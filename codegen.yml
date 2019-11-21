@@ -1,13 +1,13 @@
 overwrite: true
 documents: null
-schema: http://localhost:4000/graphql
+schema: http://localhost:4100/graphql
 generates:
   ./src/fragmentTypes.json:
     plugins:
       - fragment-matcher
-  ./schema-types.d.ts:
+  ./src/schema-types.d.ts:
     plugins:
       - typescript
-  ./graphql.schema.json:
+  ./src/graphql.schema.json:
     plugins:
       - introspection

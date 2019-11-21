@@ -1,0 +1,75 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+  query: Query
+}
+
+type Contract {
+  id: ID!
+  operatorId: String!
+  operatorName: String
+  routes: [Route!]
+  subjects: [ContractObject!]
+  targets: [String!]
+}
+
+type ContractObject {
+  contract: Contract!
+  currentOperators: [Operator!]
+  id: ID!
+  routes: [Route!]
+}
+
+type Operator {
+  contracts: [Contract!]
+  operatorId: String!
+  operatorName: String
+  routes: [Route!]
+  subjects: [ContractObject!]
+  vehicles: [Vehicle!]
+}
+
+type Query {
+  contractObjects: [ContractObject!]
+  contracts: [Contract!]
+  operators: [Operator!]
+  routes: [Route!]
+  vehicles(all: Boolean): [Vehicle!]
+}
+
+type Route {
+  area: OperatingArea!
+  contract: Contract!
+  contractObject: ContractObject!
+  currentOperators: [Operator!]
+  direction: Int!
+  id: ID!
+  routeId: String!
+}
+
+type Vehicle {
+  age: Int!
+  emissionClass: String!
+  emissionDesc: String!
+  exteriorColor: String!
+  id: ID!
+  operator: Operator!
+  registryNr: String!
+  routes: [Route!]
+  type: String!
+  vehicleId: String!
+}
+
+enum CacheControlScope {
+  PRIVATE
+  PUBLIC
+}
+
+enum OperatingArea {
+  CENTER
+  OUTSIDE_CENTER
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

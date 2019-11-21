@@ -1,0 +1,15 @@
+{
+  "name": "Bultti Graphql schema",
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "Bultti Server": {
+        "url": "http://localhost:4100/graphql",
+        "headers": {
+          "user-agent": "JS GraphQL"
+        },
+        "introspect": true
+      }
+    }
+  }
+}
