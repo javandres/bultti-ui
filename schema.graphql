@@ -5,12 +5,10 @@ schema {
 }
 
 type Contract {
+  contractObjects: [ContractObject!]
   id: ID!
-  operatorId: String!
-  operatorName: String
+  operator: [Operator!]
   routes: [Route!]
-  subjects: [ContractObject!]
-  targets: [String!]
 }
 
 type ContractObject {
@@ -21,11 +19,11 @@ type ContractObject {
 }
 
 type Operator {
+  contractObjects: [ContractObject!]
   contracts: [Contract!]
   operatorId: String!
   operatorName: String
   routes: [Route!]
-  subjects: [ContractObject!]
   vehicles: [Vehicle!]
 }
 
