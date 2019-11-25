@@ -33,18 +33,6 @@ const App: React.FC = () => {
   const { data } = useQueryData({ query: vehiclesQuery })
   const arrData = data && Array.isArray(data) ? data : []
 
-  const duplicates = arrData.reduce((duplicates, vehicle, idx, arr) => {
-    const isDuplicate = arr.filter((v) => v.id === vehicle.id).length > 1
-
-    if (isDuplicate) {
-      duplicates.push(vehicle)
-    }
-
-    return duplicates
-  }, [])
-
-  console.log(duplicates)
-
   return (
     <div className={styles.App}>
       {uniqBy(arrData, 'id').map((vehicle) => (
