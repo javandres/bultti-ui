@@ -1,6 +1,7 @@
 import { action, extendObservable } from 'mobx'
+import { UIActions } from '../types/state'
 
-export const UIStore = (state) => {
+export const UIStore = (state): UIActions => {
   const defaultState = {
     vehicleFilter: '',
   }

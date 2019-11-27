@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { StateContext } from './stateContext'
 import { action } from 'mobx'
-import { StateContextType } from '../types/state'
+import { StoreContext } from '../types/state'
 
 const createDumbAction = (state, stateKey) =>
   action((value) => {
@@ -23,11 +23,11 @@ export const useStateValue = (valueKey) => {
   return [value, action]
 }
 
-export const useAppState = (): StateContextType => {
+export const useAppState = (): StoreContext => {
   const currentStateContext = useContext(StateContext)
 
   if (!currentStateContext) {
-    return { state: {}, actions: {} } as StateContextType
+    return { state: {}, actions: {} } as StoreContext
   }
 
   return currentStateContext

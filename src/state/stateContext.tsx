@@ -1,4 +1,4 @@
 import * as React from 'react'
-import { StateContextType } from '../types/state'
+import { StoreContext } from '../types/state'
 
-export const StateContext = React.createContext<StateContextType | null>(null)
+export const StateContext = React.createContext<StoreContext | null>(null)
