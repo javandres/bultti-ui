@@ -2,11 +2,14 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
-import { Provider, createClient, dedupExchange, fetchExchange } from 'urql'
+import { createClient, dedupExchange, fetchExchange, Provider } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
+import { GRAPHQL_PATH, SERVER_URL } from './constants'
+import HistoryContext, { history } from './utils/history'
+import { AppState } from './state/state'
 
 const client = createClient({
-  url: 'http://localhost:4100/graphql',
+  url: SERVER_URL + GRAPHQL_PATH,
   exchanges: [
     dedupExchange,
     // Replace the default cacheExchange with the new one
@@ -18,8 +21,12 @@ const client = createClient({
 })
 
 ReactDOM.render(
-  <Provider value={client}>
-    <App />
-  </Provider>,
+  <HistoryContext.Provider value={history}>
+    <Provider value={client}>
+      <AppState>
+        <App />
+      </AppState>
+    </Provider>
+  </HistoryContext.Provider>,
   document.getElementById('root')
 )
