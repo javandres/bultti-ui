@@ -5,7 +5,6 @@ import App from './App'
 import { createClient, dedupExchange, fetchExchange, Provider } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
 import { GRAPHQL_PATH, SERVER_URL } from './constants'
-import HistoryContext, { history } from './utils/history'
 import { StateContext } from './state/stateContext'
 import { UserStore } from './state/UserStore'
 import { createState } from './state/createState'
@@ -28,13 +27,11 @@ const initializers = [UserStore, UIStore]
   const state = await createState(initializers)
 
   ReactDOM.render(
-    <HistoryContext.Provider value={history}>
-      <Provider value={client}>
-        <StateContext.Provider value={state}>
-          <App />
-        </StateContext.Provider>
-      </Provider>
-    </HistoryContext.Provider>,
+    <Provider value={client}>
+      <StateContext.Provider value={state}>
+        <App />
+      </StateContext.Provider>
+    </Provider>,
     document.getElementById('root')
   )
 })()

@@ -30,7 +30,6 @@
     "prefer-conditional-expression": false,
     "prefer-const": [true, { "destructuring": "all" }],
     "member-ordering": false,
-    "react-hooks/exhaustive-deps": false,
     "prettier": [true, ".prettierrc"]
   }
 }

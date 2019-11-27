@@ -1,11 +1,10 @@
-import { useContext, useEffect, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { authorize, checkExistingSession } from './authentication'
-import HistoryContext from './history'
 import { useAppState } from '../state/useAppState'
 import { AuthResponse } from '../types/authentication'
+import { navigate } from '@reach/router'
 
 export const useAuth = () => {
-  const history = useContext(HistoryContext)
   const { actions } = useAppState()
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
@@ -35,11 +34,7 @@ export const useAuth = () => {
           console.error('Login not successful.')
         }
 
-        const url = new URL(window.location.href)
-        url.searchParams.delete('code')
-        url.searchParams.delete('scope')
-
-        history.replace({ pathname: '/', search: url.search })
+        await navigate('/', { replace: true })
       }
     })()
   }, [code, is_test])

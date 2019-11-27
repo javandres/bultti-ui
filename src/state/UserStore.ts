@@ -5,6 +5,10 @@ interface UserState {
   user: User
 }
 
+export interface UserActions {
+  user: (User) => void
+}
+
 export const UserStore = (state) => {
   const defaultState: UserState = {
     user: null,
