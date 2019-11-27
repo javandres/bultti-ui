@@ -1,5 +1,6 @@
 import { User } from './authentication'
 import { IObservableObject } from 'mobx'
+import { FunctionMap } from './common'
 
 export interface IAppState {
   user?: User
@@ -7,10 +8,6 @@ export interface IAppState {
 }
 
 export type ObservableAppState = IAppState & IObservableObject
-
-export interface FunctionMap {
-  [name: string]: (...args: any[]) => any
-}
 
 export type Initializer<T = any> = (
   state: ObservableAppState,

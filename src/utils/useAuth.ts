@@ -5,7 +5,7 @@ import { AuthResponse } from '../types/authentication'
 import { navigate } from '@reach/router'
 
 export const useAuth = () => {
-  const { actions } = useAppState()
+  const { state, actions } = useAppState()
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -25,7 +25,13 @@ export const useAuth = () => {
 
       if (response && response.isOk && response.email) {
         actions.user({ email: response.email })
-      } else if (code) {
+      }
+    })()
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      if (code) {
         const response = await authorize(code, is_test === 'true')
 
         if (response && response.isOk && response.email) {

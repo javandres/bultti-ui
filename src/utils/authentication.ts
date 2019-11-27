@@ -1,4 +1,4 @@
-import { SERVER_URL } from '../constants'
+import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI, SERVER_URL } from '../constants'
 import { AuthResponse } from '../types/authentication'
 
 const RequestMethod = {
@@ -63,6 +63,11 @@ export const checkExistingSession = async (): Promise<AuthResponse> => {
   }
 
   return result
+}
+
+export const redirectToLogin = () => {
+  const authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
+  window.location.assign(authUrl)
 }
 
 export const logout = async () => {
