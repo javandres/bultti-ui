@@ -1,11 +1,11 @@
-import { IAuthenticatedUser, User } from '../types/authentication'
+import { User } from '../types/authentication'
 import { action, extendObservable } from 'mobx'
 
 interface UserState {
   user: User
 }
 
-export const UserStore = (state, initialState = {}) => {
+export const UserStore = (state) => {
   const defaultState: UserState = {
     user: null,
   }
@@ -17,6 +17,6 @@ export const UserStore = (state, initialState = {}) => {
   })
 
   return {
-    setUser,
+    user: setUser,
   }
 }

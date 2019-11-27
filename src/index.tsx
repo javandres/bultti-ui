@@ -6,7 +6,10 @@ import { createClient, dedupExchange, fetchExchange, Provider } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
 import { GRAPHQL_PATH, SERVER_URL } from './constants'
 import HistoryContext, { history } from './utils/history'
-import { AppState } from './state/state'
+import { StateContext } from './state/stateContext'
+import { UserStore } from './state/UserStore'
+import { createState } from './state/createState'
+import { UIStore } from './state/UIStore'
 
 const client = createClient({
   url: SERVER_URL + GRAPHQL_PATH,
@@ -20,13 +23,18 @@ const client = createClient({
   ],
 })
 
-ReactDOM.render(
-  <HistoryContext.Provider value={history}>
-    <Provider value={client}>
-      <AppState>
-        <App />
-      </AppState>
-    </Provider>
-  </HistoryContext.Provider>,
-  document.getElementById('root')
-)
+const initializers = [UserStore, UIStore]
+;(async () => {
+  const state = await createState(initializers)
+
+  ReactDOM.render(
+    <HistoryContext.Provider value={history}>
+      <Provider value={client}>
+        <StateContext.Provider value={state}>
+          <App />
+        </StateContext.Provider>
+      </Provider>
+    </HistoryContext.Provider>,
+    document.getElementById('root')
+  )
+})()

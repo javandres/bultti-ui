@@ -1,4 +1,5 @@
 import { SERVER_URL } from '../constants'
+import { AuthResponse } from '../types/authentication'
 
 const RequestMethod = {
   GET: 'GET',
@@ -24,7 +25,7 @@ export const authorize = async (code, isTest = false) => {
   return sendRequest(RequestMethod.POST, requestBody)
 }
 
-const sendRequest = async (method, requestBody) => {
+const sendRequest = async (method, requestBody): Promise<AuthResponse> => {
   let result = null
 
   try {
@@ -45,7 +46,7 @@ const sendRequest = async (method, requestBody) => {
   return result
 }
 
-export const checkExistingSession = async () => {
+export const checkExistingSession = async (): Promise<AuthResponse> => {
   let result = null
 
   try {
