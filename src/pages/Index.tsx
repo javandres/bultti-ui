@@ -9,8 +9,15 @@ type PropTypes = {
 const Index: React.FC<PropTypes> = observer(() => {
   return (
     <div>
-      <h1>Index</h1>
-      <Link to="vehicles">Vehicles</Link>
+      <h1>Bultti</h1>
+      <ul>
+        <li>
+          <Link to="preinspection">Ennakkotarkastus</Link>
+        </li>
+        <li>
+          <Link to="postinspection">Jälkitarkastus</Link>
+        </li>
+      </ul>
     </div>
   )
 })
