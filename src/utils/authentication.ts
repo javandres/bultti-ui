@@ -71,7 +71,7 @@ export const redirectToLogin = () => {
 }
 
 export const logout = async () => {
-  let result = null
+  let result: boolean = false
 
   try {
     const response = await fetch(BACKEND_API_URL + Endpoint.LOGOUT, {
@@ -81,7 +81,7 @@ export const logout = async () => {
         'Content-Type': 'application/json',
       },
     })
-    result = await response.json()
+    result = response.status === 200
   } catch (e) {
     console.log(e)
   }

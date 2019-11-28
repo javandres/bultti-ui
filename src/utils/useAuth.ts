@@ -1,12 +1,20 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { authorize, checkExistingSession } from './authentication'
 import { useStateValue } from '../state/useAppState'
-import { AuthResponse } from '../types/authentication'
 import { navigate } from '@reach/router'
 import { useAsyncEffect } from './useAsyncEffect'
+import { AuthResponse } from '../types/authentication'
+
+export enum AuthState {
+  AUTHENTICATED,
+  UNAUTHENTICATED,
+  PENDING,
+  UNKNOWN,
+}
 
 export const useAuth = () => {
-  const [, setUser] = useStateValue('user')
+  const [authState, setAuthState] = useState<AuthState>(AuthState.UNKNOWN)
+  const [user, setUser] = useStateValue('user')
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -21,24 +29,33 @@ export const useAuth = () => {
   )
 
   useAsyncEffect(async () => {
-    const response: AuthResponse = await checkExistingSession()
-
-    if (response && response.isOk && response.email) {
-      setUser({ email: response.email })
-    }
-  }, [])
-
-  useAsyncEffect(async () => {
-    if (code) {
+    if (code && (authState === AuthState.UNKNOWN || authState === AuthState.UNAUTHENTICATED)) {
+      setAuthState(AuthState.PENDING)
       const response = await authorize(code, is_test === 'true')
 
       if (response && response.isOk && response.email) {
+        setAuthState(AuthState.AUTHENTICATED)
         setUser({ email: response.email })
       } else {
         console.error('Login not successful.')
+        setAuthState(AuthState.UNAUTHENTICATED)
       }
 
       await navigate('/', { replace: true })
+    } else if (authState === AuthState.UNKNOWN) {
+      setAuthState(AuthState.PENDING)
+      const response: AuthResponse = await checkExistingSession()
+
+      if (response && response.isOk && response.email) {
+        setAuthState(AuthState.AUTHENTICATED)
+        setUser({ email: response.email })
+      } else {
+        setAuthState(AuthState.UNAUTHENTICATED)
+      }
+    } else if (user && authState !== AuthState.AUTHENTICATED) {
+      setAuthState(AuthState.AUTHENTICATED)
     }
-  }, [code])
+  }, [code, authState, user])
+
+  return authState
 }

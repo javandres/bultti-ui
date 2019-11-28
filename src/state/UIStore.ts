@@ -3,6 +3,7 @@ import { UIActions } from '../types/state'
 
 export const UIStore = (state): UIActions => {
   const defaultState = {
+    appLoaded: false,
     vehicleFilter: '',
   }
 
@@ -12,7 +13,12 @@ export const UIStore = (state): UIActions => {
     state.vehicleFilter = value
   })
 
+  const onAppLoaded = action(() => {
+    state.appLoaded = true
+  })
+
   return {
     vehicleFilter: setVehicleFilter,
+    appLoaded: onAppLoaded,
   }
 }

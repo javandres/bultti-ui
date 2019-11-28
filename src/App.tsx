@@ -1,12 +1,17 @@
 import React from 'react'
-import { useAuth } from './utils/useAuth'
+import { AuthState, useAuth } from './utils/useAuth'
 import { observer } from 'mobx-react-lite'
 import { Router } from '@reach/router'
 import Index from './pages/Index'
 import Vehicles from './pages/Vehicles'
+import AppLoading from './pages/AppLoading'
 
 const App: React.FC = observer(() => {
-  useAuth()
+  const authState = useAuth()
+
+  if (authState !== AuthState.AUTHENTICATED) {
+    return <AppLoading showAuthModal={authState === AuthState.UNAUTHENTICATED} />
+  }
 
   return (
     <Router>
