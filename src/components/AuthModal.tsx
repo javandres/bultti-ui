@@ -1,11 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import HSLLogoNoText from '../icons/HSLLogoNoText'
 import Login from '../icons/Login'
-import { authorize, logout, redirectToLogin } from '../utils/authentication'
-import Loading, { LoadingDisplay } from './Loading'
+import { logout } from '../utils/authentication'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
+import { LoginButton } from './common'
 
 const Root = styled.div`
   position: fixed;
@@ -39,30 +39,6 @@ const Header = styled.div`
   user-select: none;
 `
 
-const LoadingIndicator = styled(LoadingDisplay)`
-  position: static;
-`
-
-const LoginButton = styled.button`
-  display: flex;
-  flex-basis: 50px;
-  justify-content: center;
-  flex-direction: row;
-  align-items: center;
-  user-select: none;
-  width: 225px;
-  cursor: pointer;
-  border-radius: 2px;
-  background-color: #ffffffe6;
-  color: #3e3e3e;
-  padding: 15px;
-  font-family: inherit;
-
-  :hover {
-    background-color: #FFF;
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1), 0 3px 14px rgba(0, 0, 0, 0.4);
-`
-
 const LoginText = styled.span`
   margin-left: 10px;
 `
@@ -71,38 +47,15 @@ const Title = styled.h2`
   margin: 10px 0px 10px 0px;
 `
 
-const allowDevLogin = process.env.REACT_APP_ALLOW_DEV_LOGIN === 'true'
-
 const AuthModal: React.FC = observer((props) => {
-  const [loading, setLoading] = useState(false)
-  const [user, setUser] = useStateValue('user')
+  const [, setUser] = useStateValue('user')
 
   const onLogoutClick = useCallback(() => {
-    setLoading(true)
-
     logout().then(async (success) => {
       if (success) {
         setUser(null)
       }
-
-      setLoading(false)
     })
-  }, [])
-
-  const openAuthForm = useCallback(() => {
-    redirectToLogin()
-  }, [])
-
-  const onDevLogin = useCallback(async () => {
-    setLoading(true)
-
-    const response = await authorize('dev')
-
-    if (response && response.isOk && response.email) {
-      setUser({ email: response.email })
-    }
-
-    setLoading(false)
   }, [])
 
   return (
@@ -112,35 +65,10 @@ const AuthModal: React.FC = observer((props) => {
           <HSLLogoNoText fill={'white'} height={'80px'} />
           <Title>HSL Bultti</Title>
         </Header>
-        {loading ? (
-          <Loading />
-        ) : (
-          <>
-            {user ? (
-              <LoginButton data-testid="logout-button" onClick={onLogoutClick}>
-                <Login height={'1em'} fill={'#3e3e3e'} />
-                <LoginText>Kirjaudu ulos</LoginText>
-              </LoginButton>
-            ) : (
-              <>
-                <p>
-                  <LoginButton onClick={openAuthForm}>
-                    <Login height={'1em'} fill={'#3e3e3e'} />
-                    <LoginText>Kirjaudu sisään</LoginText>
-                  </LoginButton>
-                </p>
-                {allowDevLogin && (
-                  <p>
-                    <LoginButton onClick={onDevLogin}>
-                      <Login height={'1em'} fill={'#3e3e3e'} />
-                      <LoginText>Dev login</LoginText>
-                    </LoginButton>
-                  </p>
-                )}
-              </>
-            )}
-          </>
-        )}
+        <LoginButton data-testid="logout-button" onClick={onLogoutClick}>
+          <Login height={'1em'} fill={'#3e3e3e'} />
+          <LoginText>Kirjaudu ulos</LoginText>
+        </LoginButton>
       </Wrapper>
     </Root>
   )

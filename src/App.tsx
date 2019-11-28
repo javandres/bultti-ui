@@ -4,13 +4,13 @@ import { observer } from 'mobx-react-lite'
 import { Router } from '@reach/router'
 import Index from './pages/Index'
 import Vehicles from './pages/Vehicles'
-import AppLoading from './pages/AppLoading'
+import AuthGate from './pages/AuthGate'
 
 const App: React.FC = observer(() => {
   const authState = useAuth()
 
   if (authState !== AuthState.AUTHENTICATED) {
-    return <AppLoading showAuthModal={authState === AuthState.UNAUTHENTICATED} />
+    return <AuthGate unauthenticated={authState === AuthState.UNAUTHENTICATED} />
   }
 
   return (

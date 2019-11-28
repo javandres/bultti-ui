@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import styled, { keyframes, css } from 'styled-components'
 import Spinner from '../icons/Spinner'
+import HSLLogoNoText from '../icons/HSLLogoNoText'
+import { Colors } from '../utils/HSLColors'
 
 const spin = keyframes`
   from {
@@ -39,7 +41,7 @@ const LoadingIndicator = styled.div<{ inline: boolean }>`
 
   svg {
     display: block;
-    animation: ${spin} 1.5s linear infinite;
+    animation: ${spin} 1.5s ease-in-out infinite;
 
     ${({ inline }) =>
       inline
@@ -94,7 +96,11 @@ const Loading = ({ className, inline = false, size, _testWait = true }: LoadingP
       data-testid={_testWait ? 'loading' : 'loading-bg'}
       inline={inline}
       className={className}>
-      <Spinner width={size || defaultSize} height={size || defaultSize} />
+      <HSLLogoNoText
+        fill={Colors.secondary.hslGreenLight}
+        width={size || defaultSize}
+        height={size || defaultSize}
+      />
     </LoadingIndicator>
   )
 }
