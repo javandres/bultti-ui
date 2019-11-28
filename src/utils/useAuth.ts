@@ -1,11 +1,12 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { authorize, checkExistingSession } from './authentication'
-import { useAppState } from '../state/useAppState'
+import { useStateValue } from '../state/useAppState'
 import { AuthResponse } from '../types/authentication'
 import { navigate } from '@reach/router'
+import { useAsyncEffect } from './useAsyncEffect'
 
 export const useAuth = () => {
-  const { state, actions } = useAppState()
+  const [, setUser] = useStateValue('user')
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -19,29 +20,25 @@ export const useAuth = () => {
     []
   )
 
-  useEffect(() => {
-    ;(async () => {
-      const response: AuthResponse = await checkExistingSession()
+  useAsyncEffect(async () => {
+    const response: AuthResponse = await checkExistingSession()
 
-      if (response && response.isOk && response.email) {
-        actions.user({ email: response.email })
-      }
-    })()
+    if (response && response.isOk && response.email) {
+      setUser({ email: response.email })
+    }
   }, [])
 
-  useEffect(() => {
-    ;(async () => {
-      if (code) {
-        const response = await authorize(code, is_test === 'true')
+  useAsyncEffect(async () => {
+    if (code) {
+      const response = await authorize(code, is_test === 'true')
 
-        if (response && response.isOk && response.email) {
-          actions.user({ email: response.email })
-        } else {
-          console.error('Login not successful.')
-        }
-
-        await navigate('/', { replace: true })
+      if (response && response.isOk && response.email) {
+        setUser({ email: response.email })
+      } else {
+        console.error('Login not successful.')
       }
-    })()
-  }, [code, is_test])
+
+      await navigate('/', { replace: true })
+    }
+  }, [code])
 }
