@@ -45,9 +45,8 @@ const LoadingIndicator = styled.div<{ inline: boolean }>`
     ${({ inline }) =>
       inline
         ? css`
-            position: absolute;
-            top: -50%;
-            left: -120%;
+            position: relative;
+            top: -1px;
           `
         : ''};
   }
@@ -84,21 +83,30 @@ type LoadingProps = {
   className?: string
   inline?: boolean
   size?: number
+  color?: string
   _testWait?: boolean
 }
 
-const Loading = ({ className, inline = false, size, _testWait = true }: LoadingProps) => {
+const Loading = ({
+  className,
+  inline = false,
+  color = Colors.secondary.hslGreenLight,
+  size,
+  _testWait = true,
+}: LoadingProps) => {
   const defaultSize = inline ? 24 : 35
+  const useSize = size || defaultSize
 
   return (
     <LoadingIndicator
       data-testid={_testWait ? 'loading' : 'loading-bg'}
       inline={inline}
+      style={inline ? { width: useSize, height: useSize } : {}}
       className={className}>
       <HSLLogoNoText
-        fill={Colors.secondary.hslGreenLight}
-        width={size || defaultSize}
-        height={size || defaultSize}
+        fill={color || Colors.secondary.hslGreenLight}
+        width={useSize}
+        height={useSize}
       />
     </LoadingIndicator>
   )

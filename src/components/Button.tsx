@@ -1,14 +1,15 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useTooltip } from '../utils/useTooltip'
+import Loading from './Loading'
 
-export const StyledButton = styled.button<
-  {
-    small?: boolean
-    transparent?: boolean
-    primary?: boolean
-  } & React.PropsWithRef<JSX.IntrinsicElements['button']>
->`
+type StyledButtonProps = {
+  small?: boolean
+  transparent?: boolean
+  primary?: boolean
+} & React.PropsWithRef<JSX.IntrinsicElements['button']>
+
+export const StyledButton = styled.button<StyledButtonProps>`
   font-family: var(--font-family);
   font-size: ${({ small = false }) => (small ? '0.75rem' : '1rem')};
   font-weight: 500;
@@ -19,7 +20,7 @@ export const StyledButton = styled.button<
   background: ${({ primary = false, transparent = false }) =>
     primary ? 'var(--blue)' : transparent ? 'transparent' : 'white'};
   letter-spacing: -0.6px;
-  padding: ${({ small = false }) => (small ? '0.25rem 1.25rem' : '1rem 1.65em')};
+  padding: ${({ small = false }) => (small ? '0.4rem 1.25rem' : '1rem 1.65em')};
   color: ${({ primary = false, transparent = false }) =>
     primary || transparent ? 'white' : 'var(--blue)'};
   user-select: none;
@@ -39,12 +40,29 @@ export const StyledButton = styled.button<
   }
 `
 
+const ButtonLoading = styled(Loading).attrs({ inline: true })`
+  display: flex;
+  margin-right: 0.5rem;
+  margin-left: -0.5rem;
+`
+
+const ButtonContent = styled.span``
+
 export type ButtonProps = {
   helpText?: string
-}
+  loading?: boolean
+} & StyledButtonProps
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
-  ({ helpText, ...props }, ref: any) => (
-    <StyledButton {...props} {...useTooltip(helpText)} ref={ref} />
+  ({ helpText, children, loading, ...props }, ref: any) => (
+    <StyledButton {...props} {...useTooltip(helpText)} ref={ref}>
+      {loading && (
+        <ButtonLoading
+          color={props.transparent || props.primary ? 'white' : 'var(--blue)'}
+          size={15}
+        />
+      )}{' '}
+      <ButtonContent>{children}</ButtonContent>
+    </StyledButton>
   )
 )

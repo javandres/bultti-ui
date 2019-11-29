@@ -2,6 +2,7 @@
   "general.app.companyName": "HSL",
   "general.app.title": "Bultti",
   "general.app.login": "Kirjaudu sisään",
+  "general.app.logout": "Kirjaudu ulos",
 
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
