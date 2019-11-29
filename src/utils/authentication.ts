@@ -20,17 +20,13 @@ if (!BACKEND_API_URL.endsWith('/')) {
   BACKEND_API_URL = BACKEND_API_URL + '/'
 }
 
-export const authorize = async (code, isTest = false) => {
+export const login = async (code, isTest = false): Promise<AuthResponse> => {
   const requestBody = { code, isTest }
-  return sendRequest(RequestMethod.POST, requestBody)
-}
-
-const sendRequest = async (method, requestBody): Promise<AuthResponse> => {
   let result = null
 
   try {
     const response = await fetch(BACKEND_API_URL + Endpoint.LOGIN, {
-      method,
+      method: RequestMethod.POST,
       credentials: 'include',
       body: JSON.stringify(requestBody),
       headers: {

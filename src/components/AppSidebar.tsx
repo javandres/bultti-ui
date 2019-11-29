@@ -109,12 +109,17 @@ export type AppSidebarProps = {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user] = useStateValue('user')
+  const [user, setUser] = useStateValue('user')
   const [logoutLoading, setLogoutLoading] = useState(false)
 
   const onLogout = useCallback(async () => {
     setLogoutLoading(true)
-    await logout()
+    const result = await logout()
+
+    if (result) {
+      setUser(null)
+    }
+
     setLogoutLoading(false)
   }, [])
 

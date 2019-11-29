@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { authorize, checkExistingSession } from './authentication'
+import { checkExistingSession, login } from './authentication'
 import { useStateValue } from '../state/useAppState'
 import { navigate } from '@reach/router'
 import { useAsyncEffect } from './useAsyncEffect'
@@ -25,13 +25,13 @@ export const useAuth = () => {
         },
         { code: '', is_test: 'false' }
       ),
-    []
+    [authState]
   )
 
   useAsyncEffect(async () => {
     if (code && (authState === AuthState.UNKNOWN || authState === AuthState.UNAUTHENTICATED)) {
       setAuthState(AuthState.PENDING)
-      const response = await authorize(code, is_test === 'true')
+      const response = await login(code, is_test === 'true')
 
       if (response && response.isOk && response.email) {
         setAuthState(AuthState.AUTHENTICATED)
@@ -54,6 +54,8 @@ export const useAuth = () => {
       }
     } else if (user && authState !== AuthState.AUTHENTICATED) {
       setAuthState(AuthState.AUTHENTICATED)
+    } else if (!user && authState === AuthState.AUTHENTICATED) {
+      setAuthState(AuthState.UNAUTHENTICATED)
     }
   }, [code, authState, user])
 

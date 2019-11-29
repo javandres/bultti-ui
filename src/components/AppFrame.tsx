@@ -1,6 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import AppSidebar from './AppSidebar'
+import { observer } from 'mobx-react-lite'
 
 const AppFrameView = styled.div`
   display: flex;
@@ -15,40 +16,33 @@ const Sidebar = styled.div`
   color: white;
 `
 
-const SidebarContent = styled.div`
- 
-`
+const SidebarContent = styled.div``
 
 const Main = styled.div`
   flex: 3 0 calc(100% - 25rem);
   height: 100%;
   overflow-y: scroll;
-  padding: 1rem;
 `
 
 const MainContent = styled.div`
-   height: 200vh;
+  padding: 1rem;
 `
 
 export type AppFrameProps = {
   children?: React.ReactNode
 }
 
-const AppFrame = ({ children }: AppFrameProps) => {
+const AppFrame = observer(({ children }: AppFrameProps) => {
   return (
     <AppFrameView>
       <Sidebar>
-        <SidebarContent>
-          <AppSidebar />
-        </SidebarContent>
+        <AppSidebar />
       </Sidebar>
       <Main>
-        <MainContent>
-          {children}
-        </MainContent>
+        <MainContent>{children}</MainContent>
       </Main>
     </AppFrameView>
   )
-}
+})
 
 export default AppFrame

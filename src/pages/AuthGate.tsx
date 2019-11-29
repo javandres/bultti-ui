@@ -5,7 +5,7 @@ import { Colors } from '../utils/HSLColors'
 import { LoadingDisplay } from '../components/Loading'
 import { HSLLogoNoText } from '../icons/HSLLogoNoText'
 import { Login } from '../icons/Login'
-import { authorize, redirectToLogin } from '../utils/authentication'
+import { login, redirectToLogin } from '../utils/authentication'
 import { useStateValue } from '../state/useAppState'
 import { LoginButton } from '../components/common'
 import { ALLOW_DEV_LOGIN } from '../constants'
@@ -62,7 +62,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => 
   const onDevLogin = useCallback(async () => {
     setLoading(true)
 
-    const response = await authorize('dev')
+    const response = await login('dev')
 
     if (response && response.isOk && response.email) {
       setUser({ email: response.email })
