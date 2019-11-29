@@ -9,7 +9,7 @@ type IconProps = {
   [propName: string]: string | number
 }
 
-export default function Icon({ fill, height, width, ...rest }: IconProps) {
+export function Logout({ fill, height, width, ...rest }: IconProps) {
   return (
     <svg
       {...rest}
@@ -29,5 +29,3 @@ export default function Icon({ fill, height, width, ...rest }: IconProps) {
     </svg>
   )
 }
-
-Icon.displayName = 'Icons.Logout'

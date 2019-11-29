@@ -1,5 +1,13 @@
 {
   "general.app.companyName": "HSL",
   "general.app.title": "Bultti",
-  "general.app.login": "Kirjaudu sisään"
+  "general.app.login": "Kirjaudu sisään",
+
+  "nav.category.preinspection": "Ennakkotarkastus",
+  "nav.category.postinspection": "Jälkitarkastus",
+  "nav.list.preinspections": "Tehdyt ennakkotarkastukset",
+  "nav.list.postinspections": "Tehdyt jälkitarkastukset",
+  "nav.reports": "Raportit",
+  "nav.new.preinspection": "Uusi ennakkotarkastus",
+  "nav.new.postinspection": "Uusi jälkitarkastus"
 }

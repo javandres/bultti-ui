@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
-import HSLLogoNoText from '../icons/HSLLogoNoText'
-import Login from '../icons/Login'
+import { HSLLogoNoText } from '../icons/HSLLogoNoText'
+import { Login } from '../icons/Login'
 import { logout } from '../utils/authentication'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'

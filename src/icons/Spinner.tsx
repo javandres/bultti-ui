@@ -10,7 +10,7 @@ type IconProps = {
   [propName: string]: string | number
 }
 
-const Spinner = ({
+export const Spinner = ({
   width,
   height,
   fill = Colors.secondary.hslGreenLight,
@@ -25,5 +25,3 @@ const Spinner = ({
 )
 
 Spinner.displayName = 'Spinner'
-
-export default Spinner
