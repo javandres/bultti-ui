@@ -1,7 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Link, RouteComponentProps } from '@reach/router'
-import AppFrame from '../components/AppFrame'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -9,7 +8,7 @@ type PropTypes = {
 
 const Index: React.FC<PropTypes> = observer(() => {
   return (
-    <AppFrame>
+    <div>
       <h1>Bultti</h1>
       <ul>
         <li>
@@ -19,7 +18,7 @@ const Index: React.FC<PropTypes> = observer(() => {
           <Link to="postinspection">Jälkitarkastus</Link>
         </li>
       </ul>
-    </AppFrame>
+    </div>
   )
 })
 

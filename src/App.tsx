@@ -9,6 +9,7 @@ import PreInspection from './pages/PreInspection'
 import PostInspection from './pages/PostInspection'
 import PreInspectionReports from './pages/PreInspectionReports'
 import PostInspectionReports from './pages/PostInspectionReports'
+import AppFrame from './components/AppFrame'
 
 const App: React.FC = observer(() => {
   const authState = useAuth()
@@ -18,14 +19,16 @@ const App: React.FC = observer(() => {
   }
 
   return (
-    <Router>
-      <Index path="/" />
-      <Vehicles path="vehicles" />
-      <PreInspection path="preinspection" />
-      <PreInspectionReports path="preinspection/reports" />
-      <PostInspection path="postinspection" />
-      <PostInspectionReports path="postinspection/reports" />
-    </Router>
+    <AppFrame>
+      <Router>
+        <Index path="/" />
+        <Vehicles path="vehicles" />
+        <PreInspection path="preinspection" />
+        <PreInspectionReports path="preinspection/reports" />
+        <PostInspection path="postinspection" />
+        <PostInspectionReports path="postinspection/reports" />
+      </Router>
+    </AppFrame>
   )
 })
 
