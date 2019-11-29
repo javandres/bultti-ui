@@ -20,7 +20,7 @@ export const StyledButton = styled.button<StyledButtonProps>`
   background: ${({ primary = false, transparent = false }) =>
     primary ? 'var(--blue)' : transparent ? 'transparent' : 'white'};
   letter-spacing: -0.6px;
-  padding: ${({ small = false }) => (small ? '0.4rem 1.25rem' : '1rem 1.65em')};
+  padding: ${({ small = false }) => (small ? '0.4rem 1rem' : '1rem 1.65em')};
   color: ${({ primary = false, transparent = false }) =>
     primary || transparent ? 'white' : 'var(--blue)'};
   user-select: none;

@@ -10,7 +10,7 @@ const AppFrameView = styled.div`
 
 const Sidebar = styled.div`
   height: 100%;
-  flex: 1 0 20rem;
+  flex: 1 0 25rem;
   background: var(--blue);
   color: white;
 `
@@ -20,7 +20,7 @@ const SidebarContent = styled.div`
 `
 
 const Main = styled.div`
-  flex: 3 0 calc(100% - 20rem);
+  flex: 3 0 calc(100% - 25rem);
   height: 100%;
   overflow-y: scroll;
   padding: 1rem;

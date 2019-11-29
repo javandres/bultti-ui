@@ -10,6 +10,7 @@ import { Button } from './Button'
 import { logout } from '../utils/authentication'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
+import { User } from '../icons/User'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -31,7 +32,7 @@ const AppTitle = styled.h1`
 const AppNav = styled.nav`
   display: flex;
   flex-direction: column;
-  margin-top: 1rem;
+  margin-top: 2rem;
 `
 
 const NavLink = styled(Link)`
@@ -63,18 +64,30 @@ const CategoryTitle = styled.h3`
   font-size: 0.75rem;
   text-transform: uppercase;
   color: #eeeeee;
-  margin: 0 0 0 1rem;
+  margin: 0;
   padding-bottom: 0.5rem;
+  padding-left: 1rem;
   border-bottom: 1px solid var(--dark-blue);
 `
 
-const FunctionBar = styled.div`
+const UserBar = styled.div`
   background: rgba(0, 0, 0, 0.15);
-  padding: 1rem;
-  display: flex;
+  padding: 0.75rem 1rem;
 `
 
-const LangButton = styled(Button).attrs({
+const UserBarRow = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 1rem;
+`
+
+const UserDisplay = styled.div`
+  font-weight: bold;
+  margin-left: 1rem;
+`
+
+/*const LangButton = styled(Button).attrs({
   small: true,
   transparent: true,
 })<{ selected: boolean }>`
@@ -89,14 +102,14 @@ const LangButton = styled(Button).attrs({
   &:hover {
     color: white;
   }
-`
+`*/
 
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [language, setLanguage] = useStateValue('language')
+  const [user] = useStateValue('user')
   const [logoutLoading, setLogoutLoading] = useState(false)
 
   const onLogout = useCallback(async () => {
@@ -107,23 +120,19 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
 
   return (
     <AppSidebarView>
-      <FunctionBar>
-        <LangButton onClick={() => setLanguage('fi')} selected={language === 'fi'}>
-          Fi
-        </LangButton>
-        <Button
-          loading={logoutLoading}
-          onClick={onLogout}
-          style={{ marginLeft: 'auto' }}
-          small
-          transparent>
-          <Text>general.app.logout</Text>
-        </Button>
-      </FunctionBar>
       <AppTitle>
         <HSLLogo fill="white" height={40} />
         <Text>general.app.companyName</Text> <Text>general.app.title</Text>
       </AppTitle>
+      <UserBar>
+        <UserBarRow>
+          <User width="1rem" height="1rem" fill="white" />
+          {user && <UserDisplay>{user?.email}</UserDisplay>}
+        </UserBarRow>
+        <Button loading={logoutLoading} onClick={onLogout} small transparent>
+          <Text>general.app.logout</Text>
+        </Button>
+      </UserBar>
       <AppNav>
         <NavCategory>
           <CategoryTitle>

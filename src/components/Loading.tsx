@@ -41,14 +41,6 @@ const LoadingIndicator = styled.div<{ inline: boolean }>`
   svg {
     display: block;
     animation: ${spin} 1.5s ease-in-out infinite;
-
-    ${({ inline }) =>
-      inline
-        ? css`
-            position: relative;
-            top: -1px;
-          `
-        : ''};
   }
 `
 
