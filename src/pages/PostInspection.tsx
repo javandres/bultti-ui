@@ -1,6 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { Link, RouteComponentProps } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
+import { Page } from '../components/common'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -8,10 +9,9 @@ type PropTypes = {
 
 const PostInspection: React.FC<PropTypes> = observer((props) => {
   return (
-    <div>
-      <Link to="/">Home</Link>
-      <h1>PostInspection</h1>
-    </div>
+    <Page>
+      <h2>Jälkitarkastus</h2>
+    </Page>
   )
 })
 

@@ -13,3 +13,9 @@ export const LoginButton = styled(StyledButton)`
     margin-left: 10px;
   }
 `
+
+export const Page = styled.div`
+  > *:first-child {
+    margin-top: 0;
+  }
+`

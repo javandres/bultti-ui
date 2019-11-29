@@ -6,8 +6,8 @@
 
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
-  "nav.list.preinspections": "Tehdyt ennakkotarkastukset",
-  "nav.list.postinspections": "Tehdyt jälkitarkastukset",
+  "nav.list.preinspection": "Tehdyt ennakkotarkastukset",
+  "nav.list.postinspection": "Tehdyt jälkitarkastukset",
   "nav.reports": "Raportit",
   "nav.new.preinspection": "Uusi ennakkotarkastus",
   "nav.new.postinspection": "Uusi jälkitarkastus"

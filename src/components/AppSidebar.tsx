@@ -21,12 +21,24 @@ const HSLLogo = styled(HSLLogoNoText)`
   display: block;
 `
 
-const AppTitle = styled.h1`
+const AppTitle = styled(Link)`
   padding: 2rem 1rem;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  transition: background 0.1s ease-out, transform 0.1s ease-out;
+  color: white;
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.15);
+    transform: scale(1.025);
+  }
+
+  h1 {
+    margin: 0;
+  }
 `
 
 const AppNav = styled.nav`
@@ -125,9 +137,11 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
 
   return (
     <AppSidebarView>
-      <AppTitle>
+      <AppTitle to="/">
         <HSLLogo fill="white" height={40} />
-        <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+        <h1>
+          <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+        </h1>
       </AppTitle>
       <UserBar>
         <UserBarRow>
@@ -145,13 +159,13 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           </CategoryTitle>
           <NavLink to="preinspection">
             <Search fill="white" width="1rem" height="1rem" />
-            <Text>nav.list.preinspections</Text>
+            <Text>nav.list.preinspection</Text>
           </NavLink>
-          <NavLink to="preinspection">
+          <NavLink to="preinspection/create">
             <Plus fill="white" width="1rem" height="1rem" />
             <Text>nav.new.preinspection</Text>
           </NavLink>
-          <NavLink to="preinspection/reprots">
+          <NavLink to="preinspection/reports">
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>nav.reports</Text>
           </NavLink>
@@ -162,7 +176,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           </CategoryTitle>
           <NavLink to="postinspection">
             <Search fill="white" width="1rem" height="1rem" />
-            <Text>nav.list.postinspections</Text>
+            <Text>nav.list.postinspection</Text>
+          </NavLink>
+        </NavCategory>
+        <NavCategory>
+          <CategoryTitle>Dev stuff</CategoryTitle>
+          <NavLink to="vehicles">
+            <Search fill="white" width="1rem" height="1rem" />
+            Vehicles test page
           </NavLink>
         </NavCategory>
       </AppNav>
