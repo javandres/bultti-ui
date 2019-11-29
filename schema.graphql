@@ -12,7 +12,8 @@ type Contract {
 }
 
 type ContractObject {
-  contract: Contract!
+  contract: Contract
+  contractId: String
   currentOperators: [Operator!]
   id: ID!
   routes: [Route!]
@@ -37,8 +38,10 @@ type Query {
 
 type Route {
   area: OperatingArea!
-  contract: Contract!
-  contractObject: ContractObject!
+  contract: Contract
+  contractId: String
+  contractObject: ContractObject
+  contractObjectId: String
   currentOperators: [Operator!]
   direction: Int!
   id: ID!
@@ -51,7 +54,8 @@ type Vehicle {
   emissionDesc: String!
   exteriorColor: String!
   id: ID!
-  operator: Operator!
+  operator: Operator
+  operatorId: String
   registryNr: String!
   routes: [Route!]
   type: String!
@@ -65,7 +69,7 @@ enum CacheControlScope {
 
 enum OperatingArea {
   CENTER
-  OUTSIDE_CENTER
+  OTHER
 }
 
 
