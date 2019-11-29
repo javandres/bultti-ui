@@ -1,6 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react'
-import styled, { keyframes, css } from 'styled-components'
-import Spinner from '../icons/Spinner'
+import React, { useEffect, useRef, useState } from 'react'
+import styled, { css, keyframes } from 'styled-components'
 import HSLLogoNoText from '../icons/HSLLogoNoText'
 import { Colors } from '../utils/HSLColors'
 

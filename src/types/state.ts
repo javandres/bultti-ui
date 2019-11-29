@@ -1,18 +1,14 @@
 import { User } from './authentication'
-import { IObservableObject } from 'mobx'
 import { FunctionMap } from './common'
+import { Language } from '../utils/translate'
 
 export interface IAppState {
   user?: User
   vehicleFilter?: string
+  language?: Language
 }
 
-export type ObservableAppState = IAppState & IObservableObject
-
-export type Initializer<T = any> = (
-  state: ObservableAppState,
-  initialData: IAppState
-) => T | Promise<T>
+export type Initializer<T = any> = (state: IAppState, initialData: IAppState) => T | Promise<T>
 
 export interface UserActions extends FunctionMap {
   user: (User) => void
@@ -25,6 +21,6 @@ export interface UIActions extends FunctionMap {
 export type ActionMap = UserActions & UIActions
 
 export type StoreContext = {
-  state: ObservableAppState
+  state: IAppState
   actions: ActionMap
 }

@@ -1,10 +1,25 @@
-import { action, extendObservable } from 'mobx'
+import { action, extendObservable, observable } from 'mobx'
 import { UIActions } from '../types/state'
+import { Language } from '../utils/translate'
+
+// Language state is separate because some parts of the app that aren't
+// in the scope of the React component tree may want to use it.
+export const languageState: { language: Language } = observable({
+  language: 'fi',
+})
+
+export const setLanguage = action((setTo: Language = 'fi') => {
+  languageState.language = setTo
+})
 
 export const UIStore = (state): UIActions => {
   const defaultState = {
     appLoaded: false,
     vehicleFilter: '',
+    get language() {
+      // proxy separate language state through app state
+      return languageState.language
+    },
   }
 
   extendObservable(state, defaultState)
@@ -20,5 +35,6 @@ export const UIStore = (state): UIActions => {
   return {
     vehicleFilter: setVehicleFilter,
     appLoaded: onAppLoaded,
+    language: setLanguage,
   }
 }

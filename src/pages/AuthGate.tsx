@@ -9,6 +9,7 @@ import { authorize, redirectToLogin } from '../utils/authentication'
 import { useStateValue } from '../state/useAppState'
 import { LoginButton } from '../components/common'
 import { ALLOW_DEV_LOGIN } from '../constants'
+import { Text } from '../utils/translate'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -22,7 +23,7 @@ const LoadingScreen = styled.div`
 `
 
 const ButtonWrapper = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 `
 
 const LoadingIndicator = styled(LoadingDisplay)`
@@ -78,20 +79,24 @@ const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => 
         ) : (
           <LoadingIndicator loading={true} size={80} />
         )}
-        <Title>HSL Bultti</Title>
+        <Title>
+          <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+        </Title>
       </Header>
       {unauthenticated && (
         <>
           <ButtonWrapper>
             <LoginButton onClick={openAuthForm}>
-              <Login height={'1em'} fill={'#3e3e3e'} />
-              <span className="buttonText">Kirjaudu sisään</span>
+              <Login height="1em" fill="var(--blue)" />
+              <span className="buttonText">
+                <Text>general.app.login</Text>
+              </span>
             </LoginButton>
           </ButtonWrapper>
           {ALLOW_DEV_LOGIN && (
             <ButtonWrapper>
               <LoginButton onClick={onDevLogin}>
-                <Login height={'1em'} fill={'#3e3e3e'} />
+                <Login height="1em" fill="var(--blue)" />
                 <span className="buttonText">Dev login</span>
               </LoginButton>
             </ButtonWrapper>
