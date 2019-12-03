@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { useSelect } from 'downshift'
 import { Button, ButtonSize } from './Button'
+import { Operator } from '../schema-types'
 
 const vehiclesQuery = gql`
   query listOperators {
@@ -68,7 +69,7 @@ const OperatorFilter = observer(() => {
   const [operatorFilter, setOperatorFilter] = useStateValue('globalOperatorFilter')
   const { data } = useQueryData({ query: vehiclesQuery })
 
-  const operators = useMemo(() => {
+  const operators: Operator[] = useMemo(() => {
     const operatorList = data || []
     operatorList.unshift({ id: 'all', name: text('general.app.all') })
     return operatorList
@@ -82,10 +83,9 @@ const OperatorFilter = observer(() => {
     getMenuProps,
     highlightedIndex,
     getItemProps,
-  } = useSelect({
+  } = useSelect<Operator>({
     items: operators,
-    onSelectedItemChange: ({ selectedItem }: any) =>
-      setOperatorFilter(selectedItem?.id || 'all'),
+    onSelectedItemChange: ({ selectedItem }) => setOperatorFilter(selectedItem?.id || 'all'),
     selectedItem: operators.find((op) => operatorFilter === op.id) || operators[0],
     defaultSelectedItem: operators[0],
     itemToString: (item: any) => (item ? item?.name : ''),
