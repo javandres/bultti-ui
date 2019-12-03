@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { Page, PageSection } from '../components/common'
+import { Page, PageSection, PageTitle } from '../components/common'
 import FunctionBar from '../components/FunctionBar'
 import CurrentPreInspections from '../components/CurrentPreInspections'
 import AllPreInspections from '../components/AllPreInspections'
@@ -28,9 +28,7 @@ const PreInspection: React.FC<PropTypes> = observer((props) => {
           },
         ]}
       />
-      <PageSection>
-        <h3>Ennakkotarkastus</h3>
-      </PageSection>
+      <PageTitle>Ennakkotarkastus</PageTitle>
       <PageSection>
         <CurrentPreInspections />
       </PageSection>

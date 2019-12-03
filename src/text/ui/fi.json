@@ -5,6 +5,8 @@
   "general.app.logout": "Kirjaudu ulos",
   "general.app.all": "Kaikki",
 
+  "domain.all.operators": "Kaikki liikennöitsijät",
+
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
   "nav.list.preinspection": "Tehdyt ennakkotarkastukset",

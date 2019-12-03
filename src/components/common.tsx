@@ -21,6 +21,13 @@ export const Page = styled.div`
 `
 
 export const PageSection = styled.div`
-  padding: 0 1rem;
+  padding: 0 1rem 0 1.5rem;
   margin: 1rem 0;
+`
+
+export const PageTitle = styled.h2`
+  border-bottom: 1px solid var(--light-grey);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+  margin-left: 1.5rem;
 `
