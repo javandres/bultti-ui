@@ -1,0 +1,14 @@
+[
+  { "id": "1", "operatorId": "22", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
+  { "id": "2", "operatorId": "22", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
+  { "id": "3", "operatorId": "22", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
+  { "id": "4", "operatorId": "12", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
+  { "id": "5", "operatorId": "12", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
+  { "id": "6", "operatorId": "12", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
+  { "id": "7", "operatorId": "17", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
+  { "id": "8", "operatorId": "17", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
+  { "id": "9", "operatorId": "17", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
+  { "id": "10", "operatorId": "18", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
+  { "id": "11", "operatorId": "18", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
+  { "id": "12", "operatorId": "18", "productionDate": "2019-09-01", "endDate": "2019-12-31" }
+]

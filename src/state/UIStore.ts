@@ -1,6 +1,7 @@
 import { action, extendObservable, observable } from 'mobx'
 import { UIActions } from '../types/state'
 import { Language } from '../utils/translate'
+import { Operator } from '../schema-types'
 
 // Language state is separate because some parts of the app that aren't
 // in the scope of the React component tree may want to use it.
@@ -15,7 +16,7 @@ export const setLanguage = action((setTo: Language = 'fi') => {
 export const UIStore = (state): UIActions => {
   const defaultState = {
     appLoaded: false,
-    globalOperatorFilter: 'all',
+    globalOperator: null,
     get language() {
       // proxy separate language state through app state
       return languageState.language
@@ -24,8 +25,8 @@ export const UIStore = (state): UIActions => {
 
   extendObservable(state, defaultState)
 
-  const setOperatorFilter = action((value) => {
-    state.globalOperatorFilter = value
+  const setOperatorFilter = action((value: Operator | null) => {
+    state.globalOperator = value
   })
 
   const onAppLoaded = action(() => {
@@ -33,7 +34,7 @@ export const UIStore = (state): UIActions => {
   })
 
   return {
-    globalOperatorFilter: setOperatorFilter,
+    globalOperator: setOperatorFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
   }

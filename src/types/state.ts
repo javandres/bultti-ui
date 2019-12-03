@@ -1,10 +1,11 @@
 import { User } from './authentication'
 import { FunctionMap } from './common'
 import { Language } from '../utils/translate'
+import { Operator } from '../schema-types'
 
 export interface IAppState {
   user?: User
-  globalOperatorFilter?: string
+  globalOperator?: Operator | null
   language?: Language
 }
 
@@ -15,7 +16,7 @@ export interface UserActions extends FunctionMap {
 }
 
 export interface UIActions extends FunctionMap {
-  globalOperatorFilter: (string) => void
+  globalOperator: (operator: Operator | null) => void
   appLoaded: () => void
   language: (setTo: Language) => void
 }

@@ -23,6 +23,7 @@ const OperatorFilterView = styled.div``
 const InputLabel = styled.label`
   display: block;
   font-size: 1rem;
+  font-weight: bold;
   text-transform: uppercase;
   color: #eeeeee;
   margin: 2rem 0 0;
@@ -66,7 +67,7 @@ const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
 `
 
 const OperatorFilter = observer(() => {
-  const [operatorFilter, setOperatorFilter] = useStateValue('globalOperatorFilter')
+  const [operator, setOperatorFilter] = useStateValue('globalOperator')
   const { data } = useQueryData({ query: vehiclesQuery })
 
   const operators: Operator[] = useMemo(() => {
@@ -85,8 +86,10 @@ const OperatorFilter = observer(() => {
     getItemProps,
   } = useSelect<Operator>({
     items: operators,
-    onSelectedItemChange: ({ selectedItem }) => setOperatorFilter(selectedItem?.id || 'all'),
-    selectedItem: operators.find((op) => operatorFilter === op.id) || operators[0],
+    onSelectedItemChange: ({ selectedItem }) => setOperatorFilter(selectedItem || null),
+    selectedItem: !operator
+      ? operators[0]
+      : operators.find((op) => operator.id === op.id) || operators[0],
     defaultSelectedItem: operators[0],
     itemToString: (item: any) => (item ? item?.name : ''),
   })

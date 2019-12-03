@@ -1,9 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 
-const CurrentPreInspectionsView = styled.div`
-  
-`
+const CurrentPreInspectionsView = styled.div``
 
 export type CurrentPreInspectionsProps = {
   children?: React.ReactNode
