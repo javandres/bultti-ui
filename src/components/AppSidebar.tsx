@@ -11,6 +11,7 @@ import { logout } from '../utils/authentication'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { User } from '../icons/User'
+import OperatorFilter from './OperatorFilter'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -96,6 +97,8 @@ const UserDisplay = styled.div`
   font-size: 0.875rem;
 `
 
+const GlobalFilters = styled.div``
+
 /*const LangButton = styled(Button).attrs({
   small: true,
   transparent: true,
@@ -152,6 +155,9 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <Text>general.app.logout</Text>
         </Button>
       </UserBar>
+      <GlobalFilters>
+        <OperatorFilter />
+      </GlobalFilters>
       <AppNav>
         <NavCategory>
           <CategoryTitle>
