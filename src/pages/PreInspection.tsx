@@ -3,6 +3,9 @@ import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page, PageSection } from '../components/common'
 import FunctionBar from '../components/FunctionBar'
+import CurrentPreInspections from '../components/CurrentPreInspections'
+import AllPreInspections from '../components/AllPreInspections'
+import { Plus } from '../icons/Plus'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -11,11 +14,28 @@ type PropTypes = {
 const PreInspection: React.FC<PropTypes> = observer((props) => {
   return (
     <Page>
-      <FunctionBar functions={[{ label: 'Uusi ennakkotarkastus', action: () => {} }]} />
+      <FunctionBar
+        functions={[
+          {
+            name: 'Uusi ennakkotarkastus',
+            label: (
+              <>
+                <Plus fill="white" width="1rem" height="1rem" />{' '}
+                <span>Uusi ennakkotarkastus</span>
+              </>
+            ),
+            action: () => {},
+          },
+        ]}
+      />
       <PageSection>
         <h3>Ennakkotarkastus</h3>
-        <h2>Tehdyt ennakkotarkastukset</h2>
-        <p>Tehdyt ennakkotarkastukset lista tässä...</p>
+      </PageSection>
+      <PageSection>
+        <CurrentPreInspections />
+      </PageSection>
+      <PageSection>
+        <AllPreInspections />
       </PageSection>
     </Page>
   )

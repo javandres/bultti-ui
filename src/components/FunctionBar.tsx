@@ -7,12 +7,22 @@ import { Button, ButtonSize } from './Button'
 const FunctionBarView = styled.div`
   padding: 0.5rem 1rem;
   background: var(--light-grey);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  
+  svg {
+    display: block;
+    margin-right: 0.75rem;
+  }
 `
 
 const FunctionButton = styled(Button)``
 
 export type FunctionDef = {
-  label: string
+  label: React.ReactNode | string
+  name: string
   active?: boolean
   action: AnyFunction
 }
@@ -25,7 +35,7 @@ const FunctionBar: React.FC<FunctionBarProps> = observer(({ functions }) => {
   return (
     <FunctionBarView>
       {functions.map((fn) => (
-        <FunctionButton key={fn.label} onClick={fn.action} size={ButtonSize.MEDIUM}>
+        <FunctionButton key={fn.name} onClick={fn.action} size={ButtonSize.MEDIUM}>
           {fn.label}
         </FunctionButton>
       ))}

@@ -43,7 +43,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
       `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
       `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
     )};
-  color: ${({ transparent = false }) => (transparent ? 'white' : 'var(--blue)')};
+  color: white;
   user-select: none;
   display: flex;
   align-items: center;
@@ -68,8 +68,6 @@ const ButtonLoading = styled(Loading).attrs({ inline: true })<{ buttonSize: Butt
     size2Style(buttonSize, '-0.45rem', '-0.75rem', '-1rem')};
 `
 
-const ButtonContent = styled.span``
-
 export type ButtonProps = {
   helpText?: string
   loading?: boolean
@@ -86,7 +84,7 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
             buttonSize={typeof props.size !== 'undefined' ? props.size : ButtonSize.MEDIUM}
           />
         )}{' '}
-        <ButtonContent>{children}</ButtonContent>
+        {children}
       </StyledButton>
     )
   }
