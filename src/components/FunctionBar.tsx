@@ -5,7 +5,7 @@ import { AnyFunction } from '../types/common'
 import { Button, ButtonSize } from './Button'
 
 const FunctionBarView = styled.div`
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   background: var(--light-grey);
   display: flex;
   flex-direction: row;

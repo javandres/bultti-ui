@@ -20,8 +20,8 @@ const size2Style = (size: ButtonSize, ...values: string[]): string => {
 }
 
 // Prevent props from being forwarded to the DOM element and triggering an error.
-const DOMSafeButtonComponent = ({ loading, transparent, size, ...props }) => (
-  <button {...props} />
+const DOMSafeButtonComponent = React.forwardRef<HTMLButtonElement, StyledButtonProps>(
+  ({ loading, transparent, size, ...props }, ref) => <button ref={ref} {...props} />
 )
 
 export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
@@ -56,6 +56,8 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
 
   &:hover {
     background: var(--dark-blue);
+    color: white;
+    border-color: var(--light-grey);
     transform: scale(1.05);
   }
 `

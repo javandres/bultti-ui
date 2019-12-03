@@ -4,7 +4,7 @@ import { Language } from '../utils/translate'
 
 export interface IAppState {
   user?: User
-  vehicleFilter?: string
+  globalOperatorFilter?: string
   language?: Language
 }
 
@@ -15,7 +15,9 @@ export interface UserActions extends FunctionMap {
 }
 
 export interface UIActions extends FunctionMap {
-  vehicleFilter: (string) => void
+  globalOperatorFilter: (string) => void
+  appLoaded: () => void
+  language: (setTo: Language) => void
 }
 
 export type ActionMap = UserActions & UIActions

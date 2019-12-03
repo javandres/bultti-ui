@@ -5,13 +5,13 @@ schema {
 }
 
 type Contract {
-  contractObjects: [ContractObject!]
   id: ID!
+  operatingUnits: [OperatingUnit!]
   operator: [Operator!]
   routes: [Route!]
 }
 
-type ContractObject {
+type OperatingUnit {
   contract: Contract
   contractId: String
   currentOperators: [Operator!]
@@ -20,17 +20,17 @@ type ContractObject {
 }
 
 type Operator {
-  contractObjects: [ContractObject!]
   contracts: [Contract!]
-  operatorId: String!
-  operatorName: String
+  id: String!
+  name: String
+  operatingUnits: [OperatingUnit!]
   routes: [Route!]
   vehicles: [Vehicle!]
 }
 
 type Query {
-  contractObjects: [ContractObject!]
   contracts: [Contract!]
+  operatingUnits: [OperatingUnit!]
   operators: [Operator!]
   routes: [Route!]
   vehicles(all: Boolean): [Vehicle!]
@@ -40,11 +40,11 @@ type Route {
   area: OperatingArea!
   contract: Contract
   contractId: String
-  contractObject: ContractObject
-  contractObjectId: String
   currentOperators: [Operator!]
   direction: Int!
   id: ID!
+  operatingUnit: OperatingUnit
+  operatingUnitId: String
   routeId: String!
 }
 

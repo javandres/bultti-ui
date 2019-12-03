@@ -15,7 +15,7 @@ export const setLanguage = action((setTo: Language = 'fi') => {
 export const UIStore = (state): UIActions => {
   const defaultState = {
     appLoaded: false,
-    vehicleFilter: '',
+    globalOperatorFilter: 'all',
     get language() {
       // proxy separate language state through app state
       return languageState.language
@@ -24,8 +24,8 @@ export const UIStore = (state): UIActions => {
 
   extendObservable(state, defaultState)
 
-  const setVehicleFilter = action((value) => {
-    state.vehicleFilter = value
+  const setOperatorFilter = action((value) => {
+    state.globalOperatorFilter = value
   })
 
   const onAppLoaded = action(() => {
@@ -33,7 +33,7 @@ export const UIStore = (state): UIActions => {
   })
 
   return {
-    vehicleFilter: setVehicleFilter,
+    globalOperatorFilter: setOperatorFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
   }

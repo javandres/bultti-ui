@@ -3,6 +3,7 @@
   "general.app.title": "Bultti",
   "general.app.login": "Kirjaudu sisään",
   "general.app.logout": "Kirjaudu ulos",
+  "general.app.all": "Kaikki",
 
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",

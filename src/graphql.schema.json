@@ -83,7 +83,7 @@
             "deprecationReason": null
           },
           {
-            "name": "contractObjects",
+            "name": "operatingUnits",
             "description": "",
             "args": [],
             "type": {
@@ -94,7 +94,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ContractObject",
+                  "name": "OperatingUnit",
                   "ofType": null
                 }
               }
@@ -292,17 +292,25 @@
             "deprecationReason": null
           },
           {
+            "name": "operatorId",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "operator",
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Operator",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Operator",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -397,17 +405,37 @@
             "deprecationReason": null
           },
           {
-            "name": "contractObject",
+            "name": "operatingUnitId",
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ContractObject",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operatingUnit",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "OperatingUnit",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "contractId",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -417,13 +445,9 @@
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Contract",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Contract",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -472,7 +496,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ContractObject",
+        "name": "OperatingUnit",
         "description": "",
         "fields": [
           {
@@ -532,17 +556,25 @@
             "deprecationReason": null
           },
           {
+            "name": "contractId",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "contract",
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Contract",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Contract",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -559,7 +591,7 @@
         "description": "",
         "fields": [
           {
-            "name": "operatorId",
+            "name": "id",
             "description": "",
             "args": [],
             "type": {
@@ -575,7 +607,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatorName",
+            "name": "name",
             "description": "",
             "args": [],
             "type": {
@@ -627,7 +659,7 @@
             "deprecationReason": null
           },
           {
-            "name": "subjects",
+            "name": "operatingUnits",
             "description": "",
             "args": [],
             "type": {
@@ -638,7 +670,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ContractObject",
+                  "name": "OperatingUnit",
                   "ofType": null
                 }
               }
@@ -694,7 +726,7 @@
             "deprecationReason": null
           },
           {
-            "name": "targets",
+            "name": "operator",
             "description": "",
             "args": [],
             "type": {
@@ -704,39 +736,11 @@
                 "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
+                  "kind": "OBJECT",
+                  "name": "Operator",
                   "ofType": null
                 }
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operatorId",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operatorName",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -762,7 +766,7 @@
             "deprecationReason": null
           },
           {
-            "name": "subjects",
+            "name": "operatingUnits",
             "description": "",
             "args": [],
             "type": {
@@ -773,7 +777,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ContractObject",
+                  "name": "OperatingUnit",
                   "ofType": null
                 }
               }
@@ -802,7 +806,7 @@
             "deprecationReason": null
           },
           {
-            "name": "OUTSIDE_CENTER",
+            "name": "OTHER",
             "description": "",
             "isDeprecated": false,
             "deprecationReason": null

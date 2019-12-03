@@ -36,13 +36,17 @@ export function translate(
   return languageStr
 }
 
-export function text(token, language) {
-  return translate(token, 'ui', language)
+export function text(token) {
+  const selectedLanguage = languageState.language
+  return translate(token, 'ui', selectedLanguage)
 }
 
-export const Text = observer(
-  ({ children, text: textToken = children }: { children?: any; text?: string }) => {
-    const selectedLanguage = languageState.language
-    return text(textToken, selectedLanguage)
+export const Text = observer(({ children }: { children?: string }) => {
+  const selectedLanguage = languageState.language
+
+  if (!children) {
+    return ''
   }
-)
+
+  return translate(children, 'ui', selectedLanguage)
+})
