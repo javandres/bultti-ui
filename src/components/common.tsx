@@ -10,7 +10,7 @@ export const LoginButton = styled(StyledButton)`
   cursor: pointer;
 
   svg + .buttonText {
-    margin-left: 10px;
+    margin-left: 1rem;
   }
 `
 

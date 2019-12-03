@@ -10,6 +10,7 @@ import { useStateValue } from '../state/useAppState'
 import { LoginButton } from '../components/common'
 import { ALLOW_DEV_LOGIN } from '../constants'
 import { Text } from '../utils/translate'
+import { ButtonSize } from '../components/Button'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -86,8 +87,8 @@ const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => 
       {unauthenticated && (
         <>
           <ButtonWrapper>
-            <LoginButton onClick={openAuthForm}>
-              <Login height="1em" fill="var(--blue)" />
+            <LoginButton onClick={openAuthForm} size={ButtonSize.LARGE} transparent>
+              <Login height="1em" fill="white" />
               <span className="buttonText">
                 <Text>general.app.login</Text>
               </span>
@@ -95,8 +96,8 @@ const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => 
           </ButtonWrapper>
           {ALLOW_DEV_LOGIN && (
             <ButtonWrapper>
-              <LoginButton onClick={onDevLogin}>
-                <Login height="1em" fill="var(--blue)" />
+              <LoginButton onClick={onDevLogin} size={ButtonSize.LARGE} transparent>
+                <Login height="1em" fill="white" />
                 <span className="buttonText">Dev login</span>
               </LoginButton>
             </ButtonWrapper>
