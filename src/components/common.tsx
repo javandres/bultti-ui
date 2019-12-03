@@ -19,3 +19,8 @@ export const Page = styled.div`
     margin-top: 0;
   }
 `
+
+export const PageSection = styled.div`
+  padding: 0 1rem;
+  margin: 1rem 0;
+`

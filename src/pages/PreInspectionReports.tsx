@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { Link, RouteComponentProps } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
 import { Page } from '../components/common'
 
 type PropTypes = {

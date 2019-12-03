@@ -16,16 +16,10 @@ const Sidebar = styled.div`
   color: white;
 `
 
-const SidebarContent = styled.div``
-
 const Main = styled.div`
   flex: 3 0 calc(100% - 25rem);
   height: 100%;
   overflow-y: scroll;
-`
-
-const MainContent = styled.div`
-  padding: 1rem;
 `
 
 export type AppFrameProps = {
@@ -38,9 +32,7 @@ const AppFrame = observer(({ children }: AppFrameProps) => {
       <Sidebar>
         <AppSidebar />
       </Sidebar>
-      <Main>
-        <MainContent>{children}</MainContent>
-      </Main>
+      <Main>{children}</Main>
     </AppFrameView>
   )
 })

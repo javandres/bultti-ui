@@ -3,26 +3,47 @@ import styled from 'styled-components'
 import { useTooltip } from '../utils/useTooltip'
 import Loading from './Loading'
 
+export enum ButtonSize {
+  SMALL,
+  MEDIUM,
+  LARGE,
+}
+
 type StyledButtonProps = {
-  small?: boolean
+  size?: ButtonSize
   transparent?: boolean
-  primary?: boolean
+  loading?: boolean
 } & React.PropsWithRef<JSX.IntrinsicElements['button']>
 
-export const StyledButton = styled.button<StyledButtonProps>`
+const size2Style = (size: ButtonSize, ...values: string[]): string => {
+  return values[size]
+}
+
+// Prevent props from being forwarded to the DOM element and triggering an error.
+const DOMSafeButtonComponent = ({ loading, transparent, size, ...props }) => (
+  <button {...props} />
+)
+
+export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   font-family: var(--font-family);
-  font-size: ${({ small = false }) => (small ? '0.75rem' : '1rem')};
+  font-size: ${({ size = ButtonSize.MEDIUM }) =>
+    size2Style(size, '0.7rem', '0.875rem', '1.25rem')};
   font-weight: 500;
   appearance: none;
   outline: none;
   border-radius: 2.5rem;
-  border: 1px solid ${({ transparent = false }) => (!transparent ? 'var(--blue)' : 'white')};
-  background: ${({ primary = false, transparent = false }) =>
-    primary ? 'var(--blue)' : transparent ? 'transparent' : 'white'};
+  border: 1px solid
+    ${({ transparent = false }) => (transparent ? 'var(--light-grey)' : 'var(--blue)')};
+  background: ${({ transparent = false }) => (transparent ? 'transparent' : 'var(--blue)')};
   letter-spacing: -0.6px;
-  padding: ${({ small = false }) => (small ? '0.4rem 1rem' : '1rem 1.65em')};
-  color: ${({ primary = false, transparent = false }) =>
-    primary || transparent ? 'white' : 'var(--blue)'};
+  padding: ${({ loading = false, size = ButtonSize.MEDIUM }) =>
+    size2Style(
+      size,
+      `0.25rem 0.5rem 0.25rem ${loading ? '1rem' : '0.5rem'}`,
+      `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
+      `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
+    )};
+  color: ${({ transparent = false }) => (transparent ? 'white' : 'var(--blue)')};
   user-select: none;
   display: flex;
   align-items: center;
@@ -34,16 +55,17 @@ export const StyledButton = styled.button<StyledButtonProps>`
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 
   &:hover {
-    background: ${({ primary = false, transparent }) =>
-      primary || transparent ? 'var(--dark-blue)' : '#eeeeee'};
-    transform: scale(1.05) translateZ(10px);
+    background: var(--dark-blue);
+    transform: scale(1.05);
   }
 `
 
-const ButtonLoading = styled(Loading).attrs({ inline: true })`
+const ButtonLoading = styled(Loading).attrs({ inline: true })<{ buttonSize: ButtonSize }>`
   display: flex;
-  margin-right: 0.5rem;
-  margin-left: -0.5rem;
+  margin-right: ${({ buttonSize = ButtonSize.MEDIUM }) =>
+    size2Style(buttonSize, '0.45rem', '0.75rem', '1rem')};
+  margin-left: ${({ buttonSize = ButtonSize.MEDIUM }) =>
+    size2Style(buttonSize, '-0.45rem', '-0.75rem', '-1rem')};
 `
 
 const ButtonContent = styled.span``
@@ -54,15 +76,18 @@ export type ButtonProps = {
 } & StyledButtonProps
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
-  ({ helpText, children, loading, ...props }, ref: any) => (
-    <StyledButton {...props} {...useTooltip(helpText)} ref={ref}>
-      {loading && (
-        <ButtonLoading
-          color={props.transparent || props.primary ? 'white' : 'var(--blue)'}
-          size={15}
-        />
-      )}{' '}
-      <ButtonContent>{children}</ButtonContent>
-    </StyledButton>
-  )
+  ({ helpText, children, loading, ...props }, ref: any) => {
+    return (
+      <StyledButton {...props} loading={loading} {...useTooltip(helpText)} ref={ref}>
+        {loading && (
+          <ButtonLoading
+            color={props.transparent ? 'white' : 'var(--blue)'}
+            size={15}
+            buttonSize={typeof props.size !== 'undefined' ? props.size : ButtonSize.MEDIUM}
+          />
+        )}{' '}
+        <ButtonContent>{children}</ButtonContent>
+      </StyledButton>
+    )
+  }
 )

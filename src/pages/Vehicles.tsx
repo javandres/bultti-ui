@@ -5,7 +5,7 @@ import { useQueryData } from '../utils/useQueryData'
 import TestComponent from '../TestComponent'
 import { useStateValue } from '../state/useAppState'
 import { uniqBy } from 'lodash'
-import { Link, RouteComponentProps } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
 import { Page } from '../components/common'
 
 type PropTypes = {

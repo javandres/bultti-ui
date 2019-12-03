@@ -6,7 +6,7 @@ import { Link } from '@reach/router'
 import { Search } from '../icons/Search'
 import { Plus } from '../icons/Plus'
 import { Menu } from '../icons/Menu'
-import { Button } from './Button'
+import { Button, ButtonSize } from './Button'
 import { logout } from '../utils/authentication'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
@@ -85,18 +85,15 @@ const CategoryTitle = styled.h3`
 const UserBar = styled.div`
   background: rgba(0, 0, 0, 0.15);
   padding: 0.75rem 1rem;
-`
-
-const UserBarRow = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 1rem;
 `
 
 const UserDisplay = styled.div`
   font-weight: bold;
-  margin-left: 1rem;
+  margin-left: 0.75rem;
+  font-size: 0.875rem;
 `
 
 /*const LangButton = styled(Button).attrs({
@@ -144,11 +141,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </h1>
       </AppTitle>
       <UserBar>
-        <UserBarRow>
-          <User width="1rem" height="1rem" fill="white" />
-          {user && <UserDisplay>{user?.email}</UserDisplay>}
-        </UserBarRow>
-        <Button loading={logoutLoading} onClick={onLogout} small transparent>
+        <User width="1rem" height="1rem" fill="white" />
+        {user && <UserDisplay>{user?.email}</UserDisplay>}
+        <Button
+          style={{ marginLeft: 'auto' }}
+          loading={logoutLoading}
+          onClick={onLogout}
+          size={ButtonSize.SMALL}
+          transparent>
           <Text>general.app.logout</Text>
         </Button>
       </UserBar>

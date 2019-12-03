@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../components/common'
+import { Page, PageSection } from '../components/common'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -10,7 +10,9 @@ type PropTypes = {
 const Index: React.FC<PropTypes> = observer(() => {
   return (
     <Page>
-      <h2>Tervetuloa Bulttiin</h2>
+      <PageSection>
+        <h2>Tervetuloa Bulttiin</h2>
+      </PageSection>
     </Page>
   )
 })
