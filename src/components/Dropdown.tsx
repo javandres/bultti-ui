@@ -4,6 +4,7 @@ import { useSelect } from 'downshift'
 import { Operator } from '../schema-types'
 import { text } from '../utils/translate'
 import { Button, ButtonSize } from './Button'
+import { ArrowDown } from '../icons/ArrowDown'
 
 const DropdownView = styled.div``
 
@@ -29,16 +30,27 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem 1rem;
-  border-radius: 7px;
+  border-radius: 8px;
   border: 0;
   font-size: 1rem;
   justify-content: flex-start;
+
+  &:hover {
+    background: var(--lighter-grey);
+    color: var(--dark-grey);
+    border-color: var(--light-grey);
+  }
+
+  svg {
+    display: block;
+    margin-left: auto;
+  }
 `
 
 const SuggestionsList = styled.ul`
   list-style: none;
   width: calc(100% - 2rem);
-  border-radius: 7px;
+  border-radius: 8px;
   background: white;
   max-height: 250px;
   overflow-y: auto;
@@ -116,6 +128,7 @@ const Dropdown: React.FC<any> = <T extends {}>({
       <SelectWrapper>
         <SelectButton {...getToggleButtonProps()}>
           {toString(currentlySelected, itemToLabel) || text('general.app.all')}
+          <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
         </SelectButton>
         <SuggestionsList {...getMenuProps()}>
           {isOpen

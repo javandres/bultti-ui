@@ -58,7 +58,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
     background: var(--dark-blue);
     color: white;
     border-color: var(--light-grey);
-    transform: scale(1.05);
+    transform: scale(1.025);
   }
 `
 
