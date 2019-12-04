@@ -6,7 +6,7 @@ import { Button, ButtonSize } from './Button'
 
 const FunctionBarView = styled.div`
   padding: 0.75rem 1rem;
-  background: var(--light-grey);
+  background: var(--lighter-grey);
   display: flex;
   flex-direction: row;
   align-items: center;
