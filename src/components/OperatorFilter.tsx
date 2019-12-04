@@ -31,7 +31,13 @@ const OperatorFilter = observer(() => {
 
   const onSelect = useCallback(
     (selectedItem) => {
-      setOperatorFilter(selectedItem || null)
+      let selectValue = selectedItem
+
+      if (!selectedItem || selectedItem?.id === 'all') {
+        selectValue = null
+      }
+
+      setOperatorFilter(selectValue)
     },
     [setOperatorFilter]
   )

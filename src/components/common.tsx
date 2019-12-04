@@ -31,3 +31,8 @@ export const PageTitle = styled.h2`
   margin-bottom: 1.5rem;
   margin-left: 1.5rem;
 `
+
+export const Heading = styled.h3`
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+`
