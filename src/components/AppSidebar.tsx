@@ -131,8 +131,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
     if (result) {
       setUser(null)
     }
-
-    setLogoutLoading(false)
   }, [])
 
   return (

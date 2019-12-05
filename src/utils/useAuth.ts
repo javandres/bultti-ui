@@ -29,13 +29,13 @@ export const useAuth = () => {
   )
 
   useAsyncEffect(async () => {
-    if (code && (authState === AuthState.UNKNOWN || authState === AuthState.UNAUTHENTICATED)) {
+    if (code && ![AuthState.PENDING, AuthState.AUTHENTICATED].includes(authState)) {
       setAuthState(AuthState.PENDING)
       const response = await login(code, is_test === 'true')
 
-      if (response && response.isOk && response.email) {
-        setAuthState(AuthState.AUTHENTICATED)
+      if (response?.isOk && response?.email) {
         setUser({ email: response.email })
+        setAuthState(AuthState.AUTHENTICATED)
       } else {
         console.error('Login not successful.')
         setAuthState(AuthState.UNAUTHENTICATED)

@@ -31,6 +31,7 @@ type Operator {
 type Query {
   contracts: [Contract!]
   operatingUnits: [OperatingUnit!]
+  operator(id: String): Operator
   operators: [Operator!]
   routes: [Route!]
   vehicles(all: Boolean): [Vehicle!]

@@ -52,6 +52,7 @@ export type Query = {
    __typename?: 'Query',
   vehicles?: Maybe<Array<Vehicle>>,
   operators?: Maybe<Array<Operator>>,
+  operator?: Maybe<Operator>,
   contracts?: Maybe<Array<Contract>>,
   operatingUnits?: Maybe<Array<OperatingUnit>>,
   routes?: Maybe<Array<Route>>,
@@ -60,6 +61,11 @@ export type Query = {
 
 export type QueryVehiclesArgs = {
   all?: Maybe<Scalars['Boolean']>
+};
+
+
+export type QueryOperatorArgs = {
+  id?: Maybe<Scalars['String']>
 };
 
 export type Route = {

@@ -6,23 +6,13 @@ import { Text } from '../utils/translate'
 import { Heading } from './common'
 import preinspections from '../data/preinspections.json'
 import { findValidItems } from '../utils/findValid'
+import InspectionItem from './InspectionItem'
 
 const CurrentPreInspectionsView = styled.div``
 
 const OperatorTitle = styled.h3``
 
-const PreinspectionItem = styled.div`
-  padding: 1rem;
-  border: 1px solid var(--blue);
-  border-radius: 10px;
-  margin-bottom: 1rem;
-`
-
-export type CurrentPreInspectionsProps = {
-  children?: React.ReactNode
-}
-
-const CurrentPreInspections = observer(({ children }: CurrentPreInspectionsProps) => {
+const CurrentPreInspections = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
   const data = !!preinspections && Array.isArray(preinspections) ? preinspections : []
   const currentPreinspections = globalOperator
@@ -45,11 +35,7 @@ const CurrentPreInspections = observer(({ children }: CurrentPreInspectionsProps
       </Heading>
       <div>
         {currentPreinspections.map((inspection) => (
-          <PreinspectionItem>
-            {inspection.operatorId}
-            <br />
-            {inspection.productionDate} - {inspection.endDate}
-          </PreinspectionItem>
+          <InspectionItem key={inspection.id} inspection={inspection} />
         ))}
       </div>
     </CurrentPreInspectionsView>

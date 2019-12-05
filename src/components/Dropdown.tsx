@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useSelect } from 'downshift'
-import { Operator } from '../schema-types'
 import { text } from '../utils/translate'
 import { Button, ButtonSize } from './Button'
 import { ArrowDown } from '../icons/ArrowDown'
