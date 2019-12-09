@@ -11,7 +11,7 @@ import { logout } from '../utils/authentication'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { User } from '../icons/User'
-import OperatorFilter from './OperatorFilter'
+import GlobalOperatorFilter from './GlobalOperatorFilter'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -154,7 +154,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </Button>
       </UserBar>
       <GlobalFilters>
-        <OperatorFilter />
+        <GlobalOperatorFilter />
       </GlobalFilters>
       <AppNav>
         <NavCategory>

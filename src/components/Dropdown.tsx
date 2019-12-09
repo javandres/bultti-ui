@@ -5,27 +5,28 @@ import { text } from '../utils/translate'
 import { Button, ButtonSize } from './Button'
 import { ArrowDown } from '../icons/ArrowDown'
 
+type DropdownThemeTypes = 'light' | 'dark'
+
 const DropdownView = styled.div``
 
-const InputLabel = styled.label`
+const InputLabel = styled.label<{ theme: DropdownThemeTypes }>`
   display: block;
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
-  color: #eeeeee;
-  margin: 2rem 0 0;
+  color: ${(p) => (p.theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
+  margin: 0;
   padding-bottom: 0.5rem;
-  padding-left: 1rem;
-  border-bottom: 1px solid var(--dark-blue);
 `
 
 const SelectWrapper = styled.div`
-  padding: 1rem;
   position: relative;
 `
 
-const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
-  background: white;
+const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
+  theme: DropdownThemeTypes
+}>`
+  background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'white')};
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem 1rem;
@@ -34,34 +35,38 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
   font-size: 1rem;
   justify-content: flex-start;
 
-  &:hover {
-    background: var(--lighter-grey);
-    color: var(--dark-grey);
-    border-color: var(--light-grey);
-  }
-
   svg {
     display: block;
     margin-left: auto;
   }
+
+  &:hover {
+    background: ${(p) => (p.theme === 'light' ? 'var(--dark-blue)' : 'var(--lighter-grey)')};
+    color: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+
+    svg * {
+      fill: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+    }
+  }
 `
 
-const SuggestionsList = styled.ul`
+const SuggestionsList = styled.ul<{ theme: DropdownThemeTypes }>`
   list-style: none;
-  width: calc(100% - 2rem);
+  width: 100%;
   border-radius: 8px;
-  background: white;
+  background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'var(--dark-grey)')};
   max-height: 250px;
   overflow-y: auto;
   position: absolute;
   outline: 0;
-  top: 0;
-  left: 1rem;
+  top: -1rem;
+  left: 0;
   padding: 0;
 `
 
 const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
-  color: ${(p) => (p.highlighted ? 'white' : 'var(--dark-grey)')};
+  color: ${(p) =>
+    p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
   cursor: pointer;
   padding: 0.75rem 1rem;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
@@ -75,6 +80,7 @@ export type DropdownProps<T = any> = {
   itemToLabel: string | ((item: T | null) => string)
   selectedItem?: T
   className?: string
+  theme?: 'light' | 'dark'
 }
 
 function toString(item, converter) {
@@ -97,6 +103,7 @@ const Dropdown: React.FC<any> = <T extends {}>({
   selectedItem,
   itemToString = 'id',
   itemToLabel = 'label',
+  theme = 'light',
 }: DropdownProps<T>) => {
   const onSelectFn = useCallback(
     ({ selectedItem = null }) => {
@@ -122,17 +129,22 @@ const Dropdown: React.FC<any> = <T extends {}>({
   })
 
   return (
-    <DropdownView className={className}>
-      <InputLabel {...getLabelProps()}>{label}</InputLabel>
+    <DropdownView className={className} theme={theme}>
+      {!!label && (
+        <InputLabel {...getLabelProps()} htmlFor="null" theme={theme}>
+          {label}
+        </InputLabel>
+      )}
       <SelectWrapper>
-        <SelectButton {...getToggleButtonProps()}>
+        <SelectButton {...getToggleButtonProps()} theme={theme}>
           {toString(currentlySelected, itemToLabel) || text('general.app.all')}
           <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
         </SelectButton>
-        <SuggestionsList {...getMenuProps()}>
+        <SuggestionsList {...getMenuProps()} theme={theme}>
           {isOpen
             ? items.map((item, index) => (
                 <OperatorSuggestion
+                  theme={theme}
                   highlighted={highlightedIndex === index}
                   {...getItemProps({
                     key: toString(item, itemToString),

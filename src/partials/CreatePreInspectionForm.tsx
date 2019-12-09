@@ -1,20 +1,38 @@
 import React from 'react'
 import styled from 'styled-components'
-import { observer } from 'mobx-react-lite'
+import { observer, useLocalStore } from 'mobx-react-lite'
 import { ColumnWrapper, HalfWidth } from '../components/common'
+import { format } from 'date-fns'
+import SelectOperator from '../components/SelectOperator'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
-
 const FormColumn = styled(HalfWidth)``
 
-export type PropTypes = {
-  children?: React.ReactNode
-}
+const OperatorSelect = styled(SelectOperator)``
 
-const CreatePreInspectionForm: React.FC<PropTypes> = observer(({ children }) => {
+export type PropTypes = {}
+
+const currentYear = format(new Date(), 'yyyy')
+
+const CreatePreInspectionForm: React.FC<PropTypes> = observer(() => {
+  const formState = useLocalStore(() => ({
+    operator: null,
+    season: '',
+    selectOperator: (operator = null) => {
+      formState.operator = operator
+    },
+  }))
+
   return (
     <CreatePreInspectionFormView>
-      <FormColumn>Column 1</FormColumn>
+      <FormColumn>
+        <OperatorSelect
+          label="Liikennöitsijä"
+          theme="light"
+          selectedOperator={formState.operator}
+          onSelectOperator={formState.selectOperator}
+        />
+      </FormColumn>
       <FormColumn>Column 2</FormColumn>
     </CreatePreInspectionFormView>
   )

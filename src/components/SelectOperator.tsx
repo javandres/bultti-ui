@@ -6,6 +6,7 @@ import { Operator } from '../schema-types'
 import { text } from '../utils/translate'
 import Dropdown from './Dropdown'
 import gql from 'graphql-tag'
+import { compact } from 'lodash'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -17,7 +18,10 @@ const operatorsQuery = gql`
 `
 
 export type PropTypes = {
-  label?: string
+  label?: string | null
+  className?: string
+  theme?: 'light' | 'dark'
+  allowAll?: boolean
   selectedOperator: null | Operator
   onSelectOperator: (operator: null | Operator) => void
 }
@@ -25,14 +29,25 @@ export type PropTypes = {
 const SelectOperatorView = styled(Dropdown)``
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({ onSelectOperator, selectedOperator = null, label }) => {
+  ({
+    onSelectOperator,
+    selectedOperator = null,
+    label,
+    className,
+    theme = 'light',
+    allowAll = false,
+  }) => {
     const { data } = useQueryData({ query: operatorsQuery })
 
     const operators: Operator[] = useMemo(() => {
-      const operatorList = data || []
-      operatorList.unshift({ id: 'all', name: text('general.app.all') })
+      const operatorList = !data ? [] : compact([...data])
+
+      if (allowAll && operatorList[0]?.id !== 'all') {
+        operatorList.unshift({ id: 'all', name: text('general.app.all') })
+      }
+
       return operatorList
-    }, [data])
+    }, [data, allowAll])
 
     const onSelect = useCallback(
       (selectedItem) => {
@@ -57,7 +72,9 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
     return (
       <SelectOperatorView
-        label={label || "Valitse liikennöitsijä"}
+        className={className}
+        theme={theme}
+        label={!label ? null : label || 'Valitse liikennöitsijä'}
         items={operators}
         onSelect={onSelect}
         selectedItem={currentOperator}
