@@ -36,3 +36,15 @@ export const Heading = styled.h3`
   margin-bottom: 1rem;
   font-size: 1.5rem;
 `
+
+export const ColumnWrapper = styled.div`
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  flex-wrap: nowrap;
+`
+
+export const HalfWidth = styled.div`
+  flex: 1 1 50%;
+  padding: 1rem 1.5rem;
+`

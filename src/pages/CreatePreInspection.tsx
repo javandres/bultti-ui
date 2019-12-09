@@ -1,8 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
+import { ColumnWrapper, HalfWidth } from '../components/common'
 
-const CreatePreInspectionView = styled.div``
+const CreatePreInspectionView = styled(ColumnWrapper)``
+const FormColumn = styled(HalfWidth)``
+
 
 export type PropTypes = {
   children?: React.ReactNode
@@ -11,7 +14,9 @@ export type PropTypes = {
 const CreatePreInspection: React.FC<PropTypes> = ({ children }) => {
   return (
     <CreatePreInspectionView>
-      <></>
+      <FormColumn>
+
+      </FormColumn>
     </CreatePreInspectionView>
   )
 }
