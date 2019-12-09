@@ -16,12 +16,14 @@ export interface DepartureBlocks {
 }
 
 export interface Inspection {
+  id: string
   operatorId: string
   season: string
   startDate: string
   endDate: string
-  productionFrom: string
+  productionStart: string
+  productionEnd: string
   departureBlocks?: DepartureBlocks
-  createdAt: string
-  createdBy: string
+  createdAt?: string
+  createdBy?: string
 }

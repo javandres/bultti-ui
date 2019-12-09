@@ -1,14 +1,110 @@
 [
-  { "id": "1", "operatorId": "22", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
-  { "id": "2", "operatorId": "22", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
-  { "id": "3", "operatorId": "22", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
-  { "id": "4", "operatorId": "12", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
-  { "id": "5", "operatorId": "12", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
-  { "id": "6", "operatorId": "12", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
-  { "id": "7", "operatorId": "17", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
-  { "id": "8", "operatorId": "17", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
-  { "id": "9", "operatorId": "17", "productionDate": "2019-09-01", "endDate": "2019-12-31" },
-  { "id": "10", "operatorId": "18", "productionDate": "2019-01-01", "endDate": "2019-05-31" },
-  { "id": "11", "operatorId": "18", "productionDate": "2019-06-01", "endDate": "2019-08-30" },
-  { "id": "12", "operatorId": "18", "productionDate": "2019-09-01", "endDate": "2019-12-31" }
+  {
+    "id": "1",
+    "operatorId": "22",
+    "season": "spring2019",
+    "productionStart": "2019-01-01",
+    "productionEnd": "2019-05-31",
+    "startDate": "2019-05-24",
+    "endDate": "2019-05-31"
+  },
+  {
+    "id": "2",
+    "operatorId": "22",
+    "season": "spring2019",
+    "productionStart": "2019-06-01",
+    "productionEnd": "2019-08-30",
+    "startDate": "2019-08-23",
+    "endDate": "2019-08-30"
+  },
+  {
+    "id": "3",
+    "operatorId": "22",
+    "season": "fall2019",
+    "productionStart": "2019-09-01",
+    "productionEnd": "2019-12-31",
+    "startDate": "2019-12-24",
+    "endDate": "2019-12-31"
+  },
+  {
+    "id": "4",
+    "operatorId": "12",
+    "season": "spring2019",
+    "productionStart": "2019-01-01",
+    "productionEnd": "2019-05-31",
+    "startDate": "2019-05-24",
+    "endDate": "2019-05-31"
+  },
+  {
+    "id": "5",
+    "operatorId": "12",
+    "season": "spring2019",
+    "productionStart": "2019-06-01",
+    "productionEnd": "2019-08-30",
+    "startDate": "2019-08-23",
+    "endDate": "2019-08-30"
+  },
+  {
+    "id": "6",
+    "operatorId": "12",
+    "season": "fall2019",
+    "productionStart": "2019-09-01",
+    "productionEnd": "2019-12-31",
+    "startDate": "2019-12-24",
+    "endDate": "2019-12-31"
+  },
+  {
+    "id": "7",
+    "operatorId": "17",
+    "season": "spring2019",
+    "productionStart": "2019-01-01",
+    "productionEnd": "2019-05-31",
+    "startDate": "2019-05-24",
+    "endDate": "2019-05-31"
+  },
+  {
+    "id": "8",
+    "operatorId": "17",
+    "season": "spring2019",
+    "productionStart": "2019-06-01",
+    "productionEnd": "2019-08-30",
+    "startDate": "2019-08-23",
+    "endDate": "2019-08-30"
+  },
+  {
+    "id": "9",
+    "operatorId": "17",
+    "season": "fall2019",
+    "productionStart": "2019-09-01",
+    "productionEnd": "2019-12-31",
+    "startDate": "2019-12-24",
+    "endDate": "2019-12-31"
+  },
+  {
+    "id": "10",
+    "operatorId": "18",
+    "season": "spring2019",
+    "productionStart": "2019-01-01",
+    "productionEnd": "2019-05-31",
+    "startDate": "2019-05-24",
+    "endDate": "2019-05-31"
+  },
+  {
+    "id": "11",
+    "operatorId": "18",
+    "season": "spring2019",
+    "productionStart": "2019-06-01",
+    "productionEnd": "2019-08-30",
+    "startDate": "2019-08-23",
+    "endDate": "2019-08-30"
+  },
+  {
+    "id": "12",
+    "operatorId": "18",
+    "season": "fall2019",
+    "productionStart": "2019-09-01",
+    "productionEnd": "2019-12-31",
+    "startDate": "2019-12-24",
+    "endDate": "2019-12-31"
+  }
 ]
