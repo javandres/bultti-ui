@@ -10,6 +10,7 @@ import PostInspection from './pages/PostInspection'
 import PreInspectionReports from './pages/PreInspectionReports'
 import PostInspectionReports from './pages/PostInspectionReports'
 import AppFrame from './components/AppFrame'
+import CreatePreInspection from './pages/CreatePreInspection'
 
 const App: React.FC = observer(() => {
   const authState = useAuth()
@@ -24,6 +25,7 @@ const App: React.FC = observer(() => {
         <Index path="/" />
         <Vehicles path="vehicles" />
         <PreInspection path="preinspection" />
+        <CreatePreInspection path="preinspection/create" />
         <PreInspectionReports path="preinspection/reports" />
         <PostInspection path="postinspection" />
         <PostInspectionReports path="postinspection/reports" />

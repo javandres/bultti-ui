@@ -38,7 +38,7 @@ const PreInspection: React.FC<PropTypes> = observer(() => {
                 <span>Uusi ennakkotarkastus</span>
               </>
             ),
-            action: () => {},
+            path: 'preinspection/create',
           },
         ]}
       />
