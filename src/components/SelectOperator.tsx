@@ -22,7 +22,7 @@ export type PropTypes = {
   onSelectOperator: (operator: null | Operator) => void
 }
 
-const OperatorFilterView = styled(Dropdown)``
+const SelectOperatorView = styled(Dropdown)``
 
 const SelectOperator: React.FC<PropTypes> = observer(
   ({ onSelectOperator, selectedOperator = null, label }) => {
@@ -56,7 +56,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
     )
 
     return (
-      <OperatorFilterView
+      <SelectOperatorView
         label={label || "Valitse liikennöitsijä"}
         items={operators}
         onSelect={onSelect}

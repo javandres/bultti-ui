@@ -8,12 +8,7 @@ import AllPreInspections from '../components/AllPreInspections'
 import { Plus } from '../icons/Plus'
 import { useStateValue } from '../state/useAppState'
 import preinspections from '../data/preinspections.json'
-import { Text } from '../utils/translate'
-import styled from 'styled-components'
-
-const OperatorTitle = styled.h3`
-  margin-left: 1.5rem;
-`
+import OperatorTitle from '../components/OperatorTitle'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -43,9 +38,7 @@ const PreInspection: React.FC<PropTypes> = observer(() => {
         ]}
       />
       <PageTitle>Ennakkotarkastus</PageTitle>
-      <OperatorTitle>
-        {globalOperator ? globalOperator.name : <Text>domain.all.operators</Text>}
-      </OperatorTitle>
+      <OperatorTitle />
       <PageSection>
         <CurrentPreInspections
           operator={globalOperator}
