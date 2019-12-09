@@ -16,7 +16,7 @@ type PropTypes = {
 
 const CurrentPreInspections: React.FC<PropTypes> = observer(({ operator, preInspections }) => {
   const currentPreinspections = operator
-    ? findValidItems(preInspections, 'productionDate', 'endDate')
+    ? findValidItems(preInspections, 'productionStart', 'productionEnd')
     : preInspections
 
   return (
