@@ -1,9 +1,11 @@
 // O = from depot
 // N = normal
 // I = to depot
+import { ExecutionRequirement } from '../inputs/WeeklyExecutionRequirements'
+
 export type DepartureType = 'O' | 'N' | 'I'
 
-export interface DepartureBlocks {
+export interface DepartureBlock {
   id: string
   outDepot: string
   inDepot: string
@@ -29,7 +31,8 @@ export interface Inspection {
   endDate: string
   productionStart: string
   productionEnd: string
-  departureBlocks?: DepartureBlocks
+  executionRequirements: ExecutionRequirement[]
+  departureBlocks: DepartureBlock[]
   createdAt?: string
   createdBy?: string
 }

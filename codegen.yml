@@ -5,7 +5,7 @@ generates:
   ./src/fragmentTypes.json:
     plugins:
       - fragment-matcher
-  ./src/schema-types.d.ts:
+  ./src/schema-types.ts:
     plugins:
       - typescript
   ./src/graphql.schema.json:
