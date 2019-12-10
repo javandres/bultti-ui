@@ -55,9 +55,10 @@ const SuggestionsList = styled.ul<{ theme: DropdownThemeTypes }>`
   width: 100%;
   border-radius: 8px;
   background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'var(--dark-grey)')};
-  max-height: 250px;
+  max-height: 260px;
   overflow-y: auto;
   position: absolute;
+  z-index: 10;
   outline: 0;
   top: -1rem;
   left: 0;
