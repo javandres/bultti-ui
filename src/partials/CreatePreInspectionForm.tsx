@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
-import { ColumnWrapper, HalfWidth } from '../components/common'
+import { ColumnWrapper, HalfWidth, InputLabel } from '../components/common'
 import SelectOperator from '../inputs/SelectOperator'
 import SelectSeason from '../inputs/SelectSeason'
 import WeeklyExecutionRequirements, {
@@ -9,6 +9,7 @@ import WeeklyExecutionRequirements, {
 } from '../inputs/WeeklyExecutionRequirements'
 import { DepartureBlock, Season } from '../types/inspection'
 import { Operator } from '../schema-types'
+import SelectWeek from '../inputs/SelectWeek'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -44,8 +45,8 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     operator: null,
     season: null,
     executionRequirements: [],
-    startDate: '',
-    endDate: '',
+    startDate: '2019-12-10',
+    endDate: '2019-12-31',
     productionStart: '',
     productionEnd: '',
     departureBlocks: [],
@@ -92,6 +93,16 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             theme="light"
             value={formState.season}
             onSelect={formState.selectSeason}
+          />
+        </ControlGroup>
+        <ControlGroup>
+          <InputLabel theme="light">Tarkastusjakson alku- ja loppupäivämäärää</InputLabel>
+          <SelectWeek
+            selectWeek={true}
+            startDate={formState.startDate}
+            onChangeStartDate={formState.setStartDate}
+            endDate={formState.endDate}
+            onChangeEndDate={formState.setEndDate}
           />
         </ControlGroup>
       </FormColumn>

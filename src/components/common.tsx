@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { StyledButton } from './Button'
+import { ThemeTypes } from '../types/common'
 
 export const LoginButton = styled(StyledButton)`
   display: flex;
@@ -52,4 +53,14 @@ export const ColumnWrapper = styled.div`
 export const HalfWidth = styled.div`
   flex: 1 1 50%;
   padding: 1rem 1.5rem;
+`
+
+export const InputLabel = styled.label<{ theme: ThemeTypes }>`
+  display: block;
+  font-size: 1rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: ${(p) => (p.theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
+  margin: 0;
+  padding-bottom: 0.5rem;
 `

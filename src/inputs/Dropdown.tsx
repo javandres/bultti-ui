@@ -4,27 +4,17 @@ import { useSelect } from 'downshift'
 import { text } from '../utils/translate'
 import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icons/ArrowDown'
-
-type DropdownThemeTypes = 'light' | 'dark'
+import { ThemeTypes } from '../types/common'
+import { InputLabel } from '../components/common'
 
 const DropdownView = styled.div``
-
-const InputLabel = styled.label<{ theme: DropdownThemeTypes }>`
-  display: block;
-  font-size: 1rem;
-  font-weight: bold;
-  text-transform: uppercase;
-  color: ${(p) => (p.theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
-  margin: 0;
-  padding-bottom: 0.5rem;
-`
 
 const SelectWrapper = styled.div`
   position: relative;
 `
 
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
-  theme: DropdownThemeTypes
+  theme: ThemeTypes
 }>`
   background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'white')};
   color: var(--dark-grey);
@@ -50,7 +40,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   }
 `
 
-const SuggestionsList = styled.ul<{ theme: DropdownThemeTypes }>`
+const SuggestionsList = styled.ul<{ theme: ThemeTypes }>`
   list-style: none;
   width: 100%;
   border-radius: 8px;

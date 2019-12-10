@@ -124,20 +124,30 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
     return (
       <WeeklyExecutionRequirementsView>
         <Button onClick={onAddWeek}>+1 viikko</Button>
-        {areaGroups.map(([area, reqs]) => (
-          <React.Fragment key={area}>
-            <AreaHeading>{area}</AreaHeading>
-            <RequirementArea>
-              {reqs.map((req) => (
-                <RequirementRow key={req.area + req.equipmentClass + '' + req.week}>
-                  <pre>
-                    <code>{JSON.stringify(req, null, 2)}</code>
-                  </pre>
-                </RequirementRow>
-              ))}
-            </RequirementArea>
-          </React.Fragment>
-        ))}
+        {areaGroups.map(([area, reqs]) => {
+          const vehicleClasses = reqs.reduce((classes: number[], req) => {
+            if (!classes.includes(req.equipmentClass)) {
+              classes.push(req.equipmentClass)
+            }
+
+            return classes
+          }, [])
+
+          return (
+            <React.Fragment key={area}>
+              <AreaHeading>{area}</AreaHeading>
+              <RequirementArea>
+                {reqs.map((req) => (
+                  <RequirementRow key={req.area + req.equipmentClass + '' + req.week}>
+                    <pre>
+                      <code>{JSON.stringify(req, null, 2)}</code>
+                    </pre>
+                  </RequirementRow>
+                ))}
+              </RequirementArea>
+            </React.Fragment>
+          )
+        })}
       </WeeklyExecutionRequirementsView>
     )
   }

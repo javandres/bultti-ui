@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
+import 'react-dates/initialize'
 import App from './App'
 import { createClient, dedupExchange, fetchExchange, Provider } from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
