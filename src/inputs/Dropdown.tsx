@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { useSelect } from 'downshift'
 import { text } from '../utils/translate'
-import { Button, ButtonSize } from './Button'
+import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icons/ArrowDown'
 
 type DropdownThemeTypes = 'light' | 'dark'

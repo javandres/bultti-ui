@@ -2,8 +2,8 @@ import React from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
 import { ColumnWrapper, HalfWidth } from '../components/common'
-import SelectOperator from '../components/SelectOperator'
-import SelectSeason from '../components/SelectSeason'
+import SelectOperator from '../inputs/SelectOperator'
+import SelectSeason from '../inputs/SelectSeason'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
