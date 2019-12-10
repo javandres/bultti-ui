@@ -19,6 +19,7 @@ const OperatorSelect = styled(SelectOperator)`
 
   ul {
     left: 1rem;
+    width: calc(100% - 2rem);
   }
 `
 
@@ -26,8 +27,9 @@ const GlobalOperatorFilter: React.FC = observer(() => {
   const [operator, setOperatorFilter] = useStateValue('globalOperator')
   return (
     <OperatorSelect
-      onSelectOperator={setOperatorFilter}
-      selectedOperator={operator}
+      allowAll={true}
+      onSelect={setOperatorFilter}
+      value={operator}
       label="Valitse liikennöitsijä"
       theme="dark"
     />

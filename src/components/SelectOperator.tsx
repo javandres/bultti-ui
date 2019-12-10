@@ -22,34 +22,29 @@ export type PropTypes = {
   className?: string
   theme?: 'light' | 'dark'
   allowAll?: boolean
-  selectedOperator: null | Operator
-  onSelectOperator: (operator: null | Operator) => void
+  value: null | Operator
+  onSelect: (operator: null | Operator) => void
 }
 
-const SelectOperatorView = styled(Dropdown)``
+const OperatorSelect = styled(Dropdown)``
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({
-    onSelectOperator,
-    selectedOperator = null,
-    label,
-    className,
-    theme = 'light',
-    allowAll = false,
-  }) => {
+  ({ onSelect, value = null, label, className, theme = 'light', allowAll = false }) => {
     const { data } = useQueryData({ query: operatorsQuery })
 
     const operators: Operator[] = useMemo(() => {
       const operatorList = !data ? [] : compact([...data])
 
-      if (allowAll && operatorList[0]?.id !== 'all') {
+      if (allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
         operatorList.unshift({ id: 'all', name: text('general.app.all') })
+      } else if (!allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
+        operatorList.unshift({ id: 'unselected', name: '...' })
       }
 
       return operatorList
     }, [data, allowAll])
 
-    const onSelect = useCallback(
+    const onSelectOperator = useCallback(
       (selectedItem) => {
         let selectValue = selectedItem
 
@@ -57,26 +52,24 @@ const SelectOperator: React.FC<PropTypes> = observer(
           selectValue = null
         }
 
-        onSelectOperator(selectValue)
+        onSelect(selectValue)
       },
-      [onSelectOperator]
+      [onSelect]
     )
 
     const currentOperator = useMemo(
       () =>
-        !selectedOperator
-          ? operators[0]
-          : operators.find((op) => selectedOperator.id === op.id) || operators[0],
-      [operators, selectedOperator]
+        !value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0],
+      [operators, value]
     )
 
     return (
-      <SelectOperatorView
+      <OperatorSelect
         className={className}
         theme={theme}
         label={!label ? null : label || 'Valitse liikennöitsijä'}
         items={operators}
-        onSelect={onSelect}
+        onSelect={onSelectOperator}
         selectedItem={currentOperator}
         itemToString="id"
         itemToLabel="name"

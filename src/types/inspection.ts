@@ -15,6 +15,12 @@ export interface DepartureBlocks {
   vehicleId: string
 }
 
+export interface Season {
+  name: string
+  year: number
+  season: string
+}
+
 export interface Inspection {
   id: string
   operatorId: string
