@@ -47,7 +47,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     startDate: '2019-12-09',
     endDate: '2019-12-15',
     productionStart: '',
-    productionEnd: '',
+    productionEnd: '2019-12-31',
     departureBlocks: [],
     selectOperator: (operator = null) => {
       formState.operator = operator
@@ -112,7 +112,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
       <FormColumn style={{ flex: '1 1 55%' }}>
         <WeeklyExecutionRequirements
           startDate={formState.startDate}
-          endDate={formState.endDate}
+          endDate={formState.productionEnd}
           requirements={formState.executionRequirements}
           onReplace={formState.changeRequirements}
           onChange={formState.setRequirement}
