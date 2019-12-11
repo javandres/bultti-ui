@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
-import { ColumnWrapper, HalfWidth, InputLabel } from '../components/common'
+import { ColumnWrapper, HalfWidth } from '../components/common'
 import SelectOperator from '../inputs/SelectOperator'
 import SelectSeason from '../inputs/SelectSeason'
 import WeeklyExecutionRequirements, {
@@ -45,8 +45,8 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     operator: null,
     season: null,
     executionRequirements: [],
-    startDate: '2019-12-10',
-    endDate: '2019-12-31',
+    startDate: '2019-12-09',
+    endDate: '2019-12-15',
     productionStart: '',
     productionEnd: '',
     departureBlocks: [],
@@ -96,7 +96,6 @@ const CreatePreInspectionForm: React.FC = observer(() => {
           />
         </ControlGroup>
         <ControlGroup>
-          <InputLabel theme="light">Tarkastusjakson alku- ja loppupäivämäärää</InputLabel>
           <SelectWeek
             selectWeek={true}
             startDate={formState.startDate}

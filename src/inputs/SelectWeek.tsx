@@ -1,10 +1,26 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import 'react-dates/lib/css/_datepicker.css'
-import moment, { Moment } from 'moment'
+import moment from 'moment'
 import { AnyFunction } from '../types/common'
-import { SingleDatePicker } from 'react-dates'
+import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
+import styled from 'styled-components'
+import { isValid, parseISO } from 'date-fns'
+
+const InputWrapper = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+`
+
+const InputContainer = styled.div`
+  flex: 1 1 50%;
+  margin-right: 2rem;
+
+  &:last-child {
+    margin-right: 0;
+  }
+`
 
 export type PropTypes = {
   startDate: string
@@ -20,47 +36,55 @@ const SelectWeek: React.FC<PropTypes> = observer(
       startDate,
     ])
 
-    const [focused, setFocused] = useState<boolean>(false)
+    const endMoment = useMemo(() => moment(endDate, 'YYYY-MM-DD').endOf('isoWeek'), [endDate])
 
-    const onDateChange = useCallback(
-      (date) => {
-        if (date) {
-          const weekStart = date.clone().startOf('isoWeek')
+    const [focused, setFocused] = useState<any>(null)
 
-          if (!startMoment.isSame(weekStart)) {
-            const setStartDate = weekStart.format('YYYY-MM-DD')
-            const setEndDate = weekStart
-              .clone()
-              .endOf('isoWeek')
-              .format('YYYY-MM-DD')
+    const onDateChanges = useCallback(
+      ({ startDate, endDate }) => {
+        if (startDate) {
+          onChangeStartDate(startDate.format('YYYY-MM-DD'))
+        }
 
-            onChangeStartDate(setStartDate)
-            onChangeEndDate(setEndDate)
-          }
+        if (endDate) {
+          onChangeEndDate(endDate.format('YYYY-MM-DD'))
         }
       },
       [startMoment, onChangeStartDate, onChangeEndDate]
     )
 
-    const isBlocked = useCallback((date: Moment) => date.day() !== 1, [])
+    const dateIsValid = (dateVal: string) => isValid(parseISO(dateVal))
 
     return (
       <>
-        <SingleDatePicker
-          date={startMoment}
-          id="startDate"
-          onDateChange={onDateChange}
-          focused={focused}
-          onFocusChange={({ focused }) => setFocused(!!focused)}
-          numberOfMonths={1}
-          showClearDate={true}
+        <InputWrapper>
+          <InputContainer>
+            <Input
+              label="Tarkastusjakson alku"
+              value={startDate}
+              onChange={onChangeStartDate}
+              reportChange={dateIsValid}
+            />
+          </InputContainer>
+          <InputContainer>
+            <Input label="Tarkastusjakson loppu" value={endDate} reportChange={dateIsValid} />
+          </InputContainer>
+        </InputWrapper>
+        <DayPickerRangeController
+          startDate={startMoment}
+          endDate={endMoment}
+          onDatesChange={onDateChanges}
+          startDateOffset={(day) => day.startOf('isoWeek')}
+          endDateOffset={(day) => day.endOf('isoWeek')}
+          focusedInput={focused}
+          onFocusChange={(focusedInput) => setFocused(focusedInput)}
+          numberOfMonths={2}
           firstDayOfWeek={1}
-          isDayBlocked={isBlocked}
-          enableOutsideDays={true}
+          minimumNights={1}
+          isDayBlocked={() => false}
+          enableOutsideDays={false}
           isOutsideRange={() => false}
-          keepOpenOnDateSelect={false}
         />
-        <Input disabled={true} value={endDate} />
       </>
     )
   }
