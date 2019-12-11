@@ -156,44 +156,51 @@ type ListWithHeading = [string, ExecutionRequirement[]]
 
 const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
   ({ requirements = [], onChange, onReplace, startDate, endDate }) => {
-    const [week, year] = useMemo(() => {
+    const [week, startYear, endYear] = useMemo(() => {
       const startDateObj = parseISO(startDate)
-      const week: number = getISOWeek(startDateObj)
-      const year: number = parseInt(format(startDateObj, 'yyyy'), 10)
+      const endDateObj = parseISO(endDate)
 
-      return [week, year]
-    }, [startDate])
+      const week: number = getISOWeek(startDateObj)
+      const startYear: number = parseInt(format(startDateObj, 'yyyy'), 10)
+      const endYear: number = parseInt(format(endDateObj, 'yyyy'), 10)
+
+      return [week, startYear, endYear]
+    }, [startDate, endDate])
 
     const currentRequirements: ExecutionRequirement[] = useMemo(() => {
-      if (!year || !week) {
+      if (!startYear || !week) {
         return requirements
       }
 
       // If we have no requirements yet, create some to start us off.
       if (requirements.length === 0) {
-        return generateWeekRequirements(year, week)
+        return generateWeekRequirements(startYear, week)
       }
 
       // If there are no rows for the currently selected week, create some. Copy requirements
       // from previous or next week if possible.
-      if (!requirements.some((req) => req.week === week && req.year === year)) {
-        const copyFrom = getReferenceWeek(requirements, week, year)
+      if (
+        !requirements.some(
+          (req) => req.week === week && (req.year === startYear || req.year === endYear)
+        )
+      ) {
+        const copyFrom = getReferenceWeek(requirements, week, startYear)
 
         return orderRequirements([
           ...requirements,
-          ...generateWeekRequirements(year, week, copyFrom),
+          ...generateWeekRequirements(endYear, week, copyFrom),
         ])
       }
 
       return requirements
-    }, [requirements, year, week])
+    }, [requirements, startYear, endYear, week])
 
     const onAddWeek = useCallback(() => {
       let prevReq = currentRequirements[currentRequirements.length - 1]
       const currentWeek = prevReq?.week || week
 
       if (currentWeek) {
-        const currentYear = prevReq?.year || year
+        const currentYear = prevReq?.year || startYear
 
         let nextWeek = currentWeek >= 52 ? 1 : currentWeek + 1
         let nextYear = nextWeek < currentWeek ? currentYear + 1 : currentYear
@@ -212,7 +219,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
           )
         )
       }
-    }, [onReplace, currentRequirements, week, year, endDate])
+    }, [onReplace, currentRequirements, week, startYear, endDate])
 
     const onChangeRequirement = useCallback(
       (req) => (e) => {

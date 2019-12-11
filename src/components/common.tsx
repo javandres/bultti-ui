@@ -71,4 +71,8 @@ export const FormHeading = styled.h4<{ theme: ThemeTypes }>`
   text-transform: uppercase;
   margin-bottom: 0.5rem;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
+
+  &:first-child {
+    margin-top: 0;
+  }
 `

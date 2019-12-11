@@ -110,6 +110,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
         </ControlGroup>
       </FormColumn>
       <FormColumn style={{ flex: '1 1 55%' }}>
+        <FormHeading theme="light">Suoritevaatimukset</FormHeading>
         <WeeklyExecutionRequirements
           startDate={formState.startDate}
           endDate={formState.productionEnd}
