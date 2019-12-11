@@ -4,6 +4,7 @@ import 'react-dates/lib/css/_datepicker.css'
 import moment, { Moment } from 'moment'
 import { AnyFunction } from '../types/common'
 import { SingleDatePicker } from 'react-dates'
+import Input from './Input'
 
 export type PropTypes = {
   startDate: string
@@ -19,7 +20,6 @@ const SelectWeek: React.FC<PropTypes> = observer(
       startDate,
     ])
 
-    const endMoment = useMemo(() => moment(endDate, 'YYYY-MM-DD').endOf('isoWeek'), [endDate])
     const [focused, setFocused] = useState<boolean>(false)
 
     const onDateChange = useCallback(
@@ -60,7 +60,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
           isOutsideRange={() => false}
           keepOpenOnDateSelect={false}
         />
-        <input disabled={true} value={endDate} />
+        <Input disabled={true} value={endDate} />
       </>
     )
   }

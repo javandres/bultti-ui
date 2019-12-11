@@ -16,12 +16,12 @@ const SelectWrapper = styled.div`
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   theme: ThemeTypes
 }>`
-  background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'white')};
+  background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'white')};
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 0;
+  border: 1px solid ${(p) => (p.theme === 'light' ? '#eaeaea' : 'var(--dark-blue)')};
   font-size: 1rem;
   justify-content: flex-start;
 
@@ -31,11 +31,12 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   }
 
   &:hover {
-    background: ${(p) => (p.theme === 'light' ? 'var(--dark-blue)' : 'var(--lighter-grey)')};
-    color: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+    background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--lighter-grey)')};
+    color: var(--dark-grey);
+    border-color: var(--blue);
 
     svg * {
-      fill: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+      fill: ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-grey)')};
     }
   }
 `
