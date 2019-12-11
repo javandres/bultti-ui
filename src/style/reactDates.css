@@ -1,0 +1,20 @@
+/* NOTE: the order of these styles DO matter */
+
+.DayPicker__withBorder {
+  box-shadow: none;
+  border: 1px solid var(--blue);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.CalendarDay__selected_span {
+  background: var(--light-blue);
+  color: white;
+  border: 0;
+}
+
+.CalendarDay__selected {
+  background: var(--dark-blue);
+  border: 0;
+  color: white;
+}

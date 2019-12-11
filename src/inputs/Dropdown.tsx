@@ -41,12 +41,12 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   }
 `
 
-const SuggestionsList = styled.ul<{ theme: ThemeTypes }>`
+const SuggestionsList = styled.ul<{ isOpen: boolean; theme: ThemeTypes }>`
   list-style: none;
   width: 100%;
   border-radius: 8px;
-  background: ${(p) => (p.theme === 'light' ? '#eeeeee' : 'var(--dark-grey)')};
-  max-height: 260px;
+  background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+  max-height: 265px;
   overflow-y: auto;
   position: absolute;
   z-index: 10;
@@ -54,6 +54,8 @@ const SuggestionsList = styled.ul<{ theme: ThemeTypes }>`
   top: -1rem;
   left: 0;
   padding: 0;
+  border: 1px solid ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-blue)')};
+  opacity: ${(p) => (p.isOpen ? 1 : 0)};
 `
 
 const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
@@ -132,7 +134,7 @@ const Dropdown: React.FC<any> = <T extends {}>({
           {toString(currentlySelected, itemToLabel) || text('general.app.all')}
           <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
         </SelectButton>
-        <SuggestionsList {...getMenuProps()} theme={theme}>
+        <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
           {isOpen
             ? items.map((item, index) => (
                 <OperatorSuggestion

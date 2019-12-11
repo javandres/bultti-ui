@@ -7,10 +7,14 @@ import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
 import { isValid, parseISO } from 'date-fns'
+import '../style/reactDates.css'
+
+moment.locale('fi')
 
 const InputWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
+  margin-bottom: 1rem;
 `
 
 const InputContainer = styled.div`
@@ -84,6 +88,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
           isDayBlocked={() => false}
           enableOutsideDays={false}
           isOutsideRange={() => false}
+          hideKeyboardShortcutsPanel={true}
         />
       </>
     )
