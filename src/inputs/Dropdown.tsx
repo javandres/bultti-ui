@@ -49,7 +49,7 @@ const SuggestionsList = styled.ul<{ isOpen: boolean; theme: ThemeTypes }>`
   max-height: 265px;
   overflow-y: auto;
   position: absolute;
-  z-index: 10;
+  z-index: 100;
   outline: 0;
   top: -1rem;
   left: 0;
@@ -134,22 +134,22 @@ const Dropdown: React.FC<any> = <T extends {}>({
           {toString(currentlySelected, itemToLabel) || text('general.app.all')}
           <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
         </SelectButton>
-        <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
-          {isOpen
-            ? items.map((item, index) => (
-                <OperatorSuggestion
-                  theme={theme}
-                  highlighted={highlightedIndex === index}
-                  {...getItemProps({
-                    key: toString(item, itemToString),
-                    index,
-                    item,
-                  })}>
-                  {toString(item, itemToLabel)}
-                </OperatorSuggestion>
-              ))
-            : null}
-        </SuggestionsList>
+        {isOpen && (
+          <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
+            {items.map((item, index) => (
+              <OperatorSuggestion
+                theme={theme}
+                highlighted={highlightedIndex === index}
+                {...getItemProps({
+                  key: toString(item, itemToString),
+                  index,
+                  item,
+                })}>
+                {toString(item, itemToLabel)}
+              </OperatorSuggestion>
+            ))}
+          </SuggestionsList>
+        )}
       </SelectWrapper>
     </DropdownView>
   )

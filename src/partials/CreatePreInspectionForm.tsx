@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
 import { ColumnWrapper, FormHeading, HalfWidth } from '../components/common'
@@ -8,6 +8,7 @@ import WeeklyExecutionRequirements from '../inputs/WeeklyExecutionRequirements'
 import { DepartureBlock, ExecutionRequirement, Season } from '../types/inspection'
 import { Operator } from '../schema-types'
 import SelectWeek from '../inputs/SelectWeek'
+import { useStateValue } from '../state/useAppState'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -40,8 +41,10 @@ interface PreInspectionFormData extends PreInspectionFormActions {
 }
 
 const CreatePreInspectionForm: React.FC = observer(() => {
+  const [globalOperator] = useStateValue('globalOperator')
+
   const formState = useLocalStore<PreInspectionFormData>(() => ({
-    operator: null,
+    operator: globalOperator || null,
     season: null,
     executionRequirements: [],
     startDate: '2019-12-09',
@@ -77,6 +80,12 @@ const CreatePreInspectionForm: React.FC = observer(() => {
       formState.productionEnd = endDate
     },
   }))
+
+  useEffect(() => {
+    if (formState.operator?.id !== globalOperator?.id) {
+      formState.selectOperator(globalOperator)
+    }
+  }, [globalOperator])
 
   return (
     <CreatePreInspectionFormView>
