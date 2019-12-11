@@ -1,7 +1,8 @@
 // O = from depot
 // N = normal
 // I = to depot
-import { ExecutionRequirement } from '../inputs/WeeklyExecutionRequirements'
+
+import { OperatingArea } from '../schema-types'
 
 export type DepartureType = 'O' | 'N' | 'I'
 
@@ -21,6 +22,14 @@ export interface Season {
   name: string
   year: number
   season: string
+}
+
+export interface ExecutionRequirement {
+  week: number
+  year: number
+  equipmentClass: number
+  requirement: string
+  area: OperatingArea
 }
 
 export interface Inspection {

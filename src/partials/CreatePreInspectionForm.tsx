@@ -1,13 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
-import { ColumnWrapper, HalfWidth } from '../components/common'
+import { ColumnWrapper, FormHeading, HalfWidth } from '../components/common'
 import SelectOperator from '../inputs/SelectOperator'
 import SelectSeason from '../inputs/SelectSeason'
-import WeeklyExecutionRequirements, {
-  ExecutionRequirement,
-} from '../inputs/WeeklyExecutionRequirements'
-import { DepartureBlock, Season } from '../types/inspection'
+import WeeklyExecutionRequirements from '../inputs/WeeklyExecutionRequirements'
+import { DepartureBlock, ExecutionRequirement, Season } from '../types/inspection'
 import { Operator } from '../schema-types'
 import SelectWeek from '../inputs/SelectWeek'
 
@@ -22,6 +20,7 @@ interface PreInspectionFormActions {
   selectOperator: (operator: Operator | null) => void
   selectSeason: (season: Season | null) => void
   changeRequirements: (executionRequirements: ExecutionRequirement[]) => void
+  setRequirement: (requirement: ExecutionRequirement, nextValue: string) => void
   setDepartureBlocks: (departureBlocks: DepartureBlock[]) => void
   setStartDate: (startDate: string) => void
   setEndDate: (endDate: string) => void
@@ -59,6 +58,9 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     changeRequirements: (executionRequirements = []) => {
       formState.executionRequirements = executionRequirements
     },
+    setRequirement: (requirement: ExecutionRequirement, nextValue) => {
+      requirement.requirement = nextValue
+    },
     setDepartureBlocks: (departureBlocks = []) => {
       formState.departureBlocks = departureBlocks
     },
@@ -78,7 +80,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
 
   return (
     <CreatePreInspectionFormView>
-      <FormColumn>
+      <FormColumn style={{ flex: '1 1 45%' }}>
         <ControlGroup>
           <SelectOperator
             label="Liikennöitsijä"
@@ -95,9 +97,11 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             onSelect={formState.selectSeason}
           />
         </ControlGroup>
+        <FormHeading theme="light">Tarkastusjakso</FormHeading>
         <ControlGroup>
           <SelectWeek
-            selectWeek={true}
+            startLabel="Alku"
+            endLabel="Loppu"
             startDate={formState.startDate}
             onChangeStartDate={formState.setStartDate}
             endDate={formState.endDate}
@@ -105,12 +109,13 @@ const CreatePreInspectionForm: React.FC = observer(() => {
           />
         </ControlGroup>
       </FormColumn>
-      <FormColumn>
+      <FormColumn style={{ flex: '1 1 55%' }}>
         <WeeklyExecutionRequirements
           startDate={formState.startDate}
           endDate={formState.endDate}
           requirements={formState.executionRequirements}
-          onChange={formState.changeRequirements}
+          onReplace={formState.changeRequirements}
+          onChange={formState.setRequirement}
         />
       </FormColumn>
     </CreatePreInspectionFormView>

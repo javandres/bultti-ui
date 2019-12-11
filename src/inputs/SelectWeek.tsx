@@ -32,10 +32,12 @@ export type PropTypes = {
   onChangeStartDate: AnyFunction
   onChangeEndDate: AnyFunction
   selectWeek?: boolean
+  startLabel?: string
+  endLabel?: string
 }
 
 const SelectWeek: React.FC<PropTypes> = observer(
-  ({ startDate, endDate, onChangeEndDate, onChangeStartDate }) => {
+  ({ startDate, endDate, onChangeEndDate, onChangeStartDate, startLabel, endLabel }) => {
     const startMoment = useMemo(() => moment(startDate, 'YYYY-MM-DD').startOf('isoWeek'), [
       startDate,
     ])
@@ -64,14 +66,21 @@ const SelectWeek: React.FC<PropTypes> = observer(
         <InputWrapper>
           <InputContainer>
             <Input
-              label="Tarkastusjakson alku"
+              subLabel={true}
+              label={startLabel}
               value={startDate}
               onChange={onChangeStartDate}
               reportChange={dateIsValid}
             />
           </InputContainer>
           <InputContainer>
-            <Input label="Tarkastusjakson loppu" value={endDate} reportChange={dateIsValid} />
+            <Input
+              subLabel={true}
+              label={endLabel}
+              value={endDate}
+              onChange={onChangeEndDate}
+              reportChange={dateIsValid}
+            />
           </InputContainer>
         </InputWrapper>
         <DayPickerRangeController
@@ -82,9 +91,9 @@ const SelectWeek: React.FC<PropTypes> = observer(
           endDateOffset={(day) => day.endOf('isoWeek')}
           focusedInput={focused}
           onFocusChange={(focusedInput) => setFocused(focusedInput)}
-          numberOfMonths={2}
+          numberOfMonths={1}
           firstDayOfWeek={1}
-          minimumNights={1}
+          minimumNights={6}
           isDayBlocked={() => false}
           enableOutsideDays={false}
           isOutsideRange={() => false}

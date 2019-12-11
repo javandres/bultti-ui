@@ -28,6 +28,7 @@ const TextInput = styled.input<{ theme: ThemeTypes }>`
 export type PropTypes = {
   className?: string
   label?: string
+  subLabel?: boolean
   value: string | number
   onChange?: (value: string) => unknown
   reportChange?: (value: string) => boolean
@@ -35,7 +36,16 @@ export type PropTypes = {
 } & InputHTMLAttributes<HTMLInputElement>
 
 const Input: React.FC<PropTypes> = observer(
-  ({ className, value, onChange, theme = 'light', label, reportChange, ...inputProps }) => {
+  ({
+    className,
+    value,
+    onChange,
+    theme = 'light',
+    label,
+    reportChange,
+    subLabel,
+    ...inputProps
+  }) => {
     const [internalValue, setInternalValue] = useState(value)
 
     const onValueChange = useCallback(
@@ -58,7 +68,11 @@ const Input: React.FC<PropTypes> = observer(
 
     return (
       <InputView className={className}>
-        {!!label && <InputLabel theme={theme}>{label}</InputLabel>}
+        {!!label && (
+          <InputLabel subLabel={subLabel} theme={theme}>
+            {label}
+          </InputLabel>
+        )}
         <TextInput
           {...inputProps}
           theme={theme}

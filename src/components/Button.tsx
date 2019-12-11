@@ -57,8 +57,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   &:hover {
     background: var(--dark-blue);
     color: white;
-    border-color: var(--light-grey);
-    transform: scale(1.01);
+    transform: scale(1.025);
   }
 `
 

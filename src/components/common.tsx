@@ -55,12 +55,20 @@ export const HalfWidth = styled.div`
   padding: 1rem 1.5rem;
 `
 
-export const InputLabel = styled.label<{ theme: ThemeTypes }>`
+export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }>`
   display: block;
+  font-size: ${(p) => (p.subLabel ? '0.75rem' : '1rem')};
+  font-weight: bold;
+  text-transform: uppercase;
+  color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
+  margin: 0;
+  padding-bottom: 0.5rem;
+`
+
+export const FormHeading = styled.h4<{ theme: ThemeTypes }>`
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
-  color: ${(p) => (p.theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
-  margin: 0;
-  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
 `

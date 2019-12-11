@@ -21,6 +21,7 @@
     "noImplicitThis": true,
     "noImplicitAny": false,
     "strictNullChecks": true,
+    "downlevelIteration": true,
     "noEmit": true,
     "jsx": "react"
   },
