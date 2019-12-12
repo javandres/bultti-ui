@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import 'react-dates/lib/css/_datepicker.css'
-import moment from 'moment'
+import moment, { Moment } from 'moment'
 import { AnyFunction } from '../types/common'
 import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
@@ -29,6 +29,7 @@ const InputContainer = styled.div`
 export type PropTypes = {
   startDate: string
   endDate: string
+  maxDate?: string
   onChangeStartDate: AnyFunction
   onChangeEndDate: AnyFunction
   selectWeek?: boolean
@@ -37,12 +38,25 @@ export type PropTypes = {
 }
 
 const SelectWeek: React.FC<PropTypes> = observer(
-  ({ startDate, endDate, onChangeEndDate, onChangeStartDate, startLabel, endLabel }) => {
+  ({
+    startDate,
+    endDate,
+    maxDate,
+    onChangeEndDate,
+    onChangeStartDate,
+    startLabel,
+    endLabel,
+  }) => {
     const startMoment = useMemo(() => moment(startDate, 'YYYY-MM-DD').startOf('isoWeek'), [
       startDate,
     ])
 
     const endMoment = useMemo(() => moment(endDate, 'YYYY-MM-DD').endOf('isoWeek'), [endDate])
+
+    const maxMoment = useMemo(
+      () => (maxDate ? moment(maxDate, 'YYYY-MM-DD').endOf('isoWeek') : false),
+      [maxDate]
+    )
 
     const [focused, setFocused] = useState<any>(null)
 
@@ -59,7 +73,12 @@ const SelectWeek: React.FC<PropTypes> = observer(
       [startMoment, onChangeStartDate, onChangeEndDate]
     )
 
-    const dateIsValid = (dateVal: string) => isValid(parseISO(dateVal))
+    const dateIsValid = useCallback((dateVal: string) => isValid(parseISO(dateVal)), [])
+
+    const dateIsBlocked = useCallback(
+      (dateVal: Moment) => (!maxMoment ? false : dateVal.isAfter(maxMoment)),
+      [maxMoment]
+    )
 
     return (
       <>
@@ -94,9 +113,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
           numberOfMonths={1}
           firstDayOfWeek={1}
           minimumNights={6}
-          isDayBlocked={() => false}
-          enableOutsideDays={false}
-          isOutsideRange={() => false}
+          isDayBlocked={dateIsBlocked}
           hideKeyboardShortcutsPanel={true}
         />
       </>

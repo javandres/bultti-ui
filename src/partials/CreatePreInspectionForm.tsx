@@ -120,6 +120,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             onChangeStartDate={formState.setStartDate}
             endDate={formState.endDate}
             onChangeEndDate={formState.setEndDate}
+            maxDate={formState.productionEnd}
           />
         </ControlGroup>
       </FormColumn>
