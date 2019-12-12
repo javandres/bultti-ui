@@ -9,6 +9,7 @@ import { DepartureBlock, ExecutionRequirement, Season } from '../types/inspectio
 import { Operator } from '../schema-types'
 import SelectWeek from '../inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
+import { IObservableArray, observable } from 'mobx'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -22,6 +23,7 @@ interface PreInspectionFormActions {
   selectSeason: (season: Season | null) => void
   changeRequirements: (executionRequirements: ExecutionRequirement[]) => void
   setRequirement: (requirement: ExecutionRequirement, nextValue: string) => void
+  removeRequirement: (requirement: ExecutionRequirement) => void
   setDepartureBlocks: (departureBlocks: DepartureBlock[]) => void
   setStartDate: (startDate: string) => void
   setEndDate: (endDate: string) => void
@@ -32,7 +34,7 @@ interface PreInspectionFormActions {
 interface PreInspectionFormData extends PreInspectionFormActions {
   operator: Operator | null
   season: Season | null
-  executionRequirements: ExecutionRequirement[]
+  executionRequirements: IObservableArray<ExecutionRequirement>
   startDate: string
   endDate: string
   productionStart: string
@@ -46,23 +48,26 @@ const CreatePreInspectionForm: React.FC = observer(() => {
   const formState = useLocalStore<PreInspectionFormData>(() => ({
     operator: globalOperator || null,
     season: null,
-    executionRequirements: [],
+    executionRequirements: observable.array([]),
     startDate: '2019-12-09',
     endDate: '2019-12-15',
     productionStart: '',
     productionEnd: '2019-12-31',
-    departureBlocks: [],
+    departureBlocks: observable.array([]),
     selectOperator: (operator = null) => {
       formState.operator = operator
     },
     selectSeason: (season = null) => {
       formState.season = season
     },
-    changeRequirements: (executionRequirements = []) => {
-      formState.executionRequirements = executionRequirements
+    changeRequirements: (requirements: ExecutionRequirement[] = []) => {
+      formState.executionRequirements = observable.array(requirements)
     },
     setRequirement: (requirement: ExecutionRequirement, nextValue) => {
       requirement.requirement = nextValue
+    },
+    removeRequirement: (requirement: ExecutionRequirement) => {
+      formState.executionRequirements.remove(requirement)
     },
     setDepartureBlocks: (departureBlocks = []) => {
       formState.departureBlocks = departureBlocks
@@ -126,6 +131,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
           requirements={formState.executionRequirements}
           onReplace={formState.changeRequirements}
           onChange={formState.setRequirement}
+          onRemove={formState.removeRequirement}
         />
       </FormColumn>
     </CreatePreInspectionFormView>

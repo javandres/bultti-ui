@@ -4,9 +4,10 @@ import { observer } from 'mobx-react-lite'
 import { format, getISOWeek, parseISO } from 'date-fns'
 import { OperatingArea } from '../schema-types'
 import { groupBy, orderBy, uniqBy } from 'lodash'
-import { Button } from '../components/Button'
+import { Button, ButtonSize } from '../components/Button'
 import { orderByNumber } from '../utils/orderByNumber'
 import { ExecutionRequirement } from '../types/inspection'
+import { toJS } from 'mobx'
 
 const WeeklyExecutionRequirementsView = styled.div``
 
@@ -26,12 +27,34 @@ const YearHeading = styled.h5`
   margin-bottom: 1rem;
 `
 
+const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
+  background: var(--red);
+  position: absolute;
+  border: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0;
+  line-height: 1;
+  align-items: baseline;
+  justify-content: center;
+  font-size: 0.75rem;
+  left: -0.75rem;
+  top: 0.4rem;
+  display: none;
+`
+
 const TableRow = styled.div`
   display: flex;
   border-bottom: 1px solid var(--lighter-grey);
+  position: relative;
 
   &:last-child {
     border-bottom: 0;
+  }
+  
+  &:hover ${RemoveButton} {
+    display: flex;
   }
 `
 
@@ -92,6 +115,7 @@ export type PropTypes = {
   requirements: ExecutionRequirement[]
   onChange: (requirement: ExecutionRequirement, nextValue: string) => void
   onReplace: (requirements: ExecutionRequirement[]) => void
+  onRemove: (requirement: ExecutionRequirement) => void
   startDate: string
   endDate: string
 }
@@ -155,7 +179,7 @@ const getReferenceWeek = (requirements, week, year) => {
 type ListWithHeading = [string, ExecutionRequirement[]]
 
 const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
-  ({ requirements = [], onChange, onReplace, startDate, endDate }) => {
+  ({ requirements = [], onChange, onReplace, onRemove, startDate, endDate }) => {
     const [week, startYear, endYear] = useMemo(() => {
       const startDateObj = parseISO(startDate)
       const endDateObj = parseISO(endDate)
@@ -211,7 +235,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
           orderRequirements(
             uniqBy(
               [
-                ...currentRequirements,
+                ...toJS(currentRequirements),
                 ...generateWeekRequirements(nextYear, nextWeek, copyFrom),
               ],
               (req) => req.week + req.area + req.equipmentClass + '' + req.year
@@ -220,6 +244,21 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
         )
       }
     }, [onReplace, currentRequirements, week, startYear, endDate])
+
+    const onRemoveWeek = useCallback(
+      (modelReq: ExecutionRequirement) => () => {
+        const removeReqs = currentRequirements.filter(
+          (req) => req.year === modelReq.year && req.week === modelReq.week
+        )
+
+        if (removeReqs.length !== 0) {
+          for (const rmReq of removeReqs) {
+            onRemove(rmReq)
+          }
+        }
+      },
+      [currentRequirements]
+    )
 
     const onChangeRequirement = useCallback(
       (req) => (e) => {
@@ -242,7 +281,6 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
 
     return (
       <WeeklyExecutionRequirementsView>
-        <Button onClick={onAddWeek}>+ 1 viikko</Button>
         {orderBy(yearGroups, ([year]) => parseInt(year, 10), ['desc']).map(
           ([year, yearReqs]) => {
             const areaRows = Object.entries(groupBy(yearReqs, 'area'))
@@ -295,6 +333,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
                                 </InputWrapper>
                               </TableCell>
                             ))}
+                            <RemoveButton onClick={onRemoveWeek(reqs[0])}>X</RemoveButton>
                           </TableRow>
                         ))}
                       </RequirementArea>
@@ -305,6 +344,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
             )
           }
         )}
+        <Button onClick={onAddWeek}>+ 1 viikko</Button>
       </WeeklyExecutionRequirementsView>
     )
   }
