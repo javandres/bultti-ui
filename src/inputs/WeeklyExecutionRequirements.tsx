@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { format, getISOWeek, parseISO } from 'date-fns'
+import { format, getISOWeek, parseISO, endOfWeek, addWeeks } from 'date-fns'
 import { OperatingArea } from '../schema-types'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { Button, ButtonSize } from '../components/Button'
@@ -52,7 +52,7 @@ const TableRow = styled.div`
   &:last-child {
     border-bottom: 0;
   }
-  
+
   &:hover ${RemoveButton} {
     display: flex;
   }
@@ -116,8 +116,8 @@ export type PropTypes = {
   onChange: (requirement: ExecutionRequirement, nextValue: string) => void
   onReplace: (requirements: ExecutionRequirement[]) => void
   onRemove: (requirement: ExecutionRequirement) => void
-  startDate: string
-  endDate: string
+  date: string
+  maxDate: string
 }
 
 const generateWeekRequirements = (
@@ -176,74 +176,95 @@ const getReferenceWeek = (requirements, week, year) => {
   return referenceRows
 }
 
+const createWeekKey = (week, year) => parseInt(`${year}${week < 10 ? '0' : ''}${week}`, 10)
+
+const getWeekAndYear = (date) => {
+  if (!date) {
+    return [0, 0]
+  }
+
+  const dateObj = date instanceof Date ? date : parseISO(date)
+  const weekEnd = endOfWeek(dateObj)
+  const week: number = getISOWeek(weekEnd)
+  const year: number = parseInt(format(weekEnd, 'yyyy'), 10)
+
+  return [week, year]
+}
+
 type ListWithHeading = [string, ExecutionRequirement[]]
 
 const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
-  ({ requirements = [], onChange, onReplace, onRemove, startDate, endDate }) => {
-    const [week, startYear, endYear] = useMemo(() => {
-      const startDateObj = parseISO(startDate)
-      const endDateObj = parseISO(endDate)
+  ({ requirements = [], onChange, onReplace, onRemove, date, maxDate }) => {
+    const [currentWeek, currentYear] = useMemo(() => getWeekAndYear(date), [date])
+    const [endWeek, endYear] = useMemo(() => getWeekAndYear(maxDate), [maxDate])
 
-      const week: number = getISOWeek(startDateObj)
-      const startYear: number = parseInt(format(startDateObj, 'yyyy'), 10)
-      const endYear: number = parseInt(format(endDateObj, 'yyyy'), 10)
+    const currentWeekKey = useMemo(() => createWeekKey(currentWeek, currentYear), [
+      currentWeek,
+      currentYear,
+    ])
 
-      return [week, startYear, endYear]
-    }, [startDate, endDate])
+    const maxWeekKey = useMemo(() => createWeekKey(endWeek, endYear), [endWeek, endYear])
 
     const currentRequirements: ExecutionRequirement[] = useMemo(() => {
-      if (!startYear || !week) {
+      if (!currentYear || !currentWeek) {
         return requirements
       }
 
       // If we have no requirements yet, create some to start us off.
       if (requirements.length === 0) {
-        return generateWeekRequirements(startYear, week)
+        return generateWeekRequirements(currentYear, currentWeek)
       }
 
       // If there are no rows for the currently selected week, create some. Copy requirements
       // from previous or next week if possible.
       if (
-        !requirements.some(
-          (req) => req.week === week && (req.year === startYear || req.year === endYear)
-        )
+        !requirements.some((req) => req.week === currentWeek && req.year === currentYear) &&
+        currentWeekKey <= maxWeekKey
       ) {
-        const copyFrom = getReferenceWeek(requirements, week, startYear)
+        const copyFrom = getReferenceWeek(requirements, currentWeek, currentYear)
 
         return orderRequirements([
           ...requirements,
-          ...generateWeekRequirements(endYear, week, copyFrom),
+          ...generateWeekRequirements(currentYear, currentWeek, copyFrom),
         ])
       }
 
       return requirements
-    }, [requirements, startYear, endYear, week])
+    }, [requirements, currentYear, currentWeek, currentWeekKey, maxWeekKey])
+
+    const [nextWeek, nextYear] = useMemo(() => {
+      let prevReq = currentRequirements[currentRequirements.length - 1]
+
+      const prevWeek = prevReq?.week || currentWeek
+      const prevYear = prevReq?.year || currentYear
+
+      let nextWeek = prevWeek >= 52 ? 1 : prevWeek + 1
+      let nextYear = nextWeek < prevWeek ? prevYear + 1 : prevYear
+
+      return [nextWeek, nextYear]
+    }, [currentWeek, currentYear, currentRequirements])
+
+    const nextWeekKey = useMemo(() => createWeekKey(nextWeek, nextYear), [nextWeek, nextYear])
 
     const onAddWeek = useCallback(() => {
-      let prevReq = currentRequirements[currentRequirements.length - 1]
-      const currentWeek = prevReq?.week || week
+      if (nextWeekKey > maxWeekKey) {
+        return
+      }
 
-      if (currentWeek) {
-        const currentYear = prevReq?.year || startYear
+      const copyFrom = getReferenceWeek(currentRequirements, nextWeek, nextYear)
 
-        let nextWeek = currentWeek >= 52 ? 1 : currentWeek + 1
-        let nextYear = nextWeek < currentWeek ? currentYear + 1 : currentYear
-
-        const copyFrom = getReferenceWeek(currentRequirements, nextWeek, nextYear)
-
-        onReplace(
-          orderRequirements(
-            uniqBy(
-              [
-                ...toJS(currentRequirements),
-                ...generateWeekRequirements(nextYear, nextWeek, copyFrom),
-              ],
-              (req) => req.week + req.area + req.equipmentClass + '' + req.year
-            )
+      onReplace(
+        orderRequirements(
+          uniqBy(
+            [
+              ...toJS(currentRequirements),
+              ...generateWeekRequirements(nextYear, nextWeek, copyFrom),
+            ],
+            (req) => req.week + req.area + req.equipmentClass + '' + req.year
           )
         )
-      }
-    }, [onReplace, currentRequirements, week, startYear, endDate])
+      )
+    }, [onReplace, nextWeek, nextYear, nextWeekKey, maxWeekKey])
 
     const onRemoveWeek = useCallback(
       (modelReq: ExecutionRequirement) => () => {
@@ -344,7 +365,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
             )
           }
         )}
-        <Button onClick={onAddWeek}>+ 1 viikko</Button>
+        {nextWeekKey <= maxWeekKey && <Button onClick={onAddWeek}>+ 1 viikko</Button>}
       </WeeklyExecutionRequirementsView>
     )
   }

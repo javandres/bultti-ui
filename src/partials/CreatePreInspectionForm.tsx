@@ -126,8 +126,8 @@ const CreatePreInspectionForm: React.FC = observer(() => {
       <FormColumn style={{ flex: '1 1 55%' }}>
         <FormHeading theme="light">Suoritevaatimukset</FormHeading>
         <WeeklyExecutionRequirements
-          startDate={formState.startDate}
-          endDate={formState.productionEnd}
+          date={formState.startDate}
+          maxDate={formState.productionEnd}
           requirements={formState.executionRequirements}
           onReplace={formState.changeRequirements}
           onChange={formState.setRequirement}
