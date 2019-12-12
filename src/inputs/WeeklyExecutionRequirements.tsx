@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
-import { observer } from 'mobx-react-lite'
-import { format, getISOWeek, parseISO, endOfWeek, addWeeks } from 'date-fns'
+import { observer, useObserver } from 'mobx-react-lite'
+import { endOfWeek, format, getISOWeek, parseISO } from 'date-fns'
 import { OperatingArea } from '../schema-types'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { Button, ButtonSize } from '../components/Button'
@@ -232,8 +232,12 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
       return requirements
     }, [requirements, currentYear, currentWeek, currentWeekKey, maxWeekKey])
 
+    const newestRequirement = useObserver(
+      () => currentRequirements[currentRequirements.length - 1]
+    )
+
     const [nextWeek, nextYear] = useMemo(() => {
-      let prevReq = currentRequirements[currentRequirements.length - 1]
+      let prevReq = newestRequirement
 
       const prevWeek = prevReq?.week || currentWeek
       const prevYear = prevReq?.year || currentYear
@@ -242,7 +246,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
       let nextYear = nextWeek < prevWeek ? prevYear + 1 : prevYear
 
       return [nextWeek, nextYear]
-    }, [currentWeek, currentYear, currentRequirements])
+    }, [currentWeek, currentYear, newestRequirement])
 
     const nextWeekKey = useMemo(() => createWeekKey(nextWeek, nextYear), [nextWeek, nextYear])
 
