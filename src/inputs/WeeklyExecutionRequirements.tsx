@@ -69,7 +69,7 @@ const TableCell = styled.div`
   align-items: center;
   justify-content: center;
 
-  &:last-child {
+  &:nth-last-child(2), &:last-child {
     border-right: 0;
   }
 

@@ -10,6 +10,7 @@ import { Operator } from '../schema-types'
 import SelectWeek from '../inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
+import SelectDate from '../inputs/SelectDate'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -51,7 +52,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     executionRequirements: observable.array([]),
     startDate: '2019-12-09',
     endDate: '2019-12-15',
-    productionStart: '',
+    productionStart: '2019-09-01',
     productionEnd: '2019-12-31',
     departureBlocks: observable.array([]),
     selectOperator: (operator = null) => {
@@ -109,6 +110,14 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             theme="light"
             value={formState.season}
             onSelect={formState.selectSeason}
+          />
+        </ControlGroup>
+        <FormHeading theme="light">Tuotantojakso</FormHeading>
+        <ControlGroup>
+          <SelectDate
+            value={formState.productionStart}
+            onChange={formState.setProductionStartDate}
+            label="Alkupäivä"
           />
         </ControlGroup>
         <FormHeading theme="light">Tarkastusjakso</FormHeading>

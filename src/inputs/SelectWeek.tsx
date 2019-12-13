@@ -7,14 +7,19 @@ import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
 import { isValid, parseISO } from 'date-fns'
-import '../style/reactDates.css'
+import '../style/reactDates.scss'
 
 moment.locale('fi')
 
-const InputWrapper = styled.div`
+const WeekSelectWrapper = styled.div`
+  position: relative;
+  margin-bottom: 1rem;
+`
+
+const InputsWrapper = styled.div`
   display: flex;
   flex-wrap: nowrap;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `
 
 const InputContainer = styled.div`
@@ -24,6 +29,13 @@ const InputContainer = styled.div`
   &:last-child {
     margin-right: 0;
   }
+`
+
+const DatePickerWrapper = styled.div<{ focused: boolean }>`
+  position: absolute;
+  opacity: ${(p) => (p.focused ? 1 : 0)};
+  pointer-events: ${(p) => (p.focused ? 'all' : 'none')};
+  z-index: ${(p) => (p.focused ? 100 : -1)};
 `
 
 export type PropTypes = {
@@ -80,9 +92,24 @@ const SelectWeek: React.FC<PropTypes> = observer(
       [maxMoment]
     )
 
+    const onInputFocus = useCallback(
+      (which) => () => {
+        setFocused(which)
+      },
+      []
+    )
+
+    const onInputBlur = useCallback(() => {
+      if (focused !== null) {
+        setTimeout(() => {
+          setFocused(null)
+        }, 200)
+      }
+    }, [focused])
+
     return (
-      <>
-        <InputWrapper>
+      <WeekSelectWrapper>
+        <InputsWrapper>
           <InputContainer>
             <Input
               subLabel={true}
@@ -90,6 +117,8 @@ const SelectWeek: React.FC<PropTypes> = observer(
               value={startDate}
               onChange={onChangeStartDate}
               reportChange={dateIsValid}
+              onFocus={onInputFocus('startDate')}
+              onBlur={onInputBlur}
             />
           </InputContainer>
           <InputContainer>
@@ -99,24 +128,28 @@ const SelectWeek: React.FC<PropTypes> = observer(
               value={endDate}
               onChange={onChangeEndDate}
               reportChange={dateIsValid}
+              onFocus={onInputFocus('endDate')}
+              onBlur={onInputBlur}
             />
           </InputContainer>
-        </InputWrapper>
-        <DayPickerRangeController
-          startDate={startMoment}
-          endDate={endMoment}
-          onDatesChange={onDateChanges}
-          startDateOffset={(day) => day.startOf('isoWeek')}
-          endDateOffset={(day) => day.endOf('isoWeek')}
-          focusedInput={focused}
-          onFocusChange={(focusedInput) => setFocused(focusedInput)}
-          numberOfMonths={1}
-          firstDayOfWeek={1}
-          minimumNights={6}
-          isDayBlocked={dateIsBlocked}
-          hideKeyboardShortcutsPanel={true}
-        />
-      </>
+        </InputsWrapper>
+        <DatePickerWrapper focused={!!focused}>
+          <DayPickerRangeController
+            startDate={startMoment}
+            endDate={endMoment}
+            onDatesChange={onDateChanges}
+            startDateOffset={(day) => day.startOf('isoWeek')}
+            endDateOffset={(day) => day.endOf('isoWeek')}
+            focusedInput={focused}
+            onFocusChange={setFocused}
+            numberOfMonths={1}
+            firstDayOfWeek={1}
+            minimumNights={6}
+            isDayBlocked={dateIsBlocked}
+            hideKeyboardShortcutsPanel={true}
+          />
+        </DatePickerWrapper>
+      </WeekSelectWrapper>
     )
   }
 )
