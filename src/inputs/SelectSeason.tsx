@@ -2,8 +2,9 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Dropdown from './Dropdown'
-import { Season } from '../types/inspection'
-import seasonsData from '../data/seasons.json'
+import { Season } from '../schema-types'
+import { useQueryData } from '../utils/useQueryData'
+import { seasonsQuery } from '../queries/seasons'
 
 export type PropTypes = {
   label?: string | null
@@ -13,25 +14,40 @@ export type PropTypes = {
   onSelect: (season: null | Season) => void
 }
 
+const UNSELECTED_VAL = '...'
+
 const SeasonsSelect = styled(Dropdown)``
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light' }) => {
-    const seasons: Season[] = useMemo(() => {
-      const seasonsList = [...seasonsData]
+    const { data } = useQueryData({ query: seasonsQuery })
 
-      if (seasonsList[0]?.name !== '...') {
-        seasonsList.unshift({ name: '...', year: 0, season: '' })
+    const seasons: Season[] = useMemo(() => {
+      const seasonsList: Season[] = [...data]
+
+      if (seasonsList[0]?.id !== '...') {
+        const unselectedSeason: Season = {
+          id: UNSELECTED_VAL,
+          year: 0,
+          season: '',
+          dateBegin: '',
+          dateEnd: '',
+        }
+        seasonsList.unshift(unselectedSeason)
+      }
+
+      if (value && !seasonsList.find((s) => s?.id === value?.id)) {
+        seasonsList.push(value)
       }
 
       return seasonsList
-    }, [])
+    }, [data, value])
 
     const onSelectSeason = useCallback(
       (selectedItem) => {
         let selectValue = selectedItem
 
-        if (!selectedItem) {
+        if (!selectedItem || selectedItem?.id === UNSELECTED_VAL) {
           selectValue = null
         }
 
@@ -40,10 +56,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       [onSelect]
     )
 
-    const currentSeason = useMemo(
-      () => (!value ? seasons[0] : seasons.find((op) => value.name === op.name) || seasons[0]),
-      [seasons, value]
-    )
+    const currentSeason = useMemo(() => value || seasons[0], [seasons, value])
 
     return (
       <SeasonsSelect
@@ -53,8 +66,8 @@ const SelectSeason: React.FC<PropTypes> = observer(
         items={seasons}
         onSelect={onSelectSeason}
         selectedItem={currentSeason}
-        itemToString="name"
-        itemToLabel="name"
+        itemToString="id"
+        itemToLabel="id"
       />
     )
   }

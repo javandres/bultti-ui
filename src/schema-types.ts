@@ -56,6 +56,7 @@ export type Query = {
   contracts?: Maybe<Array<Contract>>,
   operatingUnits?: Maybe<Array<OperatingUnit>>,
   routes?: Maybe<Array<Route>>,
+  seasons?: Maybe<Array<Season>>,
 };
 
 
@@ -79,6 +80,15 @@ export type Route = {
   contract?: Maybe<Contract>,
   area: OperatingArea,
   currentOperators?: Maybe<Array<Operator>>,
+};
+
+export type Season = {
+   __typename?: 'Season',
+  id: Scalars['String'],
+  year: Scalars['Int'],
+  season: Scalars['String'],
+  dateBegin: Scalars['String'],
+  dateEnd: Scalars['String'],
 };
 
 

@@ -34,6 +34,7 @@ type Query {
   operator(id: String): Operator
   operators: [Operator!]
   routes: [Route!]
+  seasons: [Season!]
   vehicles(all: Boolean): [Vehicle!]
 }
 
@@ -47,6 +48,14 @@ type Route {
   operatingUnit: OperatingUnit
   operatingUnitId: String
   routeId: String!
+}
+
+type Season {
+  dateBegin: String!
+  dateEnd: String!
+  id: String!
+  season: String!
+  year: Int!
 }
 
 type Vehicle {

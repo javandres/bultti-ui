@@ -18,12 +18,6 @@ export interface DepartureBlock {
   vehicleId: string
 }
 
-export interface Season {
-  name: string
-  year: number
-  season: string
-}
-
 export interface ExecutionRequirement {
   week: number
   year: number

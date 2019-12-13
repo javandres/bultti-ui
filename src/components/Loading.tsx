@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { HSLLogoNoText } from '../icons/HSLLogoNoText'
 import { Colors } from '../utils/HSLColors'
+import { observer } from 'mobx-react-lite'
 
 const spin = keyframes`
   from {
@@ -71,6 +72,12 @@ const LoadingContainer = styled(LoadingSafeDivComponent)`
       : ''};
 `
 
+const PageLoadingContainer = styled(LoadingSafeDivComponent)`
+  position: relative;
+  padding: 0 1.5rem;
+  margin: 1rem 0;
+`
+
 type LoadingProps = {
   className?: string
   inline?: boolean
@@ -79,30 +86,32 @@ type LoadingProps = {
   _testWait?: boolean
 }
 
-const Loading = ({
-  className,
-  inline = false,
-  color = Colors.secondary.hslGreenLight,
-  size,
-  _testWait = true,
-}: LoadingProps) => {
-  const defaultSize = inline ? 24 : 35
-  const useSize = size || defaultSize
+const Loading = observer(
+  ({
+    className,
+    inline = false,
+    color = Colors.secondary.hslGreenLight,
+    size,
+    _testWait = true,
+  }: LoadingProps) => {
+    const defaultSize = inline ? 24 : 35
+    const useSize = size || defaultSize
 
-  return (
-    <LoadingIndicator
-      data-testid={_testWait ? 'loading' : 'loading-bg'}
-      inline={inline}
-      style={inline ? { width: useSize, height: useSize } : {}}
-      className={className}>
-      <HSLLogoNoText
-        fill={color || Colors.secondary.hslGreenLight}
-        width={useSize}
-        height={useSize}
-      />
-    </LoadingIndicator>
-  )
-}
+    return (
+      <LoadingIndicator
+        data-testid={_testWait ? 'loading' : 'loading-bg'}
+        inline={inline}
+        style={inline ? { width: useSize, height: useSize } : {}}
+        className={className}>
+        <HSLLogoNoText
+          fill={color || Colors.secondary.hslGreenLight}
+          width={useSize}
+          height={useSize}
+        />
+      </LoadingIndicator>
+    )
+  }
+)
 
 export default Loading
 
@@ -113,36 +122,54 @@ type LoadingDisplayProps = {
   size?: number
 }
 
-export const LoadingDisplay = ({
-  loading = true,
-  className,
-  inline = false,
-  size,
-}: LoadingDisplayProps) => {
-  const [isRendered, setIsRendered] = useState(loading)
-  const timerRef = useRef(0)
+export const LoadingDisplay = observer(
+  ({ loading = true, className, inline = false, size }: LoadingDisplayProps) => {
+    const [isRendered, setIsRendered] = useState(loading)
+    const timerRef = useRef(0)
 
-  useEffect(() => {
-    if (loading) {
-      setIsRendered(true)
-    } else {
-      timerRef.current = window.setTimeout(() => {
-        setIsRendered(false)
-      }, 300)
+    useEffect(() => {
+      if (loading) {
+        setIsRendered(true)
+      } else {
+        timerRef.current = window.setTimeout(() => {
+          setIsRendered(false)
+        }, 300)
+      }
+
+      return () => {
+        window.clearTimeout(timerRef.current)
+      }
+    }, [loading])
+
+    if (!isRendered) {
+      return null
     }
 
-    return () => {
-      window.clearTimeout(timerRef.current)
-    }
-  }, [loading])
-
-  if (!isRendered) {
-    return null
+    return (
+      <LoadingContainer
+        data-testid="loading-container"
+        className={className}
+        loading={loading}>
+        <Loading inline={inline} size={size} />
+      </LoadingContainer>
+    )
   }
+)
 
-  return (
-    <LoadingContainer data-testid="loading-container" className={className} loading={loading}>
-      <Loading inline={inline} size={size} />
-    </LoadingContainer>
-  )
-}
+const PageLoadingIndicator = styled(Loading)`
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  width: auto;
+  height: auto;
+`
+
+export const PageLoading: React.FC<LoadingDisplayProps> = observer(
+  ({ loading = true, className, inline = false, size }) => {
+    return (
+      <PageLoadingContainer data-testid="page-loading" className={className} loading={loading}>
+        <PageLoadingIndicator size={16 * 5} />
+      </PageLoadingContainer>
+    )
+  }
+)
