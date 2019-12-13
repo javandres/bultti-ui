@@ -2,6 +2,7 @@
 
 schema {
   query: Query
+  mutation: Mutation
 }
 
 type Contract {
@@ -9,6 +10,38 @@ type Contract {
   operatingUnits: [OperatingUnit!]
   operator: [Operator!]
   routes: [Route!]
+}
+
+type DepartureBlock {
+  arrivalTime: String!
+  departureTime: String!
+  departureType: DepartureType!
+  direction: String!
+  id: String!
+  inDepot: String!
+  outDepot: String!
+  preInspection: PreInspection
+  preInspectionId: String
+  routeId: String!
+  vehicleId: String!
+}
+
+type ExecutionRequirement {
+  area: OperatingArea!
+  equipmentClass: Int!
+  requirement: String!
+  week: Int!
+  year: Int!
+}
+
+type File {
+  encoding: String!
+  filename: String!
+  mimetype: String!
+}
+
+type Mutation {
+  uploadDepartureBlocks(file: Upload!, inspectionId: String!): [DepartureBlock!]
 }
 
 type OperatingUnit {
@@ -28,6 +61,21 @@ type Operator {
   vehicles: [Vehicle!]
 }
 
+type PreInspection {
+  createdAt: String!
+  createdBy: String!
+  departureBlocks: [DepartureBlock!]!
+  endDate: String!
+  executionRequirements: [ExecutionRequirement!]!
+  id: String!
+  operatorId: String!
+  productionEnd: String!
+  productionStart: String!
+  season: Season!
+  seasonId: String!
+  startDate: String!
+}
+
 type Query {
   contracts: [Contract!]
   operatingUnits: [OperatingUnit!]
@@ -35,6 +83,7 @@ type Query {
   operators: [Operator!]
   routes: [Route!]
   seasons: [Season!]
+  uploads: [String]
   vehicles(all: Boolean): [Vehicle!]
 }
 
@@ -72,9 +121,10 @@ type Vehicle {
   vehicleId: String!
 }
 
-enum CacheControlScope {
-  PRIVATE
-  PUBLIC
+enum DepartureType {
+  I
+  N
+  O
 }
 
 enum OperatingArea {
@@ -82,6 +132,31 @@ enum OperatingArea {
   OTHER
 }
 
+input ExecutionRequirementInput {
+  area: OperatingArea!
+  equipmentClass: Int!
+  requirement: String!
+  week: Int!
+  year: Int!
+}
 
-"The `Upload` scalar type represents a file upload."
+input PreInspectionInput {
+  endDate: String!
+  executionRequirements: [ExecutionRequirementInput!]!
+  operatorId: String!
+  productionEnd: String!
+  productionStart: String!
+  season: SeasonInput!
+  startDate: String!
+}
+
+input SeasonInput {
+  dateBegin: String
+  dateEnd: String
+  id: String!
+  season: String
+  year: Int
+}
+
+
 scalar Upload

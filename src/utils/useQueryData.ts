@@ -1,4 +1,4 @@
-import { useQuery } from 'urql'
+import { QueryProps, useQuery } from 'urql'
 import { get } from 'lodash'
 
 export const useQueryData = (queryConfig, pickData = '') => {

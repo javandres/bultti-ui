@@ -132,6 +132,7 @@ const generateWeekRequirements = (
 
     for (equipmentClass; equipmentClass < 10; equipmentClass++) {
       const copyFromReq = copyFrom.find(
+        // eslint-disable-next-line no-loop-func
         (req) => req.equipmentClass === equipmentClass && req.area === area
       )
 

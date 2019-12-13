@@ -17,6 +17,9 @@ import { parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
 import { PageLoading } from '../components/Loading'
 import { seasonsQuery } from '../queries/seasons'
+import UploadFile from '../inputs/UploadFile'
+import { useUploader } from '../utils/useUploader'
+import gql from 'graphql-tag'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -54,6 +57,19 @@ interface PreInspectionFormData extends PreInspectionFormActions {
 const getCurrentSeason = (date, seasons: Season[]) => {
   return seasons.find((season) => isBetween(date, season.dateBegin, season.dateEnd))
 }
+
+const uploadDepartureBlocksMutation = gql`
+  mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
+    uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
+      id
+      departureTime
+      departureType
+      direction
+      routeId
+      vehicleId
+    }
+  }
+`
 
 const CreatePreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
@@ -124,6 +140,10 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     }
   }, [data, formState.season])
 
+  const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
+    inspectionId: '123',
+  })
+
   return (
     <CreatePreInspectionFormView>
       {!formState.ready ? (
@@ -178,6 +198,8 @@ const CreatePreInspectionForm: React.FC = observer(() => {
               onChange={formState.setRequirement}
               onRemove={formState.removeRequirement}
             />
+            <FormHeading theme="light">Lähtöketjut</FormHeading>
+            <UploadFile uploader={departureBlocksUploader} />
           </FormColumn>
         </>
       )}
