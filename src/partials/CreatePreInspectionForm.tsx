@@ -70,6 +70,20 @@ const getCurrentSeason = (date, seasons: Season[]) => {
   return seasons.find((season) => isBetween(date, season.dateBegin, season.dateEnd))
 }
 
+const operatingUnitsQuery = gql`
+  query operatingUnits($operatorId: String!) {
+    operatingUnits(operatorId: $operatorId) {
+      id
+      operatorId
+      routeIds
+      operator {
+        id
+        name
+      }
+    }
+  }
+`
+
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
     uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
@@ -85,7 +99,6 @@ const uploadDepartureBlocksMutation = gql`
 
 const CreatePreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
-  const { data } = useQueryData(seasonsQuery)
 
   const formState = useLocalStore<PreInspectionFormData>(() => ({
     ready: false,
@@ -132,6 +145,16 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     },
   }))
 
+  const { data: seasonsData } = useQueryData(seasonsQuery)
+
+  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+    variables: {
+      operatorId: formState?.operator?.id || '',
+    },
+  })
+
+  console.log(operatingUnitsData)
+
   useEffect(() => {
     if (formState.operator?.id !== globalOperator?.id) {
       formState.selectOperator(globalOperator)
@@ -139,7 +162,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
   }, [globalOperator])
 
   useEffect(() => {
-    const currentSeason = formState.season || getCurrentSeason(new Date(), data || [])
+    const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
 
     if (currentSeason) {
       formState.setProductionStartDate(currentSeason.dateBegin)
@@ -153,7 +176,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
 
       formState.whenReady()
     }
-  }, [data, formState.season])
+  }, [seasonsData, formState.season])
 
   const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
     variables: {
@@ -197,7 +220,12 @@ const CreatePreInspectionForm: React.FC = observer(() => {
                 onChange={formState.setProductionStartDate}
                 label="Alku"
               />
-              <Input value={formState.productionEnd} label="Loppu" subLabel={true} disabled={true} />
+              <Input
+                value={formState.productionEnd}
+                label="Loppu"
+                subLabel={true}
+                disabled={true}
+              />
             </ControlGroup>
             <FormHeading theme="light">Tarkastusjakso</FormHeading>
             <ControlGroup>

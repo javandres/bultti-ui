@@ -14,6 +14,7 @@ type Contract {
 
 type DepartureBlock {
   arrivalTime: String!
+  blockFile: String!
   departureTime: String!
   departureType: DepartureType!
   direction: String!
@@ -45,11 +46,10 @@ type Mutation {
 }
 
 type OperatingUnit {
-  contract: Contract
-  contractId: String
-  currentOperators: [Operator!]
   id: ID!
-  routes: [Route!]
+  operator: Operator
+  operatorId: String
+  routeIds: [String!]
 }
 
 type Operator {
@@ -78,7 +78,7 @@ type PreInspection {
 
 type Query {
   contracts: [Contract!]
-  operatingUnits: [OperatingUnit!]
+  operatingUnits(operatorId: String!): [OperatingUnit!]
   operator(id: String): Operator
   operators: [Operator!]
   routes: [Route!]
