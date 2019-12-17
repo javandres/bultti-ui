@@ -3,7 +3,6 @@ import { AuthState, useAuth } from './utils/useAuth'
 import { observer } from 'mobx-react-lite'
 import { Router } from '@reach/router'
 import Index from './pages/Index'
-import Vehicles from './pages/Vehicles'
 import AuthGate from './pages/AuthGate'
 import PreInspection from './pages/PreInspection'
 import PostInspection from './pages/PostInspection'
@@ -23,7 +22,6 @@ const App: React.FC = observer(() => {
     <AppFrame>
       <Router>
         <Index path="/" />
-        <Vehicles path="vehicles" />
         <PreInspection path="preinspection" />
         <CreatePreInspection path="preinspection/create" />
         <PreInspectionReports path="preinspection/reports" />

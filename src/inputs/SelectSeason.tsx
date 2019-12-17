@@ -20,7 +20,7 @@ const SeasonsSelect = styled(Dropdown)``
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light' }) => {
-    const { data } = useQueryData({ query: seasonsQuery })
+    const { data } = useQueryData(seasonsQuery)
 
     const seasons: Season[] = useMemo(() => {
       const seasonsList: Season[] = [...data]

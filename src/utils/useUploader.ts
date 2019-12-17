@@ -1,20 +1,34 @@
 import { DocumentNode } from 'graphql'
-import { useMutation } from 'urql'
-import { useCallback } from 'react'
+import { useCallback, useMemo } from 'react'
+import { MutationHookOptions, useMutation } from '@apollo/react-hooks'
+import { pickGraphqlData } from './pickGraphqlData'
+import { OperationVariables } from '@apollo/react-common'
 
-export const useUploader = <T = any, V = object>(
-  mutation: DocumentNode | string,
-  variables
+export const useUploader = <TData = any, TVariables = OperationVariables>(
+  mutation: DocumentNode,
+  options: MutationHookOptions<TData, TVariables> = {},
+  pickData = ''
 ) => {
-  const [state, execMutation] = useMutation<T, V>(mutation)
-
-  const uploadFile = useCallback(
-    (file, otherVariables = {}) => {
-      const queryVars = { file, ...variables, ...otherVariables }
-      return execMutation(queryVars)
-    },
-    [variables, execMutation]
+  const [mutationFn, { data, loading, error }] = useMutation<TData, TVariables>(
+    mutation,
+    options
   )
 
-  return [uploadFile, state]
+  const uploadFile = useCallback(
+    (file: File, overrideOptions = {}) => {
+      const queryOptions = {
+        ...overrideOptions,
+        variables: {
+          ...(options?.variables || {}),
+          ...(overrideOptions?.variables || {}),
+          file,
+        },
+      }
+      return mutationFn(queryOptions)
+    },
+    [options?.variables, mutationFn]
+  )
+
+  const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
+  return [uploadFile, { data: pickedData, loading, error }]
 }

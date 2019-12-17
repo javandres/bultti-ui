@@ -30,7 +30,7 @@ const OperatorSelect = styled(Dropdown)``
 
 const SelectOperator: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light', allowAll = false }) => {
-    const { data } = useQueryData({ query: operatorsQuery })
+    const { data } = useQueryData(operatorsQuery)
 
     const operators: Operator[] = useMemo(() => {
       const operatorList = !data ? [] : compact([...data])

@@ -20,8 +20,7 @@ export type InspectionItemProps = {
 }
 
 const InspectionItem = ({ inspection }: InspectionItemProps) => {
-  const { data } = useQueryData({
-    query: operatorQuery,
+  const { data } = useQueryData(operatorQuery, {
     variables: { id: inspection.operatorId },
   })
 

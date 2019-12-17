@@ -73,7 +73,7 @@ const uploadDepartureBlocksMutation = gql`
 
 const CreatePreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
-  const { data } = useQueryData({ query: seasonsQuery })
+  const { data } = useQueryData(seasonsQuery)
 
   const formState = useLocalStore<PreInspectionFormData>(() => ({
     ready: false,
@@ -141,7 +141,9 @@ const CreatePreInspectionForm: React.FC = observer(() => {
   }, [data, formState.season])
 
   const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
-    inspectionId: '123',
+    variables: {
+      inspectionId: '123',
+    },
   })
 
   return (
