@@ -8,7 +8,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
-) => {
+): [any, {data: any, loading: boolean, error: any}] => {
   const [mutationFn, { data, loading, error }] = useMutation<TData, TVariables>(
     mutation,
     options

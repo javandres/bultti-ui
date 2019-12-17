@@ -15,7 +15,7 @@ import { useQueryData } from '../utils/useQueryData'
 import { isBetween } from '../utils/isBetween'
 import { parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
-import { PageLoading } from '../components/Loading'
+import Loading, { PageLoading } from '../components/Loading'
 import { seasonsQuery } from '../queries/seasons'
 import UploadFile from '../inputs/UploadFile'
 import { useUploader } from '../utils/useUploader'
@@ -146,6 +146,11 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     },
   })
 
+  const [
+    ,
+    { data: departureBlockData, loading: departureBlocksLoading },
+  ] = departureBlocksUploader
+
   return (
     <CreatePreInspectionFormView>
       {!formState.ready ? (
@@ -202,6 +207,13 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             />
             <FormHeading theme="light">Lähtöketjut</FormHeading>
             <UploadFile uploader={departureBlocksUploader} />
+            {departureBlocksLoading ? (
+              <Loading />
+            ) : (
+              <pre>
+                <code>{JSON.stringify(departureBlockData, null, 2)}</code>
+              </pre>
+            )}
           </FormColumn>
         </>
       )}
