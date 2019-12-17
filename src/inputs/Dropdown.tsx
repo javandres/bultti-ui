@@ -16,7 +16,7 @@ const SelectWrapper = styled.div`
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   theme: ThemeTypes
 }>`
-  background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'white')};
+  background: white;
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem 1rem;
@@ -31,7 +31,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   }
 
   &:hover {
-    background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--lighter-grey)')};
+    background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
     color: var(--dark-grey);
     border-color: var(--blue);
 

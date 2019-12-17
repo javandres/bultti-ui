@@ -1,28 +1,39 @@
 import React, { InputHTMLAttributes, useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/common'
 import { ThemeTypes } from '../types/common'
 
 const InputView = styled.div``
 
-const TextInput = styled.input<{ theme: ThemeTypes }>`
+const TextInput = styled.input<{ theme: ThemeTypes; readOnly?: boolean; disabled?: boolean }>`
   font-family: var(--font-family);
-  background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'white')};
+  background: ${(p) =>
+    p.theme === 'light' ? (p.readOnly || p.disabled ? '#f8f8f8' : 'white') : 'white'};
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 1px solid ${(p) => (p.theme === 'light' ? '#eaeaea' : 'var(--dark-blue)')};
+  border: ${(p) =>
+    p.readOnly || p.disabled
+      ? 0
+      : p.theme === 'light'
+      ? '1px solid #eaeaea'
+      : '1px solid var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
   outline: 0;
 
-  &:focus {
-    background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--lighter-grey)')};
-    border-color: var(--blue);
-    color: var(--dark-grey);
-  }
+  ${(p) =>
+    !p.readOnly
+      ? css`
+          &:focus {
+            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
+            border-color: var(--blue);
+            color: var(--dark-grey);
+          }
+        `
+      : ''}
 `
 
 export type PropTypes = {

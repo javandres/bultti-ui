@@ -1,12 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import 'react-dates/lib/css/_datepicker.css'
 import moment, { Moment } from 'moment'
 import { AnyFunction } from '../types/common'
 import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
 import { isValid, parseISO } from 'date-fns'
+import 'react-dates/lib/css/_datepicker.css'
 import '../style/reactDates.scss'
 
 moment.locale('fi')
@@ -24,7 +24,7 @@ const InputsWrapper = styled.div`
 
 const InputContainer = styled.div`
   flex: 1 1 50%;
-  margin-right: 2rem;
+  margin-right: 1rem;
 
   &:last-child {
     margin-right: 0;
@@ -47,6 +47,7 @@ export type PropTypes = {
   selectWeek?: boolean
   startLabel?: string
   endLabel?: string
+  name?: string
 }
 
 const SelectWeek: React.FC<PropTypes> = observer(
@@ -58,7 +59,10 @@ const SelectWeek: React.FC<PropTypes> = observer(
     onChangeStartDate,
     startLabel,
     endLabel,
+    name,
   }) => {
+    const inputName = useMemo(() => name || 'week_input', [name])
+
     const startMoment = useMemo(() => moment(startDate, 'YYYY-MM-DD').startOf('isoWeek'), [
       startDate,
     ])
@@ -99,37 +103,40 @@ const SelectWeek: React.FC<PropTypes> = observer(
       []
     )
 
-    const onInputBlur = useCallback(() => {
-      if (focused !== null) {
-        setTimeout(() => {
+    const onClosePicker = useCallback(
+      (e) => {
+        if (!(e?.target?.name?.includes(inputName))) {
           setFocused(null)
-        }, 200)
-      }
-    }, [focused])
+        }
+      },
+      [focused, inputName]
+    )
 
     return (
       <WeekSelectWrapper>
         <InputsWrapper>
           <InputContainer>
             <Input
+              name={`start_date_${inputName}`}
               subLabel={true}
               label={startLabel}
               value={startDate}
               onChange={onChangeStartDate}
               reportChange={dateIsValid}
               onFocus={onInputFocus('startDate')}
-              onBlur={onInputBlur}
+              onBlur={onClosePicker}
             />
           </InputContainer>
           <InputContainer>
             <Input
+              name={`end_date_${inputName}`}
               subLabel={true}
               label={endLabel}
               value={endDate}
               onChange={onChangeEndDate}
               reportChange={dateIsValid}
               onFocus={onInputFocus('endDate')}
-              onBlur={onInputBlur}
+              onBlur={onClosePicker}
             />
           </InputContainer>
         </InputsWrapper>
@@ -138,6 +145,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
             startDate={startMoment}
             endDate={endMoment}
             onDatesChange={onDateChanges}
+            onOutsideClick={onClosePicker}
             startDateOffset={(day) => day.startOf('isoWeek')}
             endDateOffset={(day) => day.endOf('isoWeek')}
             focusedInput={focused}

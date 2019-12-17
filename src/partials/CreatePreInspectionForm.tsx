@@ -13,19 +13,31 @@ import { IObservableArray, observable } from 'mobx'
 import SelectDate from '../inputs/SelectDate'
 import { useQueryData } from '../utils/useQueryData'
 import { isBetween } from '../utils/isBetween'
-import { parseISO, startOfISOWeek } from 'date-fns'
+import { parseISO, startOfISOWeek, endOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
 import Loading, { PageLoading } from '../components/Loading'
 import { seasonsQuery } from '../queries/seasons'
 import UploadFile from '../inputs/UploadFile'
 import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
+import Input from '../inputs/Input'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
 
 const ControlGroup = styled.div`
   margin: 0 0 2rem;
+  display: flex;
+  flex-wrap: nowrap;
+
+  > * {
+    flex: 1 1 50%;
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 `
 
 interface PreInspectionFormActions {
@@ -133,8 +145,11 @@ const CreatePreInspectionForm: React.FC = observer(() => {
       formState.setProductionStartDate(currentSeason.dateBegin)
       formState.setProductionEndDate(currentSeason.dateEnd)
       formState.selectSeason(currentSeason)
+
+      // Start and end dates describe the first week of the production period.
+      // This is the "comparison period" that is extrapolated across the whole production period.
       formState.setStartDate(toISODate(startOfISOWeek(parseISO(currentSeason.dateBegin))))
-      formState.setEndDate(toISODate(startOfISOWeek(parseISO(currentSeason.dateEnd))))
+      formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.dateBegin))))
 
       formState.whenReady()
     }
@@ -177,10 +192,12 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             <FormHeading theme="light">Tuotantojakso</FormHeading>
             <ControlGroup>
               <SelectDate
+                name="production_start"
                 value={formState.productionStart}
                 onChange={formState.setProductionStartDate}
-                label="Alkupäivä"
+                label="Alku"
               />
+              <Input value={formState.productionEnd} label="Loppu" subLabel={true} disabled={true} />
             </ControlGroup>
             <FormHeading theme="light">Tarkastusjakso</FormHeading>
             <ControlGroup>
