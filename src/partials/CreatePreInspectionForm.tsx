@@ -4,7 +4,6 @@ import { observer, useLocalStore } from 'mobx-react-lite'
 import { ColumnWrapper, FormHeading, HalfWidth } from '../components/common'
 import SelectOperator from '../inputs/SelectOperator'
 import SelectSeason from '../inputs/SelectSeason'
-import WeeklyExecutionRequirements from '../inputs/WeeklyExecutionRequirements'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
 import { Operator, Season } from '../schema-types'
 import SelectWeek from '../inputs/SelectWeek'
@@ -13,14 +12,13 @@ import { IObservableArray, observable } from 'mobx'
 import SelectDate from '../inputs/SelectDate'
 import { useQueryData } from '../utils/useQueryData'
 import { isBetween } from '../utils/isBetween'
-import { parseISO, startOfISOWeek, endOfISOWeek } from 'date-fns'
+import { endOfISOWeek, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
-import Loading, { PageLoading } from '../components/Loading'
+import { PageLoading } from '../components/Loading'
 import { seasonsQuery } from '../queries/seasons'
-import UploadFile from '../inputs/UploadFile'
-import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
 import Input from '../inputs/Input'
+import DepartureBlocks from '../inputs/DepartureBlocks'
 
 const CreatePreInspectionFormView = styled(ColumnWrapper)``
 const FormColumn = styled(HalfWidth)``
@@ -84,19 +82,6 @@ const operatingUnitsQuery = gql`
   }
 `
 
-const uploadDepartureBlocksMutation = gql`
-  mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
-    uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
-      id
-      departureTime
-      departureType
-      direction
-      routeId
-      vehicleId
-    }
-  }
-`
-
 const CreatePreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
 
@@ -153,8 +138,6 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     },
   })
 
-  console.log(operatingUnitsData)
-
   useEffect(() => {
     if (formState.operator?.id !== globalOperator?.id) {
       formState.selectOperator(globalOperator)
@@ -177,17 +160,6 @@ const CreatePreInspectionForm: React.FC = observer(() => {
       formState.whenReady()
     }
   }, [seasonsData, formState.season])
-
-  const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
-    variables: {
-      inspectionId: '123',
-    },
-  })
-
-  const [
-    ,
-    { data: departureBlockData, loading: departureBlocksLoading },
-  ] = departureBlocksUploader
 
   return (
     <CreatePreInspectionFormView>
@@ -241,24 +213,8 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             </ControlGroup>
           </FormColumn>
           <FormColumn style={{ flex: '1 1 55%' }}>
-            <FormHeading theme="light">Suoritevaatimukset</FormHeading>
-            <WeeklyExecutionRequirements
-              date={formState.startDate}
-              maxDate={formState.productionEnd}
-              requirements={formState.executionRequirements}
-              onReplace={formState.changeRequirements}
-              onChange={formState.setRequirement}
-              onRemove={formState.removeRequirement}
-            />
             <FormHeading theme="light">Lähtöketjut</FormHeading>
-            <UploadFile uploader={departureBlocksUploader} />
-            {departureBlocksLoading ? (
-              <Loading />
-            ) : (
-              <pre>
-                <code>{JSON.stringify(departureBlockData, null, 2)}</code>
-              </pre>
-            )}
+            <DepartureBlocks />
           </FormColumn>
         </>
       )}
