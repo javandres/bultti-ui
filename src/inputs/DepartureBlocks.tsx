@@ -5,6 +5,7 @@ import UploadFile from './UploadFile'
 import Loading from '../components/Loading'
 import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
+import { DepartureBlock } from '../types/inspection'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
@@ -22,10 +23,11 @@ const uploadDepartureBlocksMutation = gql`
 const DepartureBlocksView = styled.div``
 
 export type PropTypes = {
-  children?: React.ReactNode
+  departureBlocks: DepartureBlock[]
+  onChange: (departureBlocks: DepartureBlock[]) => void
 }
 
-const DepartureBlocks: React.FC<PropTypes> = observer(({ children }) => {
+const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChange }) => {
   const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
     variables: {
       inspectionId: '123',

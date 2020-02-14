@@ -90,10 +90,10 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     operator: globalOperator || null,
     season: null,
     executionRequirements: observable.array([]),
-    startDate: '2019-12-09',
-    endDate: '2019-12-15',
-    productionStart: '2019-09-01',
-    productionEnd: '2019-12-31',
+    startDate: '',
+    endDate: '',
+    productionStart: '',
+    productionEnd: '',
     departureBlocks: observable.array([]),
     whenReady: () => {
       formState.ready = true
@@ -214,7 +214,10 @@ const CreatePreInspectionForm: React.FC = observer(() => {
           </FormColumn>
           <FormColumn style={{ flex: '1 1 55%' }}>
             <FormHeading theme="light">Lähtöketjut</FormHeading>
-            <DepartureBlocks />
+            <DepartureBlocks
+              departureBlocks={formState.departureBlocks}
+              onChange={formState.setDepartureBlocks}
+            />
           </FormColumn>
         </>
       )}
