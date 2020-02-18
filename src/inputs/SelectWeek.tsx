@@ -105,7 +105,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
 
     const onClosePicker = useCallback(
       (e) => {
-        if (!(e?.target?.name?.includes(inputName))) {
+        if (!e?.target?.name?.includes(inputName)) {
           setFocused(null)
         }
       },
@@ -133,10 +133,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
               subLabel={true}
               label={endLabel}
               value={endDate}
-              onChange={onChangeEndDate}
-              reportChange={dateIsValid}
-              onFocus={onInputFocus('endDate')}
-              onBlur={onClosePicker}
+              disabled={true}
             />
           </InputContainer>
         </InputsWrapper>

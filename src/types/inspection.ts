@@ -5,7 +5,7 @@
 import { OperatingArea } from '../schema-types'
 
 export type DepartureType = 'O' | 'N' | 'I'
-export type DayType = 'Ma-To' | 'Pe' | 'La' | 'Su'
+export type DayType = 'Ma' | 'Ti' | 'Ke' | 'To' | 'Pe' | 'La' | 'Su'
 
 export interface DepartureBlock {
   id: string
@@ -17,7 +17,7 @@ export interface DepartureBlock {
   departureTime: string
   arrivalTime: string
   vehicleId: string
-  dayType: DayType
+  dayType?: DayType
 }
 
 export interface ExecutionRequirement {

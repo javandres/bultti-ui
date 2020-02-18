@@ -113,7 +113,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
     removeRequirement: (requirement: ExecutionRequirement) => {
       formState.executionRequirements.remove(requirement)
     },
-    setDepartureBlocks: (departureBlocks = []) => {
+    setDepartureBlocks: (departureBlocks: DepartureBlock[] = []) => {
       formState.departureBlocks = departureBlocks
     },
     setStartDate: (startDate: string = '') => {
@@ -132,11 +132,12 @@ const CreatePreInspectionForm: React.FC = observer(() => {
 
   const { data: seasonsData } = useQueryData(seasonsQuery)
 
-  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+  // TODO
+  /*const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
     variables: {
       operatorId: formState?.operator?.id || '',
     },
-  })
+  })*/
 
   useEffect(() => {
     if (formState.operator?.id !== globalOperator?.id) {

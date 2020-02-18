@@ -69,7 +69,7 @@ export const FormHeading = styled.h4<{ theme: ThemeTypes }>`
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
 
   &:first-child {
