@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import UploadFile from './UploadFile'
@@ -6,7 +6,8 @@ import Loading from '../components/Loading'
 import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
 import { DayType, DepartureBlock } from '../types/inspection'
-import { flatten } from 'lodash'
+import { difference, flatten } from 'lodash'
+import { Button } from '../components/Button'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
@@ -23,6 +24,22 @@ const uploadDepartureBlocksMutation = gql`
 
 const DepartureBlocksView = styled.div``
 
+const DepartureBlockGroupContainer = styled.div`
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #aeaeae;
+`
+
+const DayTypesContainer = styled.div`
+  margin-top: 1rem;
+  display: flex;
+  align-items: baseline;
+`
+
+const DayTypeOption = styled.div`
+  margin-right: 0.5rem;
+`
+
 export type PropTypes = {
   departureBlocks: DepartureBlock[]
   onChange: (departureBlocks: DepartureBlock[]) => void
@@ -30,9 +47,17 @@ export type PropTypes = {
 
 type DayTypeGroup = DayType[]
 
+type DepartureBlockGroup = {
+  dayTypes: DayTypeGroup
+  groupIndex: number
+  blocks: DepartureBlock[]
+}
+
 type BlockGroupPropTypes = {
-  dayTypeGroup: DayTypeGroup
-  onAddBlock: (block: DepartureBlock, dayType: DayType) => void
+  blockGroup: DepartureBlockGroup
+  onAddBlock: (block: DepartureBlock) => void
+  onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
+  onRemoveDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
 }
 
 const availableDayTypes: DayType[] = [
@@ -46,7 +71,9 @@ const availableDayTypes: DayType[] = [
 ]
 
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
-  (dayTypeGroup, onAddBlock) => {
+  ({ blockGroup, onAddBlock, onAddDayType, onRemoveDayType }) => {
+    const { dayTypes, groupIndex } = blockGroup
+
     const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
         inspectionId: '123',
@@ -58,8 +85,21 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       { data: departureBlockData, loading: departureBlocksLoading },
     ] = departureBlocksUploader
 
+    const onDayTypeChange = useCallback(
+      (dayType: DayType) => (e) => {
+        const isSelected = e.target.checked
+
+        if (isSelected) {
+          onAddDayType(dayType, groupIndex)
+        } else {
+          onRemoveDayType(dayType, groupIndex)
+        }
+      },
+      [onAddDayType, onRemoveDayType]
+    )
+
     return (
-      <>
+      <DepartureBlockGroupContainer>
         <UploadFile label="Lataa lähtöketjutiedosto" uploader={departureBlocksUploader} />
         {departureBlocksLoading ? (
           <Loading />
@@ -68,7 +108,21 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
             <code>{JSON.stringify(departureBlockData, null, 2)}</code>
           </pre>
         ) : null}
-      </>
+        <DayTypesContainer>
+          {availableDayTypes.map((dt) => (
+            <DayTypeOption key={dt}>
+              <label>
+                {dt}{' '}
+                <input
+                  type="checkbox"
+                  onChange={onDayTypeChange(dt)}
+                  checked={dayTypes.includes(dt)}
+                />
+              </label>
+            </DayTypeOption>
+          ))}
+        </DayTypesContainer>
+      </DepartureBlockGroupContainer>
     )
   }
 )
@@ -81,6 +135,8 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
     [DayType.Su],
   ])
 
+  const usedDayTypes = useMemo(() => flatten(dayTypeGroups), [dayTypeGroups])
+
   const createDayTypeGroup = useCallback((dayType: DayType) => {
     const dayTypeGroup: DayTypeGroup = [dayType]
     return dayTypeGroup
@@ -91,7 +147,6 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
   // new one if it is found in a group already. If all dayTypes are used, nothing will happen.
   const addDayTypeGroup = useCallback(
     (addDayType?: DayType) => {
-      const usedDayTypes = flatten(dayTypeGroups)
       // If no specific dayType was given, search for the next available and unused day type.
       let nextDayType =
         addDayType ?? availableDayTypes.filter((dt) => !usedDayTypes.includes(dt))[0]
@@ -115,70 +170,133 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
     [dayTypeGroups]
   )
 
-  const addDayTypeToGroup = useCallback((dayType: DayType, dayTypeGroup: DayTypeGroup) => {
-    let group = dayTypeGroup
-    const groupIndex = dayTypeGroups.findIndex(dtg => dtg.every(dt => dayTypeGroup.includes(dt)))
+  const removeDayTypeFromGroup = useCallback(
+    (dayType: DayType, groupIndex: number): DayTypeGroup[] => {
+      let group = [...(dayTypeGroups[groupIndex] ?? [])]
 
-    if(groupIndex !== -1) {
-      group = dayTypeGroups.splice(groupIndex, 1)[0]
-    }
-
-    group.push(dayType)
-
-    const nextGroups = [...dayTypeGroups]
-  }, [dayTypeGroups])
-
-  const addDepartureBlock = useCallback(
-    (block: DepartureBlock, dayType: DayType) => {
-      const dayTypeGroupIndex = blockGroup.findIndex((dtg) => dtg.dayTypes.includes(dayType))
-
-      // By default, create a new DayTypeGroup for the block.
-      // It will probably be replaced by an existing one.
-      let dayTypeGroup = createDayTypeGroup(dayType)
-
-      if (dayTypeGroupIndex !== -1) {
-        const removedDayTypeGroup = blockGroup.splice(dayTypeGroupIndex, 1)
-        dayTypeGroup = removedDayTypeGroup[0]
+      if (group.length === 0) {
+        return dayTypeGroups
       }
 
-      if (!dayTypeGroup) {
-        return
+      const dayTypeIndex = group.findIndex((dt) => dt === dayType)
+
+      if (dayTypeIndex === -1) {
+        return dayTypeGroups
       }
 
-      dayTypeGroup.blocks.push(block)
-      setDayTypes([...blockGroup, dayTypeGroup])
+      group.splice(dayTypeIndex, 1)
+
+      const nextDayTypeGroups = [...dayTypeGroups]
+
+      if (group.length !== 0) {
+        nextDayTypeGroups.splice(groupIndex, 1, group)
+      } else {
+        nextDayTypeGroups.splice(groupIndex, 1)
+      }
+
+      setDayTypeGroups(nextDayTypeGroups)
+      return nextDayTypeGroups
     },
-    [blockGroup]
+    [dayTypeGroups]
   )
 
-  useEffect(() => {
-    // Loop through all dayTypeGroups and add each day type of the group
-    // to each departure block in the group. Call onChange with a flat
-    // array of DepartureBlocks with dayTypes added.
+  const addDayTypeToGroup = useCallback(
+    (dayType: DayType, groupIndex: number): DayTypeGroup[] => {
+      let currentDayTypeGroups = dayTypeGroups
+      let group = [...(currentDayTypeGroups[groupIndex] ?? [])]
 
-    const nextDepartureBlocks = blockGroup.reduce<DepartureBlock[]>((blocks, dayTypeGroup) => {
-      const blocksWithDayType: DepartureBlock[] = dayTypeGroup.dayTypes.reduce<
-        DepartureBlock[]
-      >((dayTypeBlocks, dayType) => {
-        const blocksWithDayType: DepartureBlock[] = dayTypeGroup.blocks.map((block) => {
-          block.dayType = dayType
-          return block
-        })
+      // Bail if it already exists. Shouldn't happen though.
+      if (group.includes(dayType)) {
+        return currentDayTypeGroups
+      }
 
-        return [...dayTypeBlocks, ...blocksWithDayType]
-      }, [])
+      const existingDayTypeGroupIndex = currentDayTypeGroups.findIndex((dtg) =>
+        dtg.includes(dayType)
+      )
 
-      return [...blocks, ...blocksWithDayType]
-    }, [])
+      if (existingDayTypeGroupIndex !== -1) {
+        currentDayTypeGroups = removeDayTypeFromGroup(dayType, existingDayTypeGroupIndex)
+      }
 
-    onChange(nextDepartureBlocks)
-  }, [blockGroup])
+      // Renew the group after potentially changing the state.
+      group = [...(currentDayTypeGroups[groupIndex] ?? [])]
+      group.push(dayType)
+
+      const nextDayTypeGroups = [...currentDayTypeGroups]
+      nextDayTypeGroups.splice(groupIndex, 1, group)
+      setDayTypeGroups(nextDayTypeGroups)
+
+      return nextDayTypeGroups
+    },
+    [dayTypeGroups]
+  )
+
+  const addDepartureBlock = useCallback(
+    (block: DepartureBlock) => {
+      const nextDepartureBlocks = [...departureBlocks, block]
+      onChange(nextDepartureBlocks)
+    },
+    [departureBlocks]
+  )
+
+  const blockGroups: DepartureBlockGroup[] = useMemo(() => {
+    return departureBlocks.reduce<DepartureBlockGroup[]>(
+      (groups: DepartureBlockGroup[], departureBlock) => {
+        if (typeof departureBlock.dayType === 'undefined') {
+          return groups
+        }
+
+        const blockType: DayType = departureBlock.dayType
+        const blockGroupIndex = groups.findIndex((group) => group.dayTypes.includes(blockType))
+        let blockGroup: DepartureBlockGroup | null = null
+
+        if (blockGroupIndex !== -1) {
+          blockGroup = groups.splice(blockGroupIndex, 1)[0]
+        }
+
+        if (!blockGroup) {
+          const dayTypeGroupIndex = dayTypeGroups.findIndex((dtg) => dtg.includes(blockType))
+
+          if (dayTypeGroupIndex === -1) {
+            return groups
+          }
+
+          const dayTypeGroup = dayTypeGroups[dayTypeGroupIndex]
+
+          blockGroup = {
+            dayTypes: dayTypeGroup,
+            groupIndex: dayTypeGroupIndex,
+            blocks: [departureBlock],
+          }
+        }
+
+        groups.push(blockGroup)
+        return groups
+      },
+      dayTypeGroups.length !== 0
+        ? dayTypeGroups.map((dtg, index) => ({
+            dayTypes: dtg,
+            groupIndex: index,
+            blocks: [],
+          }))
+        : []
+    )
+  }, [departureBlocks, dayTypeGroups])
 
   return (
     <DepartureBlocksView>
-      {blockGroup.map((dayTypeGroup) => (
-        <DepartureBlockDayGroup dayTypeGroup={dayTypeGroup} onAddBlock={addDepartureBlock} />
+      {blockGroups.map((blockGroup) => (
+        <DepartureBlockDayGroup
+          key={blockGroup.dayTypes.join(',')}
+          blockGroup={blockGroup}
+          onAddBlock={addDepartureBlock}
+          onAddDayType={addDayTypeToGroup}
+          onRemoveDayType={removeDayTypeFromGroup}
+        />
       ))}
+      {difference(availableDayTypes, flatten(dayTypeGroups)).length !== 0 && (
+        <Button onClick={() => addDayTypeGroup()}>Lisää lähtöketju</Button>
+      )}
     </DepartureBlocksView>
   )
 })
