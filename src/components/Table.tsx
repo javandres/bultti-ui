@@ -58,11 +58,21 @@ export type PropTypes<ItemType = any> = {
   items: ItemType[]
   columnLabels: { [key in keyof ItemType]: string }
   indexCell?: React.ReactChild
-  itemKeyProp: string
+  keyFromItem: (item: ItemType) => string
+  className?: string
 }
 
+const defaultKeyFromItem = (item) => item.id
+
 const Table: React.FC<PropTypes> = observer(
-  ({ children, items, columnLabels = {}, indexCell = '', itemKeyProp = 'id' }) => {
+  ({
+    children,
+    items,
+    columnLabels = {},
+    indexCell = '',
+    keyFromItem = defaultKeyFromItem,
+    className,
+  }) => {
     // For ordering keys of items
     const labelKeys = Object.keys(columnLabels)
 
@@ -76,7 +86,7 @@ const Table: React.FC<PropTypes> = observer(
     }
 
     return (
-      <TableView>
+      <TableView className={className}>
         <TableHeader>
           {indexCell && (
             <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
@@ -95,7 +105,7 @@ const Table: React.FC<PropTypes> = observer(
           }
 
           const itemValues = itemEntries.map(([, value]) => value)
-          const rowKey = item[itemKeyProp]
+          const rowKey = keyFromItem(item)
 
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>

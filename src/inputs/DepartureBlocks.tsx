@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import UploadFile from './UploadFile'
@@ -19,6 +19,9 @@ const uploadDepartureBlocksMutation = gql`
       direction
       routeId
       vehicleId
+      arrivalTime
+      inDepot
+      outDepot
     }
   }
 `
@@ -39,6 +42,11 @@ const DayTypesContainer = styled.div`
 
 const DayTypeOption = styled.div`
   margin-right: 0.5rem;
+`
+
+const BlocksHeading = styled.h4`
+  margin-top: 0;
+  margin-bottom: 0.5rem;
 `
 
 export type PropTypes = {
@@ -71,9 +79,23 @@ const availableDayTypes: DayType[] = [
   DayType.Su,
 ]
 
+const departureBlockColumnLabels = {
+  id: 'ID',
+  departureTime: 'Lähtöaika',
+  departureType: 'Lähtötyyppi',
+  direction: 'Suunta',
+  routeId: 'Reitti',
+  vehicleId: 'Kylkinumero',
+  arrivalTime: 'Saapumisaika',
+  inDepot: 'Lähtövarikko',
+  outDepot: 'Loppuvarikko',
+}
+
+const createDepartureBlockKey = (item) => `${item.id}/${item.dayType}`
+
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
   ({ blockGroup, onAddBlock, onAddDayType, onRemoveDayType }) => {
-    const { dayTypes, groupIndex } = blockGroup
+    const { dayTypes, groupIndex, blocks } = blockGroup
 
     const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
@@ -99,25 +121,38 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       [onAddDayType, onRemoveDayType]
     )
 
+    useEffect(() => {
+      if (!departureBlockData) {
+        return
+      }
+
+      const existingBlockKeys = blocks.map(createDepartureBlockKey)
+
+      for (const dayType of dayTypes) {
+        for (const { __typename, ...block } of departureBlockData) {
+          if (existingBlockKeys.includes(createDepartureBlockKey(block))) {
+            continue
+          }
+
+          const blockData = { ...block, dayType }
+          onAddBlock(blockData)
+        }
+      }
+    }, [dayTypes, blocks, departureBlockData])
+
     return (
       <DepartureBlockGroupContainer>
         <UploadFile label="Lataa lähtöketjutiedosto" uploader={departureBlocksUploader} />
-        {departureBlocksLoading ? (
-          <Loading />
-        ) : departureBlockData ? (
+        {departureBlocksLoading && <Loading />}
+
+        {blocks.length !== 0 && (
           <Table
-            itemKeyProp="id"
-            items={departureBlockData.map(({ __typename, ...rest }) => rest)}
-            columnLabels={{
-              id: 'ID',
-              departureTime: 'Lähtöaika',
-              departureType: 'Lähtötyyppi',
-              direction: 'Suunta',
-              routeId: 'Reitti',
-              vehicleId: 'Kylkinumero',
-            }}
+            keyFromItem={createDepartureBlockKey}
+            items={blocks}
+            columnLabels={departureBlockColumnLabels}
           />
-        ) : null}
+        )}
+
         <DayTypesContainer>
           {availableDayTypes.map((dt) => (
             <DayTypeOption key={dt}>
@@ -295,9 +330,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
 
   return (
     <DepartureBlocksView>
-      {blockGroups.map((blockGroup) => (
+      {blockGroups.map((blockGroup, groupIndex) => (
         <DepartureBlockDayGroup
-          key={blockGroup.dayTypes.join(',')}
+          key={`dayTypeGroup-${groupIndex}`}
           blockGroup={blockGroup}
           onAddBlock={addDepartureBlock}
           onAddDayType={addDayTypeToGroup}
