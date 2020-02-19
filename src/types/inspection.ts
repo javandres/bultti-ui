@@ -5,7 +5,16 @@
 import { OperatingArea } from '../schema-types'
 
 export type DepartureType = 'O' | 'N' | 'I'
-export type DayType = 'Ma' | 'Ti' | 'Ke' | 'To' | 'Pe' | 'La' | 'Su'
+
+export enum DayType {
+  Ma = 'Ma',
+  Ti = 'Ti',
+  Ke = 'Ke',
+  To = 'To',
+  Pe = 'Pe',
+  La = 'La',
+  Su = 'Su',
+}
 
 export interface DepartureBlock {
   id: string
