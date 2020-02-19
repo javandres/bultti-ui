@@ -8,6 +8,7 @@ import gql from 'graphql-tag'
 import { DayType, DepartureBlock } from '../types/inspection'
 import { difference, flatten } from 'lodash'
 import { Button } from '../components/Button'
+import Table from '../components/Table'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
@@ -104,9 +105,18 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         {departureBlocksLoading ? (
           <Loading />
         ) : departureBlockData ? (
-          <pre>
-            <code>{JSON.stringify(departureBlockData, null, 2)}</code>
-          </pre>
+          <Table
+            itemKeyProp="id"
+            items={departureBlockData.map(({ __typename, ...rest }) => rest)}
+            columnLabels={{
+              id: 'ID',
+              departureTime: 'Lähtöaika',
+              departureType: 'Lähtötyyppi',
+              direction: 'Suunta',
+              routeId: 'Reitti',
+              vehicleId: 'Kylkinumero',
+            }}
+          />
         ) : null}
         <DayTypesContainer>
           {availableDayTypes.map((dt) => (
