@@ -110,7 +110,7 @@ const Table: React.FC<PropTypes> = observer(
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
               {itemValues.map((val: any, index) => (
-                <TableCell key={val ?? `empty-${index}`}>
+                <TableCell key={val ? `${rowKey}-${val}` : `${rowKey}-${index}`}>
                   {val && <CellContent>{val}</CellContent>}
                 </TableCell>
               ))}

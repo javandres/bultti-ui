@@ -105,7 +105,8 @@ const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup) =>
 const isDayTypeEnabled = (dayType: DayType, dayTypeGroup: DayTypeGroup) =>
   getEnabledDayTypes(dayTypeGroup).includes(dayType)
 
-const createDepartureBlockKey = (item) => `${item.id}/${item.dayType}`
+const createDepartureBlockKey = (item: DepartureBlock, dayType = item.dayType) =>
+  `${item.id}/${dayType}`
 
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
   ({ blockGroup, onAddBlock, onAddDayType, onRemoveDayType }) => {
@@ -140,17 +141,20 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         return
       }
 
-      const existingBlockKeys = blocks.map(createDepartureBlockKey)
+      const existingBlockKeys = blocks.map((block) =>
+        createDepartureBlockKey(block, block.dayType)
+      )
+
       const enabledDayTypes = getEnabledDayTypes(dayTypes)
 
       for (const dayType of enabledDayTypes) {
         for (const { __typename, ...block } of departureBlockData) {
-          if (existingBlockKeys.includes(createDepartureBlockKey(block))) {
-            continue
-          }
+          const blockKey = createDepartureBlockKey(block, dayType as DayType)
 
-          const blockData = { ...block, dayType }
-          onAddBlock(blockData)
+          if (!existingBlockKeys.includes(blockKey)) {
+            const blockData = { ...block, dayType }
+            onAddBlock(blockData)
+          }
         }
       }
     }, [dayTypes, blocks, departureBlockData])
@@ -281,6 +285,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
         }
 
         const blockType: DayType = departureBlock.dayType
+
         const blockGroupIndex = groups.findIndex((group) =>
           isDayTypeEnabled(blockType, group.dayTypes)
         )
@@ -307,9 +312,13 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
             groupIndex: dayTypeGroupIndex,
             blocks: [departureBlock],
           }
+
+          groups.push(blockGroup)
+        } else {
+          blockGroup.blocks.push(departureBlock)
+          groups.splice(blockGroupIndex, 0, blockGroup)
         }
 
-        groups.push(blockGroup)
         return groups
       },
       dayTypeGroups.length !== 0
