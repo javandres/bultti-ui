@@ -3,9 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../components/Loading'
 
-const UploadView = styled.div`
-  margin-bottom: 1rem;
-`
+const UploadView = styled.div``
 
 const UploadInput = styled.input`
   display: block;

@@ -9,6 +9,7 @@ import { DayType, DepartureBlock } from '../types/inspection'
 import { difference, flatten } from 'lodash'
 import { Button } from '../components/Button'
 import Table from '../components/Table'
+import Checkbox from './Checkbox'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
@@ -35,18 +36,13 @@ const DepartureBlockGroupContainer = styled.div`
 `
 
 const DayTypesContainer = styled.div`
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   display: flex;
   align-items: baseline;
 `
 
 const DayTypeOption = styled.div`
   margin-right: 0.5rem;
-`
-
-const BlocksHeading = styled.h4`
-  margin-top: 0;
-  margin-bottom: 0.5rem;
 `
 
 export type PropTypes = {
@@ -142,9 +138,21 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
 
     return (
       <DepartureBlockGroupContainer>
+        <DayTypesContainer>
+          {availableDayTypes.map((dt) => (
+            <DayTypeOption key={dt}>
+              <Checkbox
+                label={dt}
+                onChange={onDayTypeChange(dt)}
+                checked={dayTypes.includes(dt)}
+                name="daytype"
+                value={dt}
+              />
+            </DayTypeOption>
+          ))}
+        </DayTypesContainer>
         <UploadFile label="Lataa lähtöketjutiedosto" uploader={departureBlocksUploader} />
         {departureBlocksLoading && <Loading />}
-
         {blocks.length !== 0 && (
           <Table
             keyFromItem={createDepartureBlockKey}
@@ -152,21 +160,6 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
             columnLabels={departureBlockColumnLabels}
           />
         )}
-
-        <DayTypesContainer>
-          {availableDayTypes.map((dt) => (
-            <DayTypeOption key={dt}>
-              <label>
-                {dt}{' '}
-                <input
-                  type="checkbox"
-                  onChange={onDayTypeChange(dt)}
-                  checked={dayTypes.includes(dt)}
-                />
-              </label>
-            </DayTypeOption>
-          ))}
-        </DayTypesContainer>
       </DepartureBlockGroupContainer>
     )
   }
