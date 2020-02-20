@@ -66,7 +66,6 @@ const defaultKeyFromItem = (item) => item.id
 
 const Table: React.FC<PropTypes> = observer(
   ({
-    children,
     items,
     columnLabels = {},
     indexCell = '',
@@ -110,7 +109,7 @@ const Table: React.FC<PropTypes> = observer(
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
               {itemValues.map((val: any, index) => (
-                <TableCell key={val ? `${rowKey}-${val}` : `${rowKey}-${index}`}>
+                <TableCell key={`${rowKey}-${index}`}>
                   {val && <CellContent>{val}</CellContent>}
                 </TableCell>
               ))}

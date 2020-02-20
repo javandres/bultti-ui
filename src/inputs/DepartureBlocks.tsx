@@ -6,7 +6,7 @@ import Loading from '../components/Loading'
 import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
 import { DayType, DepartureBlock } from '../types/inspection'
-import { difference, flatten } from 'lodash'
+import { difference, flatten, orderBy } from 'lodash'
 import { Button } from '../components/Button'
 import Table from '../components/Table'
 import Checkbox from './Checkbox'
@@ -43,6 +43,10 @@ const DayTypesContainer = styled.div`
 
 const DayTypeOption = styled.div`
   margin-right: 0.5rem;
+`
+
+const DepartureBlocksTable = styled(Table)`
+  margin-top: 1rem;
 `
 
 export type PropTypes = {
@@ -177,9 +181,11 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         <UploadFile label="Lataa lähtöketjutiedosto" uploader={departureBlocksUploader} />
         {departureBlocksLoading && <Loading />}
         {blocks.length !== 0 && (
-          <Table
+          <DepartureBlocksTable
             keyFromItem={createDepartureBlockKey}
-            items={blocks}
+            items={orderBy(blocks, ({ dayType }) =>
+              Object.keys(defaultDayTypeGroup).indexOf(dayType as string)
+            )}
             columnLabels={departureBlockColumnLabels}
           />
         )}
