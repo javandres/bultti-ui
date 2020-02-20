@@ -50,7 +50,17 @@ export type PropTypes = {
   onChange: (departureBlocks: DepartureBlock[]) => void
 }
 
-type DayTypeGroup = DayType[]
+type DayTypeGroup = {
+  [DayType.Ma]: boolean
+  [DayType.Ti]: boolean
+  [DayType.Ke]: boolean
+  [DayType.To]: boolean
+  [DayType.Pe]: boolean
+  [DayType.La]: boolean
+  [DayType.Su]: boolean
+}
+
+type DayTypeState = Array<DayTypeGroup>
 
 type DepartureBlockGroup = {
   dayTypes: DayTypeGroup
@@ -65,15 +75,15 @@ type BlockGroupPropTypes = {
   onRemoveDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
 }
 
-const availableDayTypes: DayType[] = [
-  DayType.Ma,
-  DayType.Ti,
-  DayType.Ke,
-  DayType.To,
-  DayType.Pe,
-  DayType.La,
-  DayType.Su,
-]
+const defaultDayTypeGroup: DayTypeGroup = {
+  [DayType.Ma]: false,
+  [DayType.Ti]: false,
+  [DayType.Ke]: false,
+  [DayType.To]: false,
+  [DayType.Pe]: false,
+  [DayType.La]: false,
+  [DayType.Su]: false,
+}
 
 const departureBlockColumnLabels = {
   id: 'ID',
@@ -86,6 +96,14 @@ const departureBlockColumnLabels = {
   inDepot: 'Lähtövarikko',
   outDepot: 'Loppuvarikko',
 }
+
+const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup) =>
+  Object.entries(dayTypeGroup)
+    .filter(([, enabled]) => !!enabled)
+    .map(([dt]) => dt)
+
+const isDayTypeEnabled = (dayType: DayType, dayTypeGroup: DayTypeGroup) =>
+  getEnabledDayTypes(dayTypeGroup).includes(dayType)
 
 const createDepartureBlockKey = (item) => `${item.id}/${item.dayType}`
 
@@ -123,8 +141,9 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       }
 
       const existingBlockKeys = blocks.map(createDepartureBlockKey)
+      const enabledDayTypes = getEnabledDayTypes(dayTypes)
 
-      for (const dayType of dayTypes) {
+      for (const dayType of enabledDayTypes) {
         for (const { __typename, ...block } of departureBlockData) {
           if (existingBlockKeys.includes(createDepartureBlockKey(block))) {
             continue
@@ -139,12 +158,12 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>
-          {availableDayTypes.map((dt) => (
+          {Object.entries(dayTypes).map(([dt, enabled]) => (
             <DayTypeOption key={dt}>
               <Checkbox
                 label={dt}
-                onChange={onDayTypeChange(dt)}
-                checked={dayTypes.includes(dt)}
+                onChange={onDayTypeChange(dt as DayType)}
+                checked={enabled}
                 name="daytype"
                 value={dt}
               />
@@ -166,17 +185,23 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
 )
 
 const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChange }) => {
-  const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeGroup[]>([
-    [DayType.Ma, DayType.Ti, DayType.Ke, DayType.To],
-    [DayType.Pe],
-    [DayType.La],
-    [DayType.Su],
+  const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeState>([
+    {
+      ...defaultDayTypeGroup,
+      [DayType.Ma]: true,
+      [DayType.Ti]: true,
+      [DayType.Ke]: true,
+      [DayType.To]: true,
+    },
   ])
 
-  const usedDayTypes = useMemo(() => flatten(dayTypeGroups), [dayTypeGroups])
+  const usedDayTypes = useMemo(
+    () => flatten(dayTypeGroups.map((g) => getEnabledDayTypes(g))),
+    [dayTypeGroups]
+  )
 
   const createDayTypeGroup = useCallback((dayType: DayType) => {
-    const dayTypeGroup: DayTypeGroup = [dayType]
+    const dayTypeGroup: DayTypeGroup = { ...defaultDayTypeGroup, [dayType]: true }
     return dayTypeGroup
   }, [])
 
@@ -187,86 +212,57 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
     (addDayType?: DayType) => {
       // If no specific dayType was given, search for the next available and unused day type.
       let nextDayType =
-        addDayType ?? availableDayTypes.filter((dt) => !usedDayTypes.includes(dt))[0]
+        addDayType ??
+        Object.keys(defaultDayTypeGroup).filter((dt) => !usedDayTypes.includes(dt))[0]
 
       // No day type available to add, bail.
-      if (!nextDayType) {
+      if (!nextDayType || usedDayTypes.includes(nextDayType)) {
         return
       }
 
-      // If found in an existing group, return the existing group without adding a new group.
-      if (usedDayTypes.includes(nextDayType)) {
-        return dayTypeGroups.find((dtg) => dtg.includes(nextDayType))
+      const addGroup: DayTypeGroup = createDayTypeGroup(nextDayType as DayType)
+      const nextDayTypes: DayTypeGroup[] = [...dayTypeGroups, addGroup]
+      setDayTypeGroups(nextDayTypes)
+    },
+    [dayTypeGroups]
+  )
+
+  const toggleDayTypeInGroup = useCallback(
+    (dayType: DayType, groupIndex: number, setTo = true): DayTypeState => {
+      let currentDayTypeGroups = dayTypeGroups
+
+      if (!currentDayTypeGroups[groupIndex]) {
+        return currentDayTypeGroups
       }
 
-      const addGroup: DayTypeGroup = createDayTypeGroup(nextDayType)
-      const nextDayTypes: DayTypeGroup[] = [...dayTypeGroups, addGroup]
+      if (setTo && usedDayTypes.includes(dayType)) {
+        const existingIndex = currentDayTypeGroups.findIndex((dtg) =>
+          isDayTypeEnabled(dayType, dtg)
+        )
 
-      setDayTypeGroups(nextDayTypes)
-      return addGroup
+        currentDayTypeGroups = toggleDayTypeInGroup(dayType, existingIndex, false)
+      }
+
+      const group = currentDayTypeGroups[groupIndex]
+      group[dayType] = setTo
+
+      const nextDayTypeGroups = [...currentDayTypeGroups]
+      nextDayTypeGroups.splice(groupIndex, 1, group)
+
+      setDayTypeGroups(nextDayTypeGroups)
+      return nextDayTypeGroups
     },
     [dayTypeGroups]
   )
 
   const removeDayTypeFromGroup = useCallback(
-    (dayType: DayType, groupIndex: number): DayTypeGroup[] => {
-      let group = [...(dayTypeGroups[groupIndex] ?? [])]
-
-      if (group.length === 0) {
-        return dayTypeGroups
-      }
-
-      const dayTypeIndex = group.findIndex((dt) => dt === dayType)
-
-      if (dayTypeIndex === -1) {
-        return dayTypeGroups
-      }
-
-      group.splice(dayTypeIndex, 1)
-
-      const nextDayTypeGroups = [...dayTypeGroups]
-
-      if (group.length !== 0) {
-        nextDayTypeGroups.splice(groupIndex, 1, group)
-      } else {
-        nextDayTypeGroups.splice(groupIndex, 1)
-      }
-
-      setDayTypeGroups(nextDayTypeGroups)
-      return nextDayTypeGroups
-    },
-    [dayTypeGroups]
+    (dayType: DayType, groupIndex: number) => toggleDayTypeInGroup(dayType, groupIndex, false),
+    [toggleDayTypeInGroup]
   )
 
   const addDayTypeToGroup = useCallback(
-    (dayType: DayType, groupIndex: number): DayTypeGroup[] => {
-      let currentDayTypeGroups = dayTypeGroups
-      let group = [...(currentDayTypeGroups[groupIndex] ?? [])]
-
-      // Bail if it already exists. Shouldn't happen though.
-      if (group.includes(dayType)) {
-        return currentDayTypeGroups
-      }
-
-      const existingDayTypeGroupIndex = currentDayTypeGroups.findIndex((dtg) =>
-        dtg.includes(dayType)
-      )
-
-      if (existingDayTypeGroupIndex !== -1) {
-        currentDayTypeGroups = removeDayTypeFromGroup(dayType, existingDayTypeGroupIndex)
-      }
-
-      // Renew the group after potentially changing the state.
-      group = [...(currentDayTypeGroups[groupIndex] ?? [])]
-      group.push(dayType)
-
-      const nextDayTypeGroups = [...currentDayTypeGroups]
-      nextDayTypeGroups.splice(groupIndex, 1, group)
-      setDayTypeGroups(nextDayTypeGroups)
-
-      return nextDayTypeGroups
-    },
-    [dayTypeGroups]
+    (dayType: DayType, groupIndex: number) => toggleDayTypeInGroup(dayType, groupIndex, true),
+    [toggleDayTypeInGroup]
   )
 
   const addDepartureBlock = useCallback(
@@ -285,7 +281,10 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
         }
 
         const blockType: DayType = departureBlock.dayType
-        const blockGroupIndex = groups.findIndex((group) => group.dayTypes.includes(blockType))
+        const blockGroupIndex = groups.findIndex((group) =>
+          isDayTypeEnabled(blockType, group.dayTypes)
+        )
+
         let blockGroup: DepartureBlockGroup | null = null
 
         if (blockGroupIndex !== -1) {
@@ -293,7 +292,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
         }
 
         if (!blockGroup) {
-          const dayTypeGroupIndex = dayTypeGroups.findIndex((dtg) => dtg.includes(blockType))
+          const dayTypeGroupIndex = dayTypeGroups.findIndex((dtg) =>
+            isDayTypeEnabled(blockType, dtg)
+          )
 
           if (dayTypeGroupIndex === -1) {
             return groups
@@ -332,7 +333,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ departureBlocks, onChan
           onRemoveDayType={removeDayTypeFromGroup}
         />
       ))}
-      {difference(availableDayTypes, flatten(dayTypeGroups)).length !== 0 && (
+      {difference(Object.keys(defaultDayTypeGroup), usedDayTypes).length !== 0 && (
         <Button onClick={() => addDayTypeGroup()}>Lisää lähtöketju</Button>
       )}
     </DepartureBlocksView>
