@@ -217,7 +217,7 @@ const CreatePreInspectionForm: React.FC = observer(() => {
             <FormHeading theme="light">Lähtöketjut</FormHeading>
             <DepartureBlocks
               departureBlocks={formState.departureBlocks}
-              onChange={formState.setDepartureBlocks}
+              onChangeBlocks={formState.setDepartureBlocks}
             />
           </FormColumn>
         </>
