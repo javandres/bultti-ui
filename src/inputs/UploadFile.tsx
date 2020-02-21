@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { ChangeEventHandler, useEffect } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../components/Loading'
@@ -20,25 +20,29 @@ export type PropTypes = {
   uploader: any // (file: File, variables?: { [key: string]: any }) => void
   label?: string
   className?: string
+  onChange: ChangeEventHandler<HTMLInputElement>
+  value: null | FileList
 }
 
 const UploadFile: React.FC<PropTypes> = observer(
-  ({ uploader, label = 'Valitse tiedosto', className }) => {
+  ({ uploader, label = 'Valitse tiedosto', className, onChange, value }) => {
     const [upload, state] = uploader
 
-    const onFileChange = useCallback((e) => {
-      const file = e.target.files[0]
+    useEffect(() => {
+      if (value) {
+        const firstFile = value[0]
 
-      if (file) {
-        upload(file)
+        if (firstFile) {
+          upload(firstFile)
+        }
       }
-    }, [])
+    }, [value])
 
     return (
       <UploadView className={className}>
         {!!state.fetching && <Loading />}
         <UploadLabel htmlFor="upload">{label}</UploadLabel>
-        <UploadInput type="file" onChange={onFileChange} name="upload" />
+        <UploadInput type="file" onChange={onChange} name="upload" />
       </UploadView>
     )
   }

@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  ChangeEventHandler,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import UploadFile from './UploadFile'
@@ -115,6 +122,7 @@ const createDepartureBlockKey = (item: DepartureBlock, dayType = item.dayType) =
 
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
   ({ blockGroup, onAddBlock, onRemoveBlock, onAddDayType, onRemoveDayType }) => {
+    const [fileValue, setFileValue] = useState<null | FileList>(null)
     const { dayTypes, groupIndex, blocks } = blockGroup
 
     const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
@@ -127,6 +135,18 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       ,
       { data: departureBlockData, loading: departureBlocksLoading },
     ] = departureBlocksUploader
+
+    // TODO: Figure out how to clear the value.
+
+    useEffect(() => {
+      if (
+        (!blocks || blocks.length === 0) &&
+        departureBlockData &&
+        departureBlockData.length !== 0
+      ) {
+        setFileValue(null)
+      }
+    }, [blocks, departureBlockData])
 
     const onDayTypeChange = useCallback(
       (dayType: DayType) => (e) => {
@@ -141,15 +161,16 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       [onAddDayType, onRemoveDayType]
     )
 
+    const onRemoveDepartureBlock = useCallback((block) => () => onRemoveBlock(block), [
+      onRemoveBlock,
+    ])
+
     useEffect(() => {
       if (!departureBlockData) {
         return
       }
 
-      const existingBlockKeys = blocks.map((block) =>
-        createDepartureBlockKey(block, block.dayType)
-      )
-
+      const existingBlockKeys = blocks.map((block) => createDepartureBlockKey(block))
       const enabledDayTypes = getEnabledDayTypes(dayTypes)
 
       for (const dayType of enabledDayTypes) {
@@ -163,6 +184,14 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         }
       }
     }, [dayTypes, blocks, departureBlockData])
+
+    const onFileSelected: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
+      const files = e.target.files
+
+      if (files && files.length) {
+        setFileValue(files)
+      }
+    }, [])
 
     return (
       <DepartureBlockGroupContainer>
@@ -179,10 +208,16 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
             </DayTypeOption>
           ))}
         </DayTypesContainer>
-        <UploadFile label="Lataa lähtöketjutiedosto" uploader={departureBlocksUploader} />
+        <UploadFile
+          label="Lataa lähtöketjutiedosto"
+          uploader={departureBlocksUploader}
+          value={fileValue}
+          onChange={onFileSelected}
+        />
         {departureBlocksLoading && <Loading />}
         {blocks.length !== 0 && (
           <DepartureBlocksTable
+            onRemoveRow={onRemoveDepartureBlock}
             keyFromItem={createDepartureBlockKey}
             items={orderBy(blocks, ({ dayType }) =>
               Object.keys(defaultDayTypeGroup).indexOf(dayType as string)
@@ -197,6 +232,15 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
 
 const DepartureBlocks: React.FC<PropTypes> = observer(
   ({ departureBlocks, onChangeBlocks }) => {
+    const removedBlocks = useRef<string[]>([])
+
+    // Reset removedBlocks if there are no departureBlocks.
+    useEffect(() => {
+      if (departureBlocks.length === 0) {
+        removedBlocks.current = []
+      }
+    }, [departureBlocks])
+
     const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeState>([
       {
         ...defaultDayTypeGroup,
@@ -279,10 +323,16 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
 
     const addDepartureBlock = useCallback(
       (block: DepartureBlock) => {
+        const blockKey = createDepartureBlockKey(block)
+
+        if (removedBlocks.current.includes(blockKey)) {
+          return
+        }
+
         const nextDepartureBlocks = [...departureBlocks, block]
         onChangeBlocks(nextDepartureBlocks)
       },
-      [departureBlocks]
+      [departureBlocks, removedBlocks.current]
     )
 
     const removeDepartureBlock = useCallback(
@@ -295,12 +345,17 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
           return
         }
 
+        if (block.dayType) {
+          const blockKey = createDepartureBlockKey(block)
+          removedBlocks.current.push(blockKey)
+        }
+
         const nextDepartureBlocks = [...departureBlocks]
         nextDepartureBlocks.splice(blockIndex, 1)
 
         onChangeBlocks(nextDepartureBlocks)
       },
-      [departureBlocks]
+      [departureBlocks, removedBlocks.current]
     )
 
     useEffect(() => {

@@ -2,12 +2,30 @@ import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get, orderBy } from 'lodash'
+import { Button, ButtonSize } from './Button'
 
 const TableView = styled.div`
   width: 100%;
   margin-bottom: 1rem;
   border: 1px solid var(--light-grey);
   border-radius: 5px;
+`
+
+const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
+  background: var(--red);
+  position: absolute;
+  border: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0;
+  line-height: 1;
+  align-items: baseline;
+  justify-content: center;
+  font-size: 0.75rem;
+  left: -0.75rem;
+  top: 0.4rem;
+  display: none;
 `
 
 const TableRow = styled.div`
@@ -17,6 +35,10 @@ const TableRow = styled.div`
 
   &:last-child {
     border-bottom: 0;
+  }
+
+  &:hover ${RemoveButton} {
+    display: flex;
   }
 `
 
@@ -59,6 +81,7 @@ export type PropTypes<ItemType = any> = {
   columnLabels: { [key in keyof ItemType]: string }
   indexCell?: React.ReactChild
   keyFromItem: (item: ItemType) => string
+  onRemoveRow?: (item: ItemType) => () => void
   className?: string
 }
 
@@ -70,6 +93,7 @@ const Table: React.FC<PropTypes> = observer(
     columnLabels = {},
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
+    onRemoveRow,
     className,
   }) => {
     // For ordering keys of items
@@ -113,6 +137,7 @@ const Table: React.FC<PropTypes> = observer(
                   {val && <CellContent>{val}</CellContent>}
                 </TableCell>
               ))}
+              {onRemoveRow && <RemoveButton onClick={onRemoveRow(item)}>X</RemoveButton>}
             </TableRow>
           )
         })}
