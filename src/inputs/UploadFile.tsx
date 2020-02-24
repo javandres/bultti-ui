@@ -12,7 +12,6 @@ const UploadView = styled.div`
 const UploadInput = styled.input``
 
 const UploadWrapper = styled.div`
-  display: block;
   position: relative;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -23,6 +22,10 @@ const UploadWrapper = styled.div`
 
 const LabelText = styled.span`
   display: block;
+`
+
+const ResetButton = styled(Button)`
+  margin-left: auto;
 `
 
 const InstructionText = styled.span`
@@ -95,7 +98,7 @@ const UploadFile: React.FC<PropTypes> = observer(
           )}
           <InstructionText>Vedä tiedosto tähän tai valitse klikkaamalla.</InstructionText>
         </UploadWrapper>
-        {value.length !== 0 && <Button onClick={onResetFiles}>Reset</Button>}
+        {value.length !== 0 && <ResetButton onClick={onResetFiles}>Reset</ResetButton>}
       </UploadView>
     )
   }

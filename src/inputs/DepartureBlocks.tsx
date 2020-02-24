@@ -49,6 +49,12 @@ const DepartureBlocksTable = styled(Table)`
   margin-top: 1rem;
 `
 
+const BlocksVisibilityToggle = styled.a`
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+`
+
 export type PropTypes = {
   departureBlocks: DepartureBlock[]
   onChangeBlocks: (departureBlocks: DepartureBlock[]) => void
@@ -123,6 +129,7 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
     onRemoveDayType,
     onRemoveAllBlocks,
   }) => {
+    const [blocksVisible, setBlocksVisible] = useState(false)
     const [fileValue, setFileValue] = useState<File[]>([])
 
     const { dayTypes, groupIndex, blocks } = blockGroup
@@ -172,6 +179,14 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
     }, [dayTypes])
 
+    const onToggleBlocksVisibility = useCallback(
+      (e) => {
+        e.preventDefault()
+        setBlocksVisible(!blocksVisible)
+      },
+      [blocksVisible]
+    )
+
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>
@@ -196,6 +211,11 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         />
         {departureBlocksLoading && <Loading />}
         {blocks.length !== 0 && (
+          <BlocksVisibilityToggle onClick={onToggleBlocksVisibility} href="#">
+            {blocksVisible ? 'Piilota lähtyöketjut' : 'Näytä lähtöketjut'}
+          </BlocksVisibilityToggle>
+        )}
+        {blocksVisible && blocks.length !== 0 && (
           <DepartureBlocksTable
             onRemoveRow={(block) => () => onRemoveBlock(block)}
             keyFromItem={createDepartureBlockKey}
