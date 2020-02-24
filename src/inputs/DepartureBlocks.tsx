@@ -1,11 +1,4 @@
-import React, {
-  ChangeEventHandler,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import UploadFile from './UploadFile'
@@ -122,7 +115,7 @@ const createDepartureBlockKey = (item: DepartureBlock, dayType = item.dayType) =
 
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
   ({ blockGroup, onAddBlock, onRemoveBlock, onAddDayType, onRemoveDayType }) => {
-    const [fileValue, setFileValue] = useState<null | FileList>(null)
+    const [fileValue, setFileValue] = useState<File[]>([])
     const { dayTypes, groupIndex, blocks } = blockGroup
 
     const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
@@ -135,18 +128,6 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       ,
       { data: departureBlockData, loading: departureBlocksLoading },
     ] = departureBlocksUploader
-
-    // TODO: Figure out how to clear the value.
-
-    useEffect(() => {
-      if (
-        (!blocks || blocks.length === 0) &&
-        departureBlockData &&
-        departureBlockData.length !== 0
-      ) {
-        setFileValue(null)
-      }
-    }, [blocks, departureBlockData])
 
     const onDayTypeChange = useCallback(
       (dayType: DayType) => (e) => {
@@ -185,14 +166,6 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       }
     }, [dayTypes, blocks, departureBlockData])
 
-    const onFileSelected: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
-      const files = e.target.files
-
-      if (files && files.length) {
-        setFileValue(files)
-      }
-    }, [])
-
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>
@@ -212,7 +185,7 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
           label="Lataa lähtöketjutiedosto"
           uploader={departureBlocksUploader}
           value={fileValue}
-          onChange={onFileSelected}
+          onChange={setFileValue}
         />
         {departureBlocksLoading && <Loading />}
         {blocks.length !== 0 && (
