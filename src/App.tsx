@@ -8,7 +8,7 @@ import PreInspection from './pages/PreInspection'
 import PostInspection from './pages/PostInspection'
 import PreInspectionReports from './pages/PreInspectionReports'
 import PostInspectionReports from './pages/PostInspectionReports'
-import AppFrame from './components/AppFrame'
+import AppFrame from './common/components/AppFrame'
 import CreatePreInspection from './pages/CreatePreInspection'
 
 const App: React.FC = observer(() => {

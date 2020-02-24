@@ -1,14 +1,14 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { Page, PageSection, PageTitle } from '../components/common'
-import FunctionBar from '../components/FunctionBar'
-import CurrentPreInspections from '../components/CurrentPreInspections'
-import AllPreInspections from '../components/AllPreInspections'
-import { Plus } from '../icons/Plus'
+import { Page, PageSection, PageTitle } from '../common/components/common'
+import FunctionBar from '../common/components/FunctionBar'
+import CurrentPreInspections from '../preInspection/CurrentPreInspections'
+import AllPreInspections from '../preInspection/AllPreInspections'
+import { Plus } from '../common/icons/Plus'
 import { useStateValue } from '../state/useAppState'
 import preinspections from '../data/preinspections.json'
-import OperatorTitle from '../components/OperatorTitle'
+import OperatorTitle from '../common/components/OperatorTitle'
 
 type PropTypes = {
   children?: React.ReactNode

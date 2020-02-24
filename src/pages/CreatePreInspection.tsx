@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
-import CreatePreInspectionForm from '../partials/CreatePreInspectionForm'
-import { PageTitle } from '../components/common'
+import PreInspectionForm from '../preInspection/PreInspectionForm'
+import { PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 
 const CreatePreInspectionView = styled.div``
@@ -13,7 +13,7 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
   return (
     <CreatePreInspectionView>
       <PageTitle>Uusi ennakkotarkastus</PageTitle>
-      <CreatePreInspectionForm />
+      <PreInspectionForm />
     </CreatePreInspectionView>
   )
 })
