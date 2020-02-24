@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../utils/useUploader'
 import { DayType, DepartureBlock } from '../types/inspection'
@@ -90,6 +90,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onRemoveDayType,
     onRemoveAllBlocks,
   }) => {
+    const groupHasHiddenBlocks = useRef(false)
+
     const [blocksVisible, setBlocksVisibility] = useState(false)
     const [dayTypesVisible, setDayTypesVisibility] = useState(false)
 
@@ -124,8 +126,17 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     // Reset the file value (file input value) and remove all blocks from the group.
     const onReset = useCallback(() => {
       setFileValue([])
+      groupHasHiddenBlocks.current = false
       onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
     }, [dayTypes])
+
+    const onBlockRemoveClick = useCallback(
+      (block) => () => {
+        groupHasHiddenBlocks.current = true
+        onRemoveBlock(block)
+      },
+      [onRemoveBlock]
+    )
 
     useEffect(() => {
       // If we have no uploaded blocks, bail.
@@ -134,7 +145,11 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       }
 
       // If all blocks were removed, reset the group. Then bail.
-      if ((departureBlockData || fileValue.length !== 0) && blocks.length === 0) {
+      if (
+        groupHasHiddenBlocks.current &&
+        blocks.length === 0 &&
+        ((departureBlockData && departureBlockData.length !== 0) || fileValue.length !== 0)
+      ) {
         onReset()
         return
       }
@@ -205,7 +220,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         </FlexRow>
         {blocksVisible && blocks.length !== 0 && (
           <DepartureBlocksTable
-            onRemoveRow={dayTypesVisible ? (block) => () => onRemoveBlock(block) : undefined}
+            onRemoveRow={dayTypesVisible && blocks.length > 1 ? onBlockRemoveClick : undefined}
             keyFromItem={createDepartureBlockKey}
             items={
               dayTypesVisible
