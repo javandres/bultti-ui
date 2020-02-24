@@ -13,7 +13,6 @@ moment.locale('fi')
 
 const WeekSelectWrapper = styled.div`
   position: relative;
-  margin-bottom: 1rem;
 `
 
 const InputsWrapper = styled.div`

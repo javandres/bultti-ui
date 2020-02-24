@@ -20,13 +20,25 @@ import gql from 'graphql-tag'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 
-const CreatePreInspectionFormView = styled(ColumnWrapper)``
+const CreatePreInspectionFormView = styled.div`
+  width: 100%;
+`
+
 const FormColumn = styled(Column)``
+
+const FormWrapper = styled(ColumnWrapper)`
+  display: flex;
+  width: 100%;
+`
 
 const ControlGroup = styled.div`
   margin: 0 0 2rem;
   display: flex;
   flex-wrap: nowrap;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 
   > * {
     flex: 1 1 50%;
@@ -168,58 +180,64 @@ const PreInspectionForm: React.FC = observer(() => {
         <PageLoading />
       ) : (
         <>
-          <FormColumn width="35%" minWidth="350px">
-            <ControlGroup>
-              <SelectOperator
-                label="Liikennöitsijä"
-                theme="light"
-                value={formState.operator}
-                onSelect={formState.selectOperator}
+          <FormWrapper>
+            <FormColumn width="50%">
+              <ControlGroup>
+                <SelectOperator
+                  label="Liikennöitsijä"
+                  theme="light"
+                  value={formState.operator}
+                  onSelect={formState.selectOperator}
+                />
+              </ControlGroup>
+              <ControlGroup>
+                <SelectSeason
+                  label="Aikataulukausi"
+                  theme="light"
+                  value={formState.season}
+                  onSelect={formState.selectSeason}
+                />
+              </ControlGroup>
+            </FormColumn>
+            <FormColumn>
+              <FormHeading theme="light">Tuotantojakso</FormHeading>
+              <ControlGroup>
+                <SelectDate
+                  name="production_start"
+                  value={formState.productionStart}
+                  onChange={formState.setProductionStartDate}
+                  label="Alku"
+                />
+                <Input
+                  value={formState.productionEnd}
+                  label="Loppu"
+                  subLabel={true}
+                  disabled={true}
+                />
+              </ControlGroup>
+              <FormHeading theme="light">Tarkastusjakso</FormHeading>
+              <ControlGroup>
+                <SelectWeek
+                  startLabel="Alku"
+                  endLabel="Loppu"
+                  startDate={formState.startDate}
+                  onChangeStartDate={formState.setStartDate}
+                  endDate={formState.endDate}
+                  onChangeEndDate={formState.setEndDate}
+                  maxDate={formState.productionEnd}
+                />
+              </ControlGroup>
+            </FormColumn>
+          </FormWrapper>
+          <FormWrapper>
+            <FormColumn width="50%" minWidth="510px">
+              <FormHeading theme="light">Lähtöketjut</FormHeading>
+              <DepartureBlocks
+                departureBlocks={formState.departureBlocks}
+                onChangeBlocks={formState.setDepartureBlocks}
               />
-            </ControlGroup>
-            <ControlGroup>
-              <SelectSeason
-                label="Aikataulukausi"
-                theme="light"
-                value={formState.season}
-                onSelect={formState.selectSeason}
-              />
-            </ControlGroup>
-            <FormHeading theme="light">Tuotantojakso</FormHeading>
-            <ControlGroup>
-              <SelectDate
-                name="production_start"
-                value={formState.productionStart}
-                onChange={formState.setProductionStartDate}
-                label="Alku"
-              />
-              <Input
-                value={formState.productionEnd}
-                label="Loppu"
-                subLabel={true}
-                disabled={true}
-              />
-            </ControlGroup>
-            <FormHeading theme="light">Tarkastusjakso</FormHeading>
-            <ControlGroup>
-              <SelectWeek
-                startLabel="Alku"
-                endLabel="Loppu"
-                startDate={formState.startDate}
-                onChangeStartDate={formState.setStartDate}
-                endDate={formState.endDate}
-                onChangeEndDate={formState.setEndDate}
-                maxDate={formState.productionEnd}
-              />
-            </ControlGroup>
-          </FormColumn>
-          <FormColumn width="65%" minWidth="510px">
-            <FormHeading theme="light">Lähtöketjut</FormHeading>
-            <DepartureBlocks
-              departureBlocks={formState.departureBlocks}
-              onChangeBlocks={formState.setDepartureBlocks}
-            />
-          </FormColumn>
+            </FormColumn>
+          </FormWrapper>
         </>
       )}
     </CreatePreInspectionFormView>

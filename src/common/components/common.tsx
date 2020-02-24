@@ -50,10 +50,10 @@ export const ColumnWrapper = styled.div`
   flex-wrap: nowrap;
 `
 
-export const Column = styled.div<{ width: string; minWidth: string }>`
+export const Column = styled.div<{ width?: string; minWidth?: string }>`
   padding: 1rem 1.5rem;
-  min-width: ${(p) => p.minWidth};
-  flex: 1 1 ${(p) => p.width};
+  min-width: ${(p) => p.minWidth || '0'};
+  flex: 1 1 ${(p) => p.width || '50%'};
 `
 
 export const HalfWidth = styled(Column).attrs(() => ({ width: '50%', minWidth: '0' }))``
