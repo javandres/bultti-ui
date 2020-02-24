@@ -36,9 +36,9 @@ const uploadDepartureBlocksMutation = gql`
 `
 
 const DepartureBlockGroupContainer = styled.div`
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #aeaeae;
+  margin-bottom: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #aeaeae;
 `
 
 const DayTypesContainer = styled.div`
