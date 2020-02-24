@@ -93,10 +93,12 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     const [blocksVisible, setBlocksVisibility] = useState(false)
     const [dayTypesVisible, setDayTypesVisibility] = useState(false)
 
+    // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
 
     const { dayTypes, groupIndex, blocks } = blockGroup
 
+    // Create an upload handler for uploading the departure block file.
     const uploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
         inspectionId: '123',
@@ -105,6 +107,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
 
     const [, { data: departureBlockData, loading: departureBlocksLoading }] = uploader
 
+    // Handle day type selection.
     const onDayTypeChange = useCallback(
       (dayType: DayType) => (e) => {
         const isSelected = e.target.checked
@@ -118,10 +121,27 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       [onAddDayType, onRemoveDayType]
     )
 
+    // Reset the file value (file input value) and remove all blocks from the group.
+    const onReset = useCallback(() => {
+      setFileValue([])
+      onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
+    }, [dayTypes])
+
     useEffect(() => {
+      // If we have no uploaded blocks, bail.
       if (!departureBlockData || fileValue.length === 0 || departureBlocksLoading) {
         return
       }
+
+      // If all blocks were removed, reset the group. Then bail.
+      if ((departureBlockData || fileValue.length !== 0) && blocks.length === 0) {
+        onReset()
+        return
+      }
+
+      // Add all uploaded blocks to the pre-inspection state. Add one copy of each departure
+      // per day type selected for this group. If the file contains one row and there are
+      // four dayTypes selected, we would add four distinct departures.
 
       const existingBlockKeys = blocks.map((block) => createDepartureBlockKey(block))
       const enabledDayTypes = getEnabledDayTypes(dayTypes)
@@ -136,12 +156,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           }
         }
       }
-    }, [dayTypes, blocks, departureBlockData, fileValue, departureBlocksLoading])
-
-    const onReset = useCallback(() => {
-      setFileValue([])
-      onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
-    }, [dayTypes])
+    }, [dayTypes, blocks, departureBlockData, fileValue, departureBlocksLoading, onReset])
 
     const onToggleBlocksVisibility = useCallback(() => {
       setBlocksVisibility(!blocksVisible)
@@ -190,7 +205,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         </FlexRow>
         {blocksVisible && blocks.length !== 0 && (
           <DepartureBlocksTable
-            onRemoveRow={(block) => () => onRemoveBlock(block)}
+            onRemoveRow={dayTypesVisible ? (block) => () => onRemoveBlock(block) : undefined}
             keyFromItem={createDepartureBlockKey}
             items={
               dayTypesVisible
