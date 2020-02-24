@@ -152,9 +152,10 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
 
     const removeAllBlocksForDayTypes = useCallback(
       (dayTypes: DayType[]) => {
-        const nextDepartureBlocks = departureBlocks.filter(
-          (db) => db.dayType && !dayTypes.includes(db.dayType)
-        )
+        const blockFilter = (db) => db.dayType && !dayTypes.includes(db.dayType)
+
+        removedBlocks.current = removedBlocks.current.filter(blockFilter)
+        const nextDepartureBlocks = departureBlocks.filter(blockFilter)
 
         onChangeBlocks(nextDepartureBlocks)
       },

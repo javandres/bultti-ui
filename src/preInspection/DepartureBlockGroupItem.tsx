@@ -55,22 +55,21 @@ const DepartureBlocksTable = styled(Table)`
   margin-top: 1rem;
 `
 
-const BlocksVisibilityToggle = styled(TextButton)``
-
 const ResetButton = styled(Button)`
   margin-left: auto;
 `
 
 const departureBlockColumnLabels = {
   id: 'ID',
-  departureTime: 'Lähtöaika',
-  departureType: 'Lähtötyyppi',
+  dayType: 'Päivä',
+  departureTime: 'Aika',
+  departureType: 'Tyyppi',
   direction: 'Suunta',
   routeId: 'Reitti',
-  vehicleId: 'Kylkinumero',
-  arrivalTime: 'Saapumisaika',
-  inDepot: 'Lähtövarikko',
-  outDepot: 'Loppuvarikko',
+  vehicleId: 'Kylkinro',
+  arrivalTime: 'Saap.aika',
+  inDepot: 'Lähtövar.',
+  outDepot: 'Loppuvar.',
 }
 
 type PropTypes = {
@@ -120,7 +119,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     )
 
     useEffect(() => {
-      if (!departureBlockData) {
+      if (!departureBlockData || fileValue.length === 0 || departureBlocksLoading) {
         return
       }
 
@@ -137,11 +136,11 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           }
         }
       }
-    }, [dayTypes, blocks, departureBlockData])
+    }, [dayTypes, blocks, departureBlockData, fileValue, departureBlocksLoading])
 
     const onReset = useCallback(() => {
-      onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
       setFileValue([])
+      onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
     }, [dayTypes])
 
     const onToggleBlocksVisibility = useCallback(() => {
