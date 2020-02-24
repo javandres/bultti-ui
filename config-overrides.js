@@ -1,6 +1,4 @@
-import { addBabelPlugins } from 'customize-cra'
-
-const { override } = require('customize-cra')
+const { override, addBabelPlugins } = require('customize-cra')
 const { addReactRefresh } = require('customize-cra-react-refresh')
 
 module.exports = override(

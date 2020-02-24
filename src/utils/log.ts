@@ -7,7 +7,7 @@ export function logWithLevel(level: LogLevel, ...values: any[]) {
     (messages, val) => {
       if (isObservable(val)) {
         messages.info.push(toJS(val))
-      } else if (typeof val.stack !== 'undefined') {
+      } else if (typeof val?.stack !== 'undefined') {
         messages.errors.push(val)
       } else {
         messages.info.push(val)

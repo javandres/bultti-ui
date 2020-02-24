@@ -2,6 +2,7 @@ import { useContext } from 'react'
 import { StateContext } from './stateContext'
 import { action } from 'mobx'
 import { StoreContext } from '../types/state'
+import { useObserver } from 'mobx-react-lite'
 
 const createDumbAction = (state, stateKey) =>
   action((value) => {
@@ -10,15 +11,14 @@ const createDumbAction = (state, stateKey) =>
 
 export const useStateValue = (valueKey) => {
   const stateContext = useContext(StateContext)
+  const value = useObserver(() => stateContext?.state[valueKey] || null)
 
   if (!stateContext) {
-    return []
+    return [value, () => {}]
   }
 
-  const value = stateContext.state[valueKey] || null
-
   const action =
-    stateContext.actions[valueKey] || createDumbAction(stateContext?.state, valueKey)
+    stateContext.actions[valueKey] || createDumbAction(stateContext.state, valueKey)
 
   return [value, action]
 }

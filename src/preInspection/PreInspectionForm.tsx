@@ -19,6 +19,8 @@ import { seasonsQuery } from '../common/queries/seasons'
 import gql from 'graphql-tag'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
+import ExecutionRequirements from './ExecutionRequirements'
+import { log } from '../utils/log'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -142,20 +144,19 @@ const PreInspectionForm: React.FC = observer(() => {
     },
   }))
 
-  const { data: seasonsData } = useQueryData(seasonsQuery)
-
-  // TODO
-  /*const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
-    variables: {
-      operatorId: formState?.operator?.id || '',
-    },
-  })*/
-
   useEffect(() => {
     if (formState.operator?.id !== globalOperator?.id) {
       formState.selectOperator(globalOperator)
     }
   }, [globalOperator])
+
+  const { data: seasonsData } = useQueryData(seasonsQuery)
+
+  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+    variables: {
+      operatorId: formState?.operator?.id || '',
+    },
+  })
 
   useEffect(() => {
     const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
@@ -230,12 +231,18 @@ const PreInspectionForm: React.FC = observer(() => {
             </FormColumn>
           </FormWrapper>
           <FormWrapper>
-            <FormColumn width="50%" minWidth="510px">
+            <FormColumn width="100%" minWidth="510px">
               <FormHeading theme="light">Lähtöketjut</FormHeading>
               <DepartureBlocks
                 departureBlocks={formState.departureBlocks}
                 onChangeBlocks={formState.setDepartureBlocks}
               />
+            </FormColumn>
+          </FormWrapper>
+          <FormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <FormHeading theme="light">Suoritevaatimukset</FormHeading>
+              <ExecutionRequirements operatingUnits={operatingUnitsData} />
             </FormColumn>
           </FormWrapper>
         </>
