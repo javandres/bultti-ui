@@ -95,7 +95,12 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
         group[dayType] = setTo
 
         const nextDayTypeGroups = [...currentDayTypeGroups]
-        nextDayTypeGroups.splice(groupIndex, 1, group)
+
+        if (Object.values(group).some((val) => val)) {
+          nextDayTypeGroups.splice(groupIndex, 1, group)
+        } else {
+          nextDayTypeGroups.splice(groupIndex, 1)
+        }
 
         setDayTypeGroups(nextDayTypeGroups)
         return nextDayTypeGroups
@@ -249,7 +254,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
           />
         ))}
         {difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
-          <Button onClick={() => addDayTypeGroup()}>Lisää lähtöketju</Button>
+          <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
         )}
       </DepartureBlocksView>
     )
