@@ -12,7 +12,7 @@ import Table from '../components/Table'
 import Checkbox from './Checkbox'
 
 const uploadDepartureBlocksMutation = gql`
-  mutation uploadDepartureBlocks($file: Upload!, $inspectionId: String!) {
+  mutation uploadDepartureBlocks($file: Upload, $inspectionId: String!) {
     uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
       id
       departureTime
@@ -76,6 +76,7 @@ type BlockGroupPropTypes = {
   blockGroup: DepartureBlockGroup
   onAddBlock: (block: DepartureBlock) => void
   onRemoveBlock: (block: DepartureBlock) => void
+  onRemoveAllBlocks: (dayTypes: DayType[]) => void
   onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
   onRemoveDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
 }
@@ -102,7 +103,7 @@ const departureBlockColumnLabels = {
   outDepot: 'Loppuvarikko',
 }
 
-const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup) =>
+const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup): string[] =>
   Object.entries(dayTypeGroup)
     .filter(([, enabled]) => !!enabled)
     .map(([dt]) => dt)
@@ -114,20 +115,25 @@ const createDepartureBlockKey = (item: DepartureBlock, dayType = item.dayType) =
   `${item.id}/${dayType}`
 
 const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
-  ({ blockGroup, onAddBlock, onRemoveBlock, onAddDayType, onRemoveDayType }) => {
+  ({
+    blockGroup,
+    onAddBlock,
+    onRemoveBlock,
+    onAddDayType,
+    onRemoveDayType,
+    onRemoveAllBlocks,
+  }) => {
     const [fileValue, setFileValue] = useState<File[]>([])
+
     const { dayTypes, groupIndex, blocks } = blockGroup
 
-    const departureBlocksUploader = useUploader(uploadDepartureBlocksMutation, {
+    const uploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
         inspectionId: '123',
       },
     })
 
-    const [
-      ,
-      { data: departureBlockData, loading: departureBlocksLoading },
-    ] = departureBlocksUploader
+    const [, { data: departureBlockData, loading: departureBlocksLoading }] = uploader
 
     const onDayTypeChange = useCallback(
       (dayType: DayType) => (e) => {
@@ -141,10 +147,6 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       },
       [onAddDayType, onRemoveDayType]
     )
-
-    const onRemoveDepartureBlock = useCallback((block) => () => onRemoveBlock(block), [
-      onRemoveBlock,
-    ])
 
     useEffect(() => {
       if (!departureBlockData) {
@@ -166,6 +168,10 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
       }
     }, [dayTypes, blocks, departureBlockData])
 
+    const onReset = useCallback(() => {
+      onRemoveAllBlocks(getEnabledDayTypes(dayTypes) as DayType[])
+    }, [dayTypes])
+
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>
@@ -183,14 +189,15 @@ const DepartureBlockDayGroup: React.FC<BlockGroupPropTypes> = observer(
         </DayTypesContainer>
         <UploadFile
           label="Lataa lähtöketjutiedosto"
-          uploader={departureBlocksUploader}
+          uploader={uploader}
           value={fileValue}
+          onReset={onReset}
           onChange={setFileValue}
         />
         {departureBlocksLoading && <Loading />}
         {blocks.length !== 0 && (
           <DepartureBlocksTable
-            onRemoveRow={onRemoveDepartureBlock}
+            onRemoveRow={(block) => () => onRemoveBlock(block)}
             keyFromItem={createDepartureBlockKey}
             items={orderBy(blocks, ({ dayType }) =>
               Object.keys(defaultDayTypeGroup).indexOf(dayType as string)
@@ -331,6 +338,17 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
       [departureBlocks, removedBlocks.current]
     )
 
+    const removeAllBlocksForDayTypes = useCallback(
+      (dayTypes: DayType[]) => {
+        const nextDepartureBlocks = departureBlocks.filter(
+          (db) => db.dayType && !dayTypes.includes(db.dayType)
+        )
+
+        onChangeBlocks(nextDepartureBlocks)
+      },
+      [departureBlocks]
+    )
+
     useEffect(() => {
       if (enabledDayTypes.length === 0 || departureBlocks.length === 0) {
         return
@@ -412,6 +430,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
             blockGroup={blockGroup}
             onAddBlock={addDepartureBlock}
             onRemoveBlock={removeDepartureBlock}
+            onRemoveAllBlocks={removeAllBlocksForDayTypes}
             onAddDayType={addDayTypeToGroup}
             onRemoveDayType={removeDayTypeFromGroup}
           />

@@ -15,6 +15,7 @@ type Contract {
 type DepartureBlock {
   arrivalTime: String!
   blockFile: String!
+  dayType: String!
   departureTime: String!
   departureType: DepartureType!
   direction: String!
@@ -42,7 +43,7 @@ type File {
 }
 
 type Mutation {
-  uploadDepartureBlocks(file: Upload!, inspectionId: String!): [DepartureBlock!]
+  uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
 }
 
 type OperatingUnit {
