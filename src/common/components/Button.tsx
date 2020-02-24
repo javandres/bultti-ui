@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { useTooltip } from '../../utils/useTooltip'
 import Loading from './Loading'
+import { observer } from 'mobx-react-lite'
 
 export enum ButtonSize {
   SMALL,
@@ -61,6 +62,31 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   }
 `
 
+export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string }>`
+  font-family: var(--font-family);
+  font-size: 0.875rem;
+  text-decoration: underline;
+  color: ${(p) => p.color || '#888'};
+  appearance: none;
+  outline: none;
+  border: 0;
+  padding: 0;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transform: scale(1);
+  transition: transform 0.1s ease-out;
+  background: transparent;
+
+  &:hover {
+    transform: scale(1.025);
+  }
+`
+
 const ButtonLoading = styled(Loading).attrs({ inline: true })<{ buttonSize: ButtonSize }>`
   display: flex;
   margin-right: ${({ buttonSize = ButtonSize.MEDIUM }) =>
@@ -87,6 +113,16 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
         )}{' '}
         {children}
       </StyledButton>
+    )
+  }
+)
+
+export const TextButton: React.FC<ButtonProps> = observer(
+  ({ helpText, children, loading, ...props }) => {
+    return (
+      <StyledTextButton {...props} loading={loading} {...useTooltip(helpText)}>
+        {children}
+      </StyledTextButton>
     )
   }
 )

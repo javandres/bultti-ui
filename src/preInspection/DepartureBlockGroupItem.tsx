@@ -5,7 +5,7 @@ import { DayType, DepartureBlock } from '../types/inspection'
 import Checkbox from '../common/inputs/Checkbox'
 import UploadFile from '../common/inputs/UploadFile'
 import Loading from '../common/components/Loading'
-import { orderBy } from 'lodash'
+import { orderBy, uniqBy } from 'lodash'
 import styled from 'styled-components'
 import Table from '../common/components/Table'
 import gql from 'graphql-tag'
@@ -16,7 +16,7 @@ import {
   DepartureBlockGroup,
   getEnabledDayTypes,
 } from './departureBlocksCommon'
-import { Button } from '../common/components/Button'
+import { Button, TextButton } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 
 const uploadDepartureBlocksMutation = gql`
@@ -55,11 +55,7 @@ const DepartureBlocksTable = styled(Table)`
   margin-top: 1rem;
 `
 
-const BlocksVisibilityToggle = styled.a`
-  display: block;
-  font-size: 0.75rem;
-  color: #888;
-`
+const BlocksVisibilityToggle = styled(TextButton)``
 
 const ResetButton = styled(Button)`
   margin-left: auto;
@@ -95,7 +91,9 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onRemoveDayType,
     onRemoveAllBlocks,
   }) => {
-    const [blocksVisible, setBlocksVisible] = useState(false)
+    const [blocksVisible, setBlocksVisibility] = useState(false)
+    const [dayTypesVisible, setDayTypesVisibility] = useState(false)
+
     const [fileValue, setFileValue] = useState<File[]>([])
 
     const { dayTypes, groupIndex, blocks } = blockGroup
@@ -146,13 +144,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       setFileValue([])
     }, [dayTypes])
 
-    const onToggleBlocksVisibility = useCallback(
-      (e) => {
-        e.preventDefault()
-        setBlocksVisible(!blocksVisible)
-      },
-      [blocksVisible]
-    )
+    const onToggleBlocksVisibility = useCallback(() => {
+      setBlocksVisibility(!blocksVisible)
+    }, [blocksVisible])
+
+    const onToggleDayTypesVisibility = useCallback(() => {
+      setDayTypesVisibility(!dayTypesVisible)
+    }, [dayTypesVisible])
 
     return (
       <DepartureBlockGroupContainer>
@@ -178,9 +176,16 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         {departureBlocksLoading && <Loading />}
         <FlexRow>
           {blocks.length !== 0 && (
-            <BlocksVisibilityToggle onClick={onToggleBlocksVisibility} href="#">
-              {blocksVisible ? 'Piilota lähtyöketjut' : 'Näytä lähtöketjut'}
-            </BlocksVisibilityToggle>
+            <>
+              <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
+                {blocksVisible ? 'Piilota lähtöketjut' : 'Näytä lähtöketjut'}
+              </TextButton>
+              {blocksVisible && (
+                <TextButton onClick={onToggleDayTypesVisibility}>
+                  {dayTypesVisible ? 'Piilota päivätyypit' : 'Näytä päivätyypit'}
+                </TextButton>
+              )}
+            </>
           )}
           {fileValue.length !== 0 && <ResetButton onClick={onReset}>Reset</ResetButton>}
         </FlexRow>
@@ -188,9 +193,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           <DepartureBlocksTable
             onRemoveRow={(block) => () => onRemoveBlock(block)}
             keyFromItem={createDepartureBlockKey}
-            items={orderBy(blocks, ({ dayType }) =>
-              Object.keys(defaultDayTypeGroup).indexOf(dayType as string)
-            )}
+            items={
+              dayTypesVisible
+                ? orderBy(blocks, ({ dayType }) =>
+                    Object.keys(defaultDayTypeGroup).indexOf(dayType as string)
+                  )
+                : uniqBy(blocks, 'id').map(({ dayType, ...block }) => block)
+            }
             columnLabels={departureBlockColumnLabels}
           />
         )}
