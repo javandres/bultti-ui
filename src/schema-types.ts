@@ -6,15 +6,8 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
-  /** The `Upload` scalar type represents a file upload. */
   Upload: any,
 };
-
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
 
 export type Contract = {
    __typename?: 'Contract',
@@ -22,6 +15,90 @@ export type Contract = {
   operator?: Maybe<Array<Operator>>,
   routes?: Maybe<Array<Route>>,
   operatingUnits?: Maybe<Array<OperatingUnit>>,
+};
+
+export type DepartureBlock = {
+   __typename?: 'DepartureBlock',
+  id: Scalars['String'],
+  outDepot: Scalars['String'],
+  inDepot: Scalars['String'],
+  departureType: DepartureType,
+  routeId: Scalars['String'],
+  direction: Scalars['String'],
+  departureTime: Scalars['String'],
+  arrivalTime: Scalars['String'],
+  vehicleId: Scalars['String'],
+  preInspectionId?: Maybe<Scalars['String']>,
+  preInspection?: Maybe<PreInspection>,
+  dayType?: Maybe<Scalars['String']>,
+  blockFile: Scalars['String'],
+};
+
+export enum DepartureType {
+  O = 'O',
+  N = 'N',
+  I = 'I'
+}
+
+export type ExecutionEquipment = {
+   __typename?: 'ExecutionEquipment',
+  id?: Maybe<Scalars['ID']>,
+  preInspectionId: Scalars['String'],
+  area: OperatingArea,
+  operatorId: Scalars['String'],
+  operatingUnit: Scalars['String'],
+  class: Scalars['Int'],
+  brand: Scalars['String'],
+  model: Scalars['String'],
+  type: Scalars['String'],
+  amount: Scalars['Int'],
+  ratio: Scalars['Float'],
+  seats: Scalars['Int'],
+  emissionClass: Scalars['String'],
+  soundLevel: Scalars['Int'],
+};
+
+export type ExecutionRequirement = {
+   __typename?: 'ExecutionRequirement',
+  week: Scalars['Int'],
+  year: Scalars['Int'],
+  equipmentClass: Scalars['Int'],
+  requirement: Scalars['String'],
+  area: OperatingArea,
+};
+
+export type ExecutionRequirementInput = {
+  week: Scalars['Int'],
+  year: Scalars['Int'],
+  equipmentClass: Scalars['Int'],
+  requirement: Scalars['String'],
+  area: OperatingArea,
+};
+
+export type File = {
+   __typename?: 'File',
+  filename: Scalars['String'],
+  mimetype: Scalars['String'],
+  encoding: Scalars['String'],
+};
+
+export type Mutation = {
+   __typename?: 'Mutation',
+  uploadDepartureBlocks?: Maybe<Array<DepartureBlock>>,
+  uploadEquipmentCatalogue?: Maybe<Array<ExecutionEquipment>>,
+};
+
+
+export type MutationUploadDepartureBlocksArgs = {
+  file?: Maybe<Scalars['Upload']>,
+  inspectionId: Scalars['String']
+};
+
+
+export type MutationUploadEquipmentCatalogueArgs = {
+  file?: Maybe<Scalars['Upload']>,
+  inspectionId: Scalars['String'],
+  area: OperatingArea
 };
 
 export enum OperatingArea {
@@ -32,10 +109,9 @@ export enum OperatingArea {
 export type OperatingUnit = {
    __typename?: 'OperatingUnit',
   id: Scalars['ID'],
-  currentOperators?: Maybe<Array<Operator>>,
-  routes?: Maybe<Array<Route>>,
-  contractId?: Maybe<Scalars['String']>,
-  contract?: Maybe<Contract>,
+  operatorId?: Maybe<Scalars['String']>,
+  operator?: Maybe<Operator>,
+  routeIds?: Maybe<Array<Scalars['String']>>,
 };
 
 export type Operator = {
@@ -48,6 +124,32 @@ export type Operator = {
   routes?: Maybe<Array<Route>>,
 };
 
+export type PreInspection = {
+   __typename?: 'PreInspection',
+  id: Scalars['String'],
+  operatorId: Scalars['String'],
+  seasonId: Scalars['String'],
+  season: Season,
+  startDate: Scalars['String'],
+  endDate: Scalars['String'],
+  productionStart: Scalars['String'],
+  productionEnd: Scalars['String'],
+  executionRequirements: Array<ExecutionRequirement>,
+  departureBlocks: Array<DepartureBlock>,
+  createdAt: Scalars['String'],
+  createdBy: Scalars['String'],
+};
+
+export type PreInspectionInput = {
+  operatorId: Scalars['String'],
+  season: SeasonInput,
+  startDate: Scalars['String'],
+  endDate: Scalars['String'],
+  productionStart: Scalars['String'],
+  productionEnd: Scalars['String'],
+  executionRequirements: Array<ExecutionRequirementInput>,
+};
+
 export type Query = {
    __typename?: 'Query',
   vehicles?: Maybe<Array<Vehicle>>,
@@ -57,6 +159,7 @@ export type Query = {
   operatingUnits?: Maybe<Array<OperatingUnit>>,
   routes?: Maybe<Array<Route>>,
   seasons?: Maybe<Array<Season>>,
+  uploads?: Maybe<Array<Maybe<Scalars['String']>>>,
 };
 
 
@@ -67,6 +170,11 @@ export type QueryVehiclesArgs = {
 
 export type QueryOperatorArgs = {
   id?: Maybe<Scalars['String']>
+};
+
+
+export type QueryOperatingUnitsArgs = {
+  operatorId: Scalars['String']
 };
 
 export type Route = {
@@ -89,6 +197,14 @@ export type Season = {
   season: Scalars['String'],
   dateBegin: Scalars['String'],
   dateEnd: Scalars['String'],
+};
+
+export type SeasonInput = {
+  id: Scalars['String'],
+  year?: Maybe<Scalars['Int']>,
+  season?: Maybe<Scalars['String']>,
+  dateBegin?: Maybe<Scalars['String']>,
+  dateEnd?: Maybe<Scalars['String']>,
 };
 
 

@@ -39,6 +39,11 @@ const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid #aeaeae;
+
+  &:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
 `
 
 const DayTypesContainer = styled.div`

@@ -15,7 +15,7 @@ type Contract {
 type DepartureBlock {
   arrivalTime: String!
   blockFile: String!
-  dayType: String!
+  dayType: String
   departureTime: String!
   departureType: DepartureType!
   direction: String!
@@ -26,6 +26,22 @@ type DepartureBlock {
   preInspectionId: String
   routeId: String!
   vehicleId: String!
+}
+
+type ExecutionEquipment {
+  amount: Int!
+  area: OperatingArea!
+  brand: String!
+  class: Int!
+  emissionClass: String!
+  model: String!
+  operatingUnit: String!
+  operatorId: String!
+  preInspectionId: String!
+  ratio: Float!
+  seats: Int!
+  soundLevel: Int!
+  type: String!
 }
 
 type ExecutionRequirement {
@@ -44,6 +60,7 @@ type File {
 
 type Mutation {
   uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
+  uploadEquipmentCatalogue(area: OperatingArea!, file: Upload, inspectionId: String!): [ExecutionEquipment!]
 }
 
 type OperatingUnit {

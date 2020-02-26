@@ -15,12 +15,10 @@ import { isBetween } from '../utils/isBetween'
 import { endOfISOWeek, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
 import { PageLoading } from '../common/components/Loading'
-import { seasonsQuery } from '../common/queries/seasons'
-import gql from 'graphql-tag'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
-import { log } from '../utils/log'
+import { seasonsQuery } from '../queries/seasonsQuery'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -82,20 +80,6 @@ const getCurrentSeason = (date, seasons: Season[]) => {
   return seasons.find((season) => isBetween(date, season.dateBegin, season.dateEnd))
 }
 
-const operatingUnitsQuery = gql`
-  query operatingUnits($operatorId: String!) {
-    operatingUnits(operatorId: $operatorId) {
-      id
-      operatorId
-      routeIds
-      operator {
-        id
-        name
-      }
-    }
-  }
-`
-
 const PreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
 
@@ -152,11 +136,12 @@ const PreInspectionForm: React.FC = observer(() => {
 
   const { data: seasonsData } = useQueryData(seasonsQuery)
 
-  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+  // Wait for proper data
+  /*const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
     variables: {
       operatorId: formState?.operator?.id || '',
     },
-  })
+  })*/
 
   useEffect(() => {
     const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
@@ -242,7 +227,7 @@ const PreInspectionForm: React.FC = observer(() => {
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
               <FormHeading theme="light">Suoritevaatimukset</FormHeading>
-              <ExecutionRequirements operatingUnits={operatingUnitsData} />
+              <ExecutionRequirements />
             </FormColumn>
           </FormWrapper>
         </>

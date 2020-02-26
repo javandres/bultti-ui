@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import Dropdown from './Dropdown'
 import { Season } from '../../schema-types'
 import { useQueryData } from '../../utils/useQueryData'
-import { seasonsQuery } from '../queries/seasons'
+import { seasonsQuery } from '../../queries/seasonsQuery'
 
 export type PropTypes = {
   label?: string | null

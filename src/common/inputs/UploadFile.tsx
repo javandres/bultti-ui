@@ -11,26 +11,43 @@ const UploadView = styled.div`
 
 const UploadInput = styled.input``
 
-const UploadWrapper = styled.div<{ backgroundColor?: string }>`
+const UploadWrapper = styled.div<{ hasData?: boolean; backgroundColor?: string }>`
   position: relative;
-  padding: 1rem;
+  padding: ${(p) => (p.hasData ? '1rem' : '2rem 1rem')};
   margin-bottom: 1rem;
   border-radius: 1rem;
-  background: ${(p) => p.backgroundColor || 'var(--lighter-blue)'};
+  background: ${(p) => p.backgroundColor || 'var(--lightest-blue)'};
   outline: none;
 `
 
 const LabelText = styled.span`
-  display: block;
+  padding: 0.4rem 1rem 0.4rem;
+  margin-right: 1rem;
+  background: var(--blue);
+  color: white;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  flex: 0 0 auto;
+  cursor: pointer;
+  letter-spacing: -0.6px;
+  border-radius: 2.5rem;
+  border: 1px solid var(--blue);
+  transform: scale(1);
+  transition: background-color 0.2s ease-out, transform 0.1s ease-out;
+
+  &:hover {
+    background: var(--dark-blue);
+    color: white;
+    transform: scale(1.025);
+  }
 `
 
 const InstructionText = styled.span`
   font-size: 0.875rem;
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.5rem;
-  border: 1px solid var(--blue);
-  border-radius: 1rem;
 `
 
 const CurrentFile = styled.span`
@@ -82,14 +99,15 @@ const UploadFile: React.FC<PropTypes> = observer(
 
     return (
       <UploadView className={className}>
-        {!!state.fetching && <Loading />}
+        {!!state.loading && <Loading />}
         <UploadWrapper
           {...getRootProps({
+            hasData: state.data && state.data.length !== 0,
             backgroundColor: state.error
               ? 'var(--light-red)'
               : state.data && state.data.length !== 0
               ? 'var(--lighter-green)'
-              : 'var(--lighter-blue)',
+              : 'var(--lightest-blue)',
           })}>
           <UploadInput {...getInputProps()} />
           {value.length !== 0 ? (

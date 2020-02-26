@@ -15,7 +15,9 @@ import {
 } from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 
-const DepartureBlocksView = styled.div``
+const DepartureBlocksView = styled.div`
+  margin-bottom: 1rem;
+`
 
 type PropTypes = {
   departureBlocks: DepartureBlock[]

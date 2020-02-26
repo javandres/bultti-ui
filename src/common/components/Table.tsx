@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get, orderBy } from 'lodash'
@@ -78,9 +78,9 @@ const CellContent = styled.div`
 
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
-  columnLabels: { [key in keyof ItemType]: string }
+  columnLabels?: { [key in keyof ItemType]: string }
   indexCell?: React.ReactChild
-  keyFromItem: (item: ItemType) => string
+  keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => () => void
   className?: string
 }
@@ -99,8 +99,10 @@ const Table: React.FC<PropTypes> = observer(
     // For ordering keys of items
     const labelKeys = Object.keys(columnLabels)
 
+    const filteredItems = useMemo(() => items.map(({ __typename, ...item }) => item), [items])
+
     // Order the keys and get cleartext labels for the columns
-    let columns = Object.keys(items[0])
+    let columns = Object.keys(filteredItems[0])
 
     if (labelKeys.length !== 0) {
       columns = orderBy(columns, (key) => labelKeys.indexOf(key)).map((key) =>
@@ -120,7 +122,7 @@ const Table: React.FC<PropTypes> = observer(
             <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
           ))}
         </TableHeader>
-        {items.map((item, rowIndex) => {
+        {filteredItems.map((item, rowIndex) => {
           let itemEntries = Object.entries(item)
 
           if (labelKeys.length !== 0) {

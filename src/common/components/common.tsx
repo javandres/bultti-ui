@@ -74,11 +74,11 @@ export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }
   padding-bottom: 0.5rem;
 `
 
-export const FormHeading = styled.h4<{ theme: ThemeTypes }>`
+export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
 
   &:first-child {
