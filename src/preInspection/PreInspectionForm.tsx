@@ -20,6 +20,7 @@ import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
 import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
+import moment from 'moment'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -91,7 +92,7 @@ const PreInspectionForm: React.FC = observer(() => {
     executionRequirements: observable.array([]),
     startDate: '',
     endDate: '',
-    productionStart: '',
+    productionStart: moment().format('YYYY-MM-DD'),
     productionEnd: '',
     departureBlocks: observable.array([]),
     whenReady: () => {
@@ -129,26 +130,14 @@ const PreInspectionForm: React.FC = observer(() => {
     },
   }))
 
-  useEffect(() => {
-    if (formState.operator?.id !== globalOperator?.id) {
-      formState.selectOperator(globalOperator)
-    }
-  }, [globalOperator])
-
-  const { data: seasonsData } = useQueryData(seasonsQuery)
-
-  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
-    variables: {
-      operatorId: formState?.operator?.id || '',
-      startDate: formState?.productionStart,
-    },
+  const { data: seasonsData } = useQueryData(seasonsQuery, {
+    variables: { date: formState.productionStart },
   })
 
   useEffect(() => {
     const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
 
     if (currentSeason) {
-      formState.setProductionStartDate(currentSeason.dateBegin)
       formState.setProductionEndDate(currentSeason.dateEnd)
       formState.selectSeason(currentSeason)
 
@@ -160,6 +149,19 @@ const PreInspectionForm: React.FC = observer(() => {
       formState.whenReady()
     }
   }, [seasonsData, formState.season])
+
+  useEffect(() => {
+    if (formState.operator?.id !== globalOperator?.id) {
+      formState.selectOperator(globalOperator)
+    }
+  }, [globalOperator])
+
+  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+    variables: {
+      operatorId: formState?.operator?.id || '',
+      startDate: formState?.productionStart,
+    },
+  })
 
   return (
     <CreatePreInspectionFormView>

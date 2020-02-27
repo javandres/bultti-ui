@@ -105,7 +105,7 @@ type Query {
   operator(id: String): Operator
   operators: [Operator!]
   routes: [Route!]
-  seasons: [Season!]
+  seasons(date: Date!): [Season!]
   uploads: [String]
   vehicles(all: Boolean): [Vehicle!]
 }
@@ -123,11 +123,10 @@ type Route {
 }
 
 type Season {
-  dateBegin: String!
-  dateEnd: String!
+  endDate: Date!
   id: String!
   season: String!
-  year: Int!
+  startDate: Date!
 }
 
 type Vehicle {
@@ -174,11 +173,10 @@ input PreInspectionInput {
 }
 
 input SeasonInput {
-  dateBegin: String
-  dateEnd: String
+  endDate: Date
   id: String!
   season: String
-  year: Int
+  startDate: Date
 }
 
 
