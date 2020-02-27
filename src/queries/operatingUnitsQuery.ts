@@ -1,15 +1,15 @@
 import gql from 'graphql-tag'
 
 export const operatingUnitsQuery = gql`
-  query operatingUnits($operatorId: String!) {
-    operatingUnits(operatorId: $operatorId) {
+  query operatingUnits($operatorId: String!, $startDate: Date!) {
+    operatingUnits(operatorId: $operatorId, startDate: $startDate) {
       id
       operatorId
       routeIds
-      operator {
-        id
-        name
-      }
+      endDate
+      operationEndDate
+      operationStartDate
+      startDate
     }
   }
 `

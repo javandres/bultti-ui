@@ -34,6 +34,7 @@ type ExecutionEquipment {
   brand: String!
   class: Int!
   emissionClass: String!
+  id: ID
   model: String!
   operatingUnit: String!
   operatorId: String!
@@ -64,10 +65,14 @@ type Mutation {
 }
 
 type OperatingUnit {
+  endDate: Date
   id: ID!
+  operationEndDate: Date
+  operationStartDate: Date
   operator: Operator
-  operatorId: String
+  operatorId: String!
   routeIds: [String!]
+  startDate: Date
 }
 
 type Operator {
@@ -96,7 +101,7 @@ type PreInspection {
 
 type Query {
   contracts: [Contract!]
-  operatingUnits(operatorId: String!): [OperatingUnit!]
+  operatingUnits(operatorId: String!, startDate: Date!): [OperatingUnit!]
   operator(id: String): Operator
   operators: [Operator!]
   routes: [Route!]
@@ -177,4 +182,10 @@ input SeasonInput {
 }
 
 
+"A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki."
+scalar Date
+
 scalar Upload
+
+"A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ). Timezone will be converted to Europe/Helsinki."
+scalar DateTime

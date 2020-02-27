@@ -6,7 +6,9 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  Date: any,
   Upload: any,
+  DateTime: any,
 };
 
 export type Contract = {
@@ -16,6 +18,8 @@ export type Contract = {
   routes?: Maybe<Array<Route>>,
   operatingUnits?: Maybe<Array<OperatingUnit>>,
 };
+
+
 
 export type DepartureBlock = {
    __typename?: 'DepartureBlock',
@@ -109,9 +113,13 @@ export enum OperatingArea {
 export type OperatingUnit = {
    __typename?: 'OperatingUnit',
   id: Scalars['ID'],
-  operatorId?: Maybe<Scalars['String']>,
+  operatorId: Scalars['String'],
   operator?: Maybe<Operator>,
   routeIds?: Maybe<Array<Scalars['String']>>,
+  startDate?: Maybe<Scalars['Date']>,
+  endDate?: Maybe<Scalars['Date']>,
+  operationStartDate?: Maybe<Scalars['Date']>,
+  operationEndDate?: Maybe<Scalars['Date']>,
 };
 
 export type Operator = {
@@ -174,7 +182,8 @@ export type QueryOperatorArgs = {
 
 
 export type QueryOperatingUnitsArgs = {
-  operatorId: Scalars['String']
+  operatorId: Scalars['String'],
+  startDate: Scalars['Date']
 };
 
 export type Route = {

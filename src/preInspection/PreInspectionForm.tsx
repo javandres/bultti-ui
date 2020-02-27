@@ -19,6 +19,7 @@ import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
+import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -136,12 +137,14 @@ const PreInspectionForm: React.FC = observer(() => {
 
   const { data: seasonsData } = useQueryData(seasonsQuery)
 
-  // Wait for proper data
-  /*const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
+  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
     variables: {
       operatorId: formState?.operator?.id || '',
+      startDate: formState?.productionStart,
     },
-  })*/
+  })
+
+  console.log(operatingUnitsData)
 
   useEffect(() => {
     const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
