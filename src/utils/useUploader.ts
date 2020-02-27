@@ -7,7 +7,7 @@ import { ApolloError } from 'apollo-client'
 
 type Uploader<TData> = [
   (file: File, overrideOptions: {}) => Promise<ExecutionResult<TData>>,
-  { data: null | TData; loading: boolean; error?: ApolloError }
+  { data: null | TData; loading: boolean; error?: ApolloError, called: boolean}
 ]
 
 export const useUploader = <TData = any, TVariables = OperationVariables>(
@@ -15,7 +15,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
 ): Uploader<TData> => {
-  const [mutationFn, { data, loading, error }] = useMutation<TData, TVariables>(
+  const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
     options
   )
@@ -36,5 +36,5 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   )
 
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
-  return [uploadFile, { data: pickedData, loading, error }]
+  return [uploadFile, { data: pickedData, loading, error, called }]
 }

@@ -79,10 +79,10 @@ const UploadFile: React.FC<PropTypes> = observer(
         if (firstFile) {
           upload(firstFile)
         }
-      } else {
+      } else if (state.called) {
         upload(null)
       }
-    }, [value])
+    }, [value, state.called])
 
     const onDrop = useCallback(
       (acceptedFiles) => {

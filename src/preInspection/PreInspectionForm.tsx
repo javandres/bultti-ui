@@ -144,8 +144,6 @@ const PreInspectionForm: React.FC = observer(() => {
     },
   })
 
-  console.log(operatingUnitsData)
-
   useEffect(() => {
     const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
 
