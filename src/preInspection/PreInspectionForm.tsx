@@ -11,7 +11,6 @@ import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
 import SelectDate from '../common/inputs/SelectDate'
 import { useQueryData } from '../utils/useQueryData'
-import { isBetween } from '../utils/isBetween'
 import { endOfISOWeek, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
 import { PageLoading } from '../common/components/Loading'
@@ -78,10 +77,6 @@ interface PreInspectionFormData extends PreInspectionFormActions {
   departureBlocks: DepartureBlock[]
 }
 
-const getCurrentSeason = (date, seasons: Season[]) => {
-  return seasons.find((season) => isBetween(date, season.dateBegin, season.dateEnd))
-}
-
 const PreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
 
@@ -135,16 +130,19 @@ const PreInspectionForm: React.FC = observer(() => {
   })
 
   useEffect(() => {
-    const currentSeason = formState.season || getCurrentSeason(new Date(), seasonsData || [])
+    const currentSeason =
+      formState.season || (seasonsData && seasonsData.length !== 0) ? seasonsData[0] : null
+
+    console.log(seasonsData)
 
     if (currentSeason) {
-      formState.setProductionEndDate(currentSeason.dateEnd)
+      formState.setProductionEndDate(currentSeason.endDate)
       formState.selectSeason(currentSeason)
 
       // Start and end dates describe the first week of the production period.
       // This is the "comparison period" that is extrapolated across the whole production period.
-      formState.setStartDate(toISODate(startOfISOWeek(parseISO(currentSeason.dateBegin))))
-      formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.dateBegin))))
+      formState.setStartDate(toISODate(startOfISOWeek(parseISO(currentSeason.startDate))))
+      formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.startDate))))
 
       formState.whenReady()
     }

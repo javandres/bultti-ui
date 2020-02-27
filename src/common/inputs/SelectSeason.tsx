@@ -28,10 +28,9 @@ const SelectSeason: React.FC<PropTypes> = observer(
       if (seasonsList[0]?.id !== '...') {
         const unselectedSeason: Season = {
           id: UNSELECTED_VAL,
-          year: 0,
           season: '',
-          dateBegin: '',
-          dateEnd: '',
+          startDate: '',
+          endDate: '',
         }
         seasonsList.unshift(unselectedSeason)
       }
