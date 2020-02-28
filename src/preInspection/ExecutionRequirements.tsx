@@ -106,7 +106,7 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
           onChange={setUploadValue}
         />
         {equipmentData && (
-          <FlexRow>
+          <FlexRow style={{marginBottom: '1rem'}}>
             <ResetButton onClick={onReset}>Reset</ResetButton>
           </FlexRow>
         )}
