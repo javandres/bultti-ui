@@ -1,10 +1,10 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
 import UploadFile from '../common/inputs/UploadFile'
-import { ExecutionEquipment, OperatingArea } from '../schema-types'
+import { ExecutionEquipment, OperatingArea, OperatingUnit } from '../schema-types'
 import Table from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import { Button } from '../common/components/Button'
@@ -20,7 +20,10 @@ const ResetButton = styled(Button)`
   margin-left: auto;
 `
 
-export type PropTypes = {}
+export type PropTypes = {
+  operatingUnits: OperatingUnit[] | null
+}
+
 export type AreaPropTypes = {
   area: OperatingArea
 }
@@ -83,7 +86,9 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(({ area }) =
   )
 })
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
+const ExecutionRequirements: React.FC<PropTypes> = observer(({operatingUnits}) => {
+  console.log(operatingUnits)
+
   return (
     <ExecutionRequirementsView>
       <AreaHeading>Keskusta</AreaHeading>

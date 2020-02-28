@@ -5,7 +5,7 @@ import { Column, ColumnWrapper, FormHeading } from '../common/components/common'
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
-import { Operator, Season } from '../schema-types'
+import { OperatingArea, Operator, Season } from '../schema-types'
 import SelectWeek from '../common/inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
@@ -326,7 +326,7 @@ const PreInspectionForm: React.FC = observer(() => {
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
               <FormHeading theme="light">Suoritevaatimukset</FormHeading>
-              <ExecutionRequirements />
+              <ExecutionRequirements operatingUnits={operatingUnitsData} />
             </FormColumn>
           </FormWrapper>
         </>

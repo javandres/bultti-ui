@@ -111,6 +111,10 @@ const SelectWeek: React.FC<PropTypes> = observer(
       [focused, inputName]
     )
 
+    if (!startDate) {
+      return null
+    }
+
     return (
       <WeekSelectWrapper>
         <InputsWrapper>
