@@ -85,3 +85,21 @@ export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
     margin-top: 0;
   }
 `
+
+export const FormMessageContainer = styled.div`
+  padding: 0 1.5rem;
+`
+
+export const FormMessage = styled.div`
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--light-blue);
+  color: var(--dark-grey);
+  background: var(--lightest-blue);
+  padding: 0.75rem;
+`
+
+export const FormError = styled(FormMessage)`
+  border: 1px solid var(--light-red);
+  background: var(--lighter-red);
+`

@@ -119,11 +119,17 @@ export type OperatingUnit = {
   id: Scalars['ID'],
   operatorId: Scalars['String'],
   operator?: Maybe<Operator>,
-  routeIds?: Maybe<Array<Scalars['String']>>,
+  routes?: Maybe<Array<Maybe<OperatingUnitRoute>>>,
   startDate?: Maybe<Scalars['Date']>,
   endDate?: Maybe<Scalars['Date']>,
   operationStartDate?: Maybe<Scalars['Date']>,
   operationEndDate?: Maybe<Scalars['Date']>,
+};
+
+export type OperatingUnitRoute = {
+   __typename?: 'OperatingUnitRoute',
+  routeId: Scalars['String'],
+  length?: Maybe<Scalars['Int']>,
 };
 
 export type Operator = {

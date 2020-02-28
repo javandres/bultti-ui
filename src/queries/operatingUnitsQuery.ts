@@ -5,11 +5,15 @@ export const operatingUnitsQuery = gql`
     operatingUnits(operatorId: $operatorId, startDate: $startDate) {
       id
       operatorId
-      routeIds
+      routes {
+        length
+        routeId
+      }
       endDate
       operationEndDate
       operationStartDate
       startDate
+      operatingArea
     }
   }
 `

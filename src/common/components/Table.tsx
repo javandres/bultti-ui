@@ -79,6 +79,7 @@ const CellContent = styled.div`
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]: string }
+  columnOrder?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => () => void
@@ -91,23 +92,25 @@ const Table: React.FC<PropTypes> = observer(
   ({
     items,
     columnLabels = {},
+    columnOrder = [],
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
     className,
   }) => {
-    // For ordering keys of items
-    const labelKeys = Object.keys(columnLabels)
-
     const filteredItems = useMemo(() => items.map(({ __typename, ...item }) => item), [items])
 
     // Order the keys and get cleartext labels for the columns
     let columns = Object.keys(filteredItems[0])
 
-    if (labelKeys.length !== 0) {
-      columns = orderBy(columns, (key) => labelKeys.indexOf(key)).map((key) =>
-        get(columnLabels, key, key)
-      )
+    const columnKeysOrdering =
+      columnOrder && columnOrder.length !== 0 ? columnOrder : Object.keys(columnLabels)
+
+    if (columnKeysOrdering.length !== 0) {
+      columns = orderBy(columns, (key) => {
+        const labelIndex = columnKeysOrdering.indexOf(key)
+        return labelIndex === -1 ? 999 : labelIndex
+      }).map((key) => get(columnLabels, key, key))
     }
 
     return (
@@ -125,8 +128,11 @@ const Table: React.FC<PropTypes> = observer(
         {filteredItems.map((item, rowIndex) => {
           let itemEntries = Object.entries(item)
 
-          if (labelKeys.length !== 0) {
-            itemEntries = orderBy(itemEntries, ([key]) => labelKeys.indexOf(key))
+          if (columnKeysOrdering.length !== 0) {
+            itemEntries = orderBy(itemEntries, ([key]) => {
+              const labelIndex = columnKeysOrdering.indexOf(key)
+              return labelIndex === -1 ? 999 : labelIndex
+            })
           }
 
           const itemValues = itemEntries.map(([, value]) => value)

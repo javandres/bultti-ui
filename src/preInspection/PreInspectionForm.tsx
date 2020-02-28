@@ -1,11 +1,17 @@
 import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
-import { Column, ColumnWrapper, FormHeading } from '../common/components/common'
+import {
+  Column,
+  ColumnWrapper,
+  FormError,
+  FormMessageContainer,
+  FormHeading,
+} from '../common/components/common'
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
-import { OperatingArea, Operator, Season } from '../schema-types'
+import { Operator, Season } from '../schema-types'
 import SelectWeek from '../common/inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
@@ -55,19 +61,6 @@ const ControlGroup = styled.div`
       margin-right: 0;
     }
   }
-`
-
-const FormErrorContainer = styled.div`
-  padding: 0 1.5rem;
-`
-
-const FormError = styled.div`
-  margin-bottom: 1rem;
-  border-radius: 5px;
-  border: 1px solid var(--light-red);
-  color: var(--dark-grey);
-  background: var(--lighter-red);
-  padding: 0.75rem;
 `
 
 interface PreInspectionFormActions {
@@ -254,11 +247,11 @@ const PreInspectionForm: React.FC = observer(() => {
   return (
     <CreatePreInspectionFormView>
       {activeBlockers.length !== 0 && (
-        <FormErrorContainer>
+        <FormMessageContainer>
           {activeBlockers.map((blockerName) => (
             <FormError key={blockerName}>{blockerName}</FormError>
           ))}
-        </FormErrorContainer>
+        </FormMessageContainer>
       )}
       {!formState.inspectionId ? (
         <PageLoading />

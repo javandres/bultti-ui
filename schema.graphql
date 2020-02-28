@@ -13,18 +13,15 @@ type Contract {
 }
 
 type DepartureBlock {
-  arrivalTime: String!
   blockFile: String!
   dayType: String
   departureTime: String!
-  departureType: DepartureType!
   direction: String!
   id: String!
-  inDepot: String!
-  outDepot: String!
   preInspection: PreInspection
-  preInspectionId: String
+  preInspectionId: String!
   routeId: String!
+  variant: String
   vehicleId: String!
 }
 
@@ -69,12 +66,18 @@ type Mutation {
 type OperatingUnit {
   endDate: Date
   id: ID!
+  operatingArea: OperatingArea
   operationEndDate: Date
   operationStartDate: Date
   operator: Operator
   operatorId: String!
-  routeIds: [String!]
+  routes: [OperatingUnitRoute]
   startDate: Date
+}
+
+type OperatingUnitRoute {
+  length: Int
+  routeId: String!
 }
 
 type Operator {
