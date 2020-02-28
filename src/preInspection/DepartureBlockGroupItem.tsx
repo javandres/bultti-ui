@@ -24,13 +24,10 @@ const uploadDepartureBlocksMutation = gql`
     uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
       id
       departureTime
-      departureType
       direction
       routeId
+      variant
       vehicleId
-      arrivalTime
-      inDepot
-      outDepot
     }
   }
 `
@@ -68,13 +65,10 @@ const departureBlockColumnLabels = {
   id: 'ID',
   dayType: 'Päivä',
   departureTime: 'Aika',
-  departureType: 'Tyyppi',
   direction: 'Suunta',
   routeId: 'Reitti',
+  variant: 'Variantti',
   vehicleId: 'Kylkinro',
-  arrivalTime: 'Saap.aika',
-  inDepot: 'Lähtövar.',
-  outDepot: 'Loppuvar.',
 }
 
 type PropTypes = {
