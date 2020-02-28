@@ -186,6 +186,11 @@ export type QueryOperatingUnitsArgs = {
   startDate: Scalars['Date']
 };
 
+
+export type QuerySeasonsArgs = {
+  date: Scalars['Date']
+};
+
 export type Route = {
    __typename?: 'Route',
   id: Scalars['ID'],
@@ -202,18 +207,16 @@ export type Route = {
 export type Season = {
    __typename?: 'Season',
   id: Scalars['String'],
-  year: Scalars['Int'],
   season: Scalars['String'],
-  dateBegin: Scalars['String'],
-  dateEnd: Scalars['String'],
+  startDate: Scalars['Date'],
+  endDate: Scalars['Date'],
 };
 
 export type SeasonInput = {
   id: Scalars['String'],
-  year?: Maybe<Scalars['Int']>,
   season?: Maybe<Scalars['String']>,
-  dateBegin?: Maybe<Scalars['String']>,
-  dateEnd?: Maybe<Scalars['String']>,
+  startDate?: Maybe<Scalars['Date']>,
+  endDate?: Maybe<Scalars['Date']>,
 };
 
 

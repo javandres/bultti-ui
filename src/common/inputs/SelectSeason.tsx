@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Dropdown from './Dropdown'
 import { Season } from '../../schema-types'
-import { useQueryData } from '../../utils/useQueryData'
-import { seasonsQuery } from '../../queries/seasonsQuery'
 
 export type PropTypes = {
   label?: string | null
@@ -12,6 +10,7 @@ export type PropTypes = {
   theme?: 'light' | 'dark'
   value: null | Season
   onSelect: (season: null | Season) => void
+  seasons: Season[] | null
 }
 
 const UNSELECTED_VAL = '...'
@@ -19,11 +18,9 @@ const UNSELECTED_VAL = '...'
 const SeasonsSelect = styled(Dropdown)``
 
 const SelectSeason: React.FC<PropTypes> = observer(
-  ({ onSelect, value = null, label, className, theme = 'light' }) => {
-    const { data } = useQueryData(seasonsQuery)
-
+  ({ seasons: seasonsData, onSelect, value = null, label, className, theme = 'light' }) => {
     const seasons: Season[] = useMemo(() => {
-      const seasonsList: Season[] = [...data]
+      const seasonsList: Season[] = !seasonsData ? [] : [...seasonsData]
 
       if (seasonsList[0]?.id !== '...') {
         const unselectedSeason: Season = {
@@ -40,7 +37,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       }
 
       return seasonsList
-    }, [data, value])
+    }, [seasonsData, value])
 
     const onSelectSeason = useCallback(
       (selectedItem) => {

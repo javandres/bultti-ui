@@ -179,7 +179,22 @@
           {
             "name": "seasons",
             "description": "",
-            "args": [],
+            "args": [
+              {
+                "name": "date",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Date",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
             "type": {
               "kind": "LIST",
               "name": null,
@@ -968,22 +983,6 @@
             "deprecationReason": null
           },
           {
-            "name": "year",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "season",
             "description": "",
             "args": [],
@@ -1000,7 +999,7 @@
             "deprecationReason": null
           },
           {
-            "name": "dateBegin",
+            "name": "startDate",
             "description": "",
             "args": [],
             "type": {
@@ -1008,7 +1007,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -1016,7 +1015,7 @@
             "deprecationReason": null
           },
           {
-            "name": "dateEnd",
+            "name": "endDate",
             "description": "",
             "args": [],
             "type": {
@@ -1024,7 +1023,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "Date",
                 "ofType": null
               }
             },
@@ -2766,16 +2765,6 @@
             "defaultValue": null
           },
           {
-            "name": "year",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
             "name": "season",
             "description": "",
             "type": {
@@ -2786,21 +2775,21 @@
             "defaultValue": null
           },
           {
-            "name": "dateBegin",
+            "name": "startDate",
             "description": "",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Date",
               "ofType": null
             },
             "defaultValue": null
           },
           {
-            "name": "dateEnd",
+            "name": "endDate",
             "description": "",
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Date",
               "ofType": null
             },
             "defaultValue": null

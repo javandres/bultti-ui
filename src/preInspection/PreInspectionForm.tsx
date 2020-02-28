@@ -87,7 +87,9 @@ const PreInspectionForm: React.FC = observer(() => {
     executionRequirements: observable.array([]),
     startDate: '',
     endDate: '',
-    productionStart: moment().format('YYYY-MM-DD'),
+    productionStart: moment()
+      .add(1, 'days')
+      .format('YYYY-MM-DD'),
     productionEnd: '',
     departureBlocks: observable.array([]),
     whenReady: () => {
@@ -129,13 +131,12 @@ const PreInspectionForm: React.FC = observer(() => {
     variables: { date: formState.productionStart },
   })
 
+  // Pre-select the first available season if no season is selected.
   useEffect(() => {
     const currentSeason =
       formState.season || (seasonsData && seasonsData.length !== 0) ? seasonsData[0] : null
 
-    console.log(seasonsData)
-
-    if (currentSeason) {
+    if (currentSeason && (!formState.season || currentSeason.id !== formState.season?.id)) {
       formState.setProductionEndDate(currentSeason.endDate)
       formState.selectSeason(currentSeason)
 
@@ -179,6 +180,7 @@ const PreInspectionForm: React.FC = observer(() => {
               </ControlGroup>
               <ControlGroup>
                 <SelectSeason
+                  seasons={seasonsData}
                   label="Aikataulukausi"
                   theme="light"
                   value={formState.season}
