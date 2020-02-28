@@ -1,20 +1,23 @@
+import { MutationHookOptions, useMutation } from '@apollo/react-hooks'
+import { MutationFunctionOptions, OperationVariables } from '@apollo/react-common'
 import { DocumentNode, ExecutionResult } from 'graphql'
 import { useCallback, useMemo } from 'react'
-import { MutationHookOptions, useMutation } from '@apollo/react-hooks'
 import { pickGraphqlData } from './pickGraphqlData'
-import { OperationVariables } from '@apollo/react-common'
 import { ApolloError } from 'apollo-client'
 
-type Uploader<TData> = [
-  (file: File, overrideOptions: {}) => Promise<ExecutionResult<TData>>,
-  { data: null | TData; loading: boolean; error?: ApolloError, called: boolean}
+type Uploader<TData, TVariables> = [
+  (
+    file: File,
+    overrideOptions?: MutationFunctionOptions<TData, TVariables>
+  ) => Promise<ExecutionResult<TData>>,
+  { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 
 export const useUploader = <TData = any, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
-): Uploader<TData> => {
+): Uploader<TData, TVariables> => {
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
     options
@@ -22,7 +25,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
 
   const uploadFile = useCallback(
     (file: File, overrideOptions = {}) => {
-      const queryOptions = {
+      const queryOptions: MutationFunctionOptions<TData, TVariables> = {
         ...overrideOptions,
         variables: {
           ...(options?.variables || {}),

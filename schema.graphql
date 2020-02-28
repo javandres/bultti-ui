@@ -29,20 +29,21 @@ type DepartureBlock {
 }
 
 type ExecutionEquipment {
-  amount: Int!
-  area: OperatingArea!
-  brand: String!
-  class: Int!
-  emissionClass: String!
-  id: ID
-  model: String!
-  operatingUnit: String!
-  operatorId: String!
-  preInspectionId: String!
-  ratio: Float!
-  seats: Int!
-  soundLevel: Int!
-  type: String!
+  amount: Int
+  area: OperatingArea
+  brand: String
+  class: Int
+  emissionClass: String
+  id: ID!
+  model: String
+  operatingUnit: String
+  operatorId: String
+  preInspection: PreInspection
+  preInspectionId: String
+  ratio: Float
+  seats: Int
+  soundLevel: Int
+  type: String
 }
 
 type ExecutionRequirement {
@@ -60,6 +61,7 @@ type File {
 }
 
 type Mutation {
+  createPreInspection: PreInspection
   uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
   uploadEquipmentCatalogue(area: OperatingArea!, file: Upload, inspectionId: String!): [ExecutionEquipment!]
 }
@@ -87,16 +89,18 @@ type Operator {
 type PreInspection {
   createdAt: String!
   createdBy: String!
-  departureBlocks: [DepartureBlock!]!
-  endDate: String!
-  executionRequirements: [ExecutionRequirement!]!
+  departureBlocks: [DepartureBlock!]
+  endDate: String
+  executionRequirements: [ExecutionRequirement!]
   id: String!
-  operatorId: String!
-  productionEnd: String!
-  productionStart: String!
-  season: Season!
-  seasonId: String!
-  startDate: String!
+  operator: Operator
+  operatorId: String
+  productionEnd: String
+  productionStart: String
+  season: Season
+  seasonId: String
+  startDate: String
+  status: InspectionStatus!
 }
 
 type Query {
@@ -147,6 +151,11 @@ enum DepartureType {
   I
   N
   O
+}
+
+enum InspectionStatus {
+  DRAFT
+  IN_PRODUCTION
 }
 
 enum OperatingArea {

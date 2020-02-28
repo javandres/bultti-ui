@@ -19,7 +19,7 @@ export const createGraphqlClient = async () => {
 
   const httpLink = createUploadLink({
     uri: SERVER_URL + GRAPHQL_PATH,
-    credentials: 'same-origin',
+    credentials: 'include',
   })
 
   const fragmentMatcher = new IntrospectionFragmentMatcher({

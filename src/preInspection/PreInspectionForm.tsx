@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
 import { Column, ColumnWrapper, FormHeading } from '../common/components/common'
@@ -20,6 +20,12 @@ import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
 import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 import moment from 'moment'
+import { useMutationData } from '../utils/useMutationData'
+import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
+
+const currentDate = moment()
+  .add(1, 'days')
+  .format('YYYY-MM-DD')
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -51,8 +57,22 @@ const ControlGroup = styled.div`
   }
 `
 
+const FormErrorContainer = styled.div`
+  padding: 0 1.5rem;
+`
+
+const FormError = styled.div`
+  margin-bottom: 1rem;
+  border-radius: 5px;
+  border: 1px solid var(--light-red);
+  color: var(--dark-grey);
+  background: var(--lighter-red);
+  padding: 0.75rem;
+`
+
 interface PreInspectionFormActions {
-  whenReady: () => void
+  setInspectionId: (id: string) => void
+  setStatus: (nextStatus: PreInspectionFormStatus) => void
   selectOperator: (operator: Operator | null) => void
   selectSeason: (season: Season | null) => void
   changeRequirements: (executionRequirements: ExecutionRequirement[]) => void
@@ -65,8 +85,17 @@ interface PreInspectionFormActions {
   setProductionEndDate: (endDate: string) => void
 }
 
+enum PreInspectionFormStatus {
+  Uninitialized = 'UNINITIALIZED',
+  InitLoading = 'INIT_LOADING',
+  Invalid = 'INVALID',
+  Draft = 'DRAFT',
+  InProduction = 'IN_PRODUCTION',
+}
+
 interface PreInspectionFormData extends PreInspectionFormActions {
-  ready: boolean
+  inspectionId: string
+  status: PreInspectionFormStatus
   operator: Operator | null
   season: Season | null
   executionRequirements: IObservableArray<ExecutionRequirement>
@@ -81,19 +110,21 @@ const PreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
 
   const formState = useLocalStore<PreInspectionFormData>(() => ({
-    ready: false,
+    inspectionId: '',
+    status: PreInspectionFormStatus.Uninitialized,
     operator: globalOperator || null,
     season: null,
     executionRequirements: observable.array([]),
     startDate: '',
     endDate: '',
-    productionStart: moment()
-      .add(1, 'days')
-      .format('YYYY-MM-DD'),
+    productionStart: currentDate,
     productionEnd: '',
     departureBlocks: observable.array([]),
-    whenReady: () => {
-      formState.ready = true
+    setInspectionId: (id) => {
+      formState.inspectionId = id
+    },
+    setStatus: (nextStatus: PreInspectionFormStatus) => {
+      formState.status = nextStatus
     },
     selectOperator: (operator = null) => {
       formState.operator = operator
@@ -127,8 +158,35 @@ const PreInspectionForm: React.FC = observer(() => {
     },
   }))
 
-  const { data: seasonsData } = useQueryData(seasonsQuery, {
-    variables: { date: formState.productionStart },
+  const [
+    createPreInspection,
+    { data: createdInspectionData, loading: inspectionLoading },
+  ] = useMutationData(createPreInspectionMutation)
+
+  useEffect(() => {
+    if (formState.status === PreInspectionFormStatus.Uninitialized && !inspectionLoading) {
+      formState.setStatus(PreInspectionFormStatus.InitLoading)
+
+      createPreInspection().then(({ data }) => {
+        if (!data) {
+          formState.setStatus(PreInspectionFormStatus.Invalid)
+        } else {
+          formState.setStatus(PreInspectionFormStatus.Draft)
+        }
+      })
+    }
+
+    if (
+      createdInspectionData &&
+      formState.status === PreInspectionFormStatus.Draft &&
+      !formState.inspectionId
+    ) {
+      formState.setInspectionId(createdInspectionData.id)
+    }
+  }, [formState.status, createdInspectionData, inspectionLoading])
+
+  const { data: seasonsData, loading: seasonsLoading } = useQueryData(seasonsQuery, {
+    variables: { date: currentDate },
   })
 
   // Pre-select the first available season if no season is selected.
@@ -137,6 +195,7 @@ const PreInspectionForm: React.FC = observer(() => {
       formState.season || (seasonsData && seasonsData.length !== 0) ? seasonsData[0] : null
 
     if (currentSeason && (!formState.season || currentSeason.id !== formState.season?.id)) {
+      formState.setProductionStartDate(currentSeason.startDate)
       formState.setProductionEndDate(currentSeason.endDate)
       formState.selectSeason(currentSeason)
 
@@ -144,8 +203,6 @@ const PreInspectionForm: React.FC = observer(() => {
       // This is the "comparison period" that is extrapolated across the whole production period.
       formState.setStartDate(toISODate(startOfISOWeek(parseISO(currentSeason.startDate))))
       formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.startDate))))
-
-      formState.whenReady()
     }
   }, [seasonsData, formState.season])
 
@@ -155,16 +212,53 @@ const PreInspectionForm: React.FC = observer(() => {
     }
   }, [globalOperator])
 
-  const { data: operatingUnitsData } = useQueryData(operatingUnitsQuery, {
-    variables: {
-      operatorId: formState?.operator?.id || '',
-      startDate: formState?.productionStart,
-    },
-  })
+  const { data: operatingUnitsData, loading: unitsLoading } = useQueryData(
+    operatingUnitsQuery,
+    {
+      variables: {
+        operatorId: formState?.operator?.id || '',
+        startDate: formState?.productionStart,
+      },
+    }
+  )
+
+  const formCondition = useMemo(() => {
+    return {
+      status: formState.status === PreInspectionFormStatus.Draft,
+      inspectionId: !!formState.inspectionId,
+      operator: !!formState.operator,
+      productionStart: !!formState.productionStart,
+      seasons: seasonsLoading ? true : !!(seasonsData && seasonsData.length !== 0),
+      operatingUnits: !formState.operator
+        ? true
+        : unitsLoading
+        ? true
+        : !!(operatingUnitsData && operatingUnitsData.length !== 0),
+    }
+  }, [
+    formState.operator,
+    formState.inspectionId,
+    formState.productionStart,
+    seasonsData,
+    seasonsLoading,
+    operatingUnitsData,
+    unitsLoading,
+  ])
+
+  const activeBlockers = Object.entries(formCondition)
+    .filter(([, status]) => !status)
+    .map(([key]) => key)
 
   return (
     <CreatePreInspectionFormView>
-      {!formState.ready ? (
+      {activeBlockers.length !== 0 && (
+        <FormErrorContainer>
+          {activeBlockers.map((blockerName) => (
+            <FormError key={blockerName}>{blockerName}</FormError>
+          ))}
+        </FormErrorContainer>
+      )}
+      {!formState.inspectionId ? (
         <PageLoading />
       ) : (
         <>

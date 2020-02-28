@@ -46,20 +46,21 @@ export enum DepartureType {
 
 export type ExecutionEquipment = {
    __typename?: 'ExecutionEquipment',
-  id?: Maybe<Scalars['ID']>,
-  preInspectionId: Scalars['String'],
-  area: OperatingArea,
-  operatorId: Scalars['String'],
-  operatingUnit: Scalars['String'],
-  class: Scalars['Int'],
-  brand: Scalars['String'],
-  model: Scalars['String'],
-  type: Scalars['String'],
-  amount: Scalars['Int'],
-  ratio: Scalars['Float'],
-  seats: Scalars['Int'],
-  emissionClass: Scalars['String'],
-  soundLevel: Scalars['Int'],
+  id: Scalars['ID'],
+  preInspectionId?: Maybe<Scalars['String']>,
+  preInspection?: Maybe<PreInspection>,
+  area?: Maybe<OperatingArea>,
+  operatorId?: Maybe<Scalars['String']>,
+  operatingUnit?: Maybe<Scalars['String']>,
+  class?: Maybe<Scalars['Int']>,
+  brand?: Maybe<Scalars['String']>,
+  model?: Maybe<Scalars['String']>,
+  type?: Maybe<Scalars['String']>,
+  amount?: Maybe<Scalars['Int']>,
+  ratio?: Maybe<Scalars['Float']>,
+  seats?: Maybe<Scalars['Int']>,
+  emissionClass?: Maybe<Scalars['String']>,
+  soundLevel?: Maybe<Scalars['Int']>,
 };
 
 export type ExecutionRequirement = {
@@ -86,8 +87,14 @@ export type File = {
   encoding: Scalars['String'],
 };
 
+export enum InspectionStatus {
+  Draft = 'DRAFT',
+  InProduction = 'IN_PRODUCTION'
+}
+
 export type Mutation = {
    __typename?: 'Mutation',
+  createPreInspection?: Maybe<PreInspection>,
   uploadDepartureBlocks?: Maybe<Array<DepartureBlock>>,
   uploadEquipmentCatalogue?: Maybe<Array<ExecutionEquipment>>,
 };
@@ -135,15 +142,17 @@ export type Operator = {
 export type PreInspection = {
    __typename?: 'PreInspection',
   id: Scalars['String'],
-  operatorId: Scalars['String'],
-  seasonId: Scalars['String'],
-  season: Season,
-  startDate: Scalars['String'],
-  endDate: Scalars['String'],
-  productionStart: Scalars['String'],
-  productionEnd: Scalars['String'],
-  executionRequirements: Array<ExecutionRequirement>,
-  departureBlocks: Array<DepartureBlock>,
+  operatorId?: Maybe<Scalars['String']>,
+  operator?: Maybe<Operator>,
+  seasonId?: Maybe<Scalars['String']>,
+  season?: Maybe<Season>,
+  startDate?: Maybe<Scalars['String']>,
+  endDate?: Maybe<Scalars['String']>,
+  productionStart?: Maybe<Scalars['String']>,
+  productionEnd?: Maybe<Scalars['String']>,
+  executionRequirements?: Maybe<Array<ExecutionRequirement>>,
+  departureBlocks?: Maybe<Array<DepartureBlock>>,
+  status: InspectionStatus,
   createdAt: Scalars['String'],
   createdBy: Scalars['String'],
 };
