@@ -189,6 +189,14 @@ const PreInspectionForm: React.FC = observer(() => {
     variables: { date: currentDate },
   })
 
+  // Use the global operator as the initially selected operator if no operator
+  // has been selected for this form yet.
+  useEffect(() => {
+    if (!formState.operator) {
+      formState.selectOperator(globalOperator)
+    }
+  }, [globalOperator])
+
   // Pre-select the first available season if no season is selected.
   useEffect(() => {
     const currentSeason =
@@ -205,12 +213,6 @@ const PreInspectionForm: React.FC = observer(() => {
       formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.startDate))))
     }
   }, [seasonsData, formState.season])
-
-  useEffect(() => {
-    if (formState.operator?.id !== globalOperator?.id) {
-      formState.selectOperator(globalOperator)
-    }
-  }, [globalOperator])
 
   const { data: operatingUnitsData, loading: unitsLoading } = useQueryData(
     operatingUnitsQuery,
