@@ -108,6 +108,7 @@ type PreInspection {
 
 type Query {
   contracts: [Contract!]
+  operatingUnit(operatingUnitId: String!, operatorId: String!, startDate: Date!): OperatingUnit
   operatingUnits(operatorId: String!, startDate: Date!): [OperatingUnit!]
   operator(id: String): Operator
   operators: [Operator!]

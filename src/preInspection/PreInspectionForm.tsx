@@ -5,8 +5,8 @@ import {
   Column,
   ColumnWrapper,
   FormError,
-  FormMessageContainer,
   FormHeading,
+  FormMessageContainer,
 } from '../common/components/common'
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
@@ -24,10 +24,11 @@ import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
-import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
+import { operatingUnitQuery, operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
+import ParseEquipmentCatalogue from './ParseEquipmentCatalogue'
 
 const currentDate = moment()
   .add(1, 'days')
@@ -217,6 +218,14 @@ const PreInspectionForm: React.FC = observer(() => {
     }
   )
 
+  useQueryData(operatingUnitQuery, {
+    variables: {
+      operatorId: formState?.operator?.id || '',
+      operatingUnitId: '18/43K234HEL',
+      startDate: formState?.productionStart,
+    },
+  })
+
   const formCondition = useMemo(() => {
     return {
       status: formState.status === PreInspectionFormStatus.Draft,
@@ -305,6 +314,12 @@ const PreInspectionForm: React.FC = observer(() => {
                   maxDate={formState.productionEnd}
                 />
               </ControlGroup>
+            </FormColumn>
+          </FormWrapper>
+          <FormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <FormHeading theme="light">Parse Excel</FormHeading>
+              <ParseEquipmentCatalogue />
             </FormColumn>
           </FormWrapper>
           <FormWrapper>

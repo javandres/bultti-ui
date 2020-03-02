@@ -61,7 +61,7 @@ const CurrentFile = styled.span`
 `
 
 export type PropTypes = {
-  uploader: any // (file: File, variables?: { [key: string]: any }) => void
+  uploader?: any // (file: File, variables?: { [key: string]: any }) => void
   label?: string
   className?: string
   onChange: (files: File[]) => void
@@ -69,20 +69,20 @@ export type PropTypes = {
 }
 
 const UploadFile: React.FC<PropTypes> = observer(
-  ({ uploader, label = 'Valitse tiedosto', className, onChange, value }) => {
-    const [upload, state] = uploader
+  ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value }) => {
+    const [upload, state = { called: false }] = uploader || []
 
     useEffect(() => {
       if (value && value.length !== 0) {
         const firstFile = value[0]
 
-        if (firstFile) {
+        if (firstFile && upload) {
           upload(firstFile)
         }
-      } else if (state.called) {
+      } else if (state.called && upload) {
         upload(null)
       }
-    }, [value, state.called])
+    }, [value, upload, state.called])
 
     const onDrop = useCallback(
       (acceptedFiles) => {

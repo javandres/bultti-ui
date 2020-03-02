@@ -6,9 +6,11 @@ import gql from 'graphql-tag'
 import UploadFile from '../common/inputs/UploadFile'
 import { ExecutionEquipment, OperatingArea, OperatingUnit } from '../schema-types'
 import Table from '../common/components/Table'
-import { FlexRow, FormMessage, FormMessageContainer } from '../common/components/common'
+import { FlexRow, FormMessage } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import { get, groupBy } from 'lodash'
+import { useQueryData } from '../utils/useQueryData'
+import { operatingUnitQuery } from '../queries/operatingUnitsQuery'
 
 const ExecutionRequirementsView = styled.div``
 const ExecutionRequirementsAreaContainer = styled.div``
@@ -30,7 +32,7 @@ export type AreaPropTypes = {
   operatingUnits: OperatingUnit[]
 }
 
-const uploadEquipmentCatalogueMutation = gql`
+export const uploadEquipmentCatalogueMutation = gql`
   mutation uploadEquipmentCatalogue(
     $file: Upload
     $inspectionId: String!
@@ -106,7 +108,7 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
           onChange={setUploadValue}
         />
         {equipmentData && (
-          <FlexRow style={{marginBottom: '1rem'}}>
+          <FlexRow style={{ marginBottom: '1rem' }}>
             <ResetButton onClick={onReset}>Reset</ResetButton>
           </FlexRow>
         )}
