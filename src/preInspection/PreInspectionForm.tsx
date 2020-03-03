@@ -52,7 +52,7 @@ const FormWrapper = styled(ColumnWrapper)`
   margin: 1rem;
   background: white;
   border-radius: 0.5rem;
-  border: 1px solid #e8e8e8;
+  border: 1px solid var(--lighter-grey);
 `
 
 const ControlGroup = styled.div`

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
+import { render } from 'react-dom'
 
 const TableView = styled.div`
   width: 100%;
@@ -84,9 +85,14 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => () => void
   className?: string
+  renderCell?: (val: any, item?: ItemType) => React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
+
+const defaultRenderCellContent = (val: any): React.ReactChild => (
+  <>{val && <CellContent>{val}</CellContent>}</>
+)
 
 const Table: React.FC<PropTypes> = observer(
   ({
@@ -96,6 +102,7 @@ const Table: React.FC<PropTypes> = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
+    renderCell = defaultRenderCellContent,
     className,
   }) => {
     const filteredItems = useMemo(() => items.map(({ __typename, ...item }) => item), [items])
@@ -142,7 +149,7 @@ const Table: React.FC<PropTypes> = observer(
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
               {itemValues.map((val: any, index) => (
                 <TableCell key={`${rowKey}-${index}`}>
-                  {val && <CellContent>{val}</CellContent>}
+                  {renderCell(val, item)}
                 </TableCell>
               ))}
               {onRemoveRow && <RemoveButton onClick={onRemoveRow(item)}>X</RemoveButton>}
