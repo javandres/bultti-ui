@@ -23,8 +23,8 @@ const UploadWrapper = styled.div<{ hasData?: boolean; backgroundColor?: string }
 const LabelText = styled.span`
   padding: 0.4rem 1rem 0.4rem;
   margin-right: 1rem;
-  background: var(--blue);
-  color: white;
+  background: transparent;
+  color: var(--blue);
   user-select: none;
   display: inline-flex;
   align-items: center;
@@ -36,11 +36,9 @@ const LabelText = styled.span`
   border-radius: 2.5rem;
   border: 1px solid var(--blue);
   transform: scale(1);
-  transition: background-color 0.2s ease-out, transform 0.1s ease-out;
+  transition: transform 0.1s ease-out;
 
   &:hover {
-    background: var(--dark-blue);
-    color: white;
     transform: scale(1.025);
   }
 `

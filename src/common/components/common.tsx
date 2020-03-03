@@ -15,11 +15,7 @@ export const LoginButton = styled(StyledButton)`
   }
 `
 
-export const Page = styled.div`
-  > *:first-child {
-    margin-top: 0;
-  }
-`
+export const Page = styled.div``
 
 export const PageSection = styled.div`
   padding: 0 1rem 0 1.5rem;
@@ -71,14 +67,14 @@ export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }
   text-transform: uppercase;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
   margin: 0;
-  padding-bottom: 0.5rem;
+  padding-bottom: ${(p) => (p.subLabel ? '0.5rem' : '1rem')};
 `
 
 export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
   font-size: 1rem;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
 
   &:first-child {
@@ -87,12 +83,12 @@ export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
 `
 
 export const FormMessageContainer = styled.div`
-  padding: 0 1.5rem;
+  padding: 0 1rem;
 `
 
 export const FormMessage = styled.div`
   margin-bottom: 1rem;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   border: 1px solid var(--light-blue);
   color: var(--dark-grey);
   background: var(--lightest-blue);

@@ -19,7 +19,7 @@ import SelectDate from '../common/inputs/SelectDate'
 import { useQueryData } from '../utils/useQueryData'
 import { endOfISOWeek, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
-import { PageLoading } from '../common/components/Loading'
+import Loading, { PageLoading } from '../common/components/Loading'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
@@ -37,11 +37,22 @@ const CreatePreInspectionFormView = styled.div`
   width: 100%;
 `
 
-const FormColumn = styled(Column)``
+const FormColumn = styled(Column)`
+  padding: 1rem 0;
+  margin-right: 1.5rem;
+  
+  &:last-child {
+    margin-right: 0;
+  }
+`
 
 const FormWrapper = styled(ColumnWrapper)`
   display: flex;
-  width: 100%;
+  padding: 0.5rem 1rem;
+  margin: 1rem;
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid #e8e8e8;
 `
 
 const ControlGroup = styled.div`
@@ -232,7 +243,7 @@ const PreInspectionForm: React.FC = observer(() => {
   }, [formState.season])
 
   // Get the operating units for the selected operator.
-  const { data: operatingUnitsData, loading: unitsLoading } = useQueryData(
+  const { data: operatingUnitsData, loading: operatingUnitsLoading } = useQueryData(
     operatingUnitsQuery,
     {
       variables: {
@@ -252,7 +263,7 @@ const PreInspectionForm: React.FC = observer(() => {
       seasons: seasonsLoading ? true : seasons && seasons.length !== 0,
       operatingUnits: !formState.operator
         ? true
-        : unitsLoading
+        : operatingUnitsLoading
         ? true
         : !!(operatingUnitsData && operatingUnitsData.length !== 0),
     }
@@ -263,9 +274,10 @@ const PreInspectionForm: React.FC = observer(() => {
     seasons,
     seasonsLoading,
     operatingUnitsData,
-    unitsLoading,
+    operatingUnitsLoading,
   ])
 
+  // Validation issues that affect the form at this moment
   const activeBlockers = Object.entries(formCondition)
     .filter(([, status]) => !status)
     .map(([key]) => key)
@@ -351,7 +363,11 @@ const PreInspectionForm: React.FC = observer(() => {
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
               <FormHeading theme="light">Suoritevaatimukset</FormHeading>
-              <ExecutionRequirements operatingUnits={operatingUnitsData} />
+              {operatingUnitsLoading ? (
+                <PageLoading />
+              ) : (
+                <ExecutionRequirements operatingUnits={operatingUnitsData} />
+              )}
             </FormColumn>
           </FormWrapper>
         </>

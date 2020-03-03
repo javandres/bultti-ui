@@ -2,10 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import PreInspectionForm from '../preInspection/PreInspectionForm'
-import { PageTitle } from '../common/components/common'
+import { Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 
-const CreatePreInspectionView = styled.div``
+const CreatePreInspectionView = styled(Page)``
 
 export type PropTypes = {} & RouteComponentProps
 
