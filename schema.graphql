@@ -73,6 +73,7 @@ type OperatingUnit {
   operatorId: String!
   routes: [OperatingUnitRoute]
   startDate: Date
+  weeklyExecutionMeters: Int
 }
 
 type OperatingUnitRoute {

@@ -24,7 +24,7 @@ import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
-import { operatingUnitQuery, operatingUnitsQuery } from '../queries/operatingUnitsQuery'
+import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
@@ -193,20 +193,26 @@ const PreInspectionForm: React.FC = observer(() => {
 
   // Pre-select the first available season if no season is selected.
   useEffect(() => {
-    const currentSeason =
-      formState.season || (seasonsData && seasonsData.length !== 0) ? seasonsData[0] : null
+    const firstAvailableSeason =
+      seasonsData && seasonsData.length !== 0 ? seasonsData[0] : null
 
-    if (currentSeason && (!formState.season || currentSeason.id !== formState.season?.id)) {
-      formState.setProductionStartDate(currentSeason.startDate)
-      formState.setProductionEndDate(currentSeason.endDate)
-      formState.selectSeason(currentSeason)
+    if (!formState.season && !!firstAvailableSeason) {
+      formState.selectSeason(firstAvailableSeason)
+    }
+  }, [seasonsData, formState.season])
+
+  useEffect(() => {
+    if (formState.season) {
+      formState.setProductionStartDate(formState.season.startDate)
+      formState.setProductionEndDate(formState.season.endDate)
+      formState.selectSeason(formState.season)
 
       // Start and end dates describe the first week of the production period.
       // This is the "comparison period" that is extrapolated across the whole production period.
-      formState.setStartDate(toISODate(startOfISOWeek(parseISO(currentSeason.startDate))))
-      formState.setEndDate(toISODate(endOfISOWeek(parseISO(currentSeason.startDate))))
+      formState.setStartDate(toISODate(startOfISOWeek(parseISO(formState.season.startDate))))
+      formState.setEndDate(toISODate(endOfISOWeek(parseISO(formState.season.startDate))))
     }
-  }, [seasonsData, formState.season])
+  }, [formState.season])
 
   const { data: operatingUnitsData, loading: unitsLoading } = useQueryData(
     operatingUnitsQuery,
@@ -217,14 +223,6 @@ const PreInspectionForm: React.FC = observer(() => {
       },
     }
   )
-
-  useQueryData(operatingUnitQuery, {
-    variables: {
-      operatorId: formState?.operator?.id || '',
-      operatingUnitId: '18/43K234HEL',
-      startDate: formState?.productionStart,
-    },
-  })
 
   const formCondition = useMemo(() => {
     return {

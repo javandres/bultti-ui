@@ -14,6 +14,7 @@ export const operatingUnitsQuery = gql`
       operationStartDate
       startDate
       operatingArea
+      weeklyExecutionMeters
     }
   }
 `
@@ -36,6 +37,7 @@ export const operatingUnitQuery = gql`
       operationStartDate
       startDate
       operatingArea
+      weeklyExecutionMeters
     }
   }
 `

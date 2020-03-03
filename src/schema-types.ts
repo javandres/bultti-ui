@@ -125,6 +125,7 @@ export type OperatingUnit = {
   endDate?: Maybe<Scalars['Date']>,
   operationStartDate?: Maybe<Scalars['Date']>,
   operationEndDate?: Maybe<Scalars['Date']>,
+  weeklyExecutionMeters?: Maybe<Scalars['Int']>,
 };
 
 export type OperatingUnitRoute = {
