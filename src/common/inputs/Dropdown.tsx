@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { StyleHTMLAttributes, useCallback } from 'react'
 import styled from 'styled-components'
 import { useSelect } from 'downshift'
 import { text } from '../../utils/translate'
@@ -6,6 +6,7 @@ import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icons/ArrowDown'
 import { ThemeTypes } from '../../types/common'
 import { InputLabel } from '../components/common'
+import { observer } from 'mobx-react-lite'
 
 const DropdownView = styled.div``
 
@@ -66,14 +67,15 @@ const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
 `
 
-export type DropdownProps<T = any> = {
-  label: string
-  items: T[]
-  onSelect: (selectedItem: T | null) => unknown
-  itemToString: string | ((item: T | null) => string)
-  itemToLabel: string | ((item: T | null) => string)
-  selectedItem?: T
+export type DropdownProps = {
+  label?: string
+  items: any[]
+  onSelect: (selectedItem: any | null) => unknown
+  itemToString: string | ((item: any | null) => string)
+  itemToLabel: string | ((item: any | null) => string)
+  selectedItem?: any
   className?: string
+  style?: StyleHTMLAttributes<HTMLDivElement>
   theme?: 'light' | 'dark'
 }
 
@@ -89,70 +91,73 @@ function toString(item, converter) {
   return ''
 }
 
-const Dropdown: React.FC<any> = <T extends {}>({
-  className,
-  label,
-  items,
-  onSelect,
-  selectedItem,
-  itemToString = 'id',
-  itemToLabel = 'label',
-  theme = 'light',
-}: DropdownProps<T>) => {
-  const onSelectFn = useCallback(
-    ({ selectedItem = null }) => {
-      onSelect(selectedItem || null)
-    },
-    [onSelect]
-  )
-
-  const {
-    isOpen,
-    selectedItem: currentlySelected,
-    getToggleButtonProps,
-    getLabelProps,
-    getMenuProps,
-    highlightedIndex,
-    getItemProps,
-  } = useSelect<T>({
+const Dropdown: React.FC<DropdownProps> = observer(
+  ({
+    className,
+    style = {},
+    label,
     items,
-    onSelectedItemChange: onSelectFn,
+    onSelect,
     selectedItem,
-    defaultSelectedItem: items[0],
-    itemToString: (item: T) => toString(item, itemToString),
-  })
+    itemToString = 'id',
+    itemToLabel = 'label',
+    theme = 'light',
+  }) => {
+    const onSelectFn = useCallback(
+      ({ selectedItem = null }) => {
+        onSelect(selectedItem || null)
+      },
+      [onSelect]
+    )
 
-  return (
-    <DropdownView className={className} theme={theme}>
-      {!!label && (
-        <InputLabel {...getLabelProps()} htmlFor="null" theme={theme}>
-          {label}
-        </InputLabel>
-      )}
-      <SelectWrapper>
-        <SelectButton {...getToggleButtonProps()} theme={theme}>
-          {toString(currentlySelected, itemToLabel) || text('general.app.all')}
-          <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
-        </SelectButton>
-        {isOpen && (
-          <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
-            {items.map((item, index) => (
-              <OperatorSuggestion
-                theme={theme}
-                highlighted={highlightedIndex === index}
-                {...getItemProps({
-                  key: toString(item, itemToString),
-                  index,
-                  item,
-                })}>
-                {toString(item, itemToLabel)}
-              </OperatorSuggestion>
-            ))}
-          </SuggestionsList>
+    const {
+      isOpen,
+      selectedItem: currentlySelected,
+      getToggleButtonProps,
+      getLabelProps,
+      getMenuProps,
+      highlightedIndex,
+      getItemProps,
+    } = useSelect({
+      items,
+      onSelectedItemChange: onSelectFn,
+      selectedItem,
+      defaultSelectedItem: items[0],
+      itemToString: (item: any) => toString(item, itemToString),
+    })
+
+    return (
+      <DropdownView className={className} style={style} theme={theme}>
+        {!!label && (
+          <InputLabel {...getLabelProps()} htmlFor="null" theme={theme}>
+            {label}
+          </InputLabel>
         )}
-      </SelectWrapper>
-    </DropdownView>
-  )
-}
+        <SelectWrapper>
+          <SelectButton {...getToggleButtonProps()} theme={theme}>
+            {toString(currentlySelected, itemToLabel) || text('general.app.all')}
+            <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
+          </SelectButton>
+          {isOpen && (
+            <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
+              {items.map((item, index) => (
+                <OperatorSuggestion
+                  theme={theme}
+                  highlighted={highlightedIndex === index}
+                  {...getItemProps({
+                    key: toString(item, itemToString),
+                    index,
+                    item,
+                  })}>
+                  {toString(item, itemToLabel)}
+                </OperatorSuggestion>
+              ))}
+            </SuggestionsList>
+          )}
+        </SelectWrapper>
+      </DropdownView>
+    )
+  }
+)
 
 export default Dropdown

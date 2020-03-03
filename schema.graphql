@@ -25,21 +25,30 @@ type DepartureBlock {
   vehicleId: String!
 }
 
-type ExecutionEquipment {
-  amount: Int
-  area: OperatingArea
-  brand: String
-  class: Int
+type Equipment {
+  age: Int!
+  emissionClass: String!
+  emissionDesc: String!
+  exteriorColor: String!
+  id: ID!
+  operator: Operator
+  operatorId: String
+  registryNr: String!
+  routes: [Route!]
+  type: String!
+  vehicleId: String!
+}
+
+type EquipmentCollection {
+  age: Float
+  count: Int
   emissionClass: String
   id: ID!
+  make: String
   model: String
   operatingUnit: String
   operatorId: String
-  preInspection: PreInspection
-  preInspectionId: String
-  ratio: Float
   seats: Int
-  soundLevel: Int
   type: String
 }
 
@@ -60,7 +69,7 @@ type File {
 type Mutation {
   createPreInspection: PreInspection
   uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
-  uploadEquipmentCatalogue(area: OperatingArea!, file: Upload, inspectionId: String!): [ExecutionEquipment!]
+  uploadEquipmentCatalogue(area: OperatingArea!, file: Upload, inspectionId: String!): [EquipmentCollection!]
 }
 
 type OperatingUnit {
@@ -83,11 +92,11 @@ type OperatingUnitRoute {
 
 type Operator {
   contracts: [Contract!]
+  equipment: [Equipment!]
   id: String!
   name: String
   operatingUnits: [OperatingUnit!]
   routes: [Route!]
-  vehicles: [Vehicle!]
 }
 
 type PreInspection {
@@ -109,6 +118,7 @@ type PreInspection {
 
 type Query {
   contracts: [Contract!]
+  equipment(all: Boolean): [Equipment!]
   operatingUnit(operatingUnitId: String!, operatorId: String!, startDate: Date!): OperatingUnit
   operatingUnits(operatorId: String!, startDate: Date!): [OperatingUnit!]
   operator(id: String): Operator
@@ -116,7 +126,6 @@ type Query {
   routes: [Route!]
   seasons(date: Date!): [Season!]
   uploads: [String]
-  vehicles(all: Boolean): [Vehicle!]
 }
 
 type Route {
@@ -136,20 +145,6 @@ type Season {
   id: String!
   season: String!
   startDate: Date!
-}
-
-type Vehicle {
-  age: Int!
-  emissionClass: String!
-  emissionDesc: String!
-  exteriorColor: String!
-  id: ID!
-  operator: Operator
-  operatorId: String
-  registryNr: String!
-  routes: [Route!]
-  type: String!
-  vehicleId: String!
 }
 
 enum DepartureType {

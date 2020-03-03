@@ -14,7 +14,7 @@
         "description": "",
         "fields": [
           {
-            "name": "vehicles",
+            "name": "equipment",
             "description": "",
             "args": [
               {
@@ -36,7 +36,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Vehicle",
+                  "name": "Equipment",
                   "ofType": null
                 }
               }
@@ -300,7 +300,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "Vehicle",
+        "name": "Equipment",
         "description": "",
         "fields": [
           {
@@ -831,7 +831,7 @@
             "deprecationReason": null
           },
           {
-            "name": "vehicles",
+            "name": "equipment",
             "description": "",
             "args": [],
             "type": {
@@ -842,7 +842,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "Vehicle",
+                  "name": "Equipment",
                   "ofType": null
                 }
               }
@@ -1263,7 +1263,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "ExecutionEquipment",
+                  "name": "EquipmentCollection",
                   "ofType": null
                 }
               }
@@ -1773,7 +1773,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ExecutionEquipment",
+        "name": "EquipmentCollection",
         "description": "",
         "fields": [
           {
@@ -1788,42 +1788,6 @@
                 "name": "ID",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "preInspectionId",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "preInspection",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PreInspection",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "area",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "ENUM",
-              "name": "OperatingArea",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1853,19 +1817,7 @@
             "deprecationReason": null
           },
           {
-            "name": "class",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "brand",
+            "name": "make",
             "description": "",
             "args": [],
             "type": {
@@ -1901,24 +1853,12 @@
             "deprecationReason": null
           },
           {
-            "name": "amount",
+            "name": "count",
             "description": "",
             "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "ratio",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1949,12 +1889,12 @@
             "deprecationReason": null
           },
           {
-            "name": "soundLevel",
+            "name": "age",
             "description": "",
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,

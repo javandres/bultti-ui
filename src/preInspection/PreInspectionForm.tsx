@@ -19,7 +19,7 @@ import SelectDate from '../common/inputs/SelectDate'
 import { useQueryData } from '../utils/useQueryData'
 import { endOfISOWeek, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../utils/toISODate'
-import Loading, { PageLoading } from '../common/components/Loading'
+import { PageLoading } from '../common/components/Loading'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
@@ -28,7 +28,6 @@ import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
-import ParseEquipmentCatalogue from './ParseEquipmentCatalogue'
 import { orderBy } from 'lodash'
 
 const currentDate = moment()
@@ -40,7 +39,7 @@ const CreatePreInspectionFormView = styled.div`
 const FormColumn = styled(Column)`
   padding: 1rem 0;
   margin-right: 1.5rem;
-  
+
   &:last-child {
     margin-right: 0;
   }
@@ -343,12 +342,6 @@ const PreInspectionForm: React.FC = observer(() => {
                   maxDate={formState.productionEnd}
                 />
               </ControlGroup>
-            </FormColumn>
-          </FormWrapper>
-          <FormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <FormHeading theme="light">Parse Excel</FormHeading>
-              <ParseEquipmentCatalogue />
             </FormColumn>
           </FormWrapper>
           <FormWrapper>

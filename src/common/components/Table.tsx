@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { get, orderBy } from 'lodash'
+import { get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
-import { render } from 'react-dom'
+import Dropdown from '../inputs/Dropdown'
 
 const TableView = styled.div`
   width: 100%;
@@ -69,12 +69,39 @@ const ColumnHeaderCell = styled(TableCell)`
   font-weight: bold;
 `
 
-const CellContent = styled.div`
+export const CellContent = styled.div`
   padding: 0.5rem 0 0.5rem 0.15rem;
   text-align: center;
   border: 0;
   background: transparent;
   display: block;
+`
+
+export const TableInput = styled.input`
+  font-family: var(--font-family);
+  padding: 0.5rem 0.2rem 0.5rem 0.5rem;
+  border: 0;
+  background: transparent;
+  display: block;
+  width: 100%;
+  font-size: 0.75rem;
+`
+
+export const TableDropdown = styled(Dropdown)`
+  width: 100%;
+
+  button {
+    font-family: var(--font-family);
+    padding: 0.5rem 0.25rem 0.5rem 0.25rem;
+    border: 0;
+    background: transparent;
+    width: 100%;
+    font-size: 0.75rem;
+
+    &:hover {
+      background: transparent;
+    }
+  }
 `
 
 export type PropTypes<ItemType = any> = {
@@ -85,7 +112,7 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => () => void
   className?: string
-  renderCell?: (val: any, item?: ItemType) => React.ReactChild
+  renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -105,10 +132,9 @@ const Table: React.FC<PropTypes> = observer(
     renderCell = defaultRenderCellContent,
     className,
   }) => {
-    const filteredItems = useMemo(() => items.map(({ __typename, ...item }) => item), [items])
-
     // Order the keys and get cleartext labels for the columns
-    let columns = Object.keys(filteredItems[0])
+    // Omit keys that start with an underscore.
+    let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
 
     const columnKeysOrdering =
       columnOrder && columnOrder.length !== 0 ? columnOrder : Object.keys(columnLabels)
@@ -132,8 +158,9 @@ const Table: React.FC<PropTypes> = observer(
             <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
           ))}
         </TableHeader>
-        {filteredItems.map((item, rowIndex) => {
-          let itemEntries = Object.entries(item)
+        {items.map((item, rowIndex) => {
+          // Again, omit keys that start with an underscore.
+          let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
 
           if (columnKeysOrdering.length !== 0) {
             itemEntries = orderBy(itemEntries, ([key]) => {
@@ -142,14 +169,13 @@ const Table: React.FC<PropTypes> = observer(
             })
           }
 
-          const itemValues = itemEntries.map(([, value]) => value)
           const rowKey = keyFromItem(item)
 
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
-              {itemValues.map((val: any, index) => (
-                <TableCell key={`${rowKey}-${index}`}>
-                  {renderCell(val, item)}
+              {itemEntries.map(([key, val], index) => (
+                <TableCell key={`${rowKey}-${key}-${index}`}>
+                  {renderCell(val, key, item)}
                 </TableCell>
               ))}
               {onRemoveRow && <RemoveButton onClick={onRemoveRow(item)}>X</RemoveButton>}

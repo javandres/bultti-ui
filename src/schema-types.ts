@@ -41,23 +41,33 @@ export enum DepartureType {
   I = 'I'
 }
 
-export type ExecutionEquipment = {
-   __typename?: 'ExecutionEquipment',
+export type Equipment = {
+   __typename?: 'Equipment',
   id: Scalars['ID'],
-  preInspectionId?: Maybe<Scalars['String']>,
-  preInspection?: Maybe<PreInspection>,
-  area?: Maybe<OperatingArea>,
+  vehicleId: Scalars['String'],
+  registryNr: Scalars['String'],
+  age: Scalars['Int'],
+  type: Scalars['String'],
+  exteriorColor: Scalars['String'],
+  emissionDesc: Scalars['String'],
+  emissionClass: Scalars['String'],
+  routes?: Maybe<Array<Route>>,
+  operatorId?: Maybe<Scalars['String']>,
+  operator?: Maybe<Operator>,
+};
+
+export type EquipmentCollection = {
+   __typename?: 'EquipmentCollection',
+  id: Scalars['ID'],
   operatorId?: Maybe<Scalars['String']>,
   operatingUnit?: Maybe<Scalars['String']>,
-  class?: Maybe<Scalars['Int']>,
-  brand?: Maybe<Scalars['String']>,
+  make?: Maybe<Scalars['String']>,
   model?: Maybe<Scalars['String']>,
   type?: Maybe<Scalars['String']>,
-  amount?: Maybe<Scalars['Int']>,
-  ratio?: Maybe<Scalars['Float']>,
+  count?: Maybe<Scalars['Int']>,
   seats?: Maybe<Scalars['Int']>,
   emissionClass?: Maybe<Scalars['String']>,
-  soundLevel?: Maybe<Scalars['Int']>,
+  age?: Maybe<Scalars['Float']>,
 };
 
 export type ExecutionRequirement = {
@@ -93,7 +103,7 @@ export type Mutation = {
    __typename?: 'Mutation',
   createPreInspection?: Maybe<PreInspection>,
   uploadDepartureBlocks?: Maybe<Array<DepartureBlock>>,
-  uploadEquipmentCatalogue?: Maybe<Array<ExecutionEquipment>>,
+  uploadEquipmentCatalogue?: Maybe<Array<EquipmentCollection>>,
 };
 
 
@@ -138,7 +148,7 @@ export type Operator = {
    __typename?: 'Operator',
   id: Scalars['String'],
   name?: Maybe<Scalars['String']>,
-  vehicles?: Maybe<Array<Vehicle>>,
+  equipment?: Maybe<Array<Equipment>>,
   contracts?: Maybe<Array<Contract>>,
   operatingUnits?: Maybe<Array<OperatingUnit>>,
   routes?: Maybe<Array<Route>>,
@@ -174,7 +184,7 @@ export type PreInspectionInput = {
 
 export type Query = {
    __typename?: 'Query',
-  vehicles?: Maybe<Array<Vehicle>>,
+  equipment?: Maybe<Array<Equipment>>,
   operators?: Maybe<Array<Operator>>,
   operator?: Maybe<Operator>,
   contracts?: Maybe<Array<Contract>>,
@@ -186,7 +196,7 @@ export type Query = {
 };
 
 
-export type QueryVehiclesArgs = {
+export type QueryEquipmentArgs = {
   all?: Maybe<Scalars['Boolean']>
 };
 
@@ -241,18 +251,3 @@ export type SeasonInput = {
   endDate?: Maybe<Scalars['Date']>,
 };
 
-
-export type Vehicle = {
-   __typename?: 'Vehicle',
-  id: Scalars['ID'],
-  vehicleId: Scalars['String'],
-  registryNr: Scalars['String'],
-  age: Scalars['Int'],
-  type: Scalars['String'],
-  exteriorColor: Scalars['String'],
-  emissionDesc: Scalars['String'],
-  emissionClass: Scalars['String'],
-  routes?: Maybe<Array<Route>>,
-  operatorId?: Maybe<Scalars['String']>,
-  operator?: Maybe<Operator>,
-};

@@ -67,7 +67,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
       <OperatorSelect
         className={className}
         theme={theme}
-        label={!label ? null : label || 'Valitse liikennöitsijä'}
+        label={!label ? "" : label || 'Valitse liikennöitsijä'}
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}

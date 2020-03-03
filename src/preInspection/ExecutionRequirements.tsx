@@ -1,15 +1,16 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { useUploader } from '../utils/useUploader'
 import gql from 'graphql-tag'
-import UploadFile from '../common/inputs/UploadFile'
-import { ExecutionEquipment, OperatingArea, OperatingUnit } from '../schema-types'
-import Table from '../common/components/Table'
+import { EquipmentCollection, OperatingArea, OperatingUnit } from '../schema-types'
+import Table, { CellContent } from '../common/components/Table'
 import { FlexRow, FormMessage } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import { get, groupBy, omit } from 'lodash'
 import { round } from '../utils/round'
+import UploadFile from '../common/inputs/UploadFile'
+import { useEquipmentCatalogue } from '../utils/ParseEquipmentCatalogue'
+import EquipmentCollectionInput from './EquipmentCollectionInput'
 
 const ExecutionRequirementsView = styled.div``
 const ExecutionRequirementsAreaContainer = styled.div`
@@ -52,19 +53,15 @@ export const uploadEquipmentCatalogueMutation = gql`
     $area: OperatingArea!
   ) {
     uploadEquipmentCatalogue(file: $file, inspectionId: $inspectionId, area: $area) {
-      preInspectionId
-      area
       operatorId
       operatingUnit
-      class
-      brand
+      make
       model
       type
-      amount
-      ratio
+      count
       seats
       emissionClass
-      soundLevel
+      age
     }
   }
 `
@@ -91,22 +88,47 @@ const combinedColumnLabels = {
   ...omit(executionRequirementColumnLabels, ['operatingUnitId', 'age', 'executionMeters']),
 }
 
+const createEquipmentKey = (e: EquipmentCollection) =>
+  !(e?.make && e?.model && e?.emissionClass && e?.type)
+    ? null
+    : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
+
 const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
   ({ operatingUnits, area }) => {
     const [uploadValue, setUploadValue] = useState<File[]>([])
+    const [equipment, setEquipment] = useState<EquipmentCollection[]>([])
 
-    const uploader = useUploader<ExecutionEquipment[]>(uploadEquipmentCatalogueMutation, {
-      variables: {
-        inspectionId: '123',
-        area,
-      },
-    })
-
-    const [, { data: equipmentData }] = uploader
+    const equipmentCatalogue = useEquipmentCatalogue(uploadValue)
 
     const onReset = useCallback(() => {
       setUploadValue([])
     }, [])
+
+    useEffect(() => {
+      if (equipment.some(({ id }) => id === 'new')) {
+        return
+      }
+
+      const allEquipment: any[] = [...equipment]
+
+      // TODO: stop finished rows from being deleted
+
+      const inputRow: { _editable: boolean } & EquipmentCollection = {
+        _editable: true,
+        id: 'new',
+        make: '',
+        model: '',
+        type: '',
+        count: 0,
+        seats: 0,
+        emissionClass: '',
+        age: 0,
+      }
+
+      allEquipment.push(inputRow)
+
+      setEquipment(allEquipment)
+    }, [equipment, equipmentCatalogue])
 
     const executionRequirements = (operatingUnits || []).map((opUnit) => {
       // noinspection UnnecessaryLocalVariableJS
@@ -149,20 +171,59 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
       return [combinedKm, combinedExecutionRequirements, combinedSanctionThresholds]
     }, [executionRequirements])
 
+    const onEquipmentInputChange = useCallback(
+      (item) => (nextValue, key) => {
+        const itemIndex = equipment.findIndex((eq) => eq.id === item.id)
+        const nextEquipment = [...equipment]
+
+        const nextItem = { ...item }
+
+        if (itemIndex !== -1) {
+          nextEquipment.splice(itemIndex, 1)
+        }
+
+        nextItem[key] = nextValue
+
+        if (nextItem.id === 'new') {
+          nextItem['id'] = createEquipmentKey(nextItem) || 'new'
+        }
+
+        const useIndex = itemIndex === -1 ? nextEquipment.length - 1 : itemIndex
+        nextEquipment.splice(useIndex, 0, nextItem)
+
+        setEquipment(nextEquipment)
+      },
+      [equipment]
+    )
+
+    const renderEquipmentCell = useCallback(
+      (val, key, item) =>
+        item?._editable ? (
+          <EquipmentCollectionInput
+            value={val}
+            valueName={key}
+            onChange={onEquipmentInputChange(item)}
+          />
+        ) : (
+          <CellContent>{val}</CellContent>
+        ),
+      []
+    )
+
     return (
       <ExecutionRequirementsAreaContainer>
+        <TableHeading>Ajoneuvot</TableHeading>
         <UploadFile
-          label="Valitse kalustoluettelo"
-          uploader={uploader}
+          label="Lisää kalustoluettelosta"
           value={uploadValue}
           onChange={setUploadValue}
         />
-        {equipmentData && (
+        {uploadValue && uploadValue.length !== 0 && (
           <FlexRow style={{ marginBottom: '1rem' }}>
             <ResetButton onClick={onReset}>Reset</ResetButton>
           </FlexRow>
         )}
-        {equipmentData && <Table items={equipmentData} />}
+        <Table items={equipment} renderCell={renderEquipmentCell} />
         {executionRequirements && (
           <>
             <TableHeading>Kilpailukohteet</TableHeading>

@@ -58,7 +58,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       <SeasonsSelect
         className={className}
         theme={theme}
-        label={!label ? null : label || 'Aikataulukausi'}
+        label={!label ? "" : label || 'Aikataulukausi'}
         items={seasons}
         onSelect={onSelectSeason}
         selectedItem={currentSeason}
