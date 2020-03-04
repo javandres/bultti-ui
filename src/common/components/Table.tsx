@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { get, omitBy, orderBy } from 'lodash'
+import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
 import Dropdown from '../inputs/Dropdown'
 
@@ -108,6 +108,7 @@ export type PropTypes<ItemType = any> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]: string }
   columnOrder?: string[]
+  hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => () => void
@@ -126,6 +127,7 @@ const Table: React.FC<PropTypes> = observer(
     items,
     columnLabels = {},
     columnOrder = [],
+    hideKeys,
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
@@ -136,8 +138,22 @@ const Table: React.FC<PropTypes> = observer(
     // Omit keys that start with an underscore.
     let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
 
+    const columnLabelKeys = Object.keys(columnLabels)
+
     const columnKeysOrdering =
-      columnOrder && columnOrder.length !== 0 ? columnOrder : Object.keys(columnLabels)
+      columnOrder && columnOrder.length !== 0 ? columnOrder : columnLabelKeys
+
+    let keysToHide: string[] = []
+
+    // Hide keys listed in hideKeys if hideKeys is a non-zero array.
+    // Hide keys NOT listed in columnLabels if hideKeys is undefined.
+    // If hideKeys is a zero-length array no keys will be hidden.
+
+    if (hideKeys && hideKeys.length !== 0) {
+      keysToHide = hideKeys
+    } else if (!hideKeys && columnLabelKeys.length !== 0) {
+      keysToHide = difference(columns, columnLabelKeys)
+    }
 
     if (columnKeysOrdering.length !== 0) {
       columns = orderBy(columns, (key) => {
@@ -154,9 +170,11 @@ const Table: React.FC<PropTypes> = observer(
               {indexCell}
             </ColumnHeaderCell>
           )}
-          {columns.map((colName) => (
-            <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
-          ))}
+          {columns
+            .filter((c) => !keysToHide.includes(c))
+            .map((colName) => (
+              <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
+            ))}
         </TableHeader>
         {items.map((item, rowIndex) => {
           // Again, omit keys that start with an underscore.
@@ -173,11 +191,13 @@ const Table: React.FC<PropTypes> = observer(
 
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
-              {itemEntries.map(([key, val], index) => (
-                <TableCell key={`${rowKey}-${key}-${index}`}>
-                  {renderCell(val, key, item)}
-                </TableCell>
-              ))}
+              {itemEntries
+                .filter(([key]) => !keysToHide.includes(key))
+                .map(([key, val], index) => (
+                  <TableCell key={`${rowKey}-${key}-${index}`}>
+                    {renderCell(val, key, item)}
+                  </TableCell>
+                ))}
               {onRemoveRow && <RemoveButton onClick={onRemoveRow(item)}>X</RemoveButton>}
             </TableRow>
           )
