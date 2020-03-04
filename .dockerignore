@@ -13,3 +13,4 @@ deploy-local.sh
 docker-deploy-all.sh
 .testsecret
 cypress
+src/data
