@@ -11,6 +11,7 @@ import { round } from '../utils/round'
 import UploadFile from '../common/inputs/UploadFile'
 import { useEquipmentCatalogue } from '../utils/ParseEquipmentCatalogue'
 import EquipmentCollectionInput from './EquipmentCollectionInput'
+import { useCollectionState } from '../utils/useCollectionState'
 
 const ExecutionRequirementsView = styled.div``
 const ExecutionRequirementsAreaContainer = styled.div`
@@ -96,7 +97,10 @@ const createEquipmentKey = (e: EquipmentCollection) =>
 const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
   ({ operatingUnits, area }) => {
     const [uploadValue, setUploadValue] = useState<File[]>([])
-    const [equipment, setEquipment] = useState<EquipmentCollection[]>([])
+
+    const [equipment, { add: addEquipment, update: updateEquipment }] = useCollectionState<
+      EquipmentCollection
+    >([])
 
     const equipmentCatalogue = useEquipmentCatalogue(uploadValue)
 
@@ -108,10 +112,6 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
       if (equipment.some(({ id }) => id === 'new')) {
         return
       }
-
-      const allEquipment: any[] = [...equipment]
-
-      // TODO: stop finished rows from being deleted
 
       const inputRow: { _editable: boolean } & EquipmentCollection = {
         _editable: true,
@@ -125,10 +125,8 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
         age: 0,
       }
 
-      allEquipment.push(inputRow)
-
-      setEquipment(allEquipment)
-    }, [equipment, equipmentCatalogue])
+      addEquipment(inputRow)
+    }, [equipment, addEquipment, equipmentCatalogue])
 
     const executionRequirements = (operatingUnits || []).map((opUnit) => {
       // noinspection UnnecessaryLocalVariableJS
@@ -173,27 +171,17 @@ const ExecutionRequirementsArea: React.FC<AreaPropTypes> = observer(
 
     const onEquipmentInputChange = useCallback(
       (item) => (nextValue, key) => {
-        const itemIndex = equipment.findIndex((eq) => eq.id === item.id)
-        const nextEquipment = [...equipment]
+        const onEdit = (nextItem) => {
+          if (nextItem.id === 'new') {
+            nextItem['id'] = createEquipmentKey(nextItem) || 'new'
+          }
 
-        const nextItem = { ...item }
-
-        if (itemIndex !== -1) {
-          nextEquipment.splice(itemIndex, 1)
+          return nextItem
         }
 
-        nextItem[key] = nextValue
-
-        if (nextItem.id === 'new') {
-          nextItem['id'] = createEquipmentKey(nextItem) || 'new'
-        }
-
-        const useIndex = itemIndex === -1 ? nextEquipment.length - 1 : itemIndex
-        nextEquipment.splice(useIndex, 0, nextItem)
-
-        setEquipment(nextEquipment)
+        updateEquipment(item, key, nextValue, onEdit)
       },
-      [equipment]
+      [updateEquipment]
     )
 
     const renderEquipmentCell = useCallback(
