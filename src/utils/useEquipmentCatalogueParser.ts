@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
 import readExcelFile from 'read-excel-file'
 
-export const useEquipmentCatalogue = (file: File[]) => {
+export const useEquipmentCatalogueParser = (file: File | null) => {
   const [parsedData, setParsedData] = useState<any[]>([])
 
   useEffect(() => {
-    if (file[0]) {
-      readExcelFile(file[0]).then((rows) => {
+    if (file) {
+      readExcelFile(file).then((rows) => {
         let headers = []
       })
     }

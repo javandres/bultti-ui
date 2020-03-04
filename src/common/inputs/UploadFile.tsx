@@ -100,7 +100,7 @@ const UploadFile: React.FC<PropTypes> = observer(
 
     return (
       <UploadView className={className}>
-        {!!state.loading && <Loading />}
+        {state.loading && <Loading />}
         <UploadWrapper
           {...getRootProps({
             hasData: state.data && state.data.length !== 0,
