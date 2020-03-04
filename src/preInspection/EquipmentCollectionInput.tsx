@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { CellContent, TableDropdown, TableInput } from '../common/components/Table'
+import { isNumeric } from '../utils/isNumeric'
 
 type ValueType = string | number
 
@@ -92,7 +93,14 @@ const EquipmentCollectionInput: React.FC<PropTypes> = observer(
       )
     }
 
-    return <TableInput value={value} onChange={onChangeValue} name={valueName} />
+    return (
+      <TableInput
+        type={isNumeric(value) ? 'number' : 'text'}
+        value={value}
+        onChange={onChangeValue}
+        name={valueName}
+      />
+    )
   }
 )
 
