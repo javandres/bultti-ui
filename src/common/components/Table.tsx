@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
 import Dropdown from '../inputs/Dropdown'
+import { CrossThick } from '../icons/CrossThick'
 
 const TableView = styled.div`
   width: 100%;
@@ -104,6 +105,8 @@ export const TableDropdown = styled(Dropdown)`
   }
 `
 
+type ItemRemover<ItemType = any> = false | (() => void)
+
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]: string }
@@ -111,7 +114,7 @@ export type PropTypes<ItemType = any> = {
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => () => void
+  onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
   className?: string
   renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactChild
 }
@@ -189,6 +192,8 @@ const Table: React.FC<PropTypes> = observer(
 
           const rowKey = keyFromItem(item)
 
+          const itemRemover = !onRemoveRow ? null : onRemoveRow(item)
+
           return (
             <TableRow key={rowKey ?? `row-${rowIndex}`}>
               {itemEntries
@@ -198,7 +203,11 @@ const Table: React.FC<PropTypes> = observer(
                     {renderCell(val, key, item)}
                   </TableCell>
                 ))}
-              {onRemoveRow && <RemoveButton onClick={onRemoveRow(item)}>X</RemoveButton>}
+              {itemRemover && (
+                <RemoveButton onClick={itemRemover}>
+                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                </RemoveButton>
+              )}
             </TableRow>
           )
         })}

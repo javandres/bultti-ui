@@ -12,7 +12,6 @@ import { FlexRow } from '../common/components/common'
 import { omit } from 'lodash'
 import gql from 'graphql-tag'
 import { Button } from '../common/components/Button'
-import { Checkmark } from '../common/icons/Checkmark'
 import { CrossThick } from '../common/icons/CrossThick'
 import { Checkmark2 } from '../common/icons/Checkmark2'
 
@@ -102,9 +101,10 @@ const createEquipmentKey = (e: EquipmentCollection) =>
 const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area }) => {
   const [uploadValue, setUploadValue] = useState<File[]>([])
 
-  const [equipment, { add: addEquipment, update: updateEquipment }] = useCollectionState<
-    EquipmentCollection
-  >([])
+  const [
+    equipment,
+    { add: addEquipment, remove: removeEquipment, update: updateEquipment },
+  ] = useCollectionState<EquipmentCollection>([])
 
   const equipmentCatalogue = useEquipmentCatalogue(uploadValue)
 
@@ -237,6 +237,13 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
         items={equipment}
         columnLabels={equipmentColumnLabels}
         renderCell={renderEquipmentCell}
+        onRemoveRow={(item) => {
+          if (item.id === 'new') {
+            return false
+          }
+
+          return () => removeEquipment(item)
+        }}
       />
       {executionRequirements && (
         <>
