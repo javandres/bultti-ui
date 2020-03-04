@@ -14,6 +14,7 @@ import gql from 'graphql-tag'
 import { Button } from '../common/components/Button'
 import { Checkmark } from '../common/icons/Checkmark'
 import { CrossThick } from '../common/icons/CrossThick'
+import { Checkmark2 } from '../common/icons/Checkmark2'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -198,7 +199,7 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
       return (
         <CellContent>
           {val ? (
-            <Checkmark width="2rem" height="2rem" fill="var(--light-green)" />
+            <Checkmark2 width="1rem" height="1rem" fill="var(--light-green)" />
           ) : (
             <CrossThick width="1rem" height="1rem" fill="var(--red)" />
           )}
