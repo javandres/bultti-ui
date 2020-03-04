@@ -96,7 +96,6 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
 
     // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
-
     const { dayTypes, groupIndex, blocks } = blockGroup
 
     // Create an upload handler for uploading the departure block file.

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../components/Loading'
@@ -68,19 +68,22 @@ export type PropTypes = {
 
 const UploadFile: React.FC<PropTypes> = observer(
   ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value }) => {
-    const [upload, state = { called: false }] = uploader || []
+    const prevUpload = useRef<string | null>('')
+    const [upload, state = { loading: false, called: false }] = uploader || []
 
     useEffect(() => {
       if (value && value.length !== 0) {
         const firstFile = value[0]
 
-        if (firstFile && upload) {
+        if (firstFile && firstFile.name !== prevUpload.current && upload && !state.loading) {
+          prevUpload.current = firstFile.name
           upload(firstFile)
         }
-      } else if (state.called && upload) {
+      } else if (prevUpload.current !== null && !state.loading && state.called && upload) {
+        prevUpload.current = null
         upload(null)
       }
-    }, [value, upload, state.called])
+    }, [value, upload, state.called, state.loading, prevUpload.current])
 
     const onDrop = useCallback(
       (acceptedFiles) => {
