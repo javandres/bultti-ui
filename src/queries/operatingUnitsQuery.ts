@@ -4,6 +4,7 @@ export const operatingUnitsQuery = gql`
   query operatingUnits($operatorId: String!, $startDate: Date!) {
     operatingUnits(operatorId: $operatorId, startDate: $startDate) {
       id
+      operatingUnitId
       operatorId
       routes {
         length
@@ -15,6 +16,27 @@ export const operatingUnitsQuery = gql`
       startDate
       operatingArea
       weeklyExecutionMeters
+      equipmentCatalogue {
+        id
+        operatorId
+        startDate
+        endDate
+        operatingUnitId
+        equipment {
+          id
+          make
+          model
+          operatorId
+          percentageQuota
+          registryDate
+          registryNr
+          co2
+          emissionClass
+          exteriorColor
+          vehicleId
+          type
+        }
+      }
     }
   }
 `

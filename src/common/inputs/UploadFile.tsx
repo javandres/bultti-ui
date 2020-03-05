@@ -108,7 +108,7 @@ const UploadFile: React.FC<PropTypes> = observer(
               ? 'var(--light-red)'
               : state.data && state.data.length !== 0
               ? 'var(--lighter-green)'
-              : '#f5f5f5',
+              : 'var(--white-grey)',
           })}>
           <UploadInput {...getInputProps()} />
           {value.length !== 0 ? (

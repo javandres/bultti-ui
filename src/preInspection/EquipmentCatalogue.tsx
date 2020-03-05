@@ -1,28 +1,23 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
 import { Checkmark2 } from '../common/icons/Checkmark2'
 import { CrossThick } from '../common/icons/CrossThick'
-import { Button } from '../common/components/Button'
-import { EquipmentCatalogue } from '../schema-types'
+import { Equipment } from '../schema-types'
 import EquipmentCatalogueTableInput from './EquipmentCatalogueTableInput'
 
 const EquipmentCatalogueView = styled.div``
 
-const ResetButton = styled(Button)`
-  margin-left: auto;
-`
-
 export type PropTypes = {
-  equipment: EquipmentCatalogue[]
-  addEquipment: (item: EquipmentCatalogue) => void
-  removeEquipment: (item: EquipmentCatalogue) => void
+  equipment: Equipment[]
+  addEquipment: (item: Equipment) => void
+  removeEquipment: (item: Equipment) => void
   updateEquipment: (
-    item: EquipmentCatalogue,
+    item: Equipment,
     key: string,
     value: any,
-    onEdit?: (item: EquipmentCatalogue) => EquipmentCatalogue
+    onEdit?: (item: Equipment) => Equipment
   ) => void
 }
 
@@ -37,38 +32,35 @@ const equipmentColumnLabels = {
   age: 'Ikä',
 }
 
-const createEquipmentKey = (e: EquipmentCatalogue) =>
+const createEquipmentKey = (e: Equipment) =>
   !(e?.make && e?.model && e?.emissionClass && e?.type)
     ? null
     : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ equipment, addEquipment, removeEquipment, updateEquipment }) => {
-    const [uploadValue, setUploadValue] = useState<File[]>([])
-
     useEffect(() => {
       if (equipment.some(({ id }) => id === 'new')) {
         return
       }
 
-      const inputRow: { _editable: boolean; valid } & EquipmentCatalogue = {
+      const inputRow: { _editable: boolean; valid } & Equipment = {
         _editable: true,
         valid: false,
         id: 'new',
+        vehicleId: '',
+        make: '',
         model: '',
         type: '',
-        count: 0,
-        seats: 0,
         emissionClass: '',
-        age: 0,
+        co2: 0,
+        registryDate: '',
+        registryNr: '',
+        exteriorColor: '',
       }
 
       addEquipment(inputRow)
     }, [equipment, addEquipment])
-
-    const onReset = useCallback(() => {
-      setUploadValue([])
-    }, [])
 
     const onEquipmentInputChange = useCallback(
       (item) => (nextValue, key) => {

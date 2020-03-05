@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useCollectionState } from '../utils/useCollectionState'
@@ -7,6 +7,9 @@ import { round } from '../utils/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
 import EquipmentCatalogue from './EquipmentCatalogue'
+import OperatingUnitRequirements from './OperatingUnitRequirements'
+import { TextButton } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -57,9 +60,15 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
     { add: addEquipment, remove: removeEquipment, update: updateEquipment },
   ] = useCollectionState<Equipment>([])
 
-  const executionRequirements = (operatingUnits || []).map((opUnit) => {
+  const [operatingUnitsExpanded, setOperatingUnitsExpanded] = useState(true)
+
+  const toggleOperatingUnitsExpanded = useCallback(() => {
+    setOperatingUnitsExpanded((currentVal) => !currentVal)
+  }, [])
+
+  const operatingUnitRequirements = (operatingUnits || []).map((opUnit) => {
     // noinspection UnnecessaryLocalVariableJS
-    const requirementRow = {
+    const operatingUnitRow = {
       operatingUnitId: opUnit.id,
       age: 7.5,
       executionMeters: `${round((opUnit.weeklyExecutionMeters || 0) / 1000)} km`,
@@ -70,7 +79,7 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
         requirementRow[i] = ''
       }*/
 
-    return requirementRow
+    return operatingUnitRow
   })
 
   const combinedForArea = useMemo(() => {
@@ -96,7 +105,8 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
     }
 
     return [combinedKm, combinedExecutionRequirements, combinedSanctionThresholds]
-  }, [executionRequirements])
+  }, [operatingUnitRequirements])
+
   return (
     <ExecutionRequirementsAreaContainer>
       <TableHeading>Ajoneuvot</TableHeading>
@@ -106,15 +116,22 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
         removeEquipment={removeEquipment}
         updateEquipment={updateEquipment}
       />
-      {executionRequirements && (
+      {operatingUnitRequirements && (
         <>
           <TableHeading>Kilpailukohteet</TableHeading>
-          <Table
-            columnLabels={executionRequirementColumnLabels}
-            columnOrder={['operatingUnitId']}
-            keyFromItem={(item) => item.operatingUnitId}
-            items={executionRequirements}
-          />
+          <FlexRow>
+            {operatingUnits.length !== 0 && (
+              <TextButton onClick={toggleOperatingUnitsExpanded}>
+                {operatingUnitsExpanded ? 'Piilota kilpailukohteet' : 'Näytä kilpailukohteet'}
+              </TextButton>
+            )}
+          </FlexRow>
+          {operatingUnits.map((operatingUnit) => (
+            <OperatingUnitRequirements
+              operatingUnit={operatingUnit}
+              expanded={operatingUnitsExpanded}
+            />
+          ))}
           <TableHeading>Seuranta-alue yhteensä</TableHeading>
           <Table
             columnLabels={combinedColumnLabels}
