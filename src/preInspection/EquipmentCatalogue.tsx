@@ -8,7 +8,6 @@ import { Checkmark2 } from '../common/icons/Checkmark2'
 import { CrossThick } from '../common/icons/CrossThick'
 import EquipmentCollectionInput from './EquipmentCollectionInput'
 import { EquipmentCollection } from '../schema-types'
-import { useEquipmentCatalogueParser } from '../utils/useEquipmentCatalogueParser'
 import { Button } from '../common/components/Button'
 
 const EquipmentCatalogueView = styled.div``
@@ -49,8 +48,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ equipment, addEquipment, removeEquipment, updateEquipment }) => {
     const [uploadValue, setUploadValue] = useState<File[]>([])
 
-    const parsedEquipmentCatalogue = useEquipmentCatalogueParser(uploadValue[0] || null)
-
     useEffect(() => {
       if (equipment.some(({ id }) => id === 'new')) {
         return
@@ -70,7 +67,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       }
 
       addEquipment(inputRow)
-    }, [equipment, addEquipment, parsedEquipmentCatalogue])
+    }, [equipment, addEquipment])
 
     const onReset = useCallback(() => {
       setUploadValue([])
