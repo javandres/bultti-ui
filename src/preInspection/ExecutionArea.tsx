@@ -2,11 +2,10 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useCollectionState } from '../utils/useCollectionState'
-import { EquipmentCollection, OperatingArea, OperatingUnit } from '../schema-types'
+import { Equipment, OperatingArea, OperatingUnit } from '../schema-types'
 import { round } from '../utils/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
-import gql from 'graphql-tag'
 import EquipmentCatalogue from './EquipmentCatalogue'
 
 const ExecutionRequirementsAreaContainer = styled.div`
@@ -29,26 +28,6 @@ export type AreaPropTypes = {
   area: OperatingArea
   operatingUnits: OperatingUnit[]
 }
-
-export const uploadEquipmentCatalogueMutation = gql`
-  mutation uploadEquipmentCatalogue(
-    $file: Upload
-    $inspectionId: String!
-    $area: OperatingArea!
-  ) {
-    uploadEquipmentCatalogue(file: $file, inspectionId: $inspectionId, area: $area) {
-      operatorId
-      operatingUnit
-      make
-      model
-      type
-      count
-      seats
-      emissionClass
-      age
-    }
-  }
-`
 
 const executionRequirementColumnLabels = {
   operatingUnitId: 'Kilpailukohde',
@@ -76,7 +55,7 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(({ operatingUnits, area 
   const [
     equipment,
     { add: addEquipment, remove: removeEquipment, update: updateEquipment },
-  ] = useCollectionState<EquipmentCollection>([])
+  ] = useCollectionState<Equipment>([])
 
   const executionRequirements = (operatingUnits || []).map((opUnit) => {
     // noinspection UnnecessaryLocalVariableJS

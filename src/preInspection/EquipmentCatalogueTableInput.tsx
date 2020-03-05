@@ -38,7 +38,7 @@ const typeValues: EmissionSelectValue[] = [
   { name: 'D', label: 'D' },
 ]
 
-const EquipmentCollectionInput: React.FC<PropTypes> = observer(
+const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
   ({ value, valueName, onChange }) => {
     const isDisabled = valueName === 'id'
 
@@ -104,4 +104,4 @@ const EquipmentCollectionInput: React.FC<PropTypes> = observer(
   }
 )
 
-export default EquipmentCollectionInput
+export default EquipmentCatalogueTableInput

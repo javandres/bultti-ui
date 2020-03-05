@@ -5,13 +5,6 @@ schema {
   mutation: Mutation
 }
 
-type Contract {
-  id: ID!
-  operatingUnits: [OperatingUnit!]
-  operator: [Operator!]
-  routes: [Route!]
-}
-
 type DepartureBlock {
   blockFile: String!
   dayType: String
@@ -26,30 +19,32 @@ type DepartureBlock {
 }
 
 type Equipment {
-  age: Int!
+  co2: Float
   emissionClass: String!
-  emissionDesc: String!
+  equipmentCatalogue: EquipmentCatalogue
+  equipmentCatalogueId: String
   exteriorColor: String!
   id: ID!
+  make: String
+  model: String
   operator: Operator
   operatorId: String
+  percentageQuota: Int
+  registryDate: Date
   registryNr: String!
-  routes: [Route!]
   type: String!
   vehicleId: String!
 }
 
-type EquipmentCollection {
-  age: Float
-  count: Int
-  emissionClass: String
+type EquipmentCatalogue {
+  endDate: Date
+  equipment: [Equipment!]!
   id: ID!
-  make: String
-  model: String
-  operatingUnit: String
+  operatingUnit: OperatingUnit
+  operatingUnitId: String
+  operator: Operator
   operatorId: String
-  seats: Int
-  type: String
+  startDate: Date
 }
 
 type ExecutionRequirement {
@@ -67,15 +62,17 @@ type File {
 }
 
 type Mutation {
+  createEquipmentCatalogue(catalogueData: EquipmentCatalogueInput): EquipmentCatalogue
   createPreInspection: PreInspection
   uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
-  uploadEquipmentCatalogue(area: OperatingArea!, file: Upload, inspectionId: String!): [EquipmentCollection!]
 }
 
 type OperatingUnit {
   endDate: Date
+  equipmentCatalogue: EquipmentCatalogue
   id: ID!
   operatingArea: OperatingArea
+  operatingUnitId: String!
   operationEndDate: Date
   operationStartDate: Date
   operator: Operator
@@ -91,12 +88,11 @@ type OperatingUnitRoute {
 }
 
 type Operator {
-  contracts: [Contract!]
   equipment: [Equipment!]
+  equipmentCatalogues: [EquipmentCatalogue!]
   id: String!
   name: String
-  operatingUnits: [OperatingUnit!]
-  routes: [Route!]
+  operatingUnits(startDate: Date): [OperatingUnit!]
 }
 
 type PreInspection {
@@ -117,22 +113,20 @@ type PreInspection {
 }
 
 type Query {
-  contracts: [Contract!]
   equipment(all: Boolean): [Equipment!]
-  operatingUnit(operatingUnitId: String!, operatorId: String!, startDate: Date!): OperatingUnit
-  operatingUnits(operatorId: String!, startDate: Date!): [OperatingUnit!]
-  operator(id: String): Operator
+  equipmentCatalogue(equipmentCatalogueId: String, operatingUnitId: String, operatorId: String): EquipmentCatalogue
+  equipmentCatalogues(operatorId: String): [EquipmentCatalogue!]
+  operatingUnit(operatingUnitId: String, operatorId: String, startDate: Date): OperatingUnit
+  operatingUnits(operatorId: String, startDate: Date): [OperatingUnit!]
+  operator(operatorId: String): Operator
   operators: [Operator!]
   routes: [Route!]
-  seasons(date: Date!): [Season!]
+  seasons(date: Date): [Season!]
   uploads: [String]
 }
 
 type Route {
   area: OperatingArea!
-  contract: Contract
-  contractId: String
-  currentOperators: [Operator!]
   direction: Int!
   id: ID!
   operatingUnit: OperatingUnit
@@ -161,6 +155,13 @@ enum InspectionStatus {
 enum OperatingArea {
   CENTER
   OTHER
+}
+
+input EquipmentCatalogueInput {
+  endDate: Date
+  operatingUnitId: String
+  operatorId: String
+  startDate: Date
 }
 
 input ExecutionRequirementInput {

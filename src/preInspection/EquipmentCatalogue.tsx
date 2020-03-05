@@ -1,14 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import UploadFile from '../common/inputs/UploadFile'
-import { FlexRow } from '../common/components/common'
 import Table, { CellContent } from '../common/components/Table'
 import { Checkmark2 } from '../common/icons/Checkmark2'
 import { CrossThick } from '../common/icons/CrossThick'
-import EquipmentCollectionInput from './EquipmentCollectionInput'
-import { EquipmentCollection } from '../schema-types'
 import { Button } from '../common/components/Button'
+import { EquipmentCatalogue } from '../schema-types'
+import EquipmentCatalogueTableInput from './EquipmentCatalogueTableInput'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -17,14 +15,14 @@ const ResetButton = styled(Button)`
 `
 
 export type PropTypes = {
-  equipment: EquipmentCollection[]
-  addEquipment: (item: EquipmentCollection) => void
-  removeEquipment: (item: EquipmentCollection) => void
+  equipment: EquipmentCatalogue[]
+  addEquipment: (item: EquipmentCatalogue) => void
+  removeEquipment: (item: EquipmentCatalogue) => void
   updateEquipment: (
-    item: EquipmentCollection,
+    item: EquipmentCatalogue,
     key: string,
     value: any,
-    onEdit?: (item: EquipmentCollection) => EquipmentCollection
+    onEdit?: (item: EquipmentCatalogue) => EquipmentCatalogue
   ) => void
 }
 
@@ -39,7 +37,7 @@ const equipmentColumnLabels = {
   age: 'Ikä',
 }
 
-const createEquipmentKey = (e: EquipmentCollection) =>
+const createEquipmentKey = (e: EquipmentCatalogue) =>
   !(e?.make && e?.model && e?.emissionClass && e?.type)
     ? null
     : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
@@ -53,11 +51,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         return
       }
 
-      const inputRow: { _editable: boolean; valid } & EquipmentCollection = {
+      const inputRow: { _editable: boolean; valid } & EquipmentCatalogue = {
         _editable: true,
         valid: false,
         id: 'new',
-        make: '',
         model: '',
         type: '',
         count: 0,
@@ -108,7 +105,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
       if (item?._editable) {
         return (
-          <EquipmentCollectionInput
+          <EquipmentCatalogueTableInput
             value={val}
             valueName={key}
             onChange={onEquipmentInputChange(item)}
@@ -121,16 +118,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        <UploadFile
-          label="Lisää kalustoluettelosta"
-          value={uploadValue}
-          onChange={setUploadValue}
-        />
-        {uploadValue && uploadValue.length !== 0 && (
-          <FlexRow style={{ marginBottom: '1rem' }}>
-            <ResetButton onClick={onReset}>Reset</ResetButton>
-          </FlexRow>
-        )}
         <Table
           items={equipment}
           columnLabels={equipmentColumnLabels}
