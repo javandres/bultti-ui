@@ -55,7 +55,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     ] = useCollectionState<PendingEquipmentType>([])
 
     useEffect(() => {
-      if (pendingEquipment.some(({ id }) => id === 'new')) {
+      if (pendingEquipment.length > 0) {
         return
       }
 
@@ -79,7 +79,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [pendingEquipment, addPending])
 
     const onEquipmentInputChange = useCallback(
-      (item) => (nextValue, key) => {
+      (item) => (key, nextValue) => {
         const onEdit = (nextItem) => {
           if (nextItem.id === 'new') {
             nextItem['id'] = createEquipmentKey(nextItem) || 'new'
@@ -90,7 +90,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
         updatePending(item, key, nextValue, onEdit)
       },
-      [updateEquipment]
+      [updatePending]
     )
 
     const onAddEquipment = useCallback(
@@ -118,7 +118,14 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               items={equipment}
               columnLabels={equipmentColumnLabels}
               onRemoveRow={(item) => () => removeEquipment(item)}
-              getColumnTotal={(col) => col}
+              getColumnTotal={(col) =>
+                col === 'percentageQuota'
+                  ? equipment.reduce((total, item) => {
+                      total += parseFloat((item?.percentageQuota || '0') as string)
+                      return total
+                    }, 0) + '%'
+                  : ''
+              }
             />
           </>
         )}
@@ -130,7 +137,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 key={item.id}
                 item={item}
                 labels={equipmentColumnLabels}
-                onChange={(key, value) => updatePending(item, key, value)}
+                onChange={onEquipmentInputChange(item)}
                 onDone={() => onAddEquipment(item)}
                 doneDisabled={!equipmentIsValid(item)}
                 doneLabel="Lisää luetteloon"

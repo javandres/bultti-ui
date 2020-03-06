@@ -39,7 +39,7 @@ const TableRow = styled.div<{ footer?: boolean }>`
   display: flex;
   border-bottom: 1px solid var(--lighter-grey);
   position: relative;
-  background: ${(p) => (p.footer ? 'rgba(200,200,200,0.25)' : 'transparent')};
+  background: ${(p) => (p.footer ? 'rgba(200,200,200,0.15)' : 'transparent')};
 
   &:last-child {
     border-bottom: 0;
@@ -76,7 +76,7 @@ const ColumnHeaderCell = styled(TableCell)`
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
-  padding: 0.5rem 0.15rem;
+  padding: ${p => p.footerCell ? '0.5rem' : '0.75rem'} 0.15rem;
   border: 0;
   background: transparent;
   display: block;
