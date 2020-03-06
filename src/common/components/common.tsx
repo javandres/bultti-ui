@@ -67,7 +67,7 @@ export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }
   text-transform: uppercase;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
   margin: 0;
-  padding-bottom: ${(p) => (p.subLabel ? '0.5rem' : '1rem')};
+  padding-bottom: ${(p) => (p.subLabel ? '0.5rem' : '0.75rem')};
 `
 
 export const FormHeading = styled.h5<{ theme: ThemeTypes }>`

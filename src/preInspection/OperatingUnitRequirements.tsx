@@ -86,9 +86,10 @@ export type PropTypes = {
 
 const OperatingUnitRequirements: React.FC<PropTypes> = observer(
   ({ productionDate, operatingUnit, expanded = true }) => {
+    // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = (
       operatingUnit?.equipmentCatalogues || []
-    ).filter((cat) => isBetween(productionDate, cat.startDate, cat.endDate))[0]
+    ).find((cat) => isBetween(productionDate, cat.startDate, cat.endDate))
 
     const [
       equipment,
@@ -101,6 +102,8 @@ const OperatingUnitRequirements: React.FC<PropTypes> = observer(
     useEffect(() => {
       setIsExpanded(expanded)
     }, [expanded])
+
+    // TODO: Calculated values for operating unit
 
     return (
       <OperatingUnitView>

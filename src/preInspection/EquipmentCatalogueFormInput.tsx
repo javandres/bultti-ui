@@ -1,7 +1,34 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { CellContent, TableDropdown, TableInput } from '../common/components/Table'
+import { CellContent } from '../common/components/Table'
 import { isNumeric } from '../utils/isNumeric'
+import styled from 'styled-components'
+import { TextInput } from '../common/inputs/Input'
+import Dropdown from '../common/inputs/Dropdown'
+
+export const FormInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+`
+
+export const FormDropdown = styled(Dropdown)`
+  width: 100%;
+
+  button {
+    font-family: var(--font-family);
+    padding: 0.715rem 1rem;
+    border: 1px solid #eaeaea;
+    background: transparent;
+    width: 100%;
+    font-size: 0.75rem;
+
+    &:hover {
+      background: #fafafa;
+      border-color: var(--blue);
+      color: var(--dark-grey);
+    }
+  }
+`
 
 type ValueType = string | number
 
@@ -38,7 +65,7 @@ const typeValues: EmissionSelectValue[] = [
   { name: 'D', label: 'D' },
 ]
 
-const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
+const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
   ({ value, valueName, onChange }) => {
     const isDisabled = valueName === 'id'
 
@@ -73,7 +100,7 @@ const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
 
     if (valueName === 'emissionClass') {
       return (
-        <TableDropdown
+        <FormDropdown
           {...dropdownProps}
           items={emissionClassValues}
           selectedItem={
@@ -85,7 +112,7 @@ const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
 
     if (valueName === 'type') {
       return (
-        <TableDropdown
+        <FormDropdown
           {...dropdownProps}
           items={typeValues}
           selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
@@ -94,7 +121,7 @@ const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
     }
 
     return (
-      <TableInput
+      <FormInput
         type={isNumeric(value) ? 'number' : 'text'}
         value={value}
         onChange={onChangeValue}
@@ -104,4 +131,4 @@ const EquipmentCatalogueTableInput: React.FC<PropTypes> = observer(
   }
 )
 
-export default EquipmentCatalogueTableInput
+export default EquipmentCatalogueFormInput

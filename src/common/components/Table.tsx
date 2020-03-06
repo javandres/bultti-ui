@@ -5,15 +5,16 @@ import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
 import Dropdown from '../inputs/Dropdown'
 import { CrossThick } from '../icons/CrossThick'
+import { TextInput } from '../inputs/Input'
 
 const TableView = styled.div`
   width: 100%;
   margin-bottom: 1rem;
   border: 1px solid var(--light-grey);
   border-radius: 5px;
-  
+
   &:last-child {
-  margin-bottom: 0;
+    margin-bottom: 0;
   }
 `
 
@@ -34,10 +35,11 @@ const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
   display: none;
 `
 
-const TableRow = styled.div`
+const TableRow = styled.div<{ footer?: boolean }>`
   display: flex;
   border-bottom: 1px solid var(--lighter-grey);
   position: relative;
+  background: ${(p) => (p.footer ? 'rgba(200,200,200,0.25)' : 'transparent')};
 
   &:last-child {
     border-bottom: 0;
@@ -53,7 +55,6 @@ const TableHeader = styled(TableRow)``
 const TableCell = styled.div`
   flex: 1 1 calc(100% / 11);
   min-width: 45px;
-  text-align: center;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: center;
@@ -74,39 +75,14 @@ const ColumnHeaderCell = styled(TableCell)`
   font-weight: bold;
 `
 
-export const CellContent = styled.div`
-  padding: 0.5rem 0 0.5rem 0.15rem;
+export const CellContent = styled.div<{ footerCell?: boolean }>`
+  padding: 0.5rem 0.15rem;
+  border: 0;
+  background: transparent;
+  display: block;
+  width: 100%;
   text-align: center;
-  border: 0;
-  background: transparent;
-  display: block;
-`
-
-export const TableInput = styled.input`
-  font-family: var(--font-family);
-  padding: 0.5rem 0.2rem 0.5rem 0.5rem;
-  border: 0;
-  background: transparent;
-  display: block;
-  width: 100%;
-  font-size: 0.75rem;
-`
-
-export const TableDropdown = styled(Dropdown)`
-  width: 100%;
-
-  button {
-    font-family: var(--font-family);
-    padding: 0.5rem 0.25rem 0.5rem 0.25rem;
-    border: 0;
-    background: transparent;
-    width: 100%;
-    font-size: 0.75rem;
-
-    &:hover {
-      background: transparent;
-    }
-  }
+  font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
 `
 
 type ItemRemover<ItemType = any> = false | (() => void)
@@ -121,6 +97,7 @@ export type PropTypes<ItemType = any> = {
   onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
   className?: string
   renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactChild
+  getColumnTotal?: (key: string) => React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -139,6 +116,7 @@ const Table: React.FC<PropTypes> = observer(
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
     renderCell = defaultRenderCellContent,
+    getColumnTotal,
     className,
   }) => {
     // Order the keys and get cleartext labels for the columns
@@ -166,7 +144,13 @@ const Table: React.FC<PropTypes> = observer(
       columns = orderBy(columns, (key) => {
         const labelIndex = columnKeysOrdering.indexOf(key)
         return labelIndex === -1 ? 999 : labelIndex
-      }).map((key) => get(columnLabels, key, key))
+      }).filter((c) => !keysToHide.includes(c))
+    }
+
+    let columnNames = columns
+
+    if (columnLabelKeys.length !== 0) {
+      columnNames = columns.map((key) => get(columnLabels, key, key))
     }
 
     return (
@@ -177,11 +161,9 @@ const Table: React.FC<PropTypes> = observer(
               {indexCell}
             </ColumnHeaderCell>
           )}
-          {columns
-            .filter((c) => !keysToHide.includes(c))
-            .map((colName) => (
-              <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
-            ))}
+          {columnNames.map((colName) => (
+            <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
+          ))}
         </TableHeader>
         {items.map((item, rowIndex) => {
           // Again, omit keys that start with an underscore.
@@ -215,6 +197,15 @@ const Table: React.FC<PropTypes> = observer(
             </TableRow>
           )
         })}
+        {typeof getColumnTotal === 'function' && (
+          <TableRow key="totals" footer={true}>
+            {columns.map((col) => (
+              <TableCell key={`footer_${col}`}>
+                <CellContent footerCell={true}>{getColumnTotal(col)}</CellContent>
+              </TableCell>
+            ))}
+          </TableRow>
+        )}
       </TableView>
     )
   }

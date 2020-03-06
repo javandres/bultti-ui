@@ -3,9 +3,9 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
 import { Equipment } from '../schema-types'
-import EquipmentCatalogueTableInput from './EquipmentCatalogueTableInput'
+import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import { useCollectionState } from '../utils/useCollectionState'
-import { Button, ButtonSize } from '../common/components/Button'
+import ItemForm from '../common/inputs/ItemForm'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -28,26 +28,22 @@ export type PropTypes = {
 
 const equipmentColumnLabels = {
   vehicleId: 'Kylkinumero',
-  make: 'Merkki*',
+  make: 'Merkki',
   model: 'Malli',
-  type: 'Kalustotyyppi*',
+  type: 'Kalustotyyppi',
   percentageQuota: 'Osuus',
-  emissionClass: 'Euroluokka*',
+  emissionClass: 'Euroluokka',
   co2: 'CO2 arvo',
   exteriorColor: 'Ulkoväri',
   registryNumber: 'Rekisterinumero',
   registryDate: 'Rekisteröintipäivä',
 }
 
-const pendingEquipmentColumnLabels = {
-  ...equipmentColumnLabels,
-  addToCatalogue: 'Lisää luetteloon',
-}
+const equipmentIsValid = (e: Equipment): boolean =>
+  !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota)
 
 const createEquipmentKey = (e: Equipment) =>
-  !(e?.make && e?.model && e?.emissionClass && e?.type)
-    ? null
-    : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
+  !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
 type PendingEquipmentType = { _editable: boolean; valid } & Equipment
 
@@ -74,6 +70,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         co2: 0,
         registryDate: '',
         registryNr: '',
+        percentageQuota: 0,
         exteriorColor: '',
         addToCatalogue: '',
       }
@@ -104,33 +101,12 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       [addEquipment, removePending]
     )
 
-    const renderEquipmentCell = useCallback((val, key, item) => {
-      if (key === 'addToCatalogue') {
-        const isValid = !!createEquipmentKey(item)
-
-        return (
-          <CellContent>
-            <Button
-              size={ButtonSize.SMALL}
-              disabled={!isValid}
-              onClick={() => onAddEquipment(item)}>
-              Lisää luetteloon
-            </Button>
-          </CellContent>
-        )
+    const renderEquipmentCell = useCallback((val: any, key: string, onChange) => {
+      if (['id'].includes(key)) {
+        return <CellContent>{val}</CellContent>
       }
 
-      if (item?._editable) {
-        return (
-          <EquipmentCatalogueTableInput
-            value={val}
-            valueName={key}
-            onChange={onEquipmentInputChange(item)}
-          />
-        )
-      }
-
-      return <CellContent>{val}</CellContent>
+      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
     return (
@@ -142,24 +118,25 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               items={equipment}
               columnLabels={equipmentColumnLabels}
               onRemoveRow={(item) => () => removeEquipment(item)}
+              getColumnTotal={(col) => col}
             />
           </>
         )}
         {pendingEquipment.length !== 0 && (
           <>
-            <TableHeading>Lisää ajoneuvo</TableHeading>
-            <Table
-              items={pendingEquipment}
-              columnLabels={pendingEquipmentColumnLabels}
-              renderCell={renderEquipmentCell}
-              onRemoveRow={(item) => {
-                if (item.id === 'new') {
-                  return false
-                }
-
-                return () => removePending(item)
-              }}
-            />
+            <TableHeading style={{ marginTop: '2rem' }}>Lisää ajoneuvo</TableHeading>
+            {pendingEquipment.map((item) => (
+              <ItemForm
+                key={item.id}
+                item={item}
+                labels={equipmentColumnLabels}
+                onChange={(key, value) => updatePending(item, key, value)}
+                onDone={() => onAddEquipment(item)}
+                doneDisabled={!equipmentIsValid(item)}
+                doneLabel="Lisää luetteloon"
+                renderInput={renderEquipmentCell}
+              />
+            ))}
           </>
         )}
       </EquipmentCatalogueView>

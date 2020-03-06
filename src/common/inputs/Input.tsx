@@ -6,7 +6,7 @@ import { ThemeTypes } from '../../types/common'
 
 const InputView = styled.div``
 
-const TextInput = styled.input<{ theme: ThemeTypes; readOnly?: boolean; disabled?: boolean }>`
+export const TextInput = styled.input<{ theme: ThemeTypes; readOnly?: boolean; disabled?: boolean }>`
   font-family: var(--font-family);
   background: ${(p) =>
     p.theme === 'light' ? (p.readOnly || p.disabled ? '#f8f8f8' : 'white') : 'white'};
