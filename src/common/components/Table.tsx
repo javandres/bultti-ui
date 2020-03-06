@@ -11,6 +11,10 @@ const TableView = styled.div`
   margin-bottom: 1rem;
   border: 1px solid var(--light-grey);
   border-radius: 5px;
+  
+  &:last-child {
+  margin-bottom: 0;
+  }
 `
 
 const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`

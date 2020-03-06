@@ -128,7 +128,6 @@ const OperatingUnitRequirements: React.FC<PropTypes> = observer(
         </HeaderRow>
         {isExpanded && (
           <Content>
-            <TableHeading>Ajoneuvot</TableHeading>
             <EquipmentCatalogue
               equipment={equipment}
               addEquipment={addEquipment}

@@ -2,15 +2,15 @@ import React, { useCallback, useEffect } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
-import { Checkmark2 } from '../common/icons/Checkmark2'
-import { CrossThick } from '../common/icons/CrossThick'
 import { Equipment } from '../schema-types'
 import EquipmentCatalogueTableInput from './EquipmentCatalogueTableInput'
 import { useCollectionState } from '../utils/useCollectionState'
+import { Button, ButtonSize } from '../common/components/Button'
 
 const EquipmentCatalogueView = styled.div``
 
 const TableHeading = styled.h5`
+  margin-top: 0;
   margin-bottom: 0.5rem;
 `
 
@@ -96,15 +96,26 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       [updateEquipment]
     )
 
+    const onAddEquipment = useCallback(
+      (item) => {
+        addEquipment(item)
+        removePending(item)
+      },
+      [addEquipment, removePending]
+    )
+
     const renderEquipmentCell = useCallback((val, key, item) => {
       if (key === 'addToCatalogue') {
+        const isValid = !!createEquipmentKey(item)
+
         return (
           <CellContent>
-            {val ? (
-              <Checkmark2 width="1rem" height="1rem" fill="var(--light-green)" />
-            ) : (
-              <CrossThick width="1rem" height="1rem" fill="var(--red)" />
-            )}
+            <Button
+              size={ButtonSize.SMALL}
+              disabled={!isValid}
+              onClick={() => onAddEquipment(item)}>
+              Lisää luetteloon
+            </Button>
           </CellContent>
         )
       }
@@ -124,24 +135,33 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        <Table
-          items={equipment}
-          columnLabels={equipmentColumnLabels}
-          onRemoveRow={(item) => () => removeEquipment(item)}
-        />
-        <TableHeading>Lisää ajoneuvo</TableHeading>
-        <Table
-          items={pendingEquipment}
-          columnLabels={pendingEquipmentColumnLabels}
-          renderCell={renderEquipmentCell}
-          onRemoveRow={(item) => {
-            if (item.id === 'new') {
-              return false
-            }
+        {equipment.length !== 0 && (
+          <>
+            <TableHeading>Ajoneuvot</TableHeading>
+            <Table
+              items={equipment}
+              columnLabels={equipmentColumnLabels}
+              onRemoveRow={(item) => () => removeEquipment(item)}
+            />
+          </>
+        )}
+        {pendingEquipment.length !== 0 && (
+          <>
+            <TableHeading>Lisää ajoneuvo</TableHeading>
+            <Table
+              items={pendingEquipment}
+              columnLabels={pendingEquipmentColumnLabels}
+              renderCell={renderEquipmentCell}
+              onRemoveRow={(item) => {
+                if (item.id === 'new') {
+                  return false
+                }
 
-            return () => removePending(item)
-          }}
-        />
+                return () => removePending(item)
+              }}
+            />
+          </>
+        )}
       </EquipmentCatalogueView>
     )
   }

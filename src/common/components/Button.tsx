@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useTooltip } from '../../utils/useTooltip'
 import Loading from './Loading'
 import { observer } from 'mobx-react-lite'
@@ -14,6 +14,7 @@ type StyledButtonProps = {
   size?: ButtonSize
   transparent?: boolean
   loading?: boolean
+  disabled?: boolean
 } & React.PropsWithRef<JSX.IntrinsicElements['button']>
 
 const size2Style = (size: ButtonSize, ...values: string[]): string => {
@@ -34,8 +35,10 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   outline: none;
   border-radius: 2.5rem;
   border: 1px solid
-    ${({ transparent = false }) => (transparent ? 'var(--light-grey)' : 'var(--blue)')};
-  background: ${({ transparent = false }) => (transparent ? 'transparent' : 'var(--blue)')};
+    ${({ disabled, transparent = false }) =>
+      disabled || transparent ? 'var(--light-grey)' : 'var(--blue)'};
+  background: ${({ disabled, transparent = false }) =>
+    disabled ? 'var(--lighter-grey)' : transparent ? 'transparent' : 'var(--blue)'};
   letter-spacing: -0.6px;
   padding: ${({ loading = false, size = ButtonSize.MEDIUM }) =>
     size2Style(
@@ -44,23 +47,28 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
       `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
       `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
     )};
-  color: white;
+  color: ${({ disabled }) => (disabled ? 'var(--grey)' : 'white')};
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
   width: auto;
   flex: 0 0 auto;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};;
   transform: scale(1);
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 
-  &:hover {
-    background: var(--dark-blue);
-    border-color: var(--dark-blue);
-    color: white;
-    transform: scale(1.025);
-  }
+  ${({ disabled }) =>
+    !disabled
+      ? css`
+          &:hover {
+            background: var(--dark-blue);
+            border-color: var(--dark-blue);
+            color: white;
+            transform: scale(1.025);
+          }
+        `
+      : ''}
 `
 
 export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string }>`
