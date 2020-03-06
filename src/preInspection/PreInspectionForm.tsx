@@ -359,7 +359,10 @@ const PreInspectionForm: React.FC = observer(() => {
               {operatingUnitsLoading ? (
                 <PageLoading />
               ) : (
-                <ExecutionRequirements operatingUnits={operatingUnitsData} />
+                <ExecutionRequirements
+                  productionDate={formState.productionStart}
+                  operatingUnits={operatingUnitsData}
+                />
               )}
             </FormColumn>
           </FormWrapper>

@@ -16,7 +16,7 @@ export const operatingUnitsQuery = gql`
       startDate
       operatingArea
       weeklyExecutionMeters
-      equipmentCatalogue {
+      equipmentCatalogues {
         id
         operatorId
         startDate

@@ -129,7 +129,7 @@ export type OperatingUnit = {
   operatingUnitId: Scalars['String'],
   operatorId: Scalars['String'],
   operator?: Maybe<Operator>,
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>,
+  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
   routes?: Maybe<Array<Maybe<OperatingUnitRoute>>>,
   operatingArea?: Maybe<OperatingArea>,
   startDate?: Maybe<Scalars['Date']>,
@@ -208,14 +208,14 @@ export type QueryEquipmentArgs = {
 
 
 export type QueryEquipmentCataloguesArgs = {
-  operatorId?: Maybe<Scalars['String']>
+  operatorId?: Maybe<Scalars['String']>,
+  operatingUnitId?: Maybe<Scalars['String']>
 };
 
 
 export type QueryEquipmentCatalogueArgs = {
   operatorId?: Maybe<Scalars['String']>,
-  equipmentCatalogueId?: Maybe<Scalars['String']>,
-  operatingUnitId?: Maybe<Scalars['String']>
+  equipmentCatalogueId?: Maybe<Scalars['String']>
 };
 
 

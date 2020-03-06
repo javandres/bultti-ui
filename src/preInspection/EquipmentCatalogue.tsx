@@ -6,8 +6,13 @@ import { Checkmark2 } from '../common/icons/Checkmark2'
 import { CrossThick } from '../common/icons/CrossThick'
 import { Equipment } from '../schema-types'
 import EquipmentCatalogueTableInput from './EquipmentCatalogueTableInput'
+import { useCollectionState } from '../utils/useCollectionState'
 
 const EquipmentCatalogueView = styled.div``
+
+const TableHeading = styled.h5`
+  margin-bottom: 0.5rem;
+`
 
 export type PropTypes = {
   equipment: Equipment[]
@@ -22,14 +27,21 @@ export type PropTypes = {
 }
 
 const equipmentColumnLabels = {
-  valid: 'OK',
+  vehicleId: 'Kylkinumero',
   make: 'Merkki*',
-  model: 'Malli*',
+  model: 'Malli',
   type: 'Kalustotyyppi*',
-  count: 'Määrä',
-  seats: 'Istuinpaikat',
+  percentageQuota: 'Osuus',
   emissionClass: 'Euroluokka*',
-  age: 'Ikä',
+  co2: 'CO2 arvo',
+  exteriorColor: 'Ulkoväri',
+  registryNumber: 'Rekisterinumero',
+  registryDate: 'Rekisteröintipäivä',
+}
+
+const pendingEquipmentColumnLabels = {
+  ...equipmentColumnLabels,
+  addToCatalogue: 'Lisää luetteloon',
 }
 
 const createEquipmentKey = (e: Equipment) =>
@@ -37,16 +49,22 @@ const createEquipmentKey = (e: Equipment) =>
     ? null
     : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
+type PendingEquipmentType = { _editable: boolean; valid } & Equipment
+
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ equipment, addEquipment, removeEquipment, updateEquipment }) => {
+    const [
+      pendingEquipment,
+      { add: addPending, remove: removePending, update: updatePending },
+    ] = useCollectionState<PendingEquipmentType>([])
+
     useEffect(() => {
-      if (equipment.some(({ id }) => id === 'new')) {
+      if (pendingEquipment.some(({ id }) => id === 'new')) {
         return
       }
 
-      const inputRow: { _editable: boolean; valid } & Equipment = {
+      const inputRow: { _editable: boolean; addToCatalogue: string } & Equipment = {
         _editable: true,
-        valid: false,
         id: 'new',
         vehicleId: '',
         make: '',
@@ -57,33 +75,29 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         registryDate: '',
         registryNr: '',
         exteriorColor: '',
+        addToCatalogue: '',
       }
 
-      addEquipment(inputRow)
-    }, [equipment, addEquipment])
+      addPending(inputRow)
+    }, [pendingEquipment, addPending])
 
     const onEquipmentInputChange = useCallback(
       (item) => (nextValue, key) => {
         const onEdit = (nextItem) => {
           if (nextItem.id === 'new') {
-            const nextId = createEquipmentKey(nextItem) || 'new'
-            nextItem['id'] = nextId
-
-            if (nextId !== 'new') {
-              nextItem['valid'] = true
-            }
+            nextItem['id'] = createEquipmentKey(nextItem) || 'new'
           }
 
           return nextItem
         }
 
-        updateEquipment(item, key, nextValue, onEdit)
+        updatePending(item, key, nextValue, onEdit)
       },
       [updateEquipment]
     )
 
     const renderEquipmentCell = useCallback((val, key, item) => {
-      if (key === 'valid') {
+      if (key === 'addToCatalogue') {
         return (
           <CellContent>
             {val ? (
@@ -113,13 +127,19 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         <Table
           items={equipment}
           columnLabels={equipmentColumnLabels}
+          onRemoveRow={(item) => () => removeEquipment(item)}
+        />
+        <TableHeading>Lisää ajoneuvo</TableHeading>
+        <Table
+          items={pendingEquipment}
+          columnLabels={pendingEquipmentColumnLabels}
           renderCell={renderEquipmentCell}
           onRemoveRow={(item) => {
             if (item.id === 'new') {
               return false
             }
 
-            return () => removeEquipment(item)
+            return () => removePending(item)
           }}
         />
       </EquipmentCatalogueView>

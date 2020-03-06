@@ -69,7 +69,7 @@ type Mutation {
 
 type OperatingUnit {
   endDate: Date
-  equipmentCatalogue: EquipmentCatalogue
+  equipmentCatalogues: [EquipmentCatalogue!]
   id: ID!
   operatingArea: OperatingArea
   operatingUnitId: String!
@@ -114,8 +114,8 @@ type PreInspection {
 
 type Query {
   equipment(all: Boolean): [Equipment!]
-  equipmentCatalogue(equipmentCatalogueId: String, operatingUnitId: String, operatorId: String): EquipmentCatalogue
-  equipmentCatalogues(operatorId: String): [EquipmentCatalogue!]
+  equipmentCatalogue(equipmentCatalogueId: String, operatorId: String): EquipmentCatalogue
+  equipmentCatalogues(operatingUnitId: String, operatorId: String): [EquipmentCatalogue!]
   operatingUnit(operatingUnitId: String, operatorId: String, startDate: Date): OperatingUnit
   operatingUnits(operatorId: String, startDate: Date): [OperatingUnit!]
   operator(operatorId: String): Operator

@@ -14,9 +14,10 @@ const AreaHeading = styled.h4`
 
 export type PropTypes = {
   operatingUnits: OperatingUnit[] | null
+  productionDate: string
 }
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(({ operatingUnits = [] }) => {
+const ExecutionRequirements: React.FC<PropTypes> = observer(({ productionDate, operatingUnits = [] }) => {
   const areaUnits = groupBy(operatingUnits, 'operatingArea')
 
   return (
@@ -30,6 +31,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(({ operatingUnits = 
         <>
           <AreaHeading>Keskusta</AreaHeading>
           <ExecutionArea
+            productionDate={productionDate}
             operatingUnits={areaUnits[OperatingArea.Center]}
             area={OperatingArea.Center}
           />
@@ -39,6 +41,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(({ operatingUnits = 
         <>
           <AreaHeading>Muu</AreaHeading>
           <ExecutionArea
+            productionDate={productionDate}
             operatingUnits={areaUnits[OperatingArea.Other]}
             area={OperatingArea.Center}
           />
