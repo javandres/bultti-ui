@@ -60,7 +60,7 @@ const TableCell = styled.div`
   font-size: 0.75rem;
   background: rgba(0, 0, 0, 0.005);
 
-  &:last-child {
+  &:last-of-type {
     border-right: 0;
   }
 
@@ -203,11 +203,15 @@ const Table: React.FC<PropTypes> = observer(
         })}
         {typeof getColumnTotal === 'function' && (
           <TableRow key="totals" footer={true}>
-            {columns.map((col) => (
-              <TableCell key={`footer_${col}`}>
-                <CellContent footerCell={true}>{getColumnTotal(col)}</CellContent>
-              </TableCell>
-            ))}
+            {columns.map((col, colIdx) => {
+              const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+
+              return (
+                <TableCell key={`footer_${col}`}>
+                  <CellContent footerCell={true}>{total}</CellContent>
+                </TableCell>
+              )
+            })}
           </TableRow>
         )}
       </TableView>
