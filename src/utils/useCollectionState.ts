@@ -6,6 +6,7 @@ export type CollectionStateTuple<T = any> = [
     add: (item: T) => void
     remove: (item: T) => void
     update: (item: T, key: string, value: any, onEdit?: (item: T) => T) => void
+    replace: (items: T[]) => void
   }
 ]
 
@@ -54,5 +55,11 @@ export const useCollectionState = <T = any>(
     []
   )
 
-  return [currentValue, { add, remove, update }]
+  const replace = useCallback((items: T[]) => {
+    if (items && items.length !== 0) {
+      setCurrentValue(items)
+    }
+  }, [])
+
+  return [currentValue, { add, remove, update, replace }]
 }

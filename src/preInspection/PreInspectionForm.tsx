@@ -25,7 +25,6 @@ import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { seasonsQuery } from '../queries/seasonsQuery'
-import { operatingUnitsQuery } from '../queries/operatingUnitsQuery'
 import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
@@ -255,22 +254,12 @@ const PreInspectionForm: React.FC = observer(() => {
     }
   }, [formState.season])
 
-  // Get the operating units for the selected operator.
-  const { data: operatingUnitsData, loading: operatingUnitsLoading } = useQueryData(
-    operatingUnitsQuery,
-    {
-      variables: {
-        operatorId: formState?.operator?.id || '',
-        startDate: formState?.productionStart,
-      },
-    }
-  )
+  const [
+    operatingUnits,
+    { replace: replaceOperatingUnits, update: updateOperatingUnit },
+  ] = useCollectionState<OperatingUnit>([])
 
-  const [operatingUnits, { update: updateOperatingUnit }] = useCollectionState<OperatingUnit>(
-    operatingUnitsData || []
-  )
-
-  const onUpdateOperatingUnits = useCallback(() => {}, [operatingUnitsData])
+  const onUpdateOperatingUnits = useCallback(() => {}, [operatingUnits])
 
   // Validate that the form has each dependent piece of data.
   const formCondition = useMemo(() => {
@@ -280,11 +269,6 @@ const PreInspectionForm: React.FC = observer(() => {
       operator: !!formState.operator,
       productionStart: !!formState.productionStart,
       seasons: seasonsLoading ? true : seasons && seasons.length !== 0,
-      operatingUnits: !formState.operator
-        ? true
-        : operatingUnitsLoading
-        ? true
-        : !!(operatingUnitsData && operatingUnitsData.length !== 0),
     }
   }, [
     formState.operator,
@@ -292,8 +276,6 @@ const PreInspectionForm: React.FC = observer(() => {
     formState.productionStart,
     seasons,
     seasonsLoading,
-    operatingUnitsData,
-    operatingUnitsLoading,
   ])
 
   // Validation issues that affect the form at this moment
@@ -377,29 +359,23 @@ const PreInspectionForm: React.FC = observer(() => {
           <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
           <TransparentFormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              {operatingUnitsLoading ? (
-                <PageLoading />
-              ) : (
-                <OperatingUnits
-                  productionDate={formState.productionStart}
-                  operatingUnits={operatingUnitsData}
-                  operatorId={formState?.operator?.id || ''}
-                />
-              )}
+              <OperatingUnits
+                productionDate={formState.productionStart}
+                operatingUnits={operatingUnits}
+                operatorId={formState?.operator?.id || ''}
+                initialize={replaceOperatingUnits}
+                onUpdate={onUpdateOperatingUnits}
+              />
             </FormColumn>
           </TransparentFormWrapper>
           <SectionHeading theme="light">Suoritevaatimukset</SectionHeading>
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              {operatingUnitsLoading ? (
-                <PageLoading />
-              ) : (
-                <ExecutionRequirements
-                  productionDate={formState.productionStart}
-                  operatingUnits={operatingUnitsData}
-                  operatorId={formState?.operator?.id || ''}
-                />
-              )}
+              <ExecutionRequirements
+                productionDate={formState.productionStart}
+                operatingUnits={operatingUnits}
+                operatorId={formState?.operator?.id || ''}
+              />
             </FormColumn>
           </FormWrapper>
         </>
