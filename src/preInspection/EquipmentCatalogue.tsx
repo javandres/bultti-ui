@@ -34,7 +34,6 @@ const equipmentColumnLabels = {
   percentageQuota: 'Osuus',
   emissionClass: 'Euroluokka',
   co2: 'CO2 arvo',
-  exteriorColor: 'Ulkoväri',
   registryNr: 'Rekisterinumero',
   registryDate: 'Rekisteröintipäivä',
 }
@@ -77,8 +76,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         co2: 0,
         registryDate: '',
         registryNr: '',
-        percentageQuota: 0,
-        exteriorColor: '',
+        percentageQuota: 0
       }
 
       addPending(inputRow)
