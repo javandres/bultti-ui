@@ -20,7 +20,7 @@ const Main = styled.div`
   flex: 3 0 calc(100% - 27rem);
   height: 100%;
   overflow-y: scroll;
-  background: #fafafa;
+  background: #f5f5f5;
 `
 
 export type AppFrameProps = {

@@ -3,15 +3,14 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
-import Dropdown from '../inputs/Dropdown'
 import { CrossThick } from '../icons/CrossThick'
-import { TextInput } from '../inputs/Input'
 
 const TableView = styled.div`
-  width: 100%;
-  margin-bottom: 1rem;
-  border: 1px solid var(--light-grey);
-  border-radius: 5px;
+  width: calc(100% + 2rem);
+  border-top: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
+  border-radius: 0;
+  margin: 0 -1rem 1rem -1rem;
 
   &:last-child {
     margin-bottom: 0;
@@ -39,7 +38,6 @@ const TableRow = styled.div<{ footer?: boolean }>`
   display: flex;
   border-bottom: 1px solid var(--lighter-grey);
   position: relative;
-  background: ${(p) => (p.footer ? 'rgba(200,200,200,0.15)' : 'transparent')};
 
   &:last-child {
     border-bottom: 0;
@@ -57,9 +55,10 @@ const TableCell = styled.div`
   min-width: 45px;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
   font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.005);
 
   &:last-child {
     border-right: 0;
@@ -76,13 +75,14 @@ const ColumnHeaderCell = styled(TableCell)`
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
-  padding: ${p => p.footerCell ? '0.5rem' : '0.75rem'} 0.15rem;
+  padding: ${(p) => (p.footerCell ? '0.75rem' : '0.5rem')} 0.15rem;
   border: 0;
   background: transparent;
   display: block;
   width: 100%;
   text-align: center;
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
+  background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
 type ItemRemover<ItemType = any> = false | (() => void)
@@ -103,7 +103,11 @@ export type PropTypes<ItemType = any> = {
 const defaultKeyFromItem = (item) => item.id
 
 const defaultRenderCellContent = (val: any): React.ReactChild => (
-  <>{val && <CellContent>{val}</CellContent>}</>
+  <>
+    {!(val === false || val === null || typeof val === 'undefined') && (
+      <CellContent>{val}</CellContent>
+    )}
+  </>
 )
 
 const Table: React.FC<PropTypes> = observer(

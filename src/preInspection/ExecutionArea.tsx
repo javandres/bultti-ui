@@ -1,18 +1,14 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { OperatingArea, OperatingUnit } from '../schema-types'
+import { OperatingArea, OperatingUnit as OperatingUnitType } from '../schema-types'
 import { round } from '../utils/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
-import OperatingUnitRequirements from './OperatingUnitRequirements'
-import { TextButton } from '../common/components/Button'
-import { FlexRow } from '../common/components/common'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 1px solid var(--lighter-grey);
 
   &:last-child {
     margin-bottom: 0;
@@ -27,7 +23,7 @@ const TableHeading = styled.h5`
 
 export type AreaPropTypes = {
   area: OperatingArea
-  operatingUnits: OperatingUnit[]
+  operatingUnits: OperatingUnitType[]
   productionDate: string
 }
 
@@ -55,12 +51,6 @@ const combinedColumnLabels = {
 
 const ExecutionArea: React.FC<AreaPropTypes> = observer(
   ({ productionDate, operatingUnits, area }) => {
-    const [operatingUnitsExpanded, setOperatingUnitsExpanded] = useState(true)
-
-    const toggleOperatingUnitsExpanded = useCallback(() => {
-      setOperatingUnitsExpanded((currentVal) => !currentVal)
-    }, [])
-
     const operatingUnitRequirements = (operatingUnits || []).map((opUnit) => {
       // noinspection UnnecessaryLocalVariableJS
       const operatingUnitRow = {
@@ -105,32 +95,11 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(
     return (
       <ExecutionRequirementsAreaContainer>
         {operatingUnitRequirements && (
-          <>
-            <TableHeading>Kilpailukohteet</TableHeading>
-            <FlexRow>
-              {operatingUnits.length !== 0 && (
-                <TextButton onClick={toggleOperatingUnitsExpanded}>
-                  {operatingUnitsExpanded
-                    ? 'Piilota kilpailukohteet'
-                    : 'Näytä kilpailukohteet'}
-                </TextButton>
-              )}
-            </FlexRow>
-            {operatingUnits.map((operatingUnit) => (
-              <OperatingUnitRequirements
-                key={operatingUnit.id}
-                productionDate={productionDate}
-                operatingUnit={operatingUnit}
-                expanded={operatingUnitsExpanded}
-              />
-            ))}
-            <TableHeading>Seuranta-alue yhteensä</TableHeading>
-            <Table
-              columnLabels={combinedColumnLabels}
-              columnOrder={['label']}
-              items={combinedForArea}
-            />
-          </>
+          <Table
+            columnLabels={combinedColumnLabels}
+            columnOrder={['label']}
+            items={combinedForArea}
+          />
         )}
       </ExecutionRequirementsAreaContainer>
     )

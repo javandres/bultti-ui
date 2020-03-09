@@ -104,7 +104,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           </FieldWrapper>
         ))}
         {onDone && (
-          <FieldWrapper style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
+          <FieldWrapper style={{ alignItems: 'flex-end', justifyContent: 'flex-end', marginLeft: 'auto' }}>
             <Button disabled={doneDisabled} onClick={onDone}>
               {doneLabel}
             </Button>

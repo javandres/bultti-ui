@@ -1,17 +1,18 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
 import {
   Column,
   ColumnWrapper,
   FormError,
-  FormHeading,
   FormMessageContainer,
+  InputLabel,
+  SectionHeading,
 } from '../common/components/common'
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
-import { Operator, Season } from '../schema-types'
+import { OperatingUnit, Operator, Season } from '../schema-types'
 import SelectWeek from '../common/inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
@@ -29,6 +30,8 @@ import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
 import { orderBy } from 'lodash'
+import { useCollectionState } from '../utils/useCollectionState'
+import OperatingUnits from '../operatingUnits/OperatingUnits'
 
 const currentDate = moment()
 
@@ -52,6 +55,17 @@ const FormWrapper = styled(ColumnWrapper)`
   background: white;
   border-radius: 0.5rem;
   border: 1px solid var(--lighter-grey);
+`
+
+const TransparentFormWrapper = styled(FormWrapper)`
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+
+  ${FormColumn}:first-child {
+    padding-top: 0;
+  }
 `
 
 const ControlGroup = styled.div`
@@ -252,6 +266,12 @@ const PreInspectionForm: React.FC = observer(() => {
     }
   )
 
+  const [operatingUnits, { update: updateOperatingUnit }] = useCollectionState<OperatingUnit>(
+    operatingUnitsData || []
+  )
+
+  const onUpdateOperatingUnits = useCallback(() => {}, [operatingUnitsData])
+
   // Validate that the form has each dependent piece of data.
   const formCondition = useMemo(() => {
     return {
@@ -294,6 +314,7 @@ const PreInspectionForm: React.FC = observer(() => {
         <PageLoading />
       ) : (
         <>
+          <SectionHeading theme="light">Perustiedot</SectionHeading>
           <FormWrapper>
             <FormColumn width="50%">
               <ControlGroup>
@@ -315,7 +336,7 @@ const PreInspectionForm: React.FC = observer(() => {
               </ControlGroup>
             </FormColumn>
             <FormColumn>
-              <FormHeading theme="light">Tuotantojakso</FormHeading>
+              <InputLabel theme="light">Tuotantojakso</InputLabel>
               <ControlGroup>
                 <SelectDate
                   name="production_start"
@@ -330,7 +351,7 @@ const PreInspectionForm: React.FC = observer(() => {
                   disabled={true}
                 />
               </ControlGroup>
-              <FormHeading theme="light">Tarkastusjakso</FormHeading>
+              <InputLabel theme="light">Tarkastusjakso</InputLabel>
               <ControlGroup>
                 <SelectWeek
                   startLabel="Alku"
@@ -344,24 +365,39 @@ const PreInspectionForm: React.FC = observer(() => {
               </ControlGroup>
             </FormColumn>
           </FormWrapper>
+          <SectionHeading theme="light">Lähtöketjut</SectionHeading>
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              <FormHeading theme="light">Lähtöketjut</FormHeading>
               <DepartureBlocks
                 departureBlocks={formState.departureBlocks}
                 onChangeBlocks={formState.setDepartureBlocks}
               />
             </FormColumn>
           </FormWrapper>
+          <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
+          <TransparentFormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              {operatingUnitsLoading ? (
+                <PageLoading />
+              ) : (
+                <OperatingUnits
+                  productionDate={formState.productionStart}
+                  operatingUnits={operatingUnitsData}
+                  operatorId={formState?.operator?.id || ''}
+                />
+              )}
+            </FormColumn>
+          </TransparentFormWrapper>
+          <SectionHeading theme="light">Suoritevaatimukset</SectionHeading>
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              <FormHeading theme="light">Suoritevaatimukset</FormHeading>
               {operatingUnitsLoading ? (
                 <PageLoading />
               ) : (
                 <ExecutionRequirements
                   productionDate={formState.productionStart}
                   operatingUnits={operatingUnitsData}
+                  operatorId={formState?.operator?.id || ''}
                 />
               )}
             </FormColumn>

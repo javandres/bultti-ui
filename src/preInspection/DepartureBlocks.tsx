@@ -17,6 +17,10 @@ import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 1rem;
+  
+  &:last-child {
+    margin-bottom: 0;
+  }
 `
 
 type PropTypes = {

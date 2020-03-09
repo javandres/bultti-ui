@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
@@ -6,12 +6,17 @@ import { Equipment } from '../schema-types'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import { useCollectionState } from '../utils/useCollectionState'
 import ItemForm from '../common/inputs/ItemForm'
+import { Button } from '../common/components/Button'
 
 const EquipmentCatalogueView = styled.div``
 
 const TableHeading = styled.h5`
-  margin-top: 0;
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 export type PropTypes = {
@@ -54,17 +59,13 @@ const createEquipmentKey = (e: Equipment) =>
 type PendingEquipmentType = { _editable: boolean; valid } & Equipment
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ equipment, addEquipment, removeEquipment, updateEquipment }) => {
+  ({ equipment, addEquipment, removeEquipment }) => {
     const [
       pendingEquipment,
       { add: addPending, remove: removePending, update: updatePending },
     ] = useCollectionState<PendingEquipmentType>([])
 
-    useEffect(() => {
-      if (pendingEquipment.length > 0) {
-        return
-      }
-
+    const addDraftEquipment = useCallback(() => {
       const inputRow: { _editable: boolean } & Equipment = {
         _editable: true,
         id: 'new',
@@ -76,11 +77,11 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         co2: 0,
         registryDate: '',
         registryNr: '',
-        percentageQuota: 0
+        percentageQuota: 0,
       }
 
       addPending(inputRow)
-    }, [pendingEquipment, addPending])
+    }, [addPending])
 
     const onEquipmentInputChange = useCallback(
       (item) => (key, nextValue) => {
@@ -133,23 +134,28 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             />
           </>
         )}
-        {pendingEquipment.length !== 0 && (
-          <>
-            <TableHeading style={{ marginTop: '2rem' }}>Lisää ajoneuvo</TableHeading>
-            {pendingEquipment.map((item) => (
-              <ItemForm
-                key={item.id}
-                item={item}
-                labels={equipmentColumnLabels}
-                onChange={onEquipmentInputChange(item)}
-                onDone={() => onAddEquipment(item)}
-                doneDisabled={!equipmentIsValid(item)}
-                doneLabel="Lisää luetteloon"
-                renderInput={renderEquipmentCell}
-              />
-            ))}
-          </>
-        )}
+        <>
+          {pendingEquipment.length === 0 && (
+            <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>
+          )}
+          {pendingEquipment.length !== 0 && (
+            <>
+              <TableHeading>Lisää ajoneuvo</TableHeading>
+              {pendingEquipment.map((item) => (
+                <ItemForm
+                  key={item.id}
+                  item={item}
+                  labels={equipmentColumnLabels}
+                  onChange={onEquipmentInputChange(item)}
+                  onDone={() => onAddEquipment(item)}
+                  doneDisabled={!equipmentIsValid(item)}
+                  doneLabel="Lisää luetteloon"
+                  renderInput={renderEquipmentCell}
+                />
+              ))}
+            </>
+          )}
+        </>
       </EquipmentCatalogueView>
     )
   }

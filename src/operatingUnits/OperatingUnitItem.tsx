@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import {
   Equipment,
   EquipmentCatalogue as EquipmentCatalogueType,
-  OperatingUnit,
+  OperatingUnit as OperatingUnitType,
 } from '../schema-types'
 import { ArrowDown } from '../common/icons/ArrowDown'
 import { round } from '../utils/round'
@@ -16,6 +16,7 @@ const OperatingUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
   margin-top: 1rem;
   border-radius: 0.5rem;
+  background: white;
 `
 
 const HeaderRow = styled.div<{ expanded?: boolean }>`
@@ -25,7 +26,7 @@ const HeaderRow = styled.div<{ expanded?: boolean }>`
   border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
 
   > *:nth-child(even) {
-    background-color: var(--white-grey);
+    background-color: #fcfcfc;
   }
 `
 
@@ -74,17 +75,13 @@ const OperatingUnitHeading = styled.h4`
   align-items: center;
 `
 
-const TableHeading = styled.h5`
-  margin-bottom: 0.5rem;
-`
-
 export type PropTypes = {
-  operatingUnit: OperatingUnit
+  operatingUnit: OperatingUnitType
   expanded?: boolean
   productionDate: string
 }
 
-const OperatingUnitRequirements: React.FC<PropTypes> = observer(
+const OperatingUnitItem: React.FC<PropTypes> = observer(
   ({ productionDate, operatingUnit, expanded = true }) => {
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = (
@@ -102,8 +99,6 @@ const OperatingUnitRequirements: React.FC<PropTypes> = observer(
     useEffect(() => {
       setIsExpanded(expanded)
     }, [expanded])
-
-    // TODO: Calculated values for operating unit
 
     return (
       <OperatingUnitView>
@@ -144,4 +139,4 @@ const OperatingUnitRequirements: React.FC<PropTypes> = observer(
   }
 )
 
-export default OperatingUnitRequirements
+export default OperatingUnitItem

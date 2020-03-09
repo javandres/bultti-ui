@@ -17,6 +17,7 @@ const CheckboxLabel = styled.label<{checked: boolean}>`
 
 const LabelText = styled.span`
   margin-right: 0.25rem;
+  user-select: none;
 `
 
 export type PropTypes = {

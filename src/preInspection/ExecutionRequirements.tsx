@@ -9,46 +9,53 @@ import ExecutionArea from './ExecutionArea'
 const ExecutionRequirementsView = styled.div``
 
 const AreaHeading = styled.h4`
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
+  
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 export type PropTypes = {
   operatingUnits: OperatingUnit[] | null
+  operatorId: string
   productionDate: string
 }
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(({ productionDate, operatingUnits = [] }) => {
-  const areaUnits = groupBy(operatingUnits, 'operatingArea')
+const ExecutionRequirements: React.FC<PropTypes> = observer(
+  ({ productionDate, operatingUnits = [] }) => {
+    const areaUnits = groupBy(operatingUnits, 'operatingArea')
 
-  return (
-    <ExecutionRequirementsView>
-      {operatingUnits?.length === 0 && (
-        <FormMessage>
-          Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
-        </FormMessage>
-      )}
-      {get(areaUnits, OperatingArea.Center, []).length !== 0 && (
-        <>
-          <AreaHeading>Keskusta</AreaHeading>
-          <ExecutionArea
-            productionDate={productionDate}
-            operatingUnits={areaUnits[OperatingArea.Center]}
-            area={OperatingArea.Center}
-          />
-        </>
-      )}
-      {get(areaUnits, OperatingArea.Other, []).length !== 0 && (
-        <>
-          <AreaHeading>Muu</AreaHeading>
-          <ExecutionArea
-            productionDate={productionDate}
-            operatingUnits={areaUnits[OperatingArea.Other]}
-            area={OperatingArea.Center}
-          />
-        </>
-      )}
-    </ExecutionRequirementsView>
-  )
-})
+    return (
+      <ExecutionRequirementsView>
+        {operatingUnits?.length === 0 && (
+          <FormMessage>
+            Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
+          </FormMessage>
+        )}
+        {get(areaUnits, OperatingArea.Center, []).length !== 0 && (
+          <>
+            <AreaHeading>Keskusta</AreaHeading>
+            <ExecutionArea
+              productionDate={productionDate}
+              operatingUnits={areaUnits[OperatingArea.Center]}
+              area={OperatingArea.Center}
+            />
+          </>
+        )}
+        {get(areaUnits, OperatingArea.Other, []).length !== 0 && (
+          <>
+            <AreaHeading>Muu</AreaHeading>
+            <ExecutionArea
+              productionDate={productionDate}
+              operatingUnits={areaUnits[OperatingArea.Other]}
+              area={OperatingArea.Center}
+            />
+          </>
+        )}
+      </ExecutionRequirementsView>
+    )
+  }
+)
 
 export default ExecutionRequirements
