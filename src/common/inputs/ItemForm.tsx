@@ -13,7 +13,9 @@ const ControlledFormView = styled.div`
 `
 
 const FieldWrapper = styled.div`
-  flex: 1 1 25%;
+  display: flex;
+  flex-direction: column;
+  flex: 0 1 calc(33% - 1rem);
   margin: 1rem 1rem 1rem 0;
 `
 
@@ -102,7 +104,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           </FieldWrapper>
         ))}
         {onDone && (
-          <FieldWrapper>
+          <FieldWrapper style={{ alignItems: 'flex-end', justifyContent: 'flex-end' }}>
             <Button disabled={doneDisabled} onClick={onDone}>
               {doneLabel}
             </Button>

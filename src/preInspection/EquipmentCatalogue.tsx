@@ -35,12 +35,19 @@ const equipmentColumnLabels = {
   emissionClass: 'Euroluokka',
   co2: 'CO2 arvo',
   exteriorColor: 'Ulkoväri',
-  registryNumber: 'Rekisterinumero',
+  registryNr: 'Rekisterinumero',
   registryDate: 'Rekisteröintipäivä',
 }
 
 const equipmentIsValid = (e: Equipment): boolean =>
-  !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota)
+  !!(
+    e?.make &&
+    e?.model &&
+    e?.emissionClass &&
+    e?.type &&
+    e?.percentageQuota &&
+    e?.registryDate
+  )
 
 const createEquipmentKey = (e: Equipment) =>
   !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
@@ -59,7 +66,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         return
       }
 
-      const inputRow: { _editable: boolean; addToCatalogue: string } & Equipment = {
+      const inputRow: { _editable: boolean } & Equipment = {
         _editable: true,
         id: 'new',
         vehicleId: '',
@@ -72,7 +79,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         registryNr: '',
         percentageQuota: 0,
         exteriorColor: '',
-        addToCatalogue: '',
       }
 
       addPending(inputRow)
