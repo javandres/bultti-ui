@@ -1,5 +1,5 @@
 export type EquipmentCatalogueData = {
-  operatingUnit: string // kilpailukohde
+  procurementUnit: string // kilpailukohde
   operatorId: string // liikennöitsijä
   make: string // merkki
   model: string // malli

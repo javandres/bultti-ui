@@ -38,12 +38,12 @@ export type PropTypes = {
   onChange: (value: ValueType, key: string) => void
 }
 
-type EmissionSelectValue = {
+type SelectValue = {
   name: string
   label: string
 }
 
-const emissionClassValues: EmissionSelectValue[] = [
+const emissionClassValues: SelectValue[] = [
   { name: '', label: '...' },
   { name: '1', label: 'Euro 3' },
   { name: '2', label: 'Euro 4' },
@@ -57,7 +57,7 @@ const emissionClassValues: EmissionSelectValue[] = [
   { name: '10', label: 'Sähkö' },
 ]
 
-const typeValues: EmissionSelectValue[] = [
+const typeValues: SelectValue[] = [
   { name: '', label: '...' },
   { name: 'A1', label: 'A1' },
   { name: 'A2', label: 'A2' },

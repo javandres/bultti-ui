@@ -40,10 +40,10 @@ type EquipmentCatalogue {
   endDate: Date
   equipment: [Equipment!]!
   id: ID!
-  operatingUnit: OperatingUnit
-  operatingUnitId: String
   operator: Operator
   operatorId: String
+  procurementUnit: ProcurementUnit
+  procurementUnitId: String
   startDate: Date
 }
 
@@ -67,32 +67,12 @@ type Mutation {
   uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
 }
 
-type OperatingUnit {
-  endDate: Date
-  equipmentCatalogues: [EquipmentCatalogue!]
-  id: ID!
-  operatingArea: OperatingArea
-  operatingUnitId: String!
-  operationEndDate: Date
-  operationStartDate: Date
-  operator: Operator
-  operatorId: String!
-  routes: [OperatingUnitRoute]
-  startDate: Date
-  weeklyExecutionMeters: Int
-}
-
-type OperatingUnitRoute {
-  length: Int
-  routeId: String!
-}
-
 type Operator {
   equipment: [Equipment!]
   equipmentCatalogues: [EquipmentCatalogue!]
   id: String!
   name: String
-  operatingUnits(startDate: Date): [OperatingUnit!]
+  procurementUnits(startDate: Date): [ProcurementUnit!]
 }
 
 type PreInspection {
@@ -112,14 +92,34 @@ type PreInspection {
   status: InspectionStatus!
 }
 
+type ProcurementUnit {
+  endDate: Date
+  equipmentCatalogues: [EquipmentCatalogue!]
+  id: ID!
+  operatingArea: OperatingArea
+  operationEndDate: Date
+  operationStartDate: Date
+  operator: Operator
+  operatorId: String!
+  procurementUnitId: String!
+  routes: [ProcurementUnitRoute]
+  startDate: Date
+  weeklyExecutionMeters: Int
+}
+
+type ProcurementUnitRoute {
+  length: Int
+  routeId: String!
+}
+
 type Query {
-  equipment(all: Boolean): [Equipment!]
+  equipment(equipmentCatalogueId: String, operatorId: String): [Equipment!]
   equipmentCatalogue(equipmentCatalogueId: String, operatorId: String): EquipmentCatalogue
-  equipmentCatalogues(operatingUnitId: String, operatorId: String): [EquipmentCatalogue!]
-  operatingUnit(operatingUnitId: String, operatorId: String, startDate: Date): OperatingUnit
-  operatingUnits(operatorId: String, startDate: Date): [OperatingUnit!]
+  equipmentCatalogues(operatorId: String, procurementUnitId: String): [EquipmentCatalogue!]
   operator(operatorId: String): Operator
   operators: [Operator!]
+  procurementUnit(operatorId: String, procurementUnitId: String, startDate: Date): ProcurementUnit
+  procurementUnits(operatorId: String, startDate: Date): [ProcurementUnit!]
   routes: [Route!]
   seasons(date: Date): [Season!]
   uploads: [String]
@@ -129,8 +129,8 @@ type Route {
   area: OperatingArea!
   direction: Int!
   id: ID!
-  operatingUnit: OperatingUnit
-  operatingUnitId: String
+  procurementUnit: ProcurementUnit
+  procurementUnitId: String
   routeId: String!
 }
 
@@ -159,8 +159,8 @@ enum OperatingArea {
 
 input EquipmentCatalogueInput {
   endDate: Date
-  operatingUnitId: String
   operatorId: String
+  procurementUnitId: String
   startDate: Date
 }
 

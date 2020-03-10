@@ -18,11 +18,21 @@
             "description": "",
             "args": [
               {
-                "name": "all",
+                "name": "equipmentCatalogueId",
                 "description": "",
                 "type": {
                   "kind": "SCALAR",
-                  "name": "Boolean",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "operatorId",
+                "description": "",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
                   "ofType": null
                 },
                 "defaultValue": null
@@ -59,7 +69,7 @@
                 "defaultValue": null
               },
               {
-                "name": "operatingUnitId",
+                "name": "procurementUnitId",
                 "description": "",
                 "type": {
                   "kind": "SCALAR",
@@ -162,7 +172,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnits",
+            "name": "procurementUnits",
             "description": "",
             "args": [
               {
@@ -194,7 +204,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "OperatingUnit",
+                  "name": "ProcurementUnit",
                   "ofType": null
                 }
               }
@@ -203,7 +213,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnit",
+            "name": "procurementUnit",
             "description": "",
             "args": [
               {
@@ -217,7 +227,7 @@
                 "defaultValue": null
               },
               {
-                "name": "operatingUnitId",
+                "name": "procurementUnitId",
                 "description": "",
                 "type": {
                   "kind": "SCALAR",
@@ -239,7 +249,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "OperatingUnit",
+              "name": "ProcurementUnit",
               "ofType": null
             },
             "isDeprecated": false,
@@ -320,8 +330,8 @@
       },
       {
         "kind": "SCALAR",
-        "name": "Boolean",
-        "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "name": "String",
+        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
         "fields": null,
         "inputFields": null,
         "interfaces": null,
@@ -535,16 +545,6 @@
       },
       {
         "kind": "SCALAR",
-        "name": "String",
-        "description": "The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.",
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
         "name": "Float",
         "description": "The `Float` scalar type represents signed double-precision fractional values as specified by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).",
         "fields": null,
@@ -627,7 +627,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnits",
+            "name": "procurementUnits",
             "description": "",
             "args": [
               {
@@ -649,7 +649,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "OperatingUnit",
+                  "name": "ProcurementUnit",
                   "ofType": null
                 }
               }
@@ -709,7 +709,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnitId",
+            "name": "procurementUnitId",
             "description": "",
             "args": [],
             "type": {
@@ -721,12 +721,12 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnit",
+            "name": "procurementUnit",
             "description": "",
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "OperatingUnit",
+              "name": "ProcurementUnit",
               "ofType": null
             },
             "isDeprecated": false,
@@ -788,7 +788,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "OperatingUnit",
+        "name": "ProcurementUnit",
         "description": "",
         "fields": [
           {
@@ -808,7 +808,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnitId",
+            "name": "procurementUnitId",
             "description": "",
             "args": [],
             "type": {
@@ -880,7 +880,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "OperatingUnitRoute",
+                "name": "ProcurementUnitRoute",
                 "ofType": null
               }
             },
@@ -967,7 +967,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "OperatingUnitRoute",
+        "name": "ProcurementUnitRoute",
         "description": "",
         "fields": [
           {
@@ -1101,7 +1101,7 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnitId",
+            "name": "procurementUnitId",
             "description": "",
             "args": [],
             "type": {
@@ -1113,12 +1113,12 @@
             "deprecationReason": null
           },
           {
-            "name": "operatingUnit",
+            "name": "procurementUnit",
             "description": "",
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "OperatingUnit",
+              "name": "ProcurementUnit",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1813,7 +1813,7 @@
             "defaultValue": null
           },
           {
-            "name": "operatingUnitId",
+            "name": "procurementUnitId",
             "description": "",
             "type": {
               "kind": "SCALAR",
@@ -2198,6 +2198,16 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "Boolean",
+        "description": "The `Boolean` scalar type represents `true` or `false`.",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {

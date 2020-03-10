@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { OperatingArea, OperatingUnit } from '../schema-types'
+import { OperatingArea, ProcurementUnit } from '../schema-types'
 import { FormMessage } from '../common/components/common'
 import { get, groupBy } from 'lodash'
 import ExecutionArea from './ExecutionArea'
@@ -17,18 +17,18 @@ const AreaHeading = styled.h4`
 `
 
 export type PropTypes = {
-  operatingUnits: OperatingUnit[] | null
+  procurementUnits: ProcurementUnit[] | null
   operatorId: string
   productionDate: string
 }
 
 const ExecutionRequirements: React.FC<PropTypes> = observer(
-  ({ productionDate, operatingUnits = [] }) => {
-    const areaUnits = groupBy(operatingUnits, 'operatingArea')
+  ({ productionDate, procurementUnits = [] }) => {
+    const areaUnits = groupBy(procurementUnits, 'operatingArea')
 
     return (
       <ExecutionRequirementsView>
-        {operatingUnits?.length === 0 && (
+        {procurementUnits?.length === 0 && (
           <FormMessage>
             Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
           </FormMessage>
@@ -38,7 +38,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(
             <AreaHeading>Keskusta</AreaHeading>
             <ExecutionArea
               productionDate={productionDate}
-              operatingUnits={areaUnits[OperatingArea.Center]}
+              procurementUnits={areaUnits[OperatingArea.Center]}
               area={OperatingArea.Center}
             />
           </>
@@ -48,7 +48,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(
             <AreaHeading>Muu</AreaHeading>
             <ExecutionArea
               productionDate={productionDate}
-              operatingUnits={areaUnits[OperatingArea.Other]}
+              procurementUnits={areaUnits[OperatingArea.Other]}
               area={OperatingArea.Center}
             />
           </>

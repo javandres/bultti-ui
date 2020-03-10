@@ -57,8 +57,8 @@ export type EquipmentCatalogue = {
   id: Scalars['ID'],
   operatorId?: Maybe<Scalars['String']>,
   operator?: Maybe<Operator>,
-  operatingUnitId?: Maybe<Scalars['String']>,
-  operatingUnit?: Maybe<OperatingUnit>,
+  procurementUnitId?: Maybe<Scalars['String']>,
+  procurementUnit?: Maybe<ProcurementUnit>,
   startDate?: Maybe<Scalars['Date']>,
   endDate?: Maybe<Scalars['Date']>,
   equipment: Array<Equipment>,
@@ -66,7 +66,7 @@ export type EquipmentCatalogue = {
 
 export type EquipmentCatalogueInput = {
   operatorId?: Maybe<Scalars['String']>,
-  operatingUnitId?: Maybe<Scalars['String']>,
+  procurementUnitId?: Maybe<Scalars['String']>,
   startDate?: Maybe<Scalars['Date']>,
   endDate?: Maybe<Scalars['Date']>,
 };
@@ -123,39 +123,17 @@ export enum OperatingArea {
   Other = 'OTHER'
 }
 
-export type OperatingUnit = {
-   __typename?: 'OperatingUnit',
-  id: Scalars['ID'],
-  operatingUnitId: Scalars['String'],
-  operatorId: Scalars['String'],
-  operator?: Maybe<Operator>,
-  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
-  routes?: Maybe<Array<Maybe<OperatingUnitRoute>>>,
-  operatingArea?: Maybe<OperatingArea>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-  operationStartDate?: Maybe<Scalars['Date']>,
-  operationEndDate?: Maybe<Scalars['Date']>,
-  weeklyExecutionMeters?: Maybe<Scalars['Int']>,
-};
-
-export type OperatingUnitRoute = {
-   __typename?: 'OperatingUnitRoute',
-  routeId: Scalars['String'],
-  length?: Maybe<Scalars['Int']>,
-};
-
 export type Operator = {
    __typename?: 'Operator',
   id: Scalars['String'],
   name?: Maybe<Scalars['String']>,
   equipment?: Maybe<Array<Equipment>>,
   equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
-  operatingUnits?: Maybe<Array<OperatingUnit>>,
+  procurementUnits?: Maybe<Array<ProcurementUnit>>,
 };
 
 
-export type OperatorOperatingUnitsArgs = {
+export type OperatorProcurementUnitsArgs = {
   startDate?: Maybe<Scalars['Date']>
 };
 
@@ -187,6 +165,28 @@ export type PreInspectionInput = {
   executionRequirements: Array<ExecutionRequirementInput>,
 };
 
+export type ProcurementUnit = {
+   __typename?: 'ProcurementUnit',
+  id: Scalars['ID'],
+  procurementUnitId: Scalars['String'],
+  operatorId: Scalars['String'],
+  operator?: Maybe<Operator>,
+  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
+  routes?: Maybe<Array<Maybe<ProcurementUnitRoute>>>,
+  operatingArea?: Maybe<OperatingArea>,
+  startDate?: Maybe<Scalars['Date']>,
+  endDate?: Maybe<Scalars['Date']>,
+  operationStartDate?: Maybe<Scalars['Date']>,
+  operationEndDate?: Maybe<Scalars['Date']>,
+  weeklyExecutionMeters?: Maybe<Scalars['Int']>,
+};
+
+export type ProcurementUnitRoute = {
+   __typename?: 'ProcurementUnitRoute',
+  routeId: Scalars['String'],
+  length?: Maybe<Scalars['Int']>,
+};
+
 export type Query = {
    __typename?: 'Query',
   equipment?: Maybe<Array<Equipment>>,
@@ -194,8 +194,8 @@ export type Query = {
   equipmentCatalogue?: Maybe<EquipmentCatalogue>,
   operators?: Maybe<Array<Operator>>,
   operator?: Maybe<Operator>,
-  operatingUnits?: Maybe<Array<OperatingUnit>>,
-  operatingUnit?: Maybe<OperatingUnit>,
+  procurementUnits?: Maybe<Array<ProcurementUnit>>,
+  procurementUnit?: Maybe<ProcurementUnit>,
   routes?: Maybe<Array<Route>>,
   seasons?: Maybe<Array<Season>>,
   uploads?: Maybe<Array<Maybe<Scalars['String']>>>,
@@ -203,13 +203,14 @@ export type Query = {
 
 
 export type QueryEquipmentArgs = {
-  all?: Maybe<Scalars['Boolean']>
+  equipmentCatalogueId?: Maybe<Scalars['String']>,
+  operatorId?: Maybe<Scalars['String']>
 };
 
 
 export type QueryEquipmentCataloguesArgs = {
   operatorId?: Maybe<Scalars['String']>,
-  operatingUnitId?: Maybe<Scalars['String']>
+  procurementUnitId?: Maybe<Scalars['String']>
 };
 
 
@@ -224,15 +225,15 @@ export type QueryOperatorArgs = {
 };
 
 
-export type QueryOperatingUnitsArgs = {
+export type QueryProcurementUnitsArgs = {
   operatorId?: Maybe<Scalars['String']>,
   startDate?: Maybe<Scalars['Date']>
 };
 
 
-export type QueryOperatingUnitArgs = {
+export type QueryProcurementUnitArgs = {
   operatorId?: Maybe<Scalars['String']>,
-  operatingUnitId?: Maybe<Scalars['String']>,
+  procurementUnitId?: Maybe<Scalars['String']>,
   startDate?: Maybe<Scalars['Date']>
 };
 
@@ -246,8 +247,8 @@ export type Route = {
   id: Scalars['ID'],
   routeId: Scalars['String'],
   direction: Scalars['Int'],
-  operatingUnitId?: Maybe<Scalars['String']>,
-  operatingUnit?: Maybe<OperatingUnit>,
+  procurementUnitId?: Maybe<Scalars['String']>,
+  procurementUnit?: Maybe<ProcurementUnit>,
   area: OperatingArea,
 };
 

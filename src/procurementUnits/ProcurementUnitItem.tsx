@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import {
   Equipment,
   EquipmentCatalogue as EquipmentCatalogueType,
-  OperatingUnit as OperatingUnitType,
+  ProcurementUnit as ProcurementUnitType,
 } from '../schema-types'
 import { ArrowDown } from '../common/icons/ArrowDown'
 import { round } from '../utils/round'
@@ -12,7 +12,7 @@ import EquipmentCatalogue from './EquipmentCatalogue'
 import { useCollectionState } from '../utils/useCollectionState'
 import { isBetween } from '../utils/isBetween'
 
-const OperatingUnitView = styled.div`
+const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
   margin-top: 1rem;
   border-radius: 0.5rem;
@@ -66,7 +66,7 @@ const Content = styled.div`
   padding: 1rem;
 `
 
-const OperatingUnitHeading = styled.h4`
+const ProcurementUnitHeading = styled.h4`
   margin: 0;
   padding: 0.5rem 0.75rem;
   flex: 1 1 50%;
@@ -76,16 +76,16 @@ const OperatingUnitHeading = styled.h4`
 `
 
 export type PropTypes = {
-  operatingUnit: OperatingUnitType
+  procurementUnit: ProcurementUnitType
   expanded?: boolean
   productionDate: string
 }
 
-const OperatingUnitItem: React.FC<PropTypes> = observer(
-  ({ productionDate, operatingUnit, expanded = true }) => {
+const ProcurementUnitItem: React.FC<PropTypes> = observer(
+  ({ productionDate, procurementUnit, expanded = true }) => {
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = (
-      operatingUnit?.equipmentCatalogues || []
+      procurementUnit?.equipmentCatalogues || []
     ).find((cat) => isBetween(productionDate, cat.startDate, cat.endDate))
 
     const [
@@ -94,16 +94,16 @@ const OperatingUnitItem: React.FC<PropTypes> = observer(
     ] = useCollectionState<Equipment>(activeCatalogue?.equipment || [])
 
     const [isExpanded, setIsExpanded] = useState(true)
-    const { routes = [] } = operatingUnit
+    const { routes = [] } = procurementUnit
 
     useEffect(() => {
       setIsExpanded(expanded)
     }, [expanded])
 
     return (
-      <OperatingUnitView>
+      <ProcurementUnitView>
         <HeaderRow expanded={isExpanded}>
-          <OperatingUnitHeading>{operatingUnit.operatingUnitId}</OperatingUnitHeading>
+          <ProcurementUnitHeading>{procurementUnit.procurementUnitId}</ProcurementUnitHeading>
           <HeaderSection>
             <SectionHeading>Reitit</SectionHeading>
             {(routes || [])
@@ -113,7 +113,7 @@ const OperatingUnitItem: React.FC<PropTypes> = observer(
           </HeaderSection>
           <HeaderSection>
             <SectionHeading>Kilometrejä viikossa</SectionHeading>
-            {round((operatingUnit?.weeklyExecutionMeters || 0) / 1000)}
+            {round((procurementUnit?.weeklyExecutionMeters || 0) / 1000)}
           </HeaderSection>
           <HeaderSection>
             <SectionHeading>Maksimi keski-ikä</SectionHeading>8 (7,6)
@@ -134,9 +134,9 @@ const OperatingUnitItem: React.FC<PropTypes> = observer(
             />
           </Content>
         )}
-      </OperatingUnitView>
+      </ProcurementUnitView>
     )
   }
 )
 
-export default OperatingUnitItem
+export default ProcurementUnitItem

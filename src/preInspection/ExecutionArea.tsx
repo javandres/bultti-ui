@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { OperatingArea, OperatingUnit as OperatingUnitType } from '../schema-types'
+import { OperatingArea, ProcurementUnit as ProcurementUnitType } from '../schema-types'
 import { round } from '../utils/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
@@ -23,12 +23,12 @@ const TableHeading = styled.h5`
 
 export type AreaPropTypes = {
   area: OperatingArea
-  operatingUnits: OperatingUnitType[]
+  procurementUnits: ProcurementUnitType[]
   productionDate: string
 }
 
 const executionRequirementColumnLabels = {
-  operatingUnitId: 'Kilpailukohde',
+  procurementUnitId: 'Kilpailukohde',
   age: 'Ikä',
   executionMeters: 'Suorite / viikko',
   '1': 'Euro 3',
@@ -46,15 +46,15 @@ const executionRequirementColumnLabels = {
 
 const combinedColumnLabels = {
   label: 'Selite',
-  ...omit(executionRequirementColumnLabels, ['operatingUnitId', 'age', 'executionMeters']),
+  ...omit(executionRequirementColumnLabels, ['procurementUnitId', 'age', 'executionMeters']),
 }
 
 const ExecutionArea: React.FC<AreaPropTypes> = observer(
-  ({ productionDate, operatingUnits, area }) => {
-    const operatingUnitRequirements = (operatingUnits || []).map((opUnit) => {
+  ({ productionDate, procurementUnits, area }) => {
+    const procurementUnitRequirements = (procurementUnits || []).map((opUnit) => {
       // noinspection UnnecessaryLocalVariableJS
-      const operatingUnitRow = {
-        operatingUnitId: opUnit.id,
+      const procurementUnitRow = {
+        procurementUnitId: opUnit.id,
         age: 7.5,
         executionMeters: `${round((opUnit.weeklyExecutionMeters || 0) / 1000)} km`,
       }
@@ -64,7 +64,7 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(
         requirementRow[i] = ''
       }*/
 
-      return operatingUnitRow
+      return procurementUnitRow
     })
 
     const combinedForArea = useMemo(() => {
@@ -90,11 +90,11 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(
       }
 
       return [combinedKm, combinedExecutionRequirements, combinedSanctionThresholds]
-    }, [operatingUnitRequirements])
+    }, [procurementUnitRequirements])
 
     return (
       <ExecutionRequirementsAreaContainer>
-        {operatingUnitRequirements && (
+        {procurementUnitRequirements && (
           <Table
             columnLabels={combinedColumnLabels}
             columnOrder={['label']}

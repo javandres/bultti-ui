@@ -1,10 +1,10 @@
 import gql from 'graphql-tag'
 
-export const operatingUnitsQuery = gql`
-  query operatingUnits($operatorId: String!, $startDate: Date!) {
-    operatingUnits(operatorId: $operatorId, startDate: $startDate) {
+export const procurementUnitsQuery = gql`
+  query procurementUnits($operatorId: String!, $startDate: Date!) {
+    procurementUnits(operatorId: $operatorId, startDate: $startDate) {
       id
-      operatingUnitId
+      procurementUnitId
       operatorId
       routes {
         length
@@ -21,7 +21,7 @@ export const operatingUnitsQuery = gql`
         operatorId
         startDate
         endDate
-        operatingUnitId
+        procurementUnitId
         equipment {
           id
           make
@@ -41,11 +41,11 @@ export const operatingUnitsQuery = gql`
   }
 `
 
-export const operatingUnitQuery = gql`
-  query operatingUnit($operatorId: String!, $operatingUnitId: String!, $startDate: Date!) {
-    operatingUnit(
+export const procurementUnitQuery = gql`
+  query procurementUnit($operatorId: String!, $procurementUnitId: String!, $startDate: Date!) {
+    procurementUnit(
       operatorId: $operatorId
-      operatingUnitId: $operatingUnitId
+      procurementUnitId: $procurementUnitId
       startDate: $startDate
     ) {
       id
