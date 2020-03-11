@@ -12,7 +12,7 @@ const operatorsQuery = gql`
   query listOperators {
     operators {
       id
-      name
+      operatorName
     }
   }
 `
@@ -36,9 +36,9 @@ const SelectOperator: React.FC<PropTypes> = observer(
       const operatorList = !data ? [] : compact([...data])
 
       if (allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
-        operatorList.unshift({ id: 'all', name: text('general.app.all') })
+        operatorList.unshift({ id: 'all', operatorName: text('general.app.all') })
       } else if (!allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
-        operatorList.unshift({ id: 'unselected', name: '...' })
+        operatorList.unshift({ id: 'unselected', operatorName: '...' })
       }
 
       return operatorList
@@ -67,12 +67,12 @@ const SelectOperator: React.FC<PropTypes> = observer(
       <OperatorSelect
         className={className}
         theme={theme}
-        label={!label ? "" : label || 'Valitse liikennöitsijä'}
+        label={!label ? '' : label || 'Valitse liikennöitsijä'}
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}
         itemToString="id"
-        itemToLabel="name"
+        itemToLabel="operatorName"
       />
     )
   }

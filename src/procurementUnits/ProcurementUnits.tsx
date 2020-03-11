@@ -12,7 +12,7 @@ import { PageLoading } from '../common/components/Loading'
 const ProcurementUnitsView = styled.div``
 
 export type PropTypes = {
-  operatorId: string
+  operatorId: number
   productionDate: string
   procurementUnits: ProcurementUnitType[] | null
   onUpdate?: (item: ProcurementUnitType, key: string, value: any) => void

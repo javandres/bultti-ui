@@ -12,7 +12,7 @@ import {
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
-import { ProcurementUnit, Operator, Season } from '../schema-types'
+import { Operator, ProcurementUnit, Season } from '../schema-types'
 import SelectWeek from '../common/inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
@@ -362,7 +362,7 @@ const PreInspectionForm: React.FC = observer(() => {
               <ProcurementUnits
                 productionDate={formState.productionStart}
                 procurementUnits={procurementUnits}
-                operatorId={formState?.operator?.id || ''}
+                operatorId={formState?.operator?.id || 0}
                 initialize={replaceProcurementUnits}
                 onUpdate={onUpdateProcurementUnits}
               />
@@ -374,7 +374,7 @@ const PreInspectionForm: React.FC = observer(() => {
               <ExecutionRequirements
                 productionDate={formState.productionStart}
                 procurementUnits={procurementUnits}
-                operatorId={formState?.operator?.id || ''}
+                operatorId={formState?.operator?.id || 0}
               />
             </FormColumn>
           </FormWrapper>

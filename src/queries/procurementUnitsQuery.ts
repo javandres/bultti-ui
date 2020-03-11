@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 
 export const procurementUnitsQuery = gql`
-  query procurementUnits($operatorId: String!, $startDate: Date!) {
+  query procurementUnits($operatorId: Int!, $startDate: Date!) {
     procurementUnits(operatorId: $operatorId, startDate: $startDate) {
       id
       procurementUnitId
@@ -42,7 +42,7 @@ export const procurementUnitsQuery = gql`
 `
 
 export const procurementUnitQuery = gql`
-  query procurementUnit($operatorId: String!, $procurementUnitId: String!, $startDate: Date!) {
+  query procurementUnit($operatorId: Int!, $procurementUnitId: String!, $startDate: Date!) {
     procurementUnit(
       operatorId: $operatorId
       procurementUnitId: $procurementUnitId

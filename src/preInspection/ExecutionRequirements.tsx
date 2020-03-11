@@ -18,7 +18,7 @@ const AreaHeading = styled.h4`
 
 export type PropTypes = {
   procurementUnits: ProcurementUnit[] | null
-  operatorId: string
+  operatorId: number
   productionDate: string
 }
 

@@ -39,7 +39,7 @@ export interface ExecutionRequirement {
 
 export interface Inspection {
   id: string
-  operatorId: string
+  operatorId: number
   season: string
   startDate: string
   endDate: string
