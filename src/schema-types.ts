@@ -6,122 +6,32 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
-  Date: any,
-  Upload: any,
   DateTime: any,
 };
 
 
-
-export type DepartureBlock = {
-   __typename?: 'DepartureBlock',
-  id: Scalars['String'],
-  routeId: Scalars['String'],
-  variant?: Maybe<Scalars['String']>,
-  direction: Scalars['String'],
-  departureTime: Scalars['String'],
-  vehicleId: Scalars['String'],
-  preInspectionId: Scalars['String'],
-  preInspection?: Maybe<PreInspection>,
-  dayType?: Maybe<Scalars['String']>,
-  blockFile: Scalars['String'],
-};
-
-export enum DepartureType {
-  O = 'O',
-  N = 'N',
-  I = 'I'
-}
-
-export type Equipment = {
-   __typename?: 'Equipment',
-  id: Scalars['ID'],
-  make?: Maybe<Scalars['String']>,
-  model?: Maybe<Scalars['String']>,
-  vehicleId?: Maybe<Scalars['String']>,
-  registryNr?: Maybe<Scalars['String']>,
-  type?: Maybe<Scalars['String']>,
-  exteriorColor?: Maybe<Scalars['String']>,
-  emissionClass?: Maybe<Scalars['String']>,
-  co2?: Maybe<Scalars['Float']>,
-  operatorId?: Maybe<Scalars['Int']>,
-  operator?: Maybe<Operator>,
-  registryDate?: Maybe<Scalars['Date']>,
-  percentageQuota?: Maybe<Scalars['Int']>,
-  equipmentCatalogueId?: Maybe<Scalars['String']>,
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>,
-};
-
-export type EquipmentCatalogue = {
-   __typename?: 'EquipmentCatalogue',
-  id: Scalars['ID'],
-  operatorId?: Maybe<Scalars['Int']>,
-  operator?: Maybe<Operator>,
-  procurementUnitId?: Maybe<Scalars['String']>,
-  procurementUnit?: Maybe<ProcurementUnit>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-  equipment: Array<Equipment>,
-};
-
-export type EquipmentCatalogueInput = {
-  operatorId?: Maybe<Scalars['Int']>,
-  procurementUnitId?: Maybe<Scalars['String']>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-};
-
-export type ExecutionRequirement = {
-   __typename?: 'ExecutionRequirement',
-  equipmentClass: Scalars['Int'],
-  requirement?: Maybe<Array<ExecutionRequirementValue>>,
-  area: OperatingArea,
-};
-
-export type ExecutionRequirementInput = {
-  equipmentClass: Scalars['Int'],
-  requirement: Scalars['String'],
-  area: OperatingArea,
-};
-
-export type ExecutionRequirementValue = {
-   __typename?: 'ExecutionRequirementValue',
-  equipmentClass: Scalars['String'],
-  quotaRequirement: Scalars['Float'],
-  kilometerRequirement: Scalars['Float'],
-};
-
-export type File = {
-   __typename?: 'File',
-  filename: Scalars['String'],
-  mimetype: Scalars['String'],
-  encoding: Scalars['String'],
-};
-
 export enum InspectionStatus {
-  Draft = 'DRAFT',
-  InProduction = 'IN_PRODUCTION'
+  Draft = 'Draft',
+  InProduction = 'InProduction'
 }
 
 export type Mutation = {
    __typename?: 'Mutation',
   createPreInspection?: Maybe<PreInspection>,
-  createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
-  uploadDepartureBlocks?: Maybe<Array<DepartureBlock>>,
 };
 
 
-export type MutationCreateEquipmentCatalogueArgs = {
-  catalogueData?: Maybe<EquipmentCatalogueInput>
+export type MutationCreatePreInspectionArgs = {
+  preInspection: PreInspectionInput
 };
 
-
-export type MutationUploadDepartureBlocksArgs = {
-  file?: Maybe<Scalars['Upload']>,
-  inspectionId: Scalars['String']
+export type OperatingArea = {
+   __typename?: 'OperatingArea',
+  id: Scalars['Int'],
+  name: OperatingAreaName,
 };
 
-export enum OperatingArea {
+export enum OperatingAreaName {
   Center = 'CENTER',
   Other = 'OTHER'
 }
@@ -129,40 +39,28 @@ export enum OperatingArea {
 export type Operator = {
    __typename?: 'Operator',
   id: Scalars['Int'],
+  operatorId: Scalars['Int'],
   operatorName: Scalars['String'],
-  preInspections?: Maybe<Array<PreInspection>>,
-  executionRequirements?: Maybe<Array<ExecutionRequirement>>,
-  equipment?: Maybe<Array<Equipment>>,
-  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
-  procurementUnits?: Maybe<Array<ProcurementUnit>>,
+  preInspections: Array<PreInspection>,
 };
 
 export type PreInspection = {
    __typename?: 'PreInspection',
-  id: Scalars['String'],
+  id: Scalars['ID'],
   operatorId?: Maybe<Scalars['Int']>,
-  operator?: Maybe<Operator>,
-  seasonId?: Maybe<Scalars['String']>,
+  operator: Operator,
   season?: Maybe<Season>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-  productionStart?: Maybe<Scalars['Date']>,
-  productionEnd?: Maybe<Scalars['Date']>,
-  executionRequirements?: Maybe<Array<ExecutionRequirement>>,
-  departureBlocks?: Maybe<Array<DepartureBlock>>,
+  startDate?: Maybe<Scalars['DateTime']>,
+  endDate?: Maybe<Scalars['DateTime']>,
+  productionStart?: Maybe<Scalars['DateTime']>,
+  productionEnd?: Maybe<Scalars['DateTime']>,
   status: InspectionStatus,
-  createdAt: Scalars['Date'],
-  createdBy: Scalars['String'],
+  createdAt: Scalars['DateTime'],
+  updatedDate: Scalars['DateTime'],
 };
 
 export type PreInspectionInput = {
   operatorId: Scalars['Int'],
-  season: SeasonInput,
-  startDate: Scalars['String'],
-  endDate: Scalars['String'],
-  productionStart: Scalars['String'],
-  productionEnd: Scalars['String'],
-  executionRequirements: Array<ExecutionRequirementInput>,
 };
 
 export type ProcurementUnit = {
@@ -170,100 +68,65 @@ export type ProcurementUnit = {
   id: Scalars['ID'],
   procurementUnitId: Scalars['String'],
   operatorId: Scalars['Int'],
-  operator?: Maybe<Operator>,
-  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
-  routes?: Maybe<Array<Maybe<ProcurementUnitRoute>>>,
-  operatingArea?: Maybe<OperatingArea>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-  operationStartDate?: Maybe<Scalars['Date']>,
-  operationEndDate?: Maybe<Scalars['Date']>,
-  weeklyExecutionMeters?: Maybe<Scalars['Int']>,
+  operator: Operator,
+  weeklyMeters: Scalars['Float'],
+  weeklyKilometers: Scalars['Float'],
+  area: OperatingArea,
+  routes?: Maybe<Array<ProcurementUnitRoute>>,
+  startDate: Scalars['DateTime'],
+  endDate: Scalars['DateTime'],
+  operationStartDate: Scalars['DateTime'],
+  operationEndDate: Scalars['DateTime'],
 };
 
 export type ProcurementUnitRoute = {
    __typename?: 'ProcurementUnitRoute',
   routeId: Scalars['String'],
-  length?: Maybe<Scalars['Int']>,
+  length: Scalars['Float'],
 };
 
 export type Query = {
    __typename?: 'Query',
-  equipment?: Maybe<Array<Equipment>>,
-  equipmentCatalogues?: Maybe<Array<EquipmentCatalogue>>,
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>,
-  operators?: Maybe<Array<Operator>>,
   operator?: Maybe<Operator>,
-  procurementUnits?: Maybe<Array<ProcurementUnit>>,
+  operators: Array<Operator>,
+  seasons: Array<Season>,
+  preInspection?: Maybe<PreInspection>,
+  preInspections: Array<PreInspection>,
   procurementUnit?: Maybe<ProcurementUnit>,
-  routes?: Maybe<Array<Route>>,
-  seasons?: Maybe<Array<Season>>,
-  uploads?: Maybe<Array<Maybe<Scalars['String']>>>,
-};
-
-
-export type QueryEquipmentArgs = {
-  equipmentCatalogueId?: Maybe<Scalars['String']>,
-  operatorId?: Maybe<Scalars['Int']>
-};
-
-
-export type QueryEquipmentCataloguesArgs = {
-  operatorId?: Maybe<Scalars['Int']>,
-  procurementUnitId?: Maybe<Scalars['String']>
-};
-
-
-export type QueryEquipmentCatalogueArgs = {
-  operatorId?: Maybe<Scalars['Int']>,
-  equipmentCatalogueId?: Maybe<Scalars['String']>
+  procurementUnitsForOperator: Array<ProcurementUnit>,
 };
 
 
 export type QueryOperatorArgs = {
-  operatorId?: Maybe<Scalars['Int']>
-};
-
-
-export type QueryProcurementUnitsArgs = {
-  operatorId?: Maybe<Scalars['Int']>,
-  startDate?: Maybe<Scalars['Date']>
-};
-
-
-export type QueryProcurementUnitArgs = {
-  operatorId?: Maybe<Scalars['Int']>,
-  procurementUnitId?: Maybe<Scalars['String']>,
-  startDate?: Maybe<Scalars['Date']>
+  operatorId: Scalars['Int']
 };
 
 
 export type QuerySeasonsArgs = {
-  date?: Maybe<Scalars['Date']>
+  date: Scalars['DateTime']
 };
 
-export type Route = {
-   __typename?: 'Route',
-  id: Scalars['ID'],
-  routeId: Scalars['String'],
-  direction: Scalars['Int'],
-  procurementUnitId?: Maybe<Scalars['String']>,
-  procurementUnit?: Maybe<ProcurementUnit>,
-  area: OperatingArea,
+
+export type QueryPreInspectionArgs = {
+  preInspectionId: Scalars['Int']
+};
+
+
+export type QueryProcurementUnitArgs = {
+  procurementUnitId: Scalars['String']
+};
+
+
+export type QueryProcurementUnitsForOperatorArgs = {
+  operatorId: Scalars['Int'],
+  date: Scalars['DateTime']
 };
 
 export type Season = {
    __typename?: 'Season',
-  id: Scalars['String'],
+  id: Scalars['ID'],
   season: Scalars['Int'],
-  startDate: Scalars['Date'],
-  endDate: Scalars['Date'],
+  startDate: Scalars['DateTime'],
+  endDate: Scalars['DateTime'],
+  preInspections: Array<PreInspection>,
 };
-
-export type SeasonInput = {
-  id: Scalars['String'],
-  season?: Maybe<Scalars['String']>,
-  startDate?: Maybe<Scalars['Date']>,
-  endDate?: Maybe<Scalars['Date']>,
-};
-

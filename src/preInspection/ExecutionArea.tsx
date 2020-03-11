@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { OperatingArea, ProcurementUnit as ProcurementUnitType } from '../schema-types'
+import { OperatingAreaName, ProcurementUnit as ProcurementUnitType } from '../schema-types'
 import { round } from '../utils/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
@@ -22,7 +22,7 @@ const TableHeading = styled.h5`
 `
 
 export type AreaPropTypes = {
-  area: OperatingArea
+  area: OperatingAreaName
   procurementUnits: ProcurementUnitType[]
   productionDate: string
 }
@@ -56,7 +56,7 @@ const ExecutionArea: React.FC<AreaPropTypes> = observer(
       const procurementUnitRow = {
         procurementUnitId: opUnit.id,
         age: 7.5,
-        executionMeters: `${round((opUnit.weeklyExecutionMeters || 0) / 1000)} km`,
+        executionMeters: `${round((opUnit.weeklyMeters || 0) / 1000)} km`,
       }
 
       // TODO: Add uploaded execution equipment data

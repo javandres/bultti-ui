@@ -15,7 +15,7 @@ export const procurementUnitsQuery = gql`
       operationStartDate
       startDate
       operatingArea
-      weeklyExecutionMeters
+      weeklyMeters
       equipmentCatalogues {
         id
         operatorId
@@ -59,7 +59,7 @@ export const procurementUnitQuery = gql`
       operationStartDate
       startDate
       operatingArea
-      weeklyExecutionMeters
+      weeklyMeters
     }
   }
 `

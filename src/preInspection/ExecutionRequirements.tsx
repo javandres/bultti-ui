@@ -1,16 +1,16 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { OperatingArea, ProcurementUnit } from '../schema-types'
 import { FormMessage } from '../common/components/common'
 import { get, groupBy } from 'lodash'
 import ExecutionArea from './ExecutionArea'
+import { OperatingAreaName, ProcurementUnit } from '../schema-types'
 
 const ExecutionRequirementsView = styled.div``
 
 const AreaHeading = styled.h4`
   margin-bottom: 1rem;
-  
+
   &:first-child {
     margin-top: 0;
   }
@@ -24,7 +24,7 @@ export type PropTypes = {
 
 const ExecutionRequirements: React.FC<PropTypes> = observer(
   ({ productionDate, procurementUnits = [] }) => {
-    const areaUnits = groupBy(procurementUnits, 'operatingArea')
+    const areaUnits = groupBy(procurementUnits, 'operatingArea.name')
 
     return (
       <ExecutionRequirementsView>
@@ -33,23 +33,23 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(
             Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
           </FormMessage>
         )}
-        {get(areaUnits, OperatingArea.Center, []).length !== 0 && (
+        {get(areaUnits, OperatingAreaName.Center, []).length !== 0 && (
           <>
             <AreaHeading>Keskusta</AreaHeading>
             <ExecutionArea
               productionDate={productionDate}
-              procurementUnits={areaUnits[OperatingArea.Center]}
-              area={OperatingArea.Center}
+              procurementUnits={areaUnits[OperatingAreaName.Center]}
+              area={OperatingAreaName.Center}
             />
           </>
         )}
-        {get(areaUnits, OperatingArea.Other, []).length !== 0 && (
+        {get(areaUnits, OperatingAreaName.Other, []).length !== 0 && (
           <>
             <AreaHeading>Muu</AreaHeading>
             <ExecutionArea
               productionDate={productionDate}
-              procurementUnits={areaUnits[OperatingArea.Other]}
-              area={OperatingArea.Center}
+              procurementUnits={areaUnits[OperatingAreaName.Other]}
+              area={OperatingAreaName.Center}
             />
           </>
         )}

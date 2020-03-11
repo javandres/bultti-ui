@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer, useObserver } from 'mobx-react-lite'
 import { endOfWeek, format, getISOWeek, parseISO } from 'date-fns'
-import { OperatingArea } from '../schema-types'
+import { OperatingAreaName } from '../schema-types'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { Button, ButtonSize } from '../common/components/Button'
 import { orderByNumber } from '../utils/orderByNumber'
@@ -69,7 +69,8 @@ const TableCell = styled.div`
   align-items: center;
   justify-content: center;
 
-  &:nth-last-child(2), &:last-child {
+  &:nth-last-child(2),
+  &:last-child {
     border-right: 0;
   }
 
@@ -146,8 +147,8 @@ const generateWeekRequirements = (
     }
   }
 
-  generateForArea(OperatingArea.Center)
-  generateForArea(OperatingArea.Other)
+  generateForArea(OperatingAreaName.Center)
+  generateForArea(OperatingAreaName.Other)
 
   return requirements
 }
@@ -265,7 +266,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
               ...toJS(currentRequirements),
               ...generateWeekRequirements(nextYear, nextWeek, copyFrom),
             ],
-            (req) => req.week + req.area + req.equipmentClass + '' + req.year
+            (req) => req.equipmentClass + '' + req.year
           )
         )
       )
@@ -348,7 +349,7 @@ const WeeklyExecutionRequirements: React.FC<PropTypes> = observer(
                           <TableRow key={weekNumber}>
                             <RowHeaderCell>{weekNumber}</RowHeaderCell>
                             {reqs.map((req, index) => (
-                              <TableCell key={req.week + req.area + req.year + '' + index}>
+                              <TableCell key={req.year + '' + index}>
                                 <InputWrapper>
                                   <TableInput
                                     maxLength={7}

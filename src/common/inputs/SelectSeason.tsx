@@ -28,6 +28,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
           season: 0,
           startDate: '',
           endDate: '',
+          preInspections: [],
         }
         seasonsList.unshift(unselectedSeason)
       }
@@ -58,7 +59,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       <SeasonsSelect
         className={className}
         theme={theme}
-        label={!label ? "" : label || 'Aikataulukausi'}
+        label={!label ? '' : label || 'Aikataulukausi'}
         items={seasons}
         onSelect={onSelectSeason}
         selectedItem={currentSeason}

@@ -113,7 +113,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
           </HeaderSection>
           <HeaderSection>
             <SectionHeading>Kilometrejä viikossa</SectionHeading>
-            {round((procurementUnit?.weeklyExecutionMeters || 0) / 1000)}
+            {round((procurementUnit?.weeklyMeters || 0) / 1000)}
           </HeaderSection>
           <HeaderSection>
             <SectionHeading>Maksimi keski-ikä</SectionHeading>8 (7,6)

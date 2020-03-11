@@ -145,7 +145,7 @@ const PreInspectionForm: React.FC = observer(() => {
     setStatus: (nextStatus: PreInspectionFormStatus) => {
       formState.status = nextStatus
     },
-    selectOperator: (operator = null) => {
+    selectOperator: (operator: Operator | null = null) => {
       formState.operator = operator
     },
     selectSeason: (season: Season | null = null) => {
@@ -362,7 +362,7 @@ const PreInspectionForm: React.FC = observer(() => {
               <ProcurementUnits
                 productionDate={formState.productionStart}
                 procurementUnits={procurementUnits}
-                operatorId={formState?.operator?.id || 0}
+                operatorId={formState?.operator?.operatorId || 0}
                 initialize={replaceProcurementUnits}
                 onUpdate={onUpdateProcurementUnits}
               />
@@ -374,7 +374,7 @@ const PreInspectionForm: React.FC = observer(() => {
               <ExecutionRequirements
                 productionDate={formState.productionStart}
                 procurementUnits={procurementUnits}
-                operatorId={formState?.operator?.id || 0}
+                operatorId={formState?.operator?.operatorId || 0}
               />
             </FormColumn>
           </FormWrapper>
