@@ -2,11 +2,12 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
-import { Equipment } from '../schema-types'
+import { Equipment, EquipmentInput } from '../schema-types'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import { useCollectionState } from '../utils/useCollectionState'
 import ItemForm from '../common/inputs/ItemForm'
 import { Button } from '../common/components/Button'
+import { get } from 'lodash'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -43,7 +44,7 @@ const equipmentColumnLabels = {
   registryDate: 'Rekisteröintipäivä',
 }
 
-const equipmentIsValid = (e: Equipment): boolean =>
+const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(
     e?.make &&
     e?.model &&
@@ -56,7 +57,7 @@ const equipmentIsValid = (e: Equipment): boolean =>
 const createEquipmentKey = (e: Equipment) =>
   !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
-type PendingEquipmentType = { _editable: boolean; valid } & Equipment
+type PendingEquipmentType = { _editable: boolean } & EquipmentInput
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ equipment, addEquipment, removeEquipment }) => {
@@ -66,14 +67,15 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     ] = useCollectionState<PendingEquipmentType>([])
 
     const addDraftEquipment = useCallback(() => {
-      const inputRow: { _editable: boolean } & Equipment = {
+      const inputRow: PendingEquipmentType = {
         _editable: true,
         id: 'new',
         vehicleId: '',
         make: '',
         model: '',
         type: '',
-        emissionClass: '',
+        exteriorColor: '',
+        emissionClass: 1,
         co2: 0,
         registryDate: '',
         registryNr: '',
@@ -126,7 +128,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               getColumnTotal={(col) =>
                 col === 'percentageQuota'
                   ? equipment.reduce((total, item) => {
-                      total += parseFloat((item?.percentageQuota || '0') as string)
+                      total += parseFloat(get(item, 'percentageQuota[0].percentageQuota', '0') as string)
                       return total
                     }, 0) + '%'
                   : ''

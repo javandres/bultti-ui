@@ -5,199 +5,183 @@ schema {
   mutation: Mutation
 }
 
-type DepartureBlock {
-  blockFile: String!
-  dayType: String
-  departureTime: String!
-  direction: String!
-  id: String!
-  preInspection: PreInspection
-  preInspectionId: String!
-  routeId: String!
-  variant: String
+type Equipment {
+  co2: Float!
+  emissionClass: Int!
+  equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
+  exteriorColor: String!
+  id: ID!
+  make: String!
+  model: String!
+  operator: Operator!
+  operatorId: Int!
+  registryDate: DateTime
+  registryNr: String
+  type: String!
+  uniqueVehicleId: String!
   vehicleId: String!
 }
 
-type Equipment {
-  co2: Float
-  emissionClass: String
-  equipmentCatalogue: EquipmentCatalogue
-  equipmentCatalogueId: String
-  exteriorColor: String
+type EquipmentCatalogue {
+  endDate: DateTime!
+  equipmentCatalogueId: String!
+  equipmentQuotas: [EquipmentCatalogueQuota!]!
   id: ID!
-  make: String
-  model: String
-  operator: Operator
-  operatorId: Int
-  percentageQuota: Int
-  registryDate: Date
-  registryNr: String
-  type: String
-  vehicleId: String
+  operator: Operator!
+  operatorId: Int!
+  procurementUnit: ProcurementUnit!
+  procurementUnitId: String!
+  startDate: DateTime!
 }
 
-type EquipmentCatalogue {
-  endDate: Date
-  equipment: [Equipment!]!
+type EquipmentCatalogueQuota {
+  catalogueEndDate: DateTime!
+  catalogueStartDate: DateTime!
+  equipment: Equipment!
+  equipmentCatalogue: EquipmentCatalogue!
+  equipmentCatalogueId: String!
+  equipmentId: String!
   id: ID!
-  operator: Operator
-  operatorId: Int
-  procurementUnit: ProcurementUnit
-  procurementUnitId: String
-  startDate: Date
+  percentageQuota: Float!
 }
 
 type ExecutionRequirement {
   area: OperatingArea!
-  equipmentClass: Int!
-  requirement: [ExecutionRequirementValue!]
+  id: ID!
+  operator: Operator!
+  preInspection: PreInspection!
+  requirements: [ExecutionRequirementValue!]!
 }
 
 type ExecutionRequirementValue {
   equipmentClass: String!
+  executionRequirement: ExecutionRequirement!
+  id: ID!
   kilometerRequirement: Float!
   quotaRequirement: Float!
 }
 
-type File {
-  encoding: String!
-  filename: String!
-  mimetype: String!
+type Mutation {
+  createEquipment(equipment: EquipmentInput!): Equipment
+  createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue
+  createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
+  createPreInspection(preInspection: PreInspectionInput!): PreInspection
 }
 
-type Mutation {
-  createEquipmentCatalogue(catalogueData: EquipmentCatalogueInput): EquipmentCatalogue
-  createPreInspection: PreInspection
-  uploadDepartureBlocks(file: Upload, inspectionId: String!): [DepartureBlock!]
+type OperatingArea {
+  executionRequirements: [ExecutionRequirement!]!
+  id: Int!
+  name: OperatingAreaName!
+  procurementUnits: [ProcurementUnit!]!
 }
 
 type Operator {
-  equipment: [Equipment!]
-  equipmentCatalogues: [EquipmentCatalogue!]
-  executionRequirements: [ExecutionRequirement!]
+  equipment: [Equipment!]!
+  equipmentCatalogues: [EquipmentCatalogue!]!
   id: Int!
+  operatorId: Int!
   operatorName: String!
-  preInspections: [PreInspection!]
-  procurementUnits: [ProcurementUnit!]
+  preInspections: [PreInspection!]!
+  procurementUnits: [ProcurementUnit!]!
 }
 
 type PreInspection {
-  createdAt: Date!
-  createdBy: String!
-  departureBlocks: [DepartureBlock!]
-  endDate: Date
+  createdAt: DateTime!
+  endDate: DateTime
   executionRequirements: [ExecutionRequirement!]
-  id: String!
-  operator: Operator
+  id: ID!
+  operator: Operator!
   operatorId: Int
-  productionEnd: Date
-  productionStart: Date
+  productionEnd: DateTime
+  productionStart: DateTime
   season: Season
-  seasonId: String
-  startDate: Date
+  startDate: DateTime
   status: InspectionStatus!
+  updatedDate: DateTime!
 }
 
 type ProcurementUnit {
-  endDate: Date
-  equipmentCatalogues: [EquipmentCatalogue!]
+  area: OperatingArea!
+  endDate: DateTime!
+  equipmentCatalogues: [EquipmentCatalogue!]!
   id: ID!
-  operatingArea: OperatingArea
-  operationEndDate: Date
-  operationStartDate: Date
-  operator: Operator
+  operationEndDate: DateTime!
+  operationStartDate: DateTime!
+  operator: Operator!
   operatorId: Int!
   procurementUnitId: String!
-  routes: [ProcurementUnitRoute]
-  startDate: Date
-  weeklyExecutionMeters: Int
+  routes: [ProcurementUnitRoute!]!
+  startDate: DateTime!
+  weeklyKilometers: Float!
+  weeklyMeters: Float!
 }
 
 type ProcurementUnitRoute {
-  length: Int
+  length: Float!
   routeId: String!
 }
 
 type Query {
-  equipment(equipmentCatalogueId: String, operatorId: Int): [Equipment!]
-  equipmentCatalogue(equipmentCatalogueId: String, operatorId: Int): EquipmentCatalogue
-  equipmentCatalogues(operatorId: Int, procurementUnitId: String): [EquipmentCatalogue!]
-  operator(operatorId: Int): Operator
-  operators: [Operator!]
-  procurementUnit(operatorId: Int, procurementUnitId: String, startDate: Date): ProcurementUnit
-  procurementUnits(operatorId: Int, startDate: Date): [ProcurementUnit!]
-  routes: [Route!]
-  seasons(date: Date): [Season!]
-  uploads: [String]
-}
-
-type Route {
-  area: OperatingArea!
-  direction: Int!
-  id: ID!
-  procurementUnit: ProcurementUnit
-  procurementUnitId: String
-  routeId: String!
+  equipment: [Equipment!]!
+  equipmentByOperator(operatorId: Int!): [Equipment!]!
+  equipmentCatalogue: [EquipmentCatalogue!]!
+  equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
+  executionRequirement: [ExecutionRequirement!]!
+  executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
+  executionRequirementsByPreInspection(preInspectionId: Int!): [ExecutionRequirement!]!
+  operator(operatorId: Int!): Operator
+  operators: [Operator!]!
+  preInspection(preInspectionId: Int!): PreInspection
+  preInspections: [PreInspection!]!
+  procurementUnit(procurementUnitId: String!): ProcurementUnit
+  procurementUnitsByOperator(date: DateTime!, operatorId: Int!): [ProcurementUnit!]!
+  seasons(date: DateTime!): [Season!]!
+  singleEquipment(equipmentId: String!): Equipment
+  singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
+  singleExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
 }
 
 type Season {
-  endDate: Date!
-  id: String!
+  endDate: DateTime!
+  id: ID!
+  preInspections: [PreInspection!]!
   season: Int!
-  startDate: Date!
-}
-
-enum DepartureType {
-  I
-  N
-  O
+  startDate: DateTime!
 }
 
 enum InspectionStatus {
-  DRAFT
-  IN_PRODUCTION
+  Draft
+  InProduction
 }
 
-enum OperatingArea {
+enum OperatingAreaName {
   CENTER
   OTHER
 }
 
 input EquipmentCatalogueInput {
-  endDate: Date
-  operatorId: Int
-  procurementUnitId: String
-  startDate: Date
+  operatorId: Int!
+}
+
+input EquipmentInput {
+  operatorId: Int!
 }
 
 input ExecutionRequirementInput {
-  area: OperatingArea!
-  equipmentClass: Int!
-  requirement: String!
+  operatorId: Int!
+  requirements: [ExecutionRequirementValueInput!]!
+}
+
+input ExecutionRequirementValueInput {
+  equipmentClass: String!
+  kilometerRequirement: Float!
+  quotaRequirement: Float!
 }
 
 input PreInspectionInput {
-  endDate: String!
-  executionRequirements: [ExecutionRequirementInput!]!
   operatorId: Int!
-  productionEnd: String!
-  productionStart: String!
-  season: SeasonInput!
-  startDate: String!
-}
-
-input SeasonInput {
-  endDate: Date
-  id: String!
-  season: String
-  startDate: Date
 }
 
 
-"A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki."
-scalar Date
-
-scalar Upload
-
-"A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ). Timezone will be converted to Europe/Helsinki."
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
 scalar DateTime

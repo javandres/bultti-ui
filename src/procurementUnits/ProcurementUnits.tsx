@@ -6,7 +6,7 @@ import { ProcurementUnit as ProcurementUnitType } from '../schema-types'
 import { TextButton } from '../common/components/Button'
 import { FlexRow, FormMessage } from '../common/components/common'
 import { useQueryData } from '../utils/useQueryData'
-import { procurementUnitsQuery } from '../queries/procurementUnitsQuery'
+import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { PageLoading } from '../common/components/Loading'
 
 const ProcurementUnitsView = styled.div``

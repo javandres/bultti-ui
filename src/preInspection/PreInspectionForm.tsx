@@ -24,10 +24,10 @@ import { PageLoading } from '../common/components/Loading'
 import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
-import { seasonsQuery } from '../queries/seasonsQuery'
+import { seasonsQuery } from './seasonsQuery'
 import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
-import { createPreInspectionMutation } from '../queries/createPreInspectionMutation'
+import { createPreInspectionMutation } from './createPreInspectionMutation'
 import { orderBy } from 'lodash'
 import { useCollectionState } from '../utils/useCollectionState'
 import ProcurementUnits from '../procurementUnits/ProcurementUnits'
@@ -110,7 +110,7 @@ enum PreInspectionFormStatus {
 }
 
 interface PreInspectionFormData extends PreInspectionFormActions {
-  inspectionId: string
+  id: string
   status: PreInspectionFormStatus
   operator: Operator | null
   season: Season | null
@@ -126,7 +126,7 @@ const PreInspectionForm: React.FC = observer(() => {
   const [globalOperator] = useStateValue('globalOperator')
 
   const formState = useLocalStore<PreInspectionFormData>(() => ({
-    inspectionId: '',
+    id: '',
     status: PreInspectionFormStatus.Uninitialized,
     operator: globalOperator || null,
     season: null,
@@ -140,7 +140,7 @@ const PreInspectionForm: React.FC = observer(() => {
     productionEnd: '',
     departureBlocks: observable.array([]),
     setInspectionId: (id) => {
-      formState.inspectionId = id
+      formState.id = id
     },
     setStatus: (nextStatus: PreInspectionFormStatus) => {
       formState.status = nextStatus
@@ -186,10 +186,20 @@ const PreInspectionForm: React.FC = observer(() => {
   // TODO: Error views when status = invalid
   useEffect(() => {
     // A pre-inspection can be created when there is not one currently loading and the form state is uninitialized.
-    if (formState.status === PreInspectionFormStatus.Uninitialized && !inspectionLoading) {
+    if (
+      formState?.operator &&
+      formState.status === PreInspectionFormStatus.Uninitialized &&
+      !inspectionLoading
+    ) {
       formState.setStatus(PreInspectionFormStatus.InitLoading)
 
-      createPreInspection().then(({ data }) => {
+      createPreInspection({
+        variables: {
+          preInspectionInput: {
+            operatorId: formState?.operator?.id || 0,
+          },
+        },
+      }).then(({ data }) => {
         // No data means the creation failed. If there is data, the
         // pre-inspection is in draft mode (ie can be edited).
         if (!data) {
@@ -204,11 +214,11 @@ const PreInspectionForm: React.FC = observer(() => {
     if (
       createdInspectionData &&
       formState.status === PreInspectionFormStatus.Draft &&
-      !formState.inspectionId
+      !formState.id
     ) {
       formState.setInspectionId(createdInspectionData.id)
     }
-  }, [formState.status, createdInspectionData, inspectionLoading])
+  }, [formState.status, formState?.operator?.id, createdInspectionData, inspectionLoading])
 
   // Get seasons to display in the seasons select. Selecting a season will also change the dates.
   const { data: seasonsData, loading: seasonsLoading } = useQueryData(seasonsQuery, {
@@ -222,6 +232,7 @@ const PreInspectionForm: React.FC = observer(() => {
   })
 
   const seasons = useMemo(() => orderBy(seasonsData || [], 'startDate', 'desc'), [seasonsData])
+  console.log(seasonsData)
 
   // Use the global operator as the initially selected operator if no operator
   // has been selected for this form yet.
@@ -242,7 +253,7 @@ const PreInspectionForm: React.FC = observer(() => {
 
   // Set dates from the selected season when it changes.
   useEffect(() => {
-    if (formState.season) {
+    if (formState.season && formState.season.startDate && formState.season.endDate) {
       formState.setProductionStartDate(formState.season.startDate)
       formState.setProductionEndDate(formState.season.endDate)
       formState.selectSeason(formState.season)
@@ -265,18 +276,12 @@ const PreInspectionForm: React.FC = observer(() => {
   const formCondition = useMemo(() => {
     return {
       status: formState.status === PreInspectionFormStatus.Draft,
-      inspectionId: !!formState.inspectionId,
+      inspectionId: !!formState.id,
       operator: !!formState.operator,
       productionStart: !!formState.productionStart,
       seasons: seasonsLoading ? true : seasons && seasons.length !== 0,
     }
-  }, [
-    formState.operator,
-    formState.inspectionId,
-    formState.productionStart,
-    seasons,
-    seasonsLoading,
-  ])
+  }, [formState.operator, formState.id, formState.productionStart, seasons, seasonsLoading])
 
   // Validation issues that affect the form at this moment
   const activeBlockers = Object.entries(formCondition)
@@ -292,8 +297,24 @@ const PreInspectionForm: React.FC = observer(() => {
           ))}
         </FormMessageContainer>
       )}
-      {!formState.inspectionId ? (
+      {inspectionLoading ? (
         <PageLoading />
+      ) : !createdInspectionData && !formState?.operator ? (
+        <>
+          <SectionHeading theme="light">Valitse liikennöitsijä</SectionHeading>
+          <FormWrapper>
+            <FormColumn width="50%">
+              <ControlGroup>
+                <SelectOperator
+                  label="Liikennöitsijä"
+                  theme="light"
+                  value={formState.operator}
+                  onSelect={formState.selectOperator}
+                />
+              </ControlGroup>
+            </FormColumn>
+          </FormWrapper>
+        </>
       ) : (
         <>
           <SectionHeading theme="light">Perustiedot</SectionHeading>

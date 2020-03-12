@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
@@ -11,6 +11,8 @@ import { round } from '../utils/round'
 import EquipmentCatalogue from './EquipmentCatalogue'
 import { useCollectionState } from '../utils/useCollectionState'
 import { isBetween } from '../utils/isBetween'
+import { useQueryData } from '../utils/useQueryData'
+import { procurementUnitQuery } from './procurementUnitsQuery'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -81,17 +83,39 @@ export type PropTypes = {
   productionDate: string
 }
 
+type EquipmentWithQuota = Equipment & { percentageQuota: number }
+
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ productionDate, procurementUnit, expanded = true }) => {
+  ({ productionDate, procurementUnit: { id }, expanded = true }) => {
+    // Get the operating units for the selected operator.
+    const { data: procurementUnit } = useQueryData(procurementUnitQuery, {
+      variables: {
+        procurementUnitId: id,
+      },
+    })
+
     // Find the currently active Equipment Catalogue for the Operating Unit
-    const activeCatalogue: EquipmentCatalogueType | undefined = (
-      procurementUnit?.equipmentCatalogues || []
-    ).find((cat) => isBetween(productionDate, cat.startDate, cat.endDate))
+    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
+      () =>
+        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
+          isBetween(productionDate, cat.startDate, cat.endDate)
+        ),
+      [procurementUnit]
+    )
+
+    const catalogueEquipment: EquipmentWithQuota[] = useMemo(
+      () =>
+        (activeCatalogue?.equipmentQuotas || []).map((quota) => ({
+          ...quota.equipment,
+          percentageQuota: quota.percentageQuota,
+        })),
+      [activeCatalogue]
+    )
 
     const [
       equipment,
       { add: addEquipment, remove: removeEquipment, update: updateEquipment },
-    ] = useCollectionState<Equipment>(activeCatalogue?.equipment || [])
+    ] = useCollectionState<Equipment>(catalogueEquipment)
 
     const [isExpanded, setIsExpanded] = useState(true)
     const { routes = [] } = procurementUnit
