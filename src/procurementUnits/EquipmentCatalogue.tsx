@@ -2,13 +2,19 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
-import { Equipment, EquipmentInput } from '../schema-types'
+import {
+  Equipment,
+  EquipmentCatalogue as EquipmentCatalogueType,
+  EquipmentInput,
+} from '../schema-types'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import ItemForm from '../common/inputs/ItemForm'
 import { Button } from '../common/components/Button'
 import { get } from 'lodash'
 import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentMutation } from './equipmentQuery'
+import { FormMessage } from '../common/components/common'
+import { EquipmentWithQuota } from './ProcurementUnitItem'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -21,17 +27,22 @@ const TableHeading = styled.h5`
   }
 `
 
+const CatalogueDetails = styled.div`
+  display: flex;
+  margin-bottom: 1.5rem;
+`
+
+const DetailsItem = styled.div`
+  margin-right: 1rem;
+  font-size: 0.875rem;
+`
+
 export type PropTypes = {
+  catalogue?: EquipmentCatalogueType
   operatorId: number
-  equipment: Equipment[]
-  addEquipment: (item: Equipment) => void
+  equipment: EquipmentWithQuota[]
+  onEquipmentAdded: () => Promise<void>
   removeEquipment: (item: Equipment) => void
-  updateEquipment: (
-    item: Equipment,
-    key: string,
-    value: any,
-    onEdit?: (item: Equipment) => Equipment
-  ) => void
 }
 
 const equipmentColumnLabels = {
@@ -55,28 +66,15 @@ const defaultGetVal = (val) => val
 const getType = (key) => equipmentInputValues[key] || defaultGetVal
 
 const equipmentIsValid = (e: EquipmentInput): boolean =>
-  !!(
-    e?.make &&
-    e?.model &&
-    e?.emissionClass &&
-    e?.type &&
-    e?.percentageQuota &&
-    e?.registryDate
-  )
+  !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
 const createEquipmentKey = (e: Equipment) =>
   !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ operatorId, equipment, addEquipment, removeEquipment }) => {
+  ({ catalogue, operatorId, equipment, onEquipmentAdded, removeEquipment }) => {
     const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
-
-    const [
-      mutate,
-      { data: createdEquipment, loading: createdEquipmentLoading },
-    ] = useMutationData(createEquipmentMutation)
-
-    console.log(createdEquipment)
+    const [createEquipment] = useMutationData(createEquipmentMutation)
 
     const addDraftEquipment = useCallback(() => {
       const inputRow: EquipmentInput = {
@@ -102,20 +100,23 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       )
     }, [])
 
-    const onAddEquipment = useCallback(
-      (item) => {
-        addEquipment(item)
-        setPendingEquipment(null)
+    const onAddEquipment = useCallback(async () => {
+      if (!catalogue) {
+        return
+      }
 
-        mutate({
-          variables: {
-            operatorId,
-            equipmentInput: item,
-          },
-        })
-      },
-      [addEquipment]
-    )
+      setPendingEquipment(null)
+
+      await createEquipment({
+        variables: {
+          operatorId,
+          equipmentInput: pendingEquipment,
+          catalogueId: catalogue.id,
+        },
+      })
+
+      await onEquipmentAdded()
+    }, [catalogue, operatorId, onEquipmentAdded, pendingEquipment])
 
     const renderEquipmentCell = useCallback((val: any, key: string, onChange) => {
       if (['id'].includes(key)) {
@@ -127,7 +128,16 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        {equipment.length !== 0 && (
+        <TableHeading>Kalustoluettelo</TableHeading>
+        <CatalogueDetails>
+          <DetailsItem>
+            Aloituspäivä: <strong>{catalogue?.startDate}</strong>
+          </DetailsItem>
+          <DetailsItem>
+            Loppupäivä: <strong>{catalogue?.endDate}</strong>
+          </DetailsItem>
+        </CatalogueDetails>
+        {equipment.length !== 0 ? (
           <>
             <TableHeading>Ajoneuvot</TableHeading>
             <Table
@@ -137,15 +147,17 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               getColumnTotal={(col) =>
                 col === 'percentageQuota'
                   ? equipment.reduce((total, item) => {
-                      total += parseFloat(
-                        get(item, 'percentageQuota[0].percentageQuota', '0') as string
-                      )
+                      total += item?.percentageQuota
                       return total
                     }, 0) + '%'
                   : ''
               }
             />
           </>
+        ) : (
+          <FormMessage style={{ marginBottom: '1rem' }}>
+            Kalustoluettelossa ei ole ajoneuvoja.
+          </FormMessage>
         )}
         <>
           {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}
@@ -156,7 +168,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 item={pendingEquipment}
                 labels={equipmentColumnLabels}
                 onChange={onEquipmentInputChange}
-                onDone={() => onAddEquipment(pendingEquipment)}
+                onDone={onAddEquipment}
                 doneDisabled={!equipmentIsValid(pendingEquipment)}
                 doneLabel="Lisää luetteloon"
                 renderInput={renderEquipmentCell}

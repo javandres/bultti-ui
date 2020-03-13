@@ -1,19 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   Equipment,
   EquipmentCatalogue as EquipmentCatalogueType,
+  EquipmentCatalogueInput,
   ProcurementUnit as ProcurementUnitType,
 } from '../schema-types'
 import { ArrowDown } from '../common/icons/ArrowDown'
 import { round } from '../utils/round'
 import EquipmentCatalogue from './EquipmentCatalogue'
-import { useCollectionState } from '../utils/useCollectionState'
 import { isBetween } from '../utils/isBetween'
 import { useQueryData } from '../utils/useQueryData'
 import { procurementUnitQuery } from './procurementUnitsQuery'
 import Loading from '../common/components/Loading'
+import { useMutationData } from '../utils/useMutationData'
+import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
+import { FormMessage } from '../common/components/common'
+import { Button } from '../common/components/Button'
+import ItemForm from '../common/inputs/ItemForm'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -84,16 +89,50 @@ export type PropTypes = {
   productionDate: string
 }
 
-type EquipmentWithQuota = Equipment & { percentageQuota: number }
+export type EquipmentWithQuota = Equipment & { percentageQuota: number }
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ productionDate, procurementUnit: { id }, expanded = true }) => {
+  ({ productionDate, procurementUnit: { operatorId, id, procurementUnitId }, expanded = true }) => {
+    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading } = useQueryData(procurementUnitQuery, {
+    const { data: procurementUnit, loading, refetch } = useQueryData(procurementUnitQuery, {
       variables: {
         procurementUnitId: id,
       },
     })
+
+    const [
+      createCatalogue,
+      { data: createdCatalogue, loading: createCatalogueLoading },
+    ] = useMutationData(createEquipmentCatalogueMutation)
+
+    const addDraftCatalogue = useCallback(() => {
+      setPendingCatalogue({
+        startDate: '',
+        endDate: '',
+      })
+    }, [])
+
+    const onChangeCatalogue = useCallback((key: string, nextValue) => {
+      setPendingCatalogue((currentPending) =>
+        !currentPending ? null : { ...currentPending, [key]: nextValue }
+      )
+    }, [])
+
+    const onAddEquipmentCatalogue = useCallback(async () => {
+      setPendingCatalogue(null)
+
+      await createCatalogue({
+        variables: {
+          operatorId: operatorId,
+          procurementUnitId: id,
+          catalogue: pendingCatalogue,
+        },
+      })
+
+      await refetch()
+    }, [operatorId, id, pendingCatalogue])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -113,10 +152,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       [activeCatalogue]
     )
 
-    const [
-      equipment,
-      { add: addEquipment, remove: removeEquipment, update: updateEquipment },
-    ] = useCollectionState<Equipment>(catalogueEquipment)
+    const onEquipmentAdded = useCallback(async () => {
+      await refetch()
+    }, [refetch])
+
+    const onRemoveEquipment = useCallback(() => {
+      console.log('Remove equipment WIP!')
+    }, [])
 
     const [isExpanded, setIsExpanded] = useState(true)
     const { routes = [] } = procurementUnit || {}
@@ -132,9 +174,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         ) : (
           <>
             <HeaderRow expanded={isExpanded}>
-              <ProcurementUnitHeading>
-                {procurementUnit.procurementUnitId}
-              </ProcurementUnitHeading>
+              <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
               <HeaderSection>
                 <SectionHeading>Reitit</SectionHeading>
                 {(routes || [])
@@ -157,13 +197,32 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             </HeaderRow>
             {isExpanded && (
               <Content>
-                <EquipmentCatalogue
-                  operatorId={procurementUnit.operatorId}
-                  equipment={equipment}
-                  addEquipment={addEquipment}
-                  removeEquipment={removeEquipment}
-                  updateEquipment={updateEquipment}
-                />
+                {!activeCatalogue ? (
+                  !pendingCatalogue ? (
+                    <>
+                      <FormMessage style={{ marginBottom: '1rem' }}>
+                        Kilpailukohteella ei ole kalustoluetteloa.
+                      </FormMessage>
+                      <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
+                    </>
+                  ) : (
+                    <ItemForm
+                      item={pendingCatalogue}
+                      onChange={onChangeCatalogue}
+                      onDone={onAddEquipmentCatalogue}
+                      keyFromItem={(item) => item.id}
+                      doneLabel="Lisää kalustoluettelo"
+                    />
+                  )
+                ) : (
+                  <EquipmentCatalogue
+                    catalogue={activeCatalogue}
+                    operatorId={procurementUnit.operatorId}
+                    equipment={catalogueEquipment}
+                    onEquipmentAdded={onEquipmentAdded}
+                    removeEquipment={onRemoveEquipment}
+                  />
+                )}
               </Content>
             )}
           </>

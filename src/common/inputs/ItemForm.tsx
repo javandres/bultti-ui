@@ -42,8 +42,8 @@ export type PropTypes<ItemType = any> = {
 
 const defaultKeyFromItem = (item) => item.id
 
-const defaultRenderInput = (key, val, onChange) => (
-  <TextInput theme="light" value={val} onChange={onChange} name={key} />
+const defaultRenderInput = (val, key, onChange) => (
+  <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
 )
 
 const ItemForm: React.FC<PropTypes> = observer(
@@ -104,7 +104,8 @@ const ItemForm: React.FC<PropTypes> = observer(
           </FieldWrapper>
         ))}
         {onDone && (
-          <FieldWrapper style={{ alignItems: 'flex-end', justifyContent: 'flex-end', marginLeft: 'auto' }}>
+          <FieldWrapper
+            style={{ alignItems: 'flex-end', justifyContent: 'flex-end', marginLeft: 'auto' }}>
             <Button disabled={doneDisabled} onClick={onDone}>
               {doneLabel}
             </Button>

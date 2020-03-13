@@ -42,7 +42,8 @@ export type EquipmentCatalogue = {
 };
 
 export type EquipmentCatalogueInput = {
-  operatorId: Scalars['Int'],
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
 };
 
 export type EquipmentCatalogueQuota = {
@@ -139,6 +140,8 @@ export type MutationRemoveEquipmentArgs = {
 
 
 export type MutationCreateEquipmentCatalogueArgs = {
+  procurementUnitId: Scalars['String'],
+  operatorId: Scalars['Int'],
   equipmentCatalogue: EquipmentCatalogueInput
 };
 

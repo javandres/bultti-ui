@@ -63,7 +63,7 @@ type ExecutionRequirementValue {
 
 type Mutation {
   createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Int!): Equipment
-  createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue
+  createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
   removeEquipment(equipmentId: String!): Boolean!
@@ -161,7 +161,8 @@ enum OperatingAreaName {
 }
 
 input EquipmentCatalogueInput {
-  operatorId: Int!
+  endDate: BulttiDateTime!
+  startDate: BulttiDateTime!
 }
 
 input EquipmentInput {
