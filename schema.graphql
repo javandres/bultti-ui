@@ -15,7 +15,7 @@ type Equipment {
   model: String!
   operator: Operator!
   operatorId: Int!
-  registryDate: DateTime
+  registryDate: BulttiDateTime
   registryNr: String
   type: String!
   uniqueVehicleId: String!
@@ -23,7 +23,7 @@ type Equipment {
 }
 
 type EquipmentCatalogue {
-  endDate: DateTime!
+  endDate: BulttiDateTime!
   equipmentCatalogueId: String!
   equipmentQuotas: [EquipmentCatalogueQuota!]!
   id: ID!
@@ -31,12 +31,12 @@ type EquipmentCatalogue {
   operatorId: Int!
   procurementUnit: ProcurementUnit!
   procurementUnitId: String!
-  startDate: DateTime!
+  startDate: BulttiDateTime!
 }
 
 type EquipmentCatalogueQuota {
-  catalogueEndDate: DateTime!
-  catalogueStartDate: DateTime!
+  catalogueEndDate: BulttiDateTime!
+  catalogueStartDate: BulttiDateTime!
   equipment: Equipment!
   equipmentCatalogue: EquipmentCatalogue!
   equipmentCatalogueId: String!
@@ -62,10 +62,12 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
-  createEquipment(equipment: EquipmentInput!): Equipment
+  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Float!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
+  removeEquipment(equipmentId: String!): Boolean!
+  updateEquipment(equipment: EquipmentInput!): Equipment
 }
 
 type OperatingArea {
@@ -86,32 +88,30 @@ type Operator {
 }
 
 type PreInspection {
-  createdAt: DateTime!
-  endDate: DateTime
+  createdAt: BulttiDateTime!
+  endDate: BulttiDateTime
   executionRequirements: [ExecutionRequirement!]
   id: ID!
   operator: Operator!
   operatorId: Int
-  productionEnd: DateTime
-  productionStart: DateTime
+  productionEnd: BulttiDateTime
+  productionStart: BulttiDateTime
   season: Season
-  startDate: DateTime
+  startDate: BulttiDateTime
   status: InspectionStatus!
-  updatedDate: DateTime!
+  updatedDate: BulttiDateTime!
 }
 
 type ProcurementUnit {
   area: OperatingArea!
-  endDate: DateTime!
+  endDate: BulttiDateTime!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: ID!
-  operationEndDate: DateTime!
-  operationStartDate: DateTime!
   operator: Operator!
   operatorId: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!
-  startDate: DateTime!
+  startDate: BulttiDateTime!
   weeklyKilometers: Float!
   weeklyMeters: Float!
 }
@@ -134,19 +134,19 @@ type Query {
   preInspection(preInspectionId: Int!): PreInspection
   preInspections: [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
-  procurementUnitsByOperator(date: DateTime!, operatorId: Int!): [ProcurementUnit!]!
-  seasons(date: DateTime!): [Season!]!
+  procurementUnitsByOperator(date: BulttiDateTime!, operatorId: Int!): [ProcurementUnit!]!
+  seasons(date: BulttiDateTime!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   singleExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
 }
 
 type Season {
-  endDate: DateTime!
+  endDate: String
   id: ID!
   preInspections: [PreInspection!]!
-  season: Int!
-  startDate: DateTime!
+  season: String!
+  startDate: String
 }
 
 enum InspectionStatus {
@@ -164,7 +164,17 @@ input EquipmentCatalogueInput {
 }
 
 input EquipmentInput {
-  operatorId: Int!
+  co2: Float!
+  emissionClass: Int!
+  exteriorColor: String!
+  id: ID
+  make: String!
+  model: String!
+  percentageQuota: Float
+  registryDate: DateTime
+  registryNr: String
+  type: String!
+  vehicleId: String!
 }
 
 input ExecutionRequirementInput {
@@ -182,6 +192,25 @@ input PreInspectionInput {
   operatorId: Int!
 }
 
+input ProcurementUnitInput {
+  area: Int!
+  endDate: BulttiDateTime!
+  id: ID!
+  operatorId: Int!
+  procurementUnitId: ID!
+  routes: [ProcurementUnitRouteInput!]
+  startDate: BulttiDateTime!
+  weeklyMeters: Float!
+}
+
+input ProcurementUnitRouteInput {
+  length: Float!
+  routeId: String!
+}
+
+
+"A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).."
+scalar BulttiDateTime
 
 "The javascript `Date` as string. Type represents date and time as the ISO Date string."
 scalar DateTime

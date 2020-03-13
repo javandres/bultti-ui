@@ -25,7 +25,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       if (seasonsList[0]?.id !== '...') {
         const unselectedSeason: Season = {
           id: UNSELECTED_VAL,
-          season: 0,
+          season: '',
           startDate: '',
           endDate: '',
           preInspections: [],

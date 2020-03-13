@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer, useLocalStore } from 'mobx-react-lite'
 import {
@@ -12,7 +12,7 @@ import {
 import SelectOperator from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
-import { Operator, ProcurementUnit, Season } from '../schema-types'
+import { Operator, Season } from '../schema-types'
 import SelectWeek from '../common/inputs/SelectWeek'
 import { useStateValue } from '../state/useAppState'
 import { IObservableArray, observable } from 'mobx'
@@ -29,7 +29,6 @@ import moment from 'moment'
 import { useMutationData } from '../utils/useMutationData'
 import { createPreInspectionMutation } from './createPreInspectionMutation'
 import { orderBy } from 'lodash'
-import { useCollectionState } from '../utils/useCollectionState'
 import ProcurementUnits from '../procurementUnits/ProcurementUnits'
 
 const currentDate = moment()
@@ -232,7 +231,6 @@ const PreInspectionForm: React.FC = observer(() => {
   })
 
   const seasons = useMemo(() => orderBy(seasonsData || [], 'startDate', 'desc'), [seasonsData])
-  console.log(seasonsData)
 
   // Use the global operator as the initially selected operator if no operator
   // has been selected for this form yet.
@@ -264,13 +262,6 @@ const PreInspectionForm: React.FC = observer(() => {
       formState.setEndDate(toISODate(endOfISOWeek(parseISO(formState.season.startDate))))
     }
   }, [formState.season])
-
-  const [
-    procurementUnits,
-    { replace: replaceProcurementUnits, update: updateProcurementUnit },
-  ] = useCollectionState<ProcurementUnit>([])
-
-  const onUpdateProcurementUnits = useCallback(() => {}, [procurementUnits])
 
   // Validate that the form has each dependent piece of data.
   const formCondition = useMemo(() => {
@@ -382,10 +373,7 @@ const PreInspectionForm: React.FC = observer(() => {
             <FormColumn width="100%" minWidth="510px">
               <ProcurementUnits
                 productionDate={formState.productionStart}
-                procurementUnits={procurementUnits}
                 operatorId={formState?.operator?.operatorId || 0}
-                initialize={replaceProcurementUnits}
-                onUpdate={onUpdateProcurementUnits}
               />
             </FormColumn>
           </TransparentFormWrapper>
@@ -394,7 +382,6 @@ const PreInspectionForm: React.FC = observer(() => {
             <FormColumn width="100%" minWidth="510px">
               <ExecutionRequirements
                 productionDate={formState.productionStart}
-                procurementUnits={procurementUnits}
                 operatorId={formState?.operator?.operatorId || 0}
               />
             </FormColumn>

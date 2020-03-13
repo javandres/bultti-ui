@@ -12,6 +12,7 @@ const operatorsQuery = gql`
   query listOperators {
     operators {
       id
+      operatorId
       operatorName
     }
   }

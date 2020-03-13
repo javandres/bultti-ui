@@ -6,8 +6,10 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  BulttiDateTime: any,
   DateTime: any,
 };
+
 
 
 export type Equipment = {
@@ -20,7 +22,7 @@ export type Equipment = {
   make: Scalars['String'],
   model: Scalars['String'],
   registryNr?: Maybe<Scalars['String']>,
-  registryDate?: Maybe<Scalars['DateTime']>,
+  registryDate?: Maybe<Scalars['BulttiDateTime']>,
   type: Scalars['String'],
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
@@ -36,8 +38,8 @@ export type EquipmentCatalogue = {
   operator: Operator,
   procurementUnitId: Scalars['String'],
   procurementUnit: ProcurementUnit,
-  startDate: Scalars['DateTime'],
-  endDate: Scalars['DateTime'],
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
   equipmentQuotas: Array<EquipmentCatalogueQuota>,
 };
 
@@ -53,8 +55,8 @@ export type EquipmentCatalogueQuota = {
   equipmentCatalogueId: Scalars['String'],
   equipment: Equipment,
   equipmentCatalogue: EquipmentCatalogue,
-  catalogueStartDate: Scalars['DateTime'],
-  catalogueEndDate: Scalars['DateTime'],
+  catalogueStartDate: Scalars['BulttiDateTime'],
+  catalogueEndDate: Scalars['BulttiDateTime'],
 };
 
 export type EquipmentInput = {
@@ -178,13 +180,13 @@ export type PreInspection = {
   operator: Operator,
   season?: Maybe<Season>,
   executionRequirements?: Maybe<Array<ExecutionRequirement>>,
-  startDate?: Maybe<Scalars['DateTime']>,
-  endDate?: Maybe<Scalars['DateTime']>,
-  productionStart?: Maybe<Scalars['DateTime']>,
-  productionEnd?: Maybe<Scalars['DateTime']>,
+  startDate?: Maybe<Scalars['BulttiDateTime']>,
+  endDate?: Maybe<Scalars['BulttiDateTime']>,
+  productionStart?: Maybe<Scalars['BulttiDateTime']>,
+  productionEnd?: Maybe<Scalars['BulttiDateTime']>,
   status: InspectionStatus,
-  createdAt: Scalars['DateTime'],
-  updatedDate: Scalars['DateTime'],
+  createdAt: Scalars['BulttiDateTime'],
+  updatedDate: Scalars['BulttiDateTime'],
 };
 
 export type PreInspectionInput = {
@@ -202,14 +204,28 @@ export type ProcurementUnit = {
   weeklyKilometers: Scalars['Float'],
   area: OperatingArea,
   routes: Array<ProcurementUnitRoute>,
-  startDate: Scalars['DateTime'],
-  endDate: Scalars['DateTime'],
-  operationStartDate: Scalars['DateTime'],
-  operationEndDate: Scalars['DateTime'],
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
+};
+
+export type ProcurementUnitInput = {
+  id: Scalars['ID'],
+  procurementUnitId: Scalars['ID'],
+  operatorId: Scalars['Int'],
+  area: Scalars['Int'],
+  weeklyMeters: Scalars['Float'],
+  routes?: Maybe<Array<ProcurementUnitRouteInput>>,
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
 };
 
 export type ProcurementUnitRoute = {
    __typename?: 'ProcurementUnitRoute',
+  routeId: Scalars['String'],
+  length: Scalars['Float'],
+};
+
+export type ProcurementUnitRouteInput = {
   routeId: Scalars['String'],
   length: Scalars['Float'],
 };
@@ -242,7 +258,7 @@ export type QueryOperatorArgs = {
 
 
 export type QuerySeasonsArgs = {
-  date: Scalars['DateTime']
+  date: Scalars['BulttiDateTime']
 };
 
 
@@ -258,7 +274,7 @@ export type QueryProcurementUnitArgs = {
 
 export type QueryProcurementUnitsByOperatorArgs = {
   operatorId: Scalars['Int'],
-  date: Scalars['DateTime']
+  date: Scalars['BulttiDateTime']
 };
 
 
@@ -299,8 +315,8 @@ export type QueryExecutionRequirementsByPreInspectionArgs = {
 export type Season = {
    __typename?: 'Season',
   id: Scalars['ID'],
-  season: Scalars['Int'],
-  startDate: Scalars['DateTime'],
-  endDate: Scalars['DateTime'],
+  season: Scalars['String'],
+  startDate?: Maybe<Scalars['String']>,
+  endDate?: Maybe<Scalars['String']>,
   preInspections: Array<PreInspection>,
 };

@@ -13,6 +13,7 @@ import { useCollectionState } from '../utils/useCollectionState'
 import { isBetween } from '../utils/isBetween'
 import { useQueryData } from '../utils/useQueryData'
 import { procurementUnitQuery } from './procurementUnitsQuery'
+import Loading from '../common/components/Loading'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -88,7 +89,7 @@ type EquipmentWithQuota = Equipment & { percentageQuota: number }
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({ productionDate, procurementUnit: { id }, expanded = true }) => {
     // Get the operating units for the selected operator.
-    const { data: procurementUnit } = useQueryData(procurementUnitQuery, {
+    const { data: procurementUnit, loading } = useQueryData(procurementUnitQuery, {
       variables: {
         procurementUnitId: id,
       },
@@ -118,7 +119,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     ] = useCollectionState<Equipment>(catalogueEquipment)
 
     const [isExpanded, setIsExpanded] = useState(true)
-    const { routes = [] } = procurementUnit
+    const { routes = [] } = procurementUnit || {}
 
     useEffect(() => {
       setIsExpanded(expanded)
@@ -126,37 +127,45 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     return (
       <ProcurementUnitView>
-        <HeaderRow expanded={isExpanded}>
-          <ProcurementUnitHeading>{procurementUnit.procurementUnitId}</ProcurementUnitHeading>
-          <HeaderSection>
-            <SectionHeading>Reitit</SectionHeading>
-            {(routes || [])
-              .map((route) => route?.routeId)
-              .filter((routeId) => !!routeId)
-              .join(', ')}
-          </HeaderSection>
-          <HeaderSection>
-            <SectionHeading>Kilometrejä viikossa</SectionHeading>
-            {round((procurementUnit?.weeklyMeters || 0) / 1000)}
-          </HeaderSection>
-          <HeaderSection>
-            <SectionHeading>Maksimi keski-ikä</SectionHeading>8 (7,6)
-          </HeaderSection>
-          <ExpandToggle
-            expanded={isExpanded}
-            onClick={() => setIsExpanded((currentVal) => !currentVal)}>
-            <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
-          </ExpandToggle>
-        </HeaderRow>
-        {isExpanded && (
-          <Content>
-            <EquipmentCatalogue
-              equipment={equipment}
-              addEquipment={addEquipment}
-              removeEquipment={removeEquipment}
-              updateEquipment={updateEquipment}
-            />
-          </Content>
+        {loading ? (
+          <Loading />
+        ) : (
+          <>
+            <HeaderRow expanded={isExpanded}>
+              <ProcurementUnitHeading>
+                {procurementUnit.procurementUnitId}
+              </ProcurementUnitHeading>
+              <HeaderSection>
+                <SectionHeading>Reitit</SectionHeading>
+                {(routes || [])
+                  .map((route) => route?.routeId)
+                  .filter((routeId) => !!routeId)
+                  .join(', ')}
+              </HeaderSection>
+              <HeaderSection>
+                <SectionHeading>Kilometrejä viikossa</SectionHeading>
+                {round((procurementUnit?.weeklyMeters || 0) / 1000)}
+              </HeaderSection>
+              <HeaderSection>
+                <SectionHeading>Maksimi keski-ikä</SectionHeading>8 (7,6)
+              </HeaderSection>
+              <ExpandToggle
+                expanded={isExpanded}
+                onClick={() => setIsExpanded((currentVal) => !currentVal)}>
+                <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
+              </ExpandToggle>
+            </HeaderRow>
+            {isExpanded && (
+              <Content>
+                <EquipmentCatalogue
+                  equipment={equipment}
+                  addEquipment={addEquipment}
+                  removeEquipment={removeEquipment}
+                  updateEquipment={updateEquipment}
+                />
+              </Content>
+            )}
+          </>
         )}
       </ProcurementUnitView>
     )
