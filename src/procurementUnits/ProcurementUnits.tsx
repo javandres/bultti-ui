@@ -33,8 +33,6 @@ const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, production
     }
   )
 
-  console.log(procurementUnitsData)
-
   const procurementUnits = procurementUnitsData || []
 
   return (
