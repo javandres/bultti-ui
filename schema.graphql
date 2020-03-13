@@ -62,7 +62,7 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
-  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Float!): Equipment
+  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
@@ -104,6 +104,7 @@ type PreInspection {
 
 type ProcurementUnit {
   area: OperatingArea!
+  areaId: Int!
   endDate: BulttiDateTime!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: ID!
@@ -171,7 +172,7 @@ input EquipmentInput {
   make: String!
   model: String!
   percentageQuota: Float
-  registryDate: DateTime
+  registryDate: BulttiDateTime
   registryNr: String
   type: String!
   vehicleId: String!
@@ -211,6 +212,3 @@ input ProcurementUnitRouteInput {
 
 "A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).."
 scalar BulttiDateTime
-
-"The javascript `Date` as string. Type represents date and time as the ISO Date string."
-scalar DateTime

@@ -1448,6 +1448,22 @@
             "deprecationReason": null
           },
           {
+            "name": "areaId",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "area",
             "description": "",
             "args": [],
@@ -2192,7 +2208,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Float",
+                    "name": "Int",
                     "ofType": null
                   }
                 },
@@ -2447,7 +2463,7 @@
             "description": "",
             "type": {
               "kind": "SCALAR",
-              "name": "DateTime",
+              "name": "BulttiDateTime",
               "ofType": null
             },
             "defaultValue": null
@@ -2509,16 +2525,6 @@
             "defaultValue": null
           }
         ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "SCALAR",
-        "name": "DateTime",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
         "interfaces": null,
         "enumValues": null,
         "possibleTypes": null

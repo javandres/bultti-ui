@@ -7,9 +7,7 @@ export type Scalars = {
   Int: number,
   Float: number,
   BulttiDateTime: any,
-  DateTime: any,
 };
-
 
 
 export type Equipment = {
@@ -66,7 +64,7 @@ export type EquipmentInput = {
   make: Scalars['String'],
   model: Scalars['String'],
   registryNr?: Maybe<Scalars['String']>,
-  registryDate?: Maybe<Scalars['DateTime']>,
+  registryDate?: Maybe<Scalars['BulttiDateTime']>,
   type: Scalars['String'],
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
@@ -125,7 +123,7 @@ export type MutationCreatePreInspectionArgs = {
 
 export type MutationCreateEquipmentArgs = {
   catalogueId?: Maybe<Scalars['String']>,
-  operatorId: Scalars['Float'],
+  operatorId: Scalars['Int'],
   equipment: EquipmentInput
 };
 
@@ -202,6 +200,7 @@ export type ProcurementUnit = {
   equipmentCatalogues: Array<EquipmentCatalogue>,
   weeklyMeters: Scalars['Float'],
   weeklyKilometers: Scalars['Float'],
+  areaId: Scalars['Int'],
   area: OperatingArea,
   routes: Array<ProcurementUnitRoute>,
   startDate: Scalars['BulttiDateTime'],

@@ -104,7 +104,8 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
           {...dropdownProps}
           items={emissionClassValues}
           selectedItem={
-            emissionClassValues.find(({ name }) => name === value) || emissionClassValues[0]
+            emissionClassValues.find(({ name }) => name === value + '') ||
+            emissionClassValues[0]
           }
         />
       )
@@ -123,6 +124,7 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
     return (
       <FormInput
         type={isNumeric(value) ? 'number' : 'text'}
+        step={valueName === 'percentageQuota' ? 0.01 : 1}
         value={value}
         onChange={onChangeValue}
         name={valueName}

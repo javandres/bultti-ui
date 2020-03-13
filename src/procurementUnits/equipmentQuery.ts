@@ -15,3 +15,19 @@ export const EquipmentFragment = gql`
     type
   }
 `
+
+export const createEquipmentMutation = gql`
+  mutation createEquipmentMutation(
+    $operatorId: Int!
+    $equipmentInput: EquipmentInput!
+    $catalogueId: String
+  ) {
+    createEquipment(
+      operatorId: $operatorId
+      equipment: $equipmentInput
+      catalogueId: $catalogueId
+    ) {
+      id
+    }
+  }
+`

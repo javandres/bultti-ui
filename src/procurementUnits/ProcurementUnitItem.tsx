@@ -158,6 +158,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             {isExpanded && (
               <Content>
                 <EquipmentCatalogue
+                  operatorId={procurementUnit.operatorId}
                   equipment={equipment}
                   addEquipment={addEquipment}
                   removeEquipment={removeEquipment}

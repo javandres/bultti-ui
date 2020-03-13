@@ -1,13 +1,14 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
 import { Equipment, EquipmentInput } from '../schema-types'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
-import { useCollectionState } from '../utils/useCollectionState'
 import ItemForm from '../common/inputs/ItemForm'
 import { Button } from '../common/components/Button'
 import { get } from 'lodash'
+import { useMutationData } from '../utils/useMutationData'
+import { createEquipmentMutation } from './equipmentQuery'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -21,6 +22,7 @@ const TableHeading = styled.h5`
 `
 
 export type PropTypes = {
+  operatorId: number
   equipment: Equipment[]
   addEquipment: (item: Equipment) => void
   removeEquipment: (item: Equipment) => void
@@ -44,6 +46,14 @@ const equipmentColumnLabels = {
   registryDate: 'Rekisteröintipäivä',
 }
 
+const equipmentInputValues = {
+  percentageQuota: (val) => parseFloat(val),
+  emissionClass: (val) => parseInt(val, 10),
+}
+
+const defaultGetVal = (val) => val
+const getType = (key) => equipmentInputValues[key] || defaultGetVal
+
 const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(
     e?.make &&
@@ -57,18 +67,19 @@ const equipmentIsValid = (e: EquipmentInput): boolean =>
 const createEquipmentKey = (e: Equipment) =>
   !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
 
-type PendingEquipmentType = { _editable: boolean } & EquipmentInput
-
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ equipment, addEquipment, removeEquipment }) => {
+  ({ operatorId, equipment, addEquipment, removeEquipment }) => {
+    const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
+
     const [
-      pendingEquipment,
-      { add: addPending, remove: removePending, update: updatePending },
-    ] = useCollectionState<PendingEquipmentType>([])
+      mutate,
+      { data: createdEquipment, loading: createdEquipmentLoading },
+    ] = useMutationData(createEquipmentMutation)
+
+    console.log(createdEquipment)
 
     const addDraftEquipment = useCallback(() => {
-      const inputRow: PendingEquipmentType = {
-        _editable: true,
+      const inputRow: EquipmentInput = {
         id: 'new',
         vehicleId: '',
         make: '',
@@ -82,30 +93,28 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         percentageQuota: 0,
       }
 
-      addPending(inputRow)
-    }, [addPending])
+      setPendingEquipment(inputRow)
+    }, [])
 
-    const onEquipmentInputChange = useCallback(
-      (item) => (key, nextValue) => {
-        const onEdit = (nextItem) => {
-          if (nextItem.id === 'new') {
-            nextItem['id'] = createEquipmentKey(nextItem) || 'new'
-          }
-
-          return nextItem
-        }
-
-        updatePending(item, key, nextValue, onEdit)
-      },
-      [updatePending]
-    )
+    const onEquipmentInputChange = useCallback((key: string, nextValue) => {
+      setPendingEquipment((currentPending) =>
+        !currentPending ? null : { ...currentPending, [key]: getType(key)(nextValue) }
+      )
+    }, [])
 
     const onAddEquipment = useCallback(
       (item) => {
         addEquipment(item)
-        removePending(item)
+        setPendingEquipment(null)
+
+        mutate({
+          variables: {
+            operatorId,
+            equipmentInput: item,
+          },
+        })
       },
-      [addEquipment, removePending]
+      [addEquipment]
     )
 
     const renderEquipmentCell = useCallback((val: any, key: string, onChange) => {
@@ -128,7 +137,9 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               getColumnTotal={(col) =>
                 col === 'percentageQuota'
                   ? equipment.reduce((total, item) => {
-                      total += parseFloat(get(item, 'percentageQuota[0].percentageQuota', '0') as string)
+                      total += parseFloat(
+                        get(item, 'percentageQuota[0].percentageQuota', '0') as string
+                      )
                       return total
                     }, 0) + '%'
                   : ''
@@ -137,24 +148,19 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
           </>
         )}
         <>
-          {pendingEquipment.length === 0 && (
-            <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>
-          )}
-          {pendingEquipment.length !== 0 && (
+          {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}
+          {pendingEquipment && (
             <>
               <TableHeading>Lisää ajoneuvo</TableHeading>
-              {pendingEquipment.map((item) => (
-                <ItemForm
-                  key={item.id}
-                  item={item}
-                  labels={equipmentColumnLabels}
-                  onChange={onEquipmentInputChange(item)}
-                  onDone={() => onAddEquipment(item)}
-                  doneDisabled={!equipmentIsValid(item)}
-                  doneLabel="Lisää luetteloon"
-                  renderInput={renderEquipmentCell}
-                />
-              ))}
+              <ItemForm
+                item={pendingEquipment}
+                labels={equipmentColumnLabels}
+                onChange={onEquipmentInputChange}
+                onDone={() => onAddEquipment(pendingEquipment)}
+                doneDisabled={!equipmentIsValid(pendingEquipment)}
+                doneLabel="Lisää luetteloon"
+                renderInput={renderEquipmentCell}
+              />
             </>
           )}
         </>
