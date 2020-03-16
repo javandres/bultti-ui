@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { Text } from '../../utils/translate'
 import { HSLLogoNoText } from '../icons/HSLLogoNoText'
@@ -7,13 +7,14 @@ import { Search } from '../icons/Search'
 import { Plus } from '../icons/Plus'
 import { Menu } from '../icons/Menu'
 import { Button, ButtonSize } from './Button'
-import { logout } from '../../utils/authentication'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import { User } from '../icons/User'
 import GlobalOperatorFilter from './GlobalOperatorFilter'
 import { Bus } from '../icons/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
+import { useMutationData } from '../../utils/useMutationData'
+import { logoutMutation } from '../queries/authQueries'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -124,11 +125,12 @@ export type AppSidebarProps = {
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user, setUser] = useStateValue('user')
-  const [logoutLoading, setLogoutLoading] = useState(false)
+  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
 
   const onLogout = useCallback(async () => {
-    setLogoutLoading(true)
     const result = await logout()
+
+    console.log(result)
 
     if (result) {
       setUser(null)

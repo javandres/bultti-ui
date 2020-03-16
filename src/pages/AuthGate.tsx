@@ -1,16 +1,14 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components'
 import { Colors } from '../utils/HSLColors'
 import { LoadingDisplay } from '../common/components/Loading'
 import { HSLLogoNoText } from '../common/icons/HSLLogoNoText'
 import { Login } from '../common/icons/Login'
-import { login, redirectToLogin } from '../utils/authentication'
-import { useStateValue } from '../state/useAppState'
 import { LoginButton } from '../common/components/common'
-import { ALLOW_DEV_LOGIN } from '../constants'
 import { Text } from '../utils/translate'
 import { ButtonSize } from '../common/components/Button'
+import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -50,26 +48,17 @@ const Title = styled.h2`
 type PropTypes = {
   children?: React.ReactNode
   unauthenticated: boolean
+  loading: boolean
 }
 
-const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => {
-  const [loading, setLoading] = useState(false)
-  const [, setUser] = useStateValue('user')
+const redirectToLogin = () => {
+  const authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
+  window.location.assign(authUrl)
+}
 
+const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = false }) => {
   const openAuthForm = useCallback(() => {
     redirectToLogin()
-  }, [])
-
-  const onDevLogin = useCallback(async () => {
-    setLoading(true)
-
-    const response = await login('dev')
-
-    if (response && response.isOk && response.email) {
-      setUser({ email: response.email })
-    }
-
-    setLoading(false)
   }, [])
 
   return (
@@ -94,14 +83,6 @@ const AuthGate: React.FC<PropTypes> = observer(({ unauthenticated = false }) => 
               </span>
             </LoginButton>
           </ButtonWrapper>
-          {ALLOW_DEV_LOGIN && (
-            <ButtonWrapper>
-              <LoginButton onClick={onDevLogin} size={ButtonSize.LARGE} transparent>
-                <Login height="1em" fill="white" />
-                <span className="buttonText">Dev login</span>
-              </LoginButton>
-            </ButtonWrapper>
-          )}
         </>
       )}
     </LoadingScreen>

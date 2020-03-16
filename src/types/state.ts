@@ -1,7 +1,6 @@
-import { User } from './authentication'
 import { FunctionMap } from './common'
 import { Language } from '../utils/translate'
-import { Operator, Season } from '../schema-types'
+import { Operator, Season, User } from '../schema-types'
 
 export interface IAppState {
   user?: User

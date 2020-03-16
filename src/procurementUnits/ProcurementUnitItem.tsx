@@ -102,10 +102,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [
-      createCatalogue,
-      { data: createdCatalogue, loading: createCatalogueLoading },
-    ] = useMutationData(createEquipmentCatalogueMutation)
+    const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
 
     const addDraftCatalogue = useCallback(() => {
       setPendingCatalogue({
@@ -200,9 +197,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 {!activeCatalogue ? (
                   !pendingCatalogue ? (
                     <>
-                      <MessageView>
-                        Kilpailukohteella ei ole kalustoluetteloa.
-                      </MessageView>
+                      <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
                       <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
                     </>
                   ) : (

@@ -114,6 +114,8 @@ export type Mutation = {
   removeEquipment: Scalars['Boolean'],
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   createExecutionRequirement?: Maybe<ExecutionRequirement>,
+  login?: Maybe<User>,
+  logout: Scalars['Boolean'],
 };
 
 
@@ -148,6 +150,13 @@ export type MutationCreateEquipmentCatalogueArgs = {
 
 export type MutationCreateExecutionRequirementArgs = {
   executionRequirement: ExecutionRequirementInput
+};
+
+
+export type MutationLoginArgs = {
+  isTest?: Maybe<Scalars['Boolean']>,
+  redirectUri?: Maybe<Scalars['String']>,
+  authorizationCode: Scalars['String']
 };
 
 export type OperatingArea = {
@@ -188,6 +197,7 @@ export type PreInspection = {
   status: InspectionStatus,
   createdAt: Scalars['BulttiDateTime'],
   updatedDate: Scalars['BulttiDateTime'],
+  createdBy: User,
 };
 
 export type PreInspectionInput = {
@@ -251,6 +261,9 @@ export type Query = {
   executionRequirement: Array<ExecutionRequirement>,
   executionRequirementsByOperator: Array<ExecutionRequirement>,
   executionRequirementsByPreInspection: Array<ExecutionRequirement>,
+  user?: Maybe<User>,
+  users: Array<User>,
+  currentUser: User,
 };
 
 
@@ -314,6 +327,11 @@ export type QueryExecutionRequirementsByPreInspectionArgs = {
   preInspectionId: Scalars['Int']
 };
 
+
+export type QueryUserArgs = {
+  userId: Scalars['Int']
+};
+
 export type Season = {
    __typename?: 'Season',
   id: Scalars['ID'],
@@ -322,3 +340,22 @@ export type Season = {
   endDate: Scalars['BulttiDateTime'],
   preInspections: Array<PreInspection>,
 };
+
+export type User = {
+   __typename?: 'User',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  email: Scalars['String'],
+  role: UserRole,
+  organisation?: Maybe<Scalars['String']>,
+  operatorIds?: Maybe<Array<Scalars['Int']>>,
+  hslIdGroups?: Maybe<Array<Scalars['String']>>,
+  preInspections: Array<PreInspection>,
+};
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  HslUser = 'HSL_USER',
+  OperatorUser = 'OPERATOR_USER',
+  BlockedUser = 'BLOCKED_USER'
+}

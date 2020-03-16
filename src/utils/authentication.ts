@@ -20,52 +20,6 @@ if (!BACKEND_API_URL.endsWith('/')) {
   BACKEND_API_URL = BACKEND_API_URL + '/'
 }
 
-export const login = async (code, isTest = false): Promise<AuthResponse> => {
-  const requestBody = { code, isTest }
-  let result = null
-
-  try {
-    const response = await fetch(BACKEND_API_URL + Endpoint.LOGIN, {
-      method: RequestMethod.POST,
-      credentials: 'include',
-      body: JSON.stringify(requestBody),
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-    result = await response.json()
-  } catch (e) {
-    console.log(e)
-  }
-
-  return result
-}
-
-export const checkExistingSession = async (): Promise<AuthResponse> => {
-  let result = null
-
-  try {
-    const response = await fetch(BACKEND_API_URL + Endpoint.SESSION, {
-      credentials: 'include',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-    })
-    result = await response.json()
-  } catch (e) {
-    console.log(e)
-  }
-
-  return result
-}
-
-export const redirectToLogin = () => {
-  const authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
-  window.location.assign(authUrl)
-}
-
 export const logout = async () => {
   let result: boolean = false
 

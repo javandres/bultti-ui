@@ -1,9 +1,9 @@
-import { User } from '../types/authentication'
 import { action, extendObservable } from 'mobx'
 import { UserActions } from '../types/state'
+import { User } from '../schema-types'
 
 interface UserState {
-  user: User
+  user: User | null
 }
 
 export const UserStore = (state): UserActions => {
@@ -13,7 +13,7 @@ export const UserStore = (state): UserActions => {
 
   extendObservable(state, defaultState)
 
-  const setUser = action((user: User) => {
+  const setUser = action((user: User | null) => {
     state.user = user
   })
 

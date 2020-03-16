@@ -33,6 +33,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
     })
 
     const seasons: Season[] = useMemo(() => {
+      // Most current seasons first
       const seasonsList: Season[] = orderBy(
         !seasonsData ? [] : [...seasonsData],
         ({ startDate }) => parseISO(startDate).getTime(),

@@ -67,9 +67,6 @@ const getType = (key) => equipmentInputValues[key] || defaultGetVal
 const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
-const createEquipmentKey = (e: Equipment) =>
-  !equipmentIsValid(e) ? null : `${e?.make}${e?.model}${e.emissionClass}${e.type}`
-
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ catalogue, operatorId, equipment, onEquipmentAdded, removeEquipment }) => {
     const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)

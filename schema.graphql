@@ -66,6 +66,8 @@ type Mutation {
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
+  login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
+  logout: Boolean!
   removeEquipment(equipmentId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!): Equipment
 }
@@ -89,6 +91,7 @@ type Operator {
 
 type PreInspection {
   createdAt: BulttiDateTime!
+  createdBy: User!
   endDate: BulttiDateTime
   executionRequirements: [ExecutionRequirement!]
   id: ID!
@@ -123,6 +126,7 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  currentUser: User!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -140,6 +144,8 @@ type Query {
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   singleExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
+  user(userId: Int!): User
+  users: [User!]!
 }
 
 type Season {
@@ -150,6 +156,17 @@ type Season {
   startDate: BulttiDateTime!
 }
 
+type User {
+  email: String!
+  hslIdGroups: [String!]
+  id: ID!
+  name: String!
+  operatorIds: [Int!]
+  organisation: String
+  preInspections: [PreInspection!]!
+  role: UserRole!
+}
+
 enum InspectionStatus {
   Draft
   InProduction
@@ -158,6 +175,13 @@ enum InspectionStatus {
 enum OperatingAreaName {
   CENTER
   OTHER
+}
+
+enum UserRole {
+  ADMIN
+  BLOCKED_USER
+  HSL_USER
+  OPERATOR_USER
 }
 
 input EquipmentCatalogueInput {

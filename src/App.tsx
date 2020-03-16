@@ -13,10 +13,10 @@ import CreatePreInspection from './pages/CreatePreInspection'
 import ProcurementUnitsPage from './pages/ProcurementUnitsPage'
 
 const App: React.FC = observer(() => {
-  const authState = useAuth()
+  const [authState, loading] = useAuth()
 
   if (authState !== AuthState.AUTHENTICATED) {
-    return <AuthGate unauthenticated={authState === AuthState.UNAUTHENTICATED} />
+    return <AuthGate loading={loading} unauthenticated={authState === AuthState.UNAUTHENTICATED} />
   }
 
   return (
