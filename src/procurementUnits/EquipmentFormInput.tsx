@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { CellContent } from '../common/components/Table'
-import { isNumeric } from '../utils/isNumeric'
 import styled from 'styled-components'
 import { TextInput } from '../common/inputs/Input'
 import Dropdown from '../common/inputs/Dropdown'
@@ -65,13 +64,21 @@ const typeValues: SelectValue[] = [
   { name: 'D', label: 'D' },
 ]
 
-const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
+const numericTypes = ['percentageQuota', 'c02']
+
+const EquipmentFormInput: React.FC<PropTypes> = observer(
   ({ value, valueName, onChange }) => {
     const isDisabled = valueName === 'id'
+    const valueIsNumeric = numericTypes.includes(valueName)
 
     const onChangeValue = useCallback(
       (e) => {
-        const nextValue = e.target.value
+        let nextValue = e.target.value
+
+        if (valueIsNumeric) {
+          nextValue = !nextValue || isNaN(parseFloat(nextValue)) ? 0 : nextValue
+        }
+
         onChange(nextValue, valueName)
       },
       [onChange]
@@ -104,8 +111,7 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
           {...dropdownProps}
           items={emissionClassValues}
           selectedItem={
-            emissionClassValues.find(({ name }) => name === value + '') ||
-            emissionClassValues[0]
+            emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
           }
         />
       )
@@ -123,8 +129,8 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
 
     return (
       <FormInput
-        type={isNumeric(value) ? 'number' : 'text'}
-        step={valueName === 'percentageQuota' ? 0.01 : 1}
+        type={valueIsNumeric ? 'number' : 'text'}
+        step={valueIsNumeric ? 0.01 : 1}
         value={value}
         onChange={onChangeValue}
         name={valueName}
@@ -133,4 +139,4 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
   }
 )
 
-export default EquipmentCatalogueFormInput
+export default EquipmentFormInput

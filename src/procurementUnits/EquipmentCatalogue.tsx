@@ -7,10 +7,9 @@ import {
   EquipmentCatalogue as EquipmentCatalogueType,
   EquipmentInput,
 } from '../schema-types'
-import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
+import EquipmentFormInput from './EquipmentFormInput'
 import ItemForm from '../common/inputs/ItemForm'
 import { Button } from '../common/components/Button'
-import { get } from 'lodash'
 import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentMutation } from './equipmentQuery'
 import { FormMessage } from '../common/components/common'
@@ -78,7 +77,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     const addDraftEquipment = useCallback(() => {
       const inputRow: EquipmentInput = {
-        id: 'new',
         vehicleId: '',
         make: '',
         model: '',
@@ -123,7 +121,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         return <CellContent>{val}</CellContent>
       }
 
-      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
+      return <EquipmentFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
     return (
@@ -155,9 +153,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             />
           </>
         ) : (
-          <FormMessage style={{ marginBottom: '1rem' }}>
-            Kalustoluettelossa ei ole ajoneuvoja.
-          </FormMessage>
+          <FormMessage>Kalustoluettelossa ei ole ajoneuvoja.</FormMessage>
         )}
         <>
           {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}

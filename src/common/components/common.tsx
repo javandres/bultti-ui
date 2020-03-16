@@ -100,9 +100,14 @@ export const FormMessage = styled.div`
   color: var(--dark-grey);
   background: var(--lightest-blue);
   padding: 0.75rem;
+  margin-bottom: 1rem;
 
   &:first-child {
     margin-top: 0;
+  }
+  
+  &:last-child {
+    margin-bottom: 0;
   }
 `
 

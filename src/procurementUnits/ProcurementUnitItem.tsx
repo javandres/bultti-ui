@@ -200,7 +200,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 {!activeCatalogue ? (
                   !pendingCatalogue ? (
                     <>
-                      <FormMessage style={{ marginBottom: '1rem' }}>
+                      <FormMessage>
                         Kilpailukohteella ei ole kalustoluetteloa.
                       </FormMessage>
                       <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
