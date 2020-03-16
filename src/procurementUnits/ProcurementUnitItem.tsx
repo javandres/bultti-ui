@@ -19,6 +19,8 @@ import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
 import { MessageView } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import ItemForm from '../common/inputs/ItemForm'
+import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
+import { useStateValue } from '../state/useAppState'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -93,6 +95,7 @@ export type EquipmentWithQuota = Equipment & { percentageQuota: number }
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({ productionDate, procurementUnit: { operatorId, id, procurementUnitId }, expanded = true }) => {
+    const [globalSeason] = useStateValue('globalSeason')
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
 
     // Get the operating units for the selected operator.
@@ -106,10 +109,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     const addDraftCatalogue = useCallback(() => {
       setPendingCatalogue({
-        startDate: '',
-        endDate: '',
+        startDate: globalSeason?.startDate,
+        endDate: globalSeason?.endDate,
       })
-    }, [])
+    }, [globalSeason])
 
     const onChangeCatalogue = useCallback((key: string, nextValue) => {
       setPendingCatalogue((currentPending) =>
@@ -164,6 +167,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       setIsExpanded(expanded)
     }, [expanded])
 
+    const renderCatalogueInput = useCallback((val: any, key: string, onChange) => {
+      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
+    }, [])
+
     return (
       <ProcurementUnitView>
         {loading ? (
@@ -207,6 +214,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       onDone={onAddEquipmentCatalogue}
                       keyFromItem={(item) => item.id}
                       doneLabel="Lisää kalustoluettelo"
+                      renderInput={renderCatalogueInput}
                     />
                   )
                 ) : (
