@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { FormMessage } from '../common/components/common'
+import { MessageView } from '../common/components/common'
 import { get, groupBy } from 'lodash'
 import ExecutionArea from './ExecutionArea'
 import { OperatingAreaName } from '../schema-types'
@@ -28,9 +28,9 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(({ productionDate })
   return (
     <ExecutionRequirementsView>
       {procurementUnits?.length === 0 && (
-        <FormMessage>
+        <MessageView>
           Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
-        </FormMessage>
+        </MessageView>
       )}
       {get(areaUnits, OperatingAreaName.Center, []).length !== 0 && (
         <>

@@ -16,7 +16,7 @@ import { procurementUnitQuery } from './procurementUnitsQuery'
 import Loading from '../common/components/Loading'
 import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
-import { FormMessage } from '../common/components/common'
+import { MessageView } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import ItemForm from '../common/inputs/ItemForm'
 
@@ -200,9 +200,9 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 {!activeCatalogue ? (
                   !pendingCatalogue ? (
                     <>
-                      <FormMessage>
+                      <MessageView>
                         Kilpailukohteella ei ole kalustoluetteloa.
-                      </FormMessage>
+                      </MessageView>
                       <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
                     </>
                   ) : (

@@ -89,11 +89,11 @@ export const SectionHeading = styled(FormHeading)`
   margin-left: 1rem;
 `
 
-export const FormMessageContainer = styled.div`
+export const MessageContainer = styled.div`
   padding: 0 1rem;
 `
 
-export const FormMessage = styled.div`
+export const MessageView = styled.div`
   margin-top: 1rem;
   border-radius: 0.5rem;
   border: 1px solid var(--light-blue);
@@ -111,7 +111,7 @@ export const FormMessage = styled.div`
   }
 `
 
-export const FormError = styled(FormMessage)`
+export const ErrorView = styled(MessageView)`
   border: 1px solid var(--light-red);
   background: var(--lighter-red);
 `

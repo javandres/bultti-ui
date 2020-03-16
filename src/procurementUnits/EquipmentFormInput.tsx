@@ -66,77 +66,75 @@ const typeValues: SelectValue[] = [
 
 const numericTypes = ['percentageQuota', 'c02']
 
-const EquipmentFormInput: React.FC<PropTypes> = observer(
-  ({ value, valueName, onChange }) => {
-    const isDisabled = valueName === 'id'
-    const valueIsNumeric = numericTypes.includes(valueName)
+const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, onChange }) => {
+  const isDisabled = valueName === 'id'
+  const valueIsNumeric = numericTypes.includes(valueName)
 
-    const onChangeValue = useCallback(
-      (e) => {
-        let nextValue = e.target.value
+  const onChangeValue = useCallback(
+    (e) => {
+      let nextValue = e.target.value
 
-        if (valueIsNumeric) {
-          nextValue = !nextValue || isNaN(parseFloat(nextValue)) ? 0 : nextValue
-        }
+      if (valueIsNumeric) {
+        nextValue = !nextValue || isNaN(parseFloat(nextValue)) ? 0 : nextValue
+      }
 
-        onChange(nextValue, valueName)
-      },
-      [onChange]
-    )
+      onChange(nextValue, valueName)
+    },
+    [onChange, valueIsNumeric]
+  )
 
-    const onSelectValue = useCallback(
-      (selectedValue) => {
-        onChange(selectedValue.name, valueName)
-      },
-      [onChange]
-    )
+  const onSelectValue = useCallback(
+    (selectedValue) => {
+      onChange(selectedValue.name, valueName)
+    },
+    [onChange]
+  )
 
-    const dropdownProps = useMemo(
-      () => ({
-        theme: 'light',
-        onSelect: onSelectValue,
-        itemToString: 'name',
-        itemToLabel: 'label',
-      }),
-      [onSelectValue]
-    )
+  const dropdownProps = useMemo(
+    () => ({
+      theme: 'light',
+      onSelect: onSelectValue,
+      itemToString: 'name',
+      itemToLabel: 'label',
+    }),
+    [onSelectValue]
+  )
 
-    if (isDisabled) {
-      return <CellContent>{value}</CellContent>
-    }
+  if (isDisabled) {
+    return <CellContent>{value}</CellContent>
+  }
 
-    if (valueName === 'emissionClass') {
-      return (
-        <FormDropdown
-          {...dropdownProps}
-          items={emissionClassValues}
-          selectedItem={
-            emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
-          }
-        />
-      )
-    }
-
-    if (valueName === 'type') {
-      return (
-        <FormDropdown
-          {...dropdownProps}
-          items={typeValues}
-          selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
-        />
-      )
-    }
-
+  if (valueName === 'emissionClass') {
     return (
-      <FormInput
-        type={valueIsNumeric ? 'number' : 'text'}
-        step={valueIsNumeric ? 0.01 : 1}
-        value={value}
-        onChange={onChangeValue}
-        name={valueName}
+      <FormDropdown
+        {...dropdownProps}
+        items={emissionClassValues}
+        selectedItem={
+          emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
+        }
       />
     )
   }
-)
+
+  if (valueName === 'type') {
+    return (
+      <FormDropdown
+        {...dropdownProps}
+        items={typeValues}
+        selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
+      />
+    )
+  }
+
+  return (
+    <FormInput
+      type={valueIsNumeric ? 'number' : 'text'}
+      step={valueIsNumeric ? 0.01 : 1}
+      value={value}
+      onChange={onChangeValue}
+      name={valueName}
+    />
+  )
+})
 
 export default EquipmentFormInput

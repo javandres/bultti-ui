@@ -12,6 +12,8 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import { User } from '../icons/User'
 import GlobalOperatorFilter from './GlobalOperatorFilter'
+import { Bus } from '../icons/Bus'
+import GlobalSeasonFilter from './GlobalSeasonFilter'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -155,21 +157,31 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       </UserBar>
       <GlobalFilters>
         <GlobalOperatorFilter />
+        <GlobalSeasonFilter />
       </GlobalFilters>
       <AppNav>
         <NavCategory>
           <CategoryTitle>
+            <Text>nav.category.procurementunits</Text>
+          </CategoryTitle>
+          <NavLink to="procurement-units">
+            <Bus fill="white" width="1rem" height="1rem" />
+            <Text>nav.list.procurementunits</Text>
+          </NavLink>
+        </NavCategory>
+        <NavCategory>
+          <CategoryTitle>
             <Text>nav.category.preinspection</Text>
           </CategoryTitle>
-          <NavLink to="preinspection">
+          <NavLink to="pre-inspection">
             <Search fill="white" width="1rem" height="1rem" />
             <Text>nav.list.preinspection</Text>
           </NavLink>
-          <NavLink to="preinspection/create">
+          <NavLink to="pre-inspection/create">
             <Plus fill="white" width="1rem" height="1rem" />
             <Text>nav.new.preinspection</Text>
           </NavLink>
-          <NavLink to="preinspection/reports">
+          <NavLink to="pre-inspection/reports">
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>nav.reports</Text>
           </NavLink>
@@ -178,7 +190,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <CategoryTitle>
             <Text>nav.category.postinspection</Text>
           </CategoryTitle>
-          <NavLink to="postinspection">
+          <NavLink to="post-inspection">
             <Search fill="white" width="1rem" height="1rem" />
             <Text>nav.list.postinspection</Text>
           </NavLink>

@@ -3,6 +3,11 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Dropdown from './Dropdown'
 import { Season } from '../../schema-types'
+import { useQueryData } from '../../utils/useQueryData'
+import { seasonsQuery } from '../../preInspection/seasonsQuery'
+import { format, parseISO, startOfYear, subYears } from 'date-fns'
+import { DATE_FORMAT } from '../../constants'
+import { orderBy } from 'lodash'
 
 export type PropTypes = {
   label?: string | null
@@ -10,17 +15,29 @@ export type PropTypes = {
   theme?: 'light' | 'dark'
   value: null | Season
   onSelect: (season: null | Season) => void
-  seasons: Season[] | null
 }
+
+const currentDate = new Date()
 
 const UNSELECTED_VAL = '...'
 
 const SeasonsSelect = styled(Dropdown)``
 
 const SelectSeason: React.FC<PropTypes> = observer(
-  ({ seasons: seasonsData, onSelect, value = null, label, className, theme = 'light' }) => {
+  ({ onSelect, value = null, label, className, theme = 'light' }) => {
+    // Get seasons to display in the seasons select.
+    const { data: seasonsData } = useQueryData(seasonsQuery, {
+      variables: {
+        date: format(startOfYear(subYears(currentDate, 5)), DATE_FORMAT),
+      },
+    })
+
     const seasons: Season[] = useMemo(() => {
-      const seasonsList: Season[] = !seasonsData ? [] : [...seasonsData]
+      const seasonsList: Season[] = orderBy(
+        !seasonsData ? [] : [...seasonsData],
+        ({ startDate }) => parseISO(startDate).getTime(),
+        'desc'
+      )
 
       if (seasonsList[0]?.id !== '...') {
         const unselectedSeason: Season = {

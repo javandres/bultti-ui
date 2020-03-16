@@ -143,11 +143,11 @@ type Query {
 }
 
 type Season {
-  endDate: String
+  endDate: BulttiDateTime!
   id: ID!
   preInspections: [PreInspection!]!
   season: String!
-  startDate: String
+  startDate: BulttiDateTime!
 }
 
 enum InspectionStatus {

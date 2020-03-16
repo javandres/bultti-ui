@@ -7,6 +7,8 @@
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
+  "nav.category.procurementunits": "Kilpailukohteet",
+  "nav.list.procurementunits": "Muokkaa kilpailukohteet",
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
   "nav.list.preinspection": "Tehdyt ennakkotarkastukset",

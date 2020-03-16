@@ -12,7 +12,7 @@ import ItemForm from '../common/inputs/ItemForm'
 import { Button } from '../common/components/Button'
 import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentMutation } from './equipmentQuery'
-import { FormMessage } from '../common/components/common'
+import { MessageView } from '../common/components/common'
 import { EquipmentWithQuota } from './ProcurementUnitItem'
 
 const EquipmentCatalogueView = styled.div``
@@ -153,7 +153,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             />
           </>
         ) : (
-          <FormMessage>Kalustoluettelossa ei ole ajoneuvoja.</FormMessage>
+          <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
         )}
         <>
           {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}

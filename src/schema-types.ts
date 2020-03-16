@@ -318,7 +318,7 @@ export type Season = {
    __typename?: 'Season',
   id: Scalars['ID'],
   season: Scalars['String'],
-  startDate?: Maybe<Scalars['String']>,
-  endDate?: Maybe<Scalars['String']>,
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
   preInspections: Array<PreInspection>,
 };
