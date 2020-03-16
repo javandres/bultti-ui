@@ -15,8 +15,6 @@ export const setLanguage = action((setTo: Language = 'fi') => {
 })
 
 export const UIStore = (state): UIActions => {
-  console.log(state)
-
   const defaultState = {
     appLoaded: false,
     globalOperator: null,
