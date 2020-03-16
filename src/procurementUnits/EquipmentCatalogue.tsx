@@ -48,12 +48,12 @@ const equipmentColumnLabels = {
   vehicleId: 'Kylkinumero',
   make: 'Merkki',
   model: 'Malli',
-  type: 'Kalustotyyppi',
+  type: 'Tyyppi',
   percentageQuota: 'Osuus',
   emissionClass: 'Euroluokka',
   co2: 'CO2 arvo',
-  registryNr: 'Rekisterinumero',
-  registryDate: 'Rekisteröintipäivä',
+  registryNr: 'Rek.numero',
+  registryDate: 'Rek.päivä',
 }
 
 const equipmentInputValues = {

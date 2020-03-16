@@ -4,6 +4,8 @@ import { CellContent } from '../common/components/Table'
 import styled from 'styled-components'
 import { TextInput } from '../common/inputs/Input'
 import Dropdown from '../common/inputs/Dropdown'
+import SelectDate from '../common/inputs/SelectDate'
+import { get } from 'lodash'
 
 export const FormInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
@@ -66,6 +68,8 @@ const typeValues: SelectValue[] = [
 
 const numericTypes = ['percentageQuota', 'c02']
 
+const dateValues = ['registryDate']
+
 const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, onChange }) => {
   const isDisabled = valueName === 'id'
   const valueIsNumeric = numericTypes.includes(valueName)
@@ -85,7 +89,7 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, on
 
   const onSelectValue = useCallback(
     (selectedValue) => {
-      onChange(selectedValue.name, valueName)
+      onChange(get(selectedValue, 'name', selectedValue), valueName)
     },
     [onChange]
   )
@@ -123,6 +127,12 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, on
         items={typeValues}
         selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
       />
+    )
+  }
+
+  if (dateValues.includes(valueName)) {
+    return (
+      <SelectDate onChange={onSelectValue} value={value as string} label="" name="registryDate" />
     )
   }
 
