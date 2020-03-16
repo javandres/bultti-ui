@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import SelectOperator from '../inputs/SelectOperator'
 import styled from 'styled-components'
+import { UserRole } from '../../schema-types'
 
 const OperatorSelect = styled(SelectOperator)`
   > label {
@@ -25,12 +26,14 @@ const OperatorSelect = styled(SelectOperator)`
 
 const GlobalOperatorFilter: React.FC = observer(() => {
   const [operator, setOperatorFilter] = useStateValue('globalOperator')
+  const [user] = useStateValue('user')
+
   return (
     <OperatorSelect
       allowAll={true}
       onSelect={setOperatorFilter}
       value={operator}
-      label="Valitse liikennöitsijä"
+      label={user.role === UserRole.OperatorUser ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
       theme="dark"
     />
   )

@@ -2,6 +2,7 @@ import { action, extendObservable, observable } from 'mobx'
 import { UIActions } from '../types/state'
 import { Language } from '../utils/translate'
 import { Operator, Season } from '../schema-types'
+import { operatorIsAuthorized } from '../utils/operatorIsAuthorized'
 
 // Language state is separate because some parts of the app that aren't
 // in the scope of the React component tree may want to use it.
@@ -14,6 +15,8 @@ export const setLanguage = action((setTo: Language = 'fi') => {
 })
 
 export const UIStore = (state): UIActions => {
+  console.log(state)
+
   const defaultState = {
     appLoaded: false,
     globalOperator: null,
@@ -27,6 +30,10 @@ export const UIStore = (state): UIActions => {
   extendObservable(state, defaultState)
 
   const setOperatorFilter = action((value: Operator | null) => {
+    if (!operatorIsAuthorized(value, state.user)) {
+      return
+    }
+
     state.globalOperator = value
   })
 

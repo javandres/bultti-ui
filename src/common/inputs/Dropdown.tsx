@@ -1,5 +1,5 @@
 import React, { StyleHTMLAttributes, useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useSelect } from 'downshift'
 import { text } from '../../utils/translate'
 import { Button, ButtonSize } from '../components/Button'
@@ -16,30 +16,39 @@ const SelectWrapper = styled.div`
 
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   theme: ThemeTypes
+  disabled?: boolean
 }>`
-  background: white;
-  color: var(--dark-grey);
+  background: ${(p) => (p.disabled ? 'transparent' : 'white')};
+  color: ${(p) =>
+    p.disabled ? (p.theme === 'light' ? 'var(--dark-grey)' : 'white') : 'var(--dark-grey)'};
   width: 100%;
   padding: 0.75rem 1rem;
   border-radius: 8px;
-  border: 1px solid ${(p) => (p.theme === 'light' ? '#eaeaea' : 'var(--dark-blue)')};
+  border: 1px solid
+    ${(p) =>
+      p.theme === 'light' ? '#eaeaea' : p.disabled ? 'var(--lighter-grey)' : 'var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
 
   svg {
-    display: block;
+    display: ${(p) => (p.disabled ? 'none' : 'block')};
     margin-left: auto;
   }
 
-  &:hover {
-    background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
-    color: var(--dark-grey);
-    border-color: var(--blue);
+  ${(p) =>
+    !p.disabled
+      ? css`
+          &:hover {
+            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
+            color: var(--dark-grey);
+            border-color: var(--blue);
 
-    svg * {
-      fill: ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-grey)')};
-    }
-  }
+            svg * {
+              fill: ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-grey)')};
+            }
+          }
+        `
+      : ''}
 `
 
 const SuggestionsList = styled.ul<{ isOpen: boolean; theme: ThemeTypes }>`
@@ -60,14 +69,14 @@ const SuggestionsList = styled.ul<{ isOpen: boolean; theme: ThemeTypes }>`
 `
 
 const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
-  color: ${(p) =>
-    p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
+  color: ${(p) => (p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white')};
   cursor: pointer;
   padding: 0.75rem 1rem;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
 `
 
 export type DropdownProps = {
+  disabled?: boolean
   label?: string
   items: any[]
   onSelect: (selectedItem: any | null) => unknown
@@ -93,6 +102,7 @@ function toString(item, converter) {
 
 const Dropdown: React.FC<DropdownProps> = observer(
   ({
+    disabled = false,
     className,
     style = {},
     label,
@@ -134,11 +144,15 @@ const Dropdown: React.FC<DropdownProps> = observer(
           </InputLabel>
         )}
         <SelectWrapper>
-          <SelectButton {...getToggleButtonProps()} theme={theme}>
+          <SelectButton
+            {...getToggleButtonProps({
+              disabled,
+            })}
+            theme={theme}>
             {toString(currentlySelected, itemToLabel) || text('general.app.all')}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
-          {isOpen && (
+          {!disabled && isOpen && (
             <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
               {items.map((item, index) => (
                 <OperatorSuggestion

@@ -9,7 +9,7 @@ const createDumbAction = (state, stateKey) =>
     state[stateKey] = value
   })
 
-export const useStateValue = (valueKey) => {
+export const useStateValue = <T = any>(valueKey): [T, (...args: any[]) => any] => {
   const stateContext = useContext(StateContext)
   const value = useObserver(() => stateContext?.state[valueKey] || null)
 
@@ -17,8 +17,7 @@ export const useStateValue = (valueKey) => {
     return [value, () => {}]
   }
 
-  const action =
-    stateContext.actions[valueKey] || createDumbAction(stateContext.state, valueKey)
+  const action = stateContext.actions[valueKey] || createDumbAction(stateContext.state, valueKey)
 
   return [value, action]
 }

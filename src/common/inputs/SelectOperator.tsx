@@ -1,12 +1,14 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../utils/useQueryData'
-import { Operator } from '../../schema-types'
+import { Operator, User, UserRole } from '../../schema-types'
 import { text } from '../../utils/translate'
 import Dropdown from './Dropdown'
 import gql from 'graphql-tag'
 import { compact } from 'lodash'
+import { useStateValue } from '../../state/useAppState'
+import { operatorIsAuthorized } from '../../utils/operatorIsAuthorized'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -32,18 +34,41 @@ const OperatorSelect = styled(Dropdown)``
 const SelectOperator: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light', allowAll = false }) => {
     const { data } = useQueryData(operatorsQuery)
+    const [user] = useStateValue<User>('user')
 
     const operators: Operator[] = useMemo(() => {
-      const operatorList = !data ? [] : compact([...data])
+      let operatorList = !data ? [] : compact([...data])
 
-      if (allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
+      // Limit the selection to the currently logged in operator if applicable
+      if (user && user.role === UserRole.OperatorUser) {
+        operatorList = operatorList.filter((op) => operatorIsAuthorized(op, user))
+      }
+
+      // "..." and "all" options are not added if the operators list is only 1 long
+
+      if (
+        operatorList.length > 1 &&
+        allowAll &&
+        !['all', 'unselected'].includes(operatorList[0]?.id)
+      ) {
         operatorList.unshift({ id: 'all', operatorName: text('general.app.all') })
-      } else if (!allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
+      } else if (
+        operatorList.length > 1 &&
+        !allowAll &&
+        !['all', 'unselected'].includes(operatorList[0]?.id)
+      ) {
         operatorList.unshift({ id: 'unselected', operatorName: '...' })
       }
 
       return operatorList
-    }, [data, allowAll])
+    }, [user, data, allowAll])
+
+    // Auto-select the first operator if there is only one.
+    useEffect(() => {
+      if (!value && operators.length === 1) {
+        onSelect(operators[0])
+      }
+    }, [value, operators, onSelect])
 
     const onSelectOperator = useCallback(
       (selectedItem) => {
@@ -59,16 +84,20 @@ const SelectOperator: React.FC<PropTypes> = observer(
     )
 
     const currentOperator = useMemo(
-      () =>
-        !value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0],
+      () => (!value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0]),
       [operators, value]
     )
 
+    /* Disable if empty or only one item (in which case it will be auto-selected */
+
     return (
       <OperatorSelect
+        disabled={operators.length < 2}
         className={className}
         theme={theme}
-        label={!label ? '' : label || 'Valitse liikennöitsijä'}
+        label={
+          !label ? (operators.length === 1 ? 'Liikennöitsijä' : 'Valitse liikennöitsijä') : label
+        }
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}
