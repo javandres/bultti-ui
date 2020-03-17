@@ -174,7 +174,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [])
 
     const onAddEquipment = useCallback(async () => {
-      if (!catalogue || !pendingCatalogue) {
+      if (!catalogue || !pendingEquipment) {
         return
       }
 
@@ -222,71 +222,74 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        {!pendingCatalogue && catalogue ? (
+        {catalogue && !pendingCatalogue && (
           <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
             <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
               Muokkaa
             </Button>
           </ValueDisplay>
-        ) : (
+        )}
+        {pendingCatalogue && (
+          <ItemForm
+            item={pendingCatalogue}
+            onChange={onChangeCatalogue}
+            onDone={onSaveEquipmentCatalogue}
+            onCancel={onCancelPendingEquipmentCatalogue}
+            keyFromItem={(item) => item.id}
+            renderInput={renderCatalogueInput}
+            doneLabel={
+              catalogueEditMode.current === CatalogueEditMode.UPDATE
+                ? 'Tallenna'
+                : 'Lisää kalustoluettelo'
+            }
+          />
+        )}
+        {!catalogue && !pendingCatalogue && (
           <>
-            {pendingCatalogue ? (
-              <ItemForm
-                item={pendingCatalogue}
-                onChange={onChangeCatalogue}
-                onDone={onSaveEquipmentCatalogue}
-                onCancel={onCancelPendingEquipmentCatalogue}
-                keyFromItem={(item) => item.id}
-                renderInput={renderCatalogueInput}
-                doneLabel={
-                  catalogueEditMode.current === CatalogueEditMode.UPDATE
-                    ? 'Tallenna'
-                    : 'Lisää kalustoluettelo'
-                }
-              />
+            <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
+            <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
+          </>
+        )}
+        {catalogue && (
+          <>
+            {equipment.length !== 0 ? (
+              <>
+                <TableHeading>Ajoneuvot</TableHeading>
+                <Table
+                  items={equipment}
+                  columnLabels={equipmentColumnLabels}
+                  onRemoveRow={(item) => () => onRemoveEquipment(item)}
+                  getColumnTotal={(col) =>
+                    col === 'percentageQuota'
+                      ? equipment.reduce((total, item) => {
+                          total += item?.percentageQuota
+                          return total
+                        }, 0) + '%'
+                      : ''
+                  }
+                />
+              </>
             ) : (
-              <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
+              <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
+            )}
+            {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}
+            {pendingEquipment && (
+              <>
+                <TableHeading>Lisää ajoneuvo</TableHeading>
+                <ItemForm
+                  item={pendingEquipment}
+                  labels={equipmentColumnLabels}
+                  onChange={onEquipmentInputChange}
+                  onDone={onAddEquipment}
+                  onCancel={onCancelPendingEquipment}
+                  doneDisabled={!equipmentIsValid(pendingEquipment)}
+                  doneLabel="Lisää luetteloon"
+                  renderInput={renderEquipmentCell}
+                />
+              </>
             )}
           </>
         )}
-        {equipment.length !== 0 ? (
-          <>
-            <TableHeading>Ajoneuvot</TableHeading>
-            <Table
-              items={equipment}
-              columnLabels={equipmentColumnLabels}
-              onRemoveRow={(item) => () => onRemoveEquipment(item)}
-              getColumnTotal={(col) =>
-                col === 'percentageQuota'
-                  ? equipment.reduce((total, item) => {
-                      total += item?.percentageQuota
-                      return total
-                    }, 0) + '%'
-                  : ''
-              }
-            />
-          </>
-        ) : (
-          <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
-        )}
-        <>
-          {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}
-          {pendingEquipment && (
-            <>
-              <TableHeading>Lisää ajoneuvo</TableHeading>
-              <ItemForm
-                item={pendingEquipment}
-                labels={equipmentColumnLabels}
-                onChange={onEquipmentInputChange}
-                onDone={onAddEquipment}
-                onCancel={onCancelPendingEquipment}
-                doneDisabled={!equipmentIsValid(pendingEquipment)}
-                doneLabel="Lisää luetteloon"
-                renderInput={renderEquipmentCell}
-              />
-            </>
-          )}
-        </>
       </EquipmentCatalogueView>
     )
   }

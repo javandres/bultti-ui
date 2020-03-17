@@ -9,6 +9,7 @@ const ValueDisplayView = styled.div`
   flex-wrap: wrap;
   justify-content: space-between;
   border: 1px solid var(--lighter-grey);
+  border-bottom: 0;
   border-radius: 0.5rem;
   overflow: hidden;
 
@@ -27,14 +28,11 @@ const ValueWrapper = styled.div`
   flex: 1 1 50%;
   padding: 0.5rem 0.75rem;
   border-right: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
 
   &:nth-child(2n),
   &:last-child {
     border-right: 0;
-  }
-
-  &:nth-child(3):last-child {
-    border-top: 1px solid var(--lighter-grey);
   }
 `
 

@@ -17,7 +17,6 @@ import {
   weeklyMetersFromJOREMutation,
 } from './procurementUnitsQuery'
 import Loading from '../common/components/Loading'
-import { MessageView } from '../common/components/common'
 import ItemForm from '../common/inputs/ItemForm'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { Button, ButtonSize } from '../common/components/Button'
@@ -285,19 +284,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     </ItemForm>
                   </>
                 )}
-                {!activeCatalogue ? (
-                  <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
-                ) : (
-                  <>
-                    <SectionHeading>Kalustoluettelo</SectionHeading>
-                    <EquipmentCatalogue
-                      procurementUnitId={procurementUnitId}
-                      catalogue={activeCatalogue}
-                      operatorId={procurementUnit.operatorId}
-                      onCatalogueChanged={onCatalogueChanged}
-                    />
-                  </>
-                )}
+                <>
+                  <SectionHeading>Kalustoluettelo</SectionHeading>
+                  <EquipmentCatalogue
+                    procurementUnitId={id}
+                    catalogue={activeCatalogue}
+                    operatorId={procurementUnit.operatorId}
+                    onCatalogueChanged={onCatalogueChanged}
+                  />
+                </>
               </Content>
             )}
           </>
