@@ -19,6 +19,7 @@ export const useAuth = (): [AuthState, boolean] => {
   const [user, setUser] = useStateValue('user')
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
+
   const [fetchCurrentUser, { data: fetchedCurrentUser, loading: userLoading }] = useLazyQueryData<
     User
   >(currentUserQuery)
@@ -39,6 +40,8 @@ export const useAuth = (): [AuthState, boolean] => {
     if (fetchedCurrentUser) {
       setUser(fetchedCurrentUser)
       setAuthState(AuthState.AUTHENTICATED)
+    } else if (authState === AuthState.PENDING) {
+      setAuthState(AuthState.UNAUTHENTICATED)
     }
   }, [fetchedCurrentUser])
 
@@ -71,7 +74,7 @@ export const useAuth = (): [AuthState, boolean] => {
     } else if (!user && authState === AuthState.AUTHENTICATED) {
       setAuthState(AuthState.UNAUTHENTICATED)
     }
-  }, [code, authState, user, fetchedCurrentUser])
+  }, [code, authState, user])
 
-  return [authState, loginLoading && userLoading]
+  return [authState, loginLoading || userLoading]
 }
