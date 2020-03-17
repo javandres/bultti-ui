@@ -28,15 +28,13 @@ const DOMSafeButtonComponent = React.forwardRef<HTMLButtonElement, StyledButtonP
 
 export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   font-family: var(--font-family);
-  font-size: ${({ size = ButtonSize.MEDIUM }) =>
-    size2Style(size, '0.7rem', '0.875rem', '1.25rem')};
+  font-size: ${({ size = ButtonSize.MEDIUM }) => size2Style(size, '0.7rem', '0.875rem', '1.25rem')};
   font-weight: 500;
   appearance: none;
   outline: none;
   border-radius: 2.5rem;
   border: 1px solid
-    ${({ disabled, transparent = false }) =>
-      disabled || transparent ? 'var(--light-grey)' : 'var(--blue)'};
+    ${({ disabled, transparent = false }) => (disabled ? 'var(--light-grey)' : 'var(--blue)')};
   background: ${({ disabled, transparent = false }) =>
     disabled ? 'var(--lighter-grey)' : transparent ? 'transparent' : 'var(--blue)'};
   letter-spacing: -0.6px;
@@ -47,14 +45,15 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
       `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
       `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
     )};
-  color: ${({ disabled }) => (disabled ? 'var(--grey)' : 'white')};
+  color: ${({ disabled, transparent }) =>
+    disabled ? 'var(--grey)' : transparent ? 'var(--blue)' : 'white'};
   user-select: none;
   display: flex;
   align-items: center;
   justify-content: center;
   width: auto;
   flex: 0 0 auto;
-  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   transform: scale(1);
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 

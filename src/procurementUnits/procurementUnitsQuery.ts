@@ -65,3 +65,13 @@ export const updateProcurementUnitMutation = gql`
   }
   ${ProcurementUnitFragment}
 `
+
+export const weeklyMetersFromJOREMutation = gql`
+  mutation updateWeeklyMetersFromSource($procurementUnitId: String!) {
+    updateWeeklyMetersFromSource(procurementUnitId: $procurementUnitId) {
+      id
+      weeklyMeters
+      weeklyKilometers
+    }
+  }
+`

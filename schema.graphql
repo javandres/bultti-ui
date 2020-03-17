@@ -72,6 +72,7 @@ type Mutation {
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
+  updateWeeklyMetersFromSource(procurementUnitId: String!): ProcurementUnit!
 }
 
 type OperatingArea {

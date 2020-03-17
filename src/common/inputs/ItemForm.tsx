@@ -49,6 +49,7 @@ const FieldLabel = styled.label`
 
 export type PropTypes<ItemType = any> = {
   item: ItemType
+  children?: React.ReactChild
   onChange: (key: string, value: string) => void
   onDone?: () => void
   readOnly?: boolean
@@ -70,6 +71,7 @@ const defaultRenderInput = (val, key, onChange) => (
 const ItemForm: React.FC<PropTypes> = observer(
   ({
     item,
+    children,
     labels = {},
     order,
     hideKeys,
@@ -99,8 +101,14 @@ const ItemForm: React.FC<PropTypes> = observer(
         ))}
         {onDone && (
           <FieldWrapper
-            style={{ alignItems: 'flex-end', justifyContent: 'flex-end', marginLeft: 'auto' }}>
-            <Button disabled={doneDisabled} onClick={onDone}>
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              marginLeft: 'auto',
+            }}>
+            {children}
+            <Button style={{ marginLeft: 'auto' }} disabled={doneDisabled} onClick={onDone}>
               {doneLabel}
             </Button>
           </FieldWrapper>

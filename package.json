@@ -48,7 +48,8 @@
     "extends": "react-app",
     "rules": {
       "react-hooks/exhaustive-deps": "off",
-      "no-unexpected-multiline": "off"
+      "no-unexpected-multiline": "off",
+      "no-restricted-globals": "off"
     }
   },
   "browserslist": {

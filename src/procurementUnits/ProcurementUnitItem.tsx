@@ -11,14 +11,19 @@ import { round } from '../utils/round'
 import EquipmentCatalogue from './EquipmentCatalogue'
 import { isBetween } from '../utils/isBetween'
 import { useQueryData } from '../utils/useQueryData'
-import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
+import {
+  procurementUnitQuery,
+  updateProcurementUnitMutation,
+  weeklyMetersFromJOREMutation,
+} from './procurementUnitsQuery'
 import Loading from '../common/components/Loading'
 import { MessageView } from '../common/components/common'
 import ItemForm from '../common/inputs/ItemForm'
 import ValueDisplay from '../common/components/ValueDisplay'
-import { Button } from '../common/components/Button'
+import { Button, ButtonSize } from '../common/components/Button'
 import { useMutationData } from '../utils/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
+import { pickGraphqlData } from '../utils/pickGraphqlData'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -95,7 +100,7 @@ export type PropTypes = {
 }
 
 const procurementUnitLabels = {
-  weeklyMeters: 'Viikkosuoritteet',
+  weeklyMeters: 'Suoritevaatimus / viikko',
   medianAgeRequirement: 'Keski-ikä vaatimus',
 }
 
@@ -115,6 +120,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         },
       }
     )
+
+    const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
+      variables: { procurementUnitId: id },
+    })
 
     const addDraftProcurementUnit = useCallback(() => {
       const inputRow: ProcurementUnitEditInput = {
@@ -149,6 +158,23 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         !currentPending ? null : { ...currentPending, [key]: nextValue }
       )
     }, [])
+
+    const onUpdateWeeklyMeters = useCallback(async () => {
+      if (
+        confirm(
+          'Olet päivittämässä viikkosuoritteet JOREsta,' +
+            'ja mahdolliset Bultin kautta syötetyt arvot' +
+            'tullaan ylikirjoittamaan JOREsta saaduilla arvoilla. Jatketaanko?'
+        )
+      ) {
+        const { data } = await updateWeeklyMeters()
+        const nextUnit = pickGraphqlData(data)
+
+        // Since we are currently editing the procurement unit, set the new
+        // value in the form state.
+        onChangeProcurementUnit('weeklyMeters', nextUnit.weeklyMeters)
+      }
+    }, [updateWeeklyMeters])
 
     const onSaveProcurementUnit = useCallback(async () => {
       if (!procurementUnitId || !pendingProcurementUnit) {
@@ -198,7 +224,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
               </HeaderSection>
               <HeaderSection>
                 <SectionHeading>Kilometrejä viikossa</SectionHeading>
-                {round((procurementUnit?.weeklyMeters || 0) / 1000)}
+                {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
               </HeaderSection>
               <ExpandToggle
                 expanded={isExpanded}
@@ -211,24 +237,40 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 <SectionHeading>Kilpailukohteen tiedot</SectionHeading>
                 {!pendingProcurementUnit ? (
                   <>
-                    <ValueDisplay item={procurementUnit} labels={procurementUnitLabels} />
+                    <ValueDisplay
+                      renderValue={(val, key) => {
+                        if (key === 'weeklyMeters') return `${val} metriä`
+                        if (key === 'medianAgeRequirement') return `${val} vuotta`
+                        return val
+                      }}
+                      item={procurementUnit}
+                      labels={procurementUnitLabels}
+                    />
                     <Button style={{ marginTop: '1rem' }} onClick={addDraftProcurementUnit}>
                       Muokkaa
                     </Button>
                   </>
                 ) : (
-                  <ItemForm
-                    item={pendingProcurementUnit}
-                    labels={procurementUnitLabels}
-                    onChange={onChangeProcurementUnit}
-                    onDone={onSaveProcurementUnit}
-                    doneLabel="Tallenna"
-                    doneDisabled={Object.values(pendingProcurementUnit).some(
-                      (val: number | string | undefined | null) =>
-                        val === null || typeof val === 'undefined' || val === ''
-                    )}
-                    renderInput={renderProcurementItemInput}
-                  />
+                  <>
+                    <ItemForm
+                      item={pendingProcurementUnit}
+                      labels={procurementUnitLabels}
+                      onChange={onChangeProcurementUnit}
+                      onDone={onSaveProcurementUnit}
+                      doneLabel="Tallenna"
+                      doneDisabled={Object.values(pendingProcurementUnit).some(
+                        (val: number | string | undefined | null) =>
+                          val === null || typeof val === 'undefined' || val === ''
+                      )}
+                      renderInput={renderProcurementItemInput}>
+                      <Button
+                        size={ButtonSize.SMALL}
+                        transparent={true}
+                        onClick={onUpdateWeeklyMeters}>
+                        Päivitä suoritteet JOREsta
+                      </Button>
+                    </ItemForm>
+                  </>
                 )}
                 {!activeCatalogue ? (
                   <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
