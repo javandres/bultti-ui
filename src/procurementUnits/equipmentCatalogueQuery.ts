@@ -3,12 +3,12 @@ import { EquipmentFragment } from './equipmentQuery'
 
 export const createEquipmentCatalogueMutation = gql`
   mutation createEquipmentCatalogueMutation(
-    $catalogue: EquipmentCatalogueInput!
+    $catalogueData: EquipmentCatalogueInput!
     $operatorId: Int!
     $procurementUnitId: String!
   ) {
     createEquipmentCatalogue(
-      equipmentCatalogue: $catalogue
+      equipmentCatalogue: $catalogueData
       operatorId: $operatorId
       procurementUnitId: $procurementUnitId
     ) {
@@ -24,4 +24,17 @@ export const createEquipmentCatalogueMutation = gql`
     }
   }
   ${EquipmentFragment}
+`
+
+export const updateEquipmentCatalogueMutation = gql`
+  mutation updateEquipmentCatalogueMutation(
+    $catalogueData: EquipmentCatalogueInput!
+    $catalogueId: String!
+  ) {
+    updateEquipmentCatalogue(equipmentCatalogue: $catalogueData, catalogueId: $catalogueId) {
+      id
+      startDate
+      endDate
+    }
+  }
 `

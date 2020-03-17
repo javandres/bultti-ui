@@ -113,6 +113,7 @@ export type Mutation = {
   updateEquipment?: Maybe<Equipment>,
   removeEquipment: Scalars['Boolean'],
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
+  updateEquipmentCatalogue: EquipmentCatalogue,
   createExecutionRequirement?: Maybe<ExecutionRequirement>,
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
@@ -153,6 +154,12 @@ export type MutationCreateEquipmentCatalogueArgs = {
   procurementUnitId: Scalars['String'],
   operatorId: Scalars['Int'],
   equipmentCatalogue: EquipmentCatalogueInput
+};
+
+
+export type MutationUpdateEquipmentCatalogueArgs = {
+  equipmentCatalogue: EquipmentCatalogueInput,
+  catalogueId: Scalars['String']
 };
 
 

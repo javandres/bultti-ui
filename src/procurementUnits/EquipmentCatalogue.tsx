@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
@@ -15,7 +15,10 @@ import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentMutation } from './equipmentQuery'
 import { MessageView } from '../common/components/common'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
-import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
+import {
+  createEquipmentCatalogueMutation,
+  updateEquipmentCatalogueMutation,
+} from './equipmentCatalogueQuery'
 import { useStateValue } from '../state/useAppState'
 import ValueDisplay from '../common/components/ValueDisplay'
 
@@ -68,18 +71,44 @@ const getType = (key) => equipmentInputValues[key] || defaultGetVal
 const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
+enum CatalogueEditMode {
+  UPDATE = 'update',
+  CREATE = 'create',
+}
+
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
   ({ procurementUnitId, catalogue, operatorId, onCatalogueChanged }) => {
+    const catalogueEditMode = useRef<CatalogueEditMode>(
+      !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
+    )
+
     const [globalSeason] = useStateValue('globalSeason')
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
+    const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
 
     const addDraftCatalogue = useCallback(() => {
+      catalogueEditMode.current = CatalogueEditMode.CREATE
+
       setPendingCatalogue({
         startDate: globalSeason?.startDate,
         endDate: globalSeason?.endDate,
       })
     }, [globalSeason])
+
+    const editCurrentCatalogue = useCallback(() => {
+      if (!catalogue) {
+        return
+      }
+
+      catalogueEditMode.current = CatalogueEditMode.UPDATE
+
+      setPendingCatalogue({
+        startDate: catalogue.startDate,
+        endDate: catalogue.endDate,
+      })
+    }, [catalogue])
 
     const onChangeCatalogue = useCallback((key: string, nextValue) => {
       setPendingCatalogue((currentPending) =>
@@ -87,23 +116,32 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       )
     }, [])
 
-    const onAddEquipmentCatalogue = useCallback(async () => {
+    const onSaveEquipmentCatalogue = useCallback(async () => {
       if (!pendingCatalogue) {
         return
       }
 
       setPendingCatalogue(null)
 
-      await createCatalogue({
-        variables: {
-          operatorId: operatorId,
-          procurementUnitId: procurementUnitId,
-          catalogue: pendingCatalogue,
-        },
-      })
+      if (catalogue && catalogueEditMode.current === CatalogueEditMode.UPDATE) {
+        await updateCatalogue({
+          variables: {
+            catalogueId: catalogue.id,
+            catalogueData: pendingCatalogue,
+          },
+        })
+      } else {
+        await createCatalogue({
+          variables: {
+            operatorId: operatorId,
+            procurementUnitId: procurementUnitId,
+            catalogueData: pendingCatalogue,
+          },
+        })
+      }
 
       await onCatalogueChanged()
-    }, [operatorId, procurementUnitId, pendingCatalogue])
+    }, [operatorId, procurementUnitId, catalogue, pendingCatalogue, catalogueEditMode.current])
 
     const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
     const [createEquipment] = useMutationData(createEquipmentMutation)
@@ -176,18 +214,27 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        {catalogue ? (
-          <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
+        {!pendingCatalogue && catalogue ? (
+          <>
+            <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
+            <Button style={{ marginTop: '1rem' }} onClick={editCurrentCatalogue}>
+              Muokkaa
+            </Button>
+          </>
         ) : (
           <>
             {pendingCatalogue ? (
               <ItemForm
                 item={pendingCatalogue}
                 onChange={onChangeCatalogue}
-                onDone={onAddEquipmentCatalogue}
+                onDone={onSaveEquipmentCatalogue}
                 keyFromItem={(item) => item.id}
-                doneLabel="Lisää kalustoluettelo"
                 renderInput={renderCatalogueInput}
+                doneLabel={
+                  catalogueEditMode.current === CatalogueEditMode.UPDATE
+                    ? 'Tallenna'
+                    : 'Lisää kalustoluettelo'
+                }
               />
             ) : (
               <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>

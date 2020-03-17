@@ -13,10 +13,13 @@ const ControlledFormView = styled.div`
   justify-content: space-between;
   border: 1px solid var(--lighter-grey);
   border-radius: 0.5rem;
-  overflow: hidden;
 
   > *:nth-child(even) {
     background-color: #fafafa;
+  }
+
+  > *:nth-child(2) {
+    border-top-right-radius: 0.5rem;
   }
 `
 
