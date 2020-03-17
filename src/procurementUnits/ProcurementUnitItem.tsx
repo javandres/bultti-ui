@@ -2,25 +2,23 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
-  Equipment,
   EquipmentCatalogue as EquipmentCatalogueType,
-  EquipmentCatalogueInput,
   ProcurementUnit as ProcurementUnitType,
+  ProcurementUnitEditInput,
 } from '../schema-types'
 import { ArrowDown } from '../common/icons/ArrowDown'
 import { round } from '../utils/round'
 import EquipmentCatalogue from './EquipmentCatalogue'
 import { isBetween } from '../utils/isBetween'
 import { useQueryData } from '../utils/useQueryData'
-import { procurementUnitQuery } from './procurementUnitsQuery'
+import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
 import Loading from '../common/components/Loading'
-import { useMutationData } from '../utils/useMutationData'
-import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
 import { MessageView } from '../common/components/common'
-import { Button } from '../common/components/Button'
 import ItemForm from '../common/inputs/ItemForm'
-import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
-import { useStateValue } from '../state/useAppState'
+import ValueDisplay from '../common/components/ValueDisplay'
+import { Button } from '../common/components/Button'
+import { useMutationData } from '../utils/useMutationData'
+import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -36,7 +34,7 @@ const HeaderRow = styled.div<{ expanded?: boolean }>`
   border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
 
   > *:nth-child(even) {
-    background-color: #fcfcfc;
+    background-color: #fafafa;
   }
 `
 
@@ -60,6 +58,7 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
   outline: none;
   display: flex;
   align-items: center;
+  border-top-right-radius: 0.5rem;
 
   > * {
     transition: transform 0.1s ease-out;
@@ -67,9 +66,13 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
   }
 `
 
-const SectionHeading = styled.div`
-  font-weight: bold;
+const SectionHeading = styled.h5`
+  font-size: 0.875rem;
   margin-bottom: 0.5rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 const Content = styled.div`
@@ -91,48 +94,46 @@ export type PropTypes = {
   productionDate: string
 }
 
-export type EquipmentWithQuota = Equipment & { percentageQuota: number }
+const procurementUnitLabels = {
+  weeklyMeters: 'Viikkosuoritteet',
+  medianAgeRequirement: 'Keski-ikä vaatimus',
+}
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ productionDate, procurementUnit: { operatorId, id, procurementUnitId }, expanded = true }) => {
-    const [globalSeason] = useStateValue('globalSeason')
-    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+  ({ productionDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
+    const [
+      pendingProcurementUnit,
+      setPendingProcurementUnit,
+    ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading, refetch } = useQueryData(procurementUnitQuery, {
-      variables: {
-        procurementUnitId: id,
-      },
-    })
-
-    const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
-
-    const addDraftCatalogue = useCallback(() => {
-      setPendingCatalogue({
-        startDate: globalSeason?.startDate,
-        endDate: globalSeason?.endDate,
-      })
-    }, [globalSeason])
-
-    const onChangeCatalogue = useCallback((key: string, nextValue) => {
-      setPendingCatalogue((currentPending) =>
-        !currentPending ? null : { ...currentPending, [key]: nextValue }
-      )
-    }, [])
-
-    const onAddEquipmentCatalogue = useCallback(async () => {
-      setPendingCatalogue(null)
-
-      await createCatalogue({
+    const { data: procurementUnit, loading, refetch } = useQueryData<ProcurementUnitType>(
+      procurementUnitQuery,
+      {
         variables: {
-          operatorId: operatorId,
           procurementUnitId: id,
-          catalogue: pendingCatalogue,
         },
-      })
+      }
+    )
 
-      await refetch()
-    }, [operatorId, id, pendingCatalogue])
+    const addDraftProcurementUnit = useCallback(() => {
+      const inputRow: ProcurementUnitEditInput = {
+        weeklyMeters: procurementUnit.weeklyMeters ?? 0,
+        medianAgeRequirement: procurementUnit.medianAgeRequirement ?? 0,
+      }
+
+      setPendingProcurementUnit(inputRow)
+    }, [procurementUnit])
+
+    const [updateProcurementUnit] = useMutationData<ProcurementUnitEditInput>(
+      updateProcurementUnitMutation,
+      {
+        variables: {
+          procurementUnitId: id,
+          updatedData: null,
+        },
+      }
+    )
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -143,22 +144,31 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       [procurementUnit]
     )
 
-    const catalogueEquipment: EquipmentWithQuota[] = useMemo(
-      () =>
-        (activeCatalogue?.equipmentQuotas || []).map((quota) => ({
-          ...quota.equipment,
-          percentageQuota: quota.percentageQuota,
-        })),
-      [activeCatalogue]
-    )
+    const onChangeProcurementUnit = useCallback((key: string, nextValue) => {
+      setPendingProcurementUnit((currentPending) =>
+        !currentPending ? null : { ...currentPending, [key]: nextValue }
+      )
+    }, [])
 
-    const onEquipmentAdded = useCallback(async () => {
+    const onSaveProcurementUnit = useCallback(async () => {
+      if (!procurementUnitId || !pendingProcurementUnit) {
+        return
+      }
+
+      setPendingProcurementUnit(null)
+
+      await updateProcurementUnit({
+        variables: {
+          updatedData: pendingProcurementUnit,
+        },
+      })
+
+      await refetch()
+    }, [pendingProcurementUnit])
+
+    const onCatalogueChanged = useCallback(async () => {
       await refetch()
     }, [refetch])
-
-    const onRemoveEquipment = useCallback(() => {
-      console.log('Remove equipment WIP!')
-    }, [])
 
     const [isExpanded, setIsExpanded] = useState(true)
     const { routes = [] } = procurementUnit || {}
@@ -167,8 +177,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       setIsExpanded(expanded)
     }, [expanded])
 
-    const renderCatalogueInput = useCallback((val: any, key: string, onChange) => {
-      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
+    const renderProcurementItemInput = useCallback((val: any, key: string, onChange) => {
+      return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
     return (
@@ -190,9 +200,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 <SectionHeading>Kilometrejä viikossa</SectionHeading>
                 {round((procurementUnit?.weeklyMeters || 0) / 1000)}
               </HeaderSection>
-              <HeaderSection>
-                <SectionHeading>Maksimi keski-ikä</SectionHeading>8 (7,6)
-              </HeaderSection>
               <ExpandToggle
                 expanded={isExpanded}
                 onClick={() => setIsExpanded((currentVal) => !currentVal)}>
@@ -201,30 +208,40 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             </HeaderRow>
             {isExpanded && (
               <Content>
-                {!activeCatalogue ? (
-                  !pendingCatalogue ? (
-                    <>
-                      <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
-                      <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
-                    </>
-                  ) : (
-                    <ItemForm
-                      item={pendingCatalogue}
-                      onChange={onChangeCatalogue}
-                      onDone={onAddEquipmentCatalogue}
-                      keyFromItem={(item) => item.id}
-                      doneLabel="Lisää kalustoluettelo"
-                      renderInput={renderCatalogueInput}
-                    />
-                  )
+                <SectionHeading>Kilpailukohteen tiedot</SectionHeading>
+                {!pendingProcurementUnit ? (
+                  <>
+                    <ValueDisplay item={procurementUnit} labels={procurementUnitLabels} />
+                    <Button style={{ marginTop: '1rem' }} onClick={addDraftProcurementUnit}>
+                      Muokkaa
+                    </Button>
+                  </>
                 ) : (
-                  <EquipmentCatalogue
-                    catalogue={activeCatalogue}
-                    operatorId={procurementUnit.operatorId}
-                    equipment={catalogueEquipment}
-                    onEquipmentAdded={onEquipmentAdded}
-                    removeEquipment={onRemoveEquipment}
+                  <ItemForm
+                    item={pendingProcurementUnit}
+                    labels={procurementUnitLabels}
+                    onChange={onChangeProcurementUnit}
+                    onDone={onSaveProcurementUnit}
+                    doneLabel="Tallenna"
+                    doneDisabled={Object.values(pendingProcurementUnit).some(
+                      (val: number | string | undefined | null) =>
+                        val === null || typeof val === 'undefined' || val === ''
+                    )}
+                    renderInput={renderProcurementItemInput}
                   />
+                )}
+                {!activeCatalogue ? (
+                  <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
+                ) : (
+                  <>
+                    <SectionHeading>Kalustoluettelo</SectionHeading>
+                    <EquipmentCatalogue
+                      procurementUnitId={procurementUnitId}
+                      catalogue={activeCatalogue}
+                      operatorId={procurementUnit.operatorId}
+                      onCatalogueChanged={onCatalogueChanged}
+                    />
+                  </>
                 )}
               </Content>
             )}

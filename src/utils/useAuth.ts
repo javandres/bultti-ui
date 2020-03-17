@@ -74,7 +74,7 @@ export const useAuth = (): [AuthState, boolean] => {
     } else if (!user && authState === AuthState.AUTHENTICATED) {
       setAuthState(AuthState.UNAUTHENTICATED)
     }
-  }, [code, authState, user])
+  }, [code, authState, user, fetchedCurrentUser])
 
   return [authState, loginLoading || userLoading]
 }

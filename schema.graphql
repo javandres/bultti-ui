@@ -62,14 +62,15 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
-  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Int!): Equipment
+  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
   removeEquipment(equipmentId: String!): Boolean!
-  updateEquipment(equipment: EquipmentInput!): Equipment
+  updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
 }
 
 type OperatingArea {
@@ -111,6 +112,7 @@ type ProcurementUnit {
   endDate: BulttiDateTime!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: ID!
+  medianAgeRequirement: Float!
   operator: Operator!
   operatorId: Int!
   procurementUnitId: String!
@@ -126,7 +128,7 @@ type ProcurementUnitRoute {
 }
 
 type Query {
-  currentUser: User!
+  currentUser: User
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -193,7 +195,6 @@ input EquipmentInput {
   co2: Float!
   emissionClass: Int!
   exteriorColor: String!
-  id: ID
   make: String!
   model: String!
   percentageQuota: Float
@@ -216,6 +217,11 @@ input ExecutionRequirementValueInput {
 
 input PreInspectionInput {
   operatorId: Int!
+}
+
+input ProcurementUnitEditInput {
+  medianAgeRequirement: Float!
+  weeklyMeters: Float!
 }
 
 input ProcurementUnitInput {

@@ -79,7 +79,7 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, on
       let nextValue = e.target.value
 
       if (valueIsNumeric) {
-        nextValue = !nextValue || isNaN(parseFloat(nextValue)) ? 0 : nextValue
+        nextValue = !nextValue || isNaN(parseFloat(nextValue)) ? '' : nextValue
       }
 
       onChange(nextValue, valueName)

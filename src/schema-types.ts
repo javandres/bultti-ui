@@ -59,7 +59,6 @@ export type EquipmentCatalogueQuota = {
 };
 
 export type EquipmentInput = {
-  id?: Maybe<Scalars['ID']>,
   percentageQuota?: Maybe<Scalars['Float']>,
   vehicleId: Scalars['String'],
   make: Scalars['String'],
@@ -109,7 +108,8 @@ export enum InspectionStatus {
 export type Mutation = {
    __typename?: 'Mutation',
   createPreInspection?: Maybe<PreInspection>,
-  createEquipment?: Maybe<Equipment>,
+  updateProcurementUnit: ProcurementUnit,
+  createEquipment: Equipment,
   updateEquipment?: Maybe<Equipment>,
   removeEquipment: Scalars['Boolean'],
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
@@ -124,6 +124,12 @@ export type MutationCreatePreInspectionArgs = {
 };
 
 
+export type MutationUpdateProcurementUnitArgs = {
+  procurementUnit: ProcurementUnitEditInput,
+  procurementUnitId: Scalars['String']
+};
+
+
 export type MutationCreateEquipmentArgs = {
   catalogueId?: Maybe<Scalars['String']>,
   operatorId: Scalars['Int'],
@@ -132,7 +138,9 @@ export type MutationCreateEquipmentArgs = {
 
 
 export type MutationUpdateEquipmentArgs = {
-  equipment: EquipmentInput
+  quotaId?: Maybe<Scalars['String']>,
+  equipment: EquipmentInput,
+  equipmentId: Scalars['String']
 };
 
 
@@ -213,11 +221,17 @@ export type ProcurementUnit = {
   equipmentCatalogues: Array<EquipmentCatalogue>,
   weeklyMeters: Scalars['Float'],
   weeklyKilometers: Scalars['Float'],
+  medianAgeRequirement: Scalars['Float'],
   areaId: Scalars['Int'],
   area: OperatingArea,
   routes: Array<ProcurementUnitRoute>,
   startDate: Scalars['BulttiDateTime'],
   endDate: Scalars['BulttiDateTime'],
+};
+
+export type ProcurementUnitEditInput = {
+  weeklyMeters: Scalars['Float'],
+  medianAgeRequirement: Scalars['Float'],
 };
 
 export type ProcurementUnitInput = {
@@ -263,7 +277,7 @@ export type Query = {
   executionRequirementsByPreInspection: Array<ExecutionRequirement>,
   user?: Maybe<User>,
   users: Array<User>,
-  currentUser: User,
+  currentUser?: Maybe<User>,
 };
 
 

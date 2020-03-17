@@ -27,7 +27,8 @@ export const createEquipmentMutation = gql`
       equipment: $equipmentInput
       catalogueId: $catalogueId
     ) {
-      id
+      ...EquipmentFragment
     }
   }
+  ${EquipmentFragment}
 `

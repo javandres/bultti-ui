@@ -599,13 +599,9 @@
             "description": "",
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "User",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "User",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1549,6 +1545,22 @@
             "deprecationReason": null
           },
           {
+            "name": "medianAgeRequirement",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "areaId",
             "description": "",
             "args": [],
@@ -2464,6 +2476,51 @@
             "deprecationReason": null
           },
           {
+            "name": "updateProcurementUnit",
+            "description": "",
+            "args": [
+              {
+                "name": "procurementUnit",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "ProcurementUnitEditInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "procurementUnitId",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ProcurementUnit",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "createEquipment",
             "description": "",
             "args": [
@@ -2507,9 +2564,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "Equipment",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Equipment",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2519,6 +2580,16 @@
             "description": "",
             "args": [
               {
+                "name": "quotaId",
+                "description": "",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "equipment",
                 "description": "",
                 "type": {
@@ -2527,6 +2598,20 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "EquipmentInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "equipmentId",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -2750,20 +2835,49 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "EquipmentInput",
+        "name": "ProcurementUnitEditInput",
         "description": "",
         "fields": null,
         "inputFields": [
           {
-            "name": "id",
+            "name": "weeklyMeters",
             "description": "",
             "type": {
-              "kind": "SCALAR",
-              "name": "ID",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
             },
             "defaultValue": null
           },
+          {
+            "name": "medianAgeRequirement",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "EquipmentInput",
+        "description": "",
+        "fields": null,
+        "inputFields": [
           {
             "name": "percentageQuota",
             "description": "",

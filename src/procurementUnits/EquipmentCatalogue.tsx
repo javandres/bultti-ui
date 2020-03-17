@@ -1,10 +1,11 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table, { CellContent } from '../common/components/Table'
 import {
   Equipment,
   EquipmentCatalogue as EquipmentCatalogueType,
+  EquipmentCatalogueInput,
   EquipmentInput,
 } from '../schema-types'
 import EquipmentFormInput from './EquipmentFormInput'
@@ -13,11 +14,15 @@ import { Button } from '../common/components/Button'
 import { useMutationData } from '../utils/useMutationData'
 import { createEquipmentMutation } from './equipmentQuery'
 import { MessageView } from '../common/components/common'
-import { EquipmentWithQuota } from './ProcurementUnitItem'
+import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
+import { createEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
+import { useStateValue } from '../state/useAppState'
+import ValueDisplay from '../common/components/ValueDisplay'
 
 const EquipmentCatalogueView = styled.div``
 
 const TableHeading = styled.h5`
+  font-size: 0.875rem;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
 
@@ -26,22 +31,18 @@ const TableHeading = styled.h5`
   }
 `
 
-const CatalogueDetails = styled.div`
-  display: flex;
-  margin-bottom: 1.5rem;
-`
-
-const DetailsItem = styled.div`
-  margin-right: 1rem;
-  font-size: 0.875rem;
-`
-
 export type PropTypes = {
+  procurementUnitId: string
   catalogue?: EquipmentCatalogueType
   operatorId: number
-  equipment: EquipmentWithQuota[]
-  onEquipmentAdded: () => Promise<void>
-  removeEquipment: (item: Equipment) => void
+  onCatalogueChanged: () => Promise<void>
+}
+
+export type EquipmentWithQuota = Equipment & { percentageQuota: number }
+
+const equipmentCatalogueLabels = {
+  startDate: 'Alkupäivä',
+  endDate: 'Loppupäivä',
 }
 
 const equipmentColumnLabels = {
@@ -68,7 +69,42 @@ const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ catalogue, operatorId, equipment, onEquipmentAdded, removeEquipment }) => {
+  ({ procurementUnitId, catalogue, operatorId, onCatalogueChanged }) => {
+    const [globalSeason] = useStateValue('globalSeason')
+    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+    const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
+
+    const addDraftCatalogue = useCallback(() => {
+      setPendingCatalogue({
+        startDate: globalSeason?.startDate,
+        endDate: globalSeason?.endDate,
+      })
+    }, [globalSeason])
+
+    const onChangeCatalogue = useCallback((key: string, nextValue) => {
+      setPendingCatalogue((currentPending) =>
+        !currentPending ? null : { ...currentPending, [key]: nextValue }
+      )
+    }, [])
+
+    const onAddEquipmentCatalogue = useCallback(async () => {
+      if (!pendingCatalogue) {
+        return
+      }
+
+      setPendingCatalogue(null)
+
+      await createCatalogue({
+        variables: {
+          operatorId: operatorId,
+          procurementUnitId: procurementUnitId,
+          catalogue: pendingCatalogue,
+        },
+      })
+
+      await onCatalogueChanged()
+    }, [operatorId, procurementUnitId, pendingCatalogue])
+
     const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
     const [createEquipment] = useMutationData(createEquipmentMutation)
 
@@ -96,7 +132,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [])
 
     const onAddEquipment = useCallback(async () => {
-      if (!catalogue) {
+      if (!catalogue || !pendingCatalogue) {
         return
       }
 
@@ -110,8 +146,12 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         },
       })
 
-      await onEquipmentAdded()
-    }, [catalogue, operatorId, onEquipmentAdded, pendingEquipment])
+      await onCatalogueChanged()
+    }, [catalogue, operatorId, onCatalogueChanged, pendingEquipment])
+
+    const onRemoveEquipment = useCallback(async (item) => {
+      console.log('Remove equipment WIP!')
+    }, [])
 
     const renderEquipmentCell = useCallback((val: any, key: string, onChange) => {
       if (['id'].includes(key)) {
@@ -121,24 +161,46 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       return <EquipmentFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
+    const equipment: EquipmentWithQuota[] = useMemo(
+      () =>
+        (catalogue?.equipmentQuotas || []).map((quota) => ({
+          ...quota.equipment,
+          percentageQuota: quota.percentageQuota,
+        })),
+      [catalogue]
+    )
+
+    const renderCatalogueInput = useCallback((val: any, key: string, onChange) => {
+      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
+    }, [])
+
     return (
       <EquipmentCatalogueView>
-        <TableHeading>Kalustoluettelo</TableHeading>
-        <CatalogueDetails>
-          <DetailsItem>
-            Aloituspäivä: <strong>{catalogue?.startDate}</strong>
-          </DetailsItem>
-          <DetailsItem>
-            Loppupäivä: <strong>{catalogue?.endDate}</strong>
-          </DetailsItem>
-        </CatalogueDetails>
+        {catalogue ? (
+          <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
+        ) : (
+          <>
+            {pendingCatalogue ? (
+              <ItemForm
+                item={pendingCatalogue}
+                onChange={onChangeCatalogue}
+                onDone={onAddEquipmentCatalogue}
+                keyFromItem={(item) => item.id}
+                doneLabel="Lisää kalustoluettelo"
+                renderInput={renderCatalogueInput}
+              />
+            ) : (
+              <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
+            )}
+          </>
+        )}
         {equipment.length !== 0 ? (
           <>
             <TableHeading>Ajoneuvot</TableHeading>
             <Table
               items={equipment}
               columnLabels={equipmentColumnLabels}
-              onRemoveRow={(item) => () => removeEquipment(item)}
+              onRemoveRow={(item) => () => onRemoveEquipment(item)}
               getColumnTotal={(col) =>
                 col === 'percentageQuota'
                   ? equipment.reduce((total, item) => {

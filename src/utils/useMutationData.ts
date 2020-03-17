@@ -4,15 +4,17 @@ import { DocumentNode, ExecutionResult } from 'graphql'
 import { useMemo } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
 import { ApolloError } from 'apollo-client'
+import { merge } from 'lodash'
 
 type Mutator<TData, TVariables> = [
-  (
-    overrideOptions?: MutationFunctionOptions<TData, TVariables>
-  ) => Promise<ExecutionResult<TData>>,
+  (overrideOptions?: MutationFunctionOptions<TData, TVariables>) => Promise<ExecutionResult<TData>>,
   { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 
-export const useMutationData = <TData = any, TVariables = OperationVariables>(
+export const useMutationData = <
+  TData = any,
+  TVariables = OperationVariables
+>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
@@ -22,5 +24,11 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
     options
   )
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
-  return [mutationFn, { data: pickedData, loading, error, called }]
+
+  const execMutation = (mutatorOptions?: MutationFunctionOptions<TData, TVariables>) => {
+    const finalOptions = merge({}, { variables: options.variables }, mutatorOptions)
+    return mutationFn(finalOptions)
+  }
+
+  return [execMutation, { data: pickedData, loading, error, called }]
 }

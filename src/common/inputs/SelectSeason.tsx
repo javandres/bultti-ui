@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Dropdown from './Dropdown'
@@ -70,6 +70,13 @@ const SelectSeason: React.FC<PropTypes> = observer(
       },
       [onSelect]
     )
+
+    // Auto-select the first season if there is only one.
+    useEffect(() => {
+      if (!value && seasons.length !== 0) {
+        onSelect(seasons.find((season) => season.id !== UNSELECTED_VAL) || null)
+      }
+    }, [value, seasons, onSelect])
 
     const currentSeason = useMemo(() => value || seasons[0], [seasons, value])
 
