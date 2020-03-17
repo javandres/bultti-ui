@@ -15,6 +15,10 @@ const ValueDisplayView = styled.div`
   > *:nth-child(even) {
     background-color: #fafafa;
   }
+
+  > *:nth-child(2) {
+    border-top-right-radius: 0.5rem;
+  }
 `
 
 const ValueWrapper = styled.div`
@@ -24,8 +28,13 @@ const ValueWrapper = styled.div`
   padding: 0.5rem 0.75rem;
   border-right: 1px solid var(--lighter-grey);
 
+  &:nth-child(2n),
   &:last-child {
     border-right: 0;
+  }
+
+  &:nth-child(3):last-child {
+    border-top: 1px solid var(--lighter-grey);
   }
 `
 
@@ -45,12 +54,21 @@ export type PropTypes<ItemType = any> = {
   hideKeys?: string[]
   renderValue?: (val: any, key: string) => any
   className?: string
+  children?: React.ReactChild
 }
 
 const defaultRenderValue = (val) => val
 
 const ValueDisplay: React.FC<PropTypes> = observer(
-  ({ className, item, labels = {}, order, hideKeys, renderValue = defaultRenderValue }) => {
+  ({
+    className,
+    item,
+    labels = {},
+    order,
+    hideKeys,
+    renderValue = defaultRenderValue,
+    children,
+  }) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     return (
@@ -67,6 +85,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
             </ValueWrapper>
           )
         })}
+        {children && <ValueWrapper>{children}</ValueWrapper>}
       </ValueDisplayView>
     )
   }

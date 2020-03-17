@@ -143,6 +143,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       await onCatalogueChanged()
     }, [operatorId, procurementUnitId, catalogue, pendingCatalogue, catalogueEditMode.current])
 
+    const onCancelPendingEquipmentCatalogue = useCallback(() => {
+      setPendingCatalogue(null)
+    }, [])
+
     const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
     const [createEquipment] = useMutationData(createEquipmentMutation)
 
@@ -187,6 +191,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       await onCatalogueChanged()
     }, [catalogue, operatorId, onCatalogueChanged, pendingEquipment])
 
+    const onCancelPendingEquipment = useCallback(() => {
+      setPendingEquipment(null)
+    }, [])
+
     const onRemoveEquipment = useCallback(async (item) => {
       console.log('Remove equipment WIP!')
     }, [])
@@ -215,12 +223,11 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     return (
       <EquipmentCatalogueView>
         {!pendingCatalogue && catalogue ? (
-          <>
-            <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
-            <Button style={{ marginTop: '1rem' }} onClick={editCurrentCatalogue}>
+          <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
+            <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
               Muokkaa
             </Button>
-          </>
+          </ValueDisplay>
         ) : (
           <>
             {pendingCatalogue ? (
@@ -228,6 +235,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 item={pendingCatalogue}
                 onChange={onChangeCatalogue}
                 onDone={onSaveEquipmentCatalogue}
+                onCancel={onCancelPendingEquipmentCatalogue}
                 keyFromItem={(item) => item.id}
                 renderInput={renderCatalogueInput}
                 doneLabel={
@@ -271,6 +279,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 labels={equipmentColumnLabels}
                 onChange={onEquipmentInputChange}
                 onDone={onAddEquipment}
+                onCancel={onCancelPendingEquipment}
                 doneDisabled={!equipmentIsValid(pendingEquipment)}
                 doneLabel="Lisää luetteloon"
                 renderInput={renderEquipmentCell}

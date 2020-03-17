@@ -192,6 +192,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       await refetch()
     }, [pendingProcurementUnit])
 
+    const onCancelPendingUnit = useCallback(() => {
+      setPendingProcurementUnit(null)
+    }, [])
+
     const onCatalogueChanged = useCallback(async () => {
       await refetch()
     }, [refetch])
@@ -226,6 +230,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 <SectionHeading>Kilometrejä viikossa</SectionHeading>
                 {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
               </HeaderSection>
+              <HeaderSection>
+                <SectionHeading>Voimassaoloaika</SectionHeading>
+                {procurementUnit.startDate} - {procurementUnit.endDate}
+              </HeaderSection>
               <ExpandToggle
                 expanded={isExpanded}
                 onClick={() => setIsExpanded((currentVal) => !currentVal)}>
@@ -244,11 +252,11 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                         return val
                       }}
                       item={procurementUnit}
-                      labels={procurementUnitLabels}
-                    />
-                    <Button style={{ marginTop: '1rem' }} onClick={addDraftProcurementUnit}>
-                      Muokkaa
-                    </Button>
+                      labels={procurementUnitLabels}>
+                      <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
+                        Muokkaa
+                      </Button>
+                    </ValueDisplay>
                   </>
                 ) : (
                   <>
@@ -257,6 +265,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       labels={procurementUnitLabels}
                       onChange={onChangeProcurementUnit}
                       onDone={onSaveProcurementUnit}
+                      onCancel={onCancelPendingUnit}
                       doneLabel="Tallenna"
                       doneDisabled={Object.values(pendingProcurementUnit).some(
                         (val: number | string | undefined | null) =>

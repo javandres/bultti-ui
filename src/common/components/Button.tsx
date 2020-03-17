@@ -57,14 +57,14 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   transform: scale(1);
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 
-  ${({ disabled }) =>
+  ${({ disabled, transparent }) =>
     !disabled
       ? css`
           &:hover {
-            background: var(--dark-blue);
+            background: ${transparent ? 'transparent' : 'var(--dark-blue)'};
             border-color: var(--dark-blue);
-            color: white;
-            transform: scale(1.025);
+            color: ${transparent ? 'var(--dark-blue)' : 'white'};
+            transform: scale(1.02);
           }
         `
       : ''}

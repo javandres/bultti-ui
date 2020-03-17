@@ -13,6 +13,8 @@ const ControlledFormView = styled.div`
   justify-content: space-between;
   border: 1px solid var(--lighter-grey);
   border-radius: 0.5rem;
+  background: white;
+  box-shadow: 0 0 5px 0 rgba(0,20,50,0.1);
 
   > *:nth-child(even) {
     background-color: #fafafa;
@@ -47,11 +49,20 @@ const FieldLabel = styled.label`
   display: block;
 `
 
+const ActionsWrapper = styled.div`
+  margin-left: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-direction: row;
+`
+
 export type PropTypes<ItemType = any> = {
   item: ItemType
   children?: React.ReactChild
   onChange: (key: string, value: string) => void
-  onDone?: () => void
+  onDone: () => void
+  onCancel: () => void
   readOnly?: boolean
   doneLabel?: string
   doneDisabled?: boolean
@@ -78,6 +89,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     onChange,
     readOnly = false,
     onDone,
+    onCancel,
     doneDisabled = false,
     doneLabel = 'Valmis',
     renderInput = defaultRenderInput,
@@ -99,20 +111,23 @@ const ItemForm: React.FC<PropTypes> = observer(
             {readOnly ? renderReadOnlyField(val) : renderInput(val, key, onValueChange(key))}
           </FieldWrapper>
         ))}
-        {onDone && (
-          <FieldWrapper
-            style={{
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              marginLeft: 'auto',
-            }}>
-            {children}
-            <Button style={{ marginLeft: 'auto' }} disabled={doneDisabled} onClick={onDone}>
+        <FieldWrapper
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            marginLeft: 'auto',
+          }}>
+          {children}
+          <ActionsWrapper>
+            <Button style={{ marginRight: '1rem' }} transparent={true} onClick={onCancel}>
+              Peruuta
+            </Button>
+            <Button disabled={doneDisabled} onClick={onDone}>
               {doneLabel}
             </Button>
-          </FieldWrapper>
-        )}
+          </ActionsWrapper>
+        </FieldWrapper>
       </ControlledFormView>
     )
   }
