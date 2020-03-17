@@ -189,15 +189,19 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         },
       })
 
-      await refetch()
-    }, [pendingProcurementUnit])
+      if (refetch) {
+        await refetch()
+      }
+    }, [pendingProcurementUnit, refetch])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
     }, [])
 
     const onCatalogueChanged = useCallback(async () => {
-      await refetch()
+      if (refetch) {
+        await refetch()
+      }
     }, [refetch])
 
     const [isExpanded, setIsExpanded] = useState(true)
