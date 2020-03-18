@@ -9,6 +9,7 @@ import gql from 'graphql-tag'
 import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
 import { operatorIsAuthorized } from '../../utils/operatorIsAuthorized'
+import { isNumeric } from '../../utils/isNumeric'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -30,6 +31,18 @@ export type PropTypes = {
 }
 
 const OperatorSelect = styled(Dropdown)``
+
+export const operatorIsValid = (operator: Operator | null | undefined) => {
+  if (!operator) {
+    return false
+  }
+
+  if (['all', 'unselected'].includes(operator?.id as any) || !isNumeric(operator?.id)) {
+    return false
+  }
+
+  return true
+}
 
 const SelectOperator: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light', allowAll = false }) => {
@@ -62,7 +75,9 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
     // Auto-select the first operator if there is only one.
     useEffect(() => {
-      if (!value && operators.length === 1) {
+      const firstOperator = operators[0]
+
+      if (!value && operators.length === 1 && operatorIsValid(firstOperator)) {
         onSelect(operators[0])
       }
     }, [value, operators, onSelect])
@@ -71,7 +86,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
       (selectedItem) => {
         let selectValue = selectedItem
 
-        if (!selectedItem || selectedItem?.id === 'all') {
+        if (!selectedItem || !operatorIsValid(selectValue)) {
           selectValue = null
         }
 

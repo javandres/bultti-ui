@@ -31,7 +31,7 @@ const GlobalOperatorFilter: React.FC = observer(() => {
 
   return (
     <OperatorSelect
-      allowAll={!userIsOperator}
+      allowAll={false}
       onSelect={setOperatorFilter}
       value={operator}
       label={userIsOperator ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}

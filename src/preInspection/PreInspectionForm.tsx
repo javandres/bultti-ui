@@ -5,11 +5,11 @@ import {
   Column,
   ColumnWrapper,
   ErrorView,
-  MessageContainer,
   InputLabel,
+  MessageContainer,
   SectionHeading,
 } from '../common/components/common'
-import SelectOperator from '../common/inputs/SelectOperator'
+import SelectOperator, { operatorIsValid } from '../common/inputs/SelectOperator'
 import SelectSeason from '../common/inputs/SelectSeason'
 import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
 import { Operator, Season } from '../schema-types'
@@ -188,11 +188,16 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
         !inspectionLoading
       ) {
         formState.setStatus(PreInspectionFormStatus.InitLoading)
+        let operatorId = formState?.operator?.id || 0
+
+        if (!operatorIsValid(formState?.operator)) {
+          return
+        }
 
         createPreInspection({
           variables: {
             preInspectionInput: {
-              operatorId: formState?.operator?.id || 0,
+              operatorId,
             },
           },
         }).then(({ data }) => {
@@ -219,7 +224,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
     // Use the global operator as the initially selected operator if no operator
     // has been selected for this form yet.
     useEffect(() => {
-      if (!formState.operator) {
+      if (!formState.operator && preselectedOperator) {
         formState.selectOperator(preselectedOperator)
       }
     }, [preselectedOperator])
