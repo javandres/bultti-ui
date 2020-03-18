@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-export const createPreInspectionMutation = gql`  
+export const createPreInspectionMutation = gql`
   mutation createPreInspection($preInspectionInput: PreInspectionInput!) {
     createPreInspection(preInspection: $preInspectionInput) {
       id
@@ -14,6 +14,24 @@ export const createPreInspectionMutation = gql`
         id
         season
       }
+      status
+    }
+  }
+`
+
+export const updatePreInspectionMutation = gql`
+  mutation updatePreInspection(
+    $preInspectionId: String!
+    $preInspectionInput: PreInspectionInput!
+  ) {
+    updatePreInspection(preInspectionId: $preInspectionId, preInspection: $preInspectionInput) {
+      id
+      createdAt
+      startDate
+      endDate
+      operatorId
+      productionStart
+      productionEnd
       status
     }
   }

@@ -23,9 +23,13 @@ import Input from '../common/inputs/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
 import { useMutationData } from '../utils/useMutationData'
-import { createPreInspectionMutation } from './createPreInspectionMutation'
+import {
+  createPreInspectionMutation,
+  updatePreInspectionMutation,
+} from './createPreInspectionMutation'
 import ProcurementUnits from '../procurementUnits/ProcurementUnits'
 import { DATE_FORMAT } from '../constants'
+import { pickGraphqlData } from '../utils/pickGraphqlData'
 
 const currentDate = new Date()
 
@@ -178,21 +182,27 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       { data: createdInspectionData, loading: inspectionLoading },
     ] = useMutationData(createPreInspectionMutation)
 
+    const [
+      updatePreInspection,
+      { data: updatedInspectionData, loading: updateLoading },
+    ] = useMutationData(updatePreInspectionMutation)
+
+    const prevSavedPreInspection = useMemo(() => updatedInspectionData || createdInspectionData, [
+      createdInspectionData,
+      updatedInspectionData,
+    ])
+
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     // TODO: Error views when status = invalid
     useEffect(() => {
       // A pre-inspection can be created when there is not one currently loading and the form state is uninitialized.
       if (
-        formState?.operator &&
+        operatorIsValid(formState?.operator) &&
         formState.status === PreInspectionFormStatus.Uninitialized &&
         !inspectionLoading
       ) {
         formState.setStatus(PreInspectionFormStatus.InitLoading)
         let operatorId = formState?.operator?.id || 0
-
-        if (!operatorIsValid(formState?.operator)) {
-          return
-        }
 
         createPreInspection({
           variables: {
@@ -250,6 +260,36 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
         formState.setEndDate(toISODate(endOfISOWeek(parseISO(formState.season.startDate))))
       }
     }, [formState.season])
+
+    useEffect(() => {
+      if (
+        !inspectionLoading &&
+        !updateLoading &&
+        operatorIsValid(formState.operator) &&
+        prevSavedPreInspection?.operatorId !== formState?.operator?.id &&
+        formState.status === PreInspectionFormStatus.Draft &&
+        formState.id
+      ) {
+        let operatorId = formState?.operator?.id || 0
+
+        updatePreInspection({
+          variables: {
+            preInspectionId: formState.id,
+            preInspectionInput: {
+              operatorId,
+            },
+          },
+        }).then(({ data }) => {
+          let updatedPreInspection = pickGraphqlData(data)
+
+          // The mutation returns a draft pre-inspection for the updated operator if one exists,
+          // so we must update the pre-inspection ID in the form state.
+          if (updatedPreInspection) {
+            formState.setInspectionId(updatedPreInspection.id)
+          }
+        })
+      }
+    }, [formState?.operator?.id, formState.status, formState.id, updatePreInspection])
 
     // Validate that the form has each dependent piece of data.
     const formCondition = useMemo(() => {

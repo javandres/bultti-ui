@@ -113,6 +113,7 @@ export enum InspectionStatus {
 export type Mutation = {
    __typename?: 'Mutation',
   createPreInspection?: Maybe<PreInspection>,
+  updatePreInspection: PreInspection,
   updateWeeklyMetersFromSource: ProcurementUnit,
   updateProcurementUnit: ProcurementUnit,
   createEquipment: Equipment,
@@ -128,6 +129,12 @@ export type Mutation = {
 
 export type MutationCreatePreInspectionArgs = {
   preInspection: PreInspectionInput
+};
+
+
+export type MutationUpdatePreInspectionArgs = {
+  preInspection: PreInspectionInput,
+  preInspectionId: Scalars['String']
 };
 
 

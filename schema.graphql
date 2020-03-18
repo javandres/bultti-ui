@@ -70,6 +70,7 @@ type Mutation {
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
+  updatePreInspection(preInspection: PreInspectionInput!, preInspectionId: String!): PreInspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!): ProcurementUnit!
 }
