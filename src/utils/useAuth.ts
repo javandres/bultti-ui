@@ -4,7 +4,7 @@ import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/queries/authQueries'
 import { User } from '../schema-types'
 import { navigate } from '@reach/router'
-import { useQueryData } from './useQueryData'
+import { useLazyQueryData } from './useLazyQueryData'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -16,8 +16,18 @@ export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [user, setUser] = useStateValue('user')
 
-  const [login, { data: loginUser, loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const { data: currentUser, loading: userLoading } = useQueryData<User>(currentUserQuery)
+  const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
+  const [fetchUser, { data: currentUser }] = useLazyQueryData<User>(currentUserQuery)
+
+  useEffect(() => {
+    if (currentUser) {
+      setUser(currentUser)
+      setAuthState(AuthState.AUTHENTICATED)
+    } else if (authState === AuthState.AUTHENTICATED) {
+      setUser(null)
+      setAuthState(AuthState.UNAUTHENTICATED)
+    }
+  }, [currentUser, setUser])
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -31,48 +41,37 @@ export const useAuth = (): [AuthState, boolean] => {
     [authState]
   )
 
-  const authLoading = useMemo(() => loginLoading || userLoading, [loginLoading, userLoading])
-
   useEffect(() => {
-    if (!user && currentUser && authState !== AuthState.AUTHENTICATED) {
-      setUser(currentUser)
-      setAuthState(AuthState.AUTHENTICATED)
+    if (user && authState === AuthState.AUTHENTICATED) {
+      console.log('User is authenticated')
       return
     }
 
-    if (user || authState !== AuthState.PENDING) {
-      return
-    }
-
-    if (loginUser) {
-      setUser(loginUser)
+    if (user && authState === AuthState.UNAUTHENTICATED) {
+      console.log('User found, state set to authenticated')
       setAuthState(AuthState.AUTHENTICATED)
-      navigate('/', { replace: true })
-    } else if (!authLoading) {
-      console.error('Login not successful.')
+      return
+    } else if (!user && authState === AuthState.AUTHENTICATED) {
+      console.log('No user, state set to unauthenticated')
       setAuthState(AuthState.UNAUTHENTICATED)
-    }
-  }, [user, loginUser, authState, currentUser])
-
-  useEffect(() => {
-    if (authState === AuthState.PENDING) {
       return
     }
 
     if (code && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
+      console.log('Code found, logging in.')
+
       login({
         variables: {
           authorizationCode: code,
           isTest: is_test === 'true',
         },
+      }).then(() => {
+        fetchUser()
+        return navigate('/', { replace: true })
       })
-    } else if (user && authState === AuthState.UNAUTHENTICATED) {
-      setAuthState(AuthState.AUTHENTICATED)
-    } else if (!user && authState === AuthState.AUTHENTICATED) {
-      setAuthState(AuthState.UNAUTHENTICATED)
     }
-  }, [code, authState, user, login])
+  }, [user, code, authState, login])
 
-  return [authState, authLoading]
+  return [authState, loginLoading]
 }
