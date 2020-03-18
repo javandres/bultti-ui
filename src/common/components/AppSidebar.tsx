@@ -15,6 +15,7 @@ import { Bus } from '../icons/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
 import { useMutationData } from '../../utils/useMutationData'
 import { logoutMutation } from '../queries/authQueries'
+import { pickGraphqlData } from '../../utils/pickGraphqlData'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -129,10 +130,9 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
 
   const onLogout = useCallback(async () => {
     const result = await logout()
+    let isLoggedOut = pickGraphqlData(result.data)
 
-    console.log(result)
-
-    if (result) {
+    if (isLoggedOut) {
       setUser(null)
     }
   }, [])
