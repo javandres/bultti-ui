@@ -17,7 +17,6 @@ export type Equipment = {
   operatorId: Scalars['Int'],
   uniqueVehicleId: Scalars['String'],
   operator: Operator,
-  make: Scalars['String'],
   model: Scalars['String'],
   registryNr?: Maybe<Scalars['String']>,
   registryDate?: Maybe<Scalars['BulttiDateTime']>,
@@ -58,10 +57,16 @@ export type EquipmentCatalogueQuota = {
   catalogueEndDate: Scalars['BulttiDateTime'],
 };
 
+export type EquipmentCatalogueQuotaInput = {
+  id?: Maybe<Scalars['ID']>,
+  percentageQuota: Scalars['Float'],
+  equipmentId: Scalars['String'],
+  equipmentCatalogueId: Scalars['String'],
+};
+
 export type EquipmentInput = {
   percentageQuota?: Maybe<Scalars['Float']>,
   vehicleId: Scalars['String'],
-  make: Scalars['String'],
   model: Scalars['String'],
   registryNr?: Maybe<Scalars['String']>,
   registryDate?: Maybe<Scalars['BulttiDateTime']>,
@@ -112,12 +117,12 @@ export type Mutation = {
   updateProcurementUnit: ProcurementUnit,
   createEquipment: Equipment,
   updateEquipment?: Maybe<Equipment>,
-  removeEquipmentFromCatalogue: Scalars['Boolean'],
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   updateEquipmentCatalogue: EquipmentCatalogue,
   createExecutionRequirement?: Maybe<ExecutionRequirement>,
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
+  removeEquipmentFromCatalogue: Scalars['Boolean'],
 };
 
 
@@ -151,12 +156,6 @@ export type MutationUpdateEquipmentArgs = {
 };
 
 
-export type MutationRemoveEquipmentFromCatalogueArgs = {
-  catalogueId: Scalars['String'],
-  equipmentId: Scalars['String']
-};
-
-
 export type MutationCreateEquipmentCatalogueArgs = {
   procurementUnitId: Scalars['String'],
   operatorId: Scalars['Int'],
@@ -179,6 +178,12 @@ export type MutationLoginArgs = {
   isTest?: Maybe<Scalars['Boolean']>,
   redirectUri?: Maybe<Scalars['String']>,
   authorizationCode: Scalars['String']
+};
+
+
+export type MutationRemoveEquipmentFromCatalogueArgs = {
+  catalogueId: Scalars['String'],
+  equipmentId: Scalars['String']
 };
 
 export type OperatingArea = {
@@ -282,6 +287,7 @@ export type Query = {
   singleEquipment?: Maybe<Equipment>,
   equipment: Array<Equipment>,
   equipmentByOperator: Array<Equipment>,
+  queryEquipmentFromSource?: Maybe<Equipment>,
   singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   equipmentCatalogue: Array<EquipmentCatalogue>,
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>,
@@ -328,6 +334,12 @@ export type QuerySingleEquipmentArgs = {
 
 export type QueryEquipmentByOperatorArgs = {
   operatorId: Scalars['Int']
+};
+
+
+export type QueryQueryEquipmentFromSourceArgs = {
+  operatorId: Scalars['Float'],
+  vehicleId: Scalars['String']
 };
 
 

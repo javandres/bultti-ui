@@ -1,25 +1,23 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useStateValue } from '../state/useAppState'
-import { navigate } from '@reach/router'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/queries/authQueries'
 import { User } from '../schema-types'
-import { useLazyQueryData } from './useLazyQueryData'
-import { pickGraphqlData } from './pickGraphqlData'
+import { navigate } from '@reach/router'
+import { useQueryData } from './useQueryData'
 
 export enum AuthState {
   AUTHENTICATED,
   UNAUTHENTICATED,
   PENDING,
-  UNKNOWN,
 }
 
 export const useAuth = (): [AuthState, boolean] => {
-  const [authState, setAuthState] = useState<AuthState>(AuthState.UNKNOWN)
+  const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [user, setUser] = useStateValue('user')
 
-  const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const [fetchCurrentUser, { loading: userLoading }] = useLazyQueryData<User>(currentUserQuery)
+  const [login, { data: loginUser, loading: loginLoading }] = useMutationData<User>(loginMutation)
+  const { data: currentUser, loading: userLoading } = useQueryData<User>(currentUserQuery)
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -33,48 +31,48 @@ export const useAuth = (): [AuthState, boolean] => {
     [authState]
   )
 
+  const authLoading = useMemo(() => loginLoading || userLoading, [loginLoading, userLoading])
+
   useEffect(() => {
-    if (code && ![AuthState.PENDING, AuthState.AUTHENTICATED].includes(authState)) {
+    if (!user && currentUser && authState !== AuthState.AUTHENTICATED) {
+      setUser(currentUser)
+      setAuthState(AuthState.AUTHENTICATED)
+      return
+    }
+
+    if (user || authState !== AuthState.PENDING) {
+      return
+    }
+
+    if (loginUser) {
+      setUser(loginUser)
+      setAuthState(AuthState.AUTHENTICATED)
+      navigate('/', { replace: true })
+    } else if (!authLoading) {
+      console.error('Login not successful.')
+      setAuthState(AuthState.UNAUTHENTICATED)
+    }
+  }, [user, loginUser, authState, currentUser])
+
+  useEffect(() => {
+    if (authState === AuthState.PENDING) {
+      return
+    }
+
+    if (code && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
       login({
         variables: {
           authorizationCode: code,
           isTest: is_test === 'true',
         },
-      }).then(({ data }) => {
-        const authenticatedUser = pickGraphqlData(data)
-        console.log(authenticatedUser)
-
-        if (authenticatedUser) {
-          setUser(authenticatedUser)
-          setAuthState(AuthState.AUTHENTICATED)
-        } else {
-          console.error('Login not successful.')
-          setAuthState(AuthState.UNAUTHENTICATED)
-        }
-
-        navigate('/', { replace: true })
       })
-    } else if (authState === AuthState.UNKNOWN) {
-      setAuthState(AuthState.PENDING)
-      fetchCurrentUser()
-        .then((getData) => getData())
-        .then((user: User | null) => {
-          console.log(user)
-
-          if (user) {
-            setUser(user)
-            setAuthState(AuthState.AUTHENTICATED)
-          } else {
-            setAuthState(AuthState.UNAUTHENTICATED)
-          }
-        })
-    } else if (user && authState !== AuthState.AUTHENTICATED) {
+    } else if (user && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.AUTHENTICATED)
     } else if (!user && authState === AuthState.AUTHENTICATED) {
       setAuthState(AuthState.UNAUTHENTICATED)
     }
-  }, [code, authState, user])
+  }, [code, authState, user, login])
 
-  return [authState, loginLoading || userLoading]
+  return [authState, authLoading]
 }

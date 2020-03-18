@@ -32,7 +32,6 @@ export type PropTypes = {
 
 const equipmentColumnLabels = {
   vehicleId: 'Kylkinumero',
-  make: 'Merkki',
   model: 'Malli',
   type: 'Tyyppi',
   percentageQuota: 'Osuus',
@@ -51,7 +50,7 @@ const defaultGetVal = (val) => val
 const getType = (key) => equipmentInputValues[key] || defaultGetVal
 
 const equipmentIsValid = (e: EquipmentInput): boolean =>
-  !!(e?.make && e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
+  !!(e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
 // Naming things...
 const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
@@ -63,7 +62,6 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
     const addDraftEquipment = useCallback(() => {
       const inputRow: EquipmentInput = {
         vehicleId: '',
-        make: '',
         model: '',
         type: '',
         exteriorColor: '',

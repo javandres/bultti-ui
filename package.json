@@ -49,7 +49,10 @@
     "rules": {
       "react-hooks/exhaustive-deps": "off",
       "no-unexpected-multiline": "off",
-      "no-restricted-globals": "off"
+      "no-restricted-globals": "off",
+      "no-var": "off",
+      "prefer-const": "off",
+      "no-redeclare": "off"
     }
   },
   "browserslist": {

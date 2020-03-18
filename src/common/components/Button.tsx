@@ -36,7 +36,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   outline: none;
   border-radius: 2.5rem;
   border: 1px solid
-    ${({ disabled, transparent = false, theme }) =>
+    ${({ disabled, transparent = false, theme = 'light' }) =>
       disabled ? 'var(--light-grey)' : transparent && theme === 'light' ? 'var(--blue)' : 'white'};
   background: ${({ disabled, transparent = false }) =>
     disabled ? 'var(--lighter-grey)' : transparent ? 'transparent' : 'var(--blue)'};
@@ -48,7 +48,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
       `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
       `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
     )};
-  color: ${({ disabled, transparent, theme }) =>
+  color: ${({ disabled, transparent, theme = 'light' }) =>
     disabled ? 'var(--grey)' : transparent && theme === 'light' ? 'var(--blue)' : 'white'};
   user-select: none;
   display: flex;
@@ -60,7 +60,7 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   transform: scale(1);
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 
-  ${({ disabled, transparent, theme }) =>
+  ${({ disabled, transparent, theme = 'light' }) =>
     !disabled
       ? css`
           &:hover {

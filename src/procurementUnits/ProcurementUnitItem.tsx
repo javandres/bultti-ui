@@ -111,14 +111,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading, refetch } = useQueryData<ProcurementUnitType>(
-      procurementUnitQuery,
-      {
+    const { data: procurementUnit, loading, refetch } =
+      useQueryData<ProcurementUnitType>(procurementUnitQuery, {
         variables: {
           procurementUnitId: id,
         },
-      }
-    )
+      }) || {}
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
       variables: { procurementUnitId: id },
@@ -278,6 +276,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       <Button
                         size={ButtonSize.SMALL}
                         transparent={true}
+                        theme="light"
                         onClick={onUpdateWeeklyMeters}>
                         Päivitä suoritteet JOREsta
                       </Button>

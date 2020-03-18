@@ -118,7 +118,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           }}>
           {children}
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} transparent={true} onClick={onCancel}>
+            <Button style={{ marginRight: '1rem' }} theme="light" transparent={true} onClick={onCancel}>
               Peruuta
             </Button>
             <Button disabled={doneDisabled} onClick={onDone}>

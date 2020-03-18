@@ -11,7 +11,6 @@ type Equipment {
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   exteriorColor: String!
   id: ID!
-  make: String!
   model: String!
   operator: Operator!
   operatorId: Int!
@@ -144,6 +143,7 @@ type Query {
   preInspections: [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDateTime!, operatorId: Int!): [ProcurementUnit!]!
+  queryEquipmentFromSource(operatorId: Float!, vehicleId: String!): Equipment
   seasons(date: BulttiDateTime!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
@@ -193,11 +193,17 @@ input EquipmentCatalogueInput {
   startDate: BulttiDateTime!
 }
 
+input EquipmentCatalogueQuotaInput {
+  equipmentCatalogueId: String!
+  equipmentId: String!
+  id: ID
+  percentageQuota: Float!
+}
+
 input EquipmentInput {
   co2: Float!
   emissionClass: Int!
   exteriorColor: String!
-  make: String!
   model: String!
   percentageQuota: Float
   registryDate: BulttiDateTime
