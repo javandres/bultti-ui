@@ -66,7 +66,11 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
           &:hover {
             background: ${transparent ? 'transparent' : 'var(--dark-blue)'};
             border-color: ${transparent && theme === 'dark' ? 'white' : 'var(--dark-blue)'};
-            color: ${transparent && theme === 'dark' ? 'white' : 'var(--dark-blue)'};
+            color: ${transparent && theme === 'dark'
+              ? 'white'
+              : !transparent
+              ? 'white'
+              : 'var(--dark-blue)'};
             transform: scale(1.02);
           }
         `

@@ -99,7 +99,7 @@ export type PropTypes = {
 }
 
 const procurementUnitLabels = {
-  weeklyMeters: 'Suoritevaatimus / viikko',
+  weeklyMeters: 'Suorite / viikko',
   medianAgeRequirement: 'Keski-ikä vaatimus',
 }
 

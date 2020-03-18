@@ -38,22 +38,19 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
     const operators: Operator[] = useMemo(() => {
       let operatorList = !data ? [] : compact([...data])
+      let userIsOperator = user && user?.role === UserRole.OperatorUser
 
       // Limit the selection to the currently logged in operator if applicable
-      if (user && user.role === UserRole.OperatorUser) {
+      if (userIsOperator) {
         operatorList = operatorList.filter((op) => operatorIsAuthorized(op, user))
       }
 
       // "..." and "all" options are not added if the operators list is only 1 long
 
-      if (
-        operatorList.length > 1 &&
-        allowAll &&
-        !['all', 'unselected'].includes(operatorList[0]?.id)
-      ) {
+      if (!userIsOperator && allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
         operatorList.unshift({ id: 'all', operatorName: text('general.app.all') })
       } else if (
-        operatorList.length > 1 &&
+        !userIsOperator &&
         !allowAll &&
         !['all', 'unselected'].includes(operatorList[0]?.id)
       ) {

@@ -25,15 +25,16 @@ const OperatorSelect = styled(SelectOperator)`
 `
 
 const GlobalOperatorFilter: React.FC = observer(() => {
-  const [operator, setOperatorFilter] = useStateValue('globalOperator')
-  const [user] = useStateValue('user')
+  var [operator, setOperatorFilter] = useStateValue('globalOperator')
+  var [user] = useStateValue('user')
+  var userIsOperator = user && user?.role === UserRole.OperatorUser
 
   return (
     <OperatorSelect
-      allowAll={true}
+      allowAll={!userIsOperator}
       onSelect={setOperatorFilter}
       value={operator}
-      label={user.role === UserRole.OperatorUser ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
+      label={userIsOperator ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
       theme="dark"
     />
   )
