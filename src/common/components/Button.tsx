@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components'
 import { useTooltip } from '../../utils/useTooltip'
 import Loading from './Loading'
 import { observer } from 'mobx-react-lite'
+import { ThemeTypes } from '../../types/common'
 
 export enum ButtonSize {
   SMALL,
@@ -15,6 +16,7 @@ type StyledButtonProps = {
   transparent?: boolean
   loading?: boolean
   disabled?: boolean
+  theme?: ThemeTypes // If the button's environment is light or dark
 } & React.PropsWithRef<JSX.IntrinsicElements['button']>
 
 const size2Style = (size: ButtonSize, ...values: string[]): string => {
@@ -34,7 +36,8 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   outline: none;
   border-radius: 2.5rem;
   border: 1px solid
-    ${({ disabled, transparent = false }) => (disabled ? 'var(--light-grey)' : 'var(--blue)')};
+    ${({ disabled, transparent = false, theme }) =>
+      disabled ? 'var(--light-grey)' : transparent && theme === 'light' ? 'var(--blue)' : 'white'};
   background: ${({ disabled, transparent = false }) =>
     disabled ? 'var(--lighter-grey)' : transparent ? 'transparent' : 'var(--blue)'};
   letter-spacing: -0.6px;
@@ -45,8 +48,8 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
       `0.4rem 1rem 0.4rem  ${loading ? '1.5rem' : '1rem'}`,
       `1rem 1.65em 1rem ${loading ? '2.1rem' : '1.65rem'}`
     )};
-  color: ${({ disabled, transparent }) =>
-    disabled ? 'var(--grey)' : transparent ? 'var(--blue)' : 'white'};
+  color: ${({ disabled, transparent, theme }) =>
+    disabled ? 'var(--grey)' : transparent && theme === 'light' ? 'var(--blue)' : 'white'};
   user-select: none;
   display: flex;
   align-items: center;
@@ -57,13 +60,13 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   transform: scale(1);
   transition: background-color 0.2s ease-out, transform 0.1s ease-out;
 
-  ${({ disabled, transparent }) =>
+  ${({ disabled, transparent, theme }) =>
     !disabled
       ? css`
           &:hover {
             background: ${transparent ? 'transparent' : 'var(--dark-blue)'};
-            border-color: var(--dark-blue);
-            color: ${transparent ? 'var(--dark-blue)' : 'white'};
+            border-color: ${transparent && theme === 'dark' ? 'white' : 'var(--dark-blue)'};
+            color: ${transparent && theme === 'dark' ? 'white' : 'var(--dark-blue)'};
             transform: scale(1.02);
           }
         `

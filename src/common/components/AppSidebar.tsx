@@ -153,6 +153,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           loading={logoutLoading}
           onClick={onLogout}
           size={ButtonSize.SMALL}
+          theme="dark"
           transparent>
           <Text>general.app.logout</Text>
         </Button>

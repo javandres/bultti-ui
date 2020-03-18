@@ -6,7 +6,7 @@ import { useMemo } from 'react'
 import { ApolloError, ApolloQueryResult } from 'apollo-client'
 
 type QueryExecutor<TData, TVariables> = [
-  (overrideOptions?: QueryLazyOptions<TVariables> | undefined) => void,
+  (overrideOptions?: QueryLazyOptions<TVariables> | undefined) => Promise<() => (TData | null)>,
   {
     data: null | TData
     loading: boolean
@@ -20,10 +20,16 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
-  const [execQuery, { loading, error, data, refetch }] = useLazyQuery<TData, TVariables>(
+  const [queryFn, { loading, error, data, refetch }] = useLazyQuery<TData, TVariables>(
     query,
     options
   )
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
+
+  const execQuery = async (opts?: QueryLazyOptions<TVariables>) => {
+    await queryFn(opts)
+    return () => pickedData
+  }
+
   return [execQuery, { data: pickedData, loading, error, refetch }]
 }

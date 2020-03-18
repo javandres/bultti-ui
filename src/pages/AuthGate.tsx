@@ -5,9 +5,8 @@ import { Colors } from '../utils/HSLColors'
 import { LoadingDisplay } from '../common/components/Loading'
 import { HSLLogoNoText } from '../common/icons/HSLLogoNoText'
 import { Login } from '../common/icons/Login'
-import { LoginButton } from '../common/components/common'
 import { Text } from '../utils/translate'
-import { ButtonSize } from '../common/components/Button'
+import { ButtonSize, StyledButton } from '../common/components/Button'
 import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
 
 const LoadingScreen = styled.div`
@@ -43,6 +42,19 @@ const Title = styled.h2`
   font-size: 5rem;
   margin: 1rem 0 0;
   text-align: center;
+`
+
+const LoginButton = styled(StyledButton).attrs(() => ({ theme: 'dark' }))`
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+
+  svg + .buttonText {
+    margin-left: 1rem;
+  }
 `
 
 type PropTypes = {

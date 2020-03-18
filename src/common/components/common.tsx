@@ -1,19 +1,5 @@
 import styled from 'styled-components'
-import { StyledButton } from './Button'
 import { ThemeTypes } from '../../types/common'
-
-export const LoginButton = styled(StyledButton)`
-  display: flex;
-  justify-content: center;
-  flex-direction: row;
-  align-items: center;
-  user-select: none;
-  cursor: pointer;
-
-  svg + .buttonText {
-    margin-left: 1rem;
-  }
-`
 
 export const Page = styled.div``
 
@@ -105,7 +91,7 @@ export const MessageView = styled.div`
   &:first-child {
     margin-top: 0;
   }
-  
+
   &:last-child {
     margin-bottom: 0;
   }

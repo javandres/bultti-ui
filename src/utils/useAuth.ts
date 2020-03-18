@@ -19,10 +19,7 @@ export const useAuth = (): [AuthState, boolean] => {
   const [user, setUser] = useStateValue('user')
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-
-  const [fetchCurrentUser, { data: fetchedCurrentUser, loading: userLoading }] = useLazyQueryData<
-    User
-  >(currentUserQuery)
+  const [fetchCurrentUser, { loading: userLoading }] = useLazyQueryData<User>(currentUserQuery)
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
@@ -37,15 +34,6 @@ export const useAuth = (): [AuthState, boolean] => {
   )
 
   useEffect(() => {
-    if (fetchedCurrentUser) {
-      setUser(fetchedCurrentUser)
-      setAuthState(AuthState.AUTHENTICATED)
-    } else if (authState === AuthState.PENDING) {
-      setAuthState(AuthState.UNAUTHENTICATED)
-    }
-  }, [fetchedCurrentUser])
-
-  useEffect(() => {
     if (code && ![AuthState.PENDING, AuthState.AUTHENTICATED].includes(authState)) {
       setAuthState(AuthState.PENDING)
       login({
@@ -55,6 +43,7 @@ export const useAuth = (): [AuthState, boolean] => {
         },
       }).then(({ data }) => {
         const authenticatedUser = pickGraphqlData(data)
+        console.log(authenticatedUser)
 
         if (authenticatedUser) {
           setUser(authenticatedUser)
@@ -66,15 +55,26 @@ export const useAuth = (): [AuthState, boolean] => {
 
         navigate('/', { replace: true })
       })
-    } else if (!fetchedCurrentUser && authState === AuthState.UNKNOWN) {
+    } else if (authState === AuthState.UNKNOWN) {
       setAuthState(AuthState.PENDING)
-      fetchCurrentUser() // Start the fetch, the data is handled in the effect above.
+      fetchCurrentUser()
+        .then((getData) => getData())
+        .then((user: User | null) => {
+          console.log(user)
+
+          if (user) {
+            setUser(user)
+            setAuthState(AuthState.AUTHENTICATED)
+          } else {
+            setAuthState(AuthState.UNAUTHENTICATED)
+          }
+        })
     } else if (user && authState !== AuthState.AUTHENTICATED) {
       setAuthState(AuthState.AUTHENTICATED)
     } else if (!user && authState === AuthState.AUTHENTICATED) {
       setAuthState(AuthState.UNAUTHENTICATED)
     }
-  }, [code, authState, user, fetchedCurrentUser])
+  }, [code, authState, user])
 
   return [authState, loginLoading || userLoading]
 }
