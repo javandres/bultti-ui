@@ -390,6 +390,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             <FormWrapper>
               <FormColumn width="100%" minWidth="510px">
                 <DepartureBlocks
+                  inspectionId={formState.id}
                   departureBlocks={formState.departureBlocks}
                   onChangeBlocks={formState.setDepartureBlocks}
                 />

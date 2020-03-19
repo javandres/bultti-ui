@@ -2,19 +2,10 @@
 // N = normal
 // I = to depot
 
-import { OperatingArea } from '../schema-types'
+import { OperatingArea, DayType } from '../schema-types'
+export { DayType } from '../schema-types'
 
 export type DepartureType = 'O' | 'N' | 'I'
-
-export enum DayType {
-  Ma = 'Ma',
-  Ti = 'Ti',
-  Ke = 'Ke',
-  To = 'To',
-  Pe = 'Pe',
-  La = 'La',
-  Su = 'Su',
-}
 
 export interface DepartureBlock {
   id: string

@@ -24,12 +24,13 @@ const DepartureBlocksView = styled.div`
 `
 
 type PropTypes = {
+  inspectionId: string
   departureBlocks: DepartureBlock[]
   onChangeBlocks: (departureBlocks: DepartureBlock[]) => void
 }
 
 const DepartureBlocks: React.FC<PropTypes> = observer(
-  ({ departureBlocks, onChangeBlocks }) => {
+  ({ inspectionId, departureBlocks, onChangeBlocks }) => {
     const removedBlocks = useRef<string[]>([])
 
     // Reset removedBlocks if there are no departureBlocks.
@@ -251,6 +252,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(
         {blockGroups.map((blockGroup, groupIndex) => (
           <DepartureBlockGroupItem
             key={`dayTypeGroup-${groupIndex}`}
+            inspectionId={inspectionId}
             blockGroup={blockGroup}
             onAddBlock={addDepartureBlock}
             onRemoveBlock={removeDepartureBlock}

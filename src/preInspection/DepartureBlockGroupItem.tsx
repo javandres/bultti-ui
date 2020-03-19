@@ -20,14 +20,16 @@ import { Button, TextButton } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 
 const uploadDepartureBlocksMutation = gql`
-  mutation uploadDepartureBlocks($file: Upload, $inspectionId: String!) {
-    uploadDepartureBlocks(file: $file, inspectionId: $inspectionId) {
+  mutation uploadDepartureBlocks($file: Upload!, $dayTypes: [DayType!]!, $inspectionId: String!) {
+    createDepartureBlockFromFile(file: $file, dayTypes: $dayTypes, preInspectionId: $inspectionId) {
       id
-      departureTime
-      direction
-      routeId
-      variant
-      vehicleId
+      dayType
+      departures {
+        departureTime
+        direction
+        routeId
+        variant
+      }
     }
   }
 `
@@ -71,7 +73,18 @@ const departureBlockColumnLabels = {
   vehicleId: 'Kylkinro',
 }
 
+const departureColumnLabels = {
+  id: 'ID',
+  dayType: 'Päivä',
+  departureTime: 'Aika',
+  direction: 'Suunta',
+  routeId: 'Reitti',
+  variant: 'Variantti',
+  vehicleId: 'Kylkinro',
+}
+
 type PropTypes = {
+  inspectionId: string
   blockGroup: DepartureBlockGroup
   onAddBlock: (block: DepartureBlock) => void
   onRemoveBlock: (block: DepartureBlock) => void
@@ -81,14 +94,7 @@ type PropTypes = {
 }
 
 const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
-  ({
-    blockGroup,
-    onAddBlock,
-    onRemoveBlock,
-    onAddDayType,
-    onRemoveDayType,
-    onRemoveAllBlocks,
-  }) => {
+  ({ blockGroup, onAddBlock, onRemoveBlock, onAddDayType, onRemoveDayType, onRemoveAllBlocks }) => {
     const groupHasHiddenBlocks = useRef(false)
 
     const [blocksVisible, setBlocksVisibility] = useState(false)
@@ -98,14 +104,19 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     const [fileValue, setFileValue] = useState<File[]>([])
     const { dayTypes, groupIndex, blocks } = blockGroup
 
+    const dayTypeIds: DayType[] = Object.keys(dayTypes).map((dt) => DayType[dt])
+
     // Create an upload handler for uploading the departure block file.
     const uploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
         inspectionId: '123',
+        dayTypes: dayTypeIds,
       },
     })
 
     const [, { data: departureBlockData, loading: departureBlocksLoading }] = uploader
+
+    console.log(departureBlockData)
 
     // Handle day type selection.
     const onDayTypeChange = useCallback(

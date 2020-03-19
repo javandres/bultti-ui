@@ -7,8 +7,53 @@ export type Scalars = {
   Int: number,
   Float: number,
   BulttiDateTime: any,
+  Upload: any,
 };
 
+
+export enum DayType {
+  Ma = 'Ma',
+  Ti = 'Ti',
+  Ke = 'Ke',
+  To = 'To',
+  Pe = 'Pe',
+  La = 'La',
+  Su = 'Su'
+}
+
+export type Departure = {
+   __typename?: 'Departure',
+  id: Scalars['ID'],
+  departureTime: Scalars['String'],
+  direction: Scalars['String'],
+  routeId: Scalars['String'],
+  variant: Scalars['String'],
+  equipment: Equipment,
+  blockFile: Scalars['String'],
+  departureBlock: Array<DepartureBlock>,
+};
+
+export type DepartureBlock = {
+   __typename?: 'DepartureBlock',
+  id: Scalars['ID'],
+  dayType: DayType,
+  operator: Operator,
+  preInspection: PreInspection,
+  departures: Array<Departure>,
+};
+
+export type DepartureBlockInput = {
+  dayType: DayType,
+  departures: Array<DepartureInput>,
+};
+
+export type DepartureInput = {
+  departureTime: Scalars['String'],
+  direction: Scalars['String'],
+  routeId: Scalars['String'],
+  variant: Scalars['String'],
+  vehicleId: Scalars['String'],
+};
 
 export type Equipment = {
    __typename?: 'Equipment',
@@ -24,6 +69,7 @@ export type Equipment = {
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>,
+  departures: Array<Departure>,
 };
 
 export type EquipmentCatalogue = {
@@ -134,6 +180,7 @@ export type Mutation = {
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
   removeEquipmentFromCatalogue: Scalars['Boolean'],
+  createDepartureBlockFromFile?: Maybe<DepartureBlock>,
 };
 
 
@@ -203,6 +250,13 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
   equipmentId: Scalars['String']
 };
 
+
+export type MutationCreateDepartureBlockFromFileArgs = {
+  preInspectionId: Scalars['String'],
+  dayTypes: Array<DayType>,
+  file: Scalars['Upload']
+};
+
 export type OperatingArea = {
    __typename?: 'OperatingArea',
   id: Scalars['Int'],
@@ -225,6 +279,7 @@ export type Operator = {
   procurementUnits: Array<ProcurementUnit>,
   equipment: Array<Equipment>,
   equipmentCatalogues: Array<EquipmentCatalogue>,
+  departureBlocks: Array<DepartureBlock>,
 };
 
 export type PreInspection = {
@@ -234,6 +289,7 @@ export type PreInspection = {
   operator: Operator,
   season?: Maybe<Season>,
   executionRequirements?: Maybe<Array<ExecutionRequirement>>,
+  departureBlocks: Array<DepartureBlock>,
   startDate?: Maybe<Scalars['BulttiDateTime']>,
   endDate?: Maybe<Scalars['BulttiDateTime']>,
   productionStart?: Maybe<Scalars['BulttiDateTime']>,
@@ -315,6 +371,8 @@ export type Query = {
   user?: Maybe<User>,
   users: Array<User>,
   currentUser?: Maybe<User>,
+  departureBlock?: Maybe<DepartureBlock>,
+  departureBlocksForPreInspection: Array<DepartureBlock>,
 };
 
 
@@ -389,6 +447,16 @@ export type QueryUserArgs = {
   userId: Scalars['Int']
 };
 
+
+export type QueryDepartureBlockArgs = {
+  departureBlockId: Scalars['String']
+};
+
+
+export type QueryDepartureBlocksForPreInspectionArgs = {
+  preInspectionId: Scalars['String']
+};
+
 export type Season = {
    __typename?: 'Season',
   id: Scalars['ID'],
@@ -397,6 +465,7 @@ export type Season = {
   endDate: Scalars['BulttiDateTime'],
   preInspections: Array<PreInspection>,
 };
+
 
 export type User = {
    __typename?: 'User',

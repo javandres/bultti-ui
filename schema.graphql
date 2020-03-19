@@ -5,7 +5,27 @@ schema {
   mutation: Mutation
 }
 
+type Departure {
+  blockFile: String!
+  departureBlock: [DepartureBlock!]!
+  departureTime: String!
+  direction: String!
+  equipment: Equipment!
+  id: ID!
+  routeId: String!
+  variant: String!
+}
+
+type DepartureBlock {
+  dayType: DayType!
+  departures: [Departure!]!
+  id: ID!
+  operator: Operator!
+  preInspection: PreInspection!
+}
+
 type Equipment {
+  departures: [Departure!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   exteriorColor: String!
@@ -71,6 +91,7 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
+  createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload!, preInspectionId: String!): DepartureBlock
   createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
@@ -93,6 +114,7 @@ type OperatingArea {
 }
 
 type Operator {
+  departureBlocks: [DepartureBlock!]!
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: Int!
@@ -105,6 +127,7 @@ type Operator {
 type PreInspection {
   createdAt: BulttiDateTime!
   createdBy: User!
+  departureBlocks: [DepartureBlock!]!
   endDate: BulttiDateTime
   executionRequirements: [ExecutionRequirement!]
   id: ID!
@@ -141,6 +164,8 @@ type ProcurementUnitRoute {
 
 type Query {
   currentUser: User
+  departureBlock(departureBlockId: String!): DepartureBlock
+  departureBlocksForPreInspection(preInspectionId: String!): [DepartureBlock!]!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -182,6 +207,16 @@ type User {
   role: UserRole!
 }
 
+enum DayType {
+  Ke
+  La
+  Ma
+  Pe
+  Su
+  Ti
+  To
+}
+
 enum InspectionStatus {
   Draft
   InProduction
@@ -197,6 +232,19 @@ enum UserRole {
   BLOCKED_USER
   HSL_USER
   OPERATOR_USER
+}
+
+input DepartureBlockInput {
+  dayType: DayType!
+  departures: [DepartureInput!]!
+}
+
+input DepartureInput {
+  departureTime: String!
+  direction: String!
+  routeId: String!
+  variant: String!
+  vehicleId: String!
 }
 
 input EquipmentCatalogueInput {
@@ -261,3 +309,6 @@ input ProcurementUnitRouteInput {
 
 "A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).."
 scalar BulttiDateTime
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload
