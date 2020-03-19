@@ -75,7 +75,7 @@ const ColumnHeaderCell = styled(TableCell)`
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
-  padding: ${(p) => (p.footerCell ? '0.75rem' : '0.5rem')} 0.15rem;
+  padding: 0.5rem 0.15rem;
   border: 0;
   background: transparent;
   display: block;

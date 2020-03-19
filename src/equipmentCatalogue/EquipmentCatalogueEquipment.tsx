@@ -1,11 +1,15 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import { removeEquipmentMutation } from './equipmentQuery'
 import Table from '../common/components/Table'
-import { MessageView, SubSectionHeading } from '../common/components/common'
+import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
 import EditEquipment from './EditEquipment'
+import ToggleButton from '../common/input/ToggleButton'
+import { groupBy, omit } from 'lodash'
+import { Equipment } from '../schema-types'
+import { strval } from '../util/strval'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -24,9 +28,19 @@ export const equipmentColumnLabels = {
   registryDate: 'Rek.päivä',
 }
 
+export const groupedEquipmentColumnLabels = {
+  model: 'Malli',
+  type: 'Tyyppi',
+  percentageQuota: 'Osuus',
+  emissionClass: 'Euroluokka',
+  registryDate: 'Rek.päivä',
+  amount: 'Määrä',
+}
+
 // Naming things...
 const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, onEquipmentChanged }) => {
+    let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
 
     const onRemoveEquipment = useCallback(
@@ -44,23 +58,70 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       [onEquipmentChanged, removeEquipment]
     )
 
+    const onToggleEquipmentGrouped = useCallback((checked: boolean) => {
+      setEquipmentGrouped(checked)
+    }, [])
+
+    const equipmentGroups: Array<Omit<Equipment, 'vehicleId' | 'registryNr'> & {
+      amount: number
+    }> = useMemo(() => {
+      let grouped = groupBy(
+        equipment,
+        ({ model, emissionClass, type, registryDate }) =>
+          model + strval(emissionClass) + type + strval(registryDate)
+      )
+
+      return Object.values(grouped).map((equipmentGroup) => {
+        return {
+          ...omit(equipmentGroup[0], 'vehicleId', 'registryNr'),
+          percentageQuota:
+            equipmentGroup.reduce((total, item) => {
+              total += item?.percentageQuota || 0
+              return total
+            }, 0) + '%',
+          amount: equipmentGroup.length,
+        }
+      })
+    }, [equipment])
+
     return (
       <>
         {equipment.length !== 0 ? (
           <>
             <SubSectionHeading>Ajoneuvot</SubSectionHeading>
+            <FlexRow style={{ marginBottom: '1rem' }}>
+              <ToggleButton
+                name="grouped-equipment"
+                value="grouped"
+                checked={groupEquipment}
+                onChange={onToggleEquipmentGrouped}>
+                Näytä ryhmissä
+              </ToggleButton>
+            </FlexRow>
             <Table
-              items={equipment}
-              columnLabels={equipmentColumnLabels}
+              items={groupEquipment ? equipmentGroups : equipment}
+              columnLabels={groupEquipment ? groupedEquipmentColumnLabels : equipmentColumnLabels}
               onRemoveRow={(item) => () => onRemoveEquipment(item)}
-              getColumnTotal={(col) =>
-                col === 'percentageQuota'
-                  ? equipment.reduce((total, item) => {
-                      total += item?.percentageQuota
-                      return total
-                    }, 0) + '%'
-                  : ''
-              }
+              getColumnTotal={(col) => {
+                switch (col) {
+                  case 'percentageQuota':
+                    return (
+                      equipment.reduce((total, item) => {
+                        total += item?.percentageQuota || 0
+                        return total
+                      }, 0) + '%'
+                    )
+                  case 'amount':
+                    return (
+                      equipmentGroups.reduce((total, item) => {
+                        total += item?.amount || 0
+                        return total
+                      }, 0) + ' kpl'
+                    )
+                  default:
+                    return ''
+                }
+              }}
             />
           </>
         ) : (
