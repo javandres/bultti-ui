@@ -61,7 +61,7 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
 
     let [createEquipment] = useMutationData(createEquipmentMutation)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
-    let [searchEquipment, { data: foundEquipment, loading: searchLoading }] = useLazyQueryData<
+    let [searchEquipment, { data: foundEquipment }] = useLazyQueryData<
       Equipment
     >(searchEquipmentQuery)
 

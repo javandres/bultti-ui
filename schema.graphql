@@ -70,7 +70,7 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
-  createEquipment(catalogueId: String, equipment: EquipmentInput!, operatorId: Int!): Equipment!
+  createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
@@ -214,7 +214,7 @@ input EquipmentInput {
   emissionClass: Int!
   exteriorColor: String!
   model: String!
-  percentageQuota: Float
+  percentageQuota: Float!
   registryDate: BulttiDateTime
   registryNr: String
   type: String!

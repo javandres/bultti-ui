@@ -32,7 +32,7 @@ export const createEquipmentMutation = gql`
   mutation createEquipmentMutation(
     $operatorId: Int!
     $equipmentInput: EquipmentInput!
-    $catalogueId: String
+    $catalogueId: String!
   ) {
     createEquipment(
       operatorId: $operatorId

@@ -64,7 +64,7 @@ export type EquipmentCatalogueQuotaInput = {
 };
 
 export type EquipmentInput = {
-  percentageQuota?: Maybe<Scalars['Float']>,
+  percentageQuota: Scalars['Float'],
   vehicleId: Scalars['String'],
   model: Scalars['String'],
   registryNr?: Maybe<Scalars['String']>,
@@ -159,7 +159,7 @@ export type MutationUpdateProcurementUnitArgs = {
 
 
 export type MutationCreateEquipmentArgs = {
-  catalogueId?: Maybe<Scalars['String']>,
+  catalogueId: Scalars['String'],
   operatorId: Scalars['Int'],
   equipment: EquipmentInput
 };

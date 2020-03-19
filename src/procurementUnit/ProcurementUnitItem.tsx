@@ -84,6 +84,16 @@ const ProcurementUnitHeading = styled.h4`
   align-items: center;
 `
 
+export const HeaderHeading = styled.h5`
+  font-size: 0.875rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+`
+
 export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
@@ -213,18 +223,18 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             <HeaderRow expanded={isExpanded}>
               <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
               <HeaderSection>
-                <SubSectionHeading>Reitit</SubSectionHeading>
+                <HeaderHeading>Reitit</HeaderHeading>
                 {(routes || [])
                   .map((route) => route?.routeId)
                   .filter((routeId) => !!routeId)
                   .join(', ')}
               </HeaderSection>
               <HeaderSection>
-                <SubSectionHeading>Kilometrejä viikossa</SubSectionHeading>
+                <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
                 {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
               </HeaderSection>
               <HeaderSection>
-                <SubSectionHeading>Voimassaoloaika</SubSectionHeading>
+                <HeaderHeading>Voimassaoloaika</HeaderHeading>
                 {procurementUnit.startDate} - {procurementUnit.endDate}
               </HeaderSection>
               <ExpandToggle
