@@ -1,8 +1,8 @@
 import { action, extendObservable, observable } from 'mobx'
-import { UIActions } from '../types/state'
-import { Language } from '../utils/translate'
+import { UIActions } from '../type/state'
+import { Language } from '../util/translate'
 import { Operator, Season } from '../schema-types'
-import { operatorIsAuthorized } from '../utils/operatorIsAuthorized'
+import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
 
 // Language state is separate because some parts of the app that aren't
 // in the scope of the React component tree may want to use it.

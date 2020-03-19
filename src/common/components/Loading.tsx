@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
-import { HSLLogoNoText } from '../icons/HSLLogoNoText'
-import { Colors } from '../../utils/HSLColors'
+import { HSLLogoNoText } from '../icon/HSLLogoNoText'
+import { Colors } from '../../util/HSLColors'
 import { observer } from 'mobx-react-lite'
 
 const spin = keyframes`

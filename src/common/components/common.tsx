@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ThemeTypes } from '../../types/common'
+import { ThemeTypes } from '../../type/common'
 
 export const Page = styled.div``
 

@@ -1,4 +1,4 @@
-import { ActionMap, IAppState, Initializer, StoreContext } from '../types/state'
+import { ActionMap, IAppState, Initializer, StoreContext } from '../type/state'
 import { observable } from 'mobx'
 
 export const createState = async (

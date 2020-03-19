@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
-import { CrossThick } from '../icons/CrossThick'
+import { CrossThick } from '../icon/CrossThick'
 
 const TableView = styled.div`
   width: calc(100% + 2rem);

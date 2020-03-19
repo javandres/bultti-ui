@@ -1,4 +1,4 @@
-import { DayType, DepartureBlock } from '../types/inspection'
+import { DayType, DepartureBlock } from '../type/inspection'
 
 export type DayTypeGroup = {
   [DayType.Ma]: boolean

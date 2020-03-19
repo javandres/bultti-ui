@@ -1,9 +1,9 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
-import { useTooltip } from '../../utils/useTooltip'
+import { useTooltip } from '../../util/useTooltip'
 import Loading from './Loading'
 import { observer } from 'mobx-react-lite'
-import { ThemeTypes } from '../../types/common'
+import { ThemeTypes } from '../../type/common'
 
 export enum ButtonSize {
   SMALL,

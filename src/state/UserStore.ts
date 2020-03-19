@@ -1,5 +1,5 @@
 import { action, extendObservable } from 'mobx'
-import { UserActions } from '../types/state'
+import { UserActions } from '../type/state'
 import { User } from '../schema-types'
 
 interface UserState {

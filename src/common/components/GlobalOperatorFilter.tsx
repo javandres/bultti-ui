@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import SelectOperator from '../inputs/SelectOperator'
+import SelectOperator from '../input/SelectOperator'
 import styled from 'styled-components'
 import { UserRole } from '../../schema-types'
 

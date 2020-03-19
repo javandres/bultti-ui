@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { DayType, DepartureBlock } from '../types/inspection'
+import { DayType, DepartureBlock } from '../type/inspection'
 import { difference, flatten } from 'lodash'
 import { Button } from '../common/components/Button'
 import {

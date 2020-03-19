@@ -2,7 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import styled from 'styled-components'
-import SelectSeason from '../inputs/SelectSeason'
+import SelectSeason from '../input/SelectSeason'
 
 const SeasonSelect = styled(SelectSeason)`
   > label {

@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
-import { useOrderedValues } from '../../utils/useOrderedValues'
+import { useOrderedValues } from '../../util/useOrderedValues'
 
 const ValueDisplayView = styled.div`
   display: flex;

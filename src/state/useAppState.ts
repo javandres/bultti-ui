@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { StateContext } from './stateContext'
 import { action } from 'mobx'
-import { StoreContext } from '../types/state'
+import { StoreContext } from '../type/state'
 import { useObserver } from 'mobx-react-lite'
 
 const createDumbAction = (state, stateKey) =>

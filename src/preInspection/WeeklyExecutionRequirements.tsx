@@ -5,8 +5,8 @@ import { endOfWeek, format, getISOWeek, parseISO } from 'date-fns'
 import { OperatingAreaName } from '../schema-types'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { Button, ButtonSize } from '../common/components/Button'
-import { orderByNumber } from '../utils/orderByNumber'
-import { ExecutionRequirement } from '../types/inspection'
+import { orderByNumber } from '../util/orderByNumber'
+import { ExecutionRequirement } from '../type/inspection'
 import { toJS } from 'mobx'
 
 const WeeklyExecutionRequirementsView = styled.div``

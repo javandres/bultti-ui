@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Inspection } from '../types/inspection'
+import { Inspection } from '../type/inspection'
 import { orderBy } from 'lodash'
 import { Heading } from '../common/components/common'
 import InspectionItem from '../common/components/InspectionItem'

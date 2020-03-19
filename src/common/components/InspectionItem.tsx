@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Inspection } from '../../types/inspection'
-import { useQueryData } from '../../utils/useQueryData'
+import { Inspection } from '../../type/inspection'
+import { useQueryData } from '../../util/useQueryData'
 import gql from 'graphql-tag'
 
 const operatorQuery = gql`

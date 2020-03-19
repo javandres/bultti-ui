@@ -9,27 +9,27 @@ import {
   MessageContainer,
   SectionHeading,
 } from '../common/components/common'
-import SelectOperator, { operatorIsValid } from '../common/inputs/SelectOperator'
-import SelectSeason from '../common/inputs/SelectSeason'
-import { DepartureBlock, ExecutionRequirement } from '../types/inspection'
+import SelectOperator, { operatorIsValid } from '../common/input/SelectOperator'
+import SelectSeason from '../common/input/SelectSeason'
+import { DepartureBlock, ExecutionRequirement } from '../type/inspection'
 import { Operator, Season } from '../schema-types'
-import SelectWeek from '../common/inputs/SelectWeek'
+import SelectWeek from '../common/input/SelectWeek'
 import { IObservableArray, observable } from 'mobx'
-import SelectDate from '../common/inputs/SelectDate'
+import SelectDate from '../common/input/SelectDate'
 import { addDays, endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
-import { toISODate } from '../utils/toISODate'
+import { toISODate } from '../util/toISODate'
 import { PageLoading } from '../common/components/Loading'
-import Input from '../common/inputs/Input'
+import Input from '../common/input/Input'
 import DepartureBlocks from './DepartureBlocks'
 import ExecutionRequirements from './ExecutionRequirements'
-import { useMutationData } from '../utils/useMutationData'
+import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
   updatePreInspectionMutation,
 } from './createPreInspectionMutation'
-import ProcurementUnits from '../procurementUnits/ProcurementUnits'
+import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { DATE_FORMAT } from '../constants'
-import { pickGraphqlData } from '../utils/pickGraphqlData'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const currentDate = new Date()
 

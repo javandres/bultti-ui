@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { OperatingAreaName, ProcurementUnit as ProcurementUnitType } from '../schema-types'
-import { round } from '../utils/round'
+import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { omit } from 'lodash'
 
