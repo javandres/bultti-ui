@@ -17,10 +17,6 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-const TableHeading = styled.h5`
-  margin-bottom: 0.5rem;
-`
-
 export type AreaPropTypes = {
   area: OperatingAreaName
   procurementUnits: ProcurementUnitType[]

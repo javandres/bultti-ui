@@ -185,8 +185,10 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
         )}
         {!pendingEquipment && (
           <FlexRow>
-            <Button onClick={() => addDraftEquipment()}>Lisää ajoneuvo</Button>
-            <Button onClick={() => setSearchActive(true)}>Hae ja liitä ajoneuvo</Button>
+            <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
+              Lisää ajoneuvo
+            </Button>
+            <Button onClick={() => setSearchActive(true)}>Hae ajoneuvo</Button>
           </FlexRow>
         )}
         {pendingEquipment && (
