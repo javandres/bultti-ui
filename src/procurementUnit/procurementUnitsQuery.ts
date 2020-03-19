@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { EquipmentFragment } from './equipmentQuery'
+import { EquipmentFragment } from '../equipmentCatalogue/equipmentQuery'
 
 export const ProcurementUnitFragment = gql`
   fragment ProcurementUnitFragment on ProcurementUnit {

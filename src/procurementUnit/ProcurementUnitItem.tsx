@@ -8,7 +8,7 @@ import {
 } from '../schema-types'
 import { ArrowDown } from '../common/icon/ArrowDown'
 import { round } from '../util/round'
-import EquipmentCatalogue from './EquipmentCatalogue'
+import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
 import { useQueryData } from '../util/useQueryData'
 import {
