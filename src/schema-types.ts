@@ -83,6 +83,7 @@ export type EquipmentSearchResult = {
   type: Scalars['String'],
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
+  _exists: Scalars['Boolean'],
 };
 
 export type ExecutionRequirement = {

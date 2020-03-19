@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Equipment, EquipmentInput } from '../schema-types'
+import { EquipmentInput } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import {
   createEquipmentMutation,
@@ -19,6 +18,7 @@ import Input from '../common/input/Input'
 import InputForm from '../common/input/InputForm'
 import { numval } from '../util/numval'
 import { emptyOrNumber } from '../util/emptyOrNumber'
+import { omit } from 'lodash'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -48,12 +48,20 @@ const getType = (key) => equipmentInputValues[key] || defaultGetVal
 const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
+type PendingEquipment = { _exists: boolean } & EquipmentInput
+
 // Naming things...
 const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, onEquipmentChanged }) => {
-    let [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
+    let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
+
     let [searchActive, setSearchActive] = useState(false)
     let [searchVehicleId, setSearchVehicleId] = useState('')
+
+    let [
+      searchEquipment,
+      { data: foundEquipment, loading: searchLoading, called: searchCalled },
+    ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
 
     let onChangeSearchValue = useCallback((value) => {
       setSearchVehicleId(value)
@@ -61,9 +69,6 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
 
     let [createEquipment] = useMutationData(createEquipmentMutation)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
-    let [searchEquipment, { data: foundEquipment }] = useLazyQueryData<
-      Equipment
-    >(searchEquipmentQuery)
 
     let doSearch = useCallback(() => {
       if (searchVehicleId) {
@@ -76,8 +81,8 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       }
     }, [searchEquipment, searchVehicleId, operatorId])
 
-    let addDraftEquipment = useCallback((initialValues?: Equipment | EquipmentInput) => {
-      const inputRow: EquipmentInput = {
+    let addDraftEquipment = useCallback((initialValues?: PendingEquipment) => {
+      const inputRow: PendingEquipment = {
         vehicleId: initialValues?.vehicleId || '',
         model: initialValues?.model || '',
         type: initialValues?.type || '',
@@ -86,6 +91,7 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
         registryDate: initialValues?.registryDate || '',
         registryNr: initialValues?.registryNr || '',
         percentageQuota: 0,
+        _exists: initialValues?._exists || false,
       }
 
       setPendingEquipment(inputRow)
@@ -95,7 +101,12 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       if (foundEquipment && searchActive) {
         setSearchActive(false)
         setSearchVehicleId('')
-        addDraftEquipment(foundEquipment)
+
+        if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
+          addDraftEquipment(foundEquipment)
+        } else {
+          alert('Ajoneuvo on jo lisätty tähän kalustoluetteloon.')
+        }
       }
     }, [foundEquipment, searchActive])
 
@@ -115,7 +126,7 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       await createEquipment({
         variables: {
           operatorId,
-          equipmentInput: pendingEquipment,
+          equipmentInput: omit(pendingEquipment, '_exists'),
           catalogueId: catalogueId,
         },
       })
@@ -184,6 +195,11 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
             <ItemForm
               item={pendingEquipment}
               labels={equipmentColumnLabels}
+              readOnly={
+                pendingEquipment._exists
+                  ? Object.keys(equipmentColumnLabels).filter((key) => key !== 'percentageQuota')
+                  : false
+              }
               onChange={onEquipmentInputChange}
               onDone={onAddEquipment}
               onCancel={onCancelPendingEquipment}
@@ -206,8 +222,11 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
                   label: 'Kylkinumero',
                   field: <Input onChange={onChangeSearchValue} value={searchVehicleId} />,
                 },
-              ]}
-            />
+              ]}>
+              {searchVehicleId && searchCalled && !foundEquipment && !searchLoading && (
+                <MessageView>Kalustoa ei löydetty.</MessageView>
+              )}
+            </InputForm>
           </>
         )}
       </>

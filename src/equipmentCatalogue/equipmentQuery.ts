@@ -24,6 +24,7 @@ export const searchEquipmentQuery = gql`
       registryNr
       emissionClass
       vehicleId
+      _exists
     }
   }
 `

@@ -41,6 +41,7 @@ const ValueLabel = styled.label`
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   display: block;
+  user-select: none;
 `
 
 const ValueView = styled.div``

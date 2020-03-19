@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { TextInput } from './Input'
 import { Button } from '../components/Button'
-import { CellContent } from '../components/Table'
 import { useOrderedValues } from '../../util/useOrderedValues'
 
 export const ControlledFormView = styled.div`
@@ -15,9 +14,9 @@ export const ControlledFormView = styled.div`
   border-bottom: 0;
   border-radius: 0.5rem;
   background: white;
-  box-shadow: 0 0 5px 0 rgba(0,20,50,0.1);
+  box-shadow: 0 0 5px 0 rgba(0, 20, 50, 0.1);
 
-  > *:nth-child(2n+2n) {
+  > *:nth-child(2n + 2n) {
     background-color: #fafafa;
   }
 
@@ -45,6 +44,15 @@ export const FieldLabel = styled.label`
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   display: block;
+  user-select: none;
+`
+
+export const FieldValueDisplay = styled.div`
+  padding: 0.5rem 0.15rem;
+  border: 0;
+  background: transparent;
+  display: block;
+  width: 100%;
 `
 
 export const ActionsWrapper = styled.div`
@@ -61,7 +69,7 @@ export type PropTypes<ItemType = any> = {
   onChange: (key: string, value: string) => void
   onDone: () => void
   onCancel: () => void
-  readOnly?: boolean
+  readOnly?: boolean | string[]
   doneLabel?: string
   doneDisabled?: boolean
   labels?: { [key in keyof ItemType]: string }
@@ -71,7 +79,7 @@ export type PropTypes<ItemType = any> = {
   renderInput?: (val: any, key: string, onChange: (val: any) => void) => React.ReactChild
 }
 
-const renderReadOnlyField = (val) => <CellContent>{val}</CellContent>
+const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
 
 const defaultRenderInput = (val, key, onChange) => (
   <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
@@ -101,12 +109,18 @@ const ItemForm: React.FC<PropTypes> = observer(
       [onChange]
     )
 
+    let isReadOnly = useCallback(
+      (key) =>
+        readOnly === true ? true : Array.isArray(readOnly) ? readOnly.includes(key) : false,
+      [readOnly]
+    )
+
     return (
       <ControlledFormView>
         {itemEntries.map(([key, val], index) => (
           <FieldWrapper key={key}>
             <FieldLabel>{get(labels, key, key)}</FieldLabel>
-            {readOnly ? renderReadOnlyField(val) : renderInput(val, key, onValueChange(key))}
+            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(val, key, onValueChange(key))}
           </FieldWrapper>
         ))}
         <FieldWrapper
@@ -118,7 +132,11 @@ const ItemForm: React.FC<PropTypes> = observer(
           }}>
           {children}
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} theme="light" transparent={true} onClick={onCancel}>
+            <Button
+              style={{ marginRight: '1rem' }}
+              theme="light"
+              transparent={true}
+              onClick={onCancel}>
               Peruuta
             </Button>
             <Button disabled={doneDisabled} onClick={onDone}>

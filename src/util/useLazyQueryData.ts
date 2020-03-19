@@ -12,6 +12,7 @@ type QueryExecutor<TData, TVariables> = [
     loading: boolean
     error?: ApolloError
     refetch: (variables?: TVariables | undefined) => Promise<ApolloQueryResult<TData>>
+    called: boolean
   }
 ]
 
@@ -20,10 +21,10 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
-  const [queryFn, { loading, error, data, refetch }] = useLazyQuery<TData, TVariables>(
+  const [queryFn, { loading, error, data, refetch, called }] = useLazyQuery<TData, TVariables>(
     query,
     options
   )
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
-  return [queryFn, { data: pickedData, loading, error, refetch }]
+  return [queryFn, { data: pickedData, loading, error, refetch, called }]
 }

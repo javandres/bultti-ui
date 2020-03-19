@@ -44,6 +44,7 @@ type EquipmentCatalogueQuota {
 }
 
 type EquipmentSearchResult {
+  _exists: Boolean!
   emissionClass: Int!
   exteriorColor: String!
   model: String!

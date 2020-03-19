@@ -88,6 +88,7 @@ export const HeaderHeading = styled.h5`
   font-size: 0.875rem;
   font-weight: bold;
   margin-bottom: 0.5rem;
+  user-select: none;
 
   &:first-child {
     margin-top: 0;

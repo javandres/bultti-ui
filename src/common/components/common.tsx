@@ -63,6 +63,7 @@ export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
   font-weight: bold;
   text-transform: uppercase;
   margin-bottom: 1rem;
+  user-select: none;
   color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
 
   &:first-child {
@@ -73,12 +74,14 @@ export const FormHeading = styled.h5<{ theme: ThemeTypes }>`
 export const SectionHeading = styled(FormHeading)`
   margin-top: 2rem;
   margin-left: 1rem;
+  user-select: none;
 `
 
 export const SubSectionHeading = styled.h5`
   font-size: 1.25rem;
   font-weight: normal;
   margin-bottom: 1rem;
+  user-select: none;
 
   &:first-child {
     margin-top: 0;
