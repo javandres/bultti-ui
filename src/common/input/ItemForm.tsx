@@ -7,7 +7,7 @@ import { Button } from '../components/Button'
 import { CellContent } from '../components/Table'
 import { useOrderedValues } from '../../util/useOrderedValues'
 
-const ControlledFormView = styled.div`
+export const ControlledFormView = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -26,7 +26,7 @@ const ControlledFormView = styled.div`
   }
 `
 
-const FieldWrapper = styled.div`
+export const FieldWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1 1 50%;
@@ -40,14 +40,14 @@ const FieldWrapper = styled.div`
   }
 `
 
-const FieldLabel = styled.label`
+export const FieldLabel = styled.label`
   font-weight: bold;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   display: block;
 `
 
-const ActionsWrapper = styled.div`
+export const ActionsWrapper = styled.div`
   margin-left: auto;
   display: flex;
   align-items: flex-end;

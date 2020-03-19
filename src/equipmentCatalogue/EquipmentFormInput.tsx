@@ -62,11 +62,12 @@ const typeValues: SelectValue[] = [
   { name: '', label: '...' },
   { name: 'A1', label: 'A1' },
   { name: 'A2', label: 'A2' },
+  { name: 'B', label: 'B' },
   { name: 'C', label: 'C' },
   { name: 'D', label: 'D' },
 ]
 
-const numericTypes = ['percentageQuota', 'c02']
+const numericTypes = ['percentageQuota']
 
 const dateValues = ['registryDate']
 
@@ -79,8 +80,9 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, on
       let nextValue = e.target.value
 
       if (valueIsNumeric) {
-        const floatVal = parseFloat(nextValue)
+        let floatVal = parseFloat(nextValue)
         nextValue = !nextValue || isNaN(floatVal) ? '' : floatVal
+        console.log(nextValue)
       }
 
       onChange(nextValue, valueName)

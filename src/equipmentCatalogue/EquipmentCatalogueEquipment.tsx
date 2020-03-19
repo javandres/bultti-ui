@@ -1,27 +1,24 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { EquipmentInput } from '../schema-types'
+import { Equipment, EquipmentInput } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
-import { createEquipmentMutation, removeEquipmentMutation } from './equipmentQuery'
+import {
+  createEquipmentMutation,
+  removeEquipmentMutation,
+  searchEquipmentQuery,
+} from './equipmentQuery'
 import Table, { CellContent } from '../common/components/Table'
 import EquipmentFormInput from './EquipmentFormInput'
-import { MessageView } from '../common/components/common'
+import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import ItemForm from '../common/input/ItemForm'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
-
-const EquipmentCatalogueEquipmentView = styled.div``
-
-const TableHeading = styled.h5`
-  font-size: 0.875rem;
-  margin-top: 2rem;
-  margin-bottom: 0.5rem;
-
-  &:first-child {
-    margin-top: 0;
-  }
-`
+import { useLazyQueryData } from '../util/useLazyQueryData'
+import Input from '../common/input/Input'
+import InputForm from '../common/input/InputForm'
+import { numval } from '../util/numval'
+import { emptyOrNumber } from '../util/emptyOrNumber'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -36,14 +33,13 @@ const equipmentColumnLabels = {
   type: 'Tyyppi',
   percentageQuota: 'Osuus',
   emissionClass: 'Euroluokka',
-  co2: 'CO2 arvo',
   registryNr: 'Rek.numero',
   registryDate: 'Rek.päivä',
 }
 
 const equipmentInputValues = {
-  percentageQuota: (val) => parseFloat(val),
-  emissionClass: (val) => parseInt(val, 10),
+  percentageQuota: (val) => emptyOrNumber(numval(val, true)),
+  emissionClass: (val) => emptyOrNumber(numval(val)),
 }
 
 const defaultGetVal = (val) => val
@@ -55,25 +51,53 @@ const equipmentIsValid = (e: EquipmentInput): boolean =>
 // Naming things...
 const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, onEquipmentChanged }) => {
-    const [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
-    const [createEquipment] = useMutationData(createEquipmentMutation)
-    const [removeEquipment] = useMutationData(removeEquipmentMutation)
+    let [pendingEquipment, setPendingEquipment] = useState<EquipmentInput | null>(null)
+    let [searchActive, setSearchActive] = useState(false)
+    let [searchVehicleId, setSearchVehicleId] = useState('')
 
-    const addDraftEquipment = useCallback(() => {
+    let onChangeSearchValue = useCallback((value) => {
+      setSearchVehicleId(value)
+    }, [])
+
+    let [createEquipment] = useMutationData(createEquipmentMutation)
+    let [removeEquipment] = useMutationData(removeEquipmentMutation)
+    let [searchEquipment, { data: foundEquipment, loading: searchLoading }] = useLazyQueryData<
+      Equipment
+    >(searchEquipmentQuery)
+
+    let doSearch = useCallback(() => {
+      if (searchVehicleId) {
+        searchEquipment({
+          variables: {
+            operatorId,
+            vehicleId: searchVehicleId,
+          },
+        })
+      }
+    }, [searchEquipment, searchVehicleId, operatorId])
+
+    let addDraftEquipment = useCallback((initialValues?: Equipment | EquipmentInput) => {
       const inputRow: EquipmentInput = {
-        vehicleId: '',
-        model: '',
-        type: '',
-        exteriorColor: '',
-        emissionClass: 1,
-        co2: 0,
-        registryDate: '',
-        registryNr: '',
+        vehicleId: initialValues?.vehicleId || '',
+        model: initialValues?.model || '',
+        type: initialValues?.type || '',
+        exteriorColor: initialValues?.exteriorColor || '',
+        emissionClass: initialValues?.emissionClass || 1,
+        registryDate: initialValues?.registryDate || '',
+        registryNr: initialValues?.registryNr || '',
         percentageQuota: 0,
       }
 
       setPendingEquipment(inputRow)
     }, [])
+
+    useEffect(() => {
+      if (foundEquipment && searchActive) {
+        setSearchActive(false)
+        setSearchVehicleId('')
+        addDraftEquipment(foundEquipment)
+      }
+    }, [foundEquipment, searchActive])
 
     const onEquipmentInputChange = useCallback((key: string, nextValue) => {
       setPendingEquipment((currentPending) =>
@@ -130,7 +154,7 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       <>
         {equipment.length !== 0 ? (
           <>
-            <TableHeading>Ajoneuvot</TableHeading>
+            <SubSectionHeading>Ajoneuvot</SubSectionHeading>
             <Table
               items={equipment}
               columnLabels={equipmentColumnLabels}
@@ -148,10 +172,15 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
         ) : (
           <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
         )}
-        {!pendingEquipment && <Button onClick={addDraftEquipment}>Lisää ajoneuvo</Button>}
+        {!pendingEquipment && (
+          <FlexRow>
+            <Button onClick={() => addDraftEquipment()}>Lisää ajoneuvo</Button>
+            <Button onClick={() => setSearchActive(true)}>Hae ja liitä ajoneuvo</Button>
+          </FlexRow>
+        )}
         {pendingEquipment && (
           <>
-            <TableHeading>Lisää ajoneuvo</TableHeading>
+            <SubSectionHeading>Lisää ajoneuvo</SubSectionHeading>
             <ItemForm
               item={pendingEquipment}
               labels={equipmentColumnLabels}
@@ -161,6 +190,23 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
               doneDisabled={!equipmentIsValid(pendingEquipment)}
               doneLabel="Lisää luetteloon"
               renderInput={renderEquipmentCell}
+            />
+          </>
+        )}
+        {searchActive && (
+          <>
+            <SubSectionHeading>Hae kylkinumerolla</SubSectionHeading>
+            <InputForm
+              onCancel={() => setSearchActive(false)}
+              onDone={doSearch}
+              doneLabel="Hae kalusto"
+              doneDisabled={!searchVehicleId}
+              fields={[
+                {
+                  label: 'Kylkinumero',
+                  field: <Input onChange={onChangeSearchValue} value={searchVehicleId} />,
+                },
+              ]}
             />
           </>
         )}

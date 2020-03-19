@@ -23,6 +23,7 @@ import { Button, ButtonSize } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import { SubSectionHeading } from '../common/components/common'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -67,15 +68,6 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
   > * {
     transition: transform 0.1s ease-out;
     transform: rotate(${(p) => (!p.expanded ? '180deg' : '0deg')});
-  }
-`
-
-const SectionHeading = styled.h5`
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-
-  &:first-child {
-    margin-top: 0;
   }
 `
 
@@ -216,23 +208,23 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       <ProcurementUnitView>
         {loading ? (
           <Loading />
-        ) : (
+        ) : !procurementUnit ? null : (
           <>
             <HeaderRow expanded={isExpanded}>
               <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
               <HeaderSection>
-                <SectionHeading>Reitit</SectionHeading>
+                <SubSectionHeading>Reitit</SubSectionHeading>
                 {(routes || [])
                   .map((route) => route?.routeId)
                   .filter((routeId) => !!routeId)
                   .join(', ')}
               </HeaderSection>
               <HeaderSection>
-                <SectionHeading>Kilometrejä viikossa</SectionHeading>
+                <SubSectionHeading>Kilometrejä viikossa</SubSectionHeading>
                 {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
               </HeaderSection>
               <HeaderSection>
-                <SectionHeading>Voimassaoloaika</SectionHeading>
+                <SubSectionHeading>Voimassaoloaika</SubSectionHeading>
                 {procurementUnit.startDate} - {procurementUnit.endDate}
               </HeaderSection>
               <ExpandToggle
@@ -243,7 +235,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             </HeaderRow>
             {isExpanded && (
               <Content>
-                <SectionHeading>Kilpailukohteen tiedot</SectionHeading>
+                <SubSectionHeading>Kilpailukohteen tiedot</SubSectionHeading>
                 {!pendingProcurementUnit ? (
                   <>
                     <ValueDisplay
@@ -284,7 +276,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   </>
                 )}
                 <>
-                  <SectionHeading>Kalustoluettelo</SectionHeading>
+                  <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
                   <EquipmentCatalogue
                     procurementUnitId={id}
                     catalogue={activeCatalogue}

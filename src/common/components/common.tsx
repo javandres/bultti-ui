@@ -75,6 +75,16 @@ export const SectionHeading = styled(FormHeading)`
   margin-left: 1rem;
 `
 
+export const SubSectionHeading = styled.h5`
+  font-size: 1.25rem;
+  font-weight: normal;
+  margin-bottom: 1rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+`
+
 export const MessageContainer = styled.div`
   padding: 0 1rem;
 `

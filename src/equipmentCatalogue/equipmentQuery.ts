@@ -7,11 +7,24 @@ export const EquipmentFragment = gql`
     operatorId
     registryDate
     registryNr
-    co2
     emissionClass
     exteriorColor
     vehicleId
     type
+  }
+`
+
+export const searchEquipmentQuery = gql`
+  query queryEquipmentFromSource($vehicleId: String!, $operatorId: Int!) {
+    queryEquipmentFromSource(operatorId: $operatorId, vehicleId: $vehicleId) {
+      type
+      exteriorColor
+      model
+      registryDate
+      registryNr
+      emissionClass
+      vehicleId
+    }
   }
 `
 

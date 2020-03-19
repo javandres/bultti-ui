@@ -23,7 +23,6 @@ export type Equipment = {
   type: Scalars['String'],
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
-  co2: Scalars['Float'],
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>,
 };
 
@@ -73,7 +72,17 @@ export type EquipmentInput = {
   type: Scalars['String'],
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
-  co2: Scalars['Float'],
+};
+
+export type EquipmentSearchResult = {
+   __typename?: 'EquipmentSearchResult',
+  vehicleId: Scalars['String'],
+  model: Scalars['String'],
+  registryNr?: Maybe<Scalars['String']>,
+  registryDate?: Maybe<Scalars['BulttiDateTime']>,
+  type: Scalars['String'],
+  exteriorColor: Scalars['String'],
+  emissionClass: Scalars['Int'],
 };
 
 export type ExecutionRequirement = {
@@ -294,7 +303,7 @@ export type Query = {
   singleEquipment?: Maybe<Equipment>,
   equipment: Array<Equipment>,
   equipmentByOperator: Array<Equipment>,
-  queryEquipmentFromSource?: Maybe<Equipment>,
+  queryEquipmentFromSource?: Maybe<EquipmentSearchResult>,
   singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   equipmentCatalogue: Array<EquipmentCatalogue>,
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>,
@@ -345,7 +354,7 @@ export type QueryEquipmentByOperatorArgs = {
 
 
 export type QueryQueryEquipmentFromSourceArgs = {
-  operatorId: Scalars['Float'],
+  operatorId: Scalars['Int'],
   vehicleId: Scalars['String']
 };
 

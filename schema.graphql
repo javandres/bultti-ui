@@ -6,7 +6,6 @@ schema {
 }
 
 type Equipment {
-  co2: Float!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   exteriorColor: String!
@@ -42,6 +41,16 @@ type EquipmentCatalogueQuota {
   equipmentId: String!
   id: ID!
   percentageQuota: Float!
+}
+
+type EquipmentSearchResult {
+  emissionClass: Int!
+  exteriorColor: String!
+  model: String!
+  registryDate: BulttiDateTime
+  registryNr: String
+  type: String!
+  vehicleId: String!
 }
 
 type ExecutionRequirement {
@@ -144,7 +153,7 @@ type Query {
   preInspections: [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDateTime!, operatorId: Int!): [ProcurementUnit!]!
-  queryEquipmentFromSource(operatorId: Float!, vehicleId: String!): Equipment
+  queryEquipmentFromSource(operatorId: Int!, vehicleId: String!): EquipmentSearchResult
   seasons(date: BulttiDateTime!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
@@ -202,7 +211,6 @@ input EquipmentCatalogueQuotaInput {
 }
 
 input EquipmentInput {
-  co2: Float!
   emissionClass: Int!
   exteriorColor: String!
   model: String!
