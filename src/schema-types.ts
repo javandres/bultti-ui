@@ -24,13 +24,17 @@ export enum DayType {
 export type Departure = {
    __typename?: 'Departure',
   id: Scalars['ID'],
-  departureTime: Scalars['String'],
-  direction: Scalars['String'],
-  routeId: Scalars['String'],
-  variant: Scalars['String'],
+  blockNumber: Scalars['Int'],
+  controlDepot: Scalars['String'],
+  startDepot: Scalars['String'],
+  journeyType: JourneyType,
+  journeyStartTime: Scalars['String'],
+  journeyEndTime: Scalars['String'],
+  routeId?: Maybe<Scalars['String']>,
+  direction?: Maybe<Scalars['String']>,
+  variant?: Maybe<Scalars['String']>,
   equipment: Equipment,
-  blockFile: Scalars['String'],
-  departureBlock: Array<DepartureBlock>,
+  departureBlocks: Array<DepartureBlock>,
 };
 
 export type DepartureBlock = {
@@ -166,6 +170,15 @@ export enum InspectionStatus {
   InProduction = 'InProduction'
 }
 
+export enum JourneyType {
+  N = 'N',
+  L = 'L',
+  V = 'V',
+  S = 'S',
+  O = 'O',
+  I = 'I'
+}
+
 export type Mutation = {
    __typename?: 'Mutation',
   createPreInspection?: Maybe<PreInspection>,
@@ -180,7 +193,7 @@ export type Mutation = {
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
   removeEquipmentFromCatalogue: Scalars['Boolean'],
-  createDepartureBlockFromFile?: Maybe<DepartureBlock>,
+  createDepartureBlockFromFile?: Maybe<Array<DepartureBlock>>,
 };
 
 
