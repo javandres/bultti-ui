@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../util/useUploader'
-import { DayType, DepartureBlock } from '../type/inspection'
 import Checkbox from '../common/input/Checkbox'
 import UploadFile from '../common/input/UploadFile'
 import Loading from '../common/components/Loading'
@@ -18,6 +17,7 @@ import {
 } from './departureBlocksCommon'
 import { Button, TextButton } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
+import { DepartureBlock, DayType } from '../schema-types'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $dayTypes: [DayType!]!, $inspectionId: String!) {

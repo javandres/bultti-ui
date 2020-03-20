@@ -1,33 +1,3 @@
-// O = from depot
-// N = normal
-// I = to depot
-
-import { OperatingArea, DayType } from '../schema-types'
-export { DayType } from '../schema-types'
-
-export type DepartureType = 'O' | 'N' | 'I'
-
-export interface DepartureBlock {
-  id: string
-  outDepot: string
-  inDepot: string
-  departureType: DepartureType
-  routeId: string
-  direction: string
-  departureTime: string
-  arrivalTime: string
-  vehicleId: string
-  dayType?: DayType
-}
-
-export interface ExecutionRequirement {
-  week: number
-  year: number
-  equipmentClass: number
-  requirement: string
-  area: OperatingArea
-}
-
 export interface Inspection {
   id: string
   operatorId: number
@@ -36,8 +6,6 @@ export interface Inspection {
   endDate: string
   productionStart: string
   productionEnd: string
-  executionRequirements: ExecutionRequirement[]
-  departureBlocks: DepartureBlock[]
   createdAt?: string
   createdBy?: string
 }

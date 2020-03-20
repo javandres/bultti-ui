@@ -11,10 +11,8 @@ import {
 } from '../common/components/common'
 import SelectOperator, { operatorIsValid } from '../common/input/SelectOperator'
 import SelectSeason from '../common/input/SelectSeason'
-import { DepartureBlock, ExecutionRequirement } from '../type/inspection'
 import { Operator, Season } from '../schema-types'
 import SelectWeek from '../common/input/SelectWeek'
-import { IObservableArray, observable } from 'mobx'
 import SelectDate from '../common/input/SelectDate'
 import { addDays, endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
 import { toISODate } from '../util/toISODate'
@@ -90,10 +88,6 @@ interface PreInspectionFormActions {
   setStatus: (nextStatus: PreInspectionFormStatus) => void
   selectOperator: (operator: Operator | null) => void
   selectSeason: (season: Season | null) => void
-  changeRequirements: (executionRequirements: ExecutionRequirement[]) => void
-  setRequirement: (requirement: ExecutionRequirement, nextValue: string) => void
-  removeRequirement: (requirement: ExecutionRequirement) => void
-  setDepartureBlocks: (departureBlocks: DepartureBlock[]) => void
   setStartDate: (startDate: string) => void
   setEndDate: (endDate: string) => void
   setProductionStartDate: (startDate: string) => void
@@ -113,12 +107,10 @@ interface PreInspectionFormData extends PreInspectionFormActions {
   status: PreInspectionFormStatus
   operator: Operator | null
   season: Season | null
-  executionRequirements: IObservableArray<ExecutionRequirement>
   startDate: string
   endDate: string
   productionStart: string
   productionEnd: string
-  departureBlocks: DepartureBlock[]
 }
 
 type PreInspectionProps = {
@@ -133,12 +125,10 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       status: PreInspectionFormStatus.Uninitialized,
       operator: preselectedOperator || null,
       season: preselectedSeason || null,
-      executionRequirements: observable.array([]),
       startDate: '',
       endDate: '',
       productionStart: format(addDays(currentDate, 1), DATE_FORMAT),
       productionEnd: '',
-      departureBlocks: observable.array([]),
       setInspectionId: (id) => {
         formState.id = id
       },
@@ -150,18 +140,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       },
       selectSeason: (season: Season | null = null) => {
         formState.season = season || null
-      },
-      changeRequirements: (requirements: ExecutionRequirement[] = []) => {
-        formState.executionRequirements = observable.array(requirements)
-      },
-      setRequirement: (requirement: ExecutionRequirement, nextValue) => {
-        requirement.requirement = nextValue
-      },
-      removeRequirement: (requirement: ExecutionRequirement) => {
-        formState.executionRequirements.remove(requirement)
-      },
-      setDepartureBlocks: (departureBlocks: DepartureBlock[] = []) => {
-        formState.departureBlocks = departureBlocks
       },
       setStartDate: (startDate: string = '') => {
         formState.startDate = startDate
@@ -389,11 +367,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             <SectionHeading theme="light">Lähtöketjut</SectionHeading>
             <FormWrapper>
               <FormColumn width="100%" minWidth="510px">
-                <DepartureBlocks
-                  inspectionId={formState.id}
-                  departureBlocks={formState.departureBlocks}
-                  onChangeBlocks={formState.setDepartureBlocks}
-                />
+                <DepartureBlocks inspectionId={formState.id} />
               </FormColumn>
             </FormWrapper>
             <SectionHeading theme="light">Suoritevaatimukset</SectionHeading>

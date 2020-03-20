@@ -1,14 +1,14 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Inspection } from '../../type/inspection'
 import { useQueryData } from '../../util/useQueryData'
 import gql from 'graphql-tag'
+import { Inspection } from '../../type/inspection'
 
 const operatorQuery = gql`
-  query fetchOperator($id: String) {
-    operator(id: $id) {
+  query fetchOperator($id: Int!) {
+    operator(operatorId: $id) {
       id
-      name
+      operatorName
     }
   }
 `
@@ -24,7 +24,7 @@ const InspectionItem = ({ inspection }: InspectionItemProps) => {
     variables: { id: inspection.operatorId },
   })
 
-  const operatorName = data?.name || inspection.operatorId
+  const operatorName = data?.operatorName || inspection.operatorId
 
   return (
     <InspectionItemView>
