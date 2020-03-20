@@ -10,6 +10,7 @@ import ToggleButton from '../common/input/ToggleButton'
 import { groupBy, omit } from 'lodash'
 import { Equipment } from '../schema-types'
 import { strval } from '../util/strval'
+import { emissionClassNames } from '../type/values'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -31,9 +32,9 @@ export const equipmentColumnLabels = {
 export const groupedEquipmentColumnLabels = {
   model: 'Malli',
   type: 'Tyyppi',
-  percentageQuota: 'Osuus',
   emissionClass: 'Euroluokka',
   registryDate: 'Rek.päivä',
+  percentageQuota: 'Osuus',
   amount: 'Määrä',
 }
 
@@ -74,15 +75,49 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       return Object.values(grouped).map((equipmentGroup) => {
         return {
           ...omit(equipmentGroup[0], 'vehicleId', 'registryNr'),
-          percentageQuota:
-            equipmentGroup.reduce((total, item) => {
-              total += item?.percentageQuota || 0
-              return total
-            }, 0) + '%',
+          percentageQuota: equipmentGroup.reduce((total, item) => {
+            total += item?.percentageQuota || 0
+            return total
+          }, 0),
           amount: equipmentGroup.length,
         }
       })
     }, [equipment])
+
+    const renderCellValue = useCallback((val, key) => {
+      switch (key) {
+        case 'percentageQuota':
+          return val + '%'
+        case 'emissionClass':
+          return emissionClassNames[val + '']
+        default:
+          return val
+      }
+    }, [])
+
+    const renderColumnTotals = useCallback(
+      (col) => {
+        switch (col) {
+          case 'percentageQuota':
+            return (
+              equipment.reduce((total, item) => {
+                total += item?.percentageQuota || 0
+                return total
+              }, 0) + '%'
+            )
+          case 'amount':
+            return (
+              equipmentGroups.reduce((total, item) => {
+                total += item?.amount || 0
+                return total
+              }, 0) + ' kpl'
+            )
+          default:
+            return ''
+        }
+      },
+      [equipment, equipmentGroups]
+    )
 
     return (
       <>
@@ -102,26 +137,8 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
               items={groupEquipment ? equipmentGroups : equipment}
               columnLabels={groupEquipment ? groupedEquipmentColumnLabels : equipmentColumnLabels}
               onRemoveRow={(item) => () => onRemoveEquipment(item)}
-              getColumnTotal={(col) => {
-                switch (col) {
-                  case 'percentageQuota':
-                    return (
-                      equipment.reduce((total, item) => {
-                        total += item?.percentageQuota || 0
-                        return total
-                      }, 0) + '%'
-                    )
-                  case 'amount':
-                    return (
-                      equipmentGroups.reduce((total, item) => {
-                        total += item?.amount || 0
-                        return total
-                      }, 0) + ' kpl'
-                    )
-                  default:
-                    return ''
-                }
-              }}
+              renderValue={renderCellValue}
+              getColumnTotal={renderColumnTotals}
             />
           </>
         ) : (

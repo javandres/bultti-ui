@@ -96,7 +96,8 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
   className?: string
-  renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactChild
+  renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactNode
+  renderValue?: (val: any, key?: string, isHeader?: boolean) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
 }
 
@@ -110,6 +111,8 @@ const defaultRenderCellContent = (val: any): React.ReactChild => (
   </>
 )
 
+const defaultRenderValue = (val) => val
+
 const Table: React.FC<PropTypes> = observer(
   ({
     items,
@@ -120,6 +123,7 @@ const Table: React.FC<PropTypes> = observer(
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
     renderCell = defaultRenderCellContent,
+    renderValue = defaultRenderValue,
     getColumnTotal,
     className,
   }) => {
@@ -166,7 +170,7 @@ const Table: React.FC<PropTypes> = observer(
             </ColumnHeaderCell>
           )}
           {columnNames.map((colName) => (
-            <ColumnHeaderCell key={colName}>{colName}</ColumnHeaderCell>
+            <ColumnHeaderCell key={colName}>{renderValue(colName, '', true)}</ColumnHeaderCell>
           ))}
         </TableHeader>
         {items.map((item, rowIndex) => {
@@ -190,7 +194,7 @@ const Table: React.FC<PropTypes> = observer(
                 .filter(([key]) => !keysToHide.includes(key))
                 .map(([key, val], index) => (
                   <TableCell key={`${rowKey}-${key}-${index}`}>
-                    {renderCell(val, key, item)}
+                    {renderCell(renderValue(val, key, false), key, item)}
                   </TableCell>
                 ))}
               {itemRemover && (

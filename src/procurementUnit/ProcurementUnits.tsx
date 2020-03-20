@@ -16,7 +16,7 @@ export type PropTypes = {
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, productionDate }) => {
-  const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(true)
+  const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 
   const toggleProcurementUnitsExpanded = useCallback(() => {
     setProcurementUnitsExpanded((currentVal) => !currentVal)

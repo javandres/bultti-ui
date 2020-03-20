@@ -396,15 +396,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
                 />
               </FormColumn>
             </FormWrapper>
-            <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-            <TransparentFormWrapper>
-              <FormColumn width="100%" minWidth="510px">
-                <ProcurementUnits
-                  productionDate={formState.productionStart}
-                  operatorId={formState?.operator?.operatorId || 0}
-                />
-              </FormColumn>
-            </TransparentFormWrapper>
             <SectionHeading theme="light">Suoritevaatimukset</SectionHeading>
             <FormWrapper>
               <FormColumn width="100%" minWidth="510px">
@@ -414,6 +405,15 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
                 />
               </FormColumn>
             </FormWrapper>
+            <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
+            <TransparentFormWrapper>
+              <FormColumn width="100%" minWidth="510px">
+                <ProcurementUnits
+                  productionDate={formState.productionStart}
+                  operatorId={formState?.operator?.operatorId || 0}
+                />
+              </FormColumn>
+            </TransparentFormWrapper>
           </>
         )}
       </CreatePreInspectionFormView>

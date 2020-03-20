@@ -67,7 +67,7 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
 
   > * {
     transition: transform 0.1s ease-out;
-    transform: rotate(${(p) => (!p.expanded ? '180deg' : '0deg')});
+    transform: rotate(${(p) => (p.expanded ? '180deg' : '0deg')});
   }
 `
 
