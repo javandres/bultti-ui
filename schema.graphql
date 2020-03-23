@@ -100,6 +100,7 @@ type Mutation {
   createPreInspection(preInspection: PreInspectionInput!): PreInspection
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
+  removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!

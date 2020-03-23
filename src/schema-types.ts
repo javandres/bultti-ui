@@ -183,6 +183,7 @@ export type Mutation = {
   logout: Scalars['Boolean'],
   removeEquipmentFromCatalogue: Scalars['Boolean'],
   createDepartureBlockFromFile?: Maybe<Array<DepartureBlock>>,
+  removeDepartureBlocksForDayTypes: Scalars['Boolean'],
 };
 
 
@@ -257,6 +258,12 @@ export type MutationCreateDepartureBlockFromFileArgs = {
   preInspectionId: Scalars['String'],
   dayTypes: Array<DayType>,
   file: Scalars['Upload']
+};
+
+
+export type MutationRemoveDepartureBlocksForDayTypesArgs = {
+  preInspectionId: Scalars['String'],
+  dayTypes: Array<DayType>
 };
 
 export type OperatingArea = {

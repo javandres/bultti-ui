@@ -33,3 +33,9 @@ export const departureBlocksQuery = gql`
     }
   }
 `
+
+export const removeDepartureBlocks = gql`
+  mutation removeDepartureBlocksForDayTypes($dayTypes: [DayType!]!, $preInspectionId: String!) {
+    removeDepartureBlocksForDayTypes(dayTypes: $dayTypes, preInspectionId: $preInspectionId)
+  }
+`

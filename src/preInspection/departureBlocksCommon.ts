@@ -1,6 +1,7 @@
 import { DayType, DepartureBlock } from '../schema-types'
 import { useCallback, useMemo, useState } from 'react'
-import { flatten } from 'lodash'
+import { flatten, orderBy } from 'lodash'
+import { normalDayTypes } from '../constants'
 
 export type DayTypeGroup = {
   [DayType.Ma]: boolean
@@ -13,12 +14,6 @@ export type DayTypeGroup = {
 }
 
 export type DayTypeState = Array<DayTypeGroup>
-
-export type DepartureBlockGroup = {
-  dayTypes: DayTypeGroup
-  groupIndex: number
-  blocks: DepartureBlock[]
-}
 
 export const defaultDayTypeGroup: DayTypeGroup = {
   [DayType.Ma]: false,
@@ -51,6 +46,21 @@ type DayTypeGroupsReturn = [
     addDayTypeToGroup: (dayType: DayType, groupIndex: number) => DayTypeState
   }
 ]
+
+const orderDayTypeGroups = (dayTypeGroups) =>
+  orderBy(dayTypeGroups, (group) => normalDayTypes.indexOf(getEnabledDayTypes(group)[0] || ''))
+
+const spliceGroup = (groups, group, index) => {
+  const nextDayTypeGroups = [...groups]
+
+  if (group && Object.values(group).some((val) => val)) {
+    nextDayTypeGroups.splice(index, 1, group)
+  } else {
+    nextDayTypeGroups.splice(index, 1)
+  }
+
+  return nextDayTypeGroups
+}
 
 export const useDayTypeGroups = (): DayTypeGroupsReturn => {
   const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeState>([
@@ -89,7 +99,7 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
       }
 
       const addGroup: DayTypeGroup = createDayTypeGroup(nextDayType as DayType)
-      const nextDayTypes: DayTypeGroup[] = [...dayTypeGroups, addGroup]
+      const nextDayTypes: DayTypeGroup[] = orderDayTypeGroups([...dayTypeGroups, addGroup])
       setDayTypeGroups(nextDayTypes)
     },
     [dayTypeGroups]
@@ -97,32 +107,29 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
 
   const setDayTypeInGroup = useCallback(
     (dayType: DayType, groupIndex: number, setTo = true): DayTypeState => {
-      let currentDayTypeGroups = dayTypeGroups
+      let currentDayTypeGroups = [...dayTypeGroups]
 
       if (!currentDayTypeGroups[groupIndex]) {
         return currentDayTypeGroups
       }
 
+      const group = currentDayTypeGroups[groupIndex]
+
+      if (group) {
+        group[dayType] = setTo
+      }
+
+      let nextDayTypeGroups = spliceGroup(currentDayTypeGroups, group, groupIndex)
+      setDayTypeGroups(orderDayTypeGroups(nextDayTypeGroups))
+
       if (setTo && enabledDayTypes.includes(dayType)) {
-        const existingIndex = currentDayTypeGroups.findIndex((dtg) =>
+        const existingIndex = nextDayTypeGroups.findIndex((dtg) =>
           isDayTypeEnabled(dayType, dtg)
         )
 
-        currentDayTypeGroups = setDayTypeInGroup(dayType, existingIndex, false)
+        nextDayTypeGroups = setDayTypeInGroup(dayType, existingIndex, false)
       }
 
-      const group = currentDayTypeGroups[groupIndex]
-      group[dayType] = setTo
-
-      const nextDayTypeGroups = [...currentDayTypeGroups]
-
-      if (Object.values(group).some((val) => val)) {
-        nextDayTypeGroups.splice(groupIndex, 1, group)
-      } else {
-        nextDayTypeGroups.splice(groupIndex, 1)
-      }
-
-      setDayTypeGroups(nextDayTypeGroups)
       return nextDayTypeGroups
     },
     [dayTypeGroups]
@@ -130,12 +137,12 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
 
   const removeDayTypeFromGroup = useCallback(
     (dayType: DayType, groupIndex: number) => setDayTypeInGroup(dayType, groupIndex, false),
-    [setDayTypeInGroup]
+    [dayTypeGroups, setDayTypeInGroup]
   )
 
   const addDayTypeToGroup = useCallback(
     (dayType: DayType, groupIndex: number) => setDayTypeInGroup(dayType, groupIndex, true),
-    [setDayTypeInGroup]
+    [dayTypeGroups, setDayTypeInGroup]
   )
 
   return [

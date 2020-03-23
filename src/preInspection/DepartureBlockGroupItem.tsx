@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../util/useUploader'
 import Checkbox from '../common/input/Checkbox'
@@ -9,8 +9,10 @@ import Table from '../common/components/Table'
 import gql from 'graphql-tag'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, TextButton } from '../common/components/Button'
-import { FlexRow } from '../common/components/common'
-import { DayType, DepartureBlock } from '../schema-types'
+import { FlexRow, MessageView } from '../common/components/common'
+import { DayType, Departure, DepartureBlock } from '../schema-types'
+import { useMutationData } from '../util/useMutationData'
+import { removeDepartureBlocks } from './departureBlocksQuery'
 
 const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks($file: Upload!, $dayTypes: [DayType!]!, $inspectionId: String!) {
@@ -68,28 +70,41 @@ const DepartureBlocksTable = styled(Table)`
 
 const ResetButton = styled(Button)`
   margin-left: auto;
+  background: var(--red);
 `
 
-const departureColumnLabels = {
-  id: 'ID',
-  dayType: 'Päivä',
-  departureTime: 'Aika',
-  direction: 'Suunta',
-  routeId: 'Reitti',
-  variant: 'Variantti',
+const departureBLocksColumnLabels = {
+  dayTypes: 'Päivät',
+  equipmentId: 'Ajoneuvon tiedot',
+  firstStartTime: 'Ensimmäinen lähtö',
+  lastEndTime: 'Viimeinen saapuminen',
+  routes: 'Reitit',
 }
 
 type PropTypes = {
+  loading?: boolean
+  selectableDayTypes?: string[]
   departureBlocks: DepartureBlock[]
   inspectionId: string
   dayTypeGroup: DayTypeGroup
   groupIndex: number
   onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
   onRemoveDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
+  onBlocksChange: () => void
 }
 
 const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
-  ({ inspectionId, dayTypeGroup, departureBlocks, groupIndex, onAddDayType, onRemoveDayType }) => {
+  ({
+    inspectionId,
+    selectableDayTypes = [],
+    dayTypeGroup,
+    departureBlocks = [],
+    loading,
+    groupIndex,
+    onAddDayType,
+    onRemoveDayType,
+    onBlocksChange,
+  }) => {
     const [blocksVisible, setBlocksVisibility] = useState(false)
 
     // The state of the file input.
@@ -103,12 +118,34 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [, { loading: departureBlocksLoading }] = uploader
+    const [removeDepartureBlocksForDays, { loading: removeBlocksLoading }] = useMutationData(
+      removeDepartureBlocks
+    )
+
+    const [, { data: uploadedData, loading: departureBlocksLoading }] = uploader
+
+    // TODO: Better fetch uploaded blocks reaction
+
+    useEffect(() => {
+      if (uploadedData && !departureBlocksLoading) {
+        onBlocksChange()
+      }
+    }, [onBlocksChange, departureBlocksLoading, uploadedData])
+
+    let isLoading = useMemo(() => removeBlocksLoading || departureBlocksLoading || loading, [
+      loading,
+      departureBlocksLoading,
+      removeBlocksLoading,
+    ])
+
+    let isDisabled = useMemo(() => departureBlocks.length !== 0, [departureBlocks])
 
     // Handle day type selection.
     const onDayTypeChange = useCallback(
-      (dayType: DayType) => (e) => {
-        const isSelected = e.target.checked
+      (dayType: DayType, isSelected) => {
+        if (isLoading || isDisabled) {
+          return
+        }
 
         if (isSelected) {
           onAddDayType(dayType, groupIndex)
@@ -116,27 +153,67 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           onRemoveDayType(dayType, groupIndex)
         }
       },
-      [onAddDayType, onRemoveDayType]
+      [groupIndex, onAddDayType, onRemoveDayType, isDisabled, isLoading]
     )
 
     // Reset the file value (upload input value) and remove all blocks from the group.
-    const onReset = useCallback(() => {
-      setFileValue([])
-    }, [dayTypeGroup])
+    const onReset = useCallback(async () => {
+      if (
+        confirm(
+          'Olet poistamassa kaikki tähän päiväryhmään kuuluvat lähtöketjut. Uusi lähtöketjutiedosto on ladattava. Ok?'
+        )
+      ) {
+        setFileValue([])
 
-    let displayBlock: null | DepartureBlock = useMemo(() => {
-      if (!departureBlocks || departureBlocks.length === 0) {
-        return null
+        await removeDepartureBlocksForDays({
+          variables: {
+            dayTypes: getEnabledDayTypes(dayTypeGroup),
+            preInspectionId: inspectionId,
+          },
+        })
+
+        onBlocksChange()
       }
-
-      return departureBlocks[0]
-    }, [departureBlocks])
+    }, [dayTypeGroup, inspectionId, removeDepartureBlocksForDays, onBlocksChange])
 
     const onToggleBlocksVisibility = useCallback(() => {
-      setBlocksVisibility(!blocksVisible)
-    }, [blocksVisible])
+      setBlocksVisibility((currentVisible) => !currentVisible)
+    }, [])
 
-    let departures = useMemo(() => displayBlock?.departures || [], [displayBlock])
+    let displayData = useMemo(() => {
+      const displayDayTypes = getEnabledDayTypes(dayTypeGroup)
+      const displayDayTypeBlocks = displayDayTypes[0]
+
+      if (!displayDayTypeBlocks) {
+        return []
+      }
+
+      return departureBlocks
+        .filter((block) => block.dayType === displayDayTypeBlocks)
+        .map((block) => {
+          const firstDeparture: Departure | undefined = block.departures[0]
+          const lastDeparture: Departure | undefined = block.departures[block.departures.length - 1]
+          const routes = block.departures.reduce((allRoutes: string[], departure) => {
+            const routeId = `${departure.routeId}${departure?.variant || ''}`
+
+            if (!allRoutes.includes(routeId)) {
+              allRoutes.push(routeId)
+            }
+
+            return allRoutes
+          }, [])
+
+          const equipmentId = block?.equipment?.uniqueVehicleId || 'Equipment not found'
+
+          return {
+            dayTypes: displayDayTypes.join(', '),
+            equipmentId: `${block.equipmentRegistryNumber} / ${equipmentId}`,
+            firstStartTime: firstDeparture.journeyStartTime,
+            lastEndTime: lastDeparture.journeyEndTime,
+            routes: routes.join(', '),
+          }
+        })
+    }, [departureBlocks, dayTypeGroup])
 
     return (
       <DepartureBlockGroupContainer>
@@ -144,8 +221,12 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           {Object.entries(dayTypeGroup).map(([dt, enabled]) => (
             <DayTypeOption key={dt}>
               <Checkbox
+                disabled={
+                  isDisabled ||
+                  (selectableDayTypes?.length !== 0 && !selectableDayTypes.includes(dt))
+                }
                 label={dt}
-                onChange={onDayTypeChange(dt as DayType)}
+                onChange={(e) => onDayTypeChange(dt as DayType, e.target.checked)}
                 checked={enabled}
                 name="daytype"
                 value={dt}
@@ -153,30 +234,34 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             </DayTypeOption>
           ))}
         </DayTypesContainer>
-        <UploadFile
-          label="Lataa lähtöketjutiedosto"
-          uploader={uploader}
-          value={fileValue}
-          onChange={setFileValue}
-        />
-        {departureBlocksLoading && <Loading />}
-        <FlexRow>
-          {displayBlock && (
-            <>
-              <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
-                {blocksVisible ? 'Piilota lähdöt' : 'Näytä lähdöt'}
-              </TextButton>
-            </>
-          )}
-          {fileValue.length !== 0 && <ResetButton onClick={onReset}>Reset</ResetButton>}
-        </FlexRow>
-        {blocksVisible && displayBlock && (displayBlock?.departures || []).length !== 0 && (
-          <DepartureBlocksTable
-            keyFromItem={(item) => item.id}
-            items={departures}
-            columnLabels={departureColumnLabels}
+        {!loading && !isDisabled && (
+          <UploadFile
+            label="Lataa lähtöketjutiedosto"
+            uploader={uploader}
+            value={fileValue}
+            onChange={setFileValue}
           />
         )}
+        {isLoading && <Loading />}
+        {departureBlocks.length !== 0 && (
+          <FlexRow style={{ marginTop: '1rem' }}>
+            <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
+              {blocksVisible ? 'Piilota lähdöt' : 'Näytä lähdöt'}
+            </TextButton>
+            {!isLoading && isDisabled && (
+              <ResetButton onClick={onReset}>Poista kaikki ryhmän lähtöketjut</ResetButton>
+            )}
+          </FlexRow>
+        )}
+        {blocksVisible && displayData.length !== 0 ? (
+          <DepartureBlocksTable
+            keyFromItem={(item) => item.id}
+            items={displayData}
+            columnLabels={departureBLocksColumnLabels}
+          />
+        ) : displayData.length === 0 ? (
+          <MessageView>Päiväryhmällä ei ole lähtöketjuja.</MessageView>
+        ) : null}
       </DepartureBlockGroupContainer>
     )
   }

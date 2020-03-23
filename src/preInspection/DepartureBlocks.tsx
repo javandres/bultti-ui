@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, flatten, groupBy, pick } from 'lodash'
@@ -7,7 +7,8 @@ import { defaultDayTypeGroup, getEnabledDayTypes, useDayTypeGroups } from './dep
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
 import { departureBlocksQuery } from './departureBlocksQuery'
-import { DepartureBlock } from '../schema-types'
+import { DayType, DepartureBlock } from '../schema-types'
+import { normalDayTypes } from '../constants'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
@@ -24,7 +25,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
     { addDayTypeToGroup, removeDayTypeFromGroup, addDayTypeGroup },
   ] = useDayTypeGroups()
 
-  let { data: departureBlocksData, loading: departureBlocksLoading } = useQueryData(
+  let { data: departureBlocksData, loading: departureBlocksLoading, refetch } = useQueryData(
     departureBlocksQuery,
     {
       skip: !inspectionId,
@@ -34,11 +35,26 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
     }
   )
 
-  console.log(departureBlocksData)
-
   let departureBlockGroups = useMemo(() => groupBy(departureBlocksData || [], 'dayType'), [
     departureBlocksData,
   ])
+
+  let selectableDayTypes = useMemo(() => {
+    let dayTypesWithBlocks = Object.keys(departureBlockGroups)
+    return normalDayTypes.filter((dt) => !dayTypesWithBlocks.includes(dt))
+  }, [departureBlockGroups])
+
+  let onBlocksChange = useCallback(() => {
+    refetch()
+  }, [refetch])
+
+  useEffect(() => {
+    for (let dayType of Object.keys(departureBlockGroups)) {
+      if (!enabledDayTypes.includes(dayType)) {
+        addDayTypeGroup(dayType as DayType)
+      }
+    }
+  }, [departureBlockGroups, enabledDayTypes])
 
   return (
     <DepartureBlocksView>
@@ -49,12 +65,15 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
         return (
           <DepartureBlockGroupItem
             key={`dayTypeGroup-${groupIndex}`}
+            loading={departureBlocksLoading}
+            selectableDayTypes={selectableDayTypes}
             departureBlocks={departureBlocksForDayTypes}
             inspectionId={inspectionId}
             dayTypeGroup={dayTypeGroup}
             groupIndex={groupIndex}
             onAddDayType={addDayTypeToGroup}
             onRemoveDayType={removeDayTypeFromGroup}
+            onBlocksChange={onBlocksChange}
           />
         )
       })}

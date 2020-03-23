@@ -14,7 +14,6 @@ const UploadInput = styled.input``
 const UploadWrapper = styled.div<{ hasData?: boolean; backgroundColor?: string }>`
   position: relative;
   padding: ${(p) => (p.hasData ? '1rem' : '2rem 1rem')};
-  margin-bottom: 1rem;
   border-radius: 1rem;
   background: ${(p) => p.backgroundColor || 'var(--lightest-blue)'};
   outline: none;
