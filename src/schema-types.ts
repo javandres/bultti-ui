@@ -25,15 +25,11 @@ export type Departure = {
    __typename?: 'Departure',
   id: Scalars['ID'],
   blockNumber: Scalars['Int'],
-  controlDepot: Scalars['String'],
-  startDepot: Scalars['String'],
-  journeyType: JourneyType,
   journeyStartTime: Scalars['String'],
   journeyEndTime: Scalars['String'],
   routeId?: Maybe<Scalars['String']>,
   direction?: Maybe<Scalars['String']>,
   variant?: Maybe<Scalars['String']>,
-  equipment: Equipment,
   departureBlocks: Array<DepartureBlock>,
 };
 
@@ -41,7 +37,9 @@ export type DepartureBlock = {
    __typename?: 'DepartureBlock',
   id: Scalars['ID'],
   dayType: DayType,
+  equipmentRegistryNumber: Scalars['String'],
   operator: Operator,
+  equipment?: Maybe<Equipment>,
   preInspection: PreInspection,
   departures: Array<Departure>,
 };
@@ -73,7 +71,7 @@ export type Equipment = {
   exteriorColor: Scalars['String'],
   emissionClass: Scalars['Int'],
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>,
-  departures: Array<Departure>,
+  departureBlocks: Array<DepartureBlock>,
 };
 
 export type EquipmentCatalogue = {
@@ -168,15 +166,6 @@ export type ExecutionRequirementValueInput = {
 export enum InspectionStatus {
   Draft = 'Draft',
   InProduction = 'InProduction'
-}
-
-export enum JourneyType {
-  N = 'N',
-  L = 'L',
-  V = 'V',
-  S = 'S',
-  O = 'O',
-  I = 'I'
 }
 
 export type Mutation = {

@@ -17,22 +17,27 @@ const uploadDepartureBlocksMutation = gql`
     createDepartureBlockFromFile(file: $file, dayTypes: $dayTypes, preInspectionId: $inspectionId) {
       id
       dayType
+      equipment {
+        id
+        vehicleId
+        registryNr
+        emissionClass
+        model
+        type
+        equipmentCatalogueQuotas {
+          catalogueStartDate
+          catalogueEndDate
+          percentageQuota
+        }
+      }
       departures {
         id
         blockNumber
-        controlDepot
-        startDepot
         direction
         routeId
         variant
         journeyStartTime
         journeyEndTime
-        journeyType
-        equipment {
-          id
-          vehicleId
-          registryNr
-        }
       }
     }
   }
@@ -41,8 +46,6 @@ const uploadDepartureBlocksMutation = gql`
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;
   padding-top: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--lighter-grey);
 
   &:first-child {
     padding-top: 0;
@@ -77,6 +80,7 @@ const departureColumnLabels = {
 }
 
 type PropTypes = {
+  departureBlocks: DepartureBlock[]
   inspectionId: string
   dayTypeGroup: DayTypeGroup
   groupIndex: number
@@ -85,7 +89,7 @@ type PropTypes = {
 }
 
 const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
-  ({ inspectionId, dayTypeGroup, groupIndex, onAddDayType, onRemoveDayType }) => {
+  ({ inspectionId, dayTypeGroup, departureBlocks, groupIndex, onAddDayType, onRemoveDayType }) => {
     const [blocksVisible, setBlocksVisibility] = useState(false)
 
     // The state of the file input.
@@ -99,9 +103,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [, { data: departureBlockData, loading: departureBlocksLoading }] = uploader
-
-    console.log(departureBlockData)
+    const [, { loading: departureBlocksLoading }] = uploader
 
     // Handle day type selection.
     const onDayTypeChange = useCallback(
@@ -123,12 +125,12 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     }, [dayTypeGroup])
 
     let displayBlock: null | DepartureBlock = useMemo(() => {
-      if (!departureBlockData || departureBlockData.length === 0) {
+      if (!departureBlocks || departureBlocks.length === 0) {
         return null
       }
 
-      return departureBlockData[0]
-    }, [departureBlockData])
+      return departureBlocks[0]
+    }, [departureBlocks])
 
     const onToggleBlocksVisibility = useCallback(() => {
       setBlocksVisibility(!blocksVisible)

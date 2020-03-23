@@ -58,6 +58,10 @@ const CurrentFile = styled.span`
   }
 `
 
+const FileLoading = styled(Loading)`
+  margin-left: 1rem;
+`
+
 export type PropTypes = {
   uploader?: any // (file: File, variables?: { [key: string]: any }) => void
   label?: string
@@ -100,7 +104,6 @@ const UploadFile: React.FC<PropTypes> = observer(
 
     return (
       <UploadView className={className}>
-        {state.loading && <Loading />}
         <UploadWrapper
           {...getRootProps({
             hasData: state.data && state.data.length !== 0,
@@ -115,6 +118,7 @@ const UploadFile: React.FC<PropTypes> = observer(
             <CurrentFile>
               <CircleCheckmark width="1.5rem" height="1.5rem" />
               {value[0].name}
+              {state.loading && <FileLoading inline={true} />}
             </CurrentFile>
           ) : (
             <>

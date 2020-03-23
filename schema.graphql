@@ -7,29 +7,27 @@ schema {
 
 type Departure {
   blockNumber: Int!
-  controlDepot: String!
   departureBlocks: [DepartureBlock!]!
   direction: String
-  equipment: Equipment!
   id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
-  journeyType: JourneyType!
   routeId: String
-  startDepot: String!
   variant: String
 }
 
 type DepartureBlock {
   dayType: DayType!
   departures: [Departure!]!
+  equipment: Equipment
+  equipmentRegistryNumber: String!
   id: ID!
   operator: Operator!
   preInspection: PreInspection!
 }
 
 type Equipment {
-  departures: [Departure!]!
+  departureBlocks: [DepartureBlock!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   exteriorColor: String!
@@ -224,15 +222,6 @@ enum DayType {
 enum InspectionStatus {
   Draft
   InProduction
-}
-
-enum JourneyType {
-  I
-  L
-  N
-  O
-  S
-  V
 }
 
 enum OperatingAreaName {
