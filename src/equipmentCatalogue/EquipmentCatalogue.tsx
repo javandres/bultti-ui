@@ -18,7 +18,6 @@ import {
 import { useStateValue } from '../state/useAppState'
 import ValueDisplay from '../common/components/ValueDisplay'
 import EquipmentCatalogueEquipment from './EquipmentCatalogueEquipment'
-import { groupBy } from 'lodash'
 
 const EquipmentCatalogueView = styled.div``
 
