@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../util/useUploader'
 import Checkbox from '../common/input/Checkbox'
@@ -9,7 +9,7 @@ import Table, { CellContent } from '../common/components/Table'
 import gql from 'graphql-tag'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle, TextButton } from '../common/components/Button'
-import { ErrorView, FlexRow, MessageContainer, MessageView } from '../common/components/common'
+import { ErrorView, FlexRow, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks } from './departureBlocksQuery'
@@ -110,26 +110,22 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     const [fileValue, setFileValue] = useState<File[]>([])
 
     // Create an upload handler for uploading the departure block file.
-    const uploader = useUploader(uploadDepartureBlocksMutation, {
-      variables: {
-        inspectionId: inspectionId,
-        dayTypes: getEnabledDayTypes(dayTypeGroup),
+    const uploader = useUploader(
+      uploadDepartureBlocksMutation,
+      {
+        variables: {
+          inspectionId: inspectionId,
+          dayTypes: getEnabledDayTypes(dayTypeGroup),
+        },
       },
-    })
+      onBlocksChange
+    )
 
     const [removeDepartureBlocksForDays, { loading: removeBlocksLoading }] = useMutationData(
       removeDepartureBlocks
     )
 
-    const [, { data: uploadedData, loading: departureBlocksLoading }] = uploader
-
-    // TODO: Better fetch uploaded blocks reaction
-
-    useEffect(() => {
-      if (uploadedData && !departureBlocksLoading) {
-        onBlocksChange()
-      }
-    }, [onBlocksChange, departureBlocksLoading, uploadedData])
+    const [, { loading: departureBlocksLoading }] = uploader
 
     let isLoading = useMemo(() => removeBlocksLoading || departureBlocksLoading || loading, [
       loading,

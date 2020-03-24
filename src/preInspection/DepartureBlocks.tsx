@@ -28,6 +28,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
   let { data: departureBlocksData, loading: departureBlocksLoading, refetch } = useQueryData(
     departureBlocksQuery,
     {
+      notifyOnNetworkStatusChange: true,
       skip: !inspectionId,
       variables: {
         preInspectionId: inspectionId,

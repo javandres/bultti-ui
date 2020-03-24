@@ -4,6 +4,7 @@ import { DocumentNode, ExecutionResult } from 'graphql'
 import { useCallback, useMemo } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
 import { ApolloError } from 'apollo-client'
+import { GraphQLError } from 'graphql/error/GraphQLError'
 
 type Uploader<TData, TVariables> = [
   (
@@ -16,7 +17,7 @@ type Uploader<TData, TVariables> = [
 export const useUploader = <TData = any, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
-  pickData = ''
+  onUploadFinished?: (data?: TData, errors?: ReadonlyArray<GraphQLError>) => void
 ): Uploader<TData, TVariables> => {
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
@@ -33,11 +34,20 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
           file,
         },
       }
-      return mutationFn(queryOptions)
+
+      return mutationFn(queryOptions).then((result) => {
+        const uploadedData = pickGraphqlData(result.data)
+
+        if (onUploadFinished) {
+          onUploadFinished(uploadedData, result.errors)
+        }
+
+        return uploadedData
+      })
     },
-    [options?.variables, mutationFn]
+    [options?.variables, mutationFn, onUploadFinished]
   )
 
-  const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
+  const pickedData = useMemo(() => pickGraphqlData(data), [data])
   return [uploadFile, { data: pickedData, loading, error, called }]
 }
