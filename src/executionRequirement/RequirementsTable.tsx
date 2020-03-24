@@ -25,7 +25,7 @@ export type EquipmentGroup = {
   age: number
 }
 
-export type AreaPropTypes = {
+export type PropTypes = {
   equipmentTypes: EquipmentGroup[]
   weeklyMeters: number
 }
@@ -45,24 +45,28 @@ const requirementColumnLabels = {
   total: 'Yhteensä',
 }
 
-const RequirementsTable: React.FC<AreaPropTypes> = observer(({ equipmentTypes, weeklyMeters }) => {
-  let emissionClassGroups = groupBy(equipmentTypes, 'emissionClass')
+const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentTypes, weeklyMeters }) => {
+  let emissionClassGroups = useMemo(() => groupBy(equipmentTypes, 'emissionClass'), [
+    equipmentTypes,
+  ])
 
-  const classRequirements = Object.entries(emissionClassGroups).map(
-    ([emissionClass, equipment]) => {
-      const combinedPercentage: number = equipment.reduce(
-        (total: number, { percentageQuota }) => (total += percentageQuota),
-        0
-      )
+  const classRequirements = useMemo(
+    () =>
+      Object.entries(emissionClassGroups).map(([emissionClass, equipment]) => {
+        const combinedPercentage: number = equipment.reduce(
+          (total: number, { percentageQuota }) => (total += percentageQuota),
+          0
+        )
 
-      const meters = round(weeklyMeters * (combinedPercentage / 100))
+        const meters = round(weeklyMeters * (combinedPercentage / 100))
 
-      return {
-        emissionClass: parseInt(emissionClass, 10),
-        meters,
-        percentageQuota: combinedPercentage,
-      }
-    }
+        return {
+          emissionClass: parseInt(emissionClass, 10),
+          meters,
+          percentageQuota: combinedPercentage,
+        }
+      }),
+    [emissionClassGroups, weeklyMeters]
   )
 
   let requirementRows = useMemo(() => {
@@ -100,8 +104,9 @@ const RequirementsTable: React.FC<AreaPropTypes> = observer(({ equipmentTypes, w
             return val
           }
 
-          let unit = item.unit === 'percentage' ? '%' : 'M'
-          return val + ' ' + unit
+          let unit = item.unit === 'percentage' ? '%' : 'km'
+          let useVal = item.unit === 'meters' ? round(val / 1000) : val
+          return useVal + ' ' + unit
         }}
       />
     </ExecutionRequirementsAreaContainer>

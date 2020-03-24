@@ -251,6 +251,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       })
     }, [activeCatalogue])
 
+    let averageAge = useMemo(() => {
+      let combinedAge = unitEquipment.reduce((total, { age }) => (total += age), 0)
+      return round(combinedAge / unitEquipment.length)
+    }, [unitEquipment])
+
+    console.log(averageAge)
+
     return (
       <ProcurementUnitView>
         {loading ? (
@@ -329,7 +336,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
                   />
-                  <SubSectionHeading>Suoritevaatimukset</SubSectionHeading>
+                  <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
+                  <ValueDisplay
+                    style={{ marginBottom: '1rem' }}
+                    item={{ age: averageAge + ' vuotta' }}
+                    labels={{ age: 'Keski-ikä' }}
+                  />
                   <RequirementsTable
                     equipmentTypes={unitEquipment}
                     weeklyMeters={procurementUnit.weeklyMeters}

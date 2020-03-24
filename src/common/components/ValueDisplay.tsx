@@ -1,5 +1,5 @@
-import React from 'react'
-import styled from 'styled-components'
+import React, { BaseHTMLAttributes, StyleHTMLAttributes } from 'react'
+import styled, { CSSProperties } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { useOrderedValues } from '../../util/useOrderedValues'
@@ -54,6 +54,7 @@ export type PropTypes<ItemType = any> = {
   renderValue?: (val: any, key: string) => any
   className?: string
   children?: React.ReactChild
+  style?: CSSProperties
 }
 
 const defaultRenderValue = (val) => val
@@ -67,11 +68,12 @@ const ValueDisplay: React.FC<PropTypes> = observer(
     hideKeys,
     renderValue = defaultRenderValue,
     children,
+    style,
   }) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     return (
-      <ValueDisplayView className={className}>
+      <ValueDisplayView style={style} className={className}>
         {itemEntries.map(([key, val], index) => {
           if (typeof val === 'object') {
             return null
