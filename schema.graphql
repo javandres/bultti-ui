@@ -17,10 +17,11 @@ type Departure {
 }
 
 type DepartureBlock {
+  blockNumber: String!
   dayType: DayType!
   departures: [Departure!]!
-  equipment: Equipment
-  equipmentRegistryNumber: String!
+  equipment: [Equipment!]!
+  equipmentRegistryNumbers: [String!]!
   id: ID!
   operator: Operator!
   preInspection: PreInspection!

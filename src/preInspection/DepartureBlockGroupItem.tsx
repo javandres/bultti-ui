@@ -6,44 +6,12 @@ import UploadFile from '../common/input/UploadFile'
 import Loading from '../common/components/Loading'
 import styled from 'styled-components'
 import Table, { CellContent } from '../common/components/Table'
-import gql from 'graphql-tag'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle, TextButton } from '../common/components/Button'
 import { ErrorView, FlexRow, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
-import { removeDepartureBlocks } from './departureBlocksQuery'
-
-const uploadDepartureBlocksMutation = gql`
-  mutation uploadDepartureBlocks($file: Upload, $dayTypes: [DayType!]!, $inspectionId: String!) {
-    createDepartureBlockFromFile(file: $file, dayTypes: $dayTypes, preInspectionId: $inspectionId) {
-      id
-      dayType
-      equipment {
-        id
-        vehicleId
-        registryNr
-        emissionClass
-        model
-        type
-        equipmentCatalogueQuotas {
-          catalogueStartDate
-          catalogueEndDate
-          percentageQuota
-        }
-      }
-      departures {
-        id
-        blockNumber
-        direction
-        routeId
-        variant
-        journeyStartTime
-        journeyEndTime
-      }
-    }
-  }
-`
+import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
 
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;
@@ -73,6 +41,7 @@ const ResetButton = styled(Button).attrs(() => ({ buttonStyle: ButtonStyle.SECON
 `
 
 const departureBLocksColumnLabels = {
+  blockNumber: 'Ketjunumero',
   registryNumber: 'Rekisterinumero',
   equipmentId: 'Ajoneuvon tiedot',
   firstStartTime: 'Ensimmäinen lähtö',
@@ -202,13 +171,17 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             return allRoutes
           }, [])
 
-          const equipmentId = block?.equipment?.uniqueVehicleId || null
+          const equipmentIds =
+            block?.equipment.length === 0
+              ? null
+              : block?.equipment.map((eq) => eq.uniqueVehicleId).join(', ')
 
           return {
             id: block.id,
+            blockNumber: block.blockNumber,
             dayTypes: displayDayTypes.join(', '),
-            registryNumber: block.equipmentRegistryNumber,
-            equipmentId: equipmentId,
+            registryNumber: block.equipmentRegistryNumbers.join(', '),
+            equipmentId: equipmentIds,
             firstStartTime: firstDeparture.journeyStartTime,
             lastEndTime: lastDeparture.journeyEndTime,
             routes: routes.join(', '),
@@ -238,7 +211,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             }
 
             // Check for missing equipment
-            if (!block.equipment) {
+            if (block?.equipment.length === 0) {
               errors.missingEquipment = true
             }
 
@@ -248,6 +221,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         ),
       [departureBlocks]
     )
+
+    console.log(blockErrors)
 
     return (
       <DepartureBlockGroupContainer>

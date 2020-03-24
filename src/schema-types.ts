@@ -36,10 +36,11 @@ export type Departure = {
 export type DepartureBlock = {
    __typename?: 'DepartureBlock',
   id: Scalars['ID'],
+  blockNumber: Scalars['String'],
   dayType: DayType,
-  equipmentRegistryNumber: Scalars['String'],
+  equipmentRegistryNumbers: Array<Scalars['String']>,
   operator: Operator,
-  equipment?: Maybe<Equipment>,
+  equipment: Array<Equipment>,
   preInspection: PreInspection,
   departures: Array<Departure>,
 };
@@ -257,7 +258,7 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
 export type MutationCreateDepartureBlockFromFileArgs = {
   preInspectionId: Scalars['String'],
   dayTypes: Array<DayType>,
-  file: Scalars['Upload']
+  file?: Maybe<Scalars['Upload']>
 };
 
 

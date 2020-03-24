@@ -5,6 +5,7 @@ export const departureBlocksQuery = gql`
     departureBlocksForPreInspection(preInspectionId: $preInspectionId) {
       id
       dayType
+      blockNumber
       departures {
         id
         blockNumber
@@ -25,11 +26,20 @@ export const departureBlocksQuery = gql`
         vehicleId
         emissionClass
       }
-      equipmentRegistryNumber
+      equipmentRegistryNumbers
       operator {
         operatorId
         operatorName
       }
+    }
+  }
+`
+
+export const uploadDepartureBlocksMutation = gql`
+  mutation uploadDepartureBlocks($file: Upload, $dayTypes: [DayType!]!, $inspectionId: String!) {
+    createDepartureBlockFromFile(file: $file, dayTypes: $dayTypes, preInspectionId: $inspectionId) {
+      id
+      dayType
     }
   }
 `
