@@ -93,7 +93,7 @@ type ExecutionRequirementValue {
 }
 
 type Mutation {
-  createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload!, preInspectionId: String!): [DepartureBlock!]
+  createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [DepartureBlock!]
   createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
