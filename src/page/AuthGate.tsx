@@ -47,7 +47,7 @@ const Title = styled.h2`
 const LoginButton = styled(StyledButton).attrs(() => ({
   inverted: true,
   buttonStyle: ButtonStyle.SECONDARY,
-  buttonSize: ButtonSize.LARGE,
+  size: ButtonSize.LARGE,
 }))`
   display: flex;
   justify-content: center;

@@ -126,7 +126,7 @@ const props2style = (props: ButtonProps): ButtonSizeStyle & ButtonColorStyle => 
 
 // Prevent props from being forwarded to the DOM element and triggering an error.
 const DOMSafeButtonComponent = React.forwardRef<HTMLButtonElement, StyledButtonProps>(
-  ({ loading, buttonStyle, size, ...props }, ref) => <button ref={ref} {...props} />
+  ({ inverted, loading, buttonStyle, size, ...props }, ref) => <button ref={ref} {...props} />
 )
 
 export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`

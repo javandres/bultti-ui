@@ -5,11 +5,11 @@ import Checkbox from '../common/input/Checkbox'
 import UploadFile from '../common/input/UploadFile'
 import Loading from '../common/components/Loading'
 import styled from 'styled-components'
-import Table from '../common/components/Table'
+import Table, { CellContent } from '../common/components/Table'
 import gql from 'graphql-tag'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle, TextButton } from '../common/components/Button'
-import { FlexRow, MessageView } from '../common/components/common'
+import { ErrorView, FlexRow, MessageContainer, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks } from './departureBlocksQuery'
@@ -73,7 +73,7 @@ const ResetButton = styled(Button).attrs(() => ({ buttonStyle: ButtonStyle.SECON
 `
 
 const departureBLocksColumnLabels = {
-  dayTypes: 'Päivät',
+  registryNumber: 'Rekisterinumero',
   equipmentId: 'Ajoneuvon tiedot',
   firstStartTime: 'Ensimmäinen lähtö',
   lastEndTime: 'Viimeinen saapuminen',
@@ -202,17 +202,52 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             return allRoutes
           }, [])
 
-          const equipmentId = block?.equipment?.uniqueVehicleId || 'Equipment not found'
+          const equipmentId = block?.equipment?.uniqueVehicleId || null
 
           return {
+            id: block.id,
             dayTypes: displayDayTypes.join(', '),
-            equipmentId: `${block.equipmentRegistryNumber} / ${equipmentId}`,
+            registryNumber: block.equipmentRegistryNumber,
+            equipmentId: equipmentId,
             firstStartTime: firstDeparture.journeyStartTime,
             lastEndTime: lastDeparture.journeyEndTime,
             routes: routes.join(', '),
           }
         })
     }, [departureBlocks, dayTypeGroup])
+
+    const renderTableCell = useCallback(
+      (val) => {
+        return (
+          <CellContent style={{ backgroundColor: !val ? 'var(--lighter-red)' : 'transparent' }}>
+            {val}
+          </CellContent>
+        )
+      },
+      [departureBlocks]
+    )
+
+    // Loop through all blocks and find errors.
+    let blockErrors = useMemo(
+      () =>
+        departureBlocks.reduce(
+          (errors, block) => {
+            // If all checks are already failed, just return the errors.
+            if (Object.values(errors).every((val) => val)) {
+              return errors
+            }
+
+            // Check for missing equipment
+            if (!block.equipment) {
+              errors.missingEquipment = true
+            }
+
+            return errors
+          },
+          { missingEquipment: false }
+        ),
+      [departureBlocks]
+    )
 
     return (
       <DepartureBlockGroupContainer>
@@ -243,17 +278,24 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         )}
         {isLoading && <Loading />}
         {departureBlocks.length !== 0 && (
-          <FlexRow style={{ marginTop: '1rem' }}>
-            <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
-              {blocksVisible ? 'Piilota lähdöt' : 'Näytä lähdöt'}
-            </TextButton>
-            {!isLoading && isDisabled && (
-              <ResetButton onClick={onReset}>Poista kaikki ryhmän lähtöketjut</ResetButton>
+          <>
+            {Object.entries(blockErrors).map(
+              ([errorName, isError]) =>
+                isError && <ErrorView key={errorName}>{errorName}</ErrorView>
             )}
-          </FlexRow>
+            <FlexRow style={{ marginTop: '1rem' }}>
+              <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
+                {blocksVisible ? 'Piilota lähdöt' : 'Näytä lähdöt'}
+              </TextButton>
+              {!isLoading && isDisabled && (
+                <ResetButton onClick={onReset}>Poista kaikki ryhmän lähtöketjut</ResetButton>
+              )}
+            </FlexRow>
+          </>
         )}
         {blocksVisible && displayData.length !== 0 ? (
           <DepartureBlocksTable
+            renderCell={renderTableCell}
             keyFromItem={(item) => item.id}
             items={displayData}
             columnLabels={departureBLocksColumnLabels}
