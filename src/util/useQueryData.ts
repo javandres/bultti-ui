@@ -10,7 +10,9 @@ export const useQueryData = <TData = any, TVariables = OperationVariables>(
   options: QueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ) => {
-  const { loading, error, data, refetch = () => {} } = useQuery<TData, TVariables>(query, options)
-  const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
+  let queryHookObj = useQuery<TData, TVariables>(query, options)
+  let { loading, error, data, refetch = () => {} } = queryHookObj || {}
+
+  let pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
   return { data: pickedData, loading, error, refetch }
 }
