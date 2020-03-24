@@ -24,6 +24,10 @@ import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { SubSectionHeading } from '../common/components/common'
+import RequirementsTable, { EquipmentGroup } from '../executionRequirement/RequirementsTable'
+import { groupBy } from 'lodash'
+import { strval } from '../util/strval'
+import { differenceInCalendarDays, parseISO } from 'date-fns'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -215,6 +219,38 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
+    let unitEquipment: Array<EquipmentGroup> = useMemo(() => {
+      let equipmentWithQuota = (activeCatalogue?.equipmentQuotas || []).map((quota) => ({
+        ...quota.equipment,
+        percentageQuota: quota.percentageQuota,
+      }))
+
+      let grouped = groupBy(
+        equipmentWithQuota,
+        ({ model, emissionClass, type, registryDate }) =>
+          model + strval(emissionClass) + type + strval(registryDate)
+      )
+
+      return Object.values(grouped).map((equipmentGroup) => {
+        let percentageQuota = equipmentGroup.reduce((total, item) => {
+          total += item?.percentageQuota || 0
+          return total
+        }, 0)
+
+        let age = round(
+          differenceInCalendarDays(new Date(), parseISO(equipmentGroup[0].registryDate)) / 365
+        )
+
+        return {
+          emissionClass: equipmentGroup[0].emissionClass,
+          type: equipmentGroup[0].type,
+          amount: equipmentGroup.length,
+          age,
+          percentageQuota,
+        }
+      })
+    }, [activeCatalogue])
+
     return (
       <ProcurementUnitView>
         {loading ? (
@@ -292,6 +328,11 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     catalogue={activeCatalogue}
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
+                  />
+                  <SubSectionHeading>Suoritevaatimukset</SubSectionHeading>
+                  <RequirementsTable
+                    equipmentTypes={unitEquipment}
+                    weeklyMeters={procurementUnit.weeklyMeters}
                   />
                 </>
               </Content>

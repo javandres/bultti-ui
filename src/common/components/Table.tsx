@@ -97,7 +97,7 @@ export type PropTypes<ItemType = any> = {
   onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
   className?: string
   renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactNode
-  renderValue?: (val: any, key?: string, isHeader?: boolean) => React.ReactNode
+  renderValue?: (val: any, key?: string, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
 }
 
@@ -194,7 +194,7 @@ const Table: React.FC<PropTypes> = observer(
                 .filter(([key]) => !keysToHide.includes(key))
                 .map(([key, val], index) => (
                   <TableCell key={`${rowKey}-${key}-${index}`}>
-                    {renderCell(renderValue(val, key, false), key, item)}
+                    {renderCell(renderValue(val, key, false, item), key, item)}
                   </TableCell>
                 ))}
               {itemRemover && (

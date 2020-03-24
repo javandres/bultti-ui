@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { MessageView } from '../common/components/common'
 import { get, groupBy } from 'lodash'
-import ExecutionArea from './ExecutionArea'
+import RequirementsTable from './RequirementsTable'
 import { OperatingAreaName } from '../schema-types'
 
 const ExecutionRequirementsView = styled.div``
@@ -35,21 +35,11 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(({ productionDate })
       {get(areaUnits, OperatingAreaName.Center, []).length !== 0 && (
         <>
           <AreaHeading>Keskusta</AreaHeading>
-          <ExecutionArea
-            productionDate={productionDate}
-            procurementUnits={areaUnits[OperatingAreaName.Center]}
-            area={OperatingAreaName.Center}
-          />
         </>
       )}
       {get(areaUnits, OperatingAreaName.Other, []).length !== 0 && (
         <>
           <AreaHeading>Muu</AreaHeading>
-          <ExecutionArea
-            productionDate={productionDate}
-            procurementUnits={areaUnits[OperatingAreaName.Other]}
-            area={OperatingAreaName.Center}
-          />
         </>
       )}
     </ExecutionRequirementsView>
