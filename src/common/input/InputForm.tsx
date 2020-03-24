@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { ActionsWrapper, ControlledFormView, FieldLabel, FieldWrapper } from './ItemForm'
-import { Button } from '../components/Button'
+import { Button, ButtonStyle } from '../components/Button'
 
 export interface FieldConfigType {
   label: string
@@ -40,8 +40,7 @@ const InputForm: React.FC<PropTypes> = observer(
           <ActionsWrapper>
             <Button
               style={{ marginRight: '1rem' }}
-              theme="light"
-              transparent={true}
+              buttonStyle={ButtonStyle.SECONDARY}
               onClick={onCancel}>
               Peruuta
             </Button>

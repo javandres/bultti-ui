@@ -6,7 +6,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { HSLLogoNoText } from '../common/icon/HSLLogoNoText'
 import { Login } from '../common/icon/Login'
 import { Text } from '../util/translate'
-import { ButtonSize, StyledButton } from '../common/components/Button'
+import { ButtonSize, ButtonStyle, StyledButton } from '../common/components/Button'
 import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
 
 const LoadingScreen = styled.div`
@@ -44,7 +44,11 @@ const Title = styled.h2`
   text-align: center;
 `
 
-const LoginButton = styled(StyledButton).attrs(() => ({ theme: 'dark' }))`
+const LoginButton = styled(StyledButton).attrs(() => ({
+  inverted: true,
+  buttonStyle: ButtonStyle.SECONDARY,
+  buttonSize: ButtonSize.LARGE,
+}))`
   display: flex;
   justify-content: center;
   flex-direction: row;
@@ -88,7 +92,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
       {unauthenticated && (
         <>
           <ButtonWrapper>
-            <LoginButton onClick={openAuthForm} size={ButtonSize.LARGE} transparent>
+            <LoginButton onClick={openAuthForm}>
               <Login height="1em" fill="white" />
               <span className="buttonText">
                 <Text>general.app.login</Text>

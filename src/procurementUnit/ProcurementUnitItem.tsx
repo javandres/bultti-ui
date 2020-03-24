@@ -19,7 +19,7 @@ import {
 import Loading from '../common/components/Loading'
 import ItemForm from '../common/input/ItemForm'
 import ValueDisplay from '../common/components/ValueDisplay'
-import { Button, ButtonSize } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
@@ -278,8 +278,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       renderInput={renderProcurementItemInput}>
                       <Button
                         size={ButtonSize.SMALL}
-                        transparent={true}
-                        theme="light"
+                        buttonStyle={ButtonStyle.SECONDARY}
                         onClick={onUpdateWeeklyMeters}>
                         Päivitä suoritteet JOREsta
                       </Button>

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { TextInput } from './Input'
-import { Button } from '../components/Button'
+import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
 
 export const ControlledFormView = styled.div`
@@ -134,8 +134,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           <ActionsWrapper>
             <Button
               style={{ marginRight: '1rem' }}
-              theme="light"
-              transparent={true}
+              buttonStyle={ButtonStyle.SECONDARY}
               onClick={onCancel}>
               Peruuta
             </Button>

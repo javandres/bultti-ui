@@ -8,7 +8,7 @@ import styled from 'styled-components'
 import Table from '../common/components/Table'
 import gql from 'graphql-tag'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
-import { Button, TextButton } from '../common/components/Button'
+import { Button, ButtonStyle, TextButton } from '../common/components/Button'
 import { FlexRow, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
@@ -68,9 +68,8 @@ const DepartureBlocksTable = styled(Table)`
   margin-top: 1rem;
 `
 
-const ResetButton = styled(Button)`
+const ResetButton = styled(Button).attrs(() => ({ buttonStyle: ButtonStyle.SECONDARY_REMOVE }))`
   margin-left: auto;
-  background: var(--red);
 `
 
 const departureBLocksColumnLabels = {

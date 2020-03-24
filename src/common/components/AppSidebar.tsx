@@ -6,7 +6,7 @@ import { Link } from '@reach/router'
 import { Search } from '../icon/Search'
 import { Plus } from '../icon/Plus'
 import { Menu } from '../icon/Menu'
-import { Button, ButtonSize } from './Button'
+import { Button, ButtonSize, ButtonStyle } from './Button'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import { User } from '../icon/User'
@@ -153,8 +153,8 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           loading={logoutLoading}
           onClick={onLogout}
           size={ButtonSize.SMALL}
-          theme="dark"
-          transparent>
+          inverted={true}
+          buttonStyle={ButtonStyle.SECONDARY}>
           <Text>general.app.logout</Text>
         </Button>
       </UserBar>

@@ -15,7 +15,7 @@ const SelectWrapper = styled.div`
 `
 
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
-  theme: ThemeTypes
+  inverted: ThemeTypes
   disabled?: boolean
 }>`
   background: ${(p) => (p.disabled ? 'transparent' : 'white')};
@@ -51,7 +51,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
       : ''}
 `
 
-const SuggestionsList = styled.ul<{ isOpen: boolean; theme: ThemeTypes }>`
+const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
   list-style: none;
   width: 100%;
   border-radius: 8px;
@@ -85,7 +85,7 @@ export type DropdownProps = {
   selectedItem?: any
   className?: string
   style?: StyleHTMLAttributes<HTMLDivElement>
-  theme?: 'light' | 'dark'
+  theme?: ThemeTypes
 }
 
 function toString(item, converter) {
@@ -148,7 +148,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
             {...getToggleButtonProps({
               disabled,
             })}
-            theme={theme}>
+            inverted={theme === 'dark'}>
             {toString(currentlySelected, itemToLabel) || text('general.app.all')}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
