@@ -2,13 +2,14 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, flatten, groupBy, pick } from 'lodash'
-import { Button } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { defaultDayTypeGroup, getEnabledDayTypes, useDayTypeGroups } from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
 import { departureBlocksQuery } from './departureBlocksQuery'
 import { DayType, DepartureBlock } from '../schema-types'
 import { normalDayTypes } from '../constants'
+import { FlexRow } from '../common/components/common'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
@@ -59,6 +60,20 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
 
   return (
     <DepartureBlocksView>
+      <FlexRow
+        style={{
+          margin: '0 -1rem',
+          padding: '0 1rem 0.5rem',
+          borderBottom: '1px solid var(--lighter-grey)',
+        }}>
+        <Button
+          style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={() => refetch()}>
+          Päivitä
+        </Button>
+      </FlexRow>
       {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
         let dayTypeBlocks = pick(departureBlockGroups, getEnabledDayTypes(dayTypeGroup))
         let departureBlocksForDayTypes: DepartureBlock[] = flatten(Object.values(dayTypeBlocks))
