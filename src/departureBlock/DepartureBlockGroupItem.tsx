@@ -222,8 +222,6 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       [departureBlocks]
     )
 
-    console.log(blockErrors)
-
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>

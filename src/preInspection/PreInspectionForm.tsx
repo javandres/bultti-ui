@@ -18,8 +18,8 @@ import { addDays, endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fn
 import { toISODate } from '../util/toISODate'
 import { PageLoading } from '../common/components/Loading'
 import Input from '../common/input/Input'
-import DepartureBlocks from './DepartureBlocks'
-import ExecutionRequirements from './ExecutionRequirements'
+import DepartureBlocks from '../departureBlock/DepartureBlocks'
+import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
 import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
