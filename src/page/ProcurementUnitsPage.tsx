@@ -30,7 +30,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
         <Content>
           <ProcurementUnits
             operatorId={globalOperator?.id || 0}
-            productionDate={globalSeason?.startDate || ''}
+            startDate={globalSeason?.startDate || ''}
           />
         </Content>
       )}

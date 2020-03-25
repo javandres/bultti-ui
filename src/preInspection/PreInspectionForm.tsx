@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
-import { observer, useLocalStore } from 'mobx-react-lite'
+import { observer, useLocalStore, useObserver } from 'mobx-react-lite'
 import {
   Column,
   ColumnWrapper,
@@ -11,11 +11,15 @@ import {
 } from '../common/components/common'
 import SelectOperator, { operatorIsValid } from '../common/input/SelectOperator'
 import SelectSeason from '../common/input/SelectSeason'
-import { Operator, Season } from '../schema-types'
-import SelectWeek from '../common/input/SelectWeek'
+import {
+  InspectionStatus,
+  Operator,
+  PreInspection,
+  PreInspectionInput,
+  Season,
+} from '../schema-types'
 import SelectDate from '../common/input/SelectDate'
 import { addDays, endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
-import { toISODate } from '../util/toISODate'
 import { PageLoading } from '../common/components/Loading'
 import Input from '../common/input/Input'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
@@ -27,7 +31,10 @@ import {
 } from './createPreInspectionMutation'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { DATE_FORMAT } from '../constants'
+import { set, toJS } from 'mobx'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import isEqual from 'react-fast-compare'
+import { pick } from 'lodash'
 
 const currentDate = new Date()
 
@@ -83,6 +90,14 @@ const ControlGroup = styled.div`
   }
 `
 
+enum PreInspectionFormStatus {
+  Uninitialized = 'Uninitialized',
+  InitLoading = 'InitLoading',
+  Invalid = 'Invalid',
+  Draft = 'Draft',
+  InProduction = 'InProduction',
+}
+
 interface PreInspectionFormActions {
   setInspectionId: (id: string) => void
   setStatus: (nextStatus: PreInspectionFormStatus) => void
@@ -90,45 +105,35 @@ interface PreInspectionFormActions {
   selectSeason: (season: Season | null) => void
   setStartDate: (startDate: string) => void
   setEndDate: (endDate: string) => void
-  setProductionStartDate: (startDate: string) => void
-  setProductionEndDate: (endDate: string) => void
 }
 
-enum PreInspectionFormStatus {
-  Uninitialized = 'UNINITIALIZED',
-  InitLoading = 'INIT_LOADING',
-  Invalid = 'INVALID',
-  Draft = 'DRAFT',
-  InProduction = 'IN_PRODUCTION',
-}
-
-interface PreInspectionFormData extends PreInspectionFormActions {
+interface PreInspectionFormData {
   id: string
   status: PreInspectionFormStatus
   operator: Operator | null
   season: Season | null
   startDate: string
   endDate: string
-  productionStart: string
-  productionEnd: string
 }
+
+type LocalFormState = PreInspectionFormActions & PreInspectionFormData
 
 type PreInspectionProps = {
   operator?: Operator | null
   season?: Season | null
 }
 
+const compareValues = ['id', 'operator', 'season', 'startDate', 'endDate']
+
 const PreInspectionForm: React.FC<PreInspectionProps> = observer(
   ({ season: preselectedSeason = null, operator: preselectedOperator = null }) => {
-    const formState = useLocalStore<PreInspectionFormData>(() => ({
+    var formState = useLocalStore<LocalFormState>(() => ({
       id: '',
       status: PreInspectionFormStatus.Uninitialized,
       operator: preselectedOperator || null,
       season: preselectedSeason || null,
-      startDate: '',
+      startDate: format(addDays(currentDate, 1), DATE_FORMAT),
       endDate: '',
-      productionStart: format(addDays(currentDate, 1), DATE_FORMAT),
-      productionEnd: '',
       setInspectionId: (id) => {
         formState.id = id
       },
@@ -147,28 +152,28 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       setEndDate: (endDate: string = '') => {
         formState.endDate = endDate
       },
-      setProductionStartDate: (startDate: string = '') => {
-        formState.productionStart = startDate
-      },
-      setProductionEndDate: (endDate: string = '') => {
-        formState.productionEnd = endDate
-      },
     }))
 
-    const [
+    let [
       createPreInspection,
       { data: createdInspectionData, loading: inspectionLoading },
     ] = useMutationData(createPreInspectionMutation)
 
-    const [
+    let [
       updatePreInspection,
       { data: updatedInspectionData, loading: updateLoading },
     ] = useMutationData(updatePreInspectionMutation)
 
-    const prevSavedPreInspection = useMemo(() => updatedInspectionData || createdInspectionData, [
+    let prevSavedPreInspection = useMemo(() => updatedInspectionData || createdInspectionData, [
       createdInspectionData,
       updatedInspectionData,
     ])
+
+    let isDirty: boolean = useObserver(() => {
+      let compareFormState = pick(toJS(formState), compareValues)
+      let comparePrevSaved = pick(prevSavedPreInspection, compareValues)
+      return !isEqual(comparePrevSaved, compareFormState)
+    })
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     // TODO: Error views when status = invalid
@@ -176,17 +181,26 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       // A pre-inspection can be created when there is not one currently loading and the form state is uninitialized.
       if (
         operatorIsValid(formState?.operator) &&
+        formState?.season &&
         formState.status === PreInspectionFormStatus.Uninitialized &&
-        !inspectionLoading
+        !inspectionLoading &&
+        !updateLoading
       ) {
         formState.setStatus(PreInspectionFormStatus.InitLoading)
         let operatorId = formState?.operator?.id || 0
+        let seasonId = formState?.season?.id || ''
+
+        let preInspectionInput: PreInspectionInput = {
+          operatorId,
+          seasonId,
+          startDate: formState.startDate,
+          endDate: formState.endDate,
+          status: InspectionStatus.Draft,
+        }
 
         createPreInspection({
           variables: {
-            preInspectionInput: {
-              operatorId,
-            },
+            preInspectionInput,
           },
         }).then(({ data }) => {
           // No data means the creation failed. If there is data, the
@@ -205,9 +219,86 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
         formState.status === PreInspectionFormStatus.Draft &&
         !formState.id
       ) {
-        formState.setInspectionId(createdInspectionData.id)
+        set(formState, createdInspectionData)
       }
-    }, [formState.status, formState?.operator?.id, createdInspectionData, inspectionLoading])
+    }, [
+      formState.status,
+      formState?.operator?.id,
+      formState?.season,
+      createdInspectionData,
+      inspectionLoading,
+    ])
+
+    let isUpdating = useRef(false)
+
+    // Update the pre-inspection on changes
+    var saveFormState = useCallback(
+      async (draftInspection: PreInspectionFormData) => {
+        if (
+          !isUpdating.current &&
+          operatorIsValid(draftInspection.operator) &&
+          draftInspection.season &&
+          draftInspection.status === PreInspectionFormStatus.Draft &&
+          draftInspection.id
+        ) {
+          isUpdating.current = true
+
+          let preInspectionInput: PreInspectionInput = {
+            operatorId: draftInspection?.operator?.id || 0,
+            seasonId: draftInspection?.season?.id || '',
+            startDate: draftInspection.startDate,
+            endDate: draftInspection.endDate,
+          }
+
+          console.log('plep')
+
+          let updateResult = await updatePreInspection({
+            variables: {
+              preInspectionId: draftInspection.id,
+              preInspectionInput,
+            },
+          })
+
+          if (updateResult) {
+            let updatedPreInspection: PreInspection = pickGraphqlData(updateResult)
+
+            if (updatedPreInspection?.id && updatedPreInspection.id !== draftInspection.id) {
+              formState.setInspectionId(updatedPreInspection.id)
+            }
+
+            if (
+              updatedPreInspection?.operator &&
+              updatedPreInspection.operator?.id !== draftInspection.operator?.id
+            ) {
+              formState.selectOperator(updatedPreInspection.operator)
+            }
+
+            if (
+              updatedPreInspection?.season &&
+              updatedPreInspection.season?.id !== draftInspection.season?.id
+            ) {
+              formState.selectSeason(updatedPreInspection.season)
+            }
+          }
+
+          isUpdating.current = false
+        }
+      },
+      [formState, isUpdating.current, updatePreInspection]
+    )
+
+    useEffect(() => {
+      setTimeout(() => {
+        if (
+          formState.status === PreInspectionFormStatus.Draft &&
+          !updateLoading &&
+          !inspectionLoading &&
+          isDirty
+        ) {
+          saveFormState(formState)
+        }
+      }, 100)
+    }, [formState, isDirty, saveFormState, updateLoading, inspectionLoading])
 
     // Use the global operator as the initially selected operator if no operator
     // has been selected for this form yet.
@@ -228,46 +319,11 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
     // Set dates from the selected season when it changes.
     useEffect(() => {
       if (formState.season && formState.season.startDate && formState.season.endDate) {
-        formState.setProductionStartDate(formState.season.startDate)
-        formState.setProductionEndDate(formState.season.endDate)
         formState.selectSeason(formState.season)
-
-        // Start and end dates describe the first week of the production period.
-        // This is the "comparison period" that is extrapolated across the whole production period.
-        formState.setStartDate(toISODate(startOfISOWeek(parseISO(formState.season.startDate))))
-        formState.setEndDate(toISODate(endOfISOWeek(parseISO(formState.season.startDate))))
+        formState.setStartDate(formState.season.startDate)
+        formState.setEndDate(formState.season.endDate)
       }
     }, [formState.season])
-
-    useEffect(() => {
-      if (
-        !inspectionLoading &&
-        !updateLoading &&
-        operatorIsValid(formState.operator) &&
-        prevSavedPreInspection?.operatorId !== formState?.operator?.id &&
-        formState.status === PreInspectionFormStatus.Draft &&
-        formState.id
-      ) {
-        let operatorId = formState?.operator?.id || 0
-
-        updatePreInspection({
-          variables: {
-            preInspectionId: formState.id,
-            preInspectionInput: {
-              operatorId,
-            },
-          },
-        }).then(({ data }) => {
-          let updatedPreInspection = pickGraphqlData(data)
-
-          // The mutation returns a draft pre-inspection for the updated operator if one exists,
-          // so we must update the pre-inspection ID in the form state.
-          if (updatedPreInspection) {
-            formState.setInspectionId(updatedPreInspection.id)
-          }
-        })
-      }
-    }, [formState?.operator?.id, formState.status, formState.id, updatePreInspection])
 
     // Validate that the form has each dependent piece of data.
     const formCondition = useMemo(() => {
@@ -275,10 +331,10 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
         status: formState.status === PreInspectionFormStatus.Draft,
         inspectionId: !!formState.id,
         operator: !!formState.operator,
-        productionStart: !!formState.productionStart,
+        startDate: !!formState.startDate,
         season: !!formState.season,
       }
-    }, [formState.operator, formState.id, formState.productionStart, formState.season])
+    }, [formState.operator, formState.id, formState.startDate, formState.season])
 
     // Validation issues that affect the form at this moment
     const activeBlockers = Object.entries(formCondition)
@@ -339,27 +395,25 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
                 <ControlGroup>
                   <SelectDate
                     name="production_start"
-                    value={formState.productionStart}
-                    onChange={formState.setProductionStartDate}
+                    value={formState.startDate}
+                    onChange={formState.setStartDate}
                     label="Alku"
                   />
-                  <Input
-                    value={formState.productionEnd}
-                    label="Loppu"
-                    subLabel={true}
-                    disabled={true}
-                  />
+                  <Input value={formState.endDate} label="Loppu" subLabel={true} disabled={true} />
                 </ControlGroup>
                 <InputLabel theme="light">Tarkastusjakso</InputLabel>
                 <ControlGroup>
-                  <SelectWeek
-                    startLabel="Alku"
-                    endLabel="Loppu"
-                    startDate={formState.startDate}
-                    onChangeStartDate={formState.setStartDate}
-                    endDate={formState.endDate}
-                    onChangeEndDate={formState.setEndDate}
-                    maxDate={formState.productionEnd}
+                  <Input
+                    value={format(startOfISOWeek(parseISO(formState.startDate)), DATE_FORMAT)}
+                    label="Alku"
+                    subLabel={true}
+                    disabled={true}
+                  />
+                  <Input
+                    value={format(endOfISOWeek(parseISO(formState.startDate)), DATE_FORMAT)}
+                    label="Loppu"
+                    subLabel={true}
+                    disabled={true}
                   />
                 </ControlGroup>
               </FormColumn>
@@ -374,7 +428,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             <FormWrapper>
               <FormColumn width="100%" minWidth="510px">
                 <ExecutionRequirements
-                  productionDate={formState.productionStart}
+                  startDate={formState.startDate}
                   operatorId={formState?.operator?.operatorId || 0}
                 />
               </FormColumn>
@@ -383,7 +437,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             <TransparentFormWrapper>
               <FormColumn width="100%" minWidth="510px">
                 <ProcurementUnits
-                  productionDate={formState.productionStart}
+                  startDate={formState.startDate}
                   operatorId={formState?.operator?.operatorId || 0}
                 />
               </FormColumn>

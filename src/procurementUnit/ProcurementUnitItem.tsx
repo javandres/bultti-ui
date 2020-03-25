@@ -101,7 +101,7 @@ export const HeaderHeading = styled.h5`
 export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
-  productionDate: string
+  startDate: string
 }
 
 const procurementUnitLabels = {
@@ -110,7 +110,7 @@ const procurementUnitLabels = {
 }
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ productionDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
+  ({ startDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
     const [isExpanded, setIsExpanded] = useState(true)
     const [
       pendingProcurementUnit,
@@ -154,7 +154,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
       () =>
         (procurementUnit?.equipmentCatalogues || []).find((cat) =>
-          isBetween(productionDate, cat.startDate, cat.endDate)
+          isBetween(startDate, cat.startDate, cat.endDate)
         ),
       [procurementUnit]
     )
@@ -214,7 +214,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       setIsExpanded(expanded)
     }, [expanded])
 
-    const inspectionStartDate = useMemo(() => parseISO(productionDate), [productionDate])
+    const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
     const renderProcurementItemInput = useCallback((val: any, key: string, onChange) => {
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />

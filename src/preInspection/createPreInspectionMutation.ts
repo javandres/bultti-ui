@@ -8,13 +8,17 @@ export const createPreInspectionMutation = gql`
       startDate
       endDate
       operatorId
-      productionStart
-      productionEnd
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       season {
         id
         season
+        startDate
+        endDate
       }
-      status
     }
   }
 `
@@ -30,9 +34,17 @@ export const updatePreInspectionMutation = gql`
       startDate
       endDate
       operatorId
-      productionStart
-      productionEnd
-      status
+      operator {
+        id
+        operatorId
+        operatorName
+      }
+      season {
+        id
+        season
+        startDate
+        endDate
+      }
     }
   }
 `

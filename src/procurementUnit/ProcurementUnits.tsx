@@ -12,10 +12,10 @@ const ProcurementUnitsView = styled.div``
 
 export type PropTypes = {
   operatorId: number
-  productionDate: string
+  startDate: string
 }
 
-const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, productionDate }) => {
+const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, startDate }) => {
   const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 
   const toggleProcurementUnitsExpanded = useCallback(() => {
@@ -26,10 +26,10 @@ const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, production
   const { data: procurementUnitsData, loading: procurementUnitsLoading } = useQueryData(
     procurementUnitsQuery,
     {
-      skip: !operatorId || !productionDate,
+      skip: !operatorId || !startDate,
       variables: {
         operatorId: operatorId,
-        startDate: productionDate,
+        startDate: startDate,
       },
     }
   )
@@ -58,7 +58,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, production
           {procurementUnits.map((procurementUnit) => (
             <ProcurementUnitItem
               key={procurementUnit.id}
-              productionDate={productionDate}
+              startDate={startDate}
               procurementUnit={procurementUnit}
               expanded={procurementUnitsExpanded}
             />

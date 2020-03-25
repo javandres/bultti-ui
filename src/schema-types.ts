@@ -297,7 +297,7 @@ export type PreInspection = {
   id: Scalars['ID'],
   operatorId?: Maybe<Scalars['Int']>,
   operator: Operator,
-  season?: Maybe<Season>,
+  season: Season,
   executionRequirements?: Maybe<Array<ExecutionRequirement>>,
   departureBlocks: Array<DepartureBlock>,
   startDate?: Maybe<Scalars['BulttiDateTime']>,
@@ -312,6 +312,12 @@ export type PreInspection = {
 
 export type PreInspectionInput = {
   operatorId: Scalars['Int'],
+  seasonId: Scalars['String'],
+  startDate?: Maybe<Scalars['BulttiDateTime']>,
+  endDate?: Maybe<Scalars['BulttiDateTime']>,
+  productionStart?: Maybe<Scalars['BulttiDateTime']>,
+  productionEnd?: Maybe<Scalars['BulttiDateTime']>,
+  status?: Maybe<InspectionStatus>,
 };
 
 export type ProcurementUnit = {

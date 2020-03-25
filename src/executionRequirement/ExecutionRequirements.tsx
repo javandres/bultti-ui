@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { MessageView } from '../common/components/common'
 import { get, groupBy } from 'lodash'
-import RequirementsTable from './RequirementsTable'
 import { OperatingAreaName } from '../schema-types'
 
 const ExecutionRequirementsView = styled.div``
@@ -18,10 +17,10 @@ const AreaHeading = styled.h4`
 
 export type PropTypes = {
   operatorId: number
-  productionDate: string
+  startDate: string
 }
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(({ productionDate }) => {
+const ExecutionRequirements: React.FC<PropTypes> = observer(({ startDate }) => {
   const procurementUnits = []
   const areaUnits = groupBy(procurementUnits, 'operatingArea.name')
 

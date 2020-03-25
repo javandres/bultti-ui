@@ -972,9 +972,13 @@
             "description": "",
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Season",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Season",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3725,6 +3729,70 @@
               }
             },
             "defaultValue": null
+          },
+          {
+            "name": "seasonId",
+            "description": "",
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "startDate",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDateTime",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "endDate",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDateTime",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "productionStart",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDateTime",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "productionEnd",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDateTime",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "status",
+            "description": "",
+            "type": {
+              "kind": "ENUM",
+              "name": "InspectionStatus",
+              "ofType": null
+            },
+            "defaultValue": "Draft"
           }
         ],
         "interfaces": null,

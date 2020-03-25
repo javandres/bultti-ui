@@ -1,4 +1,4 @@
-import React, { BaseHTMLAttributes, StyleHTMLAttributes } from 'react'
+import React from 'react'
 import styled, { CSSProperties } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
@@ -74,7 +74,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
 
     return (
       <ValueDisplayView style={style} className={className}>
-        {itemEntries.map(([key, val], index) => {
+        {itemEntries.map(([key, val]) => {
           if (typeof val === 'object') {
             return null
           }

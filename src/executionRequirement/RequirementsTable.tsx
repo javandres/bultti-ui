@@ -97,8 +97,8 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, week
     )
 
     return {
-      averageAge: round(combinedAge / equipmentGroups.length),
-      averageAgeWeighted: round(combinedAgeWeighted / weeklyMeters),
+      averageAge: round((combinedAge || 0) / (equipmentGroups?.length || 1)),
+      averageAgeWeighted: round(combinedAgeWeighted / (weeklyMeters || 1)),
     }
   }, [equipmentGroups, weeklyMeters])
 

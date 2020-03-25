@@ -139,7 +139,7 @@ type PreInspection {
   operatorId: Int
   productionEnd: BulttiDateTime
   productionStart: BulttiDateTime
-  season: Season
+  season: Season!
   startDate: BulttiDateTime
   status: InspectionStatus!
   updatedDate: BulttiDateTime!
@@ -286,7 +286,13 @@ input ExecutionRequirementValueInput {
 }
 
 input PreInspectionInput {
+  endDate: BulttiDateTime
   operatorId: Int!
+  productionEnd: BulttiDateTime
+  productionStart: BulttiDateTime
+  seasonId: String!
+  startDate: BulttiDateTime
+  status: InspectionStatus = Draft
 }
 
 input ProcurementUnitEditInput {
