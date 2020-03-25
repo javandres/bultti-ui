@@ -251,12 +251,18 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       })
     }, [activeCatalogue])
 
-    let averageAge = useMemo(() => {
+    let requirementValues = useMemo(() => {
       let combinedAge = unitEquipment.reduce((total, { age }) => (total += age), 0)
-      return round(combinedAge / unitEquipment.length)
-    }, [unitEquipment])
+      let combinedAgeWeighted = unitEquipment.reduce(
+        (total, { age, percentageQuota }) => (total += age * (percentageQuota / 100)),
+        0
+      )
 
-    console.log(averageAge)
+      return {
+        averageAge: round(combinedAge / unitEquipment.length),
+        averageAgeWeighted: round(combinedAgeWeighted / unitEquipment.length),
+      }
+    }, [unitEquipment])
 
     return (
       <ProcurementUnitView>
@@ -339,8 +345,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
                   <ValueDisplay
                     style={{ marginBottom: '1rem' }}
-                    item={{ age: averageAge + ' vuotta' }}
-                    labels={{ age: 'Keski-ikä' }}
+                    item={requirementValues}
+                    labels={{ averageAge: 'Keski-ikä', averageAgeWeighted: 'Painotettu keski-ikä' }}
                   />
                   <RequirementsTable
                     equipmentTypes={unitEquipment}
