@@ -5,6 +5,8 @@ import { groupBy } from 'lodash'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
+import { EquipmentQuotaGroup } from '../equipmentCatalogue/equipmentUtils'
+import ValueDisplay from '../common/components/ValueDisplay'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -17,16 +19,8 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type EquipmentGroup = {
-  emissionClass: number
-  percentageQuota: number
-  amount: number
-  type: string
-  age: number
-}
-
 export type PropTypes = {
-  equipmentTypes: EquipmentGroup[]
+  equipmentGroups: EquipmentQuotaGroup[]
   weeklyMeters: number
 }
 
@@ -45,9 +39,9 @@ const requirementColumnLabels = {
   total: 'Yhteensä',
 }
 
-const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentTypes, weeklyMeters }) => {
-  let emissionClassGroups = useMemo(() => groupBy(equipmentTypes, 'emissionClass'), [
-    equipmentTypes,
+const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, weeklyMeters }) => {
+  let emissionClassGroups = useMemo(() => groupBy(equipmentGroups, 'emissionClass'), [
+    equipmentGroups,
   ])
 
   const classRequirements = useMemo(
@@ -93,8 +87,26 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentTypes, weekl
     return [meterRow, percentageRow]
   }, [classRequirements])
 
+  let requirementValues = useMemo(() => {
+    let combinedAge = equipmentGroups.reduce((total, { age }) => (total += age), 0)
+    let combinedAgeWeighted = equipmentGroups.reduce(
+      (total, { age, percentageQuota }) => (total += age * (percentageQuota / 100)),
+      0
+    )
+
+    return {
+      averageAge: round(combinedAge / equipmentGroups.length),
+      averageAgeWeighted: round(combinedAgeWeighted / equipmentGroups.length),
+    }
+  }, [equipmentGroups])
+
   return (
     <ExecutionRequirementsAreaContainer>
+      <ValueDisplay
+        style={{ marginBottom: '1rem' }}
+        item={requirementValues}
+        labels={{ averageAge: 'Keski-ikä', averageAgeWeighted: 'Painotettu keski-ikä' }}
+      />
       <Table
         items={requirementRows}
         columnLabels={requirementColumnLabels}

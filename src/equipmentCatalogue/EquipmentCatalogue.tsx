@@ -17,12 +17,14 @@ import {
 } from './equipmentCatalogueQuery'
 import { useStateValue } from '../state/useAppState'
 import ValueDisplay from '../common/components/ValueDisplay'
-import EquipmentCatalogueEquipment from './EquipmentCatalogueEquipment'
+import CatalogueEquipment from './CatalogueEquipment'
+import { catalogueEquipment } from './equipmentUtils'
 
 const EquipmentCatalogueView = styled.div``
 
 export type PropTypes = {
   procurementUnitId: string
+  startDate: Date
   catalogue?: EquipmentCatalogueType
   operatorId: number
   onCatalogueChanged: () => Promise<void>
@@ -41,7 +43,7 @@ enum CatalogueEditMode {
 }
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ procurementUnitId, catalogue, operatorId, onCatalogueChanged }) => {
+  ({ procurementUnitId, catalogue, startDate, operatorId, onCatalogueChanged }) => {
     const catalogueEditMode = useRef<CatalogueEditMode>(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
@@ -115,14 +117,9 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
-    const equipment: EquipmentWithQuota[] = useMemo(
-      () =>
-        (catalogue?.equipmentQuotas || []).map((quota) => ({
-          ...quota.equipment,
-          percentageQuota: quota.percentageQuota,
-        })),
-      [catalogue]
-    )
+    const equipment: EquipmentWithQuota[] = useMemo(() => catalogueEquipment(catalogue), [
+      catalogue,
+    ])
 
     return (
       <EquipmentCatalogueView>
@@ -155,10 +152,11 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
           </>
         )}
         {catalogue && (
-          <EquipmentCatalogueEquipment
+          <CatalogueEquipment
             catalogueId={catalogue.id}
             operatorId={operatorId}
             equipment={equipment}
+            startDate={startDate}
             onEquipmentChanged={onCatalogueChanged}
           />
         )}

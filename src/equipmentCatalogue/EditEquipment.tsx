@@ -13,7 +13,7 @@ import { useMutationData } from '../util/useMutationData'
 import { emptyOrNumber } from '../util/emptyOrNumber'
 import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
-import { equipmentColumnLabels } from './EquipmentCatalogueEquipment'
+import { equipmentColumnLabels } from './CatalogueEquipment'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
 
 export type PropTypes = {

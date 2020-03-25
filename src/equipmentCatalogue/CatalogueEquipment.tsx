@@ -7,15 +7,14 @@ import { FlexRow, MessageView, SubSectionHeading } from '../common/components/co
 import { EquipmentWithQuota } from './EquipmentCatalogue'
 import EditEquipment from './EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
-import { groupBy, omit } from 'lodash'
-import { Equipment } from '../schema-types'
-import { strval } from '../util/strval'
 import { emissionClassNames } from '../type/values'
+import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
   catalogueId: string
   operatorId: number
+  startDate: Date
   onEquipmentChanged: () => Promise<void>
 }
 
@@ -38,9 +37,8 @@ export const groupedEquipmentColumnLabels = {
   amount: 'Määrä',
 }
 
-// Naming things...
-const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
-  ({ equipment, catalogueId, operatorId, onEquipmentChanged }) => {
+const CatalogueEquipment: React.FC<PropTypes> = observer(
+  ({ equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
 
@@ -63,26 +61,10 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
       setEquipmentGrouped(checked)
     }, [])
 
-    const equipmentGroups: Array<Omit<Equipment, 'vehicleId' | 'registryNr'> & {
-      amount: number
-    }> = useMemo(() => {
-      let grouped = groupBy(
-        equipment,
-        ({ model, emissionClass, type, registryDate }) =>
-          model + strval(emissionClass) + type + strval(registryDate)
-      )
-
-      return Object.values(grouped).map((equipmentGroup) => {
-        return {
-          ...omit(equipmentGroup[0], 'vehicleId', 'registryNr'),
-          percentageQuota: equipmentGroup.reduce((total, item) => {
-            total += item?.percentageQuota || 0
-            return total
-          }, 0),
-          amount: equipmentGroup.length,
-        }
-      })
-    }, [equipment])
+    const equipmentGroups: EquipmentQuotaGroup[] = useMemo(
+      () => groupedEquipment(equipment, startDate),
+      [equipment, startDate]
+    )
 
     const renderCellValue = useCallback((val, key) => {
       switch (key) {
@@ -155,4 +137,4 @@ const EquipmentCatalogueEquipment: React.FC<PropTypes> = observer(
   }
 )
 
-export default EquipmentCatalogueEquipment
+export default CatalogueEquipment

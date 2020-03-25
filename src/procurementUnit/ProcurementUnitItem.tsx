@@ -24,10 +24,9 @@ import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { SubSectionHeading } from '../common/components/common'
-import RequirementsTable, { EquipmentGroup } from '../executionRequirement/RequirementsTable'
-import { groupBy } from 'lodash'
-import { strval } from '../util/strval'
-import { differenceInCalendarDays, parseISO } from 'date-fns'
+import RequirementsTable from '../executionRequirement/RequirementsTable'
+import { catalogueEquipment, groupedEquipment } from '../equipmentCatalogue/equipmentUtils'
+import { parseISO } from 'date-fns'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -112,6 +111,7 @@ const procurementUnitLabels = {
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({ productionDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
+    const [isExpanded, setIsExpanded] = useState(true)
     const [
       pendingProcurementUnit,
       setPendingProcurementUnit,
@@ -124,6 +124,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
           procurementUnitId: id,
         },
       }) || {}
+
+    const { routes = [] } = procurementUnit || {}
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
       variables: { procurementUnitId: id },
@@ -208,61 +210,20 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       }
     }, [refetch])
 
-    const [isExpanded, setIsExpanded] = useState(true)
-    const { routes = [] } = procurementUnit || {}
-
     useEffect(() => {
       setIsExpanded(expanded)
     }, [expanded])
+
+    const inspectionStartDate = useMemo(() => parseISO(productionDate), [productionDate])
 
     const renderProcurementItemInput = useCallback((val: any, key: string, onChange) => {
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
-    let unitEquipment: Array<EquipmentGroup> = useMemo(() => {
-      let equipmentWithQuota = (activeCatalogue?.equipmentQuotas || []).map((quota) => ({
-        ...quota.equipment,
-        percentageQuota: quota.percentageQuota,
-      }))
-
-      let grouped = groupBy(
-        equipmentWithQuota,
-        ({ model, emissionClass, type, registryDate }) =>
-          model + strval(emissionClass) + type + strval(registryDate)
-      )
-
-      return Object.values(grouped).map((equipmentGroup) => {
-        let percentageQuota = equipmentGroup.reduce((total, item) => {
-          total += item?.percentageQuota || 0
-          return total
-        }, 0)
-
-        let age = round(
-          differenceInCalendarDays(new Date(), parseISO(equipmentGroup[0].registryDate)) / 365
-        )
-
-        return {
-          emissionClass: equipmentGroup[0].emissionClass,
-          type: equipmentGroup[0].type,
-          amount: equipmentGroup.length,
-          age,
-          percentageQuota,
-        }
-      })
-    }, [activeCatalogue])
-
-    let requirementValues = useMemo(() => {
-      let combinedAge = unitEquipment.reduce((total, { age }) => (total += age), 0)
-      let combinedAgeWeighted = unitEquipment.reduce(
-        (total, { age, percentageQuota }) => (total += age * (percentageQuota / 100)),
-        0
-      )
-
-      return {
-        averageAge: round(combinedAge / unitEquipment.length),
-        averageAgeWeighted: round(combinedAgeWeighted / unitEquipment.length),
-      }
-    }, [unitEquipment])
+    let unitEquipmentGroups = useMemo(() => {
+      let equipmentWithQuota = catalogueEquipment(activeCatalogue)
+      return groupedEquipment(equipmentWithQuota, inspectionStartDate)
+    }, [activeCatalogue, inspectionStartDate])
 
     return (
       <ProcurementUnitView>
@@ -337,19 +298,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 <>
                   <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
                   <EquipmentCatalogue
+                    startDate={inspectionStartDate}
                     procurementUnitId={id}
                     catalogue={activeCatalogue}
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
                   />
                   <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-                  <ValueDisplay
-                    style={{ marginBottom: '1rem' }}
-                    item={requirementValues}
-                    labels={{ averageAge: 'Keski-ikä', averageAgeWeighted: 'Painotettu keski-ikä' }}
-                  />
                   <RequirementsTable
-                    equipmentTypes={unitEquipment}
+                    equipmentGroups={unitEquipmentGroups}
                     weeklyMeters={procurementUnit.weeklyMeters}
                   />
                 </>
