@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
-import { observer, useLocalStore, useObserver } from 'mobx-react-lite'
+import { observer, useLocalStore } from 'mobx-react-lite'
 import {
   Column,
   ColumnWrapper,
@@ -31,7 +31,7 @@ import {
 } from './createPreInspectionMutation'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { DATE_FORMAT } from '../constants'
-import { set, toJS } from 'mobx'
+import { autorun, set, toJS } from 'mobx'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import isEqual from 'react-fast-compare'
 import { pick } from 'lodash'
@@ -127,6 +127,8 @@ const compareValues = ['id', 'operator', 'season', 'startDate', 'endDate']
 
 const PreInspectionForm: React.FC<PreInspectionProps> = observer(
   ({ season: preselectedSeason = null, operator: preselectedOperator = null }) => {
+    var [isDirty, setIsDirty] = useState(false)
+
     var formState = useLocalStore<LocalFormState>(() => ({
       id: '',
       status: PreInspectionFormStatus.Uninitialized,
@@ -169,11 +171,20 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
       updatedInspectionData,
     ])
 
-    let isDirty: boolean = useObserver(() => {
-      let compareFormState = pick(toJS(formState), compareValues)
-      let comparePrevSaved = pick(prevSavedPreInspection, compareValues)
-      return !isEqual(comparePrevSaved, compareFormState)
-    })
+    // TODO: Clean up update condition logic
+
+    useEffect((): any => {
+      if (!isDirty) {
+        return autorun(() => {
+          let compareFormState = pick(toJS(formState), compareValues)
+          let comparePrevSaved = pick(prevSavedPreInspection, compareValues)
+
+          if (!isEqual(comparePrevSaved, compareFormState)) {
+            setIsDirty(true)
+          }
+        })
+      }
+    }, [isDirty, formState, prevSavedPreInspection])
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     // TODO: Error views when status = invalid
@@ -203,31 +214,16 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             preInspectionInput,
           },
         }).then(({ data }) => {
-          // No data means the creation failed. If there is data, the
-          // pre-inspection is in draft mode (ie can be edited).
-          if (!data) {
-            formState.setStatus(PreInspectionFormStatus.Invalid)
+          if (data) {
+            let createdPreInspection = pickGraphqlData(data)
+            set(formState, { ...createdPreInspection, status: PreInspectionFormStatus.Draft })
+            setIsDirty(false)
           } else {
-            formState.setStatus(PreInspectionFormStatus.Draft)
+            formState.setStatus(PreInspectionFormStatus.Invalid)
           }
         })
       }
-
-      // Set the ID if we have a draft pre-inspection and it is not already set.
-      if (
-        createdInspectionData &&
-        formState.status === PreInspectionFormStatus.Draft &&
-        !formState.id
-      ) {
-        set(formState, createdInspectionData)
-      }
-    }, [
-      formState.status,
-      formState?.operator?.id,
-      formState?.season,
-      createdInspectionData,
-      inspectionLoading,
-    ])
+    }, [formState.status, formState?.operator, formState?.season, inspectionLoading])
 
     let isUpdating = useRef(false)
 
@@ -250,8 +246,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             endDate: draftInspection.endDate,
           }
 
-          console.log('plep')
-
           let updateResult = await updatePreInspection({
             variables: {
               preInspectionId: draftInspection.id,
@@ -260,9 +254,9 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
           })
 
           if (updateResult) {
-            let updatedPreInspection: PreInspection = pickGraphqlData(updateResult)
+            let updatedPreInspection: PreInspection = pickGraphqlData(updateResult.data)
 
-            if (updatedPreInspection?.id && updatedPreInspection.id !== draftInspection.id) {
+            if (updatedPreInspection.id !== draftInspection.id) {
               formState.setInspectionId(updatedPreInspection.id)
             }
 
@@ -279,6 +273,8 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
             ) {
               formState.selectSeason(updatedPreInspection.season)
             }
+
+            setIsDirty(false)
           }
 
           isUpdating.current = false
@@ -288,7 +284,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
     )
 
     useEffect(() => {
-      setTimeout(() => {
+      let timeout = setTimeout(() => {
         if (
           formState.status === PreInspectionFormStatus.Draft &&
           !updateLoading &&
@@ -298,6 +294,8 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(
           saveFormState(formState)
         }
       }, 100)
+
+      return () => clearTimeout(timeout)
     }, [formState, isDirty, saveFormState, updateLoading, inspectionLoading])
 
     // Use the global operator as the initially selected operator if no operator
