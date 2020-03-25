@@ -76,7 +76,7 @@ export type PropTypes<ItemType = any> = {
   order?: string[]
   hideKeys?: string[]
   keyFromItem?: (item: ItemType) => string
-  renderInput?: (val: any, key: string, onChange: (val: any) => void) => React.ReactChild
+  renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>

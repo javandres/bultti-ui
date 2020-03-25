@@ -113,7 +113,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       setPendingCatalogue(null)
     }, [])
 
-    const renderCatalogueInput = useCallback((val: any, key: string, onChange) => {
+    const renderCatalogueInput = useCallback((key: string, val: any, onChange) => {
       return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 

@@ -5,7 +5,7 @@ import { removeEquipmentMutation } from './equipmentQuery'
 import Table from '../common/components/Table'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
-import EditEquipment from './EditEquipment'
+import EditEquipment, { renderEquipmentInput } from './EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
@@ -37,10 +37,48 @@ export const groupedEquipmentColumnLabels = {
   amount: 'Määrä',
 }
 
+type PendingValType = string | number
+
+type PendingEquipmentValue = {
+  key: string
+  value: PendingValType
+  item: EquipmentWithQuota
+}
+
 const CatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
+    let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
+
+    const onEditValue = useCallback(
+      (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
+        if (groupEquipment || key !== 'percentageQuota') {
+          return
+        }
+
+        setPendingValue((currentValue) => {
+          if (currentValue && currentValue?.key === key) {
+            return { ...currentValue, value }
+          }
+
+          if (item) {
+            return { key, value, item }
+          }
+
+          return currentValue
+        })
+      },
+      [groupEquipment]
+    )
+
+    const onCancelPendingValue = useCallback(() => {
+      setPendingValue(null)
+    }, [])
+
+    const onSavePendingValue = useCallback(() => {
+      setPendingValue(null)
+    }, [])
 
     const onRemoveEquipment = useCallback(
       async (item) => {
@@ -66,7 +104,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       [equipment, startDate]
     )
 
-    const renderCellValue = useCallback((val, key) => {
+    const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
           return val + '%'
@@ -121,6 +159,11 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
               onRemoveRow={(item) => () => onRemoveEquipment(item)}
               renderValue={renderCellValue}
               getColumnTotal={renderColumnTotals}
+              onEditValue={onEditValue}
+              editValue={pendingValue}
+              onCancelEdit={onCancelPendingValue}
+              onSaveEdit={onSavePendingValue}
+              renderInput={renderEquipmentInput}
             />
           </>
         ) : (

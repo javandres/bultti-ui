@@ -111,7 +111,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, week
         items={requirementRows}
         columnLabels={requirementColumnLabels}
         columnOrder={['unit']}
-        renderValue={(val, key, isHeader = false, item) => {
+        renderValue={(key, val, isHeader = false, item) => {
           if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
             return val
           }

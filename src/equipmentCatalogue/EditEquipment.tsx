@@ -23,6 +23,14 @@ export type PropTypes = {
   onEquipmentChanged: () => Promise<void>
 }
 
+export const renderEquipmentInput = (key: string, val: any, onChange) => {
+  if (['id'].includes(key)) {
+    return <FieldValueDisplay>{val}</FieldValueDisplay>
+  }
+
+  return <EquipmentFormInput value={val} valueName={key} onChange={onChange} />
+}
+
 const equipmentInputValues = {
   percentageQuota: (val) => emptyOrNumber(numval(val, true)),
   emissionClass: (val) => emptyOrNumber(numval(val)),
@@ -120,14 +128,6 @@ const EditEquipment: React.FC<PropTypes> = observer(
 
     const onCancelPendingEquipment = useCallback(() => {
       setPendingEquipment(null)
-    }, [])
-
-    const renderEquipmentInput = useCallback((val: any, key: string, onChange) => {
-      if (['id'].includes(key)) {
-        return <FieldValueDisplay>{val}</FieldValueDisplay>
-      }
-
-      return <EquipmentFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
     return (

@@ -4,6 +4,8 @@ import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize } from './Button'
 import { CrossThick } from '../icon/CrossThick'
+import { TextInput } from '../input/Input'
+import { Checkmark2 } from '../icon/Checkmark2'
 
 const TableView = styled.div`
   width: calc(100% + 2rem);
@@ -29,26 +31,66 @@ const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
   align-items: baseline;
   justify-content: center;
   font-size: 0.75rem;
-  left: -0.75rem;
+  left: 0.4rem;
   top: 0.4rem;
   display: none;
 `
 
-const TableRow = styled.div<{ footer?: boolean }>`
+const EditInputWrapper = styled.div`
+  position: absolute;
+  z-index: 200;
+  top: -0.5rem;
+  bottom: -0.5rem;
+  left: -0.5rem;
+  background: var(--blue);
+  width: calc(100% + 1rem + 36px);
+  border-radius: 5px;
+  padding: 0.5rem;
+  display: flex;
+`
+
+const EditButtonsWrapper = styled.div`
+  margin-left: 0.5rem;
+  display: flex;
+  align-items: center;
+`
+
+const CancelButton = styled(RemoveButton)`
+  border: 1px solid white;
+  position: static;
+  display: flex;
+`
+const SaveButton = styled(CancelButton)`
+  background: var(--green);
+  margin-left: 0.5rem;
+`
+
+const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   display: flex;
   border-bottom: 1px solid var(--lighter-grey);
   position: relative;
+  transition: outline 0.1s ease-out;
+  outline: ${(p) =>
+    !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
 
   &:last-child {
     border-bottom: 0;
   }
 
-  &:hover ${RemoveButton} {
-    display: flex;
+  &:hover {
+    outline: ${(p) => (!p.footer ? `1px solid var(--light-blue)` : 'none')};
+    border-bottom-color: transparent;
+    z-index: 100;
+
+    ${RemoveButton} {
+      display: flex;
+    }
   }
 `
 
-const TableHeader = styled(TableRow)``
+const TableHeader = styled(TableRow)`
+  outline: none !important;
+`
 
 const TableCell = styled.div`
   flex: 1 1 calc(100% / 11);
@@ -59,6 +101,7 @@ const TableCell = styled.div`
   justify-content: center;
   font-size: 0.75rem;
   background: rgba(0, 0, 0, 0.005);
+  position: relative;
 
   &:last-of-type {
     border-right: 0;
@@ -96,14 +139,19 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
   className?: string
-  renderCell?: (val: any, key?: string, item?: ItemType) => React.ReactNode
-  renderValue?: (val: any, key?: string, isHeader?: boolean, item?: ItemType) => React.ReactNode
+  renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
+  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
+  onEditValue?: (key: string, value: string | number, item?: ItemType) => void
+  editValue?: null | { key: string; value: string | number; item: ItemType }
+  onCancelEdit?: () => void
+  onSaveEdit?: () => void
+  renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
 
-const defaultRenderCellContent = (val: any): React.ReactChild => (
+const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
   <>
     {!(val === false || val === null || typeof val === 'undefined') && (
       <CellContent>{val}</CellContent>
@@ -112,6 +160,10 @@ const defaultRenderCellContent = (val: any): React.ReactChild => (
 )
 
 const defaultRenderValue = (val) => val
+
+const defaultRenderInput = (key, val, onChange) => (
+  <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
+)
 
 const Table: React.FC<PropTypes> = observer(
   ({
@@ -126,6 +178,11 @@ const Table: React.FC<PropTypes> = observer(
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
+    onEditValue,
+    onCancelEdit,
+    onSaveEdit,
+    editValue,
+    renderInput = defaultRenderInput,
   }) => {
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
@@ -170,7 +227,7 @@ const Table: React.FC<PropTypes> = observer(
             </ColumnHeaderCell>
           )}
           {columnNames.map((colName) => (
-            <ColumnHeaderCell key={colName}>{renderValue(colName, '', true)}</ColumnHeaderCell>
+            <ColumnHeaderCell key={colName}>{renderValue('', colName, true)}</ColumnHeaderCell>
           ))}
         </TableHeader>
         {items.map((item, rowIndex) => {
@@ -186,18 +243,50 @@ const Table: React.FC<PropTypes> = observer(
 
           const rowKey = keyFromItem(item)
 
+          let isEditingRow: boolean = !!editValue && keyFromItem(editValue.item) === rowKey
+
           const itemRemover = !onRemoveRow ? null : onRemoveRow(item)
 
+          const onStartValueEdit = (key, val) => () => {
+            if (!isEditingRow && onEditValue) {
+              onEditValue(key, val, item)
+            }
+          }
+
+          const onValueChange = (key) => (nextValue) => {
+            if (isEditingRow && onEditValue) {
+              onEditValue(key, nextValue)
+            }
+          }
+
           return (
-            <TableRow key={rowKey ?? `row-${rowIndex}`}>
+            <TableRow key={rowKey ?? `row-${rowIndex}`} isEditing={isEditingRow}>
               {itemEntries
                 .filter(([key]) => !keysToHide.includes(key))
                 .map(([key, val], index) => (
-                  <TableCell key={`${rowKey}-${key}-${index}`}>
-                    {renderCell(renderValue(val, key, false, item), key, item)}
+                  <TableCell
+                    onDoubleClick={onStartValueEdit(key, val)}
+                    key={`${rowKey}-${key}-${index}`}>
+                    {onEditValue && editValue && isEditingRow && editValue.key === key ? (
+                      <>
+                        <EditInputWrapper>
+                          {renderInput(key, editValue.value, onValueChange(key))}
+                          <EditButtonsWrapper>
+                            <CancelButton onClick={onCancelEdit}>
+                              <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                            </CancelButton>
+                            <SaveButton onClick={onSaveEdit}>
+                              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
+                            </SaveButton>
+                          </EditButtonsWrapper>
+                        </EditInputWrapper>
+                      </>
+                    ) : (
+                      renderCell(key, renderValue(key, val, false, item), item)
+                    )}
                   </TableCell>
                 ))}
-              {itemRemover && (
+              {!isEditingRow && itemRemover && (
                 <RemoveButton onClick={itemRemover}>
                   <CrossThick fill="white" width="0.5rem" height="0.5rem" />
                 </RemoveButton>
