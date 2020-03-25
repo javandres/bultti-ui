@@ -89,16 +89,18 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, week
 
   let requirementValues = useMemo(() => {
     let combinedAge = equipmentGroups.reduce((total, { age }) => (total += age), 0)
+
     let combinedAgeWeighted = equipmentGroups.reduce(
-      (total, { age, percentageQuota }) => (total += age * (percentageQuota / 100)),
+      (total, { age, percentageQuota }) =>
+        (total += age * (weeklyMeters * (percentageQuota / 100))),
       0
     )
 
     return {
       averageAge: round(combinedAge / equipmentGroups.length),
-      averageAgeWeighted: round(combinedAgeWeighted / equipmentGroups.length),
+      averageAgeWeighted: round(combinedAgeWeighted / weeklyMeters),
     }
-  }, [equipmentGroups])
+  }, [equipmentGroups, weeklyMeters])
 
   return (
     <ExecutionRequirementsAreaContainer>
