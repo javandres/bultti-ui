@@ -19,6 +19,7 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
   return (catalogue?.equipmentQuotas || []).map((quota) => ({
     ...quota.equipment,
     percentageQuota: quota.percentageQuota,
+    quotaId: quota.id
   }))
 }
 

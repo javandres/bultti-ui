@@ -46,6 +46,23 @@ export const createEquipmentMutation = gql`
   ${EquipmentFragment}
 `
 
+export const updateEquipmentMutation = gql`
+  mutation updateEquipmentFromCatalogue(
+    $equipmentId: String!
+    $equipmentInput: EquipmentInput!
+    $quotaId: String!
+  ) {
+    updateEquipment(equipmentId: $equipmentId, equipment: $equipmentInput, quotaId: $quotaId) {
+      ...EquipmentFragment
+      equipmentCatalogueQuotas {
+        id
+        percentageQuota
+      }
+    }
+  }
+  ${EquipmentFragment}
+`
+
 export const removeEquipmentMutation = gql`
   mutation removeEquipmentFromCatalogue($equipmentId: String!, $catalogueId: String!) {
     removeEquipmentFromCatalogue(equipmentId: $equipmentId, catalogueId: $catalogueId)

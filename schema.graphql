@@ -264,14 +264,14 @@ input EquipmentCatalogueQuotaInput {
 }
 
 input EquipmentInput {
-  emissionClass: Int!
-  exteriorColor: String!
-  model: String!
-  percentageQuota: Float!
+  emissionClass: Int
+  exteriorColor: String
+  model: String
+  percentageQuota: Float
   registryDate: BulttiDateTime
   registryNr: String
-  type: String!
-  vehicleId: String!
+  type: String
+  vehicleId: String
 }
 
 input ExecutionRequirementInput {

@@ -113,14 +113,14 @@ export type EquipmentCatalogueQuotaInput = {
 };
 
 export type EquipmentInput = {
-  percentageQuota: Scalars['Float'],
-  vehicleId: Scalars['String'],
-  model: Scalars['String'],
+  percentageQuota?: Maybe<Scalars['Float']>,
+  vehicleId?: Maybe<Scalars['String']>,
+  model?: Maybe<Scalars['String']>,
   registryNr?: Maybe<Scalars['String']>,
   registryDate?: Maybe<Scalars['BulttiDateTime']>,
-  type: Scalars['String'],
-  exteriorColor: Scalars['String'],
-  emissionClass: Scalars['Int'],
+  type?: Maybe<Scalars['String']>,
+  exteriorColor?: Maybe<Scalars['String']>,
+  emissionClass?: Maybe<Scalars['Int']>,
 };
 
 export type EquipmentSearchResult = {

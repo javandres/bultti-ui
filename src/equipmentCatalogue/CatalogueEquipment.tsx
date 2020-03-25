@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
-import { removeEquipmentMutation } from './equipmentQuery'
+import { removeEquipmentMutation, updateEquipmentMutation } from './equipmentQuery'
 import Table from '../common/components/Table'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
@@ -9,6 +9,8 @@ import EditEquipment, { renderEquipmentInput } from './EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
+import { pick } from 'lodash'
+import { EquipmentInput } from '../schema-types'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -50,6 +52,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
+    let [updateEquipment] = useMutationData(updateEquipmentMutation)
 
     const onEditValue = useCallback(
       (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
@@ -76,9 +79,37 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       setPendingValue(null)
     }, [])
 
-    const onSavePendingValue = useCallback(() => {
+    const onSavePendingValue = useCallback(async () => {
+      if (!pendingValue) {
+        return
+      }
+
       setPendingValue(null)
-    }, [])
+
+      const equipmentInput: EquipmentInput = {
+        ...(pick(pendingValue.item, [
+          'percentageQuota',
+          'vehicleId',
+          'model',
+          'registryNr',
+          'registryDate',
+          'type',
+          'exteriorColor',
+          'emissionClass',
+        ]) as EquipmentInput),
+        [pendingValue.key]: pendingValue.value,
+      }
+
+      await updateEquipment({
+        variables: {
+          equipmentId: pendingValue.item.id,
+          quotaId: pendingValue.item.quotaId,
+          equipmentInput,
+        },
+      })
+
+      await onEquipmentChanged()
+    }, [updateEquipment, pendingValue, onEquipmentChanged])
 
     const onRemoveEquipment = useCallback(
       async (item) => {

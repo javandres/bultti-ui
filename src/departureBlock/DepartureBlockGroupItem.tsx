@@ -40,7 +40,7 @@ const ResetButton = styled(Button).attrs(() => ({ buttonStyle: ButtonStyle.SECON
   margin-left: auto;
 `
 
-const departureBLocksColumnLabels = {
+const departureBlocksColumnLabels = {
   blockNumber: 'Ketjunumero',
   registryNumber: 'Rekisterinumero',
   equipmentId: 'Ajoneuvon tiedot',
@@ -190,7 +190,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     }, [departureBlocks, dayTypeGroup])
 
     const renderTableCell = useCallback(
-      (val) => {
+      (key, val) => {
         return (
           <CellContent style={{ backgroundColor: !val ? 'var(--lighter-red)' : 'transparent' }}>
             {val}
@@ -271,7 +271,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             renderCell={renderTableCell}
             keyFromItem={(item) => item.id}
             items={displayData}
-            columnLabels={departureBLocksColumnLabels}
+            columnLabels={departureBlocksColumnLabels}
           />
         ) : displayData.length === 0 ? (
           <MessageView>Päiväryhmällä ei ole lähtöketjuja.</MessageView>

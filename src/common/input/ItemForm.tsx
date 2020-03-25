@@ -120,7 +120,7 @@ const ItemForm: React.FC<PropTypes> = observer(
         {itemEntries.map(([key, val], index) => (
           <FieldWrapper key={key}>
             <FieldLabel>{get(labels, key, key)}</FieldLabel>
-            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(val, key, onValueChange(key))}
+            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(key, val, onValueChange(key))}
           </FieldWrapper>
         ))}
         <FieldWrapper

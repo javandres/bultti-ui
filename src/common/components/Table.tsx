@@ -159,7 +159,7 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
   </>
 )
 
-const defaultRenderValue = (val) => val
+const defaultRenderValue = (key, val) => val
 
 const defaultRenderInput = (key, val, onChange) => (
   <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />

@@ -30,7 +30,7 @@ export type PropTypes = {
   onCatalogueChanged: () => Promise<void>
 }
 
-export type EquipmentWithQuota = Equipment & { percentageQuota: number }
+export type EquipmentWithQuota = Equipment & { percentageQuota: number; quotaId: string }
 
 const equipmentCatalogueLabels = {
   startDate: 'Alkupäivä',

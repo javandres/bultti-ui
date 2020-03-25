@@ -51,13 +51,13 @@ export type PropTypes<ItemType = any> = {
   labels?: { [key in keyof ItemType]: string }
   order?: string[]
   hideKeys?: string[]
-  renderValue?: (val: any, key: string) => any
+  renderValue?: (key: string, val: any) => any
   className?: string
   children?: React.ReactChild
   style?: CSSProperties
 }
 
-const defaultRenderValue = (val) => val
+const defaultRenderValue = (key, val) => val
 
 const ValueDisplay: React.FC<PropTypes> = observer(
   ({
@@ -82,7 +82,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
           return (
             <ValueWrapper key={key}>
               <ValueLabel>{get(labels, key, key)}</ValueLabel>
-              <ValueView>{renderValue(val, key)}</ValueView>
+              <ValueView>{renderValue(key, val)}</ValueView>
             </ValueWrapper>
           )
         })}
