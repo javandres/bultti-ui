@@ -7,8 +7,10 @@ export type Scalars = {
   Int: number,
   Float: number,
   BulttiDateTime: any,
+  DateTime: any,
   Upload: any,
 };
+
 
 
 export enum DayType {
@@ -311,8 +313,8 @@ export type PreInspection = {
   startDate?: Maybe<Scalars['BulttiDateTime']>,
   endDate?: Maybe<Scalars['BulttiDateTime']>,
   status: InspectionStatus,
-  createdAt: Scalars['BulttiDateTime'],
-  updatedDate: Scalars['BulttiDateTime'],
+  createdAt: Scalars['DateTime'],
+  updatedAt: Scalars['DateTime'],
   createdBy: User,
 };
 

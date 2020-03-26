@@ -19,7 +19,7 @@ export const preInspectionFragment = gql`
       startDate
       endDate
     }
-    updatedDate
+    updatedAt
     createdAt
     createdBy {
       id

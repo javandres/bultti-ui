@@ -21,10 +21,12 @@
   --lighter-red: #fff2f5;
   --yellow: #fed100;
   --dark-yellow: #d9a900;
-  --dark-grey: #444444;
+  --darker-grey: #333333;
+  --dark-grey: #555555;
   --grey: #777777;
   --light-grey: #aeaeae;
   --lighter-grey: #dfdfdf;
+  --lightest-grey: #eaeaea;
   --white-grey: #f5f5f5;
 
   --font-family: 'Gotham Rounded SSm A', 'Gotham Rounded SSm B', sans-serif;

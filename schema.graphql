@@ -129,7 +129,7 @@ type Operator {
 }
 
 type PreInspection {
-  createdAt: BulttiDateTime!
+  createdAt: DateTime!
   createdBy: User!
   departureBlocks: [DepartureBlock!]!
   endDate: BulttiDateTime
@@ -140,7 +140,7 @@ type PreInspection {
   season: Season!
   startDate: BulttiDateTime
   status: InspectionStatus!
-  updatedDate: BulttiDateTime!
+  updatedAt: DateTime!
 }
 
 type ProcurementUnit {
@@ -324,6 +324,9 @@ input ProcurementUnitRouteInput {
 
 "A DateTime string in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).."
 scalar BulttiDateTime
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime
 
 "The `Upload` scalar type represents a file upload."
 scalar Upload

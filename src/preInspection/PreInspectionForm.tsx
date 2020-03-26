@@ -20,7 +20,7 @@ import {
 } from '../schema-types'
 import SelectDate from '../common/input/SelectDate'
 import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
-import { PageLoading } from '../common/components/Loading'
+import Loading, { PageLoading } from '../common/components/Loading'
 import Input from '../common/input/Input'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
@@ -29,9 +29,9 @@ import {
   createPreInspectionMutation,
   preInspectionQuery,
   updatePreInspectionMutation,
-} from './createPreInspectionMutation'
+} from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
-import { DATE_FORMAT } from '../constants'
+import { DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
 import { useStateValue } from '../state/useAppState'
 import { useQueryData } from '../util/useQueryData'
 
@@ -85,6 +85,31 @@ const ControlGroup = styled.div`
       margin-right: 0;
     }
   }
+`
+
+const InspectionMeta = styled.div`
+  display: flex;
+  margin-left: 1rem;
+`
+
+const MetaItem = styled.div`
+  padding: 0.5rem 0.75rem;
+  margin-right: 1rem;
+  border: 1px solid var(--lighter-grey);
+  border-radius: 5px;
+  color: var(--dark-grey);
+  margin-bottom: -0.5rem;
+`
+
+const MetaLabel = styled.h6`
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: bold;
+`
+
+const MetaValue = styled.div`
+  font-size: 0.875rem;
 `
 
 type PreInspectionProps = {}
@@ -238,8 +263,10 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         </ControlGroup>
       </FormColumn>
     ),
-    [preInspection, createUpdateCallback]
+    [season, operator, setGlobalSeason, setGlobalOperator]
   )
+
+  console.log(preInspection)
 
   return (
     <CreatePreInspectionFormView>
@@ -259,6 +286,27 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         </>
       ) : (
         <>
+          <InspectionMeta>
+            {isLoading && <Loading inline={true} />}
+            <MetaItem>
+              <MetaLabel>Perustettu</MetaLabel>
+              <MetaValue>
+                {format(parseISO(preInspection.createdAt), READABLE_TIME_FORMAT)}
+              </MetaValue>
+            </MetaItem>
+            <MetaItem>
+              <MetaLabel>Viimeksi muokattu</MetaLabel>
+              <MetaValue>
+                {format(parseISO(preInspection.updatedAt), READABLE_TIME_FORMAT)}
+              </MetaValue>
+            </MetaItem>
+            <MetaItem>
+              <MetaLabel>Käyttäjä</MetaLabel>
+              <MetaValue>
+                {preInspection.createdBy?.name} ({preInspection.createdBy?.organisation})
+              </MetaValue>
+            </MetaItem>
+          </InspectionMeta>
           <SectionHeading theme="light">Perustiedot</SectionHeading>
           <FormWrapper>
             {OperatorSeasonSelect}

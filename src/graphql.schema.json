@@ -1117,7 +1117,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "BulttiDateTime",
+                "name": "DateTime",
                 "ofType": null
               }
             },
@@ -1125,7 +1125,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updatedDate",
+            "name": "updatedAt",
             "description": "",
             "args": [],
             "type": {
@@ -1133,7 +1133,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "BulttiDateTime",
+                "name": "DateTime",
                 "ofType": null
               }
             },
@@ -2774,6 +2774,16 @@
             "deprecationReason": null
           }
         ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "DateTime",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": null,
         "possibleTypes": null
       },
       {
