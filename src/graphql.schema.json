@@ -1052,30 +1052,6 @@
             "deprecationReason": null
           },
           {
-            "name": "productionStart",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "BulttiDateTime",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "productionEnd",
-            "description": "",
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "BulttiDateTime",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "status",
             "description": "",
             "args": [],
@@ -3720,13 +3696,9 @@
             "name": "operatorId",
             "description": "",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -3734,13 +3706,9 @@
             "name": "seasonId",
             "description": "",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -3756,26 +3724,6 @@
           },
           {
             "name": "endDate",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "BulttiDateTime",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "productionStart",
-            "description": "",
-            "type": {
-              "kind": "SCALAR",
-              "name": "BulttiDateTime",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "productionEnd",
             "description": "",
             "type": {
               "kind": "SCALAR",

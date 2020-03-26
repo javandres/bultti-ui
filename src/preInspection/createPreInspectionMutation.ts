@@ -8,6 +8,7 @@ export const createPreInspectionMutation = gql`
       startDate
       endDate
       operatorId
+      status
       operator {
         id
         operatorId
@@ -34,6 +35,7 @@ export const updatePreInspectionMutation = gql`
       startDate
       endDate
       operatorId
+      status
       operator {
         id
         operatorId

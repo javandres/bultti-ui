@@ -302,8 +302,6 @@ export type PreInspection = {
   departureBlocks: Array<DepartureBlock>,
   startDate?: Maybe<Scalars['BulttiDateTime']>,
   endDate?: Maybe<Scalars['BulttiDateTime']>,
-  productionStart?: Maybe<Scalars['BulttiDateTime']>,
-  productionEnd?: Maybe<Scalars['BulttiDateTime']>,
   status: InspectionStatus,
   createdAt: Scalars['BulttiDateTime'],
   updatedDate: Scalars['BulttiDateTime'],
@@ -311,12 +309,10 @@ export type PreInspection = {
 };
 
 export type PreInspectionInput = {
-  operatorId: Scalars['Int'],
-  seasonId: Scalars['String'],
+  operatorId?: Maybe<Scalars['Int']>,
+  seasonId?: Maybe<Scalars['String']>,
   startDate?: Maybe<Scalars['BulttiDateTime']>,
   endDate?: Maybe<Scalars['BulttiDateTime']>,
-  productionStart?: Maybe<Scalars['BulttiDateTime']>,
-  productionEnd?: Maybe<Scalars['BulttiDateTime']>,
   status?: Maybe<InspectionStatus>,
 };
 
