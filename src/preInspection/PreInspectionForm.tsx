@@ -11,7 +11,13 @@ import {
 } from '../common/components/common'
 import SelectOperator from '../common/input/SelectOperator'
 import SelectSeason from '../common/input/SelectSeason'
-import { InspectionStatus, Operator, PreInspectionInput, Season } from '../schema-types'
+import {
+  InitialPreInspectionInput,
+  InspectionStatus,
+  Operator,
+  PreInspectionInput,
+  Season,
+} from '../schema-types'
 import SelectDate from '../common/input/SelectDate'
 import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
 import { PageLoading } from '../common/components/Loading'
@@ -21,11 +27,13 @@ import ExecutionRequirements from '../executionRequirement/ExecutionRequirements
 import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
+  preInspectionQuery,
   updatePreInspectionMutation,
 } from './createPreInspectionMutation'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { DATE_FORMAT } from '../constants'
 import { useStateValue } from '../state/useAppState'
+import { useQueryData } from '../util/useQueryData'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -93,27 +101,39 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
   var [season, setGlobalSeason] = useStateValue('globalSeason')
   var [operator, setGlobalOperator] = useStateValue('globalOperator')
 
-  let [
-    createPreInspection,
-    { data: createdPreInspection, loading: inspectionLoading },
-  ] = useMutationData(createPreInspectionMutation)
+  let isUpdating = useRef(false)
 
-  let [
-    updatePreInspection,
-    { data: updatedPreInspection, loading: updateLoading },
-  ] = useMutationData(updatePreInspectionMutation)
+  let { data: preInspection, loading: inspectionLoading } = useQueryData(preInspectionQuery, {
+    skip: !operator || !season,
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      operatorId: operator?.id,
+      seasonId: season?.id,
+    },
+  })
 
-  let preInspection = useMemo(() => updatedPreInspection || createdPreInspection, [
-    updatedPreInspection,
-    createdPreInspection,
+  let [createPreInspection, { loading: createLoading }] = useMutationData(
+    createPreInspectionMutation
+  )
+
+  let [updatePreInspection, { loading: updateLoading }] = useMutationData(
+    updatePreInspectionMutation
+  )
+
+  let isLoading = useMemo(() => inspectionLoading || createLoading || updateLoading, [
+    inspectionLoading,
+    createLoading,
+    updateLoading,
   ])
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
-  // TODO: Error views when status = invalid
   useEffect(() => {
-    // A pre-inspection can be created when there is not one currently loading and the form state is uninitialized.
-    if (!preInspection && operator && season && !inspectionLoading && !updateLoading) {
-      let preInspectionInput: PreInspectionInput = {
+    // A pre-inspection can be created when there is not one currently existing or loading
+    if (!isUpdating.current && !preInspection && operator && season && !inspectionLoading) {
+      isUpdating.current = true
+
+      // InitialPreInspectionInput requires operator and season ID.
+      let preInspectionInput: InitialPreInspectionInput = {
         operatorId: operator.id,
         seasonId: season.id,
         startDate: season.startDate,
@@ -125,16 +145,16 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         variables: {
           preInspectionInput,
         },
+      }).then(() => {
+        isUpdating.current = false
       })
     }
-  }, [preInspection, season, operator, updateLoading, inspectionLoading])
-
-  let isUpdating = useRef(false)
+  }, [isUpdating.current, preInspection, season, operator, inspectionLoading])
 
   // Update the pre-inspection on changes
   var updatePreInspectionValue = useCallback(
     async (name: keyof PreInspectionInput, value: string | Operator | Season) => {
-      if (!isUpdating.current && !updateLoading && !inspectionLoading) {
+      if (!isUpdating.current && preInspection && !inspectionLoading) {
         isUpdating.current = true
 
         var preInspectionInput: PreInspectionInput = {}
@@ -161,7 +181,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         isUpdating.current = false
       }
     },
-    [isUpdating.current, updateLoading, inspectionLoading, updatePreInspection]
+    [isUpdating.current, preInspection, inspectionLoading, updatePreInspection]
   )
 
   let createUpdateCallback = useCallback(

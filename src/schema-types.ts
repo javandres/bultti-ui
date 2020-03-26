@@ -164,6 +164,14 @@ export type ExecutionRequirementValueInput = {
   kilometerRequirement: Scalars['Float'],
 };
 
+export type InitialPreInspectionInput = {
+  operatorId: Scalars['Int'],
+  seasonId: Scalars['String'],
+  startDate?: Maybe<Scalars['BulttiDateTime']>,
+  endDate?: Maybe<Scalars['BulttiDateTime']>,
+  status?: Maybe<InspectionStatus>,
+};
+
 export enum InspectionStatus {
   Draft = 'Draft',
   InProduction = 'InProduction'
@@ -189,7 +197,7 @@ export type Mutation = {
 
 
 export type MutationCreatePreInspectionArgs = {
-  preInspection: PreInspectionInput
+  preInspection: InitialPreInspectionInput
 };
 
 
@@ -366,6 +374,7 @@ export type Query = {
   operators: Array<Operator>,
   seasons: Array<Season>,
   preInspection?: Maybe<PreInspection>,
+  preInspectionByOperatorAndSeason?: Maybe<PreInspection>,
   preInspections: Array<PreInspection>,
   procurementUnit?: Maybe<ProcurementUnit>,
   procurementUnitsByOperator: Array<ProcurementUnit>,
@@ -399,7 +408,13 @@ export type QuerySeasonsArgs = {
 
 
 export type QueryPreInspectionArgs = {
-  preInspectionId: Scalars['Int']
+  preInspectionId: Scalars['String']
+};
+
+
+export type QueryPreInspectionByOperatorAndSeasonArgs = {
+  seasonId: Scalars['String'],
+  operatorId: Scalars['Int']
 };
 
 
