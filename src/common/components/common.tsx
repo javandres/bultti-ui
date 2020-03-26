@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { ThemeTypes } from '../../type/common'
+import { LoadingDisplay } from './Loading'
 
 export const Page = styled.div``
 
@@ -113,4 +114,29 @@ export const MessageView = styled.div`
 export const ErrorView = styled(MessageView)`
   border: 1px solid var(--light-red);
   background: var(--lighter-red);
+`
+export const MetaDisplay = styled.div`
+  display: flex;
+  margin-left: 1rem;
+`
+export const MetaItem = styled.div`
+  padding: 0.5rem 0.75rem;
+  margin-right: 1rem;
+  border: 1px solid var(--lighter-grey);
+  border-radius: 5px;
+  color: var(--dark-grey);
+  margin-bottom: -0.5rem;
+`
+export const LoadingMeta = styled(LoadingDisplay)`
+  margin-right: 1rem;
+  align-self: center;
+`
+export const MetaLabel = styled.h6`
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  font-weight: bold;
+`
+export const MetaValue = styled.div`
+  font-size: 0.875rem;
 `

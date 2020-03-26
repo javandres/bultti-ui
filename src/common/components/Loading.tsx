@@ -47,11 +47,7 @@ const LoadingIndicator = styled.div<{ inline: boolean }>`
 
 const LoadingSafeDivComponent = ({ loading, ...props }) => <div {...props} />
 
-const LoadingContainer = styled(LoadingSafeDivComponent)`
-  position: absolute;
-  top: 1rem;
-  left: 0;
-  width: 100%;
+const LoadingContainer = styled(LoadingSafeDivComponent)<{ loading?: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -146,10 +142,7 @@ export const LoadingDisplay = observer(
     }
 
     return (
-      <LoadingContainer
-        data-testid="loading-container"
-        className={className}
-        loading={loading}>
+      <LoadingContainer data-testid="loading-container" className={className} loading={loading}>
         <Loading inline={inline} size={size} />
       </LoadingContainer>
     )

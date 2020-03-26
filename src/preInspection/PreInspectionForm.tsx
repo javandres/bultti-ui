@@ -6,7 +6,12 @@ import {
   ColumnWrapper,
   ErrorView,
   InputLabel,
+  LoadingMeta,
   MessageContainer,
+  MetaDisplay,
+  MetaItem,
+  MetaLabel,
+  MetaValue,
   SectionHeading,
 } from '../common/components/common'
 import SelectOperator from '../common/input/SelectOperator'
@@ -87,31 +92,6 @@ const ControlGroup = styled.div`
   }
 `
 
-const InspectionMeta = styled.div`
-  display: flex;
-  margin-left: 1rem;
-`
-
-const MetaItem = styled.div`
-  padding: 0.5rem 0.75rem;
-  margin-right: 1rem;
-  border: 1px solid var(--lighter-grey);
-  border-radius: 5px;
-  color: var(--dark-grey);
-  margin-bottom: -0.5rem;
-`
-
-const MetaLabel = styled.h6`
-  margin: 0 0 0.25rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  font-weight: bold;
-`
-
-const MetaValue = styled.div`
-  font-size: 0.875rem;
-`
-
 type PreInspectionProps = {}
 
 function isOperator(value: any): value is Operator {
@@ -128,14 +108,17 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
 
   let isUpdating = useRef(false)
 
-  let { data: preInspection, loading: inspectionLoading } = useQueryData(preInspectionQuery, {
-    skip: !operator || !season,
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      operatorId: operator?.id,
-      seasonId: season?.id,
-    },
-  })
+  let { data: preInspection, loading: inspectionLoading, refetch } = useQueryData(
+    preInspectionQuery,
+    {
+      skip: !operator || !season,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: operator?.id,
+        seasonId: season?.id,
+      },
+    }
+  )
 
   let [createPreInspection, { loading: createLoading }] = useMutationData(
     createPreInspectionMutation
@@ -172,6 +155,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         },
       }).then(() => {
         isUpdating.current = false
+        refetch()
       })
     }
   }, [isUpdating.current, preInspection, season, operator, inspectionLoading])
@@ -204,6 +188,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         })
 
         isUpdating.current = false
+        refetch()
       }
     },
     [isUpdating.current, preInspection, inspectionLoading, updatePreInspection]
@@ -266,8 +251,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
     [season, operator, setGlobalSeason, setGlobalOperator]
   )
 
-  console.log(preInspection)
-
   return (
     <CreatePreInspectionFormView>
       {activeBlockers.length !== 0 && (
@@ -286,8 +269,10 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         </>
       ) : (
         <>
-          <InspectionMeta>
-            {isLoading && <Loading inline={true} />}
+          <MetaDisplay>
+            <LoadingMeta inline={true} loading={isLoading}>
+              <Loading inline={true} />
+            </LoadingMeta>
             <MetaItem>
               <MetaLabel>Perustettu</MetaLabel>
               <MetaValue>
@@ -306,7 +291,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
                 {preInspection.createdBy?.name} ({preInspection.createdBy?.organisation})
               </MetaValue>
             </MetaItem>
-          </InspectionMeta>
+          </MetaDisplay>
           <SectionHeading theme="light">Perustiedot</SectionHeading>
           <FormWrapper>
             {OperatorSeasonSelect}
