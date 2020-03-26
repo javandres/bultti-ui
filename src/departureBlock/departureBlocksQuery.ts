@@ -5,7 +5,6 @@ export const departureBlocksQuery = gql`
     departureBlocksForPreInspection(preInspectionId: $preInspectionId) {
       id
       dayType
-      blockNumber
       departures {
         id
         blockNumber
@@ -13,7 +12,6 @@ export const departureBlocksQuery = gql`
         journeyStartTime
         journeyEndTime
         routeId
-        variant
       }
       equipment {
         id
@@ -26,7 +24,7 @@ export const departureBlocksQuery = gql`
         vehicleId
         emissionClass
       }
-      equipmentRegistryNumbers
+      equipmentRegistryNumber
       operator {
         operatorId
         operatorName

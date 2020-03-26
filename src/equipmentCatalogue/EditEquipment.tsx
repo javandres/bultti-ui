@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button } from '../common/components/Button'
@@ -15,6 +15,8 @@ import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
 import { equipmentColumnLabels } from './CatalogueEquipment'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
+import { updateEquipmentFromDepartures } from './equipmentCatalogueQuery'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -55,6 +57,13 @@ const EditEquipment: React.FC<PropTypes> = observer(
       searchEquipment,
       { data: foundEquipment, loading: searchLoading, called: searchCalled },
     ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
+
+    let [updateFromDepartures, { loading: populateLoading }] = useMutationData(
+      updateEquipmentFromDepartures
+    )
+
+    const preInspection = useContext(PreInspectionContext)
+    const preInspectionId = preInspection?.id || ''
 
     let onChangeSearchValue = useCallback((value) => {
       setSearchVehicleId(value)
@@ -130,6 +139,15 @@ const EditEquipment: React.FC<PropTypes> = observer(
       setPendingEquipment(null)
     }, [])
 
+    const onPopulateFromDepartureBlocks = useCallback(() => {
+      updateFromDepartures({
+        variables: {
+          preInspectionId,
+          catalogueId,
+        },
+      })
+    }, [])
+
     return (
       <>
         {!pendingEquipment && (
@@ -137,7 +155,15 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
               Lisää ajoneuvo
             </Button>
-            <Button onClick={() => setSearchActive(true)}>Hae ajoneuvo</Button>
+            <Button style={{ marginRight: '1rem' }} onClick={() => setSearchActive(true)}>
+              Hae ajoneuvo
+            </Button>
+            <Button
+              style={{ marginRight: '1rem' }}
+              loading={populateLoading}
+              onClick={onPopulateFromDepartureBlocks}>
+              Lisää kalusto lähtöketjuista
+            </Button>
           </FlexRow>
         )}
         {pendingEquipment && (

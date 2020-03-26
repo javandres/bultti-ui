@@ -11,6 +11,7 @@ import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
 import { pick } from 'lodash'
 import { EquipmentInput } from '../schema-types'
+import { round } from '../util/round'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -138,7 +139,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
-          return val + '%'
+          return round(val) + '%'
         case 'emissionClass':
           return emissionClassNames[val + '']
         default:
@@ -151,10 +152,12 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
         switch (col) {
           case 'percentageQuota':
             return (
-              equipment.reduce((total, item) => {
-                total += item?.percentageQuota || 0
-                return total
-              }, 0) + '%'
+              round(
+                equipment.reduce((total, item) => {
+                  total += item?.percentageQuota || 0
+                  return total
+                }, 0)
+              ) + '%'
             )
           case 'amount':
             return (

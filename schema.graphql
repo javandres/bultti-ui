@@ -13,18 +13,17 @@ type Departure {
   journeyEndTime: String!
   journeyStartTime: String!
   routeId: String
-  variant: String
 }
 
 type DepartureBlock {
-  blockNumber: String!
   dayType: DayType!
   departures: [Departure!]!
-  equipment: [Equipment!]!
-  equipmentRegistryNumbers: [String!]!
+  equipment: Equipment!
+  equipmentRegistryNumber: String!
   id: ID!
   operator: Operator!
   preInspection: PreInspection!
+  preInspectionId: String!
 }
 
 type Equipment {
@@ -101,6 +100,7 @@ type Mutation {
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
+  populateCatalogueFromDepartures(catalogueId: String!, preInspectionId: String!): EquipmentCatalogue
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
@@ -246,7 +246,6 @@ input DepartureInput {
   departureTime: String!
   direction: String!
   routeId: String!
-  variant: String!
   vehicleId: String!
 }
 

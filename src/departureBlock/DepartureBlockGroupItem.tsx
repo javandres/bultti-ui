@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useUploader } from '../util/useUploader'
 import Checkbox from '../common/input/Checkbox'
@@ -12,6 +12,7 @@ import { ErrorView, FlexRow, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;
@@ -53,7 +54,6 @@ type PropTypes = {
   loading?: boolean
   selectableDayTypes?: string[]
   departureBlocks: DepartureBlock[]
-  inspectionId: string
   dayTypeGroup: DayTypeGroup
   groupIndex: number
   onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
@@ -63,7 +63,6 @@ type PropTypes = {
 
 const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
   ({
-    inspectionId,
     selectableDayTypes = [],
     dayTypeGroup,
     departureBlocks = [],
@@ -74,6 +73,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onBlocksChange,
   }) => {
     const [blocksVisible, setBlocksVisibility] = useState(false)
+    const preInspection = useContext(PreInspectionContext)
+    const preInspectionId = preInspection?.id || ''
 
     // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
@@ -81,7 +82,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     // Create an upload handler for uploading the departure block file.
     const uploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
-        inspectionId: inspectionId,
+        inspectionId: preInspectionId,
         dayTypes: getEnabledDayTypes(dayTypeGroup),
       },
     })
@@ -136,13 +137,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         await removeDepartureBlocksForDays({
           variables: {
             dayTypes: getEnabledDayTypes(dayTypeGroup),
-            preInspectionId: inspectionId,
+            preInspectionId: preInspectionId,
           },
         })
 
         onBlocksChange()
       }
-    }, [dayTypeGroup, inspectionId, removeDepartureBlocksForDays, onBlocksChange])
+    }, [dayTypeGroup, preInspectionId, removeDepartureBlocksForDays, onBlocksChange])
 
     const onToggleBlocksVisibility = useCallback(() => {
       setBlocksVisibility((currentVisible) => !currentVisible)
@@ -162,7 +163,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           const firstDeparture: Departure | undefined = block.departures[0]
           const lastDeparture: Departure | undefined = block.departures[block.departures.length - 1]
           const routes = block.departures.reduce((allRoutes: string[], departure) => {
-            const routeId = `${departure.routeId}${departure?.variant || ''}`
+            const routeId = departure.routeId || ''
 
             if (!allRoutes.includes(routeId)) {
               allRoutes.push(routeId)
@@ -171,17 +172,15 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             return allRoutes
           }, [])
 
-          const equipmentIds =
-            block?.equipment.length === 0
-              ? null
-              : block?.equipment.map((eq) => eq.uniqueVehicleId).join(', ')
+          const equipmentId = block?.equipment?.uniqueVehicleId || ''
+          const blockNumbers = (block?.departures || []).map((dep) => dep.blockNumber).join(', ')
 
           return {
             id: block.id,
-            blockNumber: block.blockNumber,
+            blockNumber: blockNumbers,
             dayTypes: displayDayTypes.join(', '),
-            registryNumber: block.equipmentRegistryNumbers.join(', '),
-            equipmentId: equipmentIds,
+            registryNumber: block.equipmentRegistryNumber,
+            equipmentId: equipmentId,
             firstStartTime: firstDeparture.journeyStartTime,
             lastEndTime: lastDeparture.journeyEndTime,
             routes: routes.join(', '),
@@ -211,7 +210,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             }
 
             // Check for missing equipment
-            if (block?.equipment.length === 0) {
+            if (!block?.equipment) {
               errors.missingEquipment = true
             }
 

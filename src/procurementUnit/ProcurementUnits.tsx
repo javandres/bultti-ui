@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import ProcurementUnitItem from './ProcurementUnitItem'
@@ -7,15 +7,19 @@ import { FlexRow, MessageView } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { PageLoading } from '../common/components/Loading'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 const ProcurementUnitsView = styled.div``
 
 export type PropTypes = {
-  operatorId: number
-  startDate: string
+  operatorId?: number
+  startDate?: string
 }
 
-const ProcurementUnits: React.FC<PropTypes> = observer(({ operatorId, startDate }) => {
+const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
+  const preInspection = useContext(PreInspectionContext)
+  let { operatorId, startDate } = preInspection || props
+
   const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 
   const toggleProcurementUnitsExpanded = useCallback(() => {

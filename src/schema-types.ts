@@ -31,18 +31,17 @@ export type Departure = {
   journeyEndTime: Scalars['String'],
   routeId?: Maybe<Scalars['String']>,
   direction?: Maybe<Scalars['String']>,
-  variant?: Maybe<Scalars['String']>,
   departureBlocks: Array<DepartureBlock>,
 };
 
 export type DepartureBlock = {
    __typename?: 'DepartureBlock',
   id: Scalars['ID'],
-  blockNumber: Scalars['String'],
   dayType: DayType,
-  equipmentRegistryNumbers: Array<Scalars['String']>,
+  equipmentRegistryNumber: Scalars['String'],
   operator: Operator,
-  equipment: Array<Equipment>,
+  equipment: Equipment,
+  preInspectionId: Scalars['String'],
   preInspection: PreInspection,
   departures: Array<Departure>,
 };
@@ -56,7 +55,6 @@ export type DepartureInput = {
   departureTime: Scalars['String'],
   direction: Scalars['String'],
   routeId: Scalars['String'],
-  variant: Scalars['String'],
   vehicleId: Scalars['String'],
 };
 
@@ -189,6 +187,7 @@ export type Mutation = {
   updateEquipment?: Maybe<Equipment>,
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   updateEquipmentCatalogue: EquipmentCatalogue,
+  populateCatalogueFromDepartures?: Maybe<EquipmentCatalogue>,
   createExecutionRequirement?: Maybe<ExecutionRequirement>,
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
@@ -243,6 +242,12 @@ export type MutationCreateEquipmentCatalogueArgs = {
 
 export type MutationUpdateEquipmentCatalogueArgs = {
   equipmentCatalogue: EquipmentCatalogueInput,
+  catalogueId: Scalars['String']
+};
+
+
+export type MutationPopulateCatalogueFromDeparturesArgs = {
+  preInspectionId: Scalars['String'],
   catalogueId: Scalars['String']
 };
 

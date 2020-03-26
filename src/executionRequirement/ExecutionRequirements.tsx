@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { MessageView } from '../common/components/common'
 import { get, groupBy } from 'lodash'
 import { OperatingAreaName } from '../schema-types'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -15,12 +16,12 @@ const AreaHeading = styled.h4`
   }
 `
 
-export type PropTypes = {
-  operatorId: number
-  startDate: string
-}
+export type PropTypes = {}
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(({ startDate }) => {
+const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
+  const preInspection = useContext(PreInspectionContext)
+  let { operatorId, startDate } = preInspection || {}
+
   const procurementUnits = []
   const areaUnits = groupBy(procurementUnits, 'operatingArea.name')
 

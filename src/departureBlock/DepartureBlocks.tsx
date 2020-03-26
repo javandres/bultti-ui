@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, flatten, groupBy, pick } from 'lodash'
@@ -10,16 +10,18 @@ import { departureBlocksQuery } from './departureBlocksQuery'
 import { DayType, DepartureBlock } from '../schema-types'
 import { normalDayTypes } from '../constants'
 import { FlexRow } from '../common/components/common'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
 `
 
-type PropTypes = {
-  inspectionId: string
-}
+type PropTypes = {}
 
-const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
+const DepartureBlocks: React.FC<PropTypes> = observer(() => {
+  const preInspection = useContext(PreInspectionContext)
+  const preInspectionId = preInspection?.id || ''
+
   let [
     dayTypeGroups,
     enabledDayTypes,
@@ -30,9 +32,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
     departureBlocksQuery,
     {
       notifyOnNetworkStatusChange: true,
-      skip: !inspectionId,
+      skip: !preInspectionId,
       variables: {
-        preInspectionId: inspectionId,
+        preInspectionId: preInspectionId,
       },
     }
   )
@@ -84,7 +86,6 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ inspectionId }) => {
             loading={departureBlocksLoading}
             selectableDayTypes={selectableDayTypes}
             departureBlocks={departureBlocksForDayTypes}
-            inspectionId={inspectionId}
             dayTypeGroup={dayTypeGroup}
             groupIndex={groupIndex}
             onAddDayType={addDayTypeToGroup}

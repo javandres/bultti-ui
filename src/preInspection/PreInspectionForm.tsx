@@ -1,34 +1,17 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import {
-  Column,
-  ColumnWrapper,
-  ErrorView,
-  InputLabel,
-  LoadingMeta,
-  MessageContainer,
-  MetaDisplay,
-  MetaItem,
-  MetaLabel,
-  MetaValue,
-  SectionHeading,
-} from '../common/components/common'
-import SelectOperator from '../common/input/SelectOperator'
-import SelectSeason from '../common/input/SelectSeason'
+import { ErrorView, MessageContainer, SectionHeading } from '../common/components/common'
 import {
   InitialPreInspectionInput,
   InspectionStatus,
   Operator,
+  PreInspection,
   PreInspectionInput,
   Season,
 } from '../schema-types'
-import SelectDate from '../common/input/SelectDate'
-import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
-import Loading, { PageLoading } from '../common/components/Loading'
-import Input from '../common/input/Input'
+import { PageLoading } from '../common/components/Loading'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
-import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
 import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
@@ -36,60 +19,14 @@ import {
   updatePreInspectionMutation,
 } from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
-import { DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
 import { useStateValue } from '../state/useAppState'
 import { useQueryData } from '../util/useQueryData'
+import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
+import PreInspectionMeta from './PreInspectionMeta'
+import PreInspectionConfig from './PreInspectionConfig'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
-`
-
-const FormColumn = styled(Column)`
-  padding: 1rem 0;
-  margin-right: 1.5rem;
-
-  &:last-child {
-    margin-right: 0;
-  }
-`
-
-const FormWrapper = styled(ColumnWrapper)`
-  display: flex;
-  padding: 0.5rem 1rem;
-  margin: 1rem;
-  background: white;
-  border-radius: 0.5rem;
-  border: 1px solid var(--lighter-grey);
-`
-
-const TransparentFormWrapper = styled(FormWrapper)`
-  padding: 0;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-
-  ${FormColumn}:first-child {
-    padding-top: 0;
-  }
-`
-
-const ControlGroup = styled.div`
-  margin: 0 0 2rem;
-  display: flex;
-  flex-wrap: nowrap;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-
-  > * {
-    flex: 1 1 50%;
-    margin-right: 1rem;
-
-    &:last-child {
-      margin-right: 0;
-    }
-  }
 `
 
 type PreInspectionProps = {}
@@ -102,9 +39,11 @@ function isSeason(value: any): value is Season {
   return typeof value?.season !== 'undefined' && typeof value?.startDate !== 'undefined'
 }
 
+export const PreInspectionContext = React.createContext<PreInspection | null>(null)
+
 const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
-  var [season, setGlobalSeason] = useStateValue('globalSeason')
-  var [operator, setGlobalOperator] = useStateValue('globalOperator')
+  var [season] = useStateValue('globalSeason')
+  var [operator] = useStateValue('globalOperator')
 
   let isUpdating = useRef(false)
 
@@ -227,30 +166,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
     .filter(([, status]) => !status)
     .map(([key]) => key)
 
-  let OperatorSeasonSelect = useMemo(
-    () => (
-      <FormColumn width="50%">
-        <ControlGroup>
-          <SelectOperator
-            label="Liikennöitsijä"
-            theme="light"
-            value={operator}
-            onSelect={setGlobalOperator}
-          />
-        </ControlGroup>
-        <ControlGroup>
-          <SelectSeason
-            label="Aikataulukausi"
-            theme="light"
-            value={season}
-            onSelect={setGlobalSeason}
-          />
-        </ControlGroup>
-      </FormColumn>
-    ),
-    [season, operator, setGlobalSeason, setGlobalOperator]
-  )
-
   return (
     <CreatePreInspectionFormView>
       {activeBlockers.length !== 0 && (
@@ -262,97 +177,27 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
       )}
       {inspectionLoading ? (
         <PageLoading />
-      ) : !preInspection ? (
-        <>
-          <SectionHeading theme="light">Valitse liikennöitsijä</SectionHeading>
-          <FormWrapper>{OperatorSeasonSelect}</FormWrapper>
-        </>
       ) : (
-        <>
-          <MetaDisplay>
-            <LoadingMeta inline={true} loading={isLoading}>
-              <Loading inline={true} />
-            </LoadingMeta>
-            <MetaItem>
-              <MetaLabel>Perustettu</MetaLabel>
-              <MetaValue>
-                {format(parseISO(preInspection.createdAt), READABLE_TIME_FORMAT)}
-              </MetaValue>
-            </MetaItem>
-            <MetaItem>
-              <MetaLabel>Viimeksi muokattu</MetaLabel>
-              <MetaValue>
-                {format(parseISO(preInspection.updatedAt), READABLE_TIME_FORMAT)}
-              </MetaValue>
-            </MetaItem>
-            <MetaItem>
-              <MetaLabel>Käyttäjä</MetaLabel>
-              <MetaValue>
-                {preInspection.createdBy?.name} ({preInspection.createdBy?.organisation})
-              </MetaValue>
-            </MetaItem>
-          </MetaDisplay>
+        <PreInspectionContext.Provider value={preInspection}>
+          <PreInspectionMeta isLoading={isLoading} />
+
           <SectionHeading theme="light">Perustiedot</SectionHeading>
-          <FormWrapper>
-            {OperatorSeasonSelect}
-            <FormColumn>
-              <InputLabel theme="light">Tuotantojakso</InputLabel>
-              <ControlGroup>
-                <SelectDate
-                  name="production_start"
-                  value={preInspection.startDate}
-                  onChange={createUpdateCallback('startDate')}
-                  label="Alku"
-                />
-                <Input
-                  value={preInspection.endDate}
-                  label="Loppu"
-                  subLabel={true}
-                  disabled={true}
-                />
-              </ControlGroup>
-              <InputLabel theme="light">Tarkastusjakso</InputLabel>
-              <ControlGroup>
-                <Input
-                  value={format(startOfISOWeek(parseISO(preInspection.startDate)), DATE_FORMAT)}
-                  label="Alku"
-                  subLabel={true}
-                  disabled={true}
-                />
-                <Input
-                  value={format(endOfISOWeek(parseISO(preInspection.startDate)), DATE_FORMAT)}
-                  label="Loppu"
-                  subLabel={true}
-                  disabled={true}
-                />
-              </ControlGroup>
-            </FormColumn>
-          </FormWrapper>
+          <PreInspectionConfig onUpdateValue={createUpdateCallback} />
+
           <SectionHeading theme="light">Lähtöketjut</SectionHeading>
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              <DepartureBlocks inspectionId={preInspection.id} />
+              <DepartureBlocks />
             </FormColumn>
           </FormWrapper>
-          <SectionHeading theme="light">Suoritevaatimukset</SectionHeading>
-          <FormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <ExecutionRequirements
-                startDate={preInspection.startDate}
-                operatorId={preInspection?.operator?.operatorId || 0}
-              />
-            </FormColumn>
-          </FormWrapper>
+
           <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
           <TransparentFormWrapper>
             <FormColumn width="100%" minWidth="510px">
-              <ProcurementUnits
-                startDate={preInspection.startDate}
-                operatorId={preInspection?.operator?.operatorId || 0}
-              />
+              <ProcurementUnits />
             </FormColumn>
           </TransparentFormWrapper>
-        </>
+        </PreInspectionContext.Provider>
       )}
     </CreatePreInspectionFormView>
   )
