@@ -37,6 +37,7 @@ export type Departure = {
 export type DepartureBlock = {
    __typename?: 'DepartureBlock',
   id: Scalars['ID'],
+  blockNumber: Scalars['Int'],
   dayType: DayType,
   equipmentRegistryNumber: Scalars['String'],
   operator: Operator,

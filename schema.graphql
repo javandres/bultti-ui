@@ -16,6 +16,7 @@ type Departure {
 }
 
 type DepartureBlock {
+  blockNumber: Int!
   dayType: DayType!
   departures: [Departure!]!
   equipment: Equipment

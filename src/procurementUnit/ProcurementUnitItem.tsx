@@ -260,7 +260,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 {!pendingProcurementUnit ? (
                   <>
                     <ValueDisplay
-                      renderValue={(val, key) => {
+                      renderValue={(key, val) => {
                         if (key === 'weeklyMeters') return `${val} metriä`
                         if (key === 'medianAgeRequirement') return `${val} vuotta`
                         return val

@@ -5,14 +5,6 @@ export const departureBlocksQuery = gql`
     departureBlocksForPreInspection(preInspectionId: $preInspectionId) {
       id
       dayType
-      departures {
-        id
-        blockNumber
-        direction
-        journeyStartTime
-        journeyEndTime
-        routeId
-      }
       equipment {
         id
         model

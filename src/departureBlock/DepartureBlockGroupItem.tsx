@@ -161,7 +161,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       return departureBlocks
         .filter((block) => block.dayType === displayDayTypeBlocks)
         .map((block) => {
-          const firstDeparture: Departure | undefined = block.departures[0]
+          /*const firstDeparture: Departure | undefined = block.departures[0]
           const lastDeparture: Departure | undefined = block.departures[block.departures.length - 1]
           const routes = block.departures.reduce((allRoutes: string[], departure) => {
             const routeId = departure.routeId || ''
@@ -171,22 +171,19 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             }
 
             return allRoutes
-          }, [])
+          }, [])*/
 
           const equipmentId = block?.equipment?.uniqueVehicleId || ''
-          const blockNumbers = uniq((block?.departures || []).map((dep) => dep.blockNumber)).join(
-            ', '
-          )
 
           return {
             id: block.id,
-            blockNumber: blockNumbers,
+            blockNumber: block.blockNumber,
             dayTypes: displayDayTypes.join(', '),
             registryNumber: block.equipmentRegistryNumber,
             equipmentId: equipmentId,
-            firstStartTime: firstDeparture.journeyStartTime,
-            lastEndTime: lastDeparture.journeyEndTime,
-            routes: routes.join(', '),
+            firstStartTime: '', // firstDeparture.journeyStartTime,
+            lastEndTime: '', // lastDeparture.journeyEndTime,
+            routes: '', // routes.join(', '),
           }
         })
     }, [departureBlocks, dayTypeGroup])
