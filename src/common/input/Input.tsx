@@ -85,8 +85,6 @@ const Input: React.FC<PropTypes> = observer(
 
     const onKeyPress = useCallback(
       (e) => {
-        console.log(e.which)
-
         if (onEnterPress && e.which === 13) {
           onEnterPress(value)
         }
