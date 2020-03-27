@@ -21,10 +21,9 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
-  const [queryFn, { loading, error, data, refetch, called }] = useLazyQuery<TData, TVariables>(
-    query,
-    options
-  )
+  let queryHookArr = useLazyQuery<TData, TVariables>(query, options)
+  let [queryFn, { loading, error, data, refetch, called }] = queryHookArr || [() => {}, {}]
+
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
   return [queryFn, { data: pickedData, loading, error, refetch, called }]
 }

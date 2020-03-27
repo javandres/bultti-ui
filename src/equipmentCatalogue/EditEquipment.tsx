@@ -181,7 +181,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
               style={{ marginLeft: 'auto' }}
               buttonStyle={ButtonStyle.SECONDARY_REMOVE}
               onClick={onRemoveAll}>
-              Poista kaikki kalusto
+              Poista kaikki ajoneuvot
             </Button>
           </FlexRow>
         )}

@@ -304,11 +304,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
                   />
-                  <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-                  <RequirementsTable
-                    equipmentGroups={unitEquipmentGroups}
-                    weeklyMeters={procurementUnit.weeklyMeters}
-                  />
+                  {unitEquipmentGroups.length !== 0 && (
+                    <>
+                      <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
+                      <RequirementsTable
+                        equipmentGroups={unitEquipmentGroups}
+                        weeklyMeters={procurementUnit.weeklyMeters}
+                      />
+                    </>
+                  )}
                 </>
               </Content>
             )}

@@ -119,7 +119,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, week
           }
 
           let unit = item.unit === 'percentage' ? '%' : 'km'
-          let useVal = item.unit === 'meters' ? round(val / 1000) : val
+          let useVal = item.unit === 'meters' ? round(val / 1000) : round(val)
           return useVal + ' ' + unit
         }}
       />

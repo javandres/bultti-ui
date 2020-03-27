@@ -90,6 +90,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
 
 const TableHeader = styled(TableRow)`
   outline: none !important;
+  border-bottom-color: var(--lighter-grey) !important;
 `
 
 const TableCell = styled.div`
