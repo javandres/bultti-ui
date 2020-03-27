@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
@@ -15,11 +15,7 @@ import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
 import { equipmentColumnLabels } from './CatalogueEquipment'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
-import {
-  removeAllEquipmentFromCatalogueMutation,
-  updateEquipmentFromDepartures,
-} from './equipmentCatalogueQuery'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { removeAllEquipmentFromCatalogueMutation } from './equipmentCatalogueQuery'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -61,14 +57,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
       { data: foundEquipment, loading: searchLoading, called: searchCalled },
     ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
 
-    let [updateFromDepartures, { loading: populateLoading }] = useMutationData(
-      updateEquipmentFromDepartures
-    )
-
     let [removeAllEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
-
-    const preInspection = useContext(PreInspectionContext)
-    const preInspectionId = preInspection?.id || ''
 
     let onChangeSearchValue = useCallback((value) => {
       setSearchVehicleId(value)
@@ -144,15 +133,6 @@ const EditEquipment: React.FC<PropTypes> = observer(
       setPendingEquipment(null)
     }, [])
 
-    const onPopulateFromDepartureBlocks = useCallback(() => {
-      updateFromDepartures({
-        variables: {
-          preInspectionId,
-          catalogueId,
-        },
-      })
-    }, [preInspectionId, catalogueId])
-
     const onRemoveAll = useCallback(() => {
       removeAllEquipment({
         variables: {
@@ -171,18 +151,14 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={() => setSearchActive(true)}>
               Hae ajoneuvo
             </Button>
-            <Button
-              style={{ marginRight: '1rem' }}
-              loading={populateLoading}
-              onClick={onPopulateFromDepartureBlocks}>
-              Hae ajoneuvoja lähtöketjuista
-            </Button>
-            <Button
-              style={{ marginLeft: 'auto' }}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-              onClick={onRemoveAll}>
-              Poista kaikki ajoneuvot
-            </Button>
+            {!searchActive && equipment.length !== 0 && !pendingEquipment && (
+              <Button
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                onClick={onRemoveAll}>
+                Poista kaikki ajoneuvot
+              </Button>
+            )}
           </FlexRow>
         )}
         {pendingEquipment && (
