@@ -92,7 +92,7 @@ type ButtonSizeStyle = {
 
 const props2style = (props: ButtonProps): ButtonSizeStyle & ButtonColorStyle => {
   let {
-    size = ButtonSize.SMALL,
+    size = ButtonSize.MEDIUM,
     buttonStyle = ButtonStyle.NORMAL,
     inverted = false,
     disabled = false,
@@ -196,13 +196,13 @@ export type ButtonProps = {
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
   ({ helpText, children, loading, ...props }, ref: any) => {
-    let loadingColor = 'var(--blue)'
+    let loadingColor = 'white'
 
     if (
       props.buttonStyle &&
       [ButtonStyle.SECONDARY, ButtonStyle.SECONDARY_REMOVE].includes(props.buttonStyle)
     ) {
-      loadingColor = 'white'
+      loadingColor = 'var(--blue)'
     }
 
     return (

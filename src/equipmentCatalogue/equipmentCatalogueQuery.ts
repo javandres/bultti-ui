@@ -55,3 +55,15 @@ export const updateEquipmentCatalogueMutation = gql`
     }
   }
 `
+
+export const removeAllEquipmentFromCatalogueMutation = gql`
+  mutation removeAllEquipmentFromCatalogue($catalogueId: String!) {
+    removeAllEquipmentFromCatalogue(catalogueId: $catalogueId) {
+      id
+      equipmentQuotas {
+        id
+        percentageQuota
+      }
+    }
+  }
+`

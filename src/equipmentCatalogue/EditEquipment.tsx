@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
-import { Button } from '../common/components/Button'
+import { Button, ButtonStyle } from '../common/components/Button'
 import ItemForm, { FieldValueDisplay } from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
 import Input from '../common/input/Input'
@@ -15,7 +15,10 @@ import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
 import { equipmentColumnLabels } from './CatalogueEquipment'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
-import { updateEquipmentFromDepartures } from './equipmentCatalogueQuery'
+import {
+  removeAllEquipmentFromCatalogueMutation,
+  updateEquipmentFromDepartures,
+} from './equipmentCatalogueQuery'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 export type PropTypes = {
@@ -61,6 +64,8 @@ const EditEquipment: React.FC<PropTypes> = observer(
     let [updateFromDepartures, { loading: populateLoading }] = useMutationData(
       updateEquipmentFromDepartures
     )
+
+    let [removeAllEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
 
     const preInspection = useContext(PreInspectionContext)
     const preInspectionId = preInspection?.id || ''
@@ -146,7 +151,15 @@ const EditEquipment: React.FC<PropTypes> = observer(
           catalogueId,
         },
       })
-    }, [])
+    }, [preInspectionId, catalogueId])
+
+    const onRemoveAll = useCallback(() => {
+      removeAllEquipment({
+        variables: {
+          catalogueId,
+        },
+      })
+    }, [catalogueId])
 
     return (
       <>
@@ -162,7 +175,13 @@ const EditEquipment: React.FC<PropTypes> = observer(
               style={{ marginRight: '1rem' }}
               loading={populateLoading}
               onClick={onPopulateFromDepartureBlocks}>
-              Lisää kalusto lähtöketjuista
+              Hae ajoneuvoja lähtöketjuista
+            </Button>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+              onClick={onRemoveAll}>
+              Poista kaikki kalusto
             </Button>
           </FlexRow>
         )}

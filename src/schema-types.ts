@@ -40,7 +40,7 @@ export type DepartureBlock = {
   dayType: DayType,
   equipmentRegistryNumber: Scalars['String'],
   operator: Operator,
-  equipment: Equipment,
+  equipment?: Maybe<Equipment>,
   preInspectionId: Scalars['String'],
   preInspection: PreInspection,
   departures: Array<Departure>,
@@ -188,6 +188,7 @@ export type Mutation = {
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   updateEquipmentCatalogue: EquipmentCatalogue,
   populateCatalogueFromDepartures?: Maybe<EquipmentCatalogue>,
+  removeAllEquipmentFromCatalogue: EquipmentCatalogue,
   createExecutionRequirement?: Maybe<ExecutionRequirement>,
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
@@ -248,6 +249,11 @@ export type MutationUpdateEquipmentCatalogueArgs = {
 
 export type MutationPopulateCatalogueFromDeparturesArgs = {
   preInspectionId: Scalars['String'],
+  catalogueId: Scalars['String']
+};
+
+
+export type MutationRemoveAllEquipmentFromCatalogueArgs = {
   catalogueId: Scalars['String']
 };
 
@@ -315,8 +321,8 @@ export type PreInspection = {
   season: Season,
   executionRequirements?: Maybe<Array<ExecutionRequirement>>,
   departureBlocks: Array<DepartureBlock>,
-  startDate?: Maybe<Scalars['BulttiDateTime']>,
-  endDate?: Maybe<Scalars['BulttiDateTime']>,
+  startDate: Scalars['BulttiDateTime'],
+  endDate: Scalars['BulttiDateTime'],
   status: InspectionStatus,
   createdAt: Scalars['DateTime'],
   updatedAt: Scalars['DateTime'],

@@ -13,6 +13,7 @@ import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { uniq } from 'lodash'
 
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;
@@ -173,7 +174,9 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           }, [])
 
           const equipmentId = block?.equipment?.uniqueVehicleId || ''
-          const blockNumbers = (block?.departures || []).map((dep) => dep.blockNumber).join(', ')
+          const blockNumbers = uniq((block?.departures || []).map((dep) => dep.blockNumber)).join(
+            ', '
+          )
 
           return {
             id: block.id,

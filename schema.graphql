@@ -18,7 +18,7 @@ type Departure {
 type DepartureBlock {
   dayType: DayType!
   departures: [Departure!]!
-  equipment: Equipment!
+  equipment: Equipment
   equipmentRegistryNumber: String!
   id: ID!
   operator: Operator!
@@ -101,6 +101,7 @@ type Mutation {
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
   populateCatalogueFromDepartures(catalogueId: String!, preInspectionId: String!): EquipmentCatalogue
+  removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
@@ -132,13 +133,13 @@ type PreInspection {
   createdAt: DateTime!
   createdBy: User!
   departureBlocks: [DepartureBlock!]!
-  endDate: BulttiDateTime
+  endDate: BulttiDateTime!
   executionRequirements: [ExecutionRequirement!]
   id: ID!
   operator: Operator!
   operatorId: Int
   season: Season!
-  startDate: BulttiDateTime
+  startDate: BulttiDateTime!
   status: InspectionStatus!
   updatedAt: DateTime!
 }
