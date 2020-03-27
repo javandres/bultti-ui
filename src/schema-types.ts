@@ -39,7 +39,7 @@ export type DepartureBlock = {
   id: Scalars['ID'],
   blockNumber: Scalars['Int'],
   dayType: DayType,
-  equipmentRegistryNumber: Scalars['String'],
+  equipmentRegistryNumber?: Maybe<Scalars['String']>,
   operator: Operator,
   equipment?: Maybe<Equipment>,
   preInspectionId: Scalars['String'],
@@ -454,8 +454,9 @@ export type QueryEquipmentByOperatorArgs = {
 
 
 export type QueryQueryEquipmentFromSourceArgs = {
-  operatorId: Scalars['Int'],
-  vehicleId: Scalars['String']
+  registryNr?: Maybe<Scalars['String']>,
+  vehicleId?: Maybe<Scalars['String']>,
+  operatorId: Scalars['Int']
 };
 
 

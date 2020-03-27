@@ -181,8 +181,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             dayTypes: displayDayTypes.join(', '),
             registryNumber: block.equipmentRegistryNumber,
             equipmentId: equipmentId,
-            firstStartTime: firstDeparture.journeyStartTime,
-            lastEndTime: lastDeparture.journeyEndTime,
+            firstStartTime: firstDeparture?.journeyStartTime || '',
+            lastEndTime: lastDeparture?.journeyEndTime || '',
             routes: routes.join(', '),
           }
         })

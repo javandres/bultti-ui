@@ -51,6 +51,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
 
     let [searchActive, setSearchActive] = useState(false)
     let [searchVehicleId, setSearchVehicleId] = useState('')
+    let [searchRegistryNr, setSearchRegistryNr] = useState('')
 
     let [
       searchEquipment,
@@ -58,23 +59,27 @@ const EditEquipment: React.FC<PropTypes> = observer(
     ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
 
     let [removeAllEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
-
-    let onChangeSearchValue = useCallback((value) => {
-      setSearchVehicleId(value)
-    }, [])
-
     let [createEquipment] = useMutationData(createEquipmentMutation)
 
     let doSearch = useCallback(() => {
-      if (searchVehicleId) {
-        searchEquipment({
-          variables: {
-            operatorId,
-            vehicleId: searchVehicleId,
-          },
-        })
+      if (searchVehicleId || searchRegistryNr) {
+        let useSearchTerm = searchVehicleId ? 'vehicleId' : searchRegistryNr ? 'registryNr' : null
+        let useSearchValue = searchVehicleId
+          ? searchVehicleId
+          : searchRegistryNr
+          ? searchRegistryNr
+          : ''
+
+        if (useSearchTerm) {
+          searchEquipment({
+            variables: {
+              operatorId,
+              [useSearchTerm]: useSearchValue,
+            },
+          })
+        }
       }
-    }, [searchEquipment, searchVehicleId, operatorId])
+    }, [searchEquipment, searchVehicleId, searchRegistryNr, operatorId])
 
     let addDraftEquipment = useCallback((initialValues?: PendingEquipment) => {
       const inputRow: PendingEquipment = {
@@ -96,6 +101,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
       if (foundEquipment && searchActive) {
         setSearchActive(false)
         setSearchVehicleId('')
+        setSearchRegistryNr('')
 
         if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
           addDraftEquipment(foundEquipment)
@@ -187,12 +193,22 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <InputForm
               onCancel={() => setSearchActive(false)}
               onDone={doSearch}
-              doneLabel="Hae kalusto"
-              doneDisabled={!searchVehicleId}
+              doneLabel={`Hae kalusto${
+                searchVehicleId ? ' kylkinumerolla' : searchRegistryNr ? ' rekisterinumerolla' : ''
+              }`}
+              doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
                 {
                   label: 'Kylkinumero',
-                  field: <Input onChange={onChangeSearchValue} value={searchVehicleId} />,
+                  field: (
+                    <Input onChange={(val) => setSearchVehicleId(val)} value={searchVehicleId} />
+                  ),
+                },
+                {
+                  label: 'Rekisterinumero',
+                  field: (
+                    <Input onChange={(val) => setSearchRegistryNr(val)} value={searchRegistryNr} />
+                  ),
                 },
               ]}>
               {searchVehicleId && searchCalled && !foundEquipment && !searchLoading && (

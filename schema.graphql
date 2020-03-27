@@ -20,7 +20,7 @@ type DepartureBlock {
   dayType: DayType!
   departures: [Departure!]!
   equipment: Equipment
-  equipmentRegistryNumber: String!
+  equipmentRegistryNumber: String
   id: ID!
   operator: Operator!
   preInspection: PreInspection!
@@ -184,7 +184,7 @@ type Query {
   preInspections: [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDateTime!, operatorId: Int!): [ProcurementUnit!]!
-  queryEquipmentFromSource(operatorId: Int!, vehicleId: String!): EquipmentSearchResult
+  queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
   seasons(date: BulttiDateTime!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue

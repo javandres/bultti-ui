@@ -15,8 +15,12 @@ export const EquipmentFragment = gql`
 `
 
 export const searchEquipmentQuery = gql`
-  query queryEquipmentFromSource($vehicleId: String!, $operatorId: Int!) {
-    queryEquipmentFromSource(operatorId: $operatorId, vehicleId: $vehicleId) {
+  query queryEquipmentFromSource($vehicleId: String, $registryNr: String, $operatorId: Int!) {
+    queryEquipmentFromSource(
+      operatorId: $operatorId
+      vehicleId: $vehicleId
+      registryNr: $registryNr
+    ) {
       type
       exteriorColor
       model

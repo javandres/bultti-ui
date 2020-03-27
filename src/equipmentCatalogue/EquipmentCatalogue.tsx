@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
@@ -15,10 +15,10 @@ import {
   createEquipmentCatalogueMutation,
   updateEquipmentCatalogueMutation,
 } from './equipmentCatalogueQuery'
-import { useStateValue } from '../state/useAppState'
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipment from './CatalogueEquipment'
 import { catalogueEquipment } from './equipmentUtils'
+import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -48,7 +48,8 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
 
-    const [globalSeason] = useStateValue('globalSeason')
+    const preInspection = useContext(PreInspectionContext)
+
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
@@ -58,10 +59,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       catalogueEditMode.current = CatalogueEditMode.CREATE
 
       setPendingCatalogue({
-        startDate: globalSeason?.startDate,
-        endDate: globalSeason?.endDate,
+        startDate: preInspection?.startDate,
+        endDate: preInspection?.endDate,
       })
-    }, [globalSeason])
+    }, [preInspection])
 
     const editCurrentCatalogue = useCallback(() => {
       if (!catalogue) {
