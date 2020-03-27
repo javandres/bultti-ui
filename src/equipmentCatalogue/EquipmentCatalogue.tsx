@@ -148,7 +148,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         {!catalogue && !pendingCatalogue && (
           <>
             <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
-            <Button onClick={addDraftCatalogue}>Uusi kalustoluettelo</Button>
+            <Button onClick={addDraftCatalogue}>Luo kalustoluettelo</Button>
           </>
         )}
         {catalogue && (

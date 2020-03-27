@@ -6,8 +6,9 @@ import { AnyFunction } from '../../type/common'
 import { DayPickerSingleDateController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
-import { isValid, parseISO } from 'date-fns'
+import { format, isValid, parseISO } from 'date-fns'
 import '../style/reactDates.scss'
+import { DATE_FORMAT } from '../../constants'
 
 moment.locale('fi')
 
@@ -45,84 +46,104 @@ export type PropTypes = {
   name?: string
 }
 
-const SelectDate: React.FC<PropTypes> = observer(
-  ({ value, maxDate, onChange, label, name }) => {
-    const inputName = useMemo(
-      () => name || label?.toLowerCase()?.replace(' ', '_') || 'unnamed_input',
-      [label, name]
-    )
+const SelectDate: React.FC<PropTypes> = observer(({ value, maxDate, onChange, label, name }) => {
+  let [inputValue, setInputValue] = useState(value)
 
-    const valueMoment = useMemo(() => (!value ? moment() : moment(value, 'YYYY-MM-DD')), [
-      value,
-    ])
-    const maxMoment = useMemo(() => (maxDate ? moment(maxDate, 'YYYY-MM-DD') : false), [
-      maxDate,
-    ])
+  const applyInputValue = useCallback(() => {
+    if (inputValue !== value) {
+      let inputValueDate = parseISO(inputValue)
 
-    const [focused, setFocused] = useState<any>(false)
+      if (isValid(inputValueDate)) {
+        onChange(format(inputValueDate, DATE_FORMAT))
+      }
+    }
+  }, [value, inputValue, onChange])
 
-    const onDateChanges = useCallback(
-      (date) => {
-        if (date) {
-          onChange(date.format('YYYY-MM-DD'))
-        }
-      },
-      [onChange]
-    )
+  let currentValue = useMemo(() => {
+    if (inputValue === value) {
+      return value
+    }
 
-    const dateIsValid = useCallback((dateVal: string) => isValid(parseISO(dateVal)), [])
+    let inputValueDate = parseISO(inputValue)
+    return !isValid(inputValueDate) ? value : inputValue
+  }, [inputValue, value])
 
-    const dateIsBlocked = useCallback(
-      (dateVal: Moment) => (!maxMoment ? false : dateVal.isAfter(maxMoment)),
-      [maxMoment]
-    )
+  const inputName = useMemo(
+    () => name || label?.toLowerCase()?.replace(' ', '_') || 'unnamed_input',
+    [label, name]
+  )
 
-    const onOpenPicker = useCallback((value) => {
-      const focusVal = typeof value?.focused !== 'undefined' ? value?.focused : true
-      setFocused(focusVal)
-    }, [])
+  const valueMoment = useMemo(
+    () => (!currentValue ? moment() : moment(currentValue, 'YYYY-MM-DD')),
+    [currentValue]
+  )
 
-    const onClosePicker = useCallback(
-      (e) => {
-        if (e.target.name !== inputName) {
-          setFocused(false)
-        }
-      },
-      [focused, inputName]
-    )
+  const maxMoment = useMemo(() => (maxDate ? moment(maxDate, 'YYYY-MM-DD') : false), [maxDate])
 
-    return (
-      <>
-        <InputWrapper>
-          <InputContainer>
-            <Input
-              name={inputName}
-              subLabel={true}
-              label={label}
-              value={value}
-              onChange={onChange}
-              onFocus={onOpenPicker}
-              onBlur={onClosePicker}
-              reportChange={dateIsValid}
-            />
-          </InputContainer>
-          <DatePickerWrapper focused={focused}>
-            <DayPickerSingleDateController
-              date={valueMoment}
-              onDateChange={onDateChanges}
-              onOutsideClick={onClosePicker}
-              focused={focused}
-              onFocusChange={onOpenPicker}
-              numberOfMonths={1}
-              firstDayOfWeek={1}
-              isDayBlocked={dateIsBlocked}
-              hideKeyboardShortcutsPanel={true}
-            />
-          </DatePickerWrapper>
-        </InputWrapper>
-      </>
-    )
-  }
-)
+  const [focused, setFocused] = useState<any>(false)
+
+  const onDateChanges = useCallback(
+    (date) => {
+      if (date) {
+        let dateStr = date.format('YYYY-MM-DD')
+
+        setInputValue(dateStr)
+        onChange(dateStr)
+      }
+    },
+    [onChange]
+  )
+
+  const dateIsBlocked = useCallback(
+    (dateVal: Moment) => (!maxMoment ? false : dateVal.isAfter(maxMoment)),
+    [maxMoment]
+  )
+
+  const onOpenPicker = useCallback((value) => {
+    const focusVal = typeof value?.focused !== 'undefined' ? value?.focused : true
+    setFocused(focusVal)
+  }, [])
+
+  const onClosePicker = useCallback(
+    (e) => {
+      if (e.target.name !== inputName) {
+        setFocused(false)
+      }
+    },
+    [focused, inputName]
+  )
+
+  return (
+    <>
+      <InputWrapper>
+        <InputContainer>
+          <Input
+            name={inputName}
+            subLabel={true}
+            label={label}
+            value={inputValue}
+            onChange={(nextValue) => setInputValue(nextValue)}
+            onFocus={onOpenPicker}
+            onBlur={applyInputValue}
+            onEnterPress={applyInputValue}
+          />
+        </InputContainer>
+        <DatePickerWrapper focused={focused}>
+          <DayPickerSingleDateController
+            date={valueMoment}
+            onDateChange={onDateChanges}
+            onOutsideClick={onClosePicker}
+            focused={focused}
+            onFocusChange={onOpenPicker}
+            numberOfMonths={1}
+            firstDayOfWeek={1}
+            isDayBlocked={dateIsBlocked}
+            hideKeyboardShortcutsPanel={true}
+          />
+        </DatePickerWrapper>
+      </InputWrapper>
+    </>
+  )
+})
 
 export default SelectDate

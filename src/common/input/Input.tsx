@@ -6,7 +6,11 @@ import { ThemeTypes } from '../../type/common'
 
 const InputView = styled.div``
 
-export const TextInput = styled.input<{ theme: ThemeTypes; readOnly?: boolean; disabled?: boolean }>`
+export const TextInput = styled.input<{
+  theme: ThemeTypes
+  readOnly?: boolean
+  disabled?: boolean
+}>`
   font-family: var(--font-family);
   background: ${(p) =>
     p.theme === 'light' ? (p.readOnly || p.disabled ? '#f8f8f8' : 'white') : 'white'};
@@ -40,8 +44,9 @@ export type PropTypes = {
   className?: string
   label?: string
   subLabel?: boolean
-  value: string | number
+  value: string
   onChange?: (value: string) => unknown
+  onEnterPress?: (value?: string) => unknown
   reportChange?: (value: string) => boolean
   theme?: ThemeTypes
 } & InputHTMLAttributes<HTMLInputElement>
@@ -55,6 +60,7 @@ const Input: React.FC<PropTypes> = observer(
     label,
     reportChange,
     subLabel,
+    onEnterPress,
     ...inputProps
   }) => {
     const [internalValue, setInternalValue] = useState(value)
@@ -77,6 +83,17 @@ const Input: React.FC<PropTypes> = observer(
       }
     }, [value, internalValue])
 
+    const onKeyPress = useCallback(
+      (e) => {
+        console.log(e.which)
+
+        if (onEnterPress && e.which === 13) {
+          onEnterPress(value)
+        }
+      },
+      [onEnterPress, value]
+    )
+
     return (
       <InputView className={className}>
         {!!label && (
@@ -89,6 +106,7 @@ const Input: React.FC<PropTypes> = observer(
           theme={theme}
           value={internalValue}
           onChange={onValueChange}
+          onKeyPress={onKeyPress}
         />
       </InputView>
     )
