@@ -79,15 +79,16 @@ type EquipmentSearchResult {
 
 type ExecutionRequirement {
   area: OperatingArea!
+  procurementUnit: ProcurementUnit
   requirements: [ExecutionRequirementValue!]!
 }
 
 type ExecutionRequirementValue {
-  averageAge: Float!
   averageAgeWeighted: Float!
   cumulativeDifferencePercentage: Float!
   differencePercentage: Float!
   emissionClass: Int!
+  equipmentCount: Int!
   kilometerRequirement: Float!
   kilometersFulfilled: Float!
   quotaFulfilled: Float!
@@ -175,6 +176,7 @@ type Query {
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsByPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
+  executionRequirementsByProcurementUnit(procurementUnitId: String!, startDate: String!): ExecutionRequirement!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection

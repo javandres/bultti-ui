@@ -140,20 +140,21 @@ export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement',
   requirements: Array<ExecutionRequirementValue>,
   area: OperatingArea,
+  procurementUnit?: Maybe<ProcurementUnit>,
 };
 
 export type ExecutionRequirementValue = {
    __typename?: 'ExecutionRequirementValue',
   emissionClass: Scalars['Int'],
   totalKilometers: Scalars['Float'],
-  quotaRequirement: Scalars['Float'],
   kilometerRequirement: Scalars['Float'],
+  quotaRequirement: Scalars['Float'],
   kilometersFulfilled: Scalars['Float'],
   quotaFulfilled: Scalars['Float'],
   differencePercentage: Scalars['Float'],
   cumulativeDifferencePercentage: Scalars['Float'],
-  averageAge: Scalars['Float'],
   averageAgeWeighted: Scalars['Float'],
+  equipmentCount: Scalars['Int'],
 };
 
 export type InitialPreInspectionInput = {
@@ -383,6 +384,7 @@ export type Query = {
   equipmentCatalogue: Array<EquipmentCatalogue>,
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>,
   executionRequirementsByOperator: Array<ExecutionRequirement>,
+  executionRequirementsByProcurementUnit: ExecutionRequirement,
   executionRequirementsByPreInspection: Array<ExecutionRequirement>,
   user?: Maybe<User>,
   users: Array<User>,
@@ -453,6 +455,12 @@ export type QueryEquipmentCatalogueByOperatorArgs = {
 
 export type QueryExecutionRequirementsByOperatorArgs = {
   operatorId: Scalars['Int']
+};
+
+
+export type QueryExecutionRequirementsByProcurementUnitArgs = {
+  startDate: Scalars['String'],
+  procurementUnitId: Scalars['String']
 };
 
 

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
+  ExecutionRequirement,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
 } from '../schema-types'
@@ -23,10 +24,11 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import { SubSectionHeading } from '../common/components/common'
+import { FlexRow, SubSectionHeading } from '../common/components/common'
 import RequirementsTable from '../executionRequirement/RequirementsTable'
-import { catalogueEquipment, groupedEquipment } from '../equipmentCatalogue/equipmentUtils'
 import { parseISO } from 'date-fns'
+import { executionRequirementsByProcurementUnitQuery } from '../executionRequirement/executionRequirementsQueries'
+import { catalogueEquipment, groupedEquipment } from '../equipmentCatalogue/equipmentUtils'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -118,7 +120,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading, refetch } =
+    const { data: procurementUnit, loading, refetch: refetchUnit } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
         variables: {
           procurementUnitId: id,
@@ -126,6 +128,29 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       }) || {}
 
     const { routes = [] } = procurementUnit || {}
+
+    // Find the currently active Equipment Catalogue for the Operating Unit
+    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
+      () =>
+        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
+          isBetween(startDate, cat.startDate, cat.endDate)
+        ),
+      [procurementUnit]
+    )
+
+    let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
+
+    let {
+      data: procurementUnitRequirements,
+      loading: requirementsLoading,
+      refetch: refetchRequirements,
+    } = useQueryData<ExecutionRequirement>(executionRequirementsByProcurementUnitQuery, {
+      skip: !hasEquipment || !id || !startDate,
+      variables: {
+        procurementUnitId: id,
+        startDate,
+      },
+    })
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
       variables: { procurementUnitId: id },
@@ -148,15 +173,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
           updatedData: null,
         },
       }
-    )
-
-    // Find the currently active Equipment Catalogue for the Operating Unit
-    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
-      () =>
-        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
-          isBetween(startDate, cat.startDate, cat.endDate)
-        ),
-      [procurementUnit]
     )
 
     const onChangeProcurementUnit = useCallback((key: string, nextValue) => {
@@ -182,6 +198,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       }
     }, [updateWeeklyMeters])
 
+    const onCatalogueChanged = useCallback(async () => {
+      if (refetchUnit()) {
+        await refetchUnit()
+      }
+    }, [refetchUnit()])
+
     const onSaveProcurementUnit = useCallback(async () => {
       if (!procurementUnitId || !pendingProcurementUnit) {
         return
@@ -195,20 +217,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         },
       })
 
-      if (refetch) {
-        await refetch()
-      }
-    }, [pendingProcurementUnit, refetch])
+      await onCatalogueChanged()
+    }, [pendingProcurementUnit, onCatalogueChanged])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
     }, [])
-
-    const onCatalogueChanged = useCallback(async () => {
-      if (refetch) {
-        await refetch()
-      }
-    }, [refetch])
 
     useEffect(() => {
       setIsExpanded(expanded)
@@ -220,13 +234,18 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
-    let unitEquipmentGroups = useMemo(() => {
-      let equipmentWithQuota = catalogueEquipment(activeCatalogue)
-      return groupedEquipment(equipmentWithQuota, inspectionStartDate)
-    }, [activeCatalogue, inspectionStartDate])
+    let onUpdate = useCallback(async () => {
+      if (refetchUnit) {
+        await refetchUnit()
+      }
+
+      if (refetchRequirements) {
+        await refetchRequirements()
+      }
+    }, [refetchRequirements, refetchUnit])
 
     return (
-      <ProcurementUnitView>
+      <ProcurementUnitView className="className">
         {loading ? (
           <Loading />
         ) : !procurementUnit ? null : (
@@ -256,7 +275,16 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             </HeaderRow>
             {isExpanded && (
               <Content>
-                <SubSectionHeading>Kilpailukohteen tiedot</SubSectionHeading>
+                <FlexRow>
+                  <SubSectionHeading>Kilpailukohteen tiedot</SubSectionHeading>
+                  <Button
+                    onClick={onUpdate}
+                    style={{ marginLeft: 'auto' }}
+                    buttonStyle={ButtonStyle.SECONDARY}
+                    size={ButtonSize.SMALL}>
+                    Päivitä
+                  </Button>
+                </FlexRow>
                 {!pendingProcurementUnit ? (
                   <>
                     <ValueDisplay
@@ -304,14 +332,19 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
                   />
-                  {unitEquipmentGroups.length !== 0 && (
-                    <>
-                      <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-                      <RequirementsTable
-                        equipmentGroups={unitEquipmentGroups}
-                        weeklyMeters={procurementUnit.weeklyMeters}
-                      />
-                    </>
+                  {hasEquipment && requirementsLoading ? (
+                    <Loading />
+                  ) : (
+                    hasEquipment &&
+                    procurementUnitRequirements.length !== 0 && (
+                      <>
+                        <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
+                        <RequirementsTable
+                          requirementValues={procurementUnitRequirements.requirements}
+                          weeklyMeters={procurementUnit.weeklyMeters}
+                        />
+                      </>
+                    )
                   )}
                 </>
               </Content>

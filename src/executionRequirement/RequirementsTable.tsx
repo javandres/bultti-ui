@@ -1,12 +1,10 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { groupBy } from 'lodash'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { EquipmentQuotaGroup } from '../equipmentCatalogue/equipmentUtils'
-import ValueDisplay from '../common/components/ValueDisplay'
+import { ExecutionRequirementValue } from '../schema-types'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -20,7 +18,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
 `
 
 export type PropTypes = {
-  equipmentGroups: EquipmentQuotaGroup[]
+  requirementValues: ExecutionRequirementValue[]
   weeklyMeters: number
 }
 
@@ -39,76 +37,40 @@ const requirementColumnLabels = {
   total: 'Yhteensä',
 }
 
-const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, weeklyMeters }) => {
-  let emissionClassGroups = useMemo(() => groupBy(equipmentGroups, 'emissionClass'), [
-    equipmentGroups,
-  ])
-
-  const classRequirements = useMemo(
-    () =>
-      Object.entries(emissionClassGroups).map(([emissionClass, equipment]) => {
-        const combinedPercentage: number = equipment.reduce(
-          (total: number, { percentageQuota }) => (total += percentageQuota),
-          0
-        )
-
-        const meters = round(weeklyMeters * (combinedPercentage / 100))
-
-        return {
-          emissionClass: parseInt(emissionClass, 10),
-          meters,
-          percentageQuota: combinedPercentage,
-        }
-      }),
-    [emissionClassGroups, weeklyMeters]
-  )
-
+const RequirementsTable: React.FC<PropTypes> = observer(({ requirementValues }) => {
   let requirementRows = useMemo(() => {
-    let meterRow = { unit: 'meters', total: 0 }
+    let kilometerRow = { unit: 'kilometers', total: 0 }
     let percentageRow = { unit: 'percentage', total: 0 }
+    let ageRow = { unit: 'averageAge', total: 0 }
 
     for (let i = 1; i <= 10; i++) {
-      let currentRequirement = classRequirements.find((req) => req.emissionClass === i)
+      let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
 
-      meterRow[i] = currentRequirement?.meters || 0
-      percentageRow[i] = currentRequirement?.percentageQuota || 0
+      kilometerRow[i] = currentRequirement?.kilometerRequirement || 0
+      percentageRow[i] = currentRequirement?.quotaRequirement || 0
+      ageRow[i] = currentRequirement?.averageAgeWeighted || 0
     }
 
-    meterRow.total = classRequirements.reduce(
-      (total, { meters }) => (total += meters),
-      meterRow.total
+    kilometerRow.total = requirementValues.reduce(
+      (total, { kilometerRequirement }) => (total += kilometerRequirement),
+      kilometerRow.total
     )
 
-    percentageRow.total = classRequirements.reduce(
-      (total, { percentageQuota }) => (total += percentageQuota),
+    percentageRow.total = requirementValues.reduce(
+      (total, { quotaRequirement }) => (total += quotaRequirement),
       percentageRow.total
     )
 
-    return [meterRow, percentageRow]
-  }, [classRequirements])
-
-  let requirementValues = useMemo(() => {
-    let combinedAge = equipmentGroups.reduce((total, { age }) => (total += age), 0)
-
-    let combinedAgeWeighted = equipmentGroups.reduce(
-      (total, { age, percentageQuota }) =>
-        (total += age * (weeklyMeters * (percentageQuota / 100))),
-      0
+    ageRow.total = requirementValues.reduce(
+      (total, { averageAgeWeighted }) => (total += averageAgeWeighted),
+      ageRow.total
     )
 
-    return {
-      averageAge: round((combinedAge || 0) / (equipmentGroups?.length || 1)),
-      averageAgeWeighted: round(combinedAgeWeighted / (weeklyMeters || 1)),
-    }
-  }, [equipmentGroups, weeklyMeters])
+    return [kilometerRow, percentageRow, ageRow]
+  }, [requirementValues])
 
   return (
     <ExecutionRequirementsAreaContainer>
-      <ValueDisplay
-        style={{ marginBottom: '1rem' }}
-        item={requirementValues}
-        labels={{ averageAge: 'Keski-ikä', averageAgeWeighted: 'Painotettu keski-ikä' }}
-      />
       <Table
         items={requirementRows}
         columnLabels={requirementColumnLabels}
@@ -118,8 +80,23 @@ const RequirementsTable: React.FC<PropTypes> = observer(({ equipmentGroups, week
             return val
           }
 
-          let unit = item.unit === 'percentage' ? '%' : 'km'
-          let useVal = item.unit === 'meters' ? round(val / 1000) : round(val)
+          let unit = ''
+
+          switch (item.unit) {
+            case 'percentage':
+              unit = '%'
+              break
+            case 'kilometers':
+              unit = 'km'
+              break
+            case 'averageAge':
+              unit = 'v'
+              break
+            default:
+              unit = ''
+          }
+
+          let useVal = round(val)
           return useVal + ' ' + unit
         }}
       />

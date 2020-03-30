@@ -542,6 +542,51 @@
             "deprecationReason": null
           },
           {
+            "name": "executionRequirementsByProcurementUnit",
+            "description": "",
+            "args": [
+              {
+                "name": "startDate",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "procurementUnitId",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ExecutionRequirement",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "executionRequirementsByPreInspection",
             "description": "",
             "args": [
@@ -2866,6 +2911,18 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "procurementUnit",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "ProcurementUnit",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -2911,7 +2968,7 @@
             "deprecationReason": null
           },
           {
-            "name": "quotaRequirement",
+            "name": "kilometerRequirement",
             "description": "",
             "args": [],
             "type": {
@@ -2927,7 +2984,7 @@
             "deprecationReason": null
           },
           {
-            "name": "kilometerRequirement",
+            "name": "quotaRequirement",
             "description": "",
             "args": [],
             "type": {
@@ -3007,7 +3064,7 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAge",
+            "name": "averageAgeWeighted",
             "description": "",
             "args": [],
             "type": {
@@ -3023,7 +3080,7 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeighted",
+            "name": "equipmentCount",
             "description": "",
             "args": [],
             "type": {
@@ -3031,7 +3088,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "Float",
+                "name": "Int",
                 "ofType": null
               }
             },

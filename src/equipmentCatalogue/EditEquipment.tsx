@@ -98,7 +98,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
     }, [])
 
     useEffect(() => {
-      if (foundEquipment && searchActive) {
+      if (foundEquipment && searchActive && (searchRegistryNr || searchVehicleId)) {
         setSearchActive(false)
         setSearchVehicleId('')
         setSearchRegistryNr('')

@@ -33,8 +33,6 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
     }
   )
 
-  console.log(executionRequirements)
-
   return (
     <ExecutionRequirementsView>
       <FlexRow
