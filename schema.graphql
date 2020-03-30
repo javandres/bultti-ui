@@ -44,7 +44,7 @@ type Equipment {
 }
 
 type EquipmentCatalogue {
-  endDate: BulttiDateTime!
+  endDate: String!
   equipmentCatalogueId: String!
   equipmentQuotas: [EquipmentCatalogueQuota!]!
   id: ID!
@@ -52,7 +52,7 @@ type EquipmentCatalogue {
   operatorId: Int!
   procurementUnit: ProcurementUnit!
   procurementUnitId: String!
-  startDate: BulttiDateTime!
+  startDate: String!
 }
 
 type EquipmentCatalogueQuota {
@@ -79,25 +79,26 @@ type EquipmentSearchResult {
 
 type ExecutionRequirement {
   area: OperatingArea!
-  id: ID!
-  operator: Operator!
-  preInspection: PreInspection!
   requirements: [ExecutionRequirementValue!]!
 }
 
 type ExecutionRequirementValue {
-  equipmentClass: String!
-  executionRequirement: ExecutionRequirement!
-  id: ID!
+  averageAge: Float!
+  averageAgeWeighted: Float!
+  cumulativeDifferencePercentage: Float!
+  differencePercentage: Float!
+  emissionClass: Int!
   kilometerRequirement: Float!
+  kilometersFulfilled: Float!
+  quotaFulfilled: Float!
   quotaRequirement: Float!
+  totalKilometers: Float!
 }
 
 type Mutation {
   createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [DepartureBlock!]
   createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
-  createExecutionRequirement(executionRequirement: ExecutionRequirementInput!): ExecutionRequirement
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
@@ -113,7 +114,6 @@ type Mutation {
 }
 
 type OperatingArea {
-  executionRequirements: [ExecutionRequirement!]!
   id: Int!
   name: OperatingAreaName!
   procurementUnits: [ProcurementUnit!]!
@@ -135,7 +135,6 @@ type PreInspection {
   createdBy: User!
   departureBlocks: [DepartureBlock!]!
   endDate: BulttiDateTime!
-  executionRequirements: [ExecutionRequirement!]
   id: ID!
   operator: Operator!
   operatorId: Int
@@ -174,9 +173,8 @@ type Query {
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
-  executionRequirement: [ExecutionRequirement!]!
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
-  executionRequirementsByPreInspection(preInspectionId: Int!): [ExecutionRequirement!]!
+  executionRequirementsByPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
@@ -188,7 +186,6 @@ type Query {
   seasons(date: BulttiDateTime!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
-  singleExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
   user(userId: Int!): User
   users: [User!]!
 }
@@ -272,17 +269,6 @@ input EquipmentInput {
   registryNr: String
   type: String
   vehicleId: String
-}
-
-input ExecutionRequirementInput {
-  operatorId: Int!
-  requirements: [ExecutionRequirementValueInput!]!
-}
-
-input ExecutionRequirementValueInput {
-  equipmentClass: String!
-  kilometerRequirement: Float!
-  quotaRequirement: Float!
 }
 
 input InitialPreInspectionInput {

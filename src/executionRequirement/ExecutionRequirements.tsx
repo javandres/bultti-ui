@@ -1,10 +1,11 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { MessageView } from '../common/components/common'
-import { get, groupBy } from 'lodash'
-import { OperatingAreaName } from '../schema-types'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { useQueryData } from '../util/useQueryData'
+import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
+import { FlexRow } from '../common/components/common'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -20,28 +21,36 @@ export type PropTypes = {}
 
 const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
   const preInspection = useContext(PreInspectionContext)
-  let { operatorId, startDate } = preInspection || {}
+  let { id } = preInspection || {}
 
-  const procurementUnits = []
-  const areaUnits = groupBy(procurementUnits, 'operatingArea.name')
+  let { data: executionRequirements, loading: requirementsLoading, refetch } = useQueryData(
+    executionRequirementsByPreInspectionQuery,
+    {
+      skip: !preInspection || !id,
+      variables: {
+        preInspectionId: id,
+      },
+    }
+  )
+
+  console.log(executionRequirements)
 
   return (
     <ExecutionRequirementsView>
-      {procurementUnits?.length === 0 && (
-        <MessageView>
-          Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
-        </MessageView>
-      )}
-      {get(areaUnits, OperatingAreaName.Center, []).length !== 0 && (
-        <>
-          <AreaHeading>Keskusta</AreaHeading>
-        </>
-      )}
-      {get(areaUnits, OperatingAreaName.Other, []).length !== 0 && (
-        <>
-          <AreaHeading>Muu</AreaHeading>
-        </>
-      )}
+      <FlexRow
+        style={{
+          margin: '0 -1rem',
+          padding: '0 1rem 0.5rem',
+          borderBottom: '1px solid var(--lighter-grey)',
+        }}>
+        <Button
+          style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={() => refetch()}>
+          Päivitä
+        </Button>
+      </FlexRow>
     </ExecutionRequirementsView>
   )
 })

@@ -84,8 +84,8 @@ export type EquipmentCatalogue = {
   operator: Operator,
   procurementUnitId: Scalars['String'],
   procurementUnit: ProcurementUnit,
-  startDate: Scalars['BulttiDateTime'],
-  endDate: Scalars['BulttiDateTime'],
+  startDate: Scalars['String'],
+  endDate: Scalars['String'],
   equipmentQuotas: Array<EquipmentCatalogueQuota>,
 };
 
@@ -138,31 +138,22 @@ export type EquipmentSearchResult = {
 
 export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement',
-  id: Scalars['ID'],
   requirements: Array<ExecutionRequirementValue>,
-  operator: Operator,
   area: OperatingArea,
-  preInspection: PreInspection,
-};
-
-export type ExecutionRequirementInput = {
-  operatorId: Scalars['Int'],
-  requirements: Array<ExecutionRequirementValueInput>,
 };
 
 export type ExecutionRequirementValue = {
    __typename?: 'ExecutionRequirementValue',
-  id: Scalars['ID'],
-  equipmentClass: Scalars['String'],
+  emissionClass: Scalars['Int'],
+  totalKilometers: Scalars['Float'],
   quotaRequirement: Scalars['Float'],
   kilometerRequirement: Scalars['Float'],
-  executionRequirement: ExecutionRequirement,
-};
-
-export type ExecutionRequirementValueInput = {
-  equipmentClass: Scalars['String'],
-  quotaRequirement: Scalars['Float'],
-  kilometerRequirement: Scalars['Float'],
+  kilometersFulfilled: Scalars['Float'],
+  quotaFulfilled: Scalars['Float'],
+  differencePercentage: Scalars['Float'],
+  cumulativeDifferencePercentage: Scalars['Float'],
+  averageAge: Scalars['Float'],
+  averageAgeWeighted: Scalars['Float'],
 };
 
 export type InitialPreInspectionInput = {
@@ -190,7 +181,6 @@ export type Mutation = {
   updateEquipmentCatalogue: EquipmentCatalogue,
   populateCatalogueFromDepartures?: Maybe<EquipmentCatalogue>,
   removeAllEquipmentFromCatalogue: EquipmentCatalogue,
-  createExecutionRequirement?: Maybe<ExecutionRequirement>,
   login?: Maybe<User>,
   logout: Scalars['Boolean'],
   removeEquipmentFromCatalogue: Scalars['Boolean'],
@@ -259,11 +249,6 @@ export type MutationRemoveAllEquipmentFromCatalogueArgs = {
 };
 
 
-export type MutationCreateExecutionRequirementArgs = {
-  executionRequirement: ExecutionRequirementInput
-};
-
-
 export type MutationLoginArgs = {
   isTest?: Maybe<Scalars['Boolean']>,
   redirectUri?: Maybe<Scalars['String']>,
@@ -293,7 +278,6 @@ export type OperatingArea = {
    __typename?: 'OperatingArea',
   id: Scalars['Int'],
   name: OperatingAreaName,
-  executionRequirements: Array<ExecutionRequirement>,
   procurementUnits: Array<ProcurementUnit>,
 };
 
@@ -320,7 +304,6 @@ export type PreInspection = {
   operatorId?: Maybe<Scalars['Int']>,
   operator: Operator,
   season: Season,
-  executionRequirements?: Maybe<Array<ExecutionRequirement>>,
   departureBlocks: Array<DepartureBlock>,
   startDate: Scalars['BulttiDateTime'],
   endDate: Scalars['BulttiDateTime'],
@@ -399,8 +382,6 @@ export type Query = {
   singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>,
   equipmentCatalogue: Array<EquipmentCatalogue>,
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>,
-  singleExecutionRequirement?: Maybe<ExecutionRequirement>,
-  executionRequirement: Array<ExecutionRequirement>,
   executionRequirementsByOperator: Array<ExecutionRequirement>,
   executionRequirementsByPreInspection: Array<ExecutionRequirement>,
   user?: Maybe<User>,
@@ -438,8 +419,8 @@ export type QueryProcurementUnitArgs = {
 
 
 export type QueryProcurementUnitsByOperatorArgs = {
-  operatorId: Scalars['Int'],
-  date: Scalars['BulttiDateTime']
+  date: Scalars['BulttiDateTime'],
+  operatorId: Scalars['Int']
 };
 
 
@@ -470,18 +451,13 @@ export type QueryEquipmentCatalogueByOperatorArgs = {
 };
 
 
-export type QuerySingleExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String']
-};
-
-
 export type QueryExecutionRequirementsByOperatorArgs = {
   operatorId: Scalars['Int']
 };
 
 
 export type QueryExecutionRequirementsByPreInspectionArgs = {
-  preInspectionId: Scalars['Int']
+  preInspectionId: Scalars['String']
 };
 
 

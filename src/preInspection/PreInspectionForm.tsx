@@ -24,6 +24,7 @@ import { useQueryData } from '../util/useQueryData'
 import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
 import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
+import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
@@ -192,6 +193,13 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
               <DepartureBlocks />
+            </FormColumn>
+          </FormWrapper>
+
+          <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
+          <FormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <ExecutionRequirements />
             </FormColumn>
           </FormWrapper>
 
