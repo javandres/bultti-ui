@@ -151,7 +151,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
   }, [operator, season, preInspection])
 
   // Validate that the form has each dependent piece of data.
-  const formCondition = useMemo(() => {
+  let formCondition = useMemo(() => {
     return {
       preInspection: !!preInspection,
       status: preInspection?.status === InspectionStatus.Draft,
@@ -162,14 +162,18 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
   }, [preInspection])
 
   // Validation issues that affect the form at this moment
-  const activeBlockers = Object.entries(formCondition)
+  let activeBlockers = Object.entries(formCondition)
     .filter(([, status]) => !status)
     .map(([key]) => key)
+
+  let onPublish = useCallback(() => {
+    updatePreInspectionValue('status', InspectionStatus.InProduction)
+  }, [updatePreInspectionValue])
 
   return (
     <CreatePreInspectionFormView>
       {activeBlockers.length !== 0 && (
-        <MessageContainer>
+        <MessageContainer style={{ marginBottom: '1rem' }}>
           {activeBlockers.map((blockerName) => (
             <ErrorView key={blockerName}>{blockerName}</ErrorView>
           ))}
@@ -179,7 +183,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         <PageLoading />
       ) : (
         <PreInspectionContext.Provider value={preInspection}>
-          <PreInspectionMeta isLoading={isLoading} />
+          <PreInspectionMeta isLoading={isLoading} onClickPublish={onPublish} />
 
           <SectionHeading theme="light">Perustiedot</SectionHeading>
           <PreInspectionConfig onUpdateValue={createUpdateCallback} />

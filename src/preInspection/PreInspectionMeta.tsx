@@ -11,12 +11,14 @@ import Loading from '../common/components/Loading'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
 import { PreInspectionContext } from './PreInspectionForm'
+import { Button, ButtonSize } from '../common/components/Button'
 
 type PropTypes = {
   isLoading: boolean
+  onClickPublish: () => void
 }
 
-const PreInspectionMeta: React.FC<PropTypes> = observer(({ isLoading }) => {
+const PreInspectionMeta: React.FC<PropTypes> = observer(({ isLoading, onClickPublish }) => {
   const preInspection = useContext(PreInspectionContext)
 
   if (!preInspection) {
@@ -41,6 +43,11 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ isLoading }) => {
         <MetaValue>
           {preInspection.createdBy?.name} ({preInspection.createdBy?.organisation})
         </MetaValue>
+      </MetaItem>
+      <MetaItem style={{ marginLeft: 'auto', border: 'none' }}>
+        <Button size={ButtonSize.LARGE} onClick={onClickPublish}>
+          Julkaise tuotantoon
+        </Button>
       </MetaItem>
     </MetaDisplay>
   )

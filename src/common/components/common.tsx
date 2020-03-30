@@ -120,7 +120,7 @@ export const MetaDisplay = styled.div`
   margin-left: 1rem;
 `
 export const MetaItem = styled.div`
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem 0.75rem 0.2rem;
   margin-right: 1rem;
   border: 1px solid var(--lighter-grey);
   border-radius: 5px;
@@ -132,7 +132,7 @@ export const LoadingMeta = styled(LoadingDisplay)`
   align-self: center;
 `
 export const MetaLabel = styled.h6`
-  margin: 0 0 0.25rem;
+  margin: 0.1rem 0 0.25rem;
   font-size: 0.75rem;
   text-transform: uppercase;
   font-weight: bold;

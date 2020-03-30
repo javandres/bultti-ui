@@ -73,8 +73,8 @@ const sizeValues = {
     loadingPaddingLeft: '1.5rem',
   },
   [ButtonSize.LARGE]: {
-    fontSize: '0.875rem',
-    padding: `1rem 1.65em 1rem 1.65rem`,
+    fontSize: '1rem',
+    padding: `0.75rem 1.65em 0.75rem 1.65rem`,
     loadingPaddingLeft: '2.1rem',
   },
 }
