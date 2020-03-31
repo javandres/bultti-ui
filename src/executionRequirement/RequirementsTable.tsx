@@ -132,7 +132,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, ['totalKilometers', 'averageAgeWeighted'])}
           labels={{
-            totalKilometers: 'Alueen suoritekilometrit yhteensä',
+            totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
           }}
           renderValue={renderDisplayValue}

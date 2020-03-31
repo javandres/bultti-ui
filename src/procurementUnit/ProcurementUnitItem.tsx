@@ -128,6 +128,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     const { routes = [] } = procurementUnit || {}
 
+
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
       () =>
@@ -229,7 +230,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
-    const renderProcurementItemInput = useCallback((val: any, key: string, onChange) => {
+    const renderProcurementItemInput = useCallback((key: string, val: any, onChange) => {
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
