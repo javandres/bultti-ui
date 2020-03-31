@@ -28,7 +28,6 @@ import { FlexRow, SubSectionHeading } from '../common/components/common'
 import RequirementsTable from '../executionRequirement/RequirementsTable'
 import { parseISO } from 'date-fns'
 import { executionRequirementsByProcurementUnitQuery } from '../executionRequirement/executionRequirementsQueries'
-import { catalogueEquipment, groupedEquipment } from '../equipmentCatalogue/equipmentUtils'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -199,10 +198,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     }, [updateWeeklyMeters])
 
     const onCatalogueChanged = useCallback(async () => {
-      if (refetchUnit()) {
+      if (refetchUnit) {
         await refetchUnit()
       }
-    }, [refetchUnit()])
+    }, [refetchUnit])
 
     const onSaveProcurementUnit = useCallback(async () => {
       if (!procurementUnitId || !pendingProcurementUnit) {
@@ -339,9 +338,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     procurementUnitRequirements.length !== 0 && (
                       <>
                         <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-                        <RequirementsTable
-                          requirementValues={procurementUnitRequirements.requirements}
-                        />
+                        <RequirementsTable executionRequirement={procurementUnitRequirements} />
                       </>
                     )
                   )}

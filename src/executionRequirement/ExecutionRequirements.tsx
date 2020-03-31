@@ -6,8 +6,9 @@ import { useQueryData } from '../util/useQueryData'
 import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
 import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import RequirementsTable from './RequirementsTable'
+import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
+import Loading from '../common/components/Loading'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -40,8 +41,6 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
     [executionRequirementsData]
   )
 
-  console.log(executionRequirementsData)
-
   return (
     <ExecutionRequirementsView>
       <FlexRow
@@ -58,15 +57,19 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
           Päivitä
         </Button>
       </FlexRow>
-      {areaExecutionRequirements?.length === 0 && (
+      {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
         <MessageView>
           Valitulla liikennöitsijällä ei ole voimassa-olevia suoritevaatimuksia.
         </MessageView>
       )}
+      {requirementsLoading && <Loading />}
       {areaExecutionRequirements.map((areaRequirements) => (
         <React.Fragment key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>
-          <RequirementsTable requirementValues={areaRequirements.requirements} />
+          <RequirementsTable
+            tableLayout={RequirementsTableLayout.BY_VALUES}
+            executionRequirement={areaRequirements}
+          />
         </React.Fragment>
       ))}
     </ExecutionRequirementsView>

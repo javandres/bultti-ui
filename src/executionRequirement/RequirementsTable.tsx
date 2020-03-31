@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirementValue } from '../schema-types'
+import { ExecutionRequirement, Scalars } from '../schema-types'
+import { orderBy, pick } from 'lodash'
+import ValueDisplay from '../common/components/ValueDisplay'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -17,11 +19,17 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type PropTypes = {
-  requirementValues: ExecutionRequirementValue[]
+export enum RequirementsTableLayout {
+  BY_VALUES,
+  BY_EMISSION_CLASS,
 }
 
-const requirementColumnLabels = {
+export type PropTypes = {
+  executionRequirement: ExecutionRequirement
+  tableLayout?: RequirementsTableLayout
+}
+
+const emissionClassLayoutColumnLabels = {
   unit: 'Yksikkö',
   '1': 'Euro 3',
   '2': 'Euro 4',
@@ -36,71 +44,99 @@ const requirementColumnLabels = {
   total: 'Yhteensä',
 }
 
-const RequirementsTable: React.FC<PropTypes> = observer(({ requirementValues }) => {
-  let requirementRows = useMemo(() => {
-    let kilometerRow = { unit: 'kilometers', total: 0 }
-    let percentageRow = { unit: 'percentage', total: 0 }
-    let ageRow = { unit: 'averageAge', total: 0 }
+const valuesLayoutColumnLabels = {
+  emissionClass: 'Päästöluokka',
+  kilometerRequirement: 'Kilometrivaatimus',
+  quotaRequirement: 'Prosenttiosuus',
+  kilometersFulfilled: 'Toteuma km',
+  quotaFulfilled: 'Toteuma % osuus',
+  differencePercentage: '% ero',
+  cumulativeDifferencePercentage: 'Kumul. % ero',
+  equipmentCount: 'Kalustomäärä',
+}
 
-    for (let i = 1; i <= 10; i++) {
-      let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
+const RequirementsTable: React.FC<PropTypes> = observer(
+  ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
+    let requirementRows = useMemo(() => {
+      let requirementValues = executionRequirement.requirements
 
-      kilometerRow[i] = currentRequirement?.kilometerRequirement || 0
-      percentageRow[i] = currentRequirement?.quotaRequirement || 0
-      ageRow[i] = currentRequirement?.averageAgeWeighted || 0
-    }
+      if (tableLayout === RequirementsTableLayout.BY_VALUES) {
+        return orderBy(requirementValues, 'emissionClass', 'desc')
+      }
 
-    kilometerRow.total = requirementValues.reduce(
-      (total, { kilometerRequirement }) => (total += kilometerRequirement),
-      kilometerRow.total
-    )
+      let kilometerRow = { unit: 'kilometers', total: 0 }
+      let percentageRow = { unit: 'percentage', total: 0 }
 
-    percentageRow.total = requirementValues.reduce(
-      (total, { quotaRequirement }) => (total += quotaRequirement),
-      percentageRow.total
-    )
+      for (let i = 1; i <= 10; i++) {
+        let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
 
-    ageRow.total = requirementValues.reduce(
-      (total, { averageAgeWeighted }) => (total += averageAgeWeighted),
-      ageRow.total
-    )
+        kilometerRow[i] = currentRequirement?.kilometerRequirement || 0
+        percentageRow[i] = currentRequirement?.quotaRequirement || 0
+      }
 
-    return [kilometerRow, percentageRow, ageRow]
-  }, [requirementValues])
+      kilometerRow.total = requirementValues.reduce(
+        (total, { kilometerRequirement }) => (total += kilometerRequirement),
+        kilometerRow.total
+      )
 
-  return (
-    <ExecutionRequirementsAreaContainer>
-      <Table
-        items={requirementRows}
-        columnLabels={requirementColumnLabels}
-        columnOrder={['unit']}
-        renderValue={(key, val, isHeader = false, item) => {
-          if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
-            return val
+      percentageRow.total = requirementValues.reduce(
+        (total, { quotaRequirement }) => (total += quotaRequirement),
+        percentageRow.total
+      )
+
+      return [kilometerRow, percentageRow]
+    }, [executionRequirement, tableLayout])
+
+    let renderDisplayValue = useCallback((key, val) => round(val), [])
+
+    let renderTableValue = useCallback((key, val, isHeader = false, item) => {
+      if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
+        return val
+      }
+
+      let unit = ''
+
+      switch (item.unit) {
+        case 'percentage':
+          unit = '%'
+          break
+        case 'kilometers':
+        case 'kilometerRequirement':
+        case 'kilometersFulfilled':
+          unit = 'km'
+          break
+        default:
+          unit = ''
+      }
+
+      let useVal = round(val)
+      return useVal + ' ' + unit
+    }, [])
+
+    return (
+      <ExecutionRequirementsAreaContainer>
+        <ValueDisplay
+          style={{ marginBottom: '1rem' }}
+          item={pick(executionRequirement, ['totalKilometers', 'averageAgeWeighted'])}
+          labels={{
+            totalKilometers: 'Suoritekilometrit',
+            averageAgeWeighted: 'Painotettu keski-ikä',
+          }}
+          renderValue={renderDisplayValue}
+        />
+        <Table
+          items={requirementRows}
+          columnLabels={
+            tableLayout === RequirementsTableLayout.BY_VALUES
+              ? valuesLayoutColumnLabels
+              : emissionClassLayoutColumnLabels
           }
-
-          let unit = ''
-
-          switch (item.unit) {
-            case 'percentage':
-              unit = '%'
-              break
-            case 'kilometers':
-              unit = 'km'
-              break
-            case 'averageAge':
-              unit = 'v'
-              break
-            default:
-              unit = ''
-          }
-
-          let useVal = round(val)
-          return useVal + ' ' + unit
-        }}
-      />
-    </ExecutionRequirementsAreaContainer>
-  )
-})
+          columnOrder={tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']}
+          renderValue={renderTableValue}
+        />
+      </ExecutionRequirementsAreaContainer>
+    )
+  }
+)
 
 export default RequirementsTable

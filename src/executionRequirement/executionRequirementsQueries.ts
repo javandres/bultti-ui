@@ -6,6 +6,8 @@ export const executionRequirementsByProcurementUnitQuery = gql`
       procurementUnitId: $procurementUnitId
       startDate: $startDate
     ) {
+      totalKilometers
+      averageAgeWeighted
       area {
         id
         name
@@ -15,14 +17,12 @@ export const executionRequirementsByProcurementUnitQuery = gql`
       }
       requirements {
         emissionClass
-        totalKilometers
         kilometerRequirement
         quotaRequirement
         kilometersFulfilled
         quotaFulfilled
         differencePercentage
         cumulativeDifferencePercentage
-        averageAgeWeighted
       }
     }
   }
@@ -31,20 +31,20 @@ export const executionRequirementsByProcurementUnitQuery = gql`
 export const executionRequirementsByPreInspectionQuery = gql`
   query executionRequirementsByPreInspection($preInspectionId: String!) {
     executionRequirementsByPreInspection(preInspectionId: $preInspectionId) {
+      totalKilometers
+      averageAgeWeighted
       area {
         id
         name
       }
       requirements {
         emissionClass
-        totalKilometers
         kilometerRequirement
         quotaRequirement
         kilometersFulfilled
         quotaFulfilled
         differencePercentage
         cumulativeDifferencePercentage
-        averageAgeWeighted
       }
     }
   }

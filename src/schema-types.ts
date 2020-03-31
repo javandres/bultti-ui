@@ -140,20 +140,20 @@ export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement',
   requirements: Array<ExecutionRequirementValue>,
   area: OperatingArea,
+  totalKilometers: Scalars['Float'],
+  averageAgeWeighted: Scalars['Float'],
   procurementUnit?: Maybe<ProcurementUnit>,
 };
 
 export type ExecutionRequirementValue = {
    __typename?: 'ExecutionRequirementValue',
   emissionClass: Scalars['Int'],
-  totalKilometers: Scalars['Float'],
   kilometerRequirement: Scalars['Float'],
   quotaRequirement: Scalars['Float'],
   kilometersFulfilled: Scalars['Float'],
   quotaFulfilled: Scalars['Float'],
   differencePercentage: Scalars['Float'],
   cumulativeDifferencePercentage: Scalars['Float'],
-  averageAgeWeighted: Scalars['Float'],
   equipmentCount: Scalars['Int'],
 };
 

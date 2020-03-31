@@ -13,7 +13,6 @@ import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
-import { uniq } from 'lodash'
 
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;

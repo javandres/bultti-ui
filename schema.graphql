@@ -79,12 +79,13 @@ type EquipmentSearchResult {
 
 type ExecutionRequirement {
   area: OperatingArea!
+  averageAgeWeighted: Float!
   procurementUnit: ProcurementUnit
   requirements: [ExecutionRequirementValue!]!
+  totalKilometers: Float!
 }
 
 type ExecutionRequirementValue {
-  averageAgeWeighted: Float!
   cumulativeDifferencePercentage: Float!
   differencePercentage: Float!
   emissionClass: Int!
@@ -93,7 +94,6 @@ type ExecutionRequirementValue {
   kilometersFulfilled: Float!
   quotaFulfilled: Float!
   quotaRequirement: Float!
-  totalKilometers: Float!
 }
 
 type Mutation {
