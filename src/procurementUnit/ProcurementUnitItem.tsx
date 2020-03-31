@@ -341,7 +341,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                         <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
                         <RequirementsTable
                           requirementValues={procurementUnitRequirements.requirements}
-                          weeklyMeters={procurementUnit.weeklyMeters}
                         />
                       </>
                     )

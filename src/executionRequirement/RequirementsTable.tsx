@@ -19,7 +19,6 @@ const ExecutionRequirementsAreaContainer = styled.div`
 
 export type PropTypes = {
   requirementValues: ExecutionRequirementValue[]
-  weeklyMeters: number
 }
 
 const requirementColumnLabels = {

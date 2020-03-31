@@ -1,11 +1,13 @@
-import React, { useContext } from 'react'
+import React, { useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 import { useQueryData } from '../util/useQueryData'
 import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
-import { FlexRow } from '../common/components/common'
+import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import RequirementsTable from './RequirementsTable'
+import { orderBy } from 'lodash'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -23,7 +25,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
   const preInspection = useContext(PreInspectionContext)
   let { id } = preInspection || {}
 
-  let { data: executionRequirements, loading: requirementsLoading, refetch } = useQueryData(
+  let { data: executionRequirementsData, loading: requirementsLoading, refetch } = useQueryData(
     executionRequirementsByPreInspectionQuery,
     {
       skip: !preInspection || !id,
@@ -32,6 +34,13 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
       },
     }
   )
+
+  let areaExecutionRequirements = useMemo(
+    () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
+    [executionRequirementsData]
+  )
+
+  console.log(executionRequirementsData)
 
   return (
     <ExecutionRequirementsView>
@@ -49,6 +58,17 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
           Päivitä
         </Button>
       </FlexRow>
+      {areaExecutionRequirements?.length === 0 && (
+        <MessageView>
+          Valitulla liikennöitsijällä ei ole voimassa-olevia suoritevaatimuksia.
+        </MessageView>
+      )}
+      {areaExecutionRequirements.map((areaRequirements) => (
+        <React.Fragment key={areaRequirements.area.id}>
+          <AreaHeading>{areaRequirements.area.name}</AreaHeading>
+          <RequirementsTable requirementValues={areaRequirements.requirements} />
+        </React.Fragment>
+      ))}
     </ExecutionRequirementsView>
   )
 })
