@@ -1,13 +1,12 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import Dropdown from './Dropdown'
 import { Season } from '../../schema-types'
 import { useQueryData } from '../../util/useQueryData'
 import { seasonsQuery } from '../query/seasonsQuery'
 import { format, parseISO, startOfYear, subYears } from 'date-fns'
 import { DATE_FORMAT } from '../../constants'
 import { orderBy } from 'lodash'
+import Dropdown from './Dropdown'
 
 export type PropTypes = {
   label?: string | null
@@ -20,8 +19,6 @@ export type PropTypes = {
 const currentDate = new Date()
 
 const UNSELECTED_VAL = '...'
-
-const SeasonsSelect = styled(Dropdown)``
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light' }) => {
@@ -81,7 +78,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
     const currentSeason = useMemo(() => value || seasons[0], [seasons, value])
 
     return (
-      <SeasonsSelect
+      <Dropdown
         className={className}
         theme={theme}
         label={!label ? '' : label || 'Aikataulukausi'}

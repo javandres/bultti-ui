@@ -115,7 +115,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
   }) => {
     const onSelectFn = useCallback(
       ({ selectedItem = null }) => {
-        onSelect(selectedItem || null)
+        setTimeout(() => onSelect(selectedItem || null), 1)
       },
       [onSelect]
     )

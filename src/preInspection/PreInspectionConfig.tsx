@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InputLabel, SectionHeading } from '../common/components/common'
@@ -25,40 +25,31 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
 
   let preInspection: null | PreInspection = useContext(PreInspectionContext)
 
-  let OperatorSeasonSelect = useMemo(
-    () => (
-      <FormColumn width="50%">
-        <ControlGroup>
-          <SelectOperator
-            label="Liikennöitsijä"
-            theme="light"
-            value={operator}
-            onSelect={setGlobalOperator}
-          />
-        </ControlGroup>
-        <ControlGroup>
-          <SelectSeason
-            label="Aikataulukausi"
-            theme="light"
-            value={season}
-            onSelect={setGlobalSeason}
-          />
-        </ControlGroup>
-      </FormColumn>
-    ),
-    [season, operator, setGlobalSeason, setGlobalOperator]
-  )
-
   return (
     <PreInspectionConfigView>
-      {!preInspection ? (
-        <>
-          <SectionHeading theme="light">Valitse liikennöitsijä ja kausi</SectionHeading>
-          <FormWrapper>{OperatorSeasonSelect}</FormWrapper>
-        </>
-      ) : (
-        <FormWrapper>
-          {OperatorSeasonSelect}
+      {!preInspection && (
+        <SectionHeading theme="light">Valitse liikennöitsijä ja kausi</SectionHeading>
+      )}
+      <FormWrapper>
+        <FormColumn width="50%">
+          <ControlGroup>
+            <SelectOperator
+              label="Liikennöitsijä"
+              theme="light"
+              value={operator}
+              onSelect={setGlobalOperator}
+            />
+          </ControlGroup>
+          <ControlGroup>
+            <SelectSeason
+              label="Aikataulukausi"
+              theme="light"
+              value={season}
+              onSelect={setGlobalSeason}
+            />
+          </ControlGroup>
+        </FormColumn>
+        {!!preInspection && (
           <FormColumn>
             <InputLabel theme="light">Tuotantojakso</InputLabel>
             <ControlGroup>
@@ -86,8 +77,8 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
               />
             </ControlGroup>
           </FormColumn>
-        </FormWrapper>
-      )}
+        )}
+      </FormWrapper>
     </PreInspectionConfigView>
   )
 })

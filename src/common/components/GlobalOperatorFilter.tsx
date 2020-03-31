@@ -26,6 +26,7 @@ const OperatorSelect = styled(SelectOperator)`
 
 const GlobalOperatorFilter: React.FC = observer(() => {
   var [operator, setOperatorFilter] = useStateValue('globalOperator')
+
   var [user] = useStateValue('user')
   var userIsOperator = user && user?.role === UserRole.OperatorUser
 

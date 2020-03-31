@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
 import { Operator, User, UserRole } from '../../schema-types'
@@ -29,8 +28,6 @@ export type PropTypes = {
   value: null | Operator
   onSelect: (operator: null | Operator) => void
 }
-
-const OperatorSelect = styled(Dropdown)``
 
 export const operatorIsValid = (operator: Operator | null | undefined) => {
   if (!operator) {
@@ -103,7 +100,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
     /* Disable if empty or only one item (in which case it will be auto-selected */
 
     return (
-      <OperatorSelect
+      <Dropdown
         disabled={operators.length < 2}
         className={className}
         theme={theme}
