@@ -18,10 +18,9 @@ import {
   preInspectionQuery,
   updatePreInspectionMutation,
 } from './preInspectionQueries'
-import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
 import { useQueryData } from '../util/useQueryData'
-import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
+import { FormColumn, FormWrapper } from '../common/components/form'
 import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
 import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
@@ -128,7 +127,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         })
 
         isUpdating.current = false
-        refetch()
+        await refetch()
       }
     },
     [isUpdating.current, preInspection, inspectionLoading, updatePreInspection]
@@ -202,13 +201,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
               <ExecutionRequirements />
             </FormColumn>
           </FormWrapper>
-
-          <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-          <TransparentFormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <ProcurementUnits />
-            </FormColumn>
-          </TransparentFormWrapper>
         </PreInspectionContext.Provider>
       )}
     </CreatePreInspectionFormView>
