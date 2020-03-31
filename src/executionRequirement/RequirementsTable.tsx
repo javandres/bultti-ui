@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirement, Scalars } from '../schema-types'
+import { ExecutionRequirement } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 
@@ -87,7 +87,13 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       return [kilometerRow, percentageRow]
     }, [executionRequirement, tableLayout])
 
-    let renderDisplayValue = useCallback((key, val) => round(val), [])
+    let renderDisplayValue = useCallback((key, val) => {
+      let displayVal = round(val)
+      let displayUnit =
+        key === 'totalKilometers' ? 'km' : key === 'averageAgeWeighted' ? 'vuotta' : ''
+
+      return `${displayVal} ${displayUnit}`
+    }, [])
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
       if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
@@ -96,8 +102,12 @@ const RequirementsTable: React.FC<PropTypes> = observer(
 
       let unit = ''
 
-      switch (item.unit) {
+      switch (item.unit || key) {
         case 'percentage':
+        case 'quotaRequirement':
+        case 'quotaFulfilled':
+        case 'differencePercentage':
+        case 'cumulativeDifferencePercentage':
           unit = '%'
           break
         case 'kilometers':
@@ -105,12 +115,15 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         case 'kilometersFulfilled':
           unit = 'km'
           break
+        case 'equipmentCount':
+          unit = 'kpl'
+          break
         default:
           unit = ''
       }
 
       let useVal = round(val)
-      return useVal + ' ' + unit
+      return `${useVal} ${unit}`
     }, [])
 
     return (
@@ -119,7 +132,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, ['totalKilometers', 'averageAgeWeighted'])}
           labels={{
-            totalKilometers: 'Suoritekilometrit',
+            totalKilometers: 'Alueen suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
           }}
           renderValue={renderDisplayValue}

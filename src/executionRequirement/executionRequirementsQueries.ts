@@ -23,6 +23,7 @@ export const executionRequirementsByProcurementUnitQuery = gql`
         quotaFulfilled
         differencePercentage
         cumulativeDifferencePercentage
+        equipmentCount
       }
     }
   }
@@ -45,6 +46,7 @@ export const executionRequirementsByPreInspectionQuery = gql`
         quotaFulfilled
         differencePercentage
         cumulativeDifferencePercentage
+        equipmentCount
       }
     }
   }
