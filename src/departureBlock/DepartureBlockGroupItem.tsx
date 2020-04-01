@@ -241,13 +241,15 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             </DayTypeOption>
           ))}
         </DayTypesContainer>
-        <UploadFile
-          disabled={loading || isDisabled}
-          label="Lataa lähtöketjutiedosto"
-          uploader={uploader}
-          value={fileValue}
-          onChange={setFileValue}
-        />
+        {((isDisabled && fileValue.length !== 0) || !isDisabled) && (
+          <UploadFile
+            disabled={loading || isDisabled}
+            label="Lataa lähtöketjutiedosto"
+            uploader={uploader}
+            value={fileValue}
+            onChange={setFileValue}
+          />
+        )}
         {isLoading && <Loading />}
         {departureBlocks.length !== 0 && (
           <>
