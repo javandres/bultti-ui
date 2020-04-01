@@ -72,7 +72,7 @@ export type PropTypes = {
 const UploadFile: React.FC<PropTypes> = observer(
   ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value }) => {
     const prevUpload = useRef<string | null>('')
-    const [upload, state = { loading: false, called: false }] = uploader || []
+    const [upload, state = { loading: false, called: false, error: undefined }] = uploader || []
 
     useEffect(() => {
       if (value && value.length !== 0) {
@@ -80,9 +80,19 @@ const UploadFile: React.FC<PropTypes> = observer(
 
         if (firstFile && firstFile.name !== prevUpload.current && upload && !state.loading) {
           prevUpload.current = firstFile.name
-          upload(firstFile)
+
+          upload(firstFile).then((result) => {
+            if (!result || (Array.isArray(result) && result.length === 0)) {
+              onChange([])
+            }
+          })
         }
-      } else if (prevUpload.current !== null && !state.loading && state.called && upload) {
+      } else if (
+        prevUpload.current !== null &&
+        (!state.loading || state.error) &&
+        state.called &&
+        upload
+      ) {
         prevUpload.current = null
         upload(null)
       }
