@@ -72,9 +72,10 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onRemoveDayType,
     onBlocksChange,
   }) => {
-    const [blocksVisible, setBlocksVisibility] = useState(false)
-    const preInspection = useContext(PreInspectionContext)
-    const preInspectionId = preInspection?.id || ''
+    let [blocksVisible, setBlocksVisibility] = useState(false)
+
+    let preInspection = useContext(PreInspectionContext)
+    let preInspectionId = preInspection?.id || ''
 
     // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
@@ -240,14 +241,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             </DayTypeOption>
           ))}
         </DayTypesContainer>
-        {!loading && !isDisabled && (
-          <UploadFile
-            label="Lataa lähtöketjutiedosto"
-            uploader={uploader}
-            value={fileValue}
-            onChange={setFileValue}
-          />
-        )}
+        <UploadFile
+          disabled={loading || isDisabled}
+          label="Lataa lähtöketjutiedosto"
+          uploader={uploader}
+          value={fileValue}
+          onChange={setFileValue}
+        />
         {isLoading && <Loading />}
         {departureBlocks.length !== 0 && (
           <>

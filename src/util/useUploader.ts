@@ -1,7 +1,7 @@
 import { MutationHookOptions, useMutation } from '@apollo/react-hooks'
 import { MutationFunctionOptions, OperationVariables } from '@apollo/react-common'
 import { DocumentNode, ExecutionResult } from 'graphql'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
 import { ApolloError } from 'apollo-client'
 import { GraphQLError } from 'graphql/error/GraphQLError'
@@ -19,6 +19,13 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   onUploadFinished?: (data?: TData, errors?: ReadonlyArray<GraphQLError>) => void
 ): Uploader<TData, TVariables> => {
+  let [uploadError, setUploadError] = useState()
+
+  let errorHandler = useCallback((err) => {
+    setUploadError(err)
+    return { data: null, error: err }
+  }, [])
+
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
     options
@@ -35,19 +42,22 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
         },
       }
 
-      return mutationFn(queryOptions).then((result) => {
-        const uploadedData = pickGraphqlData(result.data)
+      return mutationFn(queryOptions)
+        .then((result) => {
+          const uploadedData = pickGraphqlData(result.data)
+          setUploadError(undefined)
 
-        if (onUploadFinished) {
-          onUploadFinished(uploadedData, result.errors)
-        }
+          if (onUploadFinished) {
+            onUploadFinished(uploadedData, result.errors)
+          }
 
-        return uploadedData
-      })
+          return { data: uploadedData, error: (result?.errors || [])[0] }
+        })
+        .catch(errorHandler)
     },
-    [options?.variables, mutationFn, onUploadFinished]
+    [options?.variables, errorHandler, mutationFn, onUploadFinished]
   )
 
   const pickedData = useMemo(() => pickGraphqlData(data), [data])
-  return [uploadFile, { data: pickedData, loading, error, called }]
+  return [uploadFile, { data: pickedData, loading, error: error || uploadError, called }]
 }

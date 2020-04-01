@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import Loading from '../components/Loading'
 import { useDropzone } from 'react-dropzone'
 import { CircleCheckmark } from '../icon/CircleCheckmark'
+import { CrossThick } from '../icon/CrossThick'
 
 const UploadView = styled.div`
   margin: 0.5rem 0;
@@ -11,15 +12,16 @@ const UploadView = styled.div`
 
 const UploadInput = styled.input``
 
-const UploadWrapper = styled.div<{ hasData?: boolean; backgroundColor?: string }>`
+const UploadWrapper = styled.div<{ hasData?: boolean; isError?: boolean; isOk?: boolean }>`
   position: relative;
   padding: ${(p) => (p.hasData ? '1rem' : '2rem 1rem')};
   border-radius: 1rem;
-  background: ${(p) => p.backgroundColor || 'var(--lightest-blue)'};
+  background: ${(p) =>
+    p.isError ? 'var(--light-red)' : p.isOk ? 'var(--lighter-green)' : 'var(--white-grey)'};
   outline: none;
 `
 
-const LabelText = styled.span`
+const LabelText = styled.span<{ disabled?: boolean }>`
   padding: 0.4rem 1rem 0.4rem;
   margin-right: 1rem;
   background: transparent;
@@ -30,7 +32,7 @@ const LabelText = styled.span`
   justify-content: center;
   width: auto;
   flex: 0 0 auto;
-  cursor: pointer;
+  cursor: ${(p) => (p.disabled ? 'default' : 'pointer')};
   letter-spacing: -0.6px;
   border-radius: 2.5rem;
   border: 1px solid var(--blue);
@@ -51,10 +53,19 @@ const CurrentFile = styled.span`
   display: flex;
   align-items: center;
   font-weight: bold;
+  color: inherit;
+`
 
-  svg {
-    margin-right: 0.5rem;
-  }
+const IconWrapper = styled.span`
+  margin-right: 1rem;
+  display: flex;
+  align-items: center;
+`
+
+const ErrorMessage = styled.span`
+  display: flex;
+  margin-top: 1rem;
+  margin-bottom: -0.5rem;
 `
 
 const FileLoading = styled(Loading)`
@@ -67,46 +78,52 @@ export type PropTypes = {
   className?: string
   onChange: (files: File[]) => void
   value: File[]
+  disabled?: boolean
 }
 
 const UploadFile: React.FC<PropTypes> = observer(
-  ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value }) => {
+  ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value, disabled = false }) => {
     const prevUpload = useRef<string | null>('')
     const [upload, state = { loading: false, called: false, error: undefined }] = uploader || []
 
     useEffect(() => {
-      if (value && value.length !== 0) {
+      if (!disabled && value && value.length !== 0) {
         const firstFile = value[0]
 
         if (firstFile && firstFile.name !== prevUpload.current && upload && !state.loading) {
           prevUpload.current = firstFile.name
-
-          upload(firstFile).then((result) => {
-            if (!result || (Array.isArray(result) && result.length === 0)) {
+          upload(firstFile).then(({ data: result, error }) => {
+            // Reset the input if there was no result and not errors.
+            if ((!result || (Array.isArray(result) && result.length === 0)) && !error) {
               onChange([])
             }
           })
         }
       } else if (
+        !disabled &&
         prevUpload.current !== null &&
-        (!state.loading || state.error) &&
+        !state.loading &&
+        !state.error &&
         state.called &&
         upload
       ) {
         prevUpload.current = null
         upload(null)
       }
-    }, [value, upload, state.called, state.loading, prevUpload.current])
+    }, [disabled, value, upload, state.called, state.loading, prevUpload.current])
 
     const onDrop = useCallback(
       (acceptedFiles) => {
-        onChange([...acceptedFiles])
+        if (!disabled) {
+          onChange([...acceptedFiles])
+        }
       },
-      [onChange]
+      [onChange, disabled]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
       onDrop,
+      disabled,
       multiple: false,
       preventDropOnDocument: true,
     })
@@ -116,22 +133,28 @@ const UploadFile: React.FC<PropTypes> = observer(
         <UploadWrapper
           {...getRootProps({
             hasData: state.data && state.data.length !== 0,
-            backgroundColor: state.error
-              ? 'var(--light-red)'
-              : state.data && state.data.length !== 0
-              ? 'var(--lighter-green)'
-              : 'var(--white-grey)',
+            isError: !!state.error,
+            isOk: state.data && state.data.length !== 0,
           })}>
           <UploadInput {...getInputProps()} />
           {value.length !== 0 ? (
-            <CurrentFile>
-              <CircleCheckmark width="1.5rem" height="1.5rem" />
-              {value[0].name}
-              {state.loading && <FileLoading inline={true} />}
-            </CurrentFile>
+            <>
+              <CurrentFile>
+                <IconWrapper>
+                  {state.error ? (
+                    <CrossThick width="1.5rem" height="1.5rem" fill="red" />
+                  ) : (
+                    <CircleCheckmark width="1.5rem" height="1.5rem" />
+                  )}
+                </IconWrapper>
+                {value[0].name}
+                {state.loading && <FileLoading inline={true} />}
+              </CurrentFile>
+              {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
+            </>
           ) : (
             <>
-              <LabelText>{label}</LabelText>
+              <LabelText disabled={disabled}>{label}</LabelText>
               <InstructionText>Vedä tiedosto tähän tai valitse klikkaamalla.</InstructionText>
             </>
           )}
