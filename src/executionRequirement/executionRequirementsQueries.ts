@@ -19,10 +19,6 @@ export const executionRequirementsByProcurementUnitQuery = gql`
         emissionClass
         kilometerRequirement
         quotaRequirement
-        kilometersFulfilled
-        quotaFulfilled
-        differencePercentage
-        cumulativeDifferencePercentage
         equipmentCount
       }
     }
@@ -47,6 +43,7 @@ export const executionRequirementsByPreInspectionQuery = gql`
         differencePercentage
         cumulativeDifferencePercentage
         equipmentCount
+        equipmentCountFulfilled
       }
     }
   }

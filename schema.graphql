@@ -80,9 +80,11 @@ type EquipmentSearchResult {
 type ExecutionRequirement {
   area: OperatingArea!
   averageAgeWeighted: Float!
+  averageAgeWeightedFulfilled: Float!
   procurementUnit: ProcurementUnit
   requirements: [ExecutionRequirementValue!]!
   totalKilometers: Float!
+  totalKilometersFulfilled: Float!
 }
 
 type ExecutionRequirementValue {
@@ -90,6 +92,7 @@ type ExecutionRequirementValue {
   differencePercentage: Float!
   emissionClass: Int!
   equipmentCount: Int!
+  equipmentCountFulfilled: Int!
   kilometerRequirement: Float!
   kilometersFulfilled: Float!
   quotaFulfilled: Float!
@@ -103,7 +106,6 @@ type Mutation {
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
-  populateCatalogueFromDepartures(catalogueId: String!, preInspectionId: String!): EquipmentCatalogue
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!

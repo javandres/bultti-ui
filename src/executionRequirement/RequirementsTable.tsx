@@ -48,11 +48,12 @@ const valuesLayoutColumnLabels = {
   emissionClass: 'Päästöluokka',
   kilometerRequirement: 'Kilometrivaatimus',
   quotaRequirement: 'Prosenttiosuus',
+  equipmentCount: 'Vaatimus kpl',
   kilometersFulfilled: 'Toteuma km',
   quotaFulfilled: 'Toteuma % osuus',
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
-  equipmentCount: 'Kalustomäärä',
+  equipmentCountFulfilled: 'Toteuma kpl',
 }
 
 const RequirementsTable: React.FC<PropTypes> = observer(
