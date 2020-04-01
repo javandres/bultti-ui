@@ -5,6 +5,7 @@ import Loading from '../components/Loading'
 import { useDropzone } from 'react-dropzone'
 import { CircleCheckmark } from '../icon/CircleCheckmark'
 import { CrossThick } from '../icon/CrossThick'
+import { Button } from '../components/Button'
 
 const UploadView = styled.div`
   margin: 0.5rem 0;
@@ -66,6 +67,7 @@ const ErrorMessage = styled.span`
   display: flex;
   margin-top: 1rem;
   margin-bottom: -0.5rem;
+  line-height: 1.4;
 `
 
 const FileLoading = styled(Loading)`
@@ -110,7 +112,7 @@ const UploadFile: React.FC<PropTypes> = observer(
         prevUpload.current = null
         upload(null)
       }
-    }, [disabled, value, upload, state.called, state.loading, prevUpload.current])
+    }, [disabled, value, upload, state.called, state.loading, state.error, prevUpload.current])
 
     const onDrop = useCallback(
       (acceptedFiles) => {
@@ -119,6 +121,16 @@ const UploadFile: React.FC<PropTypes> = observer(
         }
       },
       [onChange, disabled]
+    )
+
+    const onReset = useCallback(
+      (e) => {
+        e.stopPropagation()
+
+        onChange([])
+        prevUpload.current = null
+      },
+      [onChange]
     )
 
     const { getRootProps, getInputProps } = useDropzone({
@@ -151,6 +163,7 @@ const UploadFile: React.FC<PropTypes> = observer(
                 {state.loading && <FileLoading inline={true} />}
               </CurrentFile>
               {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
+              <Button onClick={onReset}>Tyhjennä</Button>
             </>
           ) : (
             <>

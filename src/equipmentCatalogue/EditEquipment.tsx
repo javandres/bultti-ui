@@ -52,6 +52,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
     let [searchActive, setSearchActive] = useState(false)
     let [searchVehicleId, setSearchVehicleId] = useState('')
     let [searchRegistryNr, setSearchRegistryNr] = useState('')
+    let [searchRandom, setSearchRandom] = useState(false)
 
     let [
       searchEquipment,
@@ -61,7 +62,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
     let [removeAllEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
     let [createEquipment] = useMutationData(createEquipmentMutation)
 
-    let doSearch = useCallback(() => {
+    let doSearch = useCallback(async () => {
       if (searchVehicleId || searchRegistryNr) {
         let useSearchTerm = searchVehicleId ? 'vehicleId' : searchRegistryNr ? 'registryNr' : null
         let useSearchValue = searchVehicleId
@@ -71,7 +72,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
           : ''
 
         if (useSearchTerm) {
-          searchEquipment({
+          await searchEquipment({
             variables: {
               operatorId,
               [useSearchTerm]: useSearchValue,
@@ -80,6 +81,18 @@ const EditEquipment: React.FC<PropTypes> = observer(
         }
       }
     }, [searchEquipment, searchVehicleId, searchRegistryNr, operatorId])
+
+    let findRandomEquipment = useCallback(async () => {
+      setSearchRandom(true)
+
+      await searchEquipment({
+        variables: {
+          operatorId,
+        },
+      })
+
+      setSearchActive(true)
+    }, [searchEquipment, operatorId])
 
     let addDraftEquipment = useCallback((initialValues?: PendingEquipment) => {
       const inputRow: PendingEquipment = {
@@ -98,10 +111,11 @@ const EditEquipment: React.FC<PropTypes> = observer(
     }, [])
 
     useEffect(() => {
-      if (foundEquipment && searchActive && (searchRegistryNr || searchVehicleId)) {
+      if (foundEquipment && searchActive && (searchRegistryNr || searchVehicleId || searchRandom)) {
         setSearchActive(false)
         setSearchVehicleId('')
         setSearchRegistryNr('')
+        setSearchRandom(false)
 
         if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
           addDraftEquipment(foundEquipment)
@@ -109,7 +123,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
           alert('Ajoneuvo on jo lisätty tähän kalustoluetteloon.')
         }
       }
-    }, [foundEquipment, searchActive])
+    }, [foundEquipment, searchActive, searchVehicleId, searchRegistryNr, searchRandom])
 
     const onEquipmentInputChange = useCallback((key: string, nextValue) => {
       setPendingEquipment((currentPending) =>
@@ -156,6 +170,9 @@ const EditEquipment: React.FC<PropTypes> = observer(
             </Button>
             <Button style={{ marginRight: '1rem' }} onClick={() => setSearchActive(true)}>
               Hae ajoneuvo
+            </Button>
+            <Button style={{ marginRight: '1rem' }} onClick={() => findRandomEquipment()}>
+              (DEV) Lisää satunnainen ajoneuvo
             </Button>
             {!searchActive && equipment.length !== 0 && !pendingEquipment && (
               <Button

@@ -167,7 +167,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           const routes = block.departures.reduce((allRoutes: string[], departure) => {
             const routeId = departure.routeId || ''
 
-            if (!allRoutes.includes(routeId)) {
+            if (routeId && !allRoutes.includes(routeId)) {
               allRoutes.push(routeId)
             }
 
