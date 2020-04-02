@@ -151,7 +151,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       setBlocksVisibility((currentVisible) => !currentVisible)
     }, [])
 
-    let displayData = useMemo(() => {
+    // Collect the data for display in the table.
+    let tableData = useMemo(() => {
       const displayDayTypes = getEnabledDayTypes(dayTypeGroup)
       const displayDayTypeBlocks = displayDayTypes[0]
 
@@ -210,7 +211,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
               return errors
             }
 
-            // Check for missing equipment
+            // Check for missing equipment. It's the only check for now.
             if (!block?.equipment) {
               errors.missingEquipment = true
             }
@@ -268,14 +269,14 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             </FlexRow>
           </>
         )}
-        {blocksVisible && displayData.length !== 0 ? (
+        {blocksVisible && tableData.length !== 0 ? (
           <DepartureBlocksTable
             renderCell={renderTableCell}
             keyFromItem={(item) => item.id}
-            items={displayData}
+            items={tableData}
             columnLabels={departureBlocksColumnLabels}
           />
-        ) : displayData.length === 0 ? (
+        ) : tableData.length === 0 ? (
           <MessageView>Päiväryhmällä ei ole lähtöketjuja.</MessageView>
         ) : null}
       </DepartureBlockGroupContainer>

@@ -22,12 +22,15 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
   const preInspection = useContext(PreInspectionContext)
   const preInspectionId = preInspection?.id || ''
 
+  // Create day type groups with the special hook. Day type groups are departure blocks grouped by dayType.
+  // The hook contains logic to select and deselect the dayTypes.
   let [
     dayTypeGroups,
     enabledDayTypes,
     { addDayTypeToGroup, removeDayTypeFromGroup, addDayTypeGroup },
   ] = useDayTypeGroups()
 
+  // The main query that fetches the departure blocks.
   let { data: departureBlocksData, loading: departureBlocksLoading, refetch } = useQueryData(
     departureBlocksQuery,
     {
@@ -39,19 +42,26 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
     }
   )
 
+  // Group blocks by dayType.
   let departureBlockGroups = useMemo(() => groupBy(departureBlocksData || [], 'dayType'), [
     departureBlocksData,
   ])
 
+  // Figure out which day types are selectable. The day type is selectable (or unselectable)
+  // when it doesn't have any blocks attached to it.
   let selectableDayTypes = useMemo(() => {
     let dayTypesWithBlocks = Object.keys(departureBlockGroups)
     return normalDayTypes.filter((dt) => !dayTypesWithBlocks.includes(dt))
   }, [departureBlockGroups])
 
+  // Callback for when the block configuration changes, which will update the blocks query.
+  // Called from each day type group item.
   let onBlocksChange = useCallback(() => {
     refetch()
   }, [refetch])
 
+  // Add a new dayType group for each departure block group
+  // if the dayYpe doesn't already exist in a group.
   useEffect(() => {
     for (let dayType of Object.keys(departureBlockGroups)) {
       if (!enabledDayTypes.includes(dayType)) {
