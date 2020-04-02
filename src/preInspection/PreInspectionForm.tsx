@@ -189,26 +189,30 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
           <SectionHeading theme="light">Perustiedot</SectionHeading>
           <PreInspectionConfig onUpdateValue={createUpdateCallback} />
 
-          <SectionHeading theme="light">Lähtöketjut</SectionHeading>
-          <FormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <DepartureBlocks />
-            </FormColumn>
-          </FormWrapper>
+          {preInspection && (
+            <>
+              <SectionHeading theme="light">Lähtöketjut</SectionHeading>
+              <FormWrapper>
+                <FormColumn width="100%" minWidth="510px">
+                  <DepartureBlocks />
+                </FormColumn>
+              </FormWrapper>
 
-          <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
-          <FormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <ExecutionRequirements />
-            </FormColumn>
-          </FormWrapper>
+              <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
+              <FormWrapper>
+                <FormColumn width="100%" minWidth="510px">
+                  <ExecutionRequirements />
+                </FormColumn>
+              </FormWrapper>
 
-          <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-          <TransparentFormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <ProcurementUnits />
-            </FormColumn>
-          </TransparentFormWrapper>
+              <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
+              <TransparentFormWrapper>
+                <FormColumn width="100%" minWidth="510px">
+                  <ProcurementUnits />
+                </FormColumn>
+              </TransparentFormWrapper>
+            </>
+          )}
         </PreInspectionContext.Provider>
       )}
     </CreatePreInspectionFormView>

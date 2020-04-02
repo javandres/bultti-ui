@@ -1,14 +1,14 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PreInspectionContext } from '../preInspection/PreInspectionForm'
-import { useQueryData } from '../util/useQueryData'
 import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
 import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
 import Loading from '../common/components/Loading'
+import { useLazyQueryData } from '../util/useLazyQueryData'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -26,41 +26,49 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
   const preInspection = useContext(PreInspectionContext)
   let { id } = preInspection || {}
 
-  let { data: executionRequirementsData, loading: requirementsLoading, refetch } = useQueryData(
-    executionRequirementsByPreInspectionQuery,
-    {
-      skip: !preInspection || !id,
-      variables: {
-        preInspectionId: id,
-      },
-    }
-  )
+  let [
+    execQuery,
+    { data: executionRequirementsData, loading: requirementsLoading },
+  ] = useLazyQueryData(executionRequirementsByPreInspectionQuery, {
+    variables: {
+      preInspectionId: id,
+    },
+  })
 
   let areaExecutionRequirements = useMemo(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
     [executionRequirementsData]
   )
 
+  let onCalculateRequirements = useCallback(() => {
+    if (preInspection) {
+      execQuery()
+    }
+  }, [execQuery, preInspection])
+
   return (
     <ExecutionRequirementsView>
       <FlexRow
         style={{
-          margin: '0 -1rem',
+          margin: '0 -1rem 1rem',
           padding: '0 1rem 0.5rem',
           borderBottom: '1px solid var(--lighter-grey)',
         }}>
-        <Button
-          style={{ marginTop: '-1rem', marginLeft: 'auto' }}
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}
-          onClick={() => refetch()}>
-          Päivitä
-        </Button>
+        {areaExecutionRequirements?.length !== 0 && (
+          <Button
+            style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+            buttonStyle={ButtonStyle.SECONDARY}
+            size={ButtonSize.SMALL}
+            onClick={onCalculateRequirements}>
+            Päivitä
+          </Button>
+        )}
       </FlexRow>
       {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
-        <MessageView>
-          Valitulla liikennöitsijällä ei ole voimassa-olevia suoritevaatimuksia.
-        </MessageView>
+        <>
+          <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
+          <Button onClick={onCalculateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
+        </>
       )}
       {requirementsLoading && <Loading />}
       {areaExecutionRequirements.map((areaRequirements) => (
