@@ -30,6 +30,8 @@ export const executionRequirementsByPreInspectionQuery = gql`
     executionRequirementsByPreInspection(preInspectionId: $preInspectionId) {
       totalKilometers
       averageAgeWeighted
+      averageAgeWeightedFulfilled
+      totalKilometersFulfilled
       area {
         id
         name
