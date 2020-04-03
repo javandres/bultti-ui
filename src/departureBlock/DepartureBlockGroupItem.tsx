@@ -107,10 +107,10 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       removeDepartureBlocks
     )
 
-    let isLoading = useMemo(() => {
-      console.log(showBlocksLoading)
-      return removeBlocksLoading || ((showBlocksLoading || departureBlocks.length === 0) && loading)
-    }, [loading, showBlocksLoading, departureBlocks, removeBlocksLoading])
+    let isLoading = useMemo(
+      () => removeBlocksLoading || ((showBlocksLoading || departureBlocks.length === 0) && loading),
+      [loading, showBlocksLoading, departureBlocks, removeBlocksLoading]
+    )
 
     let isDisabled = useMemo(() => departureBlocks.length !== 0, [departureBlocks])
 

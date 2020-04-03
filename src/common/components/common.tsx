@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import { ThemeTypes } from '../../type/common'
 import { LoadingDisplay } from './Loading'
+import { TabsWrapper } from './Tabs'
 
 export const Page = styled.div``
 
@@ -10,10 +11,19 @@ export const PageSection = styled.div`
 `
 
 export const PageTitle = styled.h2`
-  border-bottom: 1px solid var(--light-grey);
-  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--lighter-grey);
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 1rem;
   margin-bottom: 1.5rem;
-  margin-left: 1rem;
+  margin-left: 0;
+  margin-top: 0;
+  background: white;
+
+  & + ${TabsWrapper} {
+    border-top: 1px solid white;
+    margin-top: calc(-1.5rem - 1px);
+  }
 `
 
 export const Subtitle = styled.h3`

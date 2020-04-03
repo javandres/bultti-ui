@@ -30,7 +30,10 @@ const CreatePreInspectionFormView = styled.div`
   width: 100%;
 `
 
-type PreInspectionProps = {}
+type PreInspectionProps = {
+  name?: string
+  label?: string
+}
 
 function isOperator(value: any): value is Operator {
   return typeof value?.operatorName !== 'undefined' && typeof value?.id === 'number'
