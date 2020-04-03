@@ -42,10 +42,11 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
         },
       }
 
+      setUploadError(undefined)
+
       return mutationFn(queryOptions)
         .then((result) => {
           const uploadedData = pickGraphqlData(result.data)
-          setUploadError(undefined)
 
           if (onUploadFinished) {
             onUploadFinished(uploadedData, result.errors)

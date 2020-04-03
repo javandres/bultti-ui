@@ -5,7 +5,7 @@ import Loading from '../components/Loading'
 import { useDropzone } from 'react-dropzone'
 import { CircleCheckmark } from '../icon/CircleCheckmark'
 import { CrossThick } from '../icon/CrossThick'
-import { Button } from '../components/Button'
+import { Button, ButtonStyle } from '../components/Button'
 
 const UploadView = styled.div`
   margin: 0.5rem 0;
@@ -20,6 +20,7 @@ const UploadWrapper = styled.div<{ hasData?: boolean; isError?: boolean; isOk?: 
   background: ${(p) =>
     p.isError ? 'var(--light-red)' : p.isOk ? 'var(--lighter-green)' : 'var(--white-grey)'};
   outline: none;
+  transition: padding 0.2s ease-out;
 `
 
 const LabelText = styled.span<{ disabled?: boolean }>`
@@ -71,7 +72,7 @@ const ErrorMessage = styled.span`
 `
 
 const FileLoading = styled(Loading)`
-  margin-left: 1rem;
+  margin-right: 1rem;
 `
 
 export type PropTypes = {
@@ -116,11 +117,11 @@ const UploadFile: React.FC<PropTypes> = observer(
 
     const onDrop = useCallback(
       (acceptedFiles) => {
-        if (!disabled) {
+        if (!disabled && !state.loading) {
           onChange([...acceptedFiles])
         }
       },
-      [onChange, disabled]
+      [onChange, disabled, state]
     )
 
     const onReset = useCallback(
@@ -144,7 +145,7 @@ const UploadFile: React.FC<PropTypes> = observer(
       <UploadView className={className}>
         <UploadWrapper
           {...getRootProps({
-            hasData: state.data && state.data.length !== 0,
+            hasData: (state.data && state.data.length !== 0) || state.loading,
             isError: !!state.error,
             isOk: state.data && state.data.length !== 0,
           })}>
@@ -152,18 +153,28 @@ const UploadFile: React.FC<PropTypes> = observer(
           {value.length !== 0 ? (
             <>
               <CurrentFile>
-                <IconWrapper>
-                  {state.error ? (
-                    <CrossThick width="1.5rem" height="1.5rem" fill="red" />
-                  ) : (
-                    <CircleCheckmark width="1.5rem" height="1.5rem" />
-                  )}
-                </IconWrapper>
+                {state.loading ? (
+                  <FileLoading inline={true} />
+                ) : (
+                  <IconWrapper>
+                    {state.error ? (
+                      <CrossThick width="1.5rem" height="1.5rem" fill="red" />
+                    ) : (
+                      <CircleCheckmark width="1.5rem" height="1.5rem" />
+                    )}
+                  </IconWrapper>
+                )}
                 {value[0].name}
-                {state.loading && <FileLoading inline={true} />}
               </CurrentFile>
               {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
-              <Button onClick={onReset}>Tyhjennä</Button>
+              {!state.loading && !disabled && (
+                <Button
+                  style={{ marginTop: '1rem', marginLeft: 'auto' }}
+                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                  onClick={onReset}>
+                  Tyhjennä
+                </Button>
+              )}
             </>
           ) : (
             <>

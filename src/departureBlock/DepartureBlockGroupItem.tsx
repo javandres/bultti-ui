@@ -72,10 +72,17 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onRemoveDayType,
     onBlocksChange,
   }) => {
+    let [showBlocksLoading, setShowBlocksLoading] = useState(departureBlocks.length === 0)
     let [blocksVisible, setBlocksVisibility] = useState(false)
 
     let preInspection = useContext(PreInspectionContext)
     let preInspectionId = preInspection?.id || ''
+
+    useEffect(() => {
+      if (!loading && departureBlocks.length !== 0) {
+        setShowBlocksLoading(false)
+      }
+    }, [departureBlocks, loading])
 
     // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
@@ -88,26 +95,22 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [
-      ,
-      { data: uploadedData, loading: departureBlocksLoading, error: uploadFileError },
-    ] = uploader
+    const [, { data: uploadedData, loading: uploadLoading, error: uploadFileError }] = uploader
 
     useEffect(() => {
-      if (uploadedData && !departureBlocksLoading) {
+      if (uploadedData && !uploadLoading) {
         onBlocksChange()
       }
-    }, [onBlocksChange, departureBlocksLoading, uploadedData])
+    }, [onBlocksChange, uploadLoading, uploadedData])
 
     const [removeDepartureBlocksForDays, { loading: removeBlocksLoading }] = useMutationData(
       removeDepartureBlocks
     )
 
-    let isLoading = useMemo(
-      () =>
-        removeBlocksLoading || departureBlocksLoading || (departureBlocks.length === 0 && loading),
-      [loading, departureBlocks, departureBlocksLoading, removeBlocksLoading]
-    )
+    let isLoading = useMemo(() => {
+      console.log(showBlocksLoading)
+      return removeBlocksLoading || ((showBlocksLoading || departureBlocks.length === 0) && loading)
+    }, [loading, showBlocksLoading, departureBlocks, removeBlocksLoading])
 
     let isDisabled = useMemo(() => departureBlocks.length !== 0, [departureBlocks])
 
@@ -135,6 +138,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         )
       ) {
         setFileValue([])
+        setShowBlocksLoading(true)
 
         await removeDepartureBlocksForDays({
           variables: {
