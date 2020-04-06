@@ -9,7 +9,7 @@ import EditEquipment, { renderEquipmentInput } from './EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
-import { pick } from 'lodash'
+import { orderBy, pick } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 
@@ -200,6 +200,8 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       [equipment, equipmentGroups]
     )
 
+    let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [equipment])
+
     return (
       <>
         {equipment.length !== 0 ? (
@@ -215,7 +217,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
               </ToggleButton>
             </FlexRow>
             <Table
-              items={groupEquipment ? equipmentGroups : equipment}
+              items={groupEquipment ? equipmentGroups : orderedEquipment}
               columnLabels={groupEquipment ? groupedEquipmentColumnLabels : equipmentColumnLabels}
               onRemoveRow={(item) => () => onRemoveEquipment(item)}
               renderValue={renderCellValue}

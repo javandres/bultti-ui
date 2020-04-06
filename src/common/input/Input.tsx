@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useCallback, useEffect, useState } from 'react'
+import React, { InputHTMLAttributes, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/common'
@@ -47,41 +47,31 @@ export type PropTypes = {
   value: string
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
-  reportChange?: (value: string) => boolean
   theme?: ThemeTypes
-} & InputHTMLAttributes<HTMLInputElement>
+} & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
   ({
     className,
-    value,
+    value = '',
     onChange,
     theme = 'light',
     label,
-    reportChange,
     subLabel,
     onEnterPress,
+    type = 'text',
     ...inputProps
   }) => {
-    const [internalValue, setInternalValue] = useState(value)
-
     const onValueChange = useCallback(
       (e) => {
         const nextVal = e.target.value
-        setInternalValue(nextVal)
 
-        if (typeof onChange === 'function' && (!reportChange || reportChange(nextVal))) {
+        if (typeof onChange === 'function') {
           onChange(nextVal)
         }
       },
       [onChange]
     )
-
-    useEffect(() => {
-      if (value !== internalValue) {
-        setInternalValue(value)
-      }
-    }, [value, internalValue])
 
     const onKeyPress = useCallback(
       (e) => {
@@ -102,7 +92,7 @@ const Input: React.FC<PropTypes> = observer(
         <TextInput
           {...inputProps}
           theme={theme}
-          value={internalValue}
+          value={value}
           onChange={onValueChange}
           onKeyPress={onKeyPress}
         />

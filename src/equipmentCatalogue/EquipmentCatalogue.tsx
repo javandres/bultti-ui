@@ -120,7 +120,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [])
 
     const renderCatalogueInput = useCallback((key: string, val: any, onChange) => {
-      return <EquipmentCatalogueFormInput value={val} valueName={key} onChange={onChange} />
+      return <EquipmentCatalogueFormInput value={val || ''} valueName={key} onChange={onChange} />
     }, [])
 
     const equipment: EquipmentWithQuota[] = useMemo(() => catalogueEquipment(catalogue), [

@@ -1,12 +1,4 @@
-import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI, SERVER_URL } from '../constants'
-import { AuthResponse } from '../type/authentication'
-
-const RequestMethod = {
-  GET: 'GET',
-  POST: 'POST',
-  PUT: 'PUT',
-  DELETE: 'DELETE',
-}
+import { SERVER_URL } from '../constants'
 
 const Endpoint = {
   LOGIN: 'login',

@@ -38,7 +38,7 @@ export type PropTypes = {
 }
 
 const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
-  ({ value, valueName, onChange }) => {
+  ({ value = '', valueName, onChange }) => {
     const onSelectValue = useCallback(
       (selectedValue) => {
         onChange(selectedValue, valueName)

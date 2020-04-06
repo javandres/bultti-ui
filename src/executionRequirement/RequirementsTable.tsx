@@ -7,6 +7,7 @@ import { isNumeric } from '../util/isNumeric'
 import { ExecutionRequirement } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
+import { getTotal } from '../util/getTotal'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-bottom: 1.5rem;
@@ -75,15 +76,8 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         percentageRow[i] = currentRequirement?.quotaRequirement || 0
       }
 
-      kilometerRow.total = requirementValues.reduce(
-        (total, { kilometerRequirement }) => (total += kilometerRequirement),
-        kilometerRow.total
-      )
-
-      percentageRow.total = requirementValues.reduce(
-        (total, { quotaRequirement }) => (total += quotaRequirement),
-        percentageRow.total
-      )
+      kilometerRow.total = getTotal(requirementValues, 'kilometerRequirement')
+      percentageRow.total = getTotal(requirementValues, 'quotaRequirement')
 
       return [kilometerRow, percentageRow]
     }, [executionRequirement, tableLayout])

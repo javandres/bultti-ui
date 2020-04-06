@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import moment, { Moment } from 'moment'
-import { AnyFunction } from '../../type/common'
 import { DayPickerRangeController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
@@ -37,12 +36,14 @@ const DatePickerWrapper = styled.div<{ focused: boolean }>`
   z-index: ${(p) => (p.focused ? 100 : -1)};
 `
 
+const dateIsValid = (dateVal: string) => isValid(parseISO(dateVal))
+
 export type PropTypes = {
   startDate: string
   endDate: string
   maxDate?: string
-  onChangeStartDate: AnyFunction
-  onChangeEndDate: AnyFunction
+  onChangeStartDate: (value: any) => unknown
+  onChangeEndDate: (value: any) => unknown
   selectWeek?: boolean
   startLabel?: string
   endLabel?: string
@@ -88,8 +89,6 @@ const SelectWeek: React.FC<PropTypes> = observer(
       [startMoment, onChangeStartDate, onChangeEndDate]
     )
 
-    const dateIsValid = useCallback((dateVal: string) => isValid(parseISO(dateVal)), [])
-
     const dateIsBlocked = useCallback(
       (dateVal: Moment) => (!maxMoment ? false : dateVal.isAfter(maxMoment)),
       [maxMoment]
@@ -124,8 +123,11 @@ const SelectWeek: React.FC<PropTypes> = observer(
               subLabel={true}
               label={startLabel}
               value={startDate}
-              onChange={onChangeStartDate}
-              reportChange={dateIsValid}
+              onChange={(val) => {
+                if (dateIsValid(val)) {
+                  onChangeStartDate(val)
+                }
+              }}
               onFocus={onInputFocus('startDate')}
               onBlur={onClosePicker}
             />
