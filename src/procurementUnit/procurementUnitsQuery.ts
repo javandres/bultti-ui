@@ -44,6 +44,7 @@ export const procurementUnitQuery = gql`
         equipmentQuotas {
           id
           percentageQuota
+          meterRequirement
           equipment {
             ...EquipmentFragment
           }

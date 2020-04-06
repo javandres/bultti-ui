@@ -26,6 +26,7 @@ export const equipmentColumnLabels = {
   model: 'Malli',
   type: 'Tyyppi',
   percentageQuota: 'Osuus',
+  meterRequirement: 'Metriosuus',
   emissionClass: 'Euroluokka',
   registryNr: 'Rek.numero',
   registryDate: 'Rek.päivä',
@@ -37,6 +38,7 @@ export const groupedEquipmentColumnLabels = {
   emissionClass: 'Euroluokka',
   registryDate: 'Rek.päivä',
   percentageQuota: 'Osuus',
+  kilometerRequirement: 'Kilometriosuus',
   amount: 'Määrä',
 }
 
@@ -48,6 +50,8 @@ type PendingEquipmentValue = {
   item: EquipmentWithQuota
 }
 
+const editableValues = ['percentageQuota', 'meterRequirement']
+
 const CatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
@@ -57,7 +61,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
 
     const onEditValue = useCallback(
       (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
-        if (groupEquipment || key !== 'percentageQuota') {
+        if (groupEquipment || !editableValues.includes(key)) {
           return
         }
 
@@ -90,6 +94,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       const equipmentInput: EquipmentInput = {
         ...(pick(pendingValue.item, [
           'percentageQuota',
+          'meterRequirement',
           'vehicleId',
           'model',
           'registryNr',
@@ -140,6 +145,10 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       switch (key) {
         case 'percentageQuota':
           return round(val) + '%'
+        case 'meterRequirement':
+          return round(val) + ' m'
+        case 'kilometerRequirement':
+          return round(val) + ' km'
         case 'emissionClass':
           return emissionClassNames[val + '']
         default:
@@ -158,6 +167,24 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
                   return total
                 }, 0)
               ) + '%'
+            )
+          case 'meterRequirement':
+            return (
+              round(
+                equipment.reduce((total, item) => {
+                  total += item?.meterRequirement || 0
+                  return total
+                }, 0)
+              ) + ' m'
+            )
+          case 'kilometerRequirement':
+            return (
+              round(
+                equipment.reduce((total, item) => {
+                  total += (item?.meterRequirement || 0) / 1000
+                  return total
+                }, 0)
+              ) + ' km'
             )
           case 'amount':
             return (

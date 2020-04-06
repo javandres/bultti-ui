@@ -7,6 +7,8 @@ import { differenceInCalendarDays, parseISO } from 'date-fns'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
   percentageQuota: number
+  meterRequirement: number
+  kilometerRequirement?: number
   amount: number
   age: number
 }
@@ -18,8 +20,10 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
 
   return (catalogue?.equipmentQuotas || []).map((quota) => ({
     ...quota.equipment,
-    percentageQuota: quota.percentageQuota,
-    quotaId: quota.id
+    percentageQuota: quota.percentageQuota || 0,
+    meterRequirement: quota.meterRequirement || 0,
+    kilometerRequirement: quota.meterRequirement / 1000,
+    quotaId: quota.id,
   }))
 }
 
@@ -39,6 +43,13 @@ export function groupedEquipment(
       return total
     }, 0)
 
+    let meterRequirement = equipmentGroup.reduce((total, item) => {
+      total += item?.meterRequirement || 0
+      return total
+    }, 0)
+
+    let kilometerRequirement = meterRequirement / 1000
+
     let age = round(
       differenceInCalendarDays(startDate, parseISO(equipmentGroup[0].registryDate)) / 365
     )
@@ -48,6 +59,8 @@ export function groupedEquipment(
       amount: equipmentGroup.length,
       age,
       percentageQuota,
+      meterRequirement,
+      kilometerRequirement,
     }
   })
 }

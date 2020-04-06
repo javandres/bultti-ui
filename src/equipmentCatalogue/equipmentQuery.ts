@@ -61,6 +61,7 @@ export const updateEquipmentMutation = gql`
       equipmentCatalogueQuotas {
         id
         percentageQuota
+        meterRequirement
       }
     }
   }

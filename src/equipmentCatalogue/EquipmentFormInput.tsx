@@ -67,8 +67,7 @@ const typeValues: SelectValue[] = [
   { name: 'D', label: 'D' },
 ]
 
-const numericTypes = ['percentageQuota']
-
+const numericTypes = ['percentageQuota', 'meterRequirement']
 const dateValues = ['registryDate']
 
 const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, onChange }) => {

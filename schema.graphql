@@ -12,6 +12,7 @@ type Departure {
   id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
+  procurementUnits: [ProcurementUnit!]!
   routeId: String
 }
 
@@ -63,6 +64,7 @@ type EquipmentCatalogueQuota {
   equipmentCatalogueId: String!
   equipmentId: String!
   id: ID!
+  meterRequirement: Float!
   percentageQuota: Float!
 }
 
@@ -150,6 +152,7 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea!
   areaId: Int!
+  departures: [Departure!]!
   endDate: BulttiDateTime!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: ID!
@@ -267,6 +270,7 @@ input EquipmentCatalogueQuotaInput {
 input EquipmentInput {
   emissionClass: Int
   exteriorColor: String
+  meterRequirement: Float
   model: String
   percentageQuota: Float
   registryDate: BulttiDateTime

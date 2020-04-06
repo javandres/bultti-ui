@@ -32,6 +32,7 @@ export type Departure = {
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   departureBlocks: Array<DepartureBlock>;
+  procurementUnits: Array<ProcurementUnit>;
 };
 
 export type DepartureBlock = {
@@ -98,6 +99,7 @@ export type EquipmentCatalogueQuota = {
    __typename?: 'EquipmentCatalogueQuota';
   id: Scalars['ID'];
   percentageQuota: Scalars['Float'];
+  meterRequirement: Scalars['Float'];
   equipmentId: Scalars['String'];
   equipmentCatalogueId: Scalars['String'];
   equipment: Equipment;
@@ -115,6 +117,7 @@ export type EquipmentCatalogueQuotaInput = {
 
 export type EquipmentInput = {
   percentageQuota?: Maybe<Scalars['Float']>;
+  meterRequirement?: Maybe<Scalars['Float']>;
   vehicleId?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
@@ -333,6 +336,7 @@ export type ProcurementUnit = {
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDateTime'];
   endDate: Scalars['BulttiDateTime'];
+  departures: Array<Departure>;
 };
 
 export type ProcurementUnitEditInput = {

@@ -18,22 +18,7 @@ export const createEquipmentCatalogueMutation = gql`
       equipmentQuotas {
         id
         percentageQuota
-        equipment {
-          ...EquipmentFragment
-        }
-      }
-    }
-  }
-  ${EquipmentFragment}
-`
-
-export const updateEquipmentFromDepartures = gql`
-  mutation populateCatalogueFromDepartures($preInspectionId: String!, $catalogueId: String!) {
-    populateCatalogueFromDepartures(preInspectionId: $preInspectionId, catalogueId: $catalogueId) {
-      id
-      equipmentQuotas {
-        id
-        percentageQuota
+        meterRequirement
         equipment {
           ...EquipmentFragment
         }
@@ -63,6 +48,7 @@ export const removeAllEquipmentFromCatalogueMutation = gql`
       equipmentQuotas {
         id
         percentageQuota
+        meterRequirement
       }
     }
   }
