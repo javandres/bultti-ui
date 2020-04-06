@@ -7,7 +7,7 @@ import { FlexRow, MessageView } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { PageLoading } from '../common/components/Loading'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const ProcurementUnitsView = styled.div``
 

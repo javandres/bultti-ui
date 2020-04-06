@@ -10,7 +10,7 @@ import { departureBlocksQuery } from './departureBlocksQuery'
 import { DayType, DepartureBlock } from '../schema-types'
 import { normalDayTypes } from '../constants'
 import { FlexRow } from '../common/components/common'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;

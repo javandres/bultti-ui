@@ -12,7 +12,7 @@ import { ErrorView, FlexRow, MessageView } from '../common/components/common'
 import { DayType, Departure, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1rem;

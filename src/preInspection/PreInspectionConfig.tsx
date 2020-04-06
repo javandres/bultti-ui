@@ -10,8 +10,8 @@ import SelectOperator from '../common/input/SelectOperator'
 import SelectSeason from '../common/input/SelectSeason'
 import { useStateValue } from '../state/useAppState'
 import { ControlGroup, FormColumn, FormWrapper } from '../common/components/form'
-import { PreInspectionContext } from './PreInspectionForm'
 import { PreInspection } from '../schema-types'
+import { PreInspectionContext } from './PreInspectionContext'
 
 const PreInspectionConfigView = styled.div``
 

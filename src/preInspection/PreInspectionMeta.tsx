@@ -10,8 +10,8 @@ import {
 import Loading from '../common/components/Loading'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
-import { PreInspectionContext } from './PreInspectionForm'
 import { Button, ButtonSize } from '../common/components/Button'
+import { PreInspectionContext } from './PreInspectionContext'
 
 type PropTypes = {
   isLoading: boolean

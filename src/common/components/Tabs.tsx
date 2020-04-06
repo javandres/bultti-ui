@@ -92,6 +92,11 @@ const TabLabel = styled.span`
 
 const decorate = flow(observer)
 
+export type TabChildProps = {
+  name?: string
+  label?: string
+}
+
 type TabConfig = {
   name: string
   label: string

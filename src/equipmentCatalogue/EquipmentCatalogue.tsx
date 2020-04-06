@@ -18,7 +18,7 @@ import {
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipment from './CatalogueEquipment'
 import { catalogueEquipment } from './equipmentUtils'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const EquipmentCatalogueView = styled.div``
 

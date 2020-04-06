@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { PreInspectionContext } from '../preInspection/PreInspectionForm'
 import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
 import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -9,6 +8,7 @@ import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
 import Loading from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const ExecutionRequirementsView = styled.div``
 
