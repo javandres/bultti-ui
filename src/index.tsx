@@ -11,7 +11,8 @@ import { createGraphqlClient } from './graphqlClient'
 import { ApolloProvider } from '@apollo/react-hooks'
 
 const initializers = [UserStore, UIStore]
-;(async () => {
+
+const main = async () => {
   const state = await createState(initializers)
   const client = await createGraphqlClient()
 
@@ -23,4 +24,6 @@ const initializers = [UserStore, UIStore]
     </ApolloProvider>,
     document.getElementById('root')
   )
-})()
+}
+
+main()

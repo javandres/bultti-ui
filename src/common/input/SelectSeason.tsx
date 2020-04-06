@@ -14,6 +14,7 @@ export type PropTypes = {
   theme?: 'light' | 'dark'
   value: null | Season
   onSelect: (season: null | Season) => void
+  selectInitialId?: string
 }
 
 const currentDate = new Date()
@@ -21,7 +22,7 @@ const currentDate = new Date()
 const UNSELECTED_VAL = '...'
 
 const SelectSeason: React.FC<PropTypes> = observer(
-  ({ onSelect, value = null, label, className, theme = 'light' }) => {
+  ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
     // Get seasons to display in the seasons select.
     const { data: seasonsData } = useQueryData(seasonsQuery, {
       variables: {
@@ -70,10 +71,15 @@ const SelectSeason: React.FC<PropTypes> = observer(
 
     // Auto-select the first season if there is only one.
     useEffect(() => {
-      if (!value && seasons.length !== 0) {
+      let initialSeason = seasons.find((s) => s.id === selectInitialId)
+
+      if (!value && initialSeason) {
+        onSelect(initialSeason)
+      }
+      if (!value && !initialSeason && seasons.length !== 0) {
         onSelect(seasons.find((season) => season.id !== UNSELECTED_VAL) || null)
       }
-    }, [value, seasons, onSelect])
+    }, [value, seasons, onSelect, selectInitialId])
 
     const currentSeason = useMemo(() => value || seasons[0], [seasons, value])
 

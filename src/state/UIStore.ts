@@ -3,6 +3,7 @@ import { UIActions } from '../type/state'
 import { Language } from '../util/translate'
 import { Operator, Season } from '../schema-types'
 import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
+import { setUrlValue } from '../util/urlValue'
 
 // Language state is separate because some parts of the app that aren't
 // in the scope of the React component tree may want to use it.
@@ -33,10 +34,12 @@ export const UIStore = (state): UIActions => {
     }
 
     state.globalOperator = value
+    setUrlValue('operator', value?.operatorId + '' || '')
   })
 
   const setSeasonFilter = action((value: Season | null) => {
     state.globalSeason = value
+    setUrlValue('season', value?.id || '')
   })
 
   const onAppLoaded = action(() => {

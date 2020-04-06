@@ -27,6 +27,7 @@ export type PropTypes = {
   allowAll?: boolean
   value: null | Operator
   onSelect: (operator: null | Operator) => void
+  selectInitialId?: number
 }
 
 export const operatorIsValid = (operator: Operator | null | undefined) => {
@@ -42,7 +43,15 @@ export const operatorIsValid = (operator: Operator | null | undefined) => {
 }
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({ onSelect, value = null, label, className, theme = 'light', allowAll = false }) => {
+  ({
+    onSelect,
+    value = null,
+    label,
+    className,
+    theme = 'light',
+    allowAll = false,
+    selectInitialId,
+  }) => {
     const { data } = useQueryData(operatorsQuery)
     const [user] = useStateValue<User>('user')
 
@@ -76,8 +85,14 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
       if (!value && operators.length === 1 && operatorIsValid(firstOperator)) {
         onSelect(operators[0])
+      } else if (!value && operators.length !== 0 && selectInitialId) {
+        let initialOperator = operators.find((op) => op.id === selectInitialId)
+
+        if (initialOperator) {
+          onSelect(initialOperator)
+        }
       }
-    }, [value, operators, onSelect])
+    }, [value, operators, onSelect, selectInitialId])
 
     const onSelectOperator = useCallback(
       (selectedItem) => {

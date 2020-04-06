@@ -4,7 +4,7 @@ import { action } from 'mobx'
 import { StoreContext } from '../type/state'
 import { useObserver } from 'mobx-react-lite'
 
-const createDumbAction = (state, stateKey) =>
+const createDefaultAction = (state, stateKey) =>
   action((value) => {
     state[stateKey] = value
   })
@@ -17,8 +17,7 @@ export const useStateValue = <T = any>(valueKey): [T, (...args: any[]) => any] =
     return [value, () => {}]
   }
 
-  const action = stateContext.actions[valueKey] || createDumbAction(stateContext.state, valueKey)
-
+  const action = stateContext.actions[valueKey] || createDefaultAction(stateContext.state, valueKey)
   return [value, action]
 }
 

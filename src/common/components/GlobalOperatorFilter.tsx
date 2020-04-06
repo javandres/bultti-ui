@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import SelectOperator from '../input/SelectOperator'
 import styled from 'styled-components'
 import { UserRole } from '../../schema-types'
+import { getUrlValue } from '../../util/urlValue'
 
 const OperatorSelect = styled(SelectOperator)`
   > label {
@@ -26,8 +27,13 @@ const OperatorSelect = styled(SelectOperator)`
 
 const GlobalOperatorFilter: React.FC = observer(() => {
   var [operator, setOperatorFilter] = useStateValue('globalOperator')
-
   var [user] = useStateValue('user')
+
+  var initialOperatorId = useMemo(() => {
+    let initialVal = getUrlValue('operator')
+    return initialVal ? parseInt(initialVal as string, 10) : undefined
+  }, [])
+
   var userIsOperator = user && user?.role === UserRole.OperatorUser
 
   return (
@@ -37,6 +43,7 @@ const GlobalOperatorFilter: React.FC = observer(() => {
       value={operator}
       label={userIsOperator ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
       theme="dark"
+      selectInitialId={initialOperatorId}
     />
   )
 })
