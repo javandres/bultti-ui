@@ -25,7 +25,7 @@ const App: React.FC = observer(() => {
         <Index path="/" />
         <ProcurementUnitsPage path="procurement-units" />
         <PreInspection path="pre-inspection" />
-        <CreatePreInspection path="pre-inspection/create" />
+        <CreatePreInspection path="pre-inspection/create/*" />
         <PreInspectionReports path="pre-inspection/reports" />
         <PostInspection path="post-inspection" />
         <PostInspectionReports path="postinspection/reports" />

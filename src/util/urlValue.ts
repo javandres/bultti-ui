@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
-import { createHistory, useLocation } from '@reach/router'
+import { createHistory } from '@reach/router'
 
 /**
  * Make sure that all history operations happen through the specific history object
@@ -97,7 +97,7 @@ export const resetUrlState = (replace = false) => {
 }
 
 // Used in Router Link to= props to retain the query path when clicking the link.
-export const usePathQuery = (path = '') => {
-  let currentQuery = useLocation().search
+export const pathWithQuery = (path = '', location = history.location) => {
+  let currentQuery = location.search
   return path + currentQuery
 }

@@ -1,8 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Link, LinkProps } from '@reach/router'
-import { usePathQuery } from '../../util/urlValue'
+import { Link, LinkProps, useLocation } from '@reach/router'
+import { pathWithQuery } from '../../util/urlValue'
 
 export type PropTypes = LinkProps<any>
 
@@ -28,10 +28,11 @@ const NavLinkView = styled(Link)`
 `
 
 const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
-  let pathWithQuery = usePathQuery(to)
+  let location = useLocation()
+  let queryPath = pathWithQuery(to, location)
 
   return (
-    <NavLinkView to={pathWithQuery} {...props} ref={undefined}>
+    <NavLinkView to={queryPath} {...props} ref={undefined}>
       {children}
     </NavLinkView>
   )

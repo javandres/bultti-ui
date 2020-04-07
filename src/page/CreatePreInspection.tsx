@@ -43,13 +43,14 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
         <PageTitle>Uusi ennakkotarkastus</PageTitle>
         <Tabs>
           <PreInspectionForm
-            name="create"
+            name="new"
+            path="/"
             label="Luo"
             preInspection={preInspection || null}
             loading={loading}
             onPreInspectionChange={onPreInspectionChange}
           />
-          <PreviewPreInspection name="preview" label="Esikatsele" />
+          <PreviewPreInspection path="preview" name="preview" label="Esikatsele" />
         </Tabs>
       </CreatePreInspectionView>
     </PreInspectionContext.Provider>

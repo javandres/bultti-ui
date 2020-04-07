@@ -1,8 +1,10 @@
-import React, { Children, ReactNode, useEffect, useMemo, useState } from 'react'
+import React, { Children, ReactNode, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
+import { Link, Match, RouteComponentProps, Router, useLocation } from '@reach/router'
+import { pathWithQuery } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
   height: 100%;
@@ -13,7 +15,7 @@ export const TabsWrapper = styled.div`
   max-width: 100%;
 `
 
-const TabButtonsWrapper = styled.div`
+const TabButtonsWrapper = styled.div<{ path?: any }>`
   background-color: white;
   border-bottom: 1px solid var(--blue);
   display: flex;
@@ -22,13 +24,14 @@ const TabButtonsWrapper = styled.div`
   width: 100%;
 `
 
-const TabButton = styled.button<{ fontSizeMultiplier?: number; selected?: boolean }>`
+const TabButton = styled(Link)<{ selected?: boolean }>`
   font-family: inherit;
-  font-size: ${({ fontSizeMultiplier = 1 }) => `calc(0.45rem * ${fontSizeMultiplier})`};
+  font-size: 1rem;
   font-weight: ${({ selected }) => (selected ? 'bold' : 'normal')};
   text-transform: uppercase;
+  text-decoration: none;
   background-color: ${({ selected }) => (selected ? 'var(--blue)' : 'var(--lightest-grey)')};
-  color: ${({ selected }) => (selected ? 'white' : 'var(--dark-grey)')};
+  color: ${({ selected }) => (selected ? 'white' : 'var(--grey)')};
   border: 1px solid var(--lighter-grey);
   border-bottom: 0;
   border-top-right-radius: 10px;
@@ -55,7 +58,7 @@ const TabButton = styled.button<{ fontSizeMultiplier?: number; selected?: boolea
   }
 `
 
-const TabContentWrapper = styled.div`
+const TabContentWrapper = styled.div<RouteComponentProps>`
   padding-top: 1.5rem;
   height: 100%;
 `
@@ -93,27 +96,24 @@ const TabLabel = styled.span`
 const decorate = flow(observer)
 
 export type TabChildProps = {
-  name?: string
-  label?: string
-}
-
-type TabConfig = {
   name: string
   label: string
-  content: ReactNode
-  loading: boolean
-  testId: string
+  path: string
+  loading?: boolean
+  testId?: string
 }
 
 type PropTypes = {
   children: ReactNode | ReactNode[]
   testIdPrefix?: string
   className?: string
+  rootPath?: string
 }
+
+let getPathName = (path) => (path === '/' ? './' : path)
 
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
-    let [selectedTab, selectTab] = useState('')
     // The children usually contain an empty string as the first element.
     // Compact() removes all such falsy values from the array.
     const validChildren: ReactNode[] = useMemo(
@@ -122,64 +122,42 @@ const Tabs: React.FC<PropTypes> = decorate(
     )
 
     // An array of child tab data with labels etc is extracted from props.children.
-    let tabs: TabConfig[] = useMemo(() => {
+    let tabs: TabChildProps[] = useMemo(() => {
       const childrenTabs = validChildren.map((tabContent) => {
         if (!tabContent || !React.isValidElement(tabContent)) {
           return null
         }
 
-        const { name, label, loading, testId = name } = tabContent.props
-        return { name, label, content: tabContent, loading, testId }
+        const { name, label, path, loading, testId = name } = tabContent.props
+        return { name, label, path, loading, testId }
       })
 
       return compact(childrenTabs)
     }, [validChildren])
 
-    // Various auto-select routines based on what tabs are available
-    useEffect(() => {
-      if (tabs.length !== 0) {
-        const tabNames = tabs.map(({ name }) => name)
-        let nextTab = selectedTab
-
-        if (!selectedTab || !tabNames.includes(selectedTab)) {
-          nextTab = tabNames[0]
-        }
-
-        selectTab(nextTab)
-      }
-    }, [tabs, selectedTab])
-
-    // The tab content to render
-    const selectedTabContent: ReactNode | null = useMemo(() => {
-      const selectedTabItem = tabs.find((tab) => tab.name === selectedTab)
-      // Set the current tab content to the selected tab
-      if (selectedTabItem) {
-        return selectedTabItem.content
-      }
-
-      return null
-    }, [tabs, selectedTab])
-
-    // Fit the tab label into the ever-shrinking tab element
-    const tabLabelFontSizeMultiplier =
-      tabs.length <= 2 ? 1.75 : tabs.length < 4 ? 1.5 : tabs.length < 5 ? 1.2 : 1
+    let location = useLocation()
 
     return (
       <TabsWrapper className={className}>
         <TabButtonsWrapper>
           {tabs.map((tabOption) => (
-            <TabButton
-              key={tabOption.name}
-              data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
-              fontSizeMultiplier={tabLabelFontSizeMultiplier}
-              selected={selectedTab === tabOption.name}
-              onClick={() => selectTab(tabOption.name)}>
-              {tabOption.loading && <LoadingIndicator data-testid="loading" />}
-              <TabLabel>{tabOption.label}</TabLabel>
-            </TabButton>
+            <Match path={getPathName(tabOption.path)}>
+              {({ match }) => (
+                <TabButton
+                  key={`tab_link_${tabOption.name}`}
+                  to={pathWithQuery(getPathName(tabOption.path), location)}
+                  data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
+                  selected={!!match}>
+                  {tabOption.loading && <LoadingIndicator data-testid="loading" />}
+                  <TabLabel>{tabOption.label}</TabLabel>
+                </TabButton>
+              )}
+            </Match>
           ))}
         </TabButtonsWrapper>
-        {selectedTabContent && <TabContentWrapper>{selectedTabContent}</TabContentWrapper>}
+        <TabContentWrapper>
+          <Router primary={false}>{children}</Router>
+        </TabContentWrapper>
       </TabsWrapper>
     )
   }
