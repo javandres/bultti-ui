@@ -168,7 +168,6 @@ export type InitialPreInspectionInput = {
   seasonId: Scalars['String'];
   startDate?: Maybe<Scalars['BulttiDateTime']>;
   endDate?: Maybe<Scalars['BulttiDateTime']>;
-  status?: Maybe<InspectionStatus>;
 };
 
 export enum InspectionStatus {
@@ -178,8 +177,10 @@ export enum InspectionStatus {
 
 export type Mutation = {
    __typename?: 'Mutation';
-  createPreInspection?: Maybe<PreInspection>;
+  createPreInspection: PreInspection;
   updatePreInspection: PreInspection;
+  publishPreInspection: PreInspection;
+  removePreInspection: Scalars['Boolean'];
   updateWeeklyMetersFromSource: ProcurementUnit;
   updateProcurementUnit: ProcurementUnit;
   createEquipment: Equipment;
@@ -202,6 +203,16 @@ export type MutationCreatePreInspectionArgs = {
 
 export type MutationUpdatePreInspectionArgs = {
   preInspection: PreInspectionInput;
+  preInspectionId: Scalars['String'];
+};
+
+
+export type MutationPublishPreInspectionArgs = {
+  preInspectionId: Scalars['String'];
+};
+
+
+export type MutationRemovePreInspectionArgs = {
   preInspectionId: Scalars['String'];
 };
 
@@ -300,13 +311,16 @@ export type Operator = {
 
 export type PreInspection = {
    __typename?: 'PreInspection';
+  version: Scalars['Int'];
+  startDate: Scalars['BulttiDateTime'];
+  endDate: Scalars['BulttiDateTime'];
+  versionStackIdentifier?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;
+  seasonId?: Maybe<Scalars['Int']>;
   season: Season;
   departureBlocks: Array<DepartureBlock>;
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -318,7 +332,6 @@ export type PreInspectionInput = {
   seasonId?: Maybe<Scalars['String']>;
   startDate?: Maybe<Scalars['BulttiDateTime']>;
   endDate?: Maybe<Scalars['BulttiDateTime']>;
-  status?: Maybe<InspectionStatus>;
 };
 
 export type ProcurementUnit = {
@@ -372,8 +385,9 @@ export type Query = {
   operators: Array<Operator>;
   seasons: Array<Season>;
   preInspection?: Maybe<PreInspection>;
-  preInspectionByOperatorAndSeason?: Maybe<PreInspection>;
-  preInspections: Array<PreInspection>;
+  preInspectionsByOperatorAndSeason: Array<PreInspection>;
+  currentPreInspectionByOperatorAndSeason: PreInspection;
+  allPreInspections: Array<PreInspection>;
   procurementUnit?: Maybe<ProcurementUnit>;
   procurementUnitsByOperator: Array<ProcurementUnit>;
   singleEquipment?: Maybe<Equipment>;
@@ -409,7 +423,13 @@ export type QueryPreInspectionArgs = {
 };
 
 
-export type QueryPreInspectionByOperatorAndSeasonArgs = {
+export type QueryPreInspectionsByOperatorAndSeasonArgs = {
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentPreInspectionByOperatorAndSeasonArgs = {
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };
@@ -511,3 +531,11 @@ export enum UserRole {
   OperatorUser = 'OPERATOR_USER',
   BlockedUser = 'BLOCKED_USER'
 }
+
+export type VersionedEntity = {
+   __typename?: 'VersionedEntity';
+  version: Scalars['Int'];
+  startDate: Scalars['BulttiDateTime'];
+  endDate: Scalars['BulttiDateTime'];
+  versionStackIdentifier?: Maybe<Scalars['String']>;
+};

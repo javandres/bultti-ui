@@ -105,12 +105,14 @@ type Mutation {
   createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [DepartureBlock!]
   createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
-  createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection
+  createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
+  publishPreInspection(preInspectionId: String!): PreInspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
+  removePreInspection(preInspectionId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updatePreInspection(preInspection: PreInspectionInput!, preInspectionId: String!): PreInspection!
@@ -144,9 +146,12 @@ type PreInspection {
   operator: Operator!
   operatorId: Int
   season: Season!
+  seasonId: Int
   startDate: BulttiDateTime!
   status: InspectionStatus!
   updatedAt: DateTime!
+  version: Int!
+  versionStackIdentifier: String
 }
 
 type ProcurementUnit {
@@ -172,6 +177,8 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  allPreInspections: [PreInspection!]!
+  currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection!
   currentUser: User
   departureBlock(departureBlockId: String!): DepartureBlock
   departureBlocksForPreInspection(preInspectionId: String!): [DepartureBlock!]!
@@ -185,8 +192,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
-  preInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection
-  preInspections: [PreInspection!]!
+  preInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDateTime!, operatorId: Int!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
@@ -214,6 +220,13 @@ type User {
   organisation: String
   preInspections: [PreInspection!]!
   role: UserRole!
+}
+
+type VersionedEntity {
+  endDate: BulttiDateTime!
+  startDate: BulttiDateTime!
+  version: Int!
+  versionStackIdentifier: String
 }
 
 enum DayType {
@@ -284,7 +297,6 @@ input InitialPreInspectionInput {
   operatorId: Int!
   seasonId: String!
   startDate: BulttiDateTime
-  status: InspectionStatus = Draft
 }
 
 input PreInspectionInput {
@@ -292,7 +304,6 @@ input PreInspectionInput {
   operatorId: Int
   seasonId: String
   startDate: BulttiDateTime
-  status: InspectionStatus = Draft
 }
 
 input ProcurementUnitEditInput {

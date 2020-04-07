@@ -6,6 +6,7 @@ export const preInspectionFragment = gql`
     createdAt
     startDate
     endDate
+    version
     operatorId
     status
     operator {
@@ -31,8 +32,17 @@ export const preInspectionFragment = gql`
 `
 
 export const preInspectionQuery = gql`
-  query preInspectionByOperatorAndSeason($operatorId: Int!, $seasonId: String!) {
-    preInspectionByOperatorAndSeason(operatorId: $operatorId, seasonId: $seasonId) {
+  query preInspectionById($preInspectionId: String!) {
+    preInspection(preInspectionId: $preInspectionId) {
+      ...PreInspectionFragment
+    }
+  }
+  ${preInspectionFragment}
+`
+
+export const preInspectionsByOperatorAndSeasonQuery = gql`
+  query preInspectionsByOperatorAndSeason($operatorId: Int!, $seasonId: String!) {
+    preInspectionsByOperatorAndSeason(operatorId: $operatorId, seasonId: $seasonId) {
       ...PreInspectionFragment
     }
   }
@@ -58,4 +68,19 @@ export const updatePreInspectionMutation = gql`
     }
   }
   ${preInspectionFragment}
+`
+
+export const publishPreInspectionMutation = gql`
+  mutation publishPreInspection($preInspectionId: String!) {
+    publishPreInspection(preInspectionId: $preInspectionId) {
+      ...PreInspectionFragment
+    }
+  }
+  ${preInspectionFragment}
+`
+
+export const removePreInspectionMutation = gql`
+  mutation removePreInspection($preInspectionId: String!) {
+    removePreInspection(preInspectionId: $preInspectionId)
+  }
 `
