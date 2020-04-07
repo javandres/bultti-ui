@@ -1,14 +1,14 @@
 import get from 'lodash/get'
-import invoke from 'lodash/invoke'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
-import { globalHistory } from '@reach/router'
+import { createHistory, useLocation } from '@reach/router'
 
 /**
  * Make sure that all history operations happen through the specific history object
  * created here:
  */
-let history = globalHistory
+// @ts-ignore
+export let history = createHistory(window)
 
 type UrlStateValue = string | boolean | null
 type UrlState = { [key: string]: UrlStateValue }
@@ -88,17 +88,16 @@ export const getUrlValue = (key: string, defaultValue: UrlStateValue = ''): UrlS
   return get(values, key, defaultValue)
 }
 
-export const setPathName = (pathName, historyAction = 'replace') => {
-  invoke(history, historyAction, {
-    pathname: pathName,
-    search: history.location.search,
-  })
-}
-
 export const getPathName = () => {
   return history.location.pathname
 }
 
 export const resetUrlState = (replace = false) => {
   history.navigate('/', { replace })
+}
+
+// Used in Router Link to= props to retain the query path when clicking the link.
+export const usePathQuery = (path = '') => {
+  let currentQuery = useLocation().search
+  return path + currentQuery
 }

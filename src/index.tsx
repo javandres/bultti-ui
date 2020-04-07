@@ -9,6 +9,8 @@ import { createState } from './state/createState'
 import { UIStore } from './state/UIStore'
 import { createGraphqlClient } from './graphqlClient'
 import { ApolloProvider } from '@apollo/react-hooks'
+import { LocationProvider } from '@reach/router'
+import { history } from './util/urlValue'
 
 const initializers = [UserStore, UIStore]
 
@@ -17,11 +19,13 @@ const main = async () => {
   const client = await createGraphqlClient()
 
   ReactDOM.render(
-    <ApolloProvider client={client}>
-      <StateContext.Provider value={state}>
-        <App />
-      </StateContext.Provider>
-    </ApolloProvider>,
+    <LocationProvider history={history}>
+      <ApolloProvider client={client}>
+        <StateContext.Provider value={state}>
+          <App />
+        </StateContext.Provider>
+      </ApolloProvider>
+    </LocationProvider>,
     document.getElementById('root')
   )
 }

@@ -16,6 +16,7 @@ import GlobalSeasonFilter from './GlobalSeasonFilter'
 import { useMutationData } from '../../util/useMutationData'
 import { logoutMutation } from '../query/authQueries'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
+import NavLink from './NavLink'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -50,27 +51,6 @@ const AppNav = styled.nav`
   display: flex;
   flex-direction: column;
   margin-top: 2rem;
-`
-
-const NavLink = styled(Link)`
-  padding: 1.25rem 1rem 1.25rem 1rem;
-  color: white;
-  text-decoration: none;
-  transition: background 0.1s ease-out, transform 0.1s ease-out;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.15);
-    transform: scale(1.025);
-  }
-
-  svg {
-    display: block;
-    margin-right: 0.75rem;
-  }
 `
 
 const NavCategory = styled.div`
