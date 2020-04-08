@@ -1,20 +1,15 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import {
-  InitialPreInspectionInput,
-  InspectionStatus,
-  Operator,
-  PreInspection,
-  Season,
-} from '../schema-types'
-import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
-import { useMutationData } from '../util/useMutationData'
+import { InitialPreInspectionInput, InspectionStatus, PreInspection } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { pickGraphqlData } from '../util/pickGraphqlData'
 import { FlexRow, MessageContainer, MessageView } from '../common/components/common'
+import { useStateValue } from '../state/useAppState'
+import { useMutationData } from '../util/useMutationData'
+import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const SelectPreInspectionView = styled.div``
 
@@ -75,8 +70,6 @@ export type PropTypes = {
   preInspections?: PreInspection[]
   refetchPreInspections: () => unknown
   loading?: boolean
-  operator: Operator | null
-  season: Season | null
   onSelect: (value: PreInspection | null) => unknown
   currentPreInspection: PreInspection | null
 }
@@ -90,7 +83,20 @@ export type PropTypes = {
  */
 
 const SelectPreInspection: React.FC<PropTypes> = observer(
-  ({ preInspections = [], refetchPreInspections, loading = false, operator, season, onSelect }) => {
+  ({ preInspections = [], refetchPreInspections, loading = false, onSelect }) => {
+    var [season] = useStateValue('globalSeason')
+    var [operator] = useStateValue('globalOperator')
+
+    // The highest version of
+    let maxVersion = useMemo(
+      () =>
+        preInspections.reduce(
+          (maxVersion, { version }) => (version > maxVersion ? version : maxVersion),
+          1
+        ),
+      [preInspections]
+    )
+
     let [createPreInspection, { loading: createLoading }] = useMutationData(
       createPreInspectionMutation
     )
@@ -156,7 +162,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
               <ListHeading>
                 {operator.operatorName} / {season.id}
               </ListHeading>
-              {(loading || createLoading) && <Loading size={25} inline={true} />}
+              {loading && <Loading size={25} inline={true} />}
               <Button
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
@@ -177,14 +183,17 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                     </ItemContent>
                   )}
                   <ButtonRow>
-                    <Button size={ButtonSize.MEDIUM} onClick={onCreatePreInspection}>
+                    <Button
+                      buttonStyle={ButtonStyle.NORMAL}
+                      size={ButtonSize.MEDIUM}
+                      onClick={onCreatePreInspection}>
                       Uusi ennakkotarkastus
                     </Button>
                   </ButtonRow>
                 </PreInspectionItem>
               )}
               {orderBy(preInspections, 'version', 'desc').map((preInspection) => (
-                <PreInspectionItem key={preInspection.id}>
+                <PreInspectionItem>
                   <ItemContent>
                     ID: {preInspection.id}
                     <br />
@@ -197,7 +206,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                     Status: {preInspection.status}
                   </ItemContent>
                   <ButtonRow>
-                    {preInspection.status === InspectionStatus.Draft && (
+                    {preInspection.status === InspectionStatus.Draft ? (
                       <>
                         <Button
                           buttonStyle={ButtonStyle.NORMAL}
@@ -214,15 +223,9 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           Poista
                         </Button>
                       </>
-                    )}
-                    {preInspection.status === InspectionStatus.InProduction && (
+                    ) : preInspection.status === InspectionStatus.InProduction ? (
                       <>
-                        {preInspection.version >=
-                          preInspections.reduce(
-                            (maxVersion, { version }) =>
-                              version > maxVersion ? version : maxVersion,
-                            1
-                          ) && (
+                        {preInspection.version >= maxVersion && (
                           <Button
                             buttonStyle={ButtonStyle.NORMAL}
                             size={ButtonSize.MEDIUM}
@@ -234,7 +237,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           Raportit
                         </Button>
                       </>
-                    )}
+                    ) : null}
                   </ButtonRow>
                 </PreInspectionItem>
               ))}

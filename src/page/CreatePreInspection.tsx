@@ -81,8 +81,6 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
               preInspections={preInspections}
               refetchPreInspections={refetch}
               loading={loading}
-              operator={operator}
-              season={season}
               onSelect={setCurrentPreInspection}
               currentPreInspection={currentPreInspection}
             />

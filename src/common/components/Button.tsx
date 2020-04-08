@@ -154,6 +154,11 @@ export const StyledButton = styled(DOMSafeButtonComponent)<StyledButtonProps>`
   &:hover {
     transform: ${({ disabled = false }) => (!disabled ? 'scale(1.02)' : 'scale(1)')};
   }
+
+  svg {
+    display: block;
+    margin-right: 0.75rem;
+  }
 `
 
 export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string }>`

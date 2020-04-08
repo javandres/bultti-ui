@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { ThemeTypes } from '../../type/common'
 import { LoadingDisplay } from './Loading'
 import { TabsWrapper } from './Tabs'
+import { Button, StyledButton } from './Button'
 
 export const Page = styled.div``
 
@@ -24,6 +25,10 @@ export const PageTitle = styled.h2`
     border-top: 1px solid white;
     margin-top: calc(-1.5rem - 1px);
   }
+
+  & > ${StyledButton} {
+    margin-left: auto;
+  }
 `
 
 export const Subtitle = styled.h3`
@@ -34,6 +39,7 @@ export const Subtitle = styled.h3`
 export const Heading = styled.h3`
   margin-bottom: 1rem;
   font-size: 1.5rem;
+  font-weight: normal;
 `
 
 export const ColumnWrapper = styled.div`
