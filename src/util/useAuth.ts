@@ -3,7 +3,7 @@ import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { navigate } from '@reach/router'
+import { useLocation, useNavigate } from '@reach/router'
 import { useLazyQueryData } from './useLazyQueryData'
 import { pickGraphqlData } from './pickGraphqlData'
 
@@ -14,6 +14,9 @@ export enum AuthState {
 }
 
 export const useAuth = (): [AuthState, boolean] => {
+  let location = useLocation()
+  let navigate = useNavigate()
+
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [user, setUser] = useStateValue('user')
 
@@ -33,7 +36,7 @@ export const useAuth = (): [AuthState, boolean] => {
 
   const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
     () =>
-      Array.from(new URL(window.location.href).searchParams.entries()).reduce(
+      Array.from(new URL(location.href).searchParams.entries()).reduce(
         (params, [key, value]) => {
           params[key] = value
           return params

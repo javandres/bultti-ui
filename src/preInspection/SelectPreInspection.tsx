@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { InitialPreInspectionInput, Operator, PreInspection, Season } from '../schema-types'
-import { createPreInspectionMutation, preInspectionQuery } from './preInspectionQueries'
+import {
+  createPreInspectionMutation,
+  preInspectionQuery,
+  preInspectionsByOperatorAndSeasonQuery,
+} from './preInspectionQueries'
 import { useMutationData } from '../util/useMutationData'
 import { PageLoading } from '../common/components/Loading'
 
@@ -35,7 +39,7 @@ export type PropTypes = {
 const SelectPreInspection: React.FC<PropTypes> = observer(
   ({ operator, season, onSelect, currentPreInspection }) => {
     let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
-      preInspectionQuery,
+      preInspectionsByOperatorAndSeasonQuery,
       {
         skip: !operator || !season,
         notifyOnNetworkStatusChange: true,
