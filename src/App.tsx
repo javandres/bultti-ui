@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Router, useLocation } from '@reach/router'
+import { Router } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import PreInspection from './page/PreInspection'

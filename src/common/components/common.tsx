@@ -12,13 +12,13 @@ export const PageSection = styled.div`
 
 export const PageTitle = styled.h2`
   border-bottom: 1px solid var(--lighter-grey);
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  padding-left: 1rem;
+  padding: 1rem;
   margin-bottom: 1.5rem;
   margin-left: 0;
   margin-top: 0;
   background: white;
+  display: flex;
+  align-items: center;
 
   & + ${TabsWrapper} {
     border-top: 1px solid white;

@@ -21,6 +21,8 @@ const UploadWrapper = styled.div<{ hasData?: boolean; isError?: boolean; isOk?: 
     p.isError ? 'var(--light-red)' : p.isOk ? 'var(--lighter-green)' : 'var(--white-grey)'};
   outline: none;
   transition: padding 0.2s ease-out;
+  display: flex;
+  align-items: center;
 `
 
 const LabelText = styled.span<{ disabled?: boolean }>`
@@ -169,7 +171,7 @@ const UploadFile: React.FC<PropTypes> = observer(
               {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
               {!state.loading && !disabled && (
                 <Button
-                  style={{ marginTop: '1rem', marginLeft: 'auto' }}
+                  style={{ marginLeft: 'auto' }}
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                   onClick={onReset}>
                   Tyhjennä

@@ -12,11 +12,7 @@ import {
 import { PageLoading } from '../common/components/Loading'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
-import {
-  preInspectionQuery,
-  publishPreInspectionMutation,
-  updatePreInspectionMutation,
-} from './preInspectionQueries'
+import { preInspectionQuery, updatePreInspectionMutation } from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
 import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
@@ -25,12 +21,14 @@ import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
 import { useQueryData } from '../util/useQueryData'
 import { PreInspectionContext } from './PreInspectionContext'
+import { useNavigate } from '@reach/router'
+import { ButtonStyle } from '../common/components/Button'
 
 const CreatePreInspectionFormView = styled.div`
   width: 100%;
 `
 
-type PreInspectionProps = TabChildProps
+type PreInspectionProps = {} & TabChildProps
 
 function isOperator(value: any): value is Operator {
   return typeof value?.operatorName !== 'undefined' && typeof value?.id === 'number'
@@ -41,6 +39,7 @@ function isSeason(value: any): value is Season {
 }
 
 const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
+  var navigate = useNavigate()
   var currentPreInspection = useContext(PreInspectionContext)
 
   var [season] = useStateValue('globalSeason')
@@ -50,10 +49,6 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
 
   let [updatePreInspection, { loading: updateLoading }] = useMutationData(
     updatePreInspectionMutation
-  )
-
-  let [publishPreInspection, { loading: publishLoading }] = useMutationData(
-    publishPreInspectionMutation
   )
 
   let { data: preInspection, loading: inspectionLoading, refetch } = useQueryData<PreInspection>(
@@ -73,9 +68,8 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
     }
   }, [refetch])
 
-  let isLoading = useMemo(() => inspectionLoading || updateLoading || publishLoading, [
+  let isLoading = useMemo(() => inspectionLoading || updateLoading, [
     inspectionLoading,
-    publishLoading,
     updateLoading,
   ])
 
@@ -146,15 +140,9 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
     .filter(([, status]) => !status)
     .map(([key]) => key)
 
-  let onPublish = useCallback(() => {
-    if(preInspection) {
-      publishPreInspection({
-        variables: {
-          preInspectionId: preInspection.id,
-        },
-      })
-    }
-  }, [publishPreInspection, preInspection])
+  let onMetaButtonAction = useCallback(() => {
+    navigate('create/preview')
+  }, [navigate])
 
   return (
     <CreatePreInspectionFormView>
@@ -169,7 +157,12 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
         <PageLoading />
       ) : (
         <>
-          <PreInspectionMeta isLoading={isLoading} onClickPublish={onPublish} />
+          <PreInspectionMeta
+            isLoading={isLoading}
+            buttonStyle={ButtonStyle.SECONDARY}
+            buttonAction={onMetaButtonAction}
+            buttonLabel="Esikatsele"
+          />
 
           <SectionHeading theme="light">Perustiedot</SectionHeading>
           <PreInspectionConfig onUpdateValue={createUpdateCallback} />

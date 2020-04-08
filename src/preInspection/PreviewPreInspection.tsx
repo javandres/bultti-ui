@@ -5,16 +5,24 @@ import { SectionHeading } from '../common/components/common'
 import { FormColumn, FormWrapper } from '../common/components/form'
 import ExecutionRequirements from '../executionRequirement/ExecutionRequirements'
 import { TabChildProps } from '../common/components/Tabs'
+import PreInspectionMeta from './PreInspectionMeta'
+import { ButtonStyle } from '../common/components/Button'
 
 const PreviewPreInspectionView = styled.div``
 
 export type PropTypes = {
-  children?: React.ReactNode
+  onPublish: () => unknown
 } & TabChildProps
 
-const PreviewPreInspection: React.FC<PropTypes> = observer(({ children }) => {
+const PreviewPreInspection: React.FC<PropTypes> = observer(({ onPublish }) => {
   return (
     <PreviewPreInspectionView>
+      <PreInspectionMeta
+        isLoading={false}
+        buttonStyle={ButtonStyle.NORMAL}
+        buttonAction={onPublish}
+        buttonLabel="Julkaise"
+      />
       <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
       <FormWrapper>
         <FormColumn width="100%" minWidth="510px">
