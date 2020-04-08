@@ -1,7 +1,6 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { useQueryData } from '../util/useQueryData'
 import {
   InitialPreInspectionInput,
   InspectionStatus,
@@ -9,17 +8,13 @@ import {
   PreInspection,
   Season,
 } from '../schema-types'
-import {
-  createPreInspectionMutation,
-  preInspectionsByOperatorAndSeasonQuery,
-  removePreInspectionMutation,
-} from './preInspectionQueries'
+import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
 import { useMutationData } from '../util/useMutationData'
-import { PageLoading } from '../common/components/Loading'
+import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import { MessageContainer, MessageView } from '../common/components/common'
+import { FlexRow, MessageContainer, MessageView } from '../common/components/common'
 
 const SelectPreInspectionView = styled.div``
 
@@ -60,6 +55,9 @@ const ButtonRow = styled.div`
 `
 
 export type PropTypes = {
+  preInspections?: PreInspection[]
+  refetchPreInspections: () => unknown
+  loading?: boolean
   operator: Operator | null
   season: Season | null
   onSelect: (value: PreInspection | null) => unknown
@@ -75,19 +73,7 @@ export type PropTypes = {
  */
 
 const SelectPreInspection: React.FC<PropTypes> = observer(
-  ({ operator, season, onSelect, currentPreInspection }) => {
-    let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
-      preInspectionsByOperatorAndSeasonQuery,
-      {
-        skip: !operator || !season,
-        notifyOnNetworkStatusChange: true,
-        variables: {
-          operatorId: operator?.id,
-          seasonId: season?.id,
-        },
-      }
-    )
-
+  ({ preInspections = [], refetchPreInspections, loading = false, operator, season, onSelect }) => {
     let [createPreInspection, { loading: createLoading }] = useMutationData(
       createPreInspectionMutation
     )
@@ -105,10 +91,10 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
             },
           })
 
-          await refetch()
+          await refetchPreInspections()
         }
       },
-      [removePreInspection, refetch]
+      [removePreInspection, refetchPreInspections]
     )
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
@@ -129,7 +115,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
           },
         })
 
-        await refetch()
+        await refetchPreInspections()
 
         let newPreInspection = pickGraphqlData(createResult.data)
 
@@ -139,83 +125,105 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
           console.error(createResult.errors)
         }
       }
-    }, [season, operator, createLoading, refetch, onSelect])
-
-    let preInspections = useMemo(() => preInspectionsData || [], [preInspectionsData])
+    }, [season, operator, createLoading, refetchPreInspections, onSelect])
 
     return (
       <SelectPreInspectionView>
-        {(loading || createLoading) && <PageLoading />}
         {!operator || !season ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
           </MessageContainer>
         ) : (
-          <PreInspectionItems>
-            {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-              <PreInspectionItem key="new">
-                <ItemContent style={{ marginTop: 0 }}>
-                  Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda uuden.
-                </ItemContent>
-                {preInspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
-                  <ItemContent>
-                    Uusi ennakkotarkastus korvaa nykyisen tuotannossa-olevan tarkastuksen.
+          <>
+            <FlexRow
+              style={{
+                margin: '-1rem 0 1rem',
+                padding: '0 1rem',
+                minHeight: '35px',
+              }}>
+              {(loading || createLoading) && <Loading size={25} inline={true} />}
+              <Button
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}
+                onClick={() => refetchPreInspections()}>
+                Päivitä
+              </Button>
+            </FlexRow>
+            <PreInspectionItems>
+              {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
+                <PreInspectionItem key="new">
+                  <ItemContent style={{ marginTop: 0 }}>
+                    Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda uuden.
                   </ItemContent>
-                )}
-                <ButtonRow>
-                  <Button
-                    size={ButtonSize.MEDIUM}
-                    onClick={onCreatePreInspection}>
-                    Uusi ennakkotarkastus
-                  </Button>
-                </ButtonRow>
-              </PreInspectionItem>
-            )}
-            {orderBy(preInspections, 'version').map((preInspection) => (
-              <PreInspectionItem key={preInspection.id}>
-                <ItemContent>
-                  ID: {preInspection.id}
-                  <br />
-                  Version: {preInspection.version}
-                  <br />
-                  Start date: {preInspection.startDate}
-                  <br />
-                  End date: {preInspection.endDate}
-                  <br />
-                  Status: {preInspection.status}
-                </ItemContent>
-                <ButtonRow>
-                  {preInspection.status === InspectionStatus.Draft && (
-                    <>
-                      <Button
-                        buttonStyle={ButtonStyle.NORMAL}
-                        size={ButtonSize.MEDIUM}
-                        onClick={() => onSelect(preInspection)}>
-                        Muokkaa
-                      </Button>
-                      <Button
-                        loading={removeLoading}
-                        buttonStyle={ButtonStyle.REMOVE}
-                        size={ButtonSize.MEDIUM}
-                        onClick={() => onRemove(preInspection)}>
-                        Poista
-                      </Button>
-                    </>
+                  {preInspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
+                    <ItemContent>
+                      Uusi ennakkotarkastus korvaa nykyisen tuotannossa-olevan tarkastuksen.
+                    </ItemContent>
                   )}
-                  {preInspection.status === InspectionStatus.InProduction && (
-                    <>
-                      <Button
-                        buttonStyle={ButtonStyle.NORMAL}
-                        size={ButtonSize.MEDIUM}
-                        onClick={onCreatePreInspection}>
-                        Korvaa
-                      </Button>
-                    </>
-                  )}
-                </ButtonRow>
-              </PreInspectionItem>
-            ))}
-          </PreInspectionItems>
+                  <ButtonRow>
+                    <Button size={ButtonSize.MEDIUM} onClick={onCreatePreInspection}>
+                      Uusi ennakkotarkastus
+                    </Button>
+                  </ButtonRow>
+                </PreInspectionItem>
+              )}
+              {orderBy(preInspections, 'version', 'desc').map((preInspection) => (
+                <PreInspectionItem key={preInspection.id}>
+                  <ItemContent>
+                    ID: {preInspection.id}
+                    <br />
+                    Version: {preInspection.version}
+                    <br />
+                    Start date: {preInspection.startDate}
+                    <br />
+                    End date: {preInspection.endDate}
+                    <br />
+                    Status: {preInspection.status}
+                  </ItemContent>
+                  <ButtonRow>
+                    {preInspection.status === InspectionStatus.Draft && (
+                      <>
+                        <Button
+                          buttonStyle={ButtonStyle.NORMAL}
+                          size={ButtonSize.MEDIUM}
+                          onClick={() => onSelect(preInspection)}>
+                          Muokkaa
+                        </Button>
+                        <Button
+                          loading={removeLoading}
+                          buttonStyle={ButtonStyle.REMOVE}
+                          size={ButtonSize.MEDIUM}
+                          onClick={() => onRemove(preInspection)}>
+                          Poista
+                        </Button>
+                      </>
+                    )}
+                    {preInspection.status === InspectionStatus.InProduction && (
+                      <>
+                        {preInspection.version >=
+                          preInspections.reduce(
+                            (maxVersion, { version }) =>
+                              version > maxVersion ? version : maxVersion,
+                            1
+                          ) && (
+                          <Button
+                            buttonStyle={ButtonStyle.NORMAL}
+                            size={ButtonSize.MEDIUM}
+                            onClick={onCreatePreInspection}>
+                            Korvaa
+                          </Button>
+                        )}
+                        <Button buttonStyle={ButtonStyle.NORMAL} size={ButtonSize.MEDIUM}>
+                          Raportit
+                        </Button>
+                      </>
+                    )}
+                  </ButtonRow>
+                </PreInspectionItem>
+              ))}
+            </PreInspectionItems>
+          </>
         )}
       </SelectPreInspectionView>
     )

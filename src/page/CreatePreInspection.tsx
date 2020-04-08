@@ -12,7 +12,11 @@ import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
-import { publishPreInspectionMutation } from '../preInspection/preInspectionQueries'
+import {
+  preInspectionsByOperatorAndSeasonQuery,
+  publishPreInspectionMutation,
+} from '../preInspection/preInspectionQueries'
+import { useQueryData } from '../util/useQueryData'
 
 const CreatePreInspectionView = styled(Page)``
 
@@ -24,11 +28,24 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
-  let onReset = useCallback(() => setCurrentPreInspection(null), [])
-
-  let [publishPreInspection] = useMutationData(
-    publishPreInspectionMutation
+  let { data: preInspections, loading, refetch } = useQueryData<PreInspection>(
+    preInspectionsByOperatorAndSeasonQuery,
+    {
+      skip: !operator || !season,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: operator?.id,
+        seasonId: season?.id,
+      },
+    }
   )
+
+  let onReset = useCallback(() => {
+    setCurrentPreInspection(null)
+    refetch()
+  }, [refetch])
+
+  let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
 
   let onPublish = useCallback(async () => {
     if (currentPreInspection) {
@@ -49,6 +66,8 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
           <>
             <PageTitle>Ennakkotarkastukset</PageTitle>
             <SelectPreInspection
+              preInspections={preInspections}
+              refetchPreInspections={refetch}
               operator={operator}
               season={season}
               onSelect={setCurrentPreInspection}
@@ -69,7 +88,12 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
             </PageTitle>
             <Tabs>
               <PreInspectionForm name="new" path="/" label="Luo" />
-              <PreviewPreInspection path="preview" name="preview" label="Esikatsele" onPublish={onPublish} />
+              <PreviewPreInspection
+                path="preview"
+                name="preview"
+                label="Esikatsele"
+                onPublish={onPublish}
+              />
             </Tabs>
           </>
         )}
