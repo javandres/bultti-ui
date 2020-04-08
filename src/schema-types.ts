@@ -386,7 +386,8 @@ export type Query = {
   operators: Array<Operator>;
   seasons: Array<Season>;
   preInspection?: Maybe<PreInspection>;
-  preInspectionsByOperatorAndSeason: Array<PreInspection>;
+  preInspectionsByOperator: Array<PreInspection>;
+  currentPreInspectionsByOperatorAndSeason: Array<PreInspection>;
   currentPreInspectionByOperatorAndSeason: PreInspection;
   allPreInspections: Array<PreInspection>;
   procurementUnit?: Maybe<ProcurementUnit>;
@@ -424,7 +425,12 @@ export type QueryPreInspectionArgs = {
 };
 
 
-export type QueryPreInspectionsByOperatorAndSeasonArgs = {
+export type QueryPreInspectionsByOperatorArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentPreInspectionsByOperatorAndSeasonArgs = {
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };

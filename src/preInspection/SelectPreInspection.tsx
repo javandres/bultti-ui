@@ -20,7 +20,20 @@ const SelectPreInspectionView = styled.div``
 
 const PreInspectionItems = styled.div`
   display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   padding: 0 0 0 1rem;
+`
+
+const HeaderRow = styled(FlexRow)`
+  margin: -1rem 0 1rem;
+  padding: 0 1rem;
+  min-height: 35px;
+  align-items: center;
+`
+
+const ListHeading = styled.h4`
+  margin: 0 1rem 0 0;
 `
 
 const PreInspectionItem = styled.div`
@@ -30,12 +43,12 @@ const PreInspectionItem = styled.div`
   background: white;
   border: 1px solid var(--blue);
   font-family: inherit;
+  margin-right: 1rem;
   text-align: left;
   line-height: 1.4;
-  width: 20rem;
-  margin-right: 1rem;
   display: flex;
   flex-direction: column;
+  flex: 0 0 calc(33.333% - 1rem);
 `
 
 const ItemContent = styled.div`
@@ -49,9 +62,13 @@ const ButtonRow = styled.div`
   border-top: 1px solid var(--lighter-grey);
   background: var(--white-grey);
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+
+  > * {
+    margin-right: 1rem;
+  }
 `
 
 export type PropTypes = {
@@ -135,12 +152,10 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
           </MessageContainer>
         ) : (
           <>
-            <FlexRow
-              style={{
-                margin: '-1rem 0 1rem',
-                padding: '0 1rem',
-                minHeight: '35px',
-              }}>
+            <HeaderRow>
+              <ListHeading>
+                {operator.operatorName} / {season.id}
+              </ListHeading>
               {(loading || createLoading) && <Loading size={25} inline={true} />}
               <Button
                 style={{ marginLeft: 'auto' }}
@@ -149,7 +164,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                 onClick={() => refetchPreInspections()}>
                 Päivitä
               </Button>
-            </FlexRow>
+            </HeaderRow>
             <PreInspectionItems>
               {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                 <PreInspectionItem key="new">
@@ -191,6 +206,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           Muokkaa
                         </Button>
                         <Button
+                          style={{ marginLeft: 'auto', marginRight: 0 }}
                           loading={removeLoading}
                           buttonStyle={ButtonStyle.REMOVE}
                           size={ButtonSize.MEDIUM}

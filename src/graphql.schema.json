@@ -131,7 +131,46 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspectionsByOperatorAndSeason",
+            "name": "preInspectionsByOperator",
+            "description": "",
+            "args": [
+              {
+                "name": "operatorId",
+                "description": "",
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "PreInspection",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "currentPreInspectionsByOperatorAndSeason",
             "description": "",
             "args": [
               {

@@ -180,6 +180,7 @@ type ProcurementUnitRoute {
 type Query {
   allPreInspections: [PreInspection!]!
   currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection!
+  currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
   currentUser: User
   departureBlock(departureBlockId: String!): DepartureBlock
   departureBlocksForPreInspection(preInspectionId: String!): [DepartureBlock!]!
@@ -193,7 +194,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
-  preInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
+  preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult

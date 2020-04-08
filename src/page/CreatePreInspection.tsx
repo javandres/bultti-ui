@@ -1,19 +1,19 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
-import PreInspectionForm from '../preInspection/PreInspectionForm'
+import EditPreInspection from '../preInspection/EditPreInspection'
 import { Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import { useStateValue } from '../state/useAppState'
-import { PreInspection } from '../schema-types'
+import { InspectionStatus, PreInspection } from '../schema-types'
 import PreviewPreInspection from '../preInspection/PreviewPreInspection'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import {
-  preInspectionsByOperatorAndSeasonQuery,
+  currentPreInspectionsByOperatorAndSeasonQuery,
   publishPreInspectionMutation,
 } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -29,7 +29,7 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
   var [operator] = useStateValue('globalOperator')
 
   let { data: preInspections, loading, refetch } = useQueryData<PreInspection>(
-    preInspectionsByOperatorAndSeasonQuery,
+    currentPreInspectionsByOperatorAndSeasonQuery,
     {
       skip: !operator || !season,
       notifyOnNetworkStatusChange: true,
@@ -59,15 +59,28 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
     }
   }, [publishPreInspection, currentPreInspection, onReset])
 
+  // If there is a draft, select it as the current pre-inspection.
+  // This immediately opens the pre-inspection edit view.
+  useEffect(() => {
+    if (preInspections && preInspections.length !== 0) {
+      let draft = preInspections.find((pi) => pi.status === InspectionStatus.Draft)
+
+      if (draft) {
+        setCurrentPreInspection(draft)
+      }
+    }
+  }, [preInspections])
+
   return (
     <CreatePreInspectionView>
       <PreInspectionContext.Provider value={currentPreInspection}>
         {!currentPreInspection ? (
           <>
-            <PageTitle>Ennakkotarkastukset</PageTitle>
+            <PageTitle>Valitse ennakkotarkastus muokattavaksi</PageTitle>
             <SelectPreInspection
               preInspections={preInspections}
               refetchPreInspections={refetch}
+              loading={loading}
               operator={operator}
               season={season}
               onSelect={setCurrentPreInspection}
@@ -87,7 +100,7 @@ const CreatePreInspection: React.FC<PropTypes> = observer(() => {
               </Button>
             </PageTitle>
             <Tabs>
-              <PreInspectionForm name="new" path="/" label="Luo" />
+              <EditPreInspection name="new" path="/" label="Luo" />
               <PreviewPreInspection
                 path="preview"
                 name="preview"

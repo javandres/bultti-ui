@@ -23,7 +23,7 @@ import { PreInspectionContext } from './PreInspectionContext'
 import { useNavigate } from '@reach/router'
 import { ButtonStyle } from '../common/components/Button'
 
-const CreatePreInspectionFormView = styled.div`
+const EditPreInspectionView = styled.div`
   width: 100%;
 `
 
@@ -37,7 +37,7 @@ function isSeason(value: any): value is Season {
   return typeof value?.season !== 'undefined' && typeof value?.startDate !== 'undefined'
 }
 
-const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
+const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
   var navigate = useNavigate()
   var currentPreInspection = useContext(PreInspectionContext)
 
@@ -144,7 +144,7 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
   }, [navigate])
 
   return (
-    <CreatePreInspectionFormView>
+    <EditPreInspectionView>
       {activeBlockers.length !== 0 && (
         <MessageContainer style={{ marginBottom: '1rem' }}>
           {activeBlockers.map((blockerName) => (
@@ -180,8 +180,8 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
           </TransparentFormWrapper>
         </>
       )}
-    </CreatePreInspectionFormView>
+    </EditPreInspectionView>
   )
 })
 
-export default PreInspectionForm
+export default EditPreInspection

@@ -40,9 +40,18 @@ export const preInspectionQuery = gql`
   ${preInspectionFragment}
 `
 
-export const preInspectionsByOperatorAndSeasonQuery = gql`
-  query preInspectionsByOperatorAndSeason($operatorId: Int!, $seasonId: String!) {
-    preInspectionsByOperatorAndSeason(operatorId: $operatorId, seasonId: $seasonId) {
+export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
+  query currentPreInspectionsByOperatorAndSeason($operatorId: Int!, $seasonId: String!) {
+    currentPreInspectionsByOperatorAndSeason(operatorId: $operatorId, seasonId: $seasonId) {
+      ...PreInspectionFragment
+    }
+  }
+  ${preInspectionFragment}
+`
+
+export const preInspectionsByOperatorQuery = gql`
+  query preInspectionsByOperator($operatorId: Int!) {
+    preInspectionsByOperator(operatorId: $operatorId) {
       ...PreInspectionFragment
     }
   }
