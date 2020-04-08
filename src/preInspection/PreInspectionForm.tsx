@@ -9,7 +9,6 @@ import {
   PreInspectionInput,
   Season,
 } from '../schema-types'
-import { PageLoading } from '../common/components/Loading'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
 import { preInspectionQuery, updatePreInspectionMutation } from './preInspectionQueries'
@@ -153,37 +152,32 @@ const PreInspectionForm: React.FC<PreInspectionProps> = observer(() => {
           ))}
         </MessageContainer>
       )}
-      {inspectionLoading ? (
-        <PageLoading />
-      ) : (
+
+      <PreInspectionMeta
+        isLoading={isLoading}
+        buttonStyle={ButtonStyle.SECONDARY}
+        buttonAction={onMetaButtonAction}
+        buttonLabel="Esikatsele"
+      />
+
+      <SectionHeading theme="light">Perustiedot</SectionHeading>
+      <PreInspectionConfig onUpdateValue={createUpdateCallback} />
+
+      {preInspection && (
         <>
-          <PreInspectionMeta
-            isLoading={isLoading}
-            buttonStyle={ButtonStyle.SECONDARY}
-            buttonAction={onMetaButtonAction}
-            buttonLabel="Esikatsele"
-          />
+          <SectionHeading theme="light">Lähtöketjut</SectionHeading>
+          <FormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <DepartureBlocks />
+            </FormColumn>
+          </FormWrapper>
 
-          <SectionHeading theme="light">Perustiedot</SectionHeading>
-          <PreInspectionConfig onUpdateValue={createUpdateCallback} />
-
-          {preInspection && (
-            <>
-              <SectionHeading theme="light">Lähtöketjut</SectionHeading>
-              <FormWrapper>
-                <FormColumn width="100%" minWidth="510px">
-                  <DepartureBlocks />
-                </FormColumn>
-              </FormWrapper>
-
-              <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-              <TransparentFormWrapper>
-                <FormColumn width="100%" minWidth="510px">
-                  <ProcurementUnits />
-                </FormColumn>
-              </TransparentFormWrapper>
-            </>
-          )}
+          <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
+          <TransparentFormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <ProcurementUnits />
+            </FormColumn>
+          </TransparentFormWrapper>
         </>
       )}
     </CreatePreInspectionFormView>

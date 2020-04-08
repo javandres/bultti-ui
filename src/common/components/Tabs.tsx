@@ -141,10 +141,9 @@ const Tabs: React.FC<PropTypes> = decorate(
       <TabsWrapper className={className}>
         <TabButtonsWrapper>
           {tabs.map((tabOption) => (
-            <Match path={getPathName(tabOption.path)}>
+            <Match key={`tab_link_${tabOption.name}`} path={getPathName(tabOption.path)}>
               {({ match }) => (
                 <TabButton
-                  key={`tab_link_${tabOption.name}`}
                   to={pathWithQuery(getPathName(tabOption.path), location)}
                   data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
                   selected={!!match}>

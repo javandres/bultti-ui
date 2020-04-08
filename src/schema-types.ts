@@ -6,7 +6,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  BulttiDateTime: any;
+  BulttiDate: any;
   DateTime: any;
   Upload: any;
 };
@@ -69,7 +69,7 @@ export type Equipment = {
   operator: Operator;
   model: Scalars['String'];
   registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDateTime']>;
+  registryDate?: Maybe<Scalars['BulttiDate']>;
   type: Scalars['String'];
   exteriorColor: Scalars['String'];
   emissionClass: Scalars['Int'];
@@ -91,8 +91,8 @@ export type EquipmentCatalogue = {
 };
 
 export type EquipmentCatalogueInput = {
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
 };
 
 export type EquipmentCatalogueQuota = {
@@ -104,8 +104,8 @@ export type EquipmentCatalogueQuota = {
   equipmentCatalogueId: Scalars['String'];
   equipment: Equipment;
   equipmentCatalogue: EquipmentCatalogue;
-  catalogueStartDate: Scalars['BulttiDateTime'];
-  catalogueEndDate: Scalars['BulttiDateTime'];
+  catalogueStartDate: Scalars['BulttiDate'];
+  catalogueEndDate: Scalars['BulttiDate'];
 };
 
 export type EquipmentCatalogueQuotaInput = {
@@ -121,7 +121,7 @@ export type EquipmentInput = {
   vehicleId?: Maybe<Scalars['String']>;
   model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDateTime']>;
+  registryDate?: Maybe<Scalars['BulttiDate']>;
   type?: Maybe<Scalars['String']>;
   exteriorColor?: Maybe<Scalars['String']>;
   emissionClass?: Maybe<Scalars['Int']>;
@@ -132,7 +132,7 @@ export type EquipmentSearchResult = {
   vehicleId: Scalars['String'];
   model: Scalars['String'];
   registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDateTime']>;
+  registryDate?: Maybe<Scalars['BulttiDate']>;
   type: Scalars['String'];
   exteriorColor: Scalars['String'];
   emissionClass: Scalars['Int'];
@@ -166,8 +166,8 @@ export type ExecutionRequirementValue = {
 export type InitialPreInspectionInput = {
   operatorId: Scalars['Int'];
   seasonId: Scalars['String'];
-  startDate?: Maybe<Scalars['BulttiDateTime']>;
-  endDate?: Maybe<Scalars['BulttiDateTime']>;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
 };
 
 export enum InspectionStatus {
@@ -312,8 +312,9 @@ export type Operator = {
 export type PreInspection = {
    __typename?: 'PreInspection';
   version: Scalars['Int'];
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  minStartDate?: Maybe<Scalars['BulttiDate']>;
   versionStackIdentifier?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   operatorId?: Maybe<Scalars['Int']>;
@@ -330,8 +331,8 @@ export type PreInspection = {
 export type PreInspectionInput = {
   operatorId?: Maybe<Scalars['Int']>;
   seasonId?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['BulttiDateTime']>;
-  endDate?: Maybe<Scalars['BulttiDateTime']>;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
 };
 
 export type ProcurementUnit = {
@@ -347,8 +348,8 @@ export type ProcurementUnit = {
   areaId: Scalars['Int'];
   area: OperatingArea;
   routes: Array<ProcurementUnitRoute>;
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
   departures: Array<Departure>;
 };
 
@@ -364,8 +365,8 @@ export type ProcurementUnitInput = {
   area: Scalars['Int'];
   weeklyMeters: Scalars['Float'];
   routes?: Maybe<Array<ProcurementUnitRouteInput>>;
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
 };
 
 export type ProcurementUnitRoute = {
@@ -414,7 +415,7 @@ export type QueryOperatorArgs = {
 
 
 export type QuerySeasonsArgs = {
-  date: Scalars['BulttiDateTime'];
+  date: Scalars['BulttiDate'];
 };
 
 
@@ -441,7 +442,7 @@ export type QueryProcurementUnitArgs = {
 
 
 export type QueryProcurementUnitsByOperatorArgs = {
-  date: Scalars['BulttiDateTime'];
+  date: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
 };
 
@@ -507,8 +508,8 @@ export type Season = {
    __typename?: 'Season';
   id: Scalars['ID'];
   season: Scalars['String'];
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
   preInspections: Array<PreInspection>;
 };
 
@@ -535,7 +536,8 @@ export enum UserRole {
 export type VersionedEntity = {
    __typename?: 'VersionedEntity';
   version: Scalars['Int'];
-  startDate: Scalars['BulttiDateTime'];
-  endDate: Scalars['BulttiDateTime'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  minStartDate?: Maybe<Scalars['BulttiDate']>;
   versionStackIdentifier?: Maybe<Scalars['String']>;
 };

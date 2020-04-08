@@ -23,7 +23,7 @@ export const ProcurementUnitFragment = gql`
 `
 
 export const procurementUnitsQuery = gql`
-  query procurementUnitsByOperator($operatorId: Int!, $startDate: BulttiDateTime!) {
+  query procurementUnitsByOperator($operatorId: Int!, $startDate: BulttiDate!) {
     procurementUnitsByOperator(operatorId: $operatorId, date: $startDate) {
       ...ProcurementUnitFragment
     }
