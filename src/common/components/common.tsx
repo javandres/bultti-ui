@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { ThemeTypes } from '../../type/common'
 import { LoadingDisplay } from './Loading'
 import { TabsWrapper } from './Tabs'
-import { Button, StyledButton } from './Button'
+import { StyledButton } from './Button'
 
 export const Page = styled.div``
 

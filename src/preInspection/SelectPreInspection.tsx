@@ -71,7 +71,6 @@ export type PropTypes = {
   refetchPreInspections: () => unknown
   loading?: boolean
   onSelect: (value: PreInspection | null) => unknown
-  currentPreInspection: PreInspection | null
 }
 
 /**
@@ -193,7 +192,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                 </PreInspectionItem>
               )}
               {orderBy(preInspections, 'version', 'desc').map((preInspection) => (
-                <PreInspectionItem>
+                <PreInspectionItem key={preInspection.id}>
                   <ItemContent>
                     ID: {preInspection.id}
                     <br />

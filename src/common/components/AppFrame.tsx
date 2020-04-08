@@ -18,9 +18,13 @@ const Sidebar = styled.div`
 
 const Main = styled.div`
   flex: 3 0 calc(100% - 27rem);
-  height: 100%;
+  min-height: 100%;
   overflow-y: scroll;
   background: #f5f5f5;
+  
+  > * {
+    min-height: 100%;
+  }
 `
 
 export type AppFrameProps = {

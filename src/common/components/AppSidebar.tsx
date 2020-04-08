@@ -160,7 +160,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Search fill="white" width="1rem" height="1rem" />
             <Text>nav.list.preinspection</Text>
           </NavLink>
-          <NavLink to="pre-inspection/create">
+          <NavLink to="pre-inspection/edit">
             <Plus fill="white" width="1rem" height="1rem" />
             <Text>nav.new.preinspection</Text>
           </NavLink>

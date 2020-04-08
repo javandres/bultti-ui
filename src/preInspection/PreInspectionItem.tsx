@@ -1,6 +1,8 @@
 import React from 'react'
 import styled from 'styled-components'
-import { PreInspection } from '../schema-types'
+import { InspectionStatus, PreInspection } from '../schema-types'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { useEditPreInspection } from './useEditPreInspection'
 
 const PreInspectionItemView = styled.div`
   padding: 0.75rem 1rem 0;
@@ -22,13 +24,31 @@ const ItemContent = styled.div`
   line-height: 1.4;
 `
 
+const ButtonRow = styled.div`
+  margin: auto -1rem 0;
+  padding: 0.75rem 1rem 0.75rem;
+  border-top: 1px solid var(--lighter-grey);
+  background: var(--white-grey);
+  display: flex;
+  align-items: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+
+  > * {
+    margin-right: 1rem;
+  }
+`
+
 export type InspectionItemProps = {
   preInspection: PreInspection
+  className?: string
 }
 
-const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection }) => {
+const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection, className }) => {
+  let editPreInspection = useEditPreInspection(preInspection.id)
+
   return (
-    <PreInspectionItemView>
+    <PreInspectionItemView className={className}>
       <ItemContent>
         ID: {preInspection.id}
         <br />
@@ -40,6 +60,16 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection }) => 
         <br />
         Status: {preInspection.status}
       </ItemContent>
+      <ButtonRow>
+        {preInspection.status === InspectionStatus.Draft && (
+          <Button
+            buttonStyle={ButtonStyle.NORMAL}
+            size={ButtonSize.MEDIUM}
+            onClick={editPreInspection}>
+            Muokkaa
+          </Button>
+        )}
+      </ButtonRow>
     </PreInspectionItemView>
   )
 }

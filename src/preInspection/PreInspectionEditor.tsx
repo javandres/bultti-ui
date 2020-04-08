@@ -2,23 +2,16 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'reac
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ErrorView, MessageContainer, SectionHeading } from '../common/components/common'
-import {
-  InspectionStatus,
-  Operator,
-  PreInspection,
-  PreInspectionInput,
-  Season,
-} from '../schema-types'
+import { InspectionStatus, Operator, PreInspectionInput, Season } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
-import { preInspectionQuery, updatePreInspectionMutation } from './preInspectionQueries'
+import { updatePreInspectionMutation } from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
 import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
 import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
-import { useQueryData } from '../util/useQueryData'
 import { PreInspectionContext } from './PreInspectionContext'
 import { useNavigate } from '@reach/router'
 import { ButtonStyle } from '../common/components/Button'
@@ -27,7 +20,10 @@ const EditPreInspectionView = styled.div`
   width: 100%;
 `
 
-type PreInspectionProps = {} & TabChildProps
+type PreInspectionProps = {
+  refetchData?: () => unknown
+  loading?: boolean
+} & TabChildProps
 
 function isOperator(value: any): value is Operator {
   return typeof value?.operatorName !== 'undefined' && typeof value?.id === 'number'
@@ -37,9 +33,9 @@ function isSeason(value: any): value is Season {
   return typeof value?.season !== 'undefined' && typeof value?.startDate !== 'undefined'
 }
 
-const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
+const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchData, loading }) => {
   var navigate = useNavigate()
-  var currentPreInspection = useContext(PreInspectionContext)
+  var preInspection = useContext(PreInspectionContext)
 
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
@@ -50,32 +46,18 @@ const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
     updatePreInspectionMutation
   )
 
-  let { data: preInspection, loading: inspectionLoading, refetch } = useQueryData<PreInspection>(
-    preInspectionQuery,
-    {
-      skip: !currentPreInspection,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        preInspectionId: currentPreInspection?.id,
-      },
-    }
-  )
-
   let onPreInspectionChange = useCallback(() => {
-    if (refetch) {
-      refetch()
+    if (refetchData) {
+      refetchData()
     }
-  }, [refetch])
+  }, [refetchData])
 
-  let isLoading = useMemo(() => inspectionLoading || updateLoading, [
-    inspectionLoading,
-    updateLoading,
-  ])
+  let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
   // Update the pre-inspection on changes
   var updatePreInspectionValue = useCallback(
     async (name: keyof PreInspectionInput, value: string | Operator | Season) => {
-      if (!isUpdating.current && preInspection && !inspectionLoading) {
+      if (!isUpdating.current && preInspection && !loading) {
         isUpdating.current = true
 
         var preInspectionInput: PreInspectionInput = {}
@@ -103,7 +85,7 @@ const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
         await onPreInspectionChange()
       }
     },
-    [isUpdating.current, preInspection, inspectionLoading, updatePreInspection]
+    [isUpdating.current, preInspection, loading, updatePreInspection]
   )
 
   let createUpdateCallback = useCallback(
@@ -140,8 +122,10 @@ const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
     .map(([key]) => key)
 
   let onMetaButtonAction = useCallback(() => {
-    navigate('create/preview')
-  }, [navigate])
+    if (preInspection) {
+      navigate(`edit/${preInspection.id}/preview`)
+    }
+  }, [navigate, preInspection])
 
   return (
     <EditPreInspectionView>
@@ -184,4 +168,4 @@ const EditPreInspection: React.FC<PreInspectionProps> = observer(() => {
   )
 })
 
-export default EditPreInspection
+export default PreInspectionEditor

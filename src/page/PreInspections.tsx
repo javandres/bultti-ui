@@ -32,20 +32,16 @@ const PreInspections: React.FC<PropTypes> = observer(() => {
   let preInspections =
     !!preInspectionsData && Array.isArray(preInspectionsData) ? preInspectionsData : []
 
-  console.log(preInspections)
-
   return (
     <Page>
       <PageTitle>
         Ennakkotarkastukset
-        <Button onClick={() => navigate('pre-inspection/create')}>
+        <Button onClick={() => navigate('pre-inspection/edit')}>
           <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
         </Button>
       </PageTitle>
       {preInspections.length !== 0 && (
-        <PageSection>
-          <PreInspectionsList preInspections={preInspections} onUpdate={refetch} />
-        </PageSection>
+        <PreInspectionsList preInspections={preInspections} onUpdate={refetch} />
       )}
     </Page>
   )
