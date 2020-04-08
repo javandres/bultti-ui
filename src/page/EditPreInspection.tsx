@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
-import { Page, PageTitle } from '../common/components/common'
+import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import { PreInspection } from '../schema-types'
@@ -16,6 +16,7 @@ import {
 } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useEditPreInspection } from '../preInspection/useEditPreInspection'
+import { useStateValue } from '../state/useAppState'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -24,6 +25,10 @@ export type PropTypes = {
 } & RouteComponentProps
 
 const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' }) => {
+  var [season] = useStateValue('globalSeason')
+  var [operator] = useStateValue('globalOperator')
+  var editPreInspection = useEditPreInspection()
+
   let { data: preInspection, loading: inspectionLoading, refetch } = useQueryData<PreInspection>(
     preInspectionQuery,
     {
@@ -46,11 +51,10 @@ const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' 
       })
 
       await refetch()
+      editPreInspection()
     },
-    [publishPreInspection, refetch]
+    [publishPreInspection, refetch, editPreInspection]
   )
-
-  let editPreInspection = useEditPreInspection()
 
   return (
     <EditPreInspectionView>
@@ -65,21 +69,27 @@ const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' 
             Peruuta
           </Button>
         </PageTitle>
-        <Tabs>
-          <PreInspectionEditor
-            name="new"
-            path="/"
-            label="Luo"
-            loading={inspectionLoading}
-            refetchData={refetch}
-          />
-          <PreviewPreInspection
-            path="preview"
-            name="preview"
-            label="Esikatsele"
-            publishPreInspection={onPublish}
-          />
-        </Tabs>
+        {!preInspection || !operator || !season ? (
+          <MessageContainer>
+            <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
+          </MessageContainer>
+        ) : (
+          <Tabs>
+            <PreInspectionEditor
+              name="new"
+              path="/"
+              label="Luo"
+              loading={inspectionLoading}
+              refetchData={refetch}
+            />
+            <PreviewPreInspection
+              path="preview"
+              name="preview"
+              label="Esikatsele"
+              publishPreInspection={onPublish}
+            />
+          </Tabs>
+        )}
       </PreInspectionContext.Provider>
     </EditPreInspectionView>
   )

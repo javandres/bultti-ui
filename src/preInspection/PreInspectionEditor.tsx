@@ -1,7 +1,12 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ErrorView, MessageContainer, SectionHeading } from '../common/components/common'
+import {
+  ErrorView,
+  MessageContainer,
+  MessageView,
+  SectionHeading,
+} from '../common/components/common'
 import { InspectionStatus, Operator, PreInspectionInput, Season } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
@@ -94,12 +99,12 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
   )
 
   useEffect(() => {
-    if (preInspection) {
-      if (!preInspection.operator || preInspection.operator.id !== operator.id) {
+    if (preInspection && operator && season) {
+      if (!preInspection?.operator || preInspection?.operator?.id !== operator.id) {
         updatePreInspectionValue('operatorId', operator)
       }
 
-      if (!preInspection.season || preInspection.season.id !== season.id) {
+      if (!preInspection?.season || preInspection?.season?.id !== season.id) {
         updatePreInspectionValue('seasonId', season)
       }
     }
@@ -123,7 +128,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
 
   let onMetaButtonAction = useCallback(() => {
     if (preInspection) {
-      navigate(`edit/${preInspection.id}/preview`)
+      navigate(`/pre-inspection/edit/${preInspection.id}/preview`)
     }
   }, [navigate, preInspection])
 
@@ -137,18 +142,18 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
         </MessageContainer>
       )}
 
-      <PreInspectionMeta
-        isLoading={isLoading}
-        buttonStyle={ButtonStyle.SECONDARY}
-        buttonAction={onMetaButtonAction}
-        buttonLabel="Esikatsele"
-      />
-
-      <SectionHeading theme="light">Perustiedot</SectionHeading>
-      <PreInspectionConfig onUpdateValue={createUpdateCallback} />
-
-      {preInspection && (
+      {!!preInspection && (
         <>
+          <PreInspectionMeta
+            isLoading={isLoading}
+            buttonStyle={ButtonStyle.SECONDARY}
+            buttonAction={onMetaButtonAction}
+            buttonLabel="Esikatsele"
+          />
+
+          <SectionHeading theme="light">Perustiedot</SectionHeading>
+          <PreInspectionConfig onUpdateValue={createUpdateCallback} />
+
           <SectionHeading theme="light">Lähtöketjut</SectionHeading>
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
