@@ -65,6 +65,7 @@ type EquipmentCatalogueQuota {
   equipmentId: String!
   id: ID!
   meterRequirement: Float!
+  offeredPercentageQuota: Float!
   percentageQuota: Float!
 }
 
@@ -281,7 +282,8 @@ input EquipmentCatalogueQuotaInput {
   equipmentCatalogueId: String!
   equipmentId: String!
   id: ID
-  percentageQuota: Float!
+  offeredPercentageQuota: Float
+  percentageQuota: Float
 }
 
 input EquipmentInput {
@@ -289,6 +291,7 @@ input EquipmentInput {
   exteriorColor: String
   meterRequirement: Float
   model: String
+  offeredPercentageQuota: Float
   percentageQuota: Float
   registryDate: BulttiDate
   registryNr: String

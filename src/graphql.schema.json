@@ -1909,6 +1909,22 @@
             "deprecationReason": null
           },
           {
+            "name": "offeredPercentageQuota",
+            "description": "",
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "percentageQuota",
             "description": "",
             "args": [],
@@ -4246,6 +4262,16 @@
         "fields": null,
         "inputFields": [
           {
+            "name": "offeredPercentageQuota",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "percentageQuota",
             "description": "",
             "type": {
@@ -5451,16 +5477,22 @@
             "defaultValue": null
           },
           {
+            "name": "offeredPercentageQuota",
+            "description": "",
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "percentageQuota",
             "description": "",
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
             },
             "defaultValue": null
           },

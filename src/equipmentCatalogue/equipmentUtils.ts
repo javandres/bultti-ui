@@ -4,9 +4,11 @@ import { groupBy, omit } from 'lodash'
 import { strval } from '../util/strval'
 import { round } from '../util/round'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
+import { getTotal } from '../util/getTotal'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
   percentageQuota: number
+  offeredPercentageQuota: number
   meterRequirement: number
   kilometerRequirement?: number
   amount: number
@@ -21,6 +23,7 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
   return (catalogue?.equipmentQuotas || []).map((quota) => ({
     ...quota.equipment,
     percentageQuota: quota.percentageQuota || 0,
+    offeredPercentageQuota: quota.offeredPercentageQuota || 0,
     meterRequirement: quota.meterRequirement || 0,
     kilometerRequirement: quota.meterRequirement / 1000,
     quotaId: quota.id,
@@ -38,15 +41,9 @@ export function groupedEquipment(
   )
 
   return Object.values(grouped).map((equipmentGroup) => {
-    let percentageQuota = equipmentGroup.reduce((total, item) => {
-      total += item?.percentageQuota || 0
-      return total
-    }, 0)
-
-    let meterRequirement = equipmentGroup.reduce((total, item) => {
-      total += item?.meterRequirement || 0
-      return total
-    }, 0)
+    let percentageQuota = getTotal(equipmentGroup, 'percentageQuota')
+    let offeredPercentageQuota = getTotal(equipmentGroup, 'offeredPercentageQuota')
+    let meterRequirement = getTotal(equipmentGroup, 'meterRequirement')
 
     let kilometerRequirement = meterRequirement / 1000
 
@@ -59,6 +56,7 @@ export function groupedEquipment(
       amount: equipmentGroup.length,
       age,
       percentageQuota,
+      offeredPercentageQuota,
       meterRequirement,
       kilometerRequirement,
     }

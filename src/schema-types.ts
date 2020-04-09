@@ -98,6 +98,7 @@ export type EquipmentCatalogueInput = {
 export type EquipmentCatalogueQuota = {
    __typename?: 'EquipmentCatalogueQuota';
   id: Scalars['ID'];
+  offeredPercentageQuota: Scalars['Float'];
   percentageQuota: Scalars['Float'];
   meterRequirement: Scalars['Float'];
   equipmentId: Scalars['String'];
@@ -110,12 +111,14 @@ export type EquipmentCatalogueQuota = {
 
 export type EquipmentCatalogueQuotaInput = {
   id?: Maybe<Scalars['ID']>;
-  percentageQuota: Scalars['Float'];
+  offeredPercentageQuota?: Maybe<Scalars['Float']>;
+  percentageQuota?: Maybe<Scalars['Float']>;
   equipmentId: Scalars['String'];
   equipmentCatalogueId: Scalars['String'];
 };
 
 export type EquipmentInput = {
+  offeredPercentageQuota?: Maybe<Scalars['Float']>;
   percentageQuota?: Maybe<Scalars['Float']>;
   meterRequirement?: Maybe<Scalars['Float']>;
   vehicleId?: Maybe<Scalars['String']>;

@@ -43,6 +43,8 @@ const getType = (key) => equipmentInputValues[key] || defaultGetVal
 const equipmentIsValid = (e: EquipmentInput): boolean =>
   !!(e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
+const editableValues = ['offeredPercentageQuota', 'percentageQuota']
+
 type PendingEquipment = { _exists: boolean } & EquipmentInput
 
 const EditEquipment: React.FC<PropTypes> = observer(
@@ -104,6 +106,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
         registryDate: initialValues?.registryDate || '',
         registryNr: initialValues?.registryNr || '',
         percentageQuota: 0,
+        offeredPercentageQuota: 0,
         _exists: initialValues?._exists || false,
       }
 
@@ -192,7 +195,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
               labels={equipmentColumnLabels}
               readOnly={
                 pendingEquipment._exists
-                  ? Object.keys(equipmentColumnLabels).filter((key) => key !== 'percentageQuota')
+                  ? Object.keys(equipmentColumnLabels).filter((key) => !editableValues.includes(key))
                   : false
               }
               onChange={onEquipmentInputChange}

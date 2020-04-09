@@ -18,6 +18,7 @@ export const createEquipmentCatalogueMutation = gql`
       equipmentQuotas {
         id
         percentageQuota
+        offeredPercentageQuota
         meterRequirement
         equipment {
           ...EquipmentFragment
@@ -48,6 +49,7 @@ export const removeAllEquipmentFromCatalogueMutation = gql`
       equipmentQuotas {
         id
         percentageQuota
+        offeredPercentageQuota
         meterRequirement
       }
     }

@@ -25,6 +25,7 @@ export const equipmentColumnLabels = {
   vehicleId: 'Kylkinumero',
   model: 'Malli',
   type: 'Tyyppi',
+  offeredPercentageQuota: 'Tarjottu osuus',
   percentageQuota: 'Osuus',
   meterRequirement: 'Metriosuus',
   emissionClass: 'Euroluokka',
@@ -37,6 +38,7 @@ export const groupedEquipmentColumnLabels = {
   type: 'Tyyppi',
   emissionClass: 'Euroluokka',
   registryDate: 'Rek.päivä',
+  offeredPercentageQuota: 'Tarjottu osuus',
   percentageQuota: 'Osuus',
   kilometerRequirement: 'Kilometriosuus',
   amount: 'Määrä',
@@ -50,7 +52,7 @@ type PendingEquipmentValue = {
   item: EquipmentWithQuota
 }
 
-const editableValues = ['percentageQuota', 'meterRequirement']
+const editableValues = ['offeredPercentageQuota', 'percentageQuota', 'meterRequirement']
 
 const CatalogueEquipment: React.FC<PropTypes> = observer(
   ({ equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
@@ -94,6 +96,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       const equipmentInput: EquipmentInput = {
         ...(pick(pendingValue.item, [
           'percentageQuota',
+          'offeredPercentageQuota',
           'meterRequirement',
           'vehicleId',
           'model',
@@ -143,6 +146,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
 
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
+        case 'offeredPercentageQuota':
         case 'percentageQuota':
           return round(val) + '%'
         case 'meterRequirement':
@@ -159,6 +163,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
     const renderColumnTotals = useCallback(
       (col) => {
         switch (col) {
+          case 'offeredPercentageQuota':
           case 'percentageQuota':
             return (
               round(
