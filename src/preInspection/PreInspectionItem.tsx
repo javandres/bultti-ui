@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { InspectionStatus, PreInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useEditPreInspection } from './useEditPreInspection'
+import { useNavigate } from '@reach/router'
 
 const PreInspectionItemView = styled.div`
   padding: 0.75rem 1rem 0;
@@ -46,6 +47,7 @@ export type InspectionItemProps = {
 
 const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection, className }) => {
   let editPreInspection = useEditPreInspection(preInspection.id)
+  let navigate = useNavigate()
 
   return (
     <PreInspectionItemView className={className}>
@@ -67,6 +69,14 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection, class
             size={ButtonSize.MEDIUM}
             onClick={editPreInspection}>
             Muokkaa
+          </Button>
+        )}
+        {preInspection.status === InspectionStatus.InProduction && (
+          <Button
+            buttonStyle={ButtonStyle.NORMAL}
+            size={ButtonSize.MEDIUM}
+            onClick={() => navigate('pre-inspection/reports')}>
+            Raportit
           </Button>
         )}
       </ButtonRow>
