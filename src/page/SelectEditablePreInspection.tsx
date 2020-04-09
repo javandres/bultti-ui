@@ -8,7 +8,7 @@ import { PreInspection } from '../schema-types'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
-import { useEditPreInspection } from '../preInspection/useEditPreInspection'
+import { useEditPreInspection } from '../preInspection/preInspectionUtils'
 
 const CreatePreInspectionView = styled(Page)``
 

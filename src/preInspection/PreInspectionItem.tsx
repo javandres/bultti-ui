@@ -2,15 +2,23 @@ import React from 'react'
 import styled from 'styled-components'
 import { InspectionStatus, PreInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { useEditPreInspection } from './useEditPreInspection'
 import { useNavigate } from '@reach/router'
+import { useEditPreInspection } from './preInspectionUtils'
 
-const PreInspectionItemView = styled.div`
+const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 1rem 0;
-  border-radius: 5px;
+  border-radius: 0.5rem;
   margin-bottom: 1rem;
   background: white;
-  border: 1px solid var(--blue);
+  border: 1px solid
+    ${(p) =>
+      p.status === InspectionStatus.InProduction && p.inEffect
+        ? 'var(--green)'
+        : p.status === InspectionStatus.InProduction
+        ? 'var(--blue)'
+        : 'var(--light-grey)'};
+  box-shadow: ${(p) =>
+    p.status === InspectionStatus.InProduction && p.inEffect ? '0 0 5px 0 var(--green)' : 'none'};
   font-family: inherit;
   margin-right: 1rem;
   text-align: left;
@@ -32,8 +40,8 @@ const ButtonRow = styled.div`
   background: var(--white-grey);
   display: flex;
   align-items: center;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
 
   > * {
     margin-right: 1rem;
@@ -42,15 +50,23 @@ const ButtonRow = styled.div`
 
 export type InspectionItemProps = {
   preInspection: PreInspection
+  isCurrentlyInEffect?: boolean
   className?: string
 }
 
-const PreInspectionItem: React.FC<InspectionItemProps> = ({ preInspection, className }) => {
+const PreInspectionItem: React.FC<InspectionItemProps> = ({
+  preInspection,
+  className,
+  isCurrentlyInEffect,
+}) => {
   let editPreInspection = useEditPreInspection(preInspection.id)
   let navigate = useNavigate()
 
   return (
-    <PreInspectionItemView className={className}>
+    <PreInspectionItemView
+      className={className}
+      status={preInspection.status}
+      inEffect={isCurrentlyInEffect}>
       <ItemContent>
         ID: {preInspection.id}
         <br />

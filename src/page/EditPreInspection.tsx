@@ -15,8 +15,8 @@ import {
   publishPreInspectionMutation,
 } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
-import { useEditPreInspection } from '../preInspection/useEditPreInspection'
 import { useStateValue } from '../state/useAppState'
+import { useEditPreInspection } from '../preInspection/preInspectionUtils'
 
 const EditPreInspectionView = styled(Page)``
 

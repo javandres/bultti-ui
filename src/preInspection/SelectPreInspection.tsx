@@ -1,15 +1,15 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InitialPreInspectionInput, InspectionStatus, PreInspection } from '../schema-types'
+import { InspectionStatus, PreInspection } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow, MessageContainer, MessageView } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import { useMutationData } from '../util/useMutationData'
-import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
-import { pickGraphqlData } from '../util/pickGraphqlData'
+import { removePreInspectionMutation } from './preInspectionQueries'
+import { useCreatePreInspection } from './preInspectionUtils'
 
 const SelectPreInspectionView = styled.div``
 
@@ -86,7 +86,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
 
-    // The highest version of
+    // The highest version among current pre-inspections
     let maxVersion = useMemo(
       () =>
         preInspections.reduce(
@@ -94,10 +94,6 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
           1
         ),
       [preInspections]
-    )
-
-    let [createPreInspection, { loading: createLoading }] = useMutationData(
-      createPreInspectionMutation
     )
 
     let [removePreInspection, { loading: removeLoading }] = useMutationData(
@@ -120,34 +116,17 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
     )
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
+    let createPreInspection = useCreatePreInspection(operator, season)
+
     let onCreatePreInspection = useCallback(async () => {
-      // A pre-inspection can be created when there is not one currently existing or loading
-      if (operator && season && !createLoading) {
-        // InitialPreInspectionInput requires operator and season ID.
-        let preInspectionInput: InitialPreInspectionInput = {
-          operatorId: operator.id,
-          seasonId: season.id,
-          startDate: season.startDate,
-          endDate: season.endDate,
-        }
+      let createdPreInspection = await createPreInspection()
 
-        let createResult = await createPreInspection({
-          variables: {
-            preInspectionInput,
-          },
-        })
-
-        await refetchPreInspections()
-
-        let newPreInspection = pickGraphqlData(createResult.data)
-
-        if (newPreInspection) {
-          onSelect(newPreInspection)
-        } else {
-          console.error(createResult.errors)
-        }
+      if (createdPreInspection) {
+        onSelect(createdPreInspection)
       }
-    }, [season, operator, createLoading, refetchPreInspections, onSelect])
+
+      await refetchPreInspections()
+    }, [createPreInspection, refetchPreInspections, onSelect])
 
     return (
       <SelectPreInspectionView>
