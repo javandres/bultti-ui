@@ -6,9 +6,9 @@ import { AnyFunction } from '../../type/common'
 import { DayPickerSingleDateController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
-import { format, isValid, parseISO } from 'date-fns'
 import '../style/reactDates.scss'
-import { DATE_FORMAT } from '../../constants'
+import { DATE_FORMAT_MOMENT } from '../../constants'
+import { isValid, parseISO } from 'date-fns'
 
 moment.locale('fi')
 
@@ -40,6 +40,7 @@ const DatePickerWrapper = styled.div<{ focused: boolean }>`
 
 export type PropTypes = {
   value: string
+  minDate?: string
   maxDate?: string
   onChange: AnyFunction
   label?: string
@@ -47,27 +48,47 @@ export type PropTypes = {
 }
 
 const SelectDate: React.FC<PropTypes> = observer(
-  ({ value = '', maxDate, onChange, label, name }) => {
+  ({ value = '', maxDate, minDate, onChange, label, name }) => {
     let [inputValue, setInputValue] = useState(value)
 
-    const applyInputValue = useCallback(() => {
-      if (inputValue !== value) {
-        let inputValueDate = parseISO(inputValue)
+    const minMoment = useMemo(() => (minDate ? moment(minDate, DATE_FORMAT_MOMENT) : false), [
+      minDate,
+    ])
+    const maxMoment = useMemo(() => (maxDate ? moment(maxDate, DATE_FORMAT_MOMENT) : false), [
+      maxDate,
+    ])
 
-        if (isValid(inputValueDate)) {
-          onChange(format(inputValueDate, DATE_FORMAT))
+    const getValidDate = useCallback(
+      (dateVal: Moment | Date | string): Moment | null => {
+        let momentVal = moment(dateVal)
+
+        if (!momentVal.isValid()) {
+          return !!value ? moment(value) : null
         }
-      }
-    }, [value, inputValue, onChange])
 
-    let currentValue = useMemo(() => {
-      if (inputValue === value) {
+        let validVal = momentVal.clone()
+
+        if (maxMoment && validVal.isSameOrAfter(maxMoment, 'day')) {
+          validVal = maxMoment.clone()
+        }
+
+        if (minMoment && validVal.isSameOrBefore(minMoment, 'day')) {
+          validVal = minMoment.clone()
+        }
+
+        return validVal
+      },
+      [maxMoment, minMoment]
+    )
+
+    let currentValue = useMemo((): string => {
+      if (inputValue === value || !isValid(parseISO(inputValue))) {
         return value
       }
 
-      let inputValueDate = parseISO(inputValue)
-      return !isValid(inputValueDate) ? value : inputValue
-    }, [inputValue, value])
+      let validInput = getValidDate(inputValue)
+      return validInput ? validInput.format(DATE_FORMAT_MOMENT) : value
+    }, [inputValue, value, getValidDate])
 
     const inputName = useMemo(
       () => name || label?.toLowerCase()?.replace(' ', '_') || 'unnamed_input',
@@ -75,29 +96,38 @@ const SelectDate: React.FC<PropTypes> = observer(
     )
 
     const valueMoment = useMemo(
-      () => (!currentValue ? moment() : moment(currentValue, 'YYYY-MM-DD')),
+      () => (!currentValue ? moment() : moment(currentValue, DATE_FORMAT_MOMENT)),
       [currentValue]
     )
 
-    const maxMoment = useMemo(() => (maxDate ? moment(maxDate, 'YYYY-MM-DD') : false), [maxDate])
-
     const [focused, setFocused] = useState<any>(false)
 
-    const onDateChanges = useCallback(
+    const applyInputValue = useCallback(() => {
+      if (inputValue !== value) {
+        let validDate = getValidDate(inputValue)?.format(DATE_FORMAT_MOMENT)
+
+        if (validDate) {
+          onChange(validDate)
+          setInputValue(validDate)
+          setFocused(false)
+        }
+      }
+    }, [value, inputValue, onChange, getValidDate])
+
+    const onDateChange = useCallback(
       (date) => {
         if (date) {
-          let dateStr = date.format('YYYY-MM-DD')
+          let validDate = getValidDate(date)
 
-          setInputValue(dateStr)
-          onChange(dateStr)
+          if (validDate) {
+            let validDateStr = validDate.format(DATE_FORMAT_MOMENT)
+
+            setInputValue(validDateStr)
+            onChange(validDateStr)
+          }
         }
       },
-      [onChange]
-    )
-
-    const dateIsBlocked = useCallback(
-      (dateVal: Moment) => (!maxMoment ? false : dateVal.isAfter(maxMoment)),
-      [maxMoment]
+      [onChange, getValidDate, maxMoment, minMoment]
     )
 
     const onOpenPicker = useCallback((value) => {
@@ -112,6 +142,21 @@ const SelectDate: React.FC<PropTypes> = observer(
         }
       },
       [focused, inputName]
+    )
+
+    let dateIsBlocked = useCallback(
+      (value: Moment) => {
+        if (maxMoment && value.isAfter(maxMoment)) {
+          return true
+        }
+
+        if (minMoment && value.isBefore(minMoment)) {
+          return true
+        }
+
+        return false
+      },
+      [minMoment, maxMoment]
     )
 
     return (
@@ -132,7 +177,7 @@ const SelectDate: React.FC<PropTypes> = observer(
           <DatePickerWrapper focused={focused}>
             <DayPickerSingleDateController
               date={valueMoment}
-              onDateChange={onDateChanges}
+              onDateChange={onDateChange}
               onOutsideClick={onClosePicker}
               focused={focused}
               onFocusChange={onOpenPicker}

@@ -15,10 +15,9 @@ const CreatePreInspectionView = styled(Page)``
 export type PropTypes = {} & RouteComponentProps
 
 const SelectEditablePreInspection: React.FC<PropTypes> = observer(() => {
-  let editPreInspection = useEditPreInspection()
-
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
+  var editPreInspection = useEditPreInspection()
 
   let { data: preInspections, loading, refetch } = useQueryData<PreInspection>(
     currentPreInspectionsByOperatorAndSeasonQuery,

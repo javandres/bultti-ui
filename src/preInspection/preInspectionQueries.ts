@@ -6,6 +6,7 @@ export const preInspectionFragment = gql`
     createdAt
     startDate
     endDate
+    minStartDate
     version
     operatorId
     status

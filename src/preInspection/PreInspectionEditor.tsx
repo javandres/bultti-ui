@@ -1,13 +1,8 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import {
-  ErrorView,
-  MessageContainer,
-  MessageView,
-  SectionHeading,
-} from '../common/components/common'
-import { InspectionStatus, Operator, PreInspectionInput, Season } from '../schema-types'
+import { SectionHeading } from '../common/components/common'
+import { Operator, PreInspectionInput, Season } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
 import { updatePreInspectionMutation } from './preInspectionQueries'
@@ -110,22 +105,6 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
     }
   }, [operator, season, preInspection])
 
-  // Validate that the form has each dependent piece of data.
-  let formCondition = useMemo(() => {
-    return {
-      preInspection: !!preInspection,
-      status: preInspection?.status === InspectionStatus.Draft,
-      operator: !!preInspection?.operator,
-      startDate: !!preInspection?.startDate,
-      season: !!preInspection?.season,
-    }
-  }, [preInspection])
-
-  // Validation issues that affect the form at this moment
-  let activeBlockers = Object.entries(formCondition)
-    .filter(([, status]) => !status)
-    .map(([key]) => key)
-
   let onMetaButtonAction = useCallback(() => {
     if (preInspection) {
       navigate(`/pre-inspection/edit/${preInspection.id}/preview`)
@@ -134,14 +113,6 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
 
   return (
     <EditPreInspectionView>
-      {activeBlockers.length !== 0 && (
-        <MessageContainer style={{ marginBottom: '1rem' }}>
-          {activeBlockers.map((blockerName) => (
-            <ErrorView key={blockerName}>{blockerName}</ErrorView>
-          ))}
-        </MessageContainer>
-      )}
-
       {!!preInspection && (
         <>
           <PreInspectionMeta

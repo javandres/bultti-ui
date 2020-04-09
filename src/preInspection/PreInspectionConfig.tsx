@@ -33,6 +33,8 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
               <SelectDate
                 name="production_start"
                 value={preInspection.startDate}
+                minDate={preInspection.minStartDate}
+                maxDate={preInspection.season.endDate}
                 onChange={onUpdateValue('startDate')}
                 label="Alku"
               />
