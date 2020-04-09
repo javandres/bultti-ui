@@ -9,7 +9,6 @@ import { Button } from '../common/components/Button'
 import { useQueryData } from '../util/useQueryData'
 import { preInspectionsByOperatorQuery } from '../preInspection/preInspectionQueries'
 import { PreInspection } from '../schema-types'
-import { PageLoading } from '../common/components/Loading'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -41,14 +40,17 @@ const PreInspections: React.FC<PropTypes> = observer(() => {
           <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
         </Button>
       </PageTitle>
-      {loading && <PageLoading />}
       {!operator ? (
         <MessageContainer>
           <MessageView>Valitse liikennöitsijä.</MessageView>
         </MessageContainer>
       ) : (
         preInspections.length !== 0 && (
-          <PreInspectionsList preInspections={preInspections} onUpdate={refetch} />
+          <PreInspectionsList
+            preInspections={preInspections}
+            loading={loading}
+            onUpdate={refetch}
+          />
         )
       )}
     </Page>

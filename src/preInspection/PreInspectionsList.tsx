@@ -1,20 +1,26 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { groupBy, orderBy } from 'lodash'
-import { Heading, MessageView } from '../common/components/common'
+import { FlexRow, Heading, MessageView } from '../common/components/common'
 import PreInspectionItem from './PreInspectionItem'
 import { InspectionStatus, PreInspection, Season } from '../schema-types'
 import { useCreatePreInspection, useEditPreInspection } from './preInspectionUtils'
 import { useStateValue } from '../state/useAppState'
-import { Button } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { DATE_FORMAT } from '../constants'
 import { format } from 'date-fns'
 import { isBetween } from '../util/isBetween'
+import Loading from '../common/components/Loading'
 
 const PreInspectionsListView = styled.div`
   min-height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
+`
+
+const HeaderRow = styled(FlexRow)`
+  margin: 1rem 0 2rem;
+  align-items: center;
 `
 
 const PreInspectionsWrapper = styled.div`
@@ -118,12 +124,13 @@ const TimelinePreInspectionItem = styled(PreInspectionItem)<{ isCurrentlyInEffec
 
 export type PropTypes = {
   preInspections: PreInspection[]
+  loading?: boolean
   onUpdate: () => unknown
 }
 
 let currentDate = format(new Date(), DATE_FORMAT)
 
-const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate }) => {
+const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loading = false }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
@@ -134,7 +141,6 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate }) =
 
   let editPreInspection = useEditPreInspection()
 
-  // Initialize the form by creating a pre-inspection on the server and getting the ID.
   let createPreInspection = useCreatePreInspection(operator, season)
 
   let onCreatePreInspection = useCallback(async () => {
@@ -159,11 +165,22 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate }) =
     [preInspections]
   )
 
-  console.log(currentSeason)
-
   return (
     <PreInspectionsListView>
-      <Heading>Liikennöitsijän ennakkotarkastukset</Heading>
+      <HeaderRow>
+        <Heading style={{ marginRight: '1rem', marginBottom: 0, marginTop: 0 }}>
+          Liikennöitsijän ennakkotarkastukset
+        </Heading>
+        {loading && <Loading size={25} inline={true} />}
+        <Button
+          style={{ marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={() => onUpdate()}>
+          Päivitä
+        </Button>
+      </HeaderRow>
+
       <PreInspectionsWrapper>
         {Object.entries(seasonGroups).map(([seasonId, preInspections]) => {
           let maxProductionVersion = preInspections.reduce(
@@ -200,6 +217,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate }) =
                     )}
                     <TimelinePreInspectionItem
                       preInspection={preInspection}
+                      onPreInspectionUpdated={onUpdate}
                       isCurrentlyInEffect={
                         preInspection.version === maxProductionVersion &&
                         preInspection.status === InspectionStatus.InProduction

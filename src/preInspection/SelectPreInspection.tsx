@@ -7,9 +7,7 @@ import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow, MessageContainer, MessageView } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
-import { useMutationData } from '../util/useMutationData'
-import { removePreInspectionMutation } from './preInspectionQueries'
-import { useCreatePreInspection } from './preInspectionUtils'
+import { useCreatePreInspection, useRemovePreInspection } from './preInspectionUtils'
 
 const SelectPreInspectionView = styled.div``
 
@@ -96,24 +94,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
       [preInspections]
     )
 
-    let [removePreInspection, { loading: removeLoading }] = useMutationData(
-      removePreInspectionMutation
-    )
-
-    let onRemove = useCallback(
-      async (preInspection) => {
-        if (preInspection) {
-          await removePreInspection({
-            variables: {
-              preInspectionId: preInspection.id,
-            },
-          })
-
-          await refetchPreInspections()
-        }
-      },
-      [removePreInspection, refetchPreInspections]
-    )
+    let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(refetchPreInspections)
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     let createPreInspection = useCreatePreInspection(operator, season)
@@ -197,7 +178,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           loading={removeLoading}
                           buttonStyle={ButtonStyle.REMOVE}
                           size={ButtonSize.MEDIUM}
-                          onClick={() => onRemove(preInspection)}>
+                          onClick={() => removePreInspection(preInspection)}>
                           Poista
                         </Button>
                       </>

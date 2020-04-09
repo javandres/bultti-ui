@@ -76,9 +76,9 @@ const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' 
         ) : (
           <Tabs>
             <PreInspectionEditor
-              name="new"
+              name="create"
               path="/"
-              label="Luo"
+              label="Muokkaa"
               loading={inspectionLoading}
               refetchData={refetch}
             />

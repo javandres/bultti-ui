@@ -52,6 +52,7 @@ export type PropTypes<ItemType = any> = {
   order?: string[]
   hideKeys?: string[]
   renderValue?: (key: string, val: any) => any
+  objectPaths?: { [key in keyof ItemType]: string }
   className?: string
   children?: React.ReactChild
   style?: CSSProperties
@@ -69,20 +70,37 @@ const ValueDisplay: React.FC<PropTypes> = observer(
     renderValue = defaultRenderValue,
     children,
     style,
+    objectPaths,
   }) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     return (
       <ValueDisplayView style={style} className={className}>
         {itemEntries.map(([key, val]) => {
-          if (typeof val === 'object') {
+          let displayValue = val
+
+          if (typeof val === 'object' && !!objectPaths && objectPaths[key]) {
+            let path = get(objectPaths, key)
+
+            if (!path) {
+              return null
+            }
+
+            displayValue = get(val, path)
+          }
+
+          if (
+            displayValue === null ||
+            typeof displayValue === 'undefined' ||
+            typeof displayValue === 'object'
+          ) {
             return null
           }
 
           return (
             <ValueWrapper key={key}>
               <ValueLabel>{get(labels, key, key)}</ValueLabel>
-              <ValueView>{renderValue(key, val)}</ValueView>
+              <ValueView>{renderValue(key, displayValue)}</ValueView>
             </ValueWrapper>
           )
         })}

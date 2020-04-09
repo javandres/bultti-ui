@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
-import { InitialPreInspectionInput } from '../schema-types'
+import { InitialPreInspectionInput, PreInspection } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
-import { createPreInspectionMutation } from './preInspectionQueries'
+import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
 import { useNavigate } from '@reach/router'
 
 export function useCreatePreInspection(operator, season) {
@@ -41,6 +41,29 @@ export function useCreatePreInspection(operator, season) {
   }, [season, operator, createLoading])
 }
 
+export function useRemovePreInspection(
+  afterRemove: () => unknown = () => {}
+): [(PreInspection?: PreInspection) => Promise<unknown>, { loading: boolean }] {
+  let [removePreInspection, { loading }] = useMutationData(removePreInspectionMutation)
+
+  let execRemove = useCallback(
+    async (preInspection?: PreInspection) => {
+      if (preInspection) {
+        await removePreInspection({
+          variables: {
+            preInspectionId: preInspection.id,
+          },
+        })
+
+        await afterRemove()
+      }
+    },
+    [removePreInspection, afterRemove]
+  )
+
+  return [execRemove, { loading }]
+}
+
 export function useEditPreInspection(preInspectionId = '') {
   let navigate = useNavigate()
 
@@ -54,6 +77,6 @@ export function useEditPreInspection(preInspectionId = '') {
         navigate(`/pre-inspection/edit/${useId}`)
       }
     },
-    [preInspectionId, navigate],
+    [preInspectionId, navigate]
   )
 }
