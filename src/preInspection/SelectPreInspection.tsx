@@ -94,7 +94,9 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
       [preInspections]
     )
 
-    let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(refetchPreInspections)
+    let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
+      refetchPreInspections
+    )
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     let createPreInspection = useCreatePreInspection(operator, season)
@@ -119,7 +121,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
           <>
             <HeaderRow>
               <ListHeading>
-                {operator.operatorName} / {season.id}
+                {operator.operatorName} / {typeof season === 'string' ? season : season?.id}
               </ListHeading>
               {loading && <Loading size={25} inline={true} />}
               <Button

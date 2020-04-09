@@ -37,9 +37,9 @@ export const UIStore = (state): UIActions => {
     setUrlValue('operator', value?.operatorId + '' || '')
   })
 
-  const setSeasonFilter = action((value: Season | null) => {
+  const setSeasonFilter = action((value: Season | string | null) => {
     state.globalSeason = value
-    setUrlValue('season', value?.id || '')
+    setUrlValue('season', typeof value === 'string' ? value : value?.id || '')
   })
 
   const onAppLoaded = action(() => {

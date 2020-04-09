@@ -11,34 +11,37 @@ export function useCreatePreInspection(operator, season) {
   )
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
-  return useCallback(async () => {
-    // A pre-inspection can be created when there is not one currently existing or loading
-    if (operator && season && !createLoading) {
-      // InitialPreInspectionInput requires operator and season ID.
-      let preInspectionInput: InitialPreInspectionInput = {
-        operatorId: operator.id,
-        seasonId: season.id,
-        startDate: season.startDate,
-        endDate: season.endDate,
+  return useCallback(
+    async (seasonId = season?.id) => {
+      // A pre-inspection can be created when there is not one currently existing or loading
+      if (operator && seasonId && !createLoading) {
+        // InitialPreInspectionInput requires operator and season ID.
+        let preInspectionInput: InitialPreInspectionInput = {
+          operatorId: operator.id,
+          seasonId,
+          startDate: season.startDate,
+          endDate: season.endDate,
+        }
+
+        let createResult = await createPreInspection({
+          variables: {
+            preInspectionInput,
+          },
+        })
+
+        let newPreInspection = pickGraphqlData(createResult.data)
+
+        if (newPreInspection) {
+          return newPreInspection
+        } else {
+          console.error(createResult.errors)
+        }
+
+        return null
       }
-
-      let createResult = await createPreInspection({
-        variables: {
-          preInspectionInput,
-        },
-      })
-
-      let newPreInspection = pickGraphqlData(createResult.data)
-
-      if (newPreInspection) {
-        return newPreInspection
-      } else {
-        console.error(createResult.errors)
-      }
-
-      return null
-    }
-  }, [season, operator, createLoading])
+    },
+    [season, operator, createLoading]
+  )
 }
 
 export function useRemovePreInspection(

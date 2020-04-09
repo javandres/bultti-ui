@@ -384,6 +384,7 @@ export type Query = {
    __typename?: 'Query';
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
+  season?: Maybe<Array<Season>>;
   seasons: Array<Season>;
   preInspection?: Maybe<PreInspection>;
   preInspectionsByOperator: Array<PreInspection>;
@@ -412,6 +413,11 @@ export type Query = {
 
 export type QueryOperatorArgs = {
   operatorId: Scalars['Int'];
+};
+
+
+export type QuerySeasonArgs = {
+  seasonId: Scalars['String'];
 };
 
 

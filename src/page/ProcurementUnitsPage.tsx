@@ -22,7 +22,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
   return (
     <ProcurementUnitsView>
       <PageTitle>Kilpailukohteet</PageTitle>
-      {!(globalOperator && globalSeason) ? (
+      {!(globalOperator && globalSeason && typeof globalSeason !== 'string') ? (
         <MessageContainer>
           <MessageView>Valitse liikennöitsijä ja aikautaulukausi.</MessageView>
         </MessageContainer>

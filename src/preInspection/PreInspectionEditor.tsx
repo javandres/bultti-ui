@@ -99,8 +99,10 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
         updatePreInspectionValue('operatorId', operator)
       }
 
-      if (!preInspection?.season || preInspection?.season?.id !== season.id) {
-        updatePreInspectionValue('seasonId', season)
+      let seasonId = typeof season === 'string' ? season : season?.id
+
+      if (!preInspection?.season || preInspection?.season?.id !== seasonId) {
+        updatePreInspectionValue('seasonId', season) // Works with a string season
       }
     }
   }, [operator, season, preInspection])

@@ -12,7 +12,7 @@ export type PropTypes = {
   label?: string | null
   className?: string
   theme?: 'light' | 'dark'
-  value: null | Season
+  value: null | Season | string
   onSelect: (season: null | Season) => void
   selectInitialId?: string
 }
@@ -20,6 +20,9 @@ export type PropTypes = {
 const currentDate = new Date()
 
 const UNSELECTED_VAL = '...'
+
+const valueIsSeason = (value: null | Season | string): value is Season =>
+  !!value && typeof value !== 'string' && typeof value?.id !== 'undefined'
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
@@ -49,7 +52,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
         seasonsList.unshift(unselectedSeason)
       }
 
-      if (value && !seasonsList.find((s) => s?.id === value?.id)) {
+      if (valueIsSeason(value) && !seasonsList.find((s) => s?.id === value?.id)) {
         seasonsList.push(value)
       }
 
@@ -71,17 +74,26 @@ const SelectSeason: React.FC<PropTypes> = observer(
 
     // Auto-select the first season if there is only one.
     useEffect(() => {
-      let initialSeason = seasons.find((s) => s.id === selectInitialId)
+      let initialSeasonId = selectInitialId || typeof value === 'string' ? value : ''
+      let initialSeason = seasons.find((s) => s.id === initialSeasonId)
 
-      if (!value && initialSeason) {
+      // If no value or if we got a string value
+      if ((!value || typeof value === 'string') && initialSeason) {
         onSelect(initialSeason)
       }
+
       if (!value && !initialSeason && seasons.length !== 0) {
         onSelect(seasons.find((season) => season.id !== UNSELECTED_VAL) || null)
       }
     }, [value, seasons, onSelect, selectInitialId])
 
-    const currentSeason = useMemo(() => value || seasons[0], [seasons, value])
+    const currentSeason = useMemo(() => {
+      if (!!value && typeof value === 'string') {
+        return seasons.find((s) => s.id === value)
+      }
+
+      return value || seasons[0]
+    }, [seasons, value])
 
     return (
       <Dropdown

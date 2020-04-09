@@ -131,7 +131,7 @@ export type PropTypes = {
 let currentDate = format(new Date(), DATE_FORMAT)
 
 const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loading = false }) => {
-  var [season] = useStateValue('globalSeason')
+  var [season, setSeason] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
   const seasonGroups = groupBy(
@@ -140,18 +140,21 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
   )
 
   let editPreInspection = useEditPreInspection()
-
   let createPreInspection = useCreatePreInspection(operator, season)
 
-  let onCreatePreInspection = useCallback(async () => {
-    let createdPreInspection = await createPreInspection()
+  let onCreatePreInspection = useCallback(
+    async (seasonId) => {
+      setSeason(seasonId)
+      let createdPreInspection = await createPreInspection(seasonId)
 
-    if (createdPreInspection) {
-      editPreInspection(createdPreInspection.id)
-    } else {
-      onUpdate()
-    }
-  }, [createPreInspection, editPreInspection, onUpdate])
+      if (createdPreInspection) {
+        editPreInspection(createdPreInspection.id)
+      } else {
+        onUpdate()
+      }
+    },
+    [createPreInspection, editPreInspection, onUpdate, setSeason]
+  )
 
   let currentSeason = useMemo(
     () =>
@@ -200,7 +203,9 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
                     Tällä kaudella ei ole tuotannossa-olevaa ennakkotarkastusta.
                   </TimelineMessage>
                   <TimelineActions>
-                    <Button onClick={onCreatePreInspection}>Luo uusi ennakkotarkastus</Button>
+                    <Button onClick={() => onCreatePreInspection(seasonId)}>
+                      Luo uusi ennakkotarkastus
+                    </Button>
                   </TimelineActions>
                 </>
               )}

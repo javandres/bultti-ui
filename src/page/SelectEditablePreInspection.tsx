@@ -26,7 +26,7 @@ const SelectEditablePreInspection: React.FC<PropTypes> = observer(() => {
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: operator?.id,
-        seasonId: season?.id,
+        seasonId: typeof season === 'string' ? season : season?.id,
       },
     }
   )

@@ -5,7 +5,7 @@ import { Operator, Season, User } from '../schema-types'
 export interface IAppState {
   user?: User
   globalOperator?: Operator | null
-  globalSeason?: Season | null
+  globalSeason?: Season | string | null
   language?: Language
 }
 
@@ -17,7 +17,7 @@ export interface UserActions extends FunctionMap {
 
 export interface UIActions extends FunctionMap {
   globalOperator: (operator: Operator | null) => void
-  globalSeason: (season: Season | null) => void
+  globalSeason: (season: Season | string | null) => void
   appLoaded: () => void
   language: (setTo: Language) => void
 }
