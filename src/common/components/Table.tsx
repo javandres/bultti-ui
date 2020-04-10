@@ -149,12 +149,18 @@ export type PropTypes<ItemType = any> = {
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
-  onEditValue?: (key: string, value: string | number, item?: ItemType) => void
+  onEditValue?: (key: string, value: string | number, item?: ItemType) => unknown
   editValue?: null | { key: string; value: string | number; item: ItemType }
-  onCancelEdit?: () => void
-  onSaveEdit?: () => void
+  onCancelEdit?: () => unknown
+  onSaveEdit?: () => unknown
   editableValues?: string[]
-  renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
+  renderInput?: (
+    key: string,
+    val: any,
+    onChange: (val: any) => void,
+    onAccept?: () => unknown,
+    onCancel?: () => unknown
+  ) => React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -281,7 +287,13 @@ const Table: React.FC<PropTypes> = observer(
                     {onEditValue && editValue && isEditingRow && editValue.key === key ? (
                       <>
                         <EditInputWrapper>
-                          {renderInput(key, editValue.value, onValueChange(key))}
+                          {renderInput(
+                            key,
+                            editValue.value,
+                            onValueChange(key),
+                            onSaveEdit,
+                            onCancelEdit
+                          )}
                           <EditButtonsWrapper>
                             <CancelButton onClick={onCancelEdit}>
                               <CrossThick fill="white" width="0.5rem" height="0.5rem" />

@@ -25,12 +25,26 @@ export type PropTypes = {
   offeredEditable: boolean
 }
 
-export const renderEquipmentInput = (key: string, val: any, onChange) => {
+export const renderEquipmentInput = (
+  key: string,
+  val: any,
+  onChange: (value: any, key: string) => unknown,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown
+) => {
   if (['id'].includes(key)) {
     return <FieldValueDisplay>{val}</FieldValueDisplay>
   }
 
-  return <EquipmentFormInput value={val} valueName={key} onChange={onChange} />
+  return (
+    <EquipmentFormInput
+      value={val}
+      valueName={key}
+      onChange={onChange}
+      onAccept={onAccept}
+      onCancel={onCancel}
+    />
+  )
 }
 
 const equipmentInputValues = {

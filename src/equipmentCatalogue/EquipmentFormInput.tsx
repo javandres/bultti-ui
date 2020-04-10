@@ -2,10 +2,10 @@ import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { CellContent } from '../common/components/Table'
 import styled from 'styled-components'
-import { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
+import { TextInput } from '../common/input/Input'
 
 export const FormInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
@@ -36,7 +36,9 @@ type ValueType = string | number
 export type PropTypes = {
   value: ValueType
   valueName: string
-  onChange: (value: ValueType, key: string) => void
+  onChange: (value: ValueType, key: string) => unknown
+  onAccept?: () => unknown
+  onCancel?: () => unknown
 }
 
 type SelectValue = {
@@ -70,82 +72,100 @@ const typeValues: SelectValue[] = [
 const numericTypes = ['offeredPercentageQuota', 'percentageQuota', 'meterRequirement']
 const dateValues = ['registryDate']
 
-const EquipmentFormInput: React.FC<PropTypes> = observer(({ value, valueName, onChange }) => {
-  const isDisabled = valueName === 'id'
-  const valueIsNumeric = numericTypes.includes(valueName)
+const EquipmentFormInput: React.FC<PropTypes> = observer(
+  ({ value, valueName, onChange, onAccept, onCancel }) => {
+    const isDisabled = valueName === 'id'
+    const valueIsNumeric = numericTypes.includes(valueName)
 
-  const onChangeValue = useCallback(
-    (e) => {
-      let nextValue = e.target.value
+    const onChangeValue = useCallback(
+      (e) => {
+        let nextValue = e.target.value
 
-      if (valueIsNumeric) {
-        let floatVal = parseFloat(nextValue)
-        nextValue = !nextValue || isNaN(floatVal) ? '' : floatVal
-      }
-
-      onChange(nextValue, valueName)
-    },
-    [onChange, valueIsNumeric]
-  )
-
-  const onSelectValue = useCallback(
-    (selectedValue) => {
-      onChange(get(selectedValue, 'name', selectedValue), valueName)
-    },
-    [onChange]
-  )
-
-  const dropdownProps = useMemo(
-    () => ({
-      theme: 'light',
-      onSelect: onSelectValue,
-      itemToString: 'name',
-      itemToLabel: 'label',
-    }),
-    [onSelectValue]
-  )
-
-  if (isDisabled) {
-    return <CellContent>{value}</CellContent>
-  }
-
-  if (valueName === 'emissionClass') {
-    return (
-      <FormDropdown
-        {...dropdownProps}
-        items={emissionClassValues}
-        selectedItem={
-          emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
+        if (valueIsNumeric) {
+          let floatVal = parseFloat(nextValue)
+          nextValue = !nextValue || isNaN(floatVal) ? '' : floatVal
         }
+
+        onChange(nextValue, valueName)
+      },
+      [onChange, valueIsNumeric, valueName]
+    )
+
+    const onSelectValue = useCallback(
+      (selectedValue) => {
+        onChange(get(selectedValue, 'name', selectedValue), valueName)
+      },
+      [onChange, valueName]
+    )
+
+    const onKeyPress = useCallback(
+      (e) => {
+        switch (e.key) {
+          case 'Enter':
+            onAccept && onAccept()
+            break
+          case 'Esc':
+          case 'Escape':
+            onCancel && onCancel()
+            break
+        }
+      },
+      [onChangeValue, onAccept, onCancel]
+    )
+
+    const dropdownProps = useMemo(
+      () => ({
+        theme: 'light',
+        onSelect: onSelectValue,
+        itemToString: 'name',
+        itemToLabel: 'label',
+      }),
+      [onSelectValue]
+    )
+
+    if (isDisabled) {
+      return <CellContent>{value}</CellContent>
+    }
+
+    if (valueName === 'emissionClass') {
+      return (
+        <FormDropdown
+          {...dropdownProps}
+          items={emissionClassValues}
+          selectedItem={
+            emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
+          }
+        />
+      )
+    }
+
+    if (valueName === 'type') {
+      return (
+        <FormDropdown
+          {...dropdownProps}
+          items={typeValues}
+          selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
+        />
+      )
+    }
+
+    if (dateValues.includes(valueName)) {
+      return (
+        <SelectDate onChange={onSelectValue} value={value as string} label="" name="registryDate" />
+      )
+    }
+
+    return (
+      <FormInput
+        type={valueIsNumeric ? 'number' : 'text'}
+        step={valueIsNumeric ? 0.01 : 1}
+        value={value}
+        onChange={onChangeValue}
+        name={valueName}
+        onKeyDown={onKeyPress}
       />
     )
   }
-
-  if (valueName === 'type') {
-    return (
-      <FormDropdown
-        {...dropdownProps}
-        items={typeValues}
-        selectedItem={typeValues.find(({ name }) => name === value) || typeValues[0]}
-      />
-    )
-  }
-
-  if (dateValues.includes(valueName)) {
-    return (
-      <SelectDate onChange={onSelectValue} value={value as string} label="" name="registryDate" />
-    )
-  }
-
-  return (
-    <FormInput
-      type={valueIsNumeric ? 'number' : 'text'}
-      step={valueIsNumeric ? 0.01 : 1}
-      value={value}
-      onChange={onChangeValue}
-      name={valueName}
-    />
-  )
-})
+)
 
 export default EquipmentFormInput
