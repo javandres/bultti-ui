@@ -28,6 +28,7 @@ export type PropTypes = {
   catalogue?: EquipmentCatalogueType
   operatorId: number
   onCatalogueChanged: () => Promise<void>
+  editable: boolean
 }
 
 export type EquipmentWithQuota = Equipment & {
@@ -49,7 +50,7 @@ enum CatalogueEditMode {
 }
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ procurementUnitId, catalogue, startDate, operatorId, onCatalogueChanged }) => {
+  ({ editable, procurementUnitId, catalogue, startDate, operatorId, onCatalogueChanged }) => {
     const catalogueEditMode = useRef<CatalogueEditMode>(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
@@ -62,16 +63,20 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
 
     const addDraftCatalogue = useCallback(() => {
+      if (!editable) {
+        return
+      }
+
       catalogueEditMode.current = CatalogueEditMode.CREATE
 
       setPendingCatalogue({
         startDate: preInspection?.startDate,
         endDate: preInspection?.endDate,
       })
-    }, [preInspection])
+    }, [preInspection, editable])
 
     const editCurrentCatalogue = useCallback(() => {
-      if (!catalogue) {
+      if (!editable || !catalogue) {
         return
       }
 
@@ -81,7 +86,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         startDate: catalogue.startDate,
         endDate: catalogue.endDate,
       })
-    }, [catalogue])
+    }, [catalogue, editable])
 
     const onChangeCatalogue = useCallback((key: string, nextValue) => {
       setPendingCatalogue((currentPending) =>
@@ -90,7 +95,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [])
 
     const onSaveEquipmentCatalogue = useCallback(async () => {
-      if (!pendingCatalogue) {
+      if (!editable || !pendingCatalogue) {
         return
       }
 
@@ -114,7 +119,14 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       }
 
       await onCatalogueChanged()
-    }, [operatorId, procurementUnitId, catalogue, pendingCatalogue, catalogueEditMode.current])
+    }, [
+      operatorId,
+      procurementUnitId,
+      catalogue,
+      pendingCatalogue,
+      catalogueEditMode.current,
+      editable,
+    ])
 
     const onCancelPendingEquipmentCatalogue = useCallback(() => {
       setPendingCatalogue(null)
@@ -132,12 +144,14 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       <EquipmentCatalogueView>
         {catalogue && !pendingCatalogue && (
           <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
-            <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
-              Muokkaa
-            </Button>
+            {editable && (
+              <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
+                Muokkaa
+              </Button>
+            )}
           </ValueDisplay>
         )}
-        {pendingCatalogue && (
+        {editable && pendingCatalogue && (
           <ItemForm
             item={pendingCatalogue}
             onChange={onChangeCatalogue}
@@ -155,7 +169,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         {!catalogue && !pendingCatalogue && (
           <>
             <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
-            <Button onClick={addDraftCatalogue}>Luo kalustoluettelo</Button>
+            {editable && <Button onClick={addDraftCatalogue}>Luo kalustoluettelo</Button>}
           </>
         )}
         {catalogue && (
@@ -165,6 +179,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             equipment={equipment}
             startDate={startDate}
             onEquipmentChanged={onCatalogueChanged}
+            offeredEditable={editable}
           />
         )}
       </EquipmentCatalogueView>

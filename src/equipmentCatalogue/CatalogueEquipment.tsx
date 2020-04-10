@@ -12,6 +12,7 @@ import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
 import { orderBy, pick } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
+import { getTotal } from '../util/getTotal'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -19,6 +20,7 @@ export type PropTypes = {
   operatorId: number
   startDate: Date
   onEquipmentChanged: () => Promise<void>
+  offeredEditable: boolean
 }
 
 export const equipmentColumnLabels = {
@@ -52,14 +54,18 @@ type PendingEquipmentValue = {
   item: EquipmentWithQuota
 }
 
-const editableValues = ['offeredPercentageQuota', 'percentageQuota', 'meterRequirement']
-
 const CatalogueEquipment: React.FC<PropTypes> = observer(
-  ({ equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
+  ({ offeredEditable, equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
     let [updateEquipment] = useMutationData(updateEquipmentMutation)
+
+    let editableValues = useMemo(
+      () =>
+        offeredEditable ? ['offeredPercentageQuota'] : ['percentageQuota', 'meterRequirement'],
+      [offeredEditable]
+    )
 
     const onEditValue = useCallback(
       (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
@@ -79,7 +85,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
           return currentValue
         })
       },
-      [groupEquipment]
+      [groupEquipment, editableValues]
     )
 
     const onCancelPendingValue = useCallback(() => {
@@ -120,9 +126,28 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       await onEquipmentChanged()
     }, [updateEquipment, pendingValue, onEquipmentChanged])
 
+    let canRemoveEquipment = useCallback(
+      (item: EquipmentWithQuota) => {
+        // The item can be removed when offeredEditable is true, which means that the
+        // offered equipment is editable. When it is false, only equipment which
+        // has been added on top of the offered equipment can be removed.
+
+        if (offeredEditable) {
+          return true
+        }
+
+        // When the offered percentage is 0, the equipment was not part of the initial
+        // offer from the operator and has been added to this procurement unit separately.
+        return item.offeredPercentageQuota === 0
+      },
+      [offeredEditable]
+    )
+
     const onRemoveEquipment = useCallback(
-      async (item) => {
-        if (!item || !item.id) {
+      async (item: EquipmentWithQuota) => {
+        let canRemove = canRemoveEquipment(item)
+
+        if (!canRemove || !item || !item.id) {
           return
         }
 
@@ -132,7 +157,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
 
         await onEquipmentChanged()
       },
-      [onEquipmentChanged, removeEquipment]
+      [onEquipmentChanged, removeEquipment, canRemoveEquipment]
     )
 
     const onToggleEquipmentGrouped = useCallback((checked: boolean) => {
@@ -164,40 +189,15 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       (col) => {
         switch (col) {
           case 'offeredPercentageQuota':
+            return round(getTotal(equipment, 'offeredPercentageQuota')) + '%'
           case 'percentageQuota':
-            return (
-              round(
-                equipment.reduce((total, item) => {
-                  total += item?.percentageQuota || 0
-                  return total
-                }, 0)
-              ) + '%'
-            )
+            return round(getTotal(equipment, 'percentageQuota')) + '%'
           case 'meterRequirement':
-            return (
-              round(
-                equipment.reduce((total, item) => {
-                  total += item?.meterRequirement || 0
-                  return total
-                }, 0)
-              ) + ' m'
-            )
+            return round(getTotal(equipment, 'meterRequirement')) + ' m'
           case 'kilometerRequirement':
-            return (
-              round(
-                equipment.reduce((total, item) => {
-                  total += (item?.meterRequirement || 0) / 1000
-                  return total
-                }, 0)
-              ) + ' km'
-            )
+            return round(getTotal(equipment, 'kilometerRequirement')) + ' km'
           case 'amount':
-            return (
-              equipmentGroups.reduce((total, item) => {
-                total += item?.amount || 0
-                return total
-              }, 0) + ' kpl'
-            )
+            return round(getTotal(equipmentGroups, 'amount')) + ' kpl'
           default:
             return ''
         }
@@ -224,13 +224,15 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
             <Table
               items={groupEquipment ? equipmentGroups : orderedEquipment}
               columnLabels={groupEquipment ? groupedEquipmentColumnLabels : equipmentColumnLabels}
-              onRemoveRow={(item) => () => onRemoveEquipment(item)}
+              onRemoveRow={!groupEquipment ? (item) => () => onRemoveEquipment(item) : undefined}
+              canRemoveRow={canRemoveEquipment}
               renderValue={renderCellValue}
               getColumnTotal={renderColumnTotals}
               onEditValue={onEditValue}
               editValue={pendingValue}
               onCancelEdit={onCancelPendingValue}
               onSaveEdit={onSavePendingValue}
+              editableValues={groupEquipment ? [] : editableValues}
               renderInput={renderEquipmentInput}
             />
           </>
@@ -242,6 +244,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
           catalogueId={catalogueId}
           equipment={equipment}
           onEquipmentChanged={onEquipmentChanged}
+          offeredEditable={offeredEditable}
         />
       </>
     )

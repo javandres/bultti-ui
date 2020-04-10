@@ -54,7 +54,7 @@ export type PropTypes<ItemType = any> = {
   renderValue?: (key: string, val: any) => any
   objectPaths?: { [key in keyof ItemType]: string }
   className?: string
-  children?: React.ReactChild
+  children?: React.ReactChild | false
   style?: CSSProperties
 }
 

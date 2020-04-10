@@ -34,6 +34,10 @@ const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
   left: 0.4rem;
   top: 0.4rem;
   display: none;
+
+  svg {
+    margin: 0;
+  }
 `
 
 const EditInputWrapper = styled.div`
@@ -93,7 +97,7 @@ const TableHeader = styled(TableRow)`
   border-bottom-color: var(--lighter-grey) !important;
 `
 
-const TableCell = styled.div`
+const TableCell = styled.div<{ editable?: boolean }>`
   flex: 1 1 calc(100% / 11);
   min-width: 45px;
   border-right: 1px solid var(--lighter-grey);
@@ -103,6 +107,7 @@ const TableCell = styled.div`
   font-size: 0.75rem;
   background: rgba(0, 0, 0, 0.005);
   position: relative;
+  cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
 
   &:last-of-type {
     border-right: 0;
@@ -139,6 +144,7 @@ export type PropTypes<ItemType = any> = {
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
   onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
+  canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
@@ -147,6 +153,7 @@ export type PropTypes<ItemType = any> = {
   editValue?: null | { key: string; value: string | number; item: ItemType }
   onCancelEdit?: () => void
   onSaveEdit?: () => void
+  editableValues?: string[]
   renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
 }
 
@@ -175,6 +182,7 @@ const Table: React.FC<PropTypes> = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
+    canRemoveRow = (item) => !!onRemoveRow,
     renderCell = defaultRenderCellContent,
     renderValue = defaultRenderValue,
     getColumnTotal,
@@ -184,6 +192,7 @@ const Table: React.FC<PropTypes> = observer(
     onSaveEdit,
     editValue,
     renderInput = defaultRenderInput,
+    editableValues = [],
   }) => {
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
@@ -246,7 +255,7 @@ const Table: React.FC<PropTypes> = observer(
 
           let isEditingRow: boolean = !!editValue && keyFromItem(editValue.item) === rowKey
 
-          const itemRemover = !onRemoveRow ? null : onRemoveRow(item)
+          const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
 
           const onStartValueEdit = (key, val) => () => {
             if (!isEditingRow && onEditValue) {
@@ -266,6 +275,7 @@ const Table: React.FC<PropTypes> = observer(
                 .filter(([key]) => !keysToHide.includes(key))
                 .map(([key, val], index) => (
                   <TableCell
+                    editable={editableValues?.includes(key)}
                     onDoubleClick={onStartValueEdit(key, val)}
                     key={`${rowKey}-${key}-${index}`}>
                     {onEditValue && editValue && isEditingRow && editValue.key === key ? (

@@ -20,6 +20,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
   const preInspection = useContext(PreInspectionContext)
   let { operatorId, startDate } = preInspection || props
 
+  let editable = !preInspection
+
   const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 
   const toggleProcurementUnitsExpanded = useCallback(() => {
@@ -62,6 +64,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
           {procurementUnits.map((procurementUnit) => (
             <ProcurementUnitItem
               key={procurementUnit.id}
+              editable={editable}
               startDate={startDate}
               procurementUnit={procurementUnit}
               expanded={procurementUnitsExpanded}

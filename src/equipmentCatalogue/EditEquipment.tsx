@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
@@ -22,6 +22,7 @@ export type PropTypes = {
   catalogueId: string
   operatorId: number
   onEquipmentChanged: () => Promise<void>
+  offeredEditable: boolean
 }
 
 export const renderEquipmentInput = (key: string, val: any, onChange) => {
@@ -41,20 +42,29 @@ const defaultGetVal = (val) => val
 const getType = (key) => equipmentInputValues[key] || defaultGetVal
 
 const equipmentIsValid = (e: EquipmentInput): boolean =>
-  !!(e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
-
-const editableValues = ['offeredPercentageQuota', 'percentageQuota']
+  !!(
+    e?.model &&
+    e?.emissionClass &&
+    e?.type &&
+    (e?.percentageQuota || e?.offeredPercentageQuota) &&
+    e?.registryDate
+  )
 
 type PendingEquipment = { _exists: boolean } & EquipmentInput
 
 const EditEquipment: React.FC<PropTypes> = observer(
-  ({ operatorId, equipment, catalogueId, onEquipmentChanged }) => {
+  ({ offeredEditable, operatorId, equipment, catalogueId, onEquipmentChanged }) => {
     let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
 
-    let [searchActive, setSearchActive] = useState(false)
+    let [searchFormVisible, setSearchFormVisible] = useState(false)
+    let [searchResultActive, setSearchResultActive] = useState(false)
     let [searchVehicleId, setSearchVehicleId] = useState('')
     let [searchRegistryNr, setSearchRegistryNr] = useState('')
-    let [searchRandom, setSearchRandom] = useState(false)
+
+    let editableValues = useMemo(
+      () => (offeredEditable ? ['offeredPercentageQuota'] : ['percentageQuota']),
+      [offeredEditable]
+    )
 
     let [
       searchEquipment,
@@ -80,45 +90,50 @@ const EditEquipment: React.FC<PropTypes> = observer(
               [useSearchTerm]: useSearchValue,
             },
           })
+
+          setSearchResultActive(true)
         }
       }
     }, [searchEquipment, searchVehicleId, searchRegistryNr, operatorId])
 
     let findRandomEquipment = useCallback(async () => {
-      setSearchRandom(true)
-
       await searchEquipment({
         variables: {
           operatorId,
         },
       })
 
-      setSearchActive(true)
+      setSearchResultActive(true)
     }, [searchEquipment, operatorId])
 
-    let addDraftEquipment = useCallback((initialValues?: PendingEquipment) => {
-      const inputRow: PendingEquipment = {
-        vehicleId: initialValues?.vehicleId || '',
-        model: initialValues?.model || '',
-        type: initialValues?.type || '',
-        exteriorColor: initialValues?.exteriorColor || '',
-        emissionClass: initialValues?.emissionClass || 1,
-        registryDate: initialValues?.registryDate || '',
-        registryNr: initialValues?.registryNr || '',
-        percentageQuota: 0,
-        offeredPercentageQuota: 0,
-        _exists: initialValues?._exists || false,
-      }
+    let addDraftEquipment = useCallback(
+      (initialValues?: PendingEquipment) => {
+        const inputRow: PendingEquipment = {
+          vehicleId: initialValues?.vehicleId || '',
+          model: initialValues?.model || '',
+          type: initialValues?.type || '',
+          exteriorColor: initialValues?.exteriorColor || '',
+          emissionClass: initialValues?.emissionClass || 1,
+          registryDate: initialValues?.registryDate || '',
+          registryNr: initialValues?.registryNr || '',
+          _exists: initialValues?._exists || false,
+        }
 
-      setPendingEquipment(inputRow)
-    }, [])
+        for (let editVal of editableValues) {
+          inputRow[editVal] = 0
+        }
+
+        setPendingEquipment(inputRow)
+      },
+      [editableValues]
+    )
 
     useEffect(() => {
-      if (foundEquipment && searchActive && (searchRegistryNr || searchVehicleId || searchRandom)) {
-        setSearchActive(false)
+      if (searchResultActive && foundEquipment) {
+        setSearchFormVisible(false)
+        setSearchResultActive(false)
         setSearchVehicleId('')
         setSearchRegistryNr('')
-        setSearchRandom(false)
 
         if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
           addDraftEquipment(foundEquipment)
@@ -126,7 +141,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
           alert('Ajoneuvo on jo lisätty tähän kalustoluetteloon.')
         }
       }
-    }, [foundEquipment, searchActive, searchVehicleId, searchRegistryNr, searchRandom])
+    }, [foundEquipment, searchResultActive])
 
     const onEquipmentInputChange = useCallback((key: string, nextValue) => {
       setPendingEquipment((currentPending) =>
@@ -171,20 +186,24 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
               Lisää ajoneuvo
             </Button>
-            <Button style={{ marginRight: '1rem' }} onClick={() => setSearchActive(true)}>
+            <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
               Hae ajoneuvo
             </Button>
-            <Button style={{ marginRight: '1rem' }} onClick={() => findRandomEquipment()}>
+            <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
-            {!searchActive && equipment.length !== 0 && !pendingEquipment && (
-              <Button
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={onRemoveAll}>
-                Poista kaikki ajoneuvot
-              </Button>
-            )}
+            {offeredEditable &&
+              !searchFormVisible &&
+              !searchResultActive &&
+              equipment.length !== 0 &&
+              !pendingEquipment && (
+                <Button
+                  style={{ marginLeft: 'auto' }}
+                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                  onClick={onRemoveAll}>
+                  Poista kaikki ajoneuvot
+                </Button>
+              )}
           </FlexRow>
         )}
         {pendingEquipment && (
@@ -195,7 +214,9 @@ const EditEquipment: React.FC<PropTypes> = observer(
               labels={equipmentColumnLabels}
               readOnly={
                 pendingEquipment._exists
-                  ? Object.keys(equipmentColumnLabels).filter((key) => !editableValues.includes(key))
+                  ? Object.keys(equipmentColumnLabels).filter(
+                      (key) => !editableValues.includes(key)
+                    )
                   : false
               }
               onChange={onEquipmentInputChange}
@@ -207,11 +228,11 @@ const EditEquipment: React.FC<PropTypes> = observer(
             />
           </>
         )}
-        {searchActive && (
+        {searchFormVisible && (
           <>
             <SubSectionHeading>Hae kylkinumerolla</SubSectionHeading>
             <InputForm
-              onCancel={() => setSearchActive(false)}
+              onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
               doneLabel={`Hae kalusto${
                 searchVehicleId ? ' kylkinumerolla' : searchRegistryNr ? ' rekisterinumerolla' : ''

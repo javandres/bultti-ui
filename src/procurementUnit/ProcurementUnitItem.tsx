@@ -103,6 +103,7 @@ export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
   startDate: string
+  editable: boolean
 }
 
 const procurementUnitLabels = {
@@ -111,7 +112,7 @@ const procurementUnitLabels = {
 }
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ startDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
+  ({ editable, startDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
     const [isExpanded, setIsExpanded] = useState(true)
     const [
       pendingProcurementUnit,
@@ -127,7 +128,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       }) || {}
 
     const { routes = [] } = procurementUnit || {}
-
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -183,6 +183,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (
+        editable &&
         confirm(
           'Olet päivittämässä viikkosuoritteet JOREsta,' +
             'ja mahdolliset Bultin kautta syötetyt arvot' +
@@ -196,7 +197,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         // value in the form state.
         onChangeProcurementUnit('weeklyMeters', nextUnit.weeklyMeters)
       }
-    }, [updateWeeklyMeters])
+    }, [editable, updateWeeklyMeters])
 
     const onCatalogueChanged = useCallback(async () => {
       if (refetchUnit) {
@@ -205,7 +206,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     }, [refetchUnit])
 
     const onSaveProcurementUnit = useCallback(async () => {
-      if (!procurementUnitId || !pendingProcurementUnit) {
+      if (!editable || !procurementUnitId || !pendingProcurementUnit) {
         return
       }
 
@@ -218,7 +219,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       })
 
       await onCatalogueChanged()
-    }, [pendingProcurementUnit, onCatalogueChanged])
+    }, [pendingProcurementUnit, onCatalogueChanged, editable])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
@@ -295,12 +296,14 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       }}
                       item={procurementUnit}
                       labels={procurementUnitLabels}>
-                      <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
-                        Muokkaa
-                      </Button>
+                      {editable && (
+                        <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
+                          Muokkaa
+                        </Button>
+                      )}
                     </ValueDisplay>
                   </>
-                ) : (
+                ) : editable ? (
                   <>
                     <ItemForm
                       item={pendingProcurementUnit}
@@ -322,7 +325,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       </Button>
                     </ItemForm>
                   </>
-                )}
+                ) : null}
                 <>
                   <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
                   <EquipmentCatalogue
@@ -331,10 +334,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     catalogue={activeCatalogue}
                     operatorId={procurementUnit.operatorId}
                     onCatalogueChanged={onCatalogueChanged}
+                    editable={editable}
                   />
                   {hasEquipment && requirementsLoading ? (
                     <Loading />
                   ) : (
+                    !editable &&
                     hasEquipment &&
                     procurementUnitRequirements.length !== 0 && (
                       <>
