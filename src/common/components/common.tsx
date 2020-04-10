@@ -105,6 +105,16 @@ export const SubSectionHeading = styled.h5`
   }
 `
 
+export const SmallHeading = styled.h6`
+  font-size: 0.875rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+`
+
 export const MessageContainer = styled.div`
   padding: 0 1rem;
 `

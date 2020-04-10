@@ -3,13 +3,13 @@ import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import { removeEquipmentMutation, updateEquipmentMutation } from './equipmentQuery'
 import Table from '../common/components/Table'
-import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
+import { FlexRow, MessageView, SmallHeading, SubSectionHeading } from '../common/components/common'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
 import EditEquipment, { renderEquipmentInput } from './EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
-import { orderBy, pick } from 'lodash'
+import { omit, orderBy, partition, pick } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
@@ -21,6 +21,7 @@ export type PropTypes = {
   startDate: Date
   onEquipmentChanged: () => Promise<void>
   offeredEditable: boolean
+  showPreInspectionEquipment: boolean
 }
 
 export const equipmentColumnLabels = {
@@ -54,16 +55,26 @@ type PendingEquipmentValue = {
   item: EquipmentWithQuota
 }
 
+const offeredEditableValues = ['offeredPercentageQuota']
+const notOfferedEditableValues = ['percentageQuota', 'meterRequirement']
+
 const CatalogueEquipment: React.FC<PropTypes> = observer(
-  ({ offeredEditable, equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
+  ({
+    offeredEditable,
+    showPreInspectionEquipment = false,
+    equipment,
+    catalogueId,
+    operatorId,
+    startDate,
+    onEquipmentChanged,
+  }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
     let [updateEquipment] = useMutationData(updateEquipmentMutation)
 
     let editableValues = useMemo(
-      () =>
-        offeredEditable ? ['offeredPercentageQuota'] : ['percentageQuota', 'meterRequirement'],
+      () => (offeredEditable ? offeredEditableValues : notOfferedEditableValues),
       [offeredEditable]
     )
 
@@ -164,9 +175,17 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       setEquipmentGrouped(checked)
     }, [])
 
+    let visibleEquipment = useMemo(
+      () =>
+        showPreInspectionEquipment
+          ? equipment
+          : equipment.filter((eq) => !!eq.offeredPercentageQuota),
+      [equipment, showPreInspectionEquipment]
+    )
+
     const equipmentGroups: EquipmentQuotaGroup[] = useMemo(
-      () => groupedEquipment(equipment, startDate),
-      [equipment, startDate]
+      () => groupedEquipment(visibleEquipment, startDate),
+      [visibleEquipment, startDate]
     )
 
     const renderCellValue = useCallback((key, val) => {
@@ -205,7 +224,47 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       [equipment, equipmentGroups]
     )
 
-    let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [equipment])
+    let orderedEquipment = useMemo(() => orderBy(visibleEquipment, 'emissionClass', 'desc'), [
+      equipment,
+    ])
+    let [offered, notOffered] = partition(orderedEquipment, (item) => !!item.offeredPercentageQuota)
+
+    // Create the table component for ungrouped offered or not offered equipment.
+    let equipmentTable = (equipmentCollection: EquipmentWithQuota[], isOffered: boolean = true) => {
+      // The table is editable only when the "offered equipment is editable" is true and
+      // the table is showing offered equipment OR when offered equipment is NOT editable
+      // and the table is showing NOT offered equipment.
+      let isOfferedAndEditable = offeredEditable && isOffered
+      let isNotOfferedAndEditable = !offeredEditable && !isOffered
+      let isEditable = isOfferedAndEditable || isNotOfferedAndEditable
+
+      return (
+        <Table
+          items={equipmentCollection}
+          columnLabels={
+            isOfferedAndEditable
+              ? omit(equipmentColumnLabels, ['percentageQuota', 'meterRequirement'])
+              : equipmentColumnLabels
+          }
+          onRemoveRow={isEditable ? (item) => () => onRemoveEquipment(item) : undefined}
+          canRemoveRow={isEditable ? canRemoveEquipment : () => false}
+          renderValue={renderCellValue}
+          getColumnTotal={renderColumnTotals}
+          onEditValue={isEditable ? onEditValue : undefined}
+          editValue={isEditable ? pendingValue : null}
+          onCancelEdit={isEditable ? onCancelPendingValue : undefined}
+          onSaveEdit={isEditable ? onSavePendingValue : undefined}
+          editableValues={
+            isOfferedAndEditable
+              ? offeredEditableValues
+              : isNotOfferedAndEditable
+              ? notOfferedEditableValues
+              : []
+          }
+          renderInput={renderEquipmentInput}
+        />
+      )
+    }
 
     return (
       <>
@@ -221,20 +280,31 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
                 Näytä ryhmissä
               </ToggleButton>
             </FlexRow>
-            <Table
-              items={groupEquipment ? equipmentGroups : orderedEquipment}
-              columnLabels={groupEquipment ? groupedEquipmentColumnLabels : equipmentColumnLabels}
-              onRemoveRow={!groupEquipment ? (item) => () => onRemoveEquipment(item) : undefined}
-              canRemoveRow={canRemoveEquipment}
-              renderValue={renderCellValue}
-              getColumnTotal={renderColumnTotals}
-              onEditValue={onEditValue}
-              editValue={pendingValue}
-              onCancelEdit={onCancelPendingValue}
-              onSaveEdit={onSavePendingValue}
-              editableValues={groupEquipment ? [] : editableValues}
-              renderInput={renderEquipmentInput}
-            />
+            {!groupEquipment && offered.length !== 0 && (
+              <>
+                <SmallHeading>Tarjottu kalusto</SmallHeading>
+                {equipmentTable(offered, true)}
+              </>
+            )}
+            {!groupEquipment && notOffered.length !== 0 && (
+              <>
+                <SmallHeading>Ennakkotarkastukseen lisätty kalusto</SmallHeading>
+                {equipmentTable(notOffered, false)}
+              </>
+            )}
+            {groupEquipment && (
+              <Table
+                items={equipmentGroups}
+                columnLabels={
+                  offeredEditable
+                    ? omit(groupedEquipmentColumnLabels, ['percentageQuota', 'kilometerRequirement'])
+                    : groupedEquipmentColumnLabels
+                }
+                renderValue={renderCellValue}
+                getColumnTotal={renderColumnTotals}
+                editableValues={[]}
+              />
+            )}
           </>
         ) : (
           <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>

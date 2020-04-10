@@ -180,6 +180,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             startDate={startDate}
             onEquipmentChanged={onCatalogueChanged}
             offeredEditable={editable}
+            showPreInspectionEquipment={!!preInspection}
           />
         )}
       </EquipmentCatalogueView>
