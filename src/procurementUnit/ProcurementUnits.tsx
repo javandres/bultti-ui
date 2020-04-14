@@ -20,7 +20,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
   const preInspection = useContext(PreInspectionContext)
   let { operatorId, startDate } = preInspection || props
 
-  let editable = !preInspection
+  let catalogueEditable = !preInspection
+  let showExecutionRequirements = !!preInspection
 
   const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 
@@ -63,8 +64,9 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
           </FlexRow>
           {procurementUnits.map((procurementUnit) => (
             <ProcurementUnitItem
+              catalogueEditable={catalogueEditable}
+              showExecutionRequirements={showExecutionRequirements}
               key={procurementUnit.id}
-              editable={editable}
               startDate={startDate}
               procurementUnit={procurementUnit}
               expanded={procurementUnitsExpanded}

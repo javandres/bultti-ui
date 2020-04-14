@@ -26,7 +26,7 @@ const AreaHeading = styled.h4`
 
 export type PropTypes = {}
 
-const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
+const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
   const preInspection = useContext(PreInspectionContext)
   let { id } = preInspection || {}
 
@@ -107,4 +107,4 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
   )
 })
 
-export default ExecutionRequirements
+export default PreInspectionExecutionRequirements

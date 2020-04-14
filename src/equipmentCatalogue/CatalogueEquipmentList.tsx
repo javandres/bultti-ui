@@ -1,14 +1,17 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
-import { removeEquipmentMutation, updateEquipmentMutation } from './equipmentQuery'
+import {
+  removeEquipmentMutation,
+  updateEquipmentCatalogueQuotaMutation,
+} from '../equipment/equipmentQuery'
 import Table from '../common/components/Table'
 import { FlexRow, MessageView, SmallHeading, SubSectionHeading } from '../common/components/common'
 import { EquipmentWithQuota } from './EquipmentCatalogue'
-import EditEquipment, { renderEquipmentInput } from './EditEquipment'
+import EditEquipment, { renderEquipmentInput } from '../equipment/EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
-import { EquipmentQuotaGroup, groupedEquipment } from './equipmentUtils'
+import { EquipmentQuotaGroup, groupedEquipment } from '../equipment/equipmentUtils'
 import { orderBy, pick } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
@@ -20,7 +23,7 @@ export type PropTypes = {
   operatorId: number
   startDate: Date
   onEquipmentChanged: () => Promise<void>
-  offeredEditable: boolean
+  equipmentEditable: boolean
   showPreInspectionEquipment: boolean
 }
 
@@ -54,20 +57,12 @@ type PendingEquipmentValue = {
 
 const editableValues = ['percentageQuota']
 
-const CatalogueEquipment: React.FC<PropTypes> = observer(
-  ({
-    offeredEditable,
-    showPreInspectionEquipment = false,
-    equipment,
-    catalogueId,
-    operatorId,
-    startDate,
-    onEquipmentChanged,
-  }) => {
+const CatalogueEquipmentList: React.FC<PropTypes> = observer(
+  ({ equipmentEditable, equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
     let [removeEquipment] = useMutationData(removeEquipmentMutation)
-    let [updateEquipment] = useMutationData(updateEquipmentMutation)
+    let [updateEquipmentQuota] = useMutationData(updateEquipmentCatalogueQuotaMutation)
 
     const onEditValue = useCallback(
       (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
@@ -115,7 +110,7 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
         [pendingValue.key]: pendingValue.value,
       }
 
-      await updateEquipment({
+      await updateEquipmentQuota({
         variables: {
           equipmentId: pendingValue.item.id,
           quotaId: pendingValue.item.quotaId,
@@ -124,26 +119,31 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
       })
 
       await onEquipmentChanged()
-    }, [updateEquipment, pendingValue, onEquipmentChanged])
+    }, [updateEquipmentQuota, pendingValue, onEquipmentChanged])
 
-    // TODO: allow remove only on catalogue edit page, not pre-inspection.
-    let canRemoveEquipment = useCallback((item: EquipmentWithQuota) => offeredEditable, [
-      offeredEditable,
+    let canRemoveEquipment = useCallback((item: EquipmentWithQuota) => equipmentEditable, [
+      equipmentEditable,
     ])
 
     const onRemoveEquipment = useCallback(
-      async (item: EquipmentWithQuota) => {
-        let canRemove = canRemoveEquipment(item)
+      (item: EquipmentWithQuota) => {
+        if (canRemoveEquipment(item)) {
+          return async () => {
+            let canRemove = canRemoveEquipment(item)
 
-        if (!canRemove || !item || !item.id) {
-          return
+            if (!canRemove || !item || !item.id) {
+              return
+            }
+
+            await removeEquipment({
+              variables: { equipmentId: item.id, catalogueId: catalogueId },
+            })
+
+            await onEquipmentChanged()
+          }
         }
 
-        await removeEquipment({
-          variables: { equipmentId: item.id, catalogueId: catalogueId },
-        })
-
-        await onEquipmentChanged()
+        return undefined
       },
       [onEquipmentChanged, removeEquipment, canRemoveEquipment]
     )
@@ -192,31 +192,6 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
 
     let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [equipment])
 
-    // Create the table component for ungrouped offered or not offered equipment.
-    let equipmentTable = (equipmentCollection: EquipmentWithQuota[], isOffered: boolean = true) => {
-      // The table is editable only when the "offered equipment is editable" is true and
-      // the table is showing offered equipment OR when offered equipment is NOT editable
-      // and the table is showing NOT offered equipment.
-      let isEditable = offeredEditable && isOffered
-
-      return (
-        <Table
-          items={equipmentCollection}
-          columnLabels={equipmentColumnLabels}
-          onRemoveRow={isEditable ? (item) => () => onRemoveEquipment(item) : undefined}
-          canRemoveRow={isEditable ? canRemoveEquipment : () => false}
-          renderValue={renderCellValue}
-          getColumnTotal={renderColumnTotals}
-          onEditValue={isEditable ? onEditValue : undefined}
-          editValue={isEditable ? pendingValue : null}
-          onCancelEdit={isEditable ? onCancelPendingValue : undefined}
-          onSaveEdit={isEditable ? onSavePendingValue : undefined}
-          editableValues={isEditable ? editableValues : []}
-          renderInput={renderEquipmentInput}
-        />
-      )
-    }
-
     return (
       <>
         {equipment.length !== 0 ? (
@@ -231,11 +206,22 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
                 Näytä ryhmissä
               </ToggleButton>
             </FlexRow>
+            <SmallHeading>Tarjottu kalusto</SmallHeading>
             {!groupEquipment && orderedEquipment.length !== 0 && (
-              <>
-                <SmallHeading>Tarjottu kalusto</SmallHeading>
-                {equipmentTable(orderedEquipment, true)}
-              </>
+              <Table
+                items={orderedEquipment}
+                columnLabels={equipmentColumnLabels}
+                onRemoveRow={onRemoveEquipment}
+                canRemoveRow={canRemoveEquipment}
+                renderValue={renderCellValue}
+                getColumnTotal={renderColumnTotals}
+                onEditValue={equipmentEditable ? onEditValue : undefined}
+                editValue={equipmentEditable ? pendingValue : null}
+                onCancelEdit={equipmentEditable ? onCancelPendingValue : undefined}
+                onSaveEdit={equipmentEditable ? onSavePendingValue : undefined}
+                editableValues={equipmentEditable ? editableValues : []}
+                renderInput={renderEquipmentInput}
+              />
             )}
             {groupEquipment && (
               <Table
@@ -250,16 +236,17 @@ const CatalogueEquipment: React.FC<PropTypes> = observer(
         ) : (
           <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
         )}
-        <EditEquipment
-          operatorId={operatorId}
-          catalogueId={catalogueId}
-          equipment={equipment}
-          onEquipmentChanged={onEquipmentChanged}
-          offeredEditable={offeredEditable}
-        />
+        {equipmentEditable && (
+          <EditEquipment
+            operatorId={operatorId}
+            catalogueId={catalogueId}
+            equipment={equipment}
+            onEquipmentChanged={onEquipmentChanged}
+          />
+        )}
       </>
     )
   }
 )
 
-export default CatalogueEquipment
+export default CatalogueEquipmentList

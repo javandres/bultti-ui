@@ -143,7 +143,7 @@ export type PropTypes<ItemType = any> = {
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => ItemRemover<ItemType>
+  onRemoveRow?: (item: ItemType) => undefined | ItemRemover<ItemType>
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode

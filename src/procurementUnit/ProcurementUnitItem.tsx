@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
-  ExecutionRequirement,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
 } from '../schema-types'
@@ -25,9 +24,8 @@ import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { FlexRow, SubSectionHeading } from '../common/components/common'
-import RequirementsTable from '../executionRequirement/RequirementsTable'
 import { parseISO } from 'date-fns'
-import { executionRequirementsByProcurementUnitQuery } from '../executionRequirement/executionRequirementsQueries'
+import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -103,7 +101,8 @@ export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
   startDate: string
-  editable: boolean
+  catalogueEditable: boolean
+  showExecutionRequirements: boolean
 }
 
 const procurementUnitLabels = {
@@ -112,7 +111,13 @@ const procurementUnitLabels = {
 }
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
-  ({ editable, startDate, procurementUnit: { id, procurementUnitId }, expanded = true }) => {
+  ({
+    catalogueEditable,
+    showExecutionRequirements,
+    startDate,
+    procurementUnit: { id, procurementUnitId },
+    expanded = true,
+  }) => {
     const [isExpanded, setIsExpanded] = useState(true)
     const [
       pendingProcurementUnit,
@@ -139,18 +144,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     )
 
     let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
-
-    let {
-      data: procurementUnitRequirements,
-      loading: requirementsLoading,
-      refetch: refetchRequirements,
-    } = useQueryData<ExecutionRequirement>(executionRequirementsByProcurementUnitQuery, {
-      skip: !hasEquipment || !id || !startDate,
-      variables: {
-        procurementUnitId: id,
-        startDate,
-      },
-    })
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
       variables: { procurementUnitId: id },
@@ -183,7 +176,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (
-        editable &&
+        catalogueEditable &&
         confirm(
           'Olet päivittämässä viikkosuoritteet JOREsta,' +
             'ja mahdolliset Bultin kautta syötetyt arvot' +
@@ -197,7 +190,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         // value in the form state.
         onChangeProcurementUnit('weeklyMeters', nextUnit.weeklyMeters)
       }
-    }, [editable, updateWeeklyMeters])
+    }, [catalogueEditable, updateWeeklyMeters])
 
     const onCatalogueChanged = useCallback(async () => {
       if (refetchUnit) {
@@ -206,7 +199,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     }, [refetchUnit])
 
     const onSaveProcurementUnit = useCallback(async () => {
-      if (!editable || !procurementUnitId || !pendingProcurementUnit) {
+      if (!catalogueEditable || !procurementUnitId || !pendingProcurementUnit) {
         return
       }
 
@@ -219,7 +212,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       })
 
       await onCatalogueChanged()
-    }, [pendingProcurementUnit, onCatalogueChanged, editable])
+    }, [pendingProcurementUnit, onCatalogueChanged, catalogueEditable])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
@@ -239,11 +232,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       if (refetchUnit) {
         await refetchUnit()
       }
-
-      if (refetchRequirements) {
-        await refetchRequirements()
-      }
-    }, [refetchRequirements, refetchUnit])
+    }, [refetchUnit])
 
     return (
       <ProcurementUnitView className="className">
@@ -296,14 +285,14 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       }}
                       item={procurementUnit}
                       labels={procurementUnitLabels}>
-                      {editable && (
+                      {catalogueEditable && (
                         <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
                           Muokkaa
                         </Button>
                       )}
                     </ValueDisplay>
                   </>
-                ) : editable ? (
+                ) : catalogueEditable ? (
                   <>
                     <ItemForm
                       item={pendingProcurementUnit}
@@ -326,29 +315,18 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     </ItemForm>
                   </>
                 ) : null}
-                <>
-                  <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
-                  <EquipmentCatalogue
-                    startDate={inspectionStartDate}
-                    procurementUnitId={id}
-                    catalogue={activeCatalogue}
-                    operatorId={procurementUnit.operatorId}
-                    onCatalogueChanged={onCatalogueChanged}
-                    editable={editable}
-                  />
-                  {hasEquipment && requirementsLoading ? (
-                    <Loading />
-                  ) : (
-                    !editable &&
-                    hasEquipment &&
-                    procurementUnitRequirements.length !== 0 && (
-                      <>
-                        <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-                        <RequirementsTable executionRequirement={procurementUnitRequirements} />
-                      </>
-                    )
-                  )}
-                </>
+                {showExecutionRequirements && hasEquipment && (
+                  <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
+                )}
+                <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
+                <EquipmentCatalogue
+                  startDate={inspectionStartDate}
+                  procurementUnitId={id}
+                  catalogue={activeCatalogue}
+                  operatorId={procurementUnit.operatorId}
+                  onCatalogueChanged={onCatalogueChanged}
+                  editable={catalogueEditable}
+                />
               </Content>
             )}
           </>

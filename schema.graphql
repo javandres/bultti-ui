@@ -122,7 +122,7 @@ type Mutation {
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
-  createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!, startDate: String!): ExecutionRequirement!
+  createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
@@ -212,7 +212,7 @@ type Query {
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
-  executionRequirementForProcurementUnit(procurementUnitId: String!, startDate: String!): ExecutionRequirement
+  executionRequirementForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsByPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
   operator(operatorId: Int!): Operator

@@ -677,7 +677,7 @@
             "description": "",
             "args": [
               {
-                "name": "startDate",
+                "name": "preInspectionId",
                 "description": "",
                 "type": {
                   "kind": "NON_NULL",
@@ -4285,20 +4285,6 @@
             "description": "",
             "args": [
               {
-                "name": "startDate",
-                "description": "",
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "preInspectionId",
                 "description": "",
                 "type": {
@@ -4328,13 +4314,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ExecutionRequirement",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ExecutionRequirement",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

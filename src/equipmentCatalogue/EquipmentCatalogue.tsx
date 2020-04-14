@@ -16,8 +16,8 @@ import {
   updateEquipmentCatalogueMutation,
 } from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
-import CatalogueEquipment from './CatalogueEquipment'
-import { catalogueEquipment } from './equipmentUtils'
+import CatalogueEquipmentList from './CatalogueEquipmentList'
+import { catalogueEquipment } from '../equipment/equipmentUtils'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const EquipmentCatalogueView = styled.div``
@@ -172,13 +172,13 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
           </>
         )}
         {catalogue && (
-          <CatalogueEquipment
+          <CatalogueEquipmentList
             catalogueId={catalogue.id}
             operatorId={operatorId}
             equipment={equipment}
             startDate={startDate}
             onEquipmentChanged={onCatalogueChanged}
-            offeredEditable={editable}
+            equipmentEditable={editable}
             showPreInspectionEquipment={!!preInspection}
           />
         )}

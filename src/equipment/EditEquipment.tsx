@@ -13,9 +13,9 @@ import { useMutationData } from '../util/useMutationData'
 import { emptyOrNumber } from '../util/emptyOrNumber'
 import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
-import { equipmentColumnLabels } from './CatalogueEquipment'
-import { EquipmentWithQuota } from './EquipmentCatalogue'
-import { removeAllEquipmentFromCatalogueMutation } from './equipmentCatalogueQuery'
+import { equipmentColumnLabels } from '../equipmentCatalogue/CatalogueEquipmentList'
+import { EquipmentWithQuota } from '../equipmentCatalogue/EquipmentCatalogue'
+import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/equipmentCatalogueQuery'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -90,7 +90,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
       }
 
       return editableKeys
-    }, [offeredEditable])
+    }, [offeredEditable, quotaEditable])
 
     let [
       searchEquipment,

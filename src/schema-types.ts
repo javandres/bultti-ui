@@ -210,7 +210,7 @@ export type Mutation = {
   updateEquipmentCatalogue: EquipmentCatalogue;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForPreInspection: Array<ExecutionRequirement>;
-  createExecutionRequirementsForProcurementUnit: ExecutionRequirement;
+  createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   login?: Maybe<User>;
   logout: Scalars['Boolean'];
   removeEquipmentFromCatalogue: Scalars['Boolean'];
@@ -303,7 +303,6 @@ export type MutationCreateExecutionRequirementsForPreInspectionArgs = {
 
 
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
-  startDate: Scalars['String'];
   preInspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
 };
@@ -545,7 +544,7 @@ export type QueryExecutionRequirementsByOperatorArgs = {
 
 
 export type QueryExecutionRequirementForProcurementUnitArgs = {
-  startDate: Scalars['String'];
+  preInspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
 };
 

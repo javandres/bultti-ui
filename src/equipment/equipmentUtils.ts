@@ -1,4 +1,4 @@
-import { EquipmentWithQuota } from './EquipmentCatalogue'
+import { EquipmentWithQuota } from '../equipmentCatalogue/EquipmentCatalogue'
 import {
   Equipment,
   EquipmentCatalogue,

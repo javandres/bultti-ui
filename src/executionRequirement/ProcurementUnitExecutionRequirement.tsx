@@ -1,0 +1,90 @@
+import React, { useCallback, useContext } from 'react'
+import styled from 'styled-components'
+import { observer } from 'mobx-react-lite'
+import Loading from '../common/components/Loading'
+import RequirementsTable from './RequirementsTable'
+import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
+import {
+  createExecutionRequirementForProcurementUnitMutation,
+  executionRequirementForProcurementUnitQuery,
+} from './executionRequirementsQueries'
+import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { useMutationData } from '../util/useMutationData'
+import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { useLazyQueryData } from '../util/useLazyQueryData'
+
+const ProcurementUnitExecutionRequirementView = styled.div`
+  margin-top: 1.5rem;
+`
+
+export type PropTypes = {
+  procurementUnit: ProcurementUnit
+}
+
+const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ procurementUnit }) => {
+  let preInspection = useContext(PreInspectionContext)
+
+  let [
+    fetchRequirements,
+    { data: procurementUnitRequirements, loading: requirementsLoading },
+  ] = useLazyQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery)
+
+  let [createPreInspectionRequirements, { loading: createLoading }] = useMutationData(
+    createExecutionRequirementForProcurementUnitMutation
+  )
+
+  let onFetchRequirements = useCallback(() => {
+    if (preInspection && fetchRequirements) {
+      fetchRequirements({
+        variables: {
+          procurementUnitId: procurementUnit.id,
+          preInspectionId: preInspection?.id,
+        },
+      })
+    }
+  }, [fetchRequirements, preInspection])
+
+  let onCreateRequirements = useCallback(async () => {
+    if (preInspection) {
+      await createPreInspectionRequirements({
+        variables: {
+          procurementUnitId: procurementUnit.id,
+          preInspectionId: preInspection?.id,
+        },
+      })
+
+      onFetchRequirements()
+    }
+  }, [createPreInspectionRequirements, onFetchRequirements, preInspection])
+
+  return (
+    <ProcurementUnitExecutionRequirementView>
+      <FlexRow style={{ marginBottom: '1rem' }}>
+        <SubSectionHeading style={{ marginBottom: 0 }}>
+          Kohteen suoritevaatimukset
+        </SubSectionHeading>
+        <Button
+          onClick={onFetchRequirements}
+          style={{ marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}>
+          Päivitä
+        </Button>
+      </FlexRow>
+      {requirementsLoading && <Loading />}
+      {procurementUnitRequirements ? (
+        <RequirementsTable executionRequirement={procurementUnitRequirements} />
+      ) : (
+        <>
+          <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
+          <Button loading={createLoading} onClick={onCreateRequirements}>
+            Laske suoritevaatimukset ja toteumat
+          </Button>
+        </>
+      )}
+    </ProcurementUnitExecutionRequirementView>
+  )
+})
+
+export default ProcurementUnitExecutionRequirement

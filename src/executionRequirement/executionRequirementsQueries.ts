@@ -1,26 +1,32 @@
 import gql from 'graphql-tag'
-import { EquipmentFragment } from '../equipmentCatalogue/equipmentQuery'
+import { EquipmentFragment } from '../equipment/equipmentQuery'
 
-export const executionRequirementsByProcurementUnitQuery = gql`
-  query executionRequirementsByProcurementUnit($procurementUnitId: String!, $startDate: String!) {
+export const executionRequirementForProcurementUnitQuery = gql`
+  query executionRequirementForProcurementUnit(
+    $procurementUnitId: String!
+    $preInspectionId: String!
+  ) {
     executionRequirementForProcurementUnit(
       procurementUnitId: $procurementUnitId
-      startDate: $startDate
+      preInspectionId: $preInspectionId
     ) {
+      id
       totalKilometers
+      totalKilometersFulfilled
       averageAgeWeighted
+      averageAgeWeightedFulfilled
       area {
         id
         name
       }
-      procurementUnit {
-        id
-      }
       requirements {
         emissionClass
         kilometerRequirement
+        kilometersFulfilled
         quotaRequirement
+        quotaFulfilled
         equipmentCount
+        equipmentCountFulfilled
       }
     }
   }
@@ -73,6 +79,34 @@ export const createExecutionRequirementsForPreInspectionMutation = gql`
           }
           meterRequirement
           percentageQuota
+        }
+      }
+    }
+  }
+  ${EquipmentFragment}
+`
+
+export const createExecutionRequirementForProcurementUnitMutation = gql`
+  mutation createExecutionRequirementsForPreInspection(
+    $procurementUnitId: String!
+    $preInspectionId: String!
+  ) {
+    createExecutionRequirementsForProcurementUnit(
+      procurementUnitId: $procurementUnitId
+      preInspectionId: $preInspectionId
+    ) {
+      id
+      area {
+        id
+        name
+      }
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        equipmentId
+        equipment {
+          ...EquipmentFragment
         }
       }
     }

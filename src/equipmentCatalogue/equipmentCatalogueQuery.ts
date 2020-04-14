@@ -1,5 +1,5 @@
 import gql from 'graphql-tag'
-import { EquipmentFragment } from './equipmentQuery'
+import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const createEquipmentCatalogueMutation = gql`
   mutation createEquipmentCatalogueMutation(
