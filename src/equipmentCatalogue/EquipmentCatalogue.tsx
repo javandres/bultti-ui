@@ -1,23 +1,16 @@
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import {
-  Equipment,
-  EquipmentCatalogue as EquipmentCatalogueType,
-  EquipmentCatalogueInput,
-} from '../schema-types'
+import { EquipmentCatalogue as EquipmentCatalogueType, EquipmentCatalogueInput } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { Button } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { MessageView } from '../common/components/common'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
-import {
-  createEquipmentCatalogueMutation,
-  updateEquipmentCatalogueMutation,
-} from './equipmentCatalogueQuery'
+import { createEquipmentCatalogueMutation, updateEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipmentList from './CatalogueEquipmentList'
-import { catalogueEquipment } from '../equipment/equipmentUtils'
+import { catalogueEquipment, EquipmentWithQuota } from '../equipment/equipmentUtils'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const EquipmentCatalogueView = styled.div``
@@ -29,13 +22,6 @@ export type PropTypes = {
   operatorId: number
   onCatalogueChanged: () => Promise<void>
   editable: boolean
-}
-
-export type EquipmentWithQuota = Equipment & {
-  percentageQuota: number
-  meterRequirement?: number
-  kilometerRequirement?: number
-  quotaId: string
 }
 
 const equipmentCatalogueLabels = {
@@ -179,7 +165,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             startDate={startDate}
             onEquipmentChanged={onCatalogueChanged}
             equipmentEditable={editable}
-            showPreInspectionEquipment={!!preInspection}
           />
         )}
       </EquipmentCatalogueView>

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../common/components/Loading'
@@ -13,6 +13,9 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useLazyQueryData } from '../util/useLazyQueryData'
+import RequirementEquipmentList from './RequirementEquipmentList'
+import { EquipmentWithQuota, requirementEquipment } from '../equipment/equipmentUtils'
+import { parseISO } from 'date-fns'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-top: 1.5rem;
@@ -27,16 +30,16 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
 
   let [
     fetchRequirements,
-    { data: procurementUnitRequirements, loading: requirementsLoading },
+    { data: procurementUnitRequirement, loading: requirementsLoading },
   ] = useLazyQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery)
 
   let [createPreInspectionRequirements, { loading: createLoading }] = useMutationData(
     createExecutionRequirementForProcurementUnitMutation
   )
 
-  let onFetchRequirements = useCallback(() => {
+  let onFetchRequirements = useCallback(async () => {
     if (preInspection && fetchRequirements) {
-      fetchRequirements({
+      await fetchRequirements({
         variables: {
           procurementUnitId: procurementUnit.id,
           preInspectionId: preInspection?.id,
@@ -54,9 +57,19 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         },
       })
 
-      onFetchRequirements()
+      await onFetchRequirements()
     }
   }, [createPreInspectionRequirements, onFetchRequirements, preInspection])
+
+  const equipment: EquipmentWithQuota[] = useMemo(
+    () => (procurementUnitRequirement ? requirementEquipment(procurementUnitRequirement) : []),
+    [procurementUnitRequirement]
+  )
+
+  const inspectionStartDate = useMemo(
+    () => (preInspection ? parseISO(preInspection.startDate) : new Date()),
+    [preInspection]
+  )
 
   return (
     <ProcurementUnitExecutionRequirementView>
@@ -73,13 +86,21 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         </Button>
       </FlexRow>
       {requirementsLoading && <Loading />}
-      {procurementUnitRequirements ? (
-        <RequirementsTable executionRequirement={procurementUnitRequirements} />
+      {procurementUnitRequirement ? (
+        <>
+          <RequirementEquipmentList
+            startDate={inspectionStartDate}
+            onEquipmentChanged={onFetchRequirements}
+            equipment={equipment}
+            executionRequirement={procurementUnitRequirement}
+          />
+          <RequirementsTable executionRequirement={procurementUnitRequirement} />
+        </>
       ) : (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
           <Button loading={createLoading} onClick={onCreateRequirements}>
-            Laske suoritevaatimukset ja toteumat
+            Laske kohteen suoritevaatimukset
           </Button>
         </>
       )}

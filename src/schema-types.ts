@@ -169,6 +169,13 @@ export type ExecutionRequirementQuota = {
   executionRequirement: ExecutionRequirement;
 };
 
+export type ExecutionRequirementQuotaInput = {
+  id?: Maybe<Scalars['ID']>;
+  percentageQuota?: Maybe<Scalars['Float']>;
+  equipmentId: Scalars['String'];
+  equipmentCatalogueId: Scalars['String'];
+};
+
 export type ExecutionRequirementValue = {
    __typename?: 'ExecutionRequirementValue';
   emissionClass: Scalars['Int'];
@@ -216,6 +223,7 @@ export type Mutation = {
   removeEquipmentFromCatalogue: Scalars['Boolean'];
   createDepartureBlockFromFile?: Maybe<Array<DepartureBlock>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
+  removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
 };
 
 
@@ -331,6 +339,12 @@ export type MutationCreateDepartureBlockFromFileArgs = {
 export type MutationRemoveDepartureBlocksForDayTypesArgs = {
   preInspectionId: Scalars['String'];
   dayTypes: Array<DayType>;
+};
+
+
+export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
 };
 
 export type OperatingArea = {

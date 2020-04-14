@@ -1,4 +1,3 @@
-import { EquipmentWithQuota } from '../equipmentCatalogue/EquipmentCatalogue'
 import {
   Equipment,
   EquipmentCatalogue,
@@ -18,6 +17,13 @@ export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & 
   kilometerRequirement?: number
   amount: number
   age: number
+}
+
+export type EquipmentWithQuota = Equipment & {
+  percentageQuota: number
+  meterRequirement?: number
+  kilometerRequirement?: number
+  quotaId: string
 }
 
 export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWithQuota[] {

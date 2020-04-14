@@ -130,6 +130,7 @@ type Mutation {
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
+  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removePreInspection(preInspectionId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
@@ -320,6 +321,13 @@ input EquipmentInput {
   registryNr: String
   type: String
   vehicleId: String
+}
+
+input ExecutionRequirementQuotaInput {
+  equipmentCatalogueId: String!
+  equipmentId: String!
+  id: ID
+  percentageQuota: Float
 }
 
 input InitialPreInspectionInput {

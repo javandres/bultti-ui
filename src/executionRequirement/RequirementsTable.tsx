@@ -10,8 +10,13 @@ import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
 
 const ExecutionRequirementsAreaContainer = styled.div`
+  margin-top: 1.5rem;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
 
   &:last-child {
     margin-bottom: 0;

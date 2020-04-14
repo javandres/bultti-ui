@@ -1,35 +1,35 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
-import {
-  removeEquipmentMutation,
-  updateEquipmentCatalogueQuotaMutation,
-} from '../equipment/equipmentQuery'
+import { updateEquipmentRequirementQuotaMutation } from '../equipment/equipmentQuery'
 import Table from '../common/components/Table'
 import { FlexRow, MessageView, SmallHeading, SubSectionHeading } from '../common/components/common'
 import EditEquipment, { renderEquipmentInput } from '../equipment/EditEquipment'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
-import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from '../equipment/equipmentUtils'
+import {
+  EquipmentQuotaGroup,
+  EquipmentWithQuota,
+  groupedEquipment,
+} from '../equipment/equipmentUtils'
 import { orderBy, pick } from 'lodash'
-import { EquipmentInput } from '../schema-types'
+import { EquipmentInput, ExecutionRequirement } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
+import { removeRequirementEquipmentMutation } from './executionRequirementsQueries'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
-  catalogueId: string
-  operatorId: number
+  executionRequirement: ExecutionRequirement
   startDate: Date
   onEquipmentChanged: () => Promise<void>
-  equipmentEditable: boolean
 }
 
 export const equipmentColumnLabels = {
   vehicleId: 'Kylkinumero',
   model: 'Malli',
   type: 'Tyyppi',
-  percentageQuota: 'Tarjottu osuus',
+  percentageQuota: 'Osuus',
   meterRequirement: 'Metriosuus',
   emissionClass: 'Euroluokka',
   registryNr: 'Rek.numero',
@@ -41,7 +41,8 @@ export const groupedEquipmentColumnLabels = {
   type: 'Tyyppi',
   emissionClass: 'Euroluokka',
   registryDate: 'Rek.päivä',
-  percentageQuota: 'Tarjottu osuus',
+  percentageQuota: 'Osuus',
+  kilometerRequirement: 'Kilometriosuus',
   amount: 'Määrä',
 }
 
@@ -53,14 +54,14 @@ type PendingEquipmentValue = {
   item: EquipmentWithQuota
 }
 
-const editableValues = ['percentageQuota']
+const editableValues = ['percentageQuota', 'meterRequirement']
 
-const CatalogueEquipmentList: React.FC<PropTypes> = observer(
-  ({ equipmentEditable, equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
+const RequirementEquipmentList: React.FC<PropTypes> = observer(
+  ({ equipment, executionRequirement, startDate, onEquipmentChanged }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
-    let [removeEquipment] = useMutationData(removeEquipmentMutation)
-    let [updateEquipmentQuota] = useMutationData(updateEquipmentCatalogueQuotaMutation)
+    let [removeEquipment] = useMutationData(removeRequirementEquipmentMutation)
+    let [updateEquipmentQuota] = useMutationData(updateEquipmentRequirementQuotaMutation)
 
     const onEditValue = useCallback(
       (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
@@ -97,6 +98,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       const equipmentInput: EquipmentInput = {
         ...(pick(pendingValue.item, [
           'percentageQuota',
+          'meterRequirement',
           'vehicleId',
           'model',
           'registryNr',
@@ -119,31 +121,18 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       await onEquipmentChanged()
     }, [updateEquipmentQuota, pendingValue, onEquipmentChanged])
 
-    let canRemoveEquipment = useCallback((item: EquipmentWithQuota) => equipmentEditable, [
-      equipmentEditable,
-    ])
-
     const onRemoveEquipment = useCallback(
-      (item: EquipmentWithQuota) => {
-        if (canRemoveEquipment(item)) {
-          return async () => {
-            let canRemove = canRemoveEquipment(item)
+      (item: EquipmentWithQuota) => async () => {
+        await removeEquipment({
+          variables: {
+            equipmentId: item.id,
+            requirementId: executionRequirement.id,
+          },
+        })
 
-            if (!canRemove || !item || !item.id) {
-              return
-            }
-
-            await removeEquipment({
-              variables: { equipmentId: item.id, catalogueId: catalogueId },
-            })
-
-            await onEquipmentChanged()
-          }
-        }
-
-        return undefined
+        await onEquipmentChanged()
       },
-      [onEquipmentChanged, removeEquipment, canRemoveEquipment]
+      [onEquipmentChanged, removeEquipment]
     )
 
     const onToggleEquipmentGrouped = useCallback((checked: boolean) => {
@@ -159,6 +148,10 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       switch (key) {
         case 'percentageQuota':
           return round(val) + '%'
+        case 'meterRequirement':
+          return round(val) + ' m'
+        case 'kilometerRequirement':
+          return round(val) + ' km'
         case 'emissionClass':
           return emissionClassNames[val + '']
         default:
@@ -171,6 +164,10 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
         switch (col) {
           case 'percentageQuota':
             return round(getTotal(equipment, 'percentageQuota')) + '%'
+          case 'meterRequirement':
+            return round(getTotal(equipment, 'meterRequirement')) + ' m'
+          case 'kilometerRequirement':
+            return round(getTotal(equipment, 'kilometerRequirement')) + ' km'
           case 'amount':
             return round(getTotal(equipmentGroups, 'amount')) + ' kpl'
           default:
@@ -186,7 +183,6 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       <>
         {equipment.length !== 0 ? (
           <>
-            <SubSectionHeading>Ajoneuvot</SubSectionHeading>
             <FlexRow style={{ marginBottom: '1rem' }}>
               <ToggleButton
                 name="grouped-equipment"
@@ -196,20 +192,19 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
                 Näytä ryhmissä
               </ToggleButton>
             </FlexRow>
-            <SmallHeading>Tarjottu kalusto</SmallHeading>
+            <SmallHeading>Suoritevaatimuksen kalusto</SmallHeading>
             {!groupEquipment && orderedEquipment.length !== 0 && (
               <Table
                 items={orderedEquipment}
                 columnLabels={equipmentColumnLabels}
                 onRemoveRow={onRemoveEquipment}
-                canRemoveRow={canRemoveEquipment}
                 renderValue={renderCellValue}
                 getColumnTotal={renderColumnTotals}
-                onEditValue={equipmentEditable ? onEditValue : undefined}
-                editValue={equipmentEditable ? pendingValue : null}
-                onCancelEdit={equipmentEditable ? onCancelPendingValue : undefined}
-                onSaveEdit={equipmentEditable ? onSavePendingValue : undefined}
-                editableValues={equipmentEditable ? editableValues : []}
+                onEditValue={onEditValue}
+                editValue={pendingValue}
+                onCancelEdit={onCancelPendingValue}
+                onSaveEdit={onSavePendingValue}
+                editableValues={editableValues}
                 renderInput={renderEquipmentInput}
               />
             )}
@@ -224,19 +219,17 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
             )}
           </>
         ) : (
-          <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
+          <MessageView>Suoritevaatimukseen ei ole liitetty ajoneuvoja.</MessageView>
         )}
-        {equipmentEditable && (
-          <EditEquipment
-            operatorId={operatorId}
-            catalogueId={catalogueId}
-            equipment={equipment}
-            onEquipmentChanged={onEquipmentChanged}
-          />
-        )}
+        <EditEquipment
+          operatorId={executionRequirement.operator.id}
+          executionRequirementId={executionRequirement.id}
+          equipment={equipment}
+          onEquipmentChanged={onEquipmentChanged}
+        />
       </>
     )
   }
 )
 
-export default CatalogueEquipmentList
+export default RequirementEquipmentList

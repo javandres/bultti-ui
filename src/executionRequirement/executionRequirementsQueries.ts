@@ -15,9 +15,22 @@ export const executionRequirementForProcurementUnitQuery = gql`
       totalKilometersFulfilled
       averageAgeWeighted
       averageAgeWeightedFulfilled
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       area {
         id
         name
+      }
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
       }
       requirements {
         emissionClass
@@ -30,6 +43,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       }
     }
   }
+  ${EquipmentFragment}
 `
 
 export const executionRequirementsByPreInspectionQuery = gql`
@@ -40,6 +54,11 @@ export const executionRequirementsByPreInspectionQuery = gql`
       averageAgeWeighted
       averageAgeWeightedFulfilled
       totalKilometersFulfilled
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       area {
         id
         name
@@ -66,6 +85,11 @@ export const createExecutionRequirementsForPreInspectionMutation = gql`
       area {
         id
         name
+      }
+      operator {
+        id
+        operatorId
+        operatorName
       }
       procurementUnitRequirements {
         id
@@ -100,6 +124,11 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
         id
         name
       }
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       equipmentQuotas {
         id
         meterRequirement
@@ -112,4 +141,13 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
     }
   }
   ${EquipmentFragment}
+`
+
+export const removeRequirementEquipmentMutation = gql`
+  mutation removeEquipmentFromCatalogue($equipmentId: String!, $requirementId: String!) {
+    removeEquipmentFromExecutionRequirement(
+      equipmentId: $equipmentId
+      executionRequirementId: $requirementId
+    )
+  }
 `
