@@ -37,12 +37,14 @@ export const createEquipmentMutation = gql`
   mutation createEquipmentMutation(
     $operatorId: Int!
     $equipmentInput: EquipmentInput!
-    $catalogueId: String!
+    $catalogueId: String
+    $executionRequirementId: String
   ) {
     createEquipment(
       operatorId: $operatorId
       equipment: $equipmentInput
       catalogueId: $catalogueId
+      executionRequirementId: $executionRequirementId
     ) {
       ...EquipmentFragment
     }
@@ -51,18 +53,60 @@ export const createEquipmentMutation = gql`
 `
 
 export const updateEquipmentMutation = gql`
-  mutation updateEquipmentFromCatalogue(
-    $equipmentId: String!
-    $equipmentInput: EquipmentInput!
-    $quotaId: String!
-  ) {
-    updateEquipment(equipmentId: $equipmentId, equipment: $equipmentInput, quotaId: $quotaId) {
+  mutation updateEquipmentFromCatalogue($equipmentId: String!, $equipmentInput: EquipmentInput!) {
+    updateEquipment(equipmentId: $equipmentId, equipment: $equipmentInput) {
       ...EquipmentFragment
       equipmentCatalogueQuotas {
         id
         percentageQuota
-        offeredPercentageQuota
+      }
+      executionRequirementQuotas {
+        id
         meterRequirement
+        percentageQuota
+      }
+    }
+  }
+  ${EquipmentFragment}
+`
+
+export const updateEquipmentCatalogueQuotaMutation = gql`
+  mutation updateEquipmentCatalogueQuota(
+    $equipmentId: String!
+    $equipmentInput: EquipmentInput!
+    $quotaId: String!
+  ) {
+    updateEquipmentCatalogueQuota(
+      equipmentId: $equipmentId
+      equipment: $equipmentInput
+      quotaId: $quotaId
+    ) {
+      ...EquipmentFragment
+      equipmentCatalogueQuotas {
+        id
+        percentageQuota
+      }
+    }
+  }
+  ${EquipmentFragment}
+`
+
+export const updateEquipmentRequirementQuotaMutation = gql`
+  mutation updateEquipmentRequirementQuota(
+    $equipmentId: String!
+    $equipmentInput: EquipmentInput!
+    $quotaId: String!
+  ) {
+    updateEquipmentRequirementQuota(
+      equipmentId: $equipmentId
+      equipment: $equipmentInput
+      quotaId: $quotaId
+    ) {
+      ...EquipmentFragment
+      executionRequirementQuotas {
+        id
+        meterRequirement
+        percentageQuota
       }
     }
   }

@@ -19,10 +19,10 @@ import { removeAllEquipmentFromCatalogueMutation } from './equipmentCatalogueQue
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
-  catalogueId: string
+  catalogueId?: string
+  executionRequirementId?: string
   operatorId: number
   onEquipmentChanged: () => Promise<void>
-  offeredEditable: boolean
 }
 
 export const renderEquipmentInput = (
@@ -67,7 +67,7 @@ const equipmentIsValid = (e: EquipmentInput): boolean =>
 type PendingEquipment = { _exists: boolean } & EquipmentInput
 
 const EditEquipment: React.FC<PropTypes> = observer(
-  ({ offeredEditable, operatorId, equipment, catalogueId, onEquipmentChanged }) => {
+  ({ operatorId, equipment, catalogueId, executionRequirementId, onEquipmentChanged }) => {
     let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
 
     let [searchFormVisible, setSearchFormVisible] = useState(false)
@@ -75,10 +75,22 @@ const EditEquipment: React.FC<PropTypes> = observer(
     let [searchVehicleId, setSearchVehicleId] = useState('')
     let [searchRegistryNr, setSearchRegistryNr] = useState('')
 
-    let editableValues = useMemo(
-      () => (offeredEditable ? ['offeredPercentageQuota'] : ['percentageQuota']),
-      [offeredEditable]
-    )
+    let offeredEditable = !!catalogueId
+    let quotaEditable = !!executionRequirementId
+
+    let editableValues = useMemo(() => {
+      let editableKeys: string[] = []
+
+      if (offeredEditable) {
+        editableKeys.push('offeredPercentageQuota')
+      }
+
+      if (quotaEditable) {
+        editableKeys.push('percentageQuota')
+      }
+
+      return editableKeys
+    }, [offeredEditable])
 
     let [
       searchEquipment,
@@ -164,7 +176,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
     }, [])
 
     const onAddEquipment = useCallback(async () => {
-      if (!catalogueId || !pendingEquipment) {
+      if (!(catalogueId || executionRequirementId) || !pendingEquipment) {
         return
       }
 
@@ -174,7 +186,8 @@ const EditEquipment: React.FC<PropTypes> = observer(
         variables: {
           operatorId,
           equipmentInput: omit(pendingEquipment, '_exists'),
-          catalogueId: catalogueId,
+          catalogueId: catalogueId || undefined,
+          executionRequirementId: executionRequirementId || undefined,
         },
       })
 

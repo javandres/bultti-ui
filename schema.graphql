@@ -32,6 +32,7 @@ type Equipment {
   departureBlocks: [DepartureBlock!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
+  executionRequirementQuotas: [ExecutionRequirementQuota!]!
   exteriorColor: String!
   id: ID!
   model: String!
@@ -59,13 +60,11 @@ type EquipmentCatalogue {
 type EquipmentCatalogueQuota {
   catalogueEndDate: BulttiDate!
   catalogueStartDate: BulttiDate!
-  equipment: Equipment!
-  equipmentCatalogue: EquipmentCatalogue!
+  equipment: Equipment
+  equipmentCatalogue: EquipmentCatalogue
   equipmentCatalogueId: String!
   equipmentId: String!
   id: ID!
-  meterRequirement: Float!
-  offeredPercentageQuota: Float!
   percentageQuota: Float!
 }
 
@@ -82,30 +81,48 @@ type EquipmentSearchResult {
 
 type ExecutionRequirement {
   area: OperatingArea!
+  areaRequirement: ExecutionRequirement
   averageAgeWeighted: Float!
   averageAgeWeightedFulfilled: Float!
+  equipmentQuotas: [ExecutionRequirementQuota!]!
+  id: ID!
+  operator: Operator!
+  preInspection: PreInspection!
   procurementUnit: ProcurementUnit
+  procurementUnitRequirements: [ExecutionRequirement!]
   requirements: [ExecutionRequirementValue!]!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
 
+type ExecutionRequirementQuota {
+  equipment: Equipment!
+  equipmentId: String!
+  executionRequirement: ExecutionRequirement!
+  executionRequirementId: String!
+  id: ID!
+  meterRequirement: Float!
+  percentageQuota: Float!
+}
+
 type ExecutionRequirementValue {
-  cumulativeDifferencePercentage: Float!
-  differencePercentage: Float!
+  cumulativeDifferencePercentage: Float
+  differencePercentage: Float
   emissionClass: Int!
-  equipmentCount: Int!
-  equipmentCountFulfilled: Int!
-  kilometerRequirement: Float!
-  kilometersFulfilled: Float!
-  quotaFulfilled: Float!
-  quotaRequirement: Float!
+  equipmentCount: Int
+  equipmentCountFulfilled: Int
+  kilometerRequirement: Float
+  kilometersFulfilled: Float
+  quotaFulfilled: Float
+  quotaRequirement: Float
 }
 
 type Mutation {
   createDepartureBlockFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [DepartureBlock!]
-  createEquipment(catalogueId: String!, equipment: EquipmentInput!, operatorId: Int!): Equipment!
+  createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
+  createExecutionRequirementsForPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
+  createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!, startDate: String!): ExecutionRequirement!
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
@@ -114,14 +131,17 @@ type Mutation {
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   removePreInspection(preInspectionId: String!): Boolean!
-  updateEquipment(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
+  updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updatePreInspection(preInspection: PreInspectionInput!, preInspectionId: String!): PreInspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!): ProcurementUnit!
 }
 
 type OperatingArea {
+  executionRequirements: [ExecutionRequirement!]!
   id: Int!
   name: OperatingAreaName!
   procurementUnits: [ProcurementUnit!]!
@@ -131,6 +151,7 @@ type Operator {
   departureBlocks: [DepartureBlock!]!
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
+  executionRequirements: [ExecutionRequirement!]!
   id: Int!
   operatorId: Int!
   operatorName: String!
@@ -143,6 +164,7 @@ type PreInspection {
   createdBy: User!
   departureBlocks: [DepartureBlock!]!
   endDate: BulttiDate!
+  executionRequirements: [ExecutionRequirement!]!
   id: ID!
   minStartDate: BulttiDate
   operator: Operator!
@@ -162,6 +184,7 @@ type ProcurementUnit {
   departures: [Departure!]!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
+  executionRequirements: [ExecutionRequirement!]!
   id: ID!
   medianAgeRequirement: Float!
   operator: Operator!
@@ -189,9 +212,9 @@ type Query {
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
+  executionRequirementForProcurementUnit(procurementUnitId: String!, startDate: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsByPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
-  executionRequirementsByProcurementUnit(procurementUnitId: String!, startDate: String!): ExecutionRequirement!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection

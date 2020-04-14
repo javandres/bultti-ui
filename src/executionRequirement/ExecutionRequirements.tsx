@@ -1,7 +1,10 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { executionRequirementsByPreInspectionQuery } from './executionRequirementsQueries'
+import {
+  createExecutionRequirementsForPreInspectionMutation,
+  executionRequirementsByPreInspectionQuery,
+} from './executionRequirementsQueries'
 import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
@@ -9,6 +12,7 @@ import { orderBy } from 'lodash'
 import Loading from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { useMutationData } from '../util/useMutationData'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -27,6 +31,17 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
   let { id } = preInspection || {}
 
   let [
+    createPreInspectionRequirements,
+    { data: createdPreInspectionRequirements, loading: createLoading },
+  ] = useMutationData(createExecutionRequirementsForPreInspectionMutation, {
+    variables: {
+      preInspectionId: id,
+    },
+  })
+
+  console.log(createdPreInspectionRequirements)
+
+  let [
     execQuery,
     { data: executionRequirementsData, loading: requirementsLoading },
   ] = useLazyQueryData(executionRequirementsByPreInspectionQuery, {
@@ -34,6 +49,8 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
       preInspectionId: id,
     },
   })
+
+  console.log(executionRequirementsData)
 
   let areaExecutionRequirements = useMemo(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
@@ -45,6 +62,12 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
       execQuery()
     }
   }, [execQuery, preInspection])
+
+  let onCreateRequirements = useCallback(() => {
+    if (preInspection) {
+      createPreInspectionRequirements()
+    }
+  }, [createPreInspectionRequirements, preInspection])
 
   return (
     <ExecutionRequirementsView>
@@ -67,7 +90,7 @@ const ExecutionRequirements: React.FC<PropTypes> = observer(() => {
       {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
-          <Button onClick={onCalculateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
+          <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
       {requirementsLoading && <Loading />}

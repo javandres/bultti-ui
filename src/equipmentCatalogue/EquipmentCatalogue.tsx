@@ -33,8 +33,7 @@ export type PropTypes = {
 
 export type EquipmentWithQuota = Equipment & {
   percentageQuota: number
-  offeredPercentageQuota: number
-  meterRequirement: number
+  meterRequirement?: number
   kilometerRequirement?: number
   quotaId: string
 }
