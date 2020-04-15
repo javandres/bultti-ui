@@ -236,7 +236,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                         : 'Tuotannossa'}
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>
-                      <DateTitle>Tuotantoaika</DateTitle>
+                      <DateTitle>Tuotantojakso</DateTitle>
                       <StartDate>
                         {format(parseISO(preInspection.startDate), READABLE_DATE_FORMAT)}
                       </StartDate>

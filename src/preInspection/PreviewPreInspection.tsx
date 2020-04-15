@@ -56,10 +56,9 @@ const PreviewPreInspection: React.FC<PropTypes> = observer(({ publishPreInspecti
         buttonAction={onPublish}
         buttonLabel="Julkaise"
       />
-      <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
       <FormWrapper>
         <FormColumn width="100%" minWidth="510px">
-          <PreInspectionExecutionRequirements />
+          Ei raportteja...
         </FormColumn>
       </FormWrapper>
     </PreviewPreInspectionView>

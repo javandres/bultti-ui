@@ -15,6 +15,7 @@ import { TabChildProps } from '../common/components/Tabs'
 import { PreInspectionContext } from './PreInspectionContext'
 import { useNavigate } from '@reach/router'
 import { ButtonStyle } from '../common/components/Button'
+import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -131,6 +132,13 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
           <FormWrapper>
             <FormColumn width="100%" minWidth="510px">
               <DepartureBlocks />
+            </FormColumn>
+          </FormWrapper>
+
+          <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
+          <FormWrapper>
+            <FormColumn width="100%" minWidth="510px">
+              <PreInspectionExecutionRequirements />
             </FormColumn>
           </FormWrapper>
 
