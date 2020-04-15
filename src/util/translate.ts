@@ -16,11 +16,7 @@ const textCategories = {
 export type TextCategory = 'ui' | 'help'
 export type Language = 'fi'
 
-export function translate(
-  token: string,
-  category: TextCategory = 'ui',
-  language: Language = 'fi'
-) {
+export function translate(token: string, category: TextCategory = 'ui', language: Language = 'fi') {
   const languageFile = get(textCategories, `${category}.${language}`, false)
 
   if (!languageFile) {

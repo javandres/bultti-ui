@@ -7,14 +7,11 @@ import { ApolloError } from 'apollo-client'
 import { merge } from 'lodash'
 
 type Mutator<TData, TVariables> = [
-  (overrideOptions?: MutationFunctionOptions<TData, TVariables>) => Promise<ExecutionResult<TData>>,
+  (overrideOptions?: MutationFunctionOptions<TData, TVariables>) => Promise<ExecutionResult>,
   { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 
-export const useMutationData = <
-  TData = any,
-  TVariables = OperationVariables
->(
+export const useMutationData = <TData = any, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''

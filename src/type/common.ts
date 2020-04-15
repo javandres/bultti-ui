@@ -5,4 +5,3 @@ export interface FunctionMap {
 export type ThemeTypes = 'light' | 'dark'
 
 export type AnyFunction<T = any, ReturnT = any> = (...args: T[]) => ReturnT
-

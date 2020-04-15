@@ -30,9 +30,7 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(
 
     return (
       <MetaDisplay>
-        <LoadingMeta inline={true} loading={isLoading}>
-          <Loading inline={true} />
-        </LoadingMeta>
+        <LoadingMeta inline={true} loading={isLoading} />
         <MetaItem>
           <MetaLabel>Perustettu</MetaLabel>
           <MetaValue>{format(parseISO(preInspection.createdAt), READABLE_TIME_FORMAT)}</MetaValue>

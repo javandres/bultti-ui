@@ -10,7 +10,7 @@ type Uploader<TData, TVariables> = [
   (
     file: File,
     overrideOptions?: MutationFunctionOptions<TData, TVariables>
-  ) => Promise<ExecutionResult<TData>>,
+  ) => Promise<ExecutionResult>,
   { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 

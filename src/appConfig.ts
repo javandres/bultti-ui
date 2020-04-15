@@ -1,3 +1,3 @@
 export const config = {
-  operationAreas: ['center', 'other']
+  operationAreas: ['center', 'other'],
 }

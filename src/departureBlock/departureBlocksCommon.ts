@@ -123,9 +123,7 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
       setDayTypeGroups(orderDayTypeGroups(nextDayTypeGroups))
 
       if (setTo && enabledDayTypes.includes(dayType)) {
-        const existingIndex = nextDayTypeGroups.findIndex((dtg) =>
-          isDayTypeEnabled(dayType, dtg)
-        )
+        const existingIndex = nextDayTypeGroups.findIndex((dtg) => isDayTypeEnabled(dayType, dtg))
 
         nextDayTypeGroups = setDayTypeInGroup(dayType, existingIndex, false)
       }
