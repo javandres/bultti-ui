@@ -265,8 +265,11 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             </HeaderRow>
             {isExpanded && (
               <Content>
+                {showExecutionRequirements && hasEquipment && (
+                  <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
+                )}
                 <FlexRow>
-                  <SubSectionHeading>Kilpailukohteen tiedot</SubSectionHeading>
+                  <SubSectionHeading>Kohteen tiedot</SubSectionHeading>
                   <Button
                     onClick={onUpdate}
                     style={{ marginLeft: 'auto' }}
@@ -315,9 +318,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     </ItemForm>
                   </>
                 ) : null}
-                {showExecutionRequirements && hasEquipment && (
-                  <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
-                )}
                 <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
                 <EquipmentCatalogue
                   startDate={inspectionStartDate}

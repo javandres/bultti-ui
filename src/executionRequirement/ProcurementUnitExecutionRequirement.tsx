@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../common/components/Loading'
@@ -18,7 +18,7 @@ import { EquipmentWithQuota, requirementEquipment } from '../equipment/equipment
 import { parseISO } from 'date-fns'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
-  margin-top: 1.5rem;
+  margin-bottom: 2rem;
 `
 
 export type PropTypes = {
@@ -70,6 +70,10 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     () => (preInspection ? parseISO(preInspection.startDate) : new Date()),
     [preInspection]
   )
+
+  useEffect(() => {
+    onFetchRequirements()
+  }, [])
 
   return (
     <ProcurementUnitExecutionRequirementView>
