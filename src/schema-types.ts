@@ -151,10 +151,10 @@ export type ExecutionRequirement = {
   procurementUnit?: Maybe<ProcurementUnit>;
   areaRequirement?: Maybe<ExecutionRequirement>;
   procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
-  totalKilometers: Scalars['Float'];
-  totalKilometersFulfilled: Scalars['Float'];
-  averageAgeWeighted: Scalars['Float'];
-  averageAgeWeightedFulfilled: Scalars['Float'];
+  totalKilometers?: Maybe<Scalars['Float']>;
+  totalKilometersFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
   requirements: Array<ExecutionRequirementValue>;
 };
 
@@ -468,7 +468,7 @@ export type Query = {
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  executionRequirementsByPreInspection: Array<ExecutionRequirement>;
+  executionRequirementsByArea: Array<ExecutionRequirement>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -563,7 +563,7 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 };
 
 
-export type QueryExecutionRequirementsByPreInspectionArgs = {
+export type QueryExecutionRequirementsByAreaArgs = {
   preInspectionId: Scalars['String'];
 };
 

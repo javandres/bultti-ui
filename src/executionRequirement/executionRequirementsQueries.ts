@@ -48,7 +48,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
 
 export const executionRequirementsByPreInspectionQuery = gql`
   query executionRequirementsByPreInspection($preInspectionId: String!) {
-    executionRequirementsByPreInspection(preInspectionId: $preInspectionId) {
+    executionRequirementsByArea(preInspectionId: $preInspectionId) {
       id
       totalKilometers
       averageAgeWeighted
