@@ -5,9 +5,16 @@ import { InspectionStatus, PreInspection } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { FlexRow, MessageContainer, MessageView } from '../common/components/common'
+import {
+  FlexRow,
+  MessageContainer,
+  MessageView,
+  SubSectionHeading,
+} from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import { useCreatePreInspection, useRemovePreInspection } from './preInspectionUtils'
+import { parseISO, format } from 'date-fns'
+import { READABLE_DATE_FORMAT } from '../constants'
 
 const SelectPreInspectionView = styled.div``
 
@@ -29,12 +36,20 @@ const ListHeading = styled.h4`
   margin: 0 1rem 0 0;
 `
 
-const PreInspectionItem = styled.div`
+type StatusProps = { status?: InspectionStatus | 'new' }
+
+const PreInspectionItem = styled.div<StatusProps>`
   padding: 0.75rem 1rem 0;
   border-radius: 5px;
   margin-bottom: 1rem;
   background: white;
-  border: 1px solid var(--blue);
+  border: 2px solid
+    ${(p) =>
+      p.status === 'new'
+        ? 'var(--blue)'
+        : p.status === InspectionStatus.Draft
+        ? 'var(--lighter-grey)'
+        : 'var(--light-green)'};
   font-family: inherit;
   margin-right: 1rem;
   text-align: left;
@@ -47,6 +62,7 @@ const PreInspectionItem = styled.div`
 const ItemContent = styled.div`
   margin-bottom: 1rem;
   line-height: 1.4;
+  position: relative;
 `
 
 const ButtonRow = styled.div`
@@ -62,6 +78,60 @@ const ButtonRow = styled.div`
   > * {
     margin-right: 1rem;
   }
+`
+
+const InspectionTitle = styled(SubSectionHeading)`
+  margin-bottom: 1rem;
+`
+
+const InspectionVersion = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.2rem 0.6rem;
+  border-radius: 5px;
+  background: var(--lighter-grey);
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const InspectionStatusDisplay = styled.div<StatusProps>`
+  padding: 0.25rem 0;
+  text-align: center;
+  background: ${(p) =>
+    p.status === InspectionStatus.Draft
+      ? 'var(--blue)'
+      : 'var(--light-green)'};
+  color: white;
+  margin: 0 0 1rem;
+  border-radius: 5px;
+`
+
+const InspectionPeriodDisplay = styled.div``
+
+const StartDate = styled.span`
+  margin-right: 0.75rem;
+
+  &:after {
+    content: '➔';
+    display: inline-block;
+    margin-left: 0.75rem;
+  }
+`
+
+const EndDate = styled(StartDate)`
+  &:after {
+    content: '';
+  }
+`
+
+const DateTitle = styled.h6`
+  font-size: 0.75rem;
+  margin-top: 0;
+  margin-bottom: 0.25rem;
 `
 
 export type PropTypes = {
@@ -134,7 +204,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
             </HeaderRow>
             <PreInspectionItems>
               {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-                <PreInspectionItem key="new">
+                <PreInspectionItem key="new" status="new">
                   <ItemContent style={{ marginTop: 0 }}>
                     Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda uuden.
                   </ItemContent>
@@ -154,17 +224,26 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                 </PreInspectionItem>
               )}
               {orderBy(preInspections, 'version', 'desc').map((preInspection) => (
-                <PreInspectionItem key={preInspection.id}>
+                <PreInspectionItem key={preInspection.id} status={preInspection.status}>
                   <ItemContent>
-                    ID: {preInspection.id}
-                    <br />
-                    Version: {preInspection.version}
-                    <br />
-                    Start date: {preInspection.startDate}
-                    <br />
-                    End date: {preInspection.endDate}
-                    <br />
-                    Status: {preInspection.status}
+                    <InspectionTitle>
+                      {preInspection.operator.operatorName}, {preInspection.season.id}
+                    </InspectionTitle>
+                    <InspectionVersion>{preInspection.version}</InspectionVersion>
+                    <InspectionStatusDisplay status={preInspection.status}>
+                      {preInspection.status === InspectionStatus.Draft
+                        ? 'Muokattavissa'
+                        : 'Tuotannossa'}
+                    </InspectionStatusDisplay>
+                    <InspectionPeriodDisplay>
+                      <DateTitle>Tuotantoaika</DateTitle>
+                      <StartDate>
+                        {format(parseISO(preInspection.startDate), READABLE_DATE_FORMAT)}
+                      </StartDate>
+                      <EndDate>
+                        {format(parseISO(preInspection.endDate), READABLE_DATE_FORMAT)}
+                      </EndDate>
+                    </InspectionPeriodDisplay>
                   </ItemContent>
                   <ButtonRow>
                     {preInspection.status === InspectionStatus.Draft ? (
