@@ -13,9 +13,11 @@ import { useMutationData } from '../util/useMutationData'
 import { emptyOrNumber } from '../util/emptyOrNumber'
 import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
-import { equipmentColumnLabels } from '../equipmentCatalogue/CatalogueEquipmentList'
+import { equipmentColumnLabels as catalogueEquipmentColumnLabels } from '../equipmentCatalogue/CatalogueEquipmentList'
+import { equipmentColumnLabels as requirementEquipmentColumnLabels } from '../executionRequirement/RequirementEquipmentList'
 import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/equipmentCatalogueQuery'
 import { EquipmentWithQuota } from './equipmentUtils'
+import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -77,6 +79,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
 
     let offeredEditable = !!catalogueId
     let quotaEditable = !!executionRequirementId
+    let isEditable = offeredEditable || quotaEditable
 
     let editableValues = useMemo(() => {
       let editableKeys: string[] = []
@@ -97,7 +100,12 @@ const EditEquipment: React.FC<PropTypes> = observer(
       { data: foundEquipment, loading: searchLoading, called: searchCalled },
     ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
 
-    let [removeAllEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
+    let [removeAllEquipment] = useMutationData(
+      offeredEditable
+        ? removeAllEquipmentFromCatalogueMutation
+        : removeAllEquipmentFromExecutionRequirement
+    )
+
     let [createEquipment] = useMutationData(createEquipmentMutation)
 
     let doSearch = useCallback(async () => {
@@ -164,7 +172,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
         if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
           addDraftEquipment(foundEquipment)
         } else {
-          alert('Ajoneuvo on jo lisätty tähän kalustoluetteloon.')
+          alert('Ajoneuvo on jo lisätty.')
         }
       }
     }, [foundEquipment, searchResultActive])
@@ -192,23 +200,41 @@ const EditEquipment: React.FC<PropTypes> = observer(
       })
 
       await onEquipmentChanged()
-    }, [catalogueId, operatorId, onEquipmentChanged, createEquipment, pendingEquipment])
+    }, [
+      catalogueId,
+      executionRequirementId,
+      operatorId,
+      onEquipmentChanged,
+      createEquipment,
+      pendingEquipment,
+    ])
 
     const onCancelPendingEquipment = useCallback(() => {
       setPendingEquipment(null)
     }, [])
 
     const onRemoveAll = useCallback(() => {
-      removeAllEquipment({
-        variables: {
-          catalogueId,
-        },
-      })
-    }, [catalogueId])
+      let idProp = offeredEditable ? 'catalogueId' : quotaEditable ? 'requirementId' : ''
+      let idValue = offeredEditable ? catalogueId : quotaEditable ? executionRequirementId : ''
+
+      if (idProp && idValue) {
+        removeAllEquipment({
+          variables: {
+            [idProp]: idValue,
+          },
+        })
+      }
+    }, [offeredEditable, quotaEditable, catalogueId, executionRequirementId])
+
+    let fieldLabels = offeredEditable
+      ? catalogueEquipmentColumnLabels
+      : quotaEditable
+      ? requirementEquipmentColumnLabels
+      : undefined
 
     return (
       <>
-        {!pendingEquipment && (
+        {!pendingEquipment && isEditable && (
           <FlexRow>
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
               Lisää ajoneuvo
@@ -219,7 +245,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
-            {offeredEditable &&
+            {isEditable &&
               !searchFormVisible &&
               !searchResultActive &&
               equipment.length !== 0 &&
@@ -233,24 +259,22 @@ const EditEquipment: React.FC<PropTypes> = observer(
               )}
           </FlexRow>
         )}
-        {pendingEquipment && (
+        {pendingEquipment && isEditable && (
           <>
             <SubSectionHeading>Lisää ajoneuvo</SubSectionHeading>
             <ItemForm
               item={pendingEquipment}
-              labels={equipmentColumnLabels}
+              labels={fieldLabels}
               readOnly={
                 pendingEquipment._exists
-                  ? Object.keys(equipmentColumnLabels).filter(
-                      (key) => !editableValues.includes(key)
-                    )
+                  ? Object.keys(fieldLabels || {}).filter((key) => !editableValues.includes(key))
                   : false
               }
               onChange={onEquipmentInputChange}
               onDone={onAddEquipment}
               onCancel={onCancelPendingEquipment}
               doneDisabled={!equipmentIsValid(pendingEquipment)}
-              doneLabel="Lisää luetteloon"
+              doneLabel="Lisää"
               renderInput={renderEquipmentInput}
             />
           </>

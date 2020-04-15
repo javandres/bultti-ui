@@ -30,7 +30,6 @@ export const equipmentColumnLabels = {
   model: 'Malli',
   type: 'Tyyppi',
   percentageQuota: 'Tarjottu osuus',
-  meterRequirement: 'Metriosuus',
   emissionClass: 'Euroluokka',
   registryNr: 'Rek.numero',
   registryDate: 'Rek.päivä',
