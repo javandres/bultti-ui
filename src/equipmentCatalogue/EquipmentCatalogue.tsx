@@ -1,17 +1,24 @@
 import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { EquipmentCatalogue as EquipmentCatalogueType, EquipmentCatalogueInput } from '../schema-types'
+import {
+  EquipmentCatalogue as EquipmentCatalogueType,
+  EquipmentCatalogueInput,
+} from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { Button } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { MessageView } from '../common/components/common'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
-import { createEquipmentCatalogueMutation, updateEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
+import {
+  createEquipmentCatalogueMutation,
+  updateEquipmentCatalogueMutation,
+} from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipmentList from './CatalogueEquipmentList'
 import { catalogueEquipment, EquipmentWithQuota } from '../equipment/equipmentUtils'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import EditEquipment from '../equipment/EditEquipment'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -41,7 +48,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     )
 
     const preInspection = useContext(PreInspectionContext)
-
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
@@ -125,6 +131,12 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       catalogue,
     ])
 
+    let hasEquipment = useCallback(
+      (checkItem?: any) =>
+        !checkItem ? false : equipment.some((eq) => eq.vehicleId === checkItem?.vehicleId),
+      [equipment]
+    )
+
     return (
       <EquipmentCatalogueView>
         {catalogue && !pendingCatalogue && (
@@ -158,14 +170,25 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
           </>
         )}
         {catalogue && (
-          <CatalogueEquipmentList
-            catalogueId={catalogue.id}
-            operatorId={operatorId}
-            equipment={equipment}
-            startDate={startDate}
-            onEquipmentChanged={onCatalogueChanged}
-            equipmentEditable={editable}
-          />
+          <>
+            <CatalogueEquipmentList
+              catalogueId={catalogue.id}
+              operatorId={operatorId}
+              equipment={equipment}
+              startDate={startDate}
+              onEquipmentChanged={onCatalogueChanged}
+              equipmentEditable={editable}
+            />
+            {editable && (
+              <EditEquipment
+                operatorId={operatorId}
+                catalogueId={catalogue.id}
+                equipment={equipment}
+                onEquipmentChanged={onCatalogueChanged}
+                hasEquipment={hasEquipment}
+              />
+            )}
+          </>
         )}
       </EquipmentCatalogueView>
     )

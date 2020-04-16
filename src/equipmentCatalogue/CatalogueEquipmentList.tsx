@@ -6,7 +6,6 @@ import {
   updateEquipmentCatalogueQuotaMutation,
 } from '../equipment/equipmentQuery'
 import { MessageView } from '../common/components/common'
-import EditEquipment from '../equipment/EditEquipment'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import EquipmentList from '../equipment/EquipmentList'
 
@@ -72,30 +71,18 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       [onEquipmentChanged, catalogueId, execRemoveEquipment]
     )
 
-    return (
-      <>
-        {equipment.length !== 0 ? (
-          <EquipmentList
-            equipment={equipment}
-            updateEquipment={updateEquipmentData}
-            removeEquipment={removeEquipment}
-            startDate={startDate}
-            columnLabels={equipmentColumnLabels}
-            groupedColumnLabels={groupedEquipmentColumnLabels}
-            editableValues={['percentageQuota']}
-          />
-        ) : (
-          <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
-        )}
-        {equipmentEditable && (
-          <EditEquipment
-            operatorId={operatorId}
-            catalogueId={catalogueId}
-            equipment={equipment}
-            onEquipmentChanged={onEquipmentChanged}
-          />
-        )}
-      </>
+    return equipment.length !== 0 ? (
+      <EquipmentList
+        equipment={equipment}
+        updateEquipment={updateEquipmentData}
+        removeEquipment={removeEquipment}
+        startDate={startDate}
+        columnLabels={equipmentColumnLabels}
+        groupedColumnLabels={groupedEquipmentColumnLabels}
+        editableValues={['percentageQuota']}
+      />
+    ) : (
+      <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
     )
   }
 )

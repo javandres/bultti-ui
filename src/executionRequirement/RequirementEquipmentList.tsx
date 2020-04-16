@@ -3,7 +3,6 @@ import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import { updateEquipmentRequirementQuotaMutation } from '../equipment/equipmentQuery'
 import { MessageView } from '../common/components/common'
-import EditEquipment from '../equipment/EditEquipment'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import { ExecutionRequirement } from '../schema-types'
 import { removeRequirementEquipmentMutation } from './executionRequirementsQueries'
@@ -71,28 +70,18 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
       [onEquipmentChanged, executionRequirement, execRemoveEquipment]
     )
 
-    return (
-      <>
-        {equipment.length !== 0 ? (
-          <EquipmentList
-            equipment={equipment}
-            updateEquipment={updateEquipmentData}
-            removeEquipment={removeEquipment}
-            startDate={startDate}
-            columnLabels={equipmentColumnLabels}
-            groupedColumnLabels={groupedEquipmentColumnLabels}
-            editableValues={['percentageQuota', 'meterRequirement']}
-          />
-        ) : (
-          <MessageView>Suoritevaatimukseen ei ole liitetty ajoneuvoja.</MessageView>
-        )}
-        <EditEquipment
-          operatorId={executionRequirement.operator.id}
-          executionRequirementId={executionRequirement.id}
-          equipment={equipment}
-          onEquipmentChanged={onEquipmentChanged}
-        />
-      </>
+    return equipment.length !== 0 ? (
+      <EquipmentList
+        equipment={equipment}
+        updateEquipment={updateEquipmentData}
+        removeEquipment={removeEquipment}
+        startDate={startDate}
+        columnLabels={equipmentColumnLabels}
+        groupedColumnLabels={groupedEquipmentColumnLabels}
+        editableValues={['percentageQuota', 'meterRequirement']}
+      />
+    ) : (
+      <MessageView>Suoritevaatimukseen ei ole liitetty ajoneuvoja.</MessageView>
     )
   }
 )

@@ -16,6 +16,7 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 import RequirementEquipmentList from './RequirementEquipmentList'
 import { EquipmentWithQuota, requirementEquipment } from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
+import EditEquipment from '../equipment/EditEquipment'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-bottom: 2rem;
@@ -66,6 +67,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     [procurementUnitRequirement]
   )
 
+  let hasEquipment = useCallback(
+    (checkItem?: any) =>
+      !checkItem ? false : equipment.some((eq) => eq.vehicleId === checkItem?.vehicleId),
+    [equipment]
+  )
+
   const inspectionStartDate = useMemo(
     () => (preInspection ? parseISO(preInspection.startDate) : new Date()),
     [preInspection]
@@ -97,6 +104,13 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
             onEquipmentChanged={onFetchRequirements}
             equipment={equipment}
             executionRequirement={procurementUnitRequirement}
+          />
+          <EditEquipment
+            operatorId={procurementUnitRequirement.operator.id}
+            executionRequirementId={procurementUnitRequirement.id}
+            equipment={equipment}
+            onEquipmentChanged={onFetchRequirements}
+            hasEquipment={hasEquipment}
           />
           <RequirementsTable executionRequirement={procurementUnitRequirement} />
         </>

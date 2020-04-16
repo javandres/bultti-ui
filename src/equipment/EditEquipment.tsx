@@ -19,12 +19,15 @@ import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/e
 import { EquipmentWithQuota } from './equipmentUtils'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 
+type PendingEquipment = { _exists: boolean } & EquipmentInput
+
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
   catalogueId?: string
   executionRequirementId?: string
   operatorId: number
   onEquipmentChanged: () => Promise<void>
+  hasEquipment: (checkEquipment?: PendingEquipment) => boolean
 }
 
 export const renderEquipmentInput = (
@@ -66,10 +69,8 @@ const equipmentIsValid = (e: EquipmentInput): boolean =>
     e?.registryDate
   )
 
-type PendingEquipment = { _exists: boolean } & EquipmentInput
-
 const EditEquipment: React.FC<PropTypes> = observer(
-  ({ operatorId, equipment, catalogueId, executionRequirementId, onEquipmentChanged }) => {
+  ({ operatorId, hasEquipment, catalogueId, executionRequirementId, onEquipmentChanged }) => {
     let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
 
     let [searchFormVisible, setSearchFormVisible] = useState(false)
@@ -169,7 +170,7 @@ const EditEquipment: React.FC<PropTypes> = observer(
         setSearchVehicleId('')
         setSearchRegistryNr('')
 
-        if (!equipment.some((eq) => eq.vehicleId === foundEquipment?.vehicleId)) {
+        if (!hasEquipment(foundEquipment)) {
           addDraftEquipment(foundEquipment)
         } else {
           alert('Ajoneuvo on jo lisätty.')
@@ -245,18 +246,14 @@ const EditEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
-            {isEditable &&
-              !searchFormVisible &&
-              !searchResultActive &&
-              equipment.length !== 0 &&
-              !pendingEquipment && (
-                <Button
-                  style={{ marginLeft: 'auto' }}
-                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                  onClick={onRemoveAll}>
-                  Poista kaikki ajoneuvot
-                </Button>
-              )}
+            {isEditable && !searchFormVisible && !searchResultActive && !pendingEquipment && (
+              <Button
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                onClick={onRemoveAll}>
+                Poista kaikki ajoneuvot
+              </Button>
+            )}
           </FlexRow>
         )}
         {pendingEquipment && isEditable && (
