@@ -47,6 +47,19 @@ export const createEquipmentMutation = gql`
       executionRequirementId: $executionRequirementId
     ) {
       ...EquipmentFragment
+      equipmentCatalogueQuotas {
+        id
+        percentageQuota
+        equipmentCatalogueId
+        equipmentId
+      }
+      executionRequirementQuotas {
+        id
+        percentageQuota
+        meterRequirement
+        executionRequirementId
+        equipmentId
+      }
     }
   }
   ${EquipmentFragment}

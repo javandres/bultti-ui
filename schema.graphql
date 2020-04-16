@@ -316,7 +316,6 @@ input EquipmentInput {
   exteriorColor: String
   meterRequirement: Float
   model: String
-  offeredPercentageQuota: Float
   percentageQuota: Float
   registryDate: BulttiDate
   registryNr: String

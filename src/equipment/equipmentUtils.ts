@@ -2,6 +2,7 @@ import {
   Equipment,
   EquipmentCatalogue,
   EquipmentCatalogueQuota,
+  EquipmentInput,
   ExecutionRequirement,
   ExecutionRequirementQuota,
 } from '../schema-types'
@@ -10,6 +11,11 @@ import { strval } from '../util/strval'
 import { round } from '../util/round'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { getTotal } from '../util/getTotal'
+import { useMutationData } from '../util/useMutationData'
+import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/equipmentCatalogueQuery'
+import { createEquipmentMutation } from './equipmentQuery'
+import { useCallback } from 'react'
+import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
   percentageQuota: number
@@ -101,4 +107,97 @@ export function groupedEquipment(
       kilometerRequirement,
     }
   })
+}
+
+function isCatalogue(item?: any): item is EquipmentCatalogue {
+  return (
+    !!item &&
+    typeof item?.equipmentQuotas !== 'undefined' &&
+    typeof item?.requirements === 'undefined'
+  )
+}
+
+function isRequirement(item?: any): item is ExecutionRequirement {
+  return (
+    !!item &&
+    typeof item?.equipmentQuotas !== 'undefined' &&
+    typeof item?.requirements !== 'undefined'
+  )
+}
+
+export function useEquipmentCrud(
+  catalogueOrRequirement?: EquipmentCatalogue | ExecutionRequirement,
+  onChanged: () => unknown = () => Promise.resolve()
+) {
+  let mode: 'catalogue' | 'requirement' | false = false
+
+  if (isCatalogue(catalogueOrRequirement)) {
+    mode = 'catalogue'
+  } else if (isRequirement(catalogueOrRequirement)) {
+    mode = 'requirement'
+  }
+
+  let [execRemoveAllRequirementEquipment] = useMutationData(
+    removeAllEquipmentFromExecutionRequirement
+  )
+  let [execRemoveAllCatalogueEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
+  let [execCreateEquipment] = useMutationData(createEquipmentMutation)
+
+  let removeAllEquipment = useCallback(async () => {
+    if (!catalogueOrRequirement) {
+      return
+    }
+
+    if (mode === 'catalogue') {
+      await execRemoveAllCatalogueEquipment({
+        variables: {
+          catalogueId: catalogueOrRequirement.id,
+        },
+      })
+    }
+
+    if (mode === 'requirement') {
+      await execRemoveAllRequirementEquipment({
+        variables: {
+          requirementId: catalogueOrRequirement.id,
+        },
+      })
+    }
+
+    await onChanged()
+  }, [
+    execRemoveAllRequirementEquipment,
+    execRemoveAllCatalogueEquipment,
+    catalogueOrRequirement,
+    mode,
+    onChanged,
+  ])
+
+  let addEquipment = useCallback(
+    async (equipmentInput: EquipmentInput) => {
+      let idProp =
+        mode === 'catalogue'
+          ? 'catalogueId'
+          : mode === 'requirement'
+          ? 'executionRequirementId'
+          : false
+
+      if (!catalogueOrRequirement || !idProp) {
+        return
+      }
+
+      await execCreateEquipment({
+        variables: {
+          operatorId: catalogueOrRequirement.operator.id,
+          equipmentInput,
+          [idProp]: catalogueOrRequirement.id,
+        },
+      })
+
+      await onChanged()
+    },
+    [onChanged, catalogueOrRequirement, mode, execCreateEquipment]
+  )
+
+  return { removeAllEquipment, addEquipment }
 }

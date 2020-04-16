@@ -1,9 +1,8 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../common/components/Loading'
 import RequirementsTable from './RequirementsTable'
-import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
@@ -13,10 +12,15 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useLazyQueryData } from '../util/useLazyQueryData'
-import RequirementEquipmentList from './RequirementEquipmentList'
-import { EquipmentWithQuota, requirementEquipment } from '../equipment/equipmentUtils'
+import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'
+import {
+  EquipmentWithQuota,
+  requirementEquipment,
+  useEquipmentCrud,
+} from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
-import EditEquipment from '../equipment/EditEquipment'
+import AddEquipment from '../equipment/AddEquipment'
+import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-bottom: 2rem;
@@ -28,6 +32,9 @@ export type PropTypes = {
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ procurementUnit }) => {
   let preInspection = useContext(PreInspectionContext)
+  let [shouldRefetch, setShouldRefetch] = useState(true)
+
+  let queueRefetch = useCallback(() => setShouldRefetch(true), [])
 
   let [
     fetchRequirements,
@@ -49,6 +56,11 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     }
   }, [fetchRequirements, preInspection])
 
+  let { removeAllEquipment, addEquipment } = useEquipmentCrud(
+    procurementUnitRequirement || undefined,
+    queueRefetch
+  )
+
   let onCreateRequirements = useCallback(async () => {
     if (preInspection) {
       await createPreInspectionRequirements({
@@ -58,9 +70,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         },
       })
 
-      await onFetchRequirements()
+      queueRefetch()
     }
-  }, [createPreInspectionRequirements, onFetchRequirements, preInspection])
+  }, [createPreInspectionRequirements, preInspection])
 
   const equipment: EquipmentWithQuota[] = useMemo(
     () => (procurementUnitRequirement ? requirementEquipment(procurementUnitRequirement) : []),
@@ -79,17 +91,18 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
   )
 
   useEffect(() => {
-    onFetchRequirements()
-  }, [])
+    if (shouldRefetch) {
+      setShouldRefetch(false)
+      onFetchRequirements()
+    }
+  }, [shouldRefetch, onFetchRequirements])
 
   return (
     <ProcurementUnitExecutionRequirementView>
       <FlexRow style={{ marginBottom: '1rem' }}>
-        <SubSectionHeading style={{ marginBottom: 0 }}>
-          Kohteen suoritevaatimukset
-        </SubSectionHeading>
+        <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
         <Button
-          onClick={onFetchRequirements}
+          onClick={queueRefetch}
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}>
@@ -101,16 +114,19 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         <>
           <RequirementEquipmentList
             startDate={inspectionStartDate}
-            onEquipmentChanged={onFetchRequirements}
+            onEquipmentChanged={queueRefetch}
             equipment={equipment}
             executionRequirement={procurementUnitRequirement}
           />
-          <EditEquipment
+          <AddEquipment
             operatorId={procurementUnitRequirement.operator.id}
-            executionRequirementId={procurementUnitRequirement.id}
             equipment={equipment}
-            onEquipmentChanged={onFetchRequirements}
+            onEquipmentChanged={queueRefetch}
             hasEquipment={hasEquipment}
+            addEquipment={addEquipment}
+            removeAllEquipment={removeAllEquipment}
+            editableKeys={['percentageQuota']}
+            fieldLabels={equipmentColumnLabels}
           />
           <RequirementsTable executionRequirement={procurementUnitRequirement} />
         </>

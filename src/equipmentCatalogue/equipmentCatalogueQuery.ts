@@ -15,6 +15,12 @@ export const createEquipmentCatalogueMutation = gql`
       id
       startDate
       endDate
+      operatorId
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       equipmentQuotas {
         id
         percentageQuota

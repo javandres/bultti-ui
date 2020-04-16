@@ -12,7 +12,7 @@ export type PropTypes = {
   equipment: EquipmentWithQuota[]
   executionRequirement: ExecutionRequirement
   startDate: Date
-  onEquipmentChanged: () => Promise<void>
+  onEquipmentChanged: () => unknown
 }
 
 export const equipmentColumnLabels = {

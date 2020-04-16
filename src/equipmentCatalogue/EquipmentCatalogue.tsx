@@ -15,10 +15,14 @@ import {
   updateEquipmentCatalogueMutation,
 } from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
-import CatalogueEquipmentList from './CatalogueEquipmentList'
-import { catalogueEquipment, EquipmentWithQuota } from '../equipment/equipmentUtils'
+import CatalogueEquipmentList, { equipmentColumnLabels } from './CatalogueEquipmentList'
+import {
+  catalogueEquipment,
+  EquipmentWithQuota,
+  useEquipmentCrud,
+} from '../equipment/equipmentUtils'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
-import EditEquipment from '../equipment/EditEquipment'
+import AddEquipment from '../equipment/AddEquipment'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -49,6 +53,8 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     const preInspection = useContext(PreInspectionContext)
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+
+    let { removeAllEquipment, addEquipment } = useEquipmentCrud(catalogue, onCatalogueChanged)
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
@@ -180,12 +186,15 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               equipmentEditable={editable}
             />
             {editable && (
-              <EditEquipment
+              <AddEquipment
                 operatorId={operatorId}
-                catalogueId={catalogue.id}
                 equipment={equipment}
                 onEquipmentChanged={onCatalogueChanged}
                 hasEquipment={hasEquipment}
+                editableKeys={['percentageQuota']}
+                fieldLabels={equipmentColumnLabels}
+                removeAllEquipment={removeAllEquipment}
+                addEquipment={addEquipment}
               />
             )}
           </>

@@ -41,6 +41,11 @@ export const procurementUnitQuery = gql`
         startDate
         endDate
         procurementUnitId
+        operator {
+          id
+          operatorId
+          operatorName
+        }
         equipmentQuotas {
           id
           percentageQuota
