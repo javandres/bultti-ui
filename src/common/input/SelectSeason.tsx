@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Season } from '../../schema-types'
-import { useQueryData } from '../../util/useQueryData'
-import { seasonsQuery } from '../query/seasonsQuery'
-import { format, parseISO, startOfYear, subYears } from 'date-fns'
-import { DATE_FORMAT } from '../../constants'
+import { parseISO } from 'date-fns'
 import { orderBy } from 'lodash'
 import Dropdown from './Dropdown'
+import { useSeasons } from '../../util/useSeasons'
 
 export type PropTypes = {
   label?: string | null
@@ -17,8 +15,6 @@ export type PropTypes = {
   selectInitialId?: string
 }
 
-const currentDate = new Date()
-
 const UNSELECTED_VAL = '...'
 
 const valueIsSeason = (value: null | Season | string): value is Season =>
@@ -26,12 +22,7 @@ const valueIsSeason = (value: null | Season | string): value is Season =>
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
-    // Get seasons to display in the seasons select.
-    const { data: seasonsData } = useQueryData(seasonsQuery, {
-      variables: {
-        date: format(startOfYear(subYears(currentDate, 5)), DATE_FORMAT),
-      },
-    })
+    let seasonsData = useSeasons()
 
     const seasons: Season[] = useMemo(() => {
       // Most current seasons first

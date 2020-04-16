@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import { groupBy, orderBy } from 'lodash'
+import { groupBy, orderBy, get } from 'lodash'
 import { FlexRow, Heading, MessageView } from '../common/components/common'
 import PreInspectionItem from './PreInspectionItem'
 import { InspectionStatus, PreInspection, Season } from '../schema-types'
@@ -11,6 +11,7 @@ import { DATE_FORMAT } from '../constants'
 import { format } from 'date-fns'
 import { isBetween } from '../util/isBetween'
 import Loading from '../common/components/Loading'
+import { useSeasons } from '../util/useSeasons'
 
 const PreInspectionsListView = styled.div`
   min-height: 100%;
@@ -24,20 +25,21 @@ const HeaderRow = styled(FlexRow)`
 `
 
 const PreInspectionsWrapper = styled.div`
-  border-left: 2px solid var(--blue);
+  border-left: 3px solid var(--blue);
   margin-left: 0.75rem;
   margin-top: 1.5rem;
-  padding-bottom: 2rem;
+  padding-bottom: 1.5rem;
   position: relative;
 
   &:after {
     content: '';
     position: absolute;
     bottom: 0;
-    height: 2.5px;
+    height: 3px;
     width: calc(2rem + 1px);
     background: var(--blue);
     left: calc(-1rem - 2px);
+    border-radius: 3px;
   }
 `
 
@@ -50,10 +52,10 @@ const TimelineHeading = styled.div`
     content: '';
     display: block;
     position: absolute;
-    width: 2rem;
-    height: 2rem;
-    top: -0.5rem;
-    left: calc(-1rem - 1px);
+    width: 1.51rem;
+    height: 1.51rem;
+    top: -0.25rem;
+    left: calc(-0.75rem - 1px);
     border-radius: 50%;
     background: var(--blue);
   }
@@ -71,16 +73,18 @@ const TimelineActions = styled.div`
 `
 
 const TimelineCurrentTime = styled(TimelineHeading)`
-  margin-top: 2rem;
+  margin-top: 1.25rem;
   margin-bottom: 1rem;
 
   &:before {
-    width: 1rem;
-    height: 1rem;
-    top: 0.1rem;
-    left: calc(-0.5rem - 1px);
+  box-sizing: border-box;
+    width: 1.1rem;
+    height: 1.05rem;
+    top: 0;
+    left: calc(-0.5rem - 2px);
     border-radius: 50%;
-    background: var(--green);
+    border: 3px solid var(--blue);
+    background: white;
   }
 `
 
@@ -134,6 +138,9 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
   var [season, setSeason] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
+  let seasons = useSeasons()
+  seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
+
   const seasonGroups = groupBy(
     orderBy(preInspections, ['startDate', 'version'], ['desc', 'desc']),
     'season.id'
@@ -158,7 +165,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
 
   let currentSeason = useMemo(
     () =>
-      preInspections.reduce((curSeason: Season | null, { season }) => {
+      seasons.reduce((curSeason: Season | null, season: Season) => {
         if (!curSeason && isBetween(currentDate, season.startDate, season.endDate)) {
           return season
         }
@@ -185,7 +192,10 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
       </HeaderRow>
 
       <PreInspectionsWrapper>
-        {Object.entries(seasonGroups).map(([seasonId, preInspections]) => {
+        {seasons.map((season) => {
+          let { id: seasonId } = season
+          let preInspections: PreInspection[] = get(seasonGroups, seasonId, [])
+
           let maxProductionVersion = preInspections.reduce(
             (maxVersion, { version, status }) =>
               status === InspectionStatus.InProduction && version > maxVersion
@@ -194,19 +204,27 @@ const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loa
             1
           )
 
+          let renderCurrentTemporalLocationInSeason =
+            currentSeason?.id === seasonId && preInspections.length === 0
+
           return (
             <React.Fragment key={seasonId}>
               <TimelineHeading>{seasonId}</TimelineHeading>
+              {renderCurrentTemporalLocationInSeason && (
+                <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
+              )}
               {!preInspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
                   <TimelineMessage>
                     Tällä kaudella ei ole tuotannossa-olevaa ennakkotarkastusta.
                   </TimelineMessage>
-                  <TimelineActions>
-                    <Button onClick={() => onCreatePreInspection(seasonId)}>
-                      Luo uusi ennakkotarkastus
-                    </Button>
-                  </TimelineActions>
+                  {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
+                    <TimelineActions>
+                      <Button onClick={() => onCreatePreInspection(seasonId)}>
+                        Luo uusi ennakkotarkastus
+                      </Button>
+                    </TimelineActions>
+                  )}
                 </>
               )}
               {preInspections.map((preInspection) => {
