@@ -77,7 +77,7 @@ const TimelineCurrentTime = styled(TimelineHeading)`
   margin-bottom: 1rem;
 
   &:before {
-  box-sizing: border-box;
+    box-sizing: border-box;
     width: 1.1rem;
     height: 1.05rem;
     top: 0;

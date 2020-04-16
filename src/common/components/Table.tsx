@@ -138,7 +138,7 @@ type ItemRemover<ItemType = any> = false | (() => void)
 
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
-  columnLabels?: { [key in keyof ItemType]: string }
+  columnLabels?: { [key: string]: string }
   columnOrder?: string[]
   hideKeys?: string[]
   indexCell?: React.ReactChild
