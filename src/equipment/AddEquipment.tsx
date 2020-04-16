@@ -22,7 +22,8 @@ export type PropTypes = {
   onEquipmentChanged: () => unknown
   hasEquipment: (checkEquipment?: PendingEquipment) => boolean
   addEquipment: (equipmentInput: EquipmentInput) => Promise<unknown>
-  removeAllEquipment: () => Promise<unknown>
+  removeAllEquipment?: () => Promise<unknown>
+  removeLabel?: string
   editableKeys: string[]
   fieldLabels: { [key: string]: string }
 }
@@ -66,6 +67,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     hasEquipment,
     addEquipment,
     removeAllEquipment,
+    removeLabel = 'Poista kaikki ajoneuvot',
     editableKeys,
     onEquipmentChanged,
     fieldLabels,
@@ -183,12 +185,12 @@ const AddEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
-            {!searchFormVisible && !searchResultActive && !pendingEquipment && (
+            {removeAllEquipment && !searchFormVisible && !searchResultActive && !pendingEquipment && (
               <Button
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                 onClick={removeAllEquipment}>
-                Poista kaikki ajoneuvot
+                {removeLabel}
               </Button>
             )}
           </FlexRow>

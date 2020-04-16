@@ -6,6 +6,8 @@ import RequirementsTable from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
+  removeAllEquipmentFromExecutionRequirement,
+  removeExecutionRequirementMutation,
 } from './executionRequirementsQueries'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -45,6 +47,8 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     createExecutionRequirementForProcurementUnitMutation
   )
 
+  let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
+
   let onFetchRequirements = useCallback(async () => {
     if (preInspection && fetchRequirements) {
       await fetchRequirements({
@@ -56,10 +60,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     }
   }, [fetchRequirements, preInspection])
 
-  let { removeAllEquipment, addEquipment } = useEquipmentCrud(
-    procurementUnitRequirement || undefined,
-    queueRefetch
-  )
+  let { addEquipment } = useEquipmentCrud(procurementUnitRequirement || undefined, queueRefetch)
 
   let onCreateRequirements = useCallback(async () => {
     if (preInspection) {
@@ -73,6 +74,21 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
       queueRefetch()
     }
   }, [createPreInspectionRequirements, preInspection])
+
+  let removeExecutionRequirement = useCallback(async () => {
+    if (
+      procurementUnitRequirement &&
+      confirm('Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?')
+    ) {
+      await execRemoveExecutionRequirement({
+        variables: {
+          requirementId: procurementUnitRequirement.id,
+        },
+      })
+
+      queueRefetch()
+    }
+  }, [procurementUnitRequirement, execRemoveExecutionRequirement, queueRefetch])
 
   const equipment: EquipmentWithQuota[] = useMemo(
     () => (procurementUnitRequirement ? requirementEquipment(procurementUnitRequirement) : []),
@@ -99,15 +115,23 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
 
   return (
     <ProcurementUnitExecutionRequirementView>
-      <FlexRow style={{ marginBottom: '1rem' }}>
+      <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
         <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
-        <Button
-          onClick={queueRefetch}
-          style={{ marginLeft: 'auto' }}
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}>
-          Päivitä
-        </Button>
+        <div style={{ display: 'flex', marginLeft: 'auto' }}>
+          <Button
+            onClick={queueRefetch}
+            buttonStyle={ButtonStyle.SECONDARY}
+            size={ButtonSize.SMALL}>
+            Päivitä
+          </Button>
+          <Button
+            onClick={onCreateRequirements}
+            style={{ marginLeft: '0.5rem' }}
+            buttonStyle={ButtonStyle.SECONDARY}
+            size={ButtonSize.SMALL}>
+            Virkistä kalustoluettelosta
+          </Button>
+        </div>
       </FlexRow>
       {requirementsLoading && <Loading />}
       {procurementUnitRequirement ? (
@@ -124,7 +148,8 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
             onEquipmentChanged={queueRefetch}
             hasEquipment={hasEquipment}
             addEquipment={addEquipment}
-            removeAllEquipment={removeAllEquipment}
+            removeAllEquipment={removeExecutionRequirement}
+            removeLabel="Poista suoritevaatimus"
             editableKeys={['percentageQuota']}
             fieldLabels={equipmentColumnLabels}
           />

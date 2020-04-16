@@ -405,6 +405,7 @@ export type Mutation = {
   createExecutionRequirementsForPreInspection: Array<ExecutionRequirement>;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   removeAllEquipmentFromExecutionRequirement: ExecutionRequirement;
+  removeExecutionRequirement: Scalars['Boolean'];
   login?: Maybe<User>;
   logout: Scalars['Boolean'];
   removeEquipmentFromCatalogue: Scalars['Boolean'];
@@ -504,6 +505,11 @@ export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
 
 
 export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+};
+
+
+export type MutationRemoveExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
 };
 
