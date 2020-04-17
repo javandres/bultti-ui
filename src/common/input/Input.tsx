@@ -64,7 +64,6 @@ const Input: React.FC<PropTypes> = observer(
   }) => {
     const onValueChange = useCallback(
       (e) => {
-        console.log(e)
         const nextVal = e.target.value
 
         if (typeof onChange === 'function') {
