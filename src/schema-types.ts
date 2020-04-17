@@ -36,7 +36,7 @@ export type Query = {
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  executionRequirementsByArea: Array<ExecutionRequirement>;
+  executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -131,7 +131,7 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 };
 
 
-export type QueryExecutionRequirementsByAreaArgs = {
+export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
   preInspectionId: Scalars['String'];
 };
 
@@ -405,6 +405,7 @@ export type Mutation = {
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForPreInspection: Array<ExecutionRequirement>;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
+  refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   removeAllEquipmentFromExecutionRequirement: ExecutionRequirement;
   removeExecutionRequirement: Scalars['Boolean'];
   login?: Maybe<User>;
@@ -507,6 +508,11 @@ export type MutationCreateExecutionRequirementsForPreInspectionArgs = {
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
   preInspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
+};
+
+
+export type MutationRefreshExecutionRequirementForProcurementUnitArgs = {
+  executionRequirementId: Scalars['String'];
 };
 
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Loading from '../common/components/Loading'
@@ -6,7 +6,7 @@ import RequirementsTable from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
-  removeAllEquipmentFromExecutionRequirement,
+  refreshExecutionRequirementForProcurementUnitMutation,
   removeExecutionRequirementMutation,
 } from './executionRequirementsQueries'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
@@ -23,6 +23,7 @@ import {
 import { parseISO } from 'date-fns'
 import AddEquipment from '../equipment/AddEquipment'
 import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
+import { useRefetch } from '../util/useRefetch'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-bottom: 2rem;
@@ -34,23 +35,24 @@ export type PropTypes = {
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ procurementUnit }) => {
   let preInspection = useContext(PreInspectionContext)
-  let [shouldRefetch, setShouldRefetch] = useState(true)
-
-  let queueRefetch = useCallback(() => setShouldRefetch(true), [])
 
   let [
     fetchRequirements,
     { data: procurementUnitRequirement, loading: requirementsLoading },
   ] = useLazyQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery)
 
-  let [createExecutionRequirements, { loading: createLoading }] = useMutationData(
+  let [createExecutionRequirement, { loading: createLoading }] = useMutationData(
     createExecutionRequirementForProcurementUnitMutation
+  )
+
+  let [refreshExecutionRequirement, { loading: refreshLoading }] = useMutationData(
+    refreshExecutionRequirementForProcurementUnitMutation
   )
 
   let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
 
   let onFetchRequirements = useCallback(async () => {
-    if (preInspection && fetchRequirements) {
+    if (procurementUnit && preInspection && fetchRequirements) {
       await fetchRequirements({
         variables: {
           procurementUnitId: procurementUnit.id,
@@ -58,13 +60,15 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         },
       })
     }
-  }, [fetchRequirements, preInspection])
+  }, [fetchRequirements, procurementUnit, preInspection])
+
+  let queueRefetch = useRefetch(onFetchRequirements, true)
 
   let { addEquipment } = useEquipmentCrud(procurementUnitRequirement || undefined, queueRefetch)
 
   let onCreateRequirements = useCallback(async () => {
     if (preInspection) {
-      await createExecutionRequirements({
+      await createExecutionRequirement({
         variables: {
           procurementUnitId: procurementUnit.id,
           preInspectionId: preInspection?.id,
@@ -73,17 +77,24 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
 
       queueRefetch()
     }
-  }, [createExecutionRequirements, preInspection])
+  }, [createExecutionRequirement, preInspection])
 
-  let onRefreshRequirements = useCallback(() => {
+  let onRefreshRequirements = useCallback(async () => {
     if (
+      procurementUnitRequirement &&
       confirm(
         'Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?'
       )
     ) {
-      onCreateRequirements()
+      await refreshExecutionRequirement({
+        variables: {
+          executionRequirementId: procurementUnitRequirement.id,
+        },
+      })
+
+      queueRefetch()
     }
-  }, [onCreateRequirements])
+  }, [procurementUnitRequirement, refreshExecutionRequirement])
 
   let removeExecutionRequirement = useCallback(async () => {
     if (
@@ -115,13 +126,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     () => (preInspection ? parseISO(preInspection.startDate) : new Date()),
     [preInspection]
   )
-
-  useEffect(() => {
-    if (shouldRefetch) {
-      setShouldRefetch(false)
-      onFetchRequirements()
-    }
-  }, [shouldRefetch, onFetchRequirements])
 
   return (
     <ProcurementUnitExecutionRequirementView>

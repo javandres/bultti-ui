@@ -36,7 +36,7 @@ export type PropTypes = {
 }
 
 const emissionClassLayoutColumnLabels = {
-  unit: 'Yksikkö',
+  'unit': 'Yksikkö',
   '1': 'Euro 3',
   '2': 'Euro 4',
   '3': 'Euro 3 CNG',
@@ -47,7 +47,7 @@ const emissionClassLayoutColumnLabels = {
   '8': 'Euro 6',
   '9': 'Euro 6 eteho.',
   '10': 'Sähkö',
-  total: 'Yhteensä',
+  'total': 'Yhteensä',
 }
 
 const valuesLayoutColumnLabels = {
@@ -126,6 +126,35 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       return `${useVal} ${unit}`
     }, [])
 
+    let getColumnTotal = useCallback(
+      (key: string) => {
+        if (key === 'emissionClass') {
+          return ''
+        }
+
+        let totalVal = round(getTotal<any, string>(requirementRows, key))
+
+        switch (key) {
+          case 'percentage':
+          case 'quotaRequirement':
+          case 'quotaFulfilled':
+          case 'differencePercentage':
+          case 'cumulativeDifferencePercentage':
+            return `${totalVal}%`
+          case 'kilometers':
+          case 'kilometerRequirement':
+          case 'kilometersFulfilled':
+            return `${totalVal} km`
+          case 'equipmentCount':
+          case 'equipmentCountFulfilled':
+            return `${totalVal} kpl`
+          default:
+            return totalVal
+        }
+      },
+      [executionRequirement]
+    )
+
     return (
       <ExecutionRequirementsAreaContainer>
         <ValueDisplay
@@ -146,6 +175,9 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           }
           columnOrder={tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']}
           renderValue={renderTableValue}
+          getColumnTotal={
+            tableLayout === RequirementsTableLayout.BY_VALUES ? getColumnTotal : undefined
+          }
         />
       </ExecutionRequirementsAreaContainer>
     )

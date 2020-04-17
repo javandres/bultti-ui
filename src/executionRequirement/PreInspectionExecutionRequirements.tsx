@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   createExecutionRequirementsForPreInspectionMutation,
-  executionRequirementsByPreInspectionQuery,
+  executionRequirementsByAreaQuery,
 } from './executionRequirementsQueries'
 import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -13,6 +13,7 @@ import Loading from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useMutationData } from '../util/useMutationData'
+import { useRefetch } from '../util/useRefetch'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -31,41 +32,45 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
   let { id } = preInspection || {}
 
   let [
-    createPreInspectionRequirements,
-    { data: createdPreInspectionRequirements, loading: createLoading },
-  ] = useMutationData(createExecutionRequirementsForPreInspectionMutation, {
-    variables: {
-      preInspectionId: id,
-    },
-  })
-
-  console.log(createdPreInspectionRequirements)
-
-  let [
-    execQuery,
+    fetchRequirements,
     { data: executionRequirementsData, loading: requirementsLoading },
-  ] = useLazyQueryData(executionRequirementsByPreInspectionQuery, {
+  ] = useLazyQueryData(executionRequirementsByAreaQuery, {
     variables: {
       preInspectionId: id,
     },
   })
 
-  console.log(executionRequirementsData)
+  let [createPreInspectionRequirements, { loading: createLoading }] = useMutationData(
+    createExecutionRequirementsForPreInspectionMutation,
+    {
+      variables: {
+        preInspectionId: id,
+      },
+    }
+  )
+
+  let onFetchRequirements = useCallback(async () => {
+    if (preInspection && fetchRequirements) {
+      await fetchRequirements({
+        variables: {
+          preInspectionId: preInspection?.id,
+        },
+      })
+    }
+  }, [fetchRequirements, preInspection])
+
+  let queueRefetch = useRefetch(onFetchRequirements, true)
+  let isLoading = createLoading || requirementsLoading
 
   let areaExecutionRequirements = useMemo(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
     [executionRequirementsData]
   )
 
-  let onCalculateRequirements = useCallback(() => {
+  let onCreateRequirements = useCallback(async () => {
     if (preInspection) {
-      execQuery()
-    }
-  }, [execQuery, preInspection])
-
-  let onCreateRequirements = useCallback(() => {
-    if (preInspection) {
-      createPreInspectionRequirements()
+      await createPreInspectionRequirements()
+      queueRefetch()
     }
   }, [createPreInspectionRequirements, preInspection])
 
@@ -82,18 +87,18 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
             style={{ marginTop: '-1rem', marginLeft: 'auto' }}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}
-            onClick={onCalculateRequirements}>
+            onClick={onFetchRequirements}>
             Päivitä
           </Button>
         )}
       </FlexRow>
-      {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
+      {!isLoading && areaExecutionRequirements?.length === 0 && (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
           <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
-      {requirementsLoading && <Loading />}
+      {isLoading && <Loading />}
       {areaExecutionRequirements.map((areaRequirements) => (
         <React.Fragment key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>

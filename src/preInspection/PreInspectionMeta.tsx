@@ -7,7 +7,6 @@ import {
   MetaLabel,
   MetaValue,
 } from '../common/components/common'
-import Loading from '../common/components/Loading'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
