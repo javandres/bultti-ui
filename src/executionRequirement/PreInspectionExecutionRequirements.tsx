@@ -35,6 +35,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
     fetchRequirements,
     { data: executionRequirementsData, loading: requirementsLoading },
   ] = useLazyQueryData(executionRequirementsByAreaQuery, {
+    notifyOnNetworkStatusChange: true,
     variables: {
       preInspectionId: id,
     },
