@@ -393,6 +393,7 @@ export type Mutation = {
   updatePreInspection: PreInspection;
   publishPreInspection: PreInspection;
   removePreInspection: Scalars['Boolean'];
+  generateEquipmentForPreInspection: Scalars['Boolean'];
   updateWeeklyMetersFromSource: ProcurementUnit;
   updateProcurementUnit: ProcurementUnit;
   createEquipment: Equipment;
@@ -432,6 +433,11 @@ export type MutationPublishPreInspectionArgs = {
 
 
 export type MutationRemovePreInspectionArgs = {
+  preInspectionId: Scalars['String'];
+};
+
+
+export type MutationGenerateEquipmentForPreInspectionArgs = {
   preInspectionId: Scalars['String'];
 };
 

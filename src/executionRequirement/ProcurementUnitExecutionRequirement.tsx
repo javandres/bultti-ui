@@ -116,7 +116,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
   return (
     <ProcurementUnitExecutionRequirementView>
       <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
-        <SubSectionHeading>Kohteen suoritevaatimukset</SubSectionHeading>
+        <SubSectionHeading style={{ marginBottom: 0 }}>
+          Kohteen suoritevaatimukset
+        </SubSectionHeading>
         <div style={{ display: 'flex', marginLeft: 'auto' }}>
           <Button
             onClick={queueRefetch}

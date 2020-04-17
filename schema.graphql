@@ -124,6 +124,7 @@ type Mutation {
   createExecutionRequirementsForPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
   createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
+  generateEquipmentForPreInspection(preInspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
   logout: Boolean!
   publishPreInspection(preInspectionId: String!): PreInspection!

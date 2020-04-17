@@ -16,6 +16,7 @@ import { PreInspectionContext } from './PreInspectionContext'
 import { useNavigate } from '@reach/router'
 import { ButtonStyle } from '../common/components/Button'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
+import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -148,6 +149,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
               <ProcurementUnits />
             </FormColumn>
           </TransparentFormWrapper>
+          <PreInspectionDevTools preInspection={preInspection} />
         </>
       )}
     </EditPreInspectionView>

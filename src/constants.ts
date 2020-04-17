@@ -9,5 +9,6 @@ export const DATE_FORMAT = 'yyyy-MM-dd'
 export const DATE_FORMAT_MOMENT = 'YYYY-MM-DD'
 export const READABLE_TIME_FORMAT = 'HH:mm, dd MMM yyyy'
 export const READABLE_DATE_FORMAT = 'dd MMM yyyy'
+export const ENV = process.env.NODE_ENV || 'production'
 
 export const normalDayTypes = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
