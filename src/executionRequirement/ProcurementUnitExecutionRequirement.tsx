@@ -43,7 +43,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     { data: procurementUnitRequirement, loading: requirementsLoading },
   ] = useLazyQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery)
 
-  let [createPreInspectionRequirements, { loading: createLoading }] = useMutationData(
+  let [createExecutionRequirements, { loading: createLoading }] = useMutationData(
     createExecutionRequirementForProcurementUnitMutation
   )
 
@@ -64,7 +64,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
 
   let onCreateRequirements = useCallback(async () => {
     if (preInspection) {
-      await createPreInspectionRequirements({
+      await createExecutionRequirements({
         variables: {
           procurementUnitId: procurementUnit.id,
           preInspectionId: preInspection?.id,
@@ -73,7 +73,17 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
 
       queueRefetch()
     }
-  }, [createPreInspectionRequirements, preInspection])
+  }, [createExecutionRequirements, preInspection])
+
+  let onRefreshRequirements = useCallback(() => {
+    if (
+      confirm(
+        'Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?'
+      )
+    ) {
+      onCreateRequirements()
+    }
+  }, [onCreateRequirements])
 
   let removeExecutionRequirement = useCallback(async () => {
     if (
@@ -127,7 +137,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
             Päivitä
           </Button>
           <Button
-            onClick={onCreateRequirements}
+            onClick={onRefreshRequirements}
             style={{ marginLeft: '0.5rem' }}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}>
