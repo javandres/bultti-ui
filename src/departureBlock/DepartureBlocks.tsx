@@ -78,13 +78,16 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
           padding: '0 1rem 0.5rem',
           borderBottom: '1px solid var(--lighter-grey)',
         }}>
-        <Button
-          style={{ marginTop: '-1rem', marginLeft: 'auto' }}
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}
-          onClick={() => refetch()}>
-          Päivitä
-        </Button>
+        {(departureBlocksData || []).length !== 0 && (
+          <Button
+            loading={departureBlocksLoading}
+            style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+            buttonStyle={ButtonStyle.SECONDARY}
+            size={ButtonSize.SMALL}
+            onClick={() => refetch()}>
+            Päivitä
+          </Button>
+        )}
       </FlexRow>
       {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
         let dayTypeBlocks = pick(departureBlockGroups, getEnabledDayTypes(dayTypeGroup))

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import Loading from '../common/components/Loading'
+import Loading, { LoadingDisplay } from '../common/components/Loading'
 import RequirementsTable from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
@@ -127,6 +127,8 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
     [preInspection]
   )
 
+  let isLoading = requirementsLoading || createLoading || refreshLoading
+
   return (
     <ProcurementUnitExecutionRequirementView>
       <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
@@ -135,12 +137,14 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
         </SubSectionHeading>
         <div style={{ display: 'flex', marginLeft: 'auto' }}>
           <Button
+            loading={isLoading}
             onClick={queueRefetch}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}>
             Päivitä
           </Button>
           <Button
+            loading={refreshLoading}
             onClick={onRefreshRequirements}
             style={{ marginLeft: '0.5rem' }}
             buttonStyle={ButtonStyle.SECONDARY}
@@ -149,7 +153,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(({ pro
           </Button>
         </div>
       </FlexRow>
-      {requirementsLoading && <Loading />}
+      <LoadingDisplay loading={requirementsLoading} />
       {procurementUnitRequirement ? (
         <>
           <RequirementEquipmentList

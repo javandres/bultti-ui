@@ -54,7 +54,7 @@ const LoadingContainer = styled(LoadingSafeDivComponent)<{ loading?: boolean }>`
   opacity: 0;
   pointer-events: none;
   user-select: none;
-  transition: opacity 0.1s ease-out, transform 0.2s ease-out;
+  transition: opacity 0.2s ease-out, transform 0.3s ease-out;
   transform: translateY(-5rem);
   z-index: 10;
 
@@ -116,10 +116,11 @@ type LoadingDisplayProps = {
   className?: string
   inline?: boolean
   size?: number
+  color?: string
 }
 
 export const LoadingDisplay = observer(
-  ({ loading = true, className, inline = false, size }: LoadingDisplayProps) => {
+  ({ loading = true, className, inline = false, size, color }: LoadingDisplayProps) => {
     const [isRendered, setIsRendered] = useState(loading)
     const timerRef = useRef(0)
 
@@ -143,7 +144,7 @@ export const LoadingDisplay = observer(
 
     return (
       <LoadingContainer data-testid="loading-container" className={className} loading={loading}>
-        <Loading inline={inline} size={size} />
+        <Loading inline={inline} size={size} color={color} />
       </LoadingContainer>
     )
   }

@@ -9,7 +9,7 @@ import { FlexRow, MessageView } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
-import Loading from '../common/components/Loading'
+import Loading, { LoadingDisplay } from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useMutationData } from '../util/useMutationData'
@@ -23,6 +23,12 @@ const AreaHeading = styled.h4`
   &:first-child {
     margin-top: 0;
   }
+`
+
+const HeaderLoadingContainer = styled.div`
+  margin-top: -1.75rem;
+  position: relative;
+  top: 0.625rem;
 `
 
 export type PropTypes = {}
@@ -83,6 +89,12 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           padding: '0 1rem 0.5rem',
           borderBottom: '1px solid var(--lighter-grey)',
         }}>
+        <HeaderLoadingContainer>
+          <LoadingDisplay
+            loading={isLoading && areaExecutionRequirements.length !== 0}
+            inline={true}
+          />
+        </HeaderLoadingContainer>
         {areaExecutionRequirements?.length !== 0 && (
           <Button
             style={{ marginTop: '-1rem', marginLeft: 'auto' }}
@@ -99,7 +111,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
-      {isLoading && <Loading />}
+      {isLoading && areaExecutionRequirements.length === 0 && <LoadingDisplay loading={true} />}
       {areaExecutionRequirements.map((areaRequirements) => (
         <React.Fragment key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>

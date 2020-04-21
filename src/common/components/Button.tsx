@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useTooltip } from '../../util/useTooltip'
-import Loading from './Loading'
+import { LoadingDisplay } from './Loading'
 import { observer } from 'mobx-react-lite'
 import { last } from 'lodash'
 
@@ -27,7 +27,9 @@ type StyledButtonProps = {
   inverted?: boolean
 } & React.PropsWithRef<JSX.IntrinsicElements['button']>
 
-const size2Style = (size: ButtonSize, ...values: string[]): string => {
+type ValueType = number | string
+
+const size2Style = <T extends ValueType>(size: ButtonSize, ...values: T[]): T => {
   return values[size]
 }
 
@@ -186,10 +188,10 @@ export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string 
   }
 `
 
-const ButtonLoading = styled(Loading).attrs({ inline: true })<{ buttonSize: ButtonSize }>`
+const ButtonLoading = styled(LoadingDisplay).attrs({ inline: true })<{ buttonSize: ButtonSize }>`
   display: flex;
   margin-right: ${({ buttonSize = ButtonSize.MEDIUM }) =>
-    size2Style(buttonSize, '0.45rem', '0.75rem', '1rem')};
+    size2Style(buttonSize, '0.45rem', '0.5rem', '0.75rem')};
   margin-left: ${({ buttonSize = ButtonSize.MEDIUM }) =>
     size2Style(buttonSize, '-0.45rem', '-0.75rem', '-1rem')};
 `
@@ -203,22 +205,25 @@ export const Button: React.FC<ButtonProps> = React.forwardRef(
   ({ helpText, children, loading, ...props }, ref: any) => {
     let loadingColor = 'white'
 
+    if (props.buttonStyle && [ButtonStyle.SECONDARY].includes(props.buttonStyle)) {
+      loadingColor = 'var(--blue)'
+    }
+
     if (
       props.buttonStyle &&
-      [ButtonStyle.SECONDARY, ButtonStyle.SECONDARY_REMOVE].includes(props.buttonStyle)
+      [ButtonStyle.REMOVE, ButtonStyle.SECONDARY_REMOVE].includes(props.buttonStyle)
     ) {
-      loadingColor = 'var(--blue)'
+      loadingColor = 'var(--red)'
     }
 
     return (
       <StyledButton {...props} loading={loading} {...useTooltip(helpText)} ref={ref}>
-        {loading && (
-          <ButtonLoading
-            color={loadingColor}
-            size={15}
-            buttonSize={typeof props.size !== 'undefined' ? props.size : ButtonSize.MEDIUM}
-          />
-        )}{' '}
+        <ButtonLoading
+          loading={!!loading}
+          color={loadingColor}
+          size={typeof props.size !== 'undefined' ? size2Style(props.size, 10, 15, 18) : 15}
+          buttonSize={typeof props.size !== 'undefined' ? props.size : ButtonSize.MEDIUM}
+        />{' '}
         {children}
       </StyledButton>
     )
