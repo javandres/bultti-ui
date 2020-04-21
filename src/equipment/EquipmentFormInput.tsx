@@ -1,16 +1,10 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { CellContent } from '../common/components/Table'
+import { CellContent, TableInput } from '../common/components/Table'
 import styled from 'styled-components'
 import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
-import { TextInput } from '../common/input/Input'
-
-export const FormInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
-  font-family: var(--font-family);
-  font-size: 0.75rem;
-`
 
 export const FormDropdown = styled(Dropdown)`
   width: 100%;
@@ -156,7 +150,7 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
     }
 
     return (
-      <FormInput
+      <TableInput
         type={valueIsNumeric ? 'number' : 'text'}
         step={valueIsNumeric ? 0.01 : 1}
         value={value}

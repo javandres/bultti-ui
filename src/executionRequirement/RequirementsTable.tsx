@@ -166,7 +166,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           }}
           renderValue={renderDisplayValue}
         />
-        <Table
+        <Table<any>
           items={requirementRows}
           columnLabels={
             tableLayout === RequirementsTableLayout.BY_VALUES

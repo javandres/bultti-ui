@@ -6,7 +6,7 @@ import { TextButton } from '../common/components/Button'
 import { FlexRow, MessageView } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
-import { LoadingDisplay, PageLoading } from '../common/components/Loading'
+import { LoadingDisplay } from '../common/components/Loading'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
 const ProcurementUnitsView = styled.div``

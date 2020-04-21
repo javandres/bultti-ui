@@ -1,36 +1,30 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Table from '../common/components/Table'
+import Table, { EditValue, PendingValType } from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
-import { orderBy, pick } from 'lodash'
+import { groupBy, orderBy } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import { renderEquipmentInput } from './AddEquipment'
 
+export type EquipmentUpdate = {
+  equipmentId: string
+  equipmentInput: EquipmentInput
+  quotaId: string
+}
+
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
-  updateEquipment?: (
-    equipmentId: string,
-    equipmentInput: EquipmentInput,
-    quotaId: string
-  ) => Promise<unknown>
+  updateEquipment?: (equipmentUpdates: EquipmentUpdate[]) => Promise<unknown>
   removeEquipment?: (equipmentId: string) => Promise<unknown>
   startDate: Date
   columnLabels: { [key: string]: string }
   groupedColumnLabels: { [key: string]: string }
   editableValues?: string[]
-}
-
-type PendingValType = string | number
-
-type PendingEquipmentValue = {
-  key: string
-  value: PendingValType
-  item: EquipmentWithQuota
 }
 
 const EquipmentList: React.FC<PropTypes> = observer(
@@ -44,57 +38,58 @@ const EquipmentList: React.FC<PropTypes> = observer(
     editableValues = [],
   }) => {
     let [groupEquipment, setEquipmentGrouped] = useState(true)
-    let [pendingValue, setPendingValue] = useState<PendingEquipmentValue | null>(null)
+    let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
     const onEditValue = useCallback(
-      (key: string, value: PendingValType, item?: EquipmentWithQuota) => {
+      (key: string, value: PendingValType, item: EquipmentWithQuota) => {
         if (groupEquipment || !editableValues.includes(key)) {
           return
         }
 
-        setPendingValue((currentValue) => {
-          if (currentValue && currentValue?.key === key) {
-            return { ...currentValue, value }
+        let editValue = { key, value, item }
+
+        setPendingValues((currentValues) => {
+          let existingEditValueIndex = currentValues.findIndex(
+            (val) => val.key === key && val.item.id === item.id
+          )
+
+          if (existingEditValueIndex !== -1) {
+            currentValues.splice(existingEditValueIndex, 1)
           }
 
-          if (item) {
-            return { key, value, item }
-          }
-
-          return currentValue
+          return [...currentValues, editValue]
         })
       },
       [groupEquipment, editableValues]
     )
 
     const onCancelPendingValue = useCallback(() => {
-      setPendingValue(null)
+      setPendingValues([])
     }, [])
 
     const onSavePendingValue = useCallback(async () => {
-      if (!pendingValue || !updateEquipment) {
+      if (pendingValues.length === 0 || !updateEquipment) {
         return
       }
 
-      setPendingValue(null)
+      setPendingValues([])
 
-      const equipmentInput: EquipmentInput = {
-        ...(pick(pendingValue.item, [
-          'percentageQuota',
-          'meterRequirement',
-          'vehicleId',
-          'model',
-          'registryNr',
-          'registryDate',
-          'type',
-          'exteriorColor',
-          'emissionClass',
-        ]) as EquipmentInput),
-        [pendingValue.key]: pendingValue.value,
+      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, 'item.id'))
+      let updates: EquipmentUpdate[] = []
+
+      for (let [itemId, pendingEditValues] of pendingEquipmentInput) {
+        let updatedValues = {}
+        let item = pendingEditValues[0].item
+
+        for (let val of pendingEditValues) {
+          updatedValues[val.key] = val.value
+        }
+
+        updates.push({ equipmentId: itemId, equipmentInput: updatedValues, quotaId: item.quotaId })
       }
 
-      await updateEquipment(pendingValue.item.id, equipmentInput, pendingValue.item.quotaId)
-    }, [updateEquipment, pendingValue])
+      await updateEquipment(updates)
+    }, [updateEquipment, pendingValues])
 
     const onRemoveEquipment = useCallback(
       (item: EquipmentWithQuota) => () => {
@@ -161,14 +156,14 @@ const EquipmentList: React.FC<PropTypes> = observer(
           </ToggleButton>
         </FlexRow>
         {!groupEquipment && orderedEquipment.length !== 0 && (
-          <Table
+          <Table<EquipmentWithQuota>
             items={orderedEquipment}
             columnLabels={columnLabels}
             onRemoveRow={removeEquipment ? onRemoveEquipment : undefined}
             renderValue={renderCellValue}
             getColumnTotal={renderColumnTotals}
             onEditValue={updateEquipment ? onEditValue : undefined}
-            editValue={pendingValue}
+            pendingValues={pendingValues}
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
@@ -176,7 +171,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
           />
         )}
         {groupEquipment && (
-          <Table
+          <Table<EquipmentQuotaGroup>
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}

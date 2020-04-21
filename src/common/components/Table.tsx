@@ -8,6 +8,7 @@ import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
 
 const TableView = styled.div`
+  position: relative;
   width: calc(100% + 2rem);
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
@@ -41,30 +42,26 @@ const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
 `
 
 const EditInputWrapper = styled.div`
-  position: absolute;
-  z-index: 200;
-  top: -0.5rem;
-  bottom: -0.5rem;
-  left: -0.5rem;
-  background: var(--blue);
+  background: white;
   width: calc(100% + 1rem + 36px);
   border-radius: 5px;
-  padding: 0.5rem;
   display: flex;
 `
 
-const EditButtonsWrapper = styled.div`
-  margin-left: 0.5rem;
-  display: flex;
-  align-items: center;
+export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  padding: 0.25rem;
+  border: 0;
+  border-radius: 0;
 `
 
-const CancelButton = styled(RemoveButton)`
-  border: 1px solid white;
+const CancelButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
   position: static;
+  border: 1px solid white;
   display: flex;
 `
-const SaveButton = styled(CancelButton)`
+const SaveButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
   background: var(--green);
   margin-left: 0.5rem;
 `
@@ -97,7 +94,7 @@ const TableHeader = styled(TableRow)`
   border-bottom-color: var(--lighter-grey) !important;
 `
 
-const TableCell = styled.div<{ editable?: boolean }>`
+const TableCell = styled.div<{ editable?: boolean; isEditing?: boolean }>`
   flex: 1 1 calc(100% / 11);
   min-width: 45px;
   border-right: 1px solid var(--lighter-grey);
@@ -105,7 +102,7 @@ const TableCell = styled.div<{ editable?: boolean }>`
   align-items: stretch;
   justify-content: center;
   font-size: 0.75rem;
-  background: rgba(0, 0, 0, 0.005);
+  background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
 
@@ -118,9 +115,10 @@ const TableCell = styled.div<{ editable?: boolean }>`
   }
 `
 
-const ColumnHeaderCell = styled(TableCell)`
+const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   padding: 0.5rem 0.5rem 0.4rem;
   font-weight: bold;
+  background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
@@ -134,11 +132,24 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
+const EditToolbar = styled.div<{ floating?: boolean }>`
+  position: ${(p) => (p.floating ? 'fixed' : 'static')};
+  bottom: 1rem;
+  border-radius: 10px;
+  background: white;
+  padding: 0.5rem 1rem;
+  width: calc(100% - 30rem - 3px);
+  z-index: 100;
+`
+
 type ItemRemover<ItemType = any> = false | (() => void)
+
+export type PendingValType = string | number
+export type EditValue<ItemType = any> = { key: string; value: PendingValType; item: ItemType }
 
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
-  columnLabels?: { [key: string]: string }
+  columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
   hideKeys?: string[]
   indexCell?: React.ReactChild
@@ -149,13 +160,13 @@ export type PropTypes<ItemType = any> = {
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
-  onEditValue?: (key: string, value: string | number, item?: ItemType) => unknown
-  editValue?: null | { key: string; value: string | number; item: ItemType }
+  onEditValue?: (key: string, value: string | number, item: ItemType) => unknown
+  pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
   editableValues?: string[]
   renderInput?: (
-    key: string,
+    key: keyof ItemType,
     val: any,
     onChange: (val: any) => void,
     onAccept?: () => unknown,
@@ -176,11 +187,11 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
 const defaultRenderValue = (key, val) => val
 
 const defaultRenderInput = (key, val, onChange) => (
-  <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
+  <TableInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
 )
 
-const Table: React.FC<PropTypes> = observer(
-  ({
+const Table = observer(
+  <ItemType extends any = any>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -196,10 +207,10 @@ const Table: React.FC<PropTypes> = observer(
     onEditValue,
     onCancelEdit,
     onSaveEdit,
-    editValue,
+    pendingValues = [],
     renderInput = defaultRenderInput,
     editableValues = [],
-  }) => {
+  }: PropTypes<ItemType>) => {
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
     let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
@@ -235,102 +246,121 @@ const Table: React.FC<PropTypes> = observer(
     }
 
     return (
-      <TableView className={className}>
-        <TableHeader>
-          {indexCell && (
-            <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
-              {indexCell}
-            </ColumnHeaderCell>
-          )}
-          {columnNames.map((colName) => (
-            <ColumnHeaderCell key={colName}>{renderValue('', colName, true)}</ColumnHeaderCell>
-          ))}
-        </TableHeader>
-        {items.map((item, rowIndex) => {
-          // Again, omit keys that start with an underscore.
-          let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
-
-          if (columnKeysOrdering.length !== 0) {
-            itemEntries = orderBy(itemEntries, ([key]) => {
-              const labelIndex = columnKeysOrdering.indexOf(key)
-              return labelIndex === -1 ? 999 : labelIndex
-            })
-          }
-
-          const rowKey = keyFromItem(item)
-
-          let isEditingRow: boolean = !!editValue && keyFromItem(editValue.item) === rowKey
-
-          const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
-
-          const onStartValueEdit = (key, val) => () => {
-            if (!isEditingRow && onEditValue) {
-              onEditValue(key, val, item)
-            }
-          }
-
-          const onValueChange = (key) => (nextValue) => {
-            if (isEditingRow && onEditValue) {
-              onEditValue(key, nextValue)
-            }
-          }
-
-          return (
-            <TableRow key={rowKey ?? `row-${rowIndex}`} isEditing={isEditingRow}>
-              {itemEntries
-                .filter(([key]) => !keysToHide.includes(key))
-                .map(([key, val], index) => (
-                  <TableCell
-                    editable={editableValues?.includes(key)}
-                    onDoubleClick={onStartValueEdit(key, val)}
-                    key={`${rowKey}-${key}-${index}`}>
-                    {onEditValue && editValue && isEditingRow && editValue.key === key ? (
-                      <>
-                        <EditInputWrapper>
-                          {renderInput(
-                            key,
-                            editValue.value,
-                            onValueChange(key),
-                            onSaveEdit,
-                            onCancelEdit
-                          )}
-                          <EditButtonsWrapper>
-                            <CancelButton onClick={onCancelEdit}>
-                              <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                            </CancelButton>
-                            <SaveButton onClick={onSaveEdit}>
-                              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-                            </SaveButton>
-                          </EditButtonsWrapper>
-                        </EditInputWrapper>
-                      </>
-                    ) : (
-                      renderCell(key, renderValue(key, val, false, item), item)
-                    )}
-                  </TableCell>
-                ))}
-              {!isEditingRow && itemRemover && (
-                <RemoveButton onClick={itemRemover}>
-                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                </RemoveButton>
-              )}
-            </TableRow>
-          )
-        })}
-        {typeof getColumnTotal === 'function' && (
-          <TableRow key="totals" footer={true}>
-            {columns.map((col, colIdx) => {
-              const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+      <>
+        <TableView className={className}>
+          <TableHeader>
+            {indexCell && (
+              <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
+                {indexCell}
+              </ColumnHeaderCell>
+            )}
+            {columnNames.map((colName) => {
+              let isEditingColumn =
+                pendingValues.length !== 0 && pendingValues.map((val) => val.key).includes(colName)
 
               return (
-                <TableCell key={`footer_${col}`}>
-                  <CellContent footerCell={true}>{total}</CellContent>
-                </TableCell>
+                <ColumnHeaderCell isEditing={isEditingColumn} key={colName}>
+                  {renderValue('', colName, true)}
+                </ColumnHeaderCell>
               )
             })}
-          </TableRow>
+          </TableHeader>
+          {items.map((item, rowIndex) => {
+            // Again, omit keys that start with an underscore.
+            let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
+
+            if (columnKeysOrdering.length !== 0) {
+              itemEntries = orderBy(itemEntries, ([key]) => {
+                const labelIndex = columnKeysOrdering.indexOf(key)
+                return labelIndex === -1 ? 999 : labelIndex
+              })
+            }
+
+            const rowKey = keyFromItem(item)
+
+            let isEditingRow: boolean =
+              !!pendingValues && pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
+
+            const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
+
+            const onStartValueEdit = (key, val) => () => {
+              if (!isEditingRow && onEditValue) {
+                onEditValue(key, val, item)
+              }
+            }
+
+            const onValueChange = (key) => (nextValue) => {
+              if (isEditingRow && onEditValue) {
+                onEditValue(key, nextValue, item)
+              }
+            }
+
+            return (
+              <TableRow key={rowKey ?? `row-${rowIndex}`} isEditing={isEditingRow}>
+                {itemEntries
+                  .filter(([key]) => !keysToHide.includes(key))
+                  .map(([key, val], index) => {
+                    let editValue =
+                      pendingValues.length !== 0
+                        ? pendingValues.find((val) => val.item.id === item.id && val.key === key)
+                        : null
+
+                    return (
+                      <TableCell
+                        editable={editableValues?.includes(key)}
+                        onDoubleClick={onStartValueEdit(key, val)}
+                        key={`${rowKey}-${key}-${index}`}>
+                        {onEditValue && editValue ? (
+                          <>
+                            <EditInputWrapper>
+                              {renderInput(
+                                key,
+                                editValue.value,
+                                onValueChange(key),
+                                onSaveEdit,
+                                onCancelEdit
+                              )}
+                            </EditInputWrapper>
+                          </>
+                        ) : (
+                          renderCell(key, renderValue(key, val, false, item), item)
+                        )}
+                      </TableCell>
+                    )
+                  })}
+                {!isEditingRow && itemRemover && (
+                  <RemoveButton onClick={itemRemover}>
+                    <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                  </RemoveButton>
+                )}
+              </TableRow>
+            )
+          })}
+          {typeof getColumnTotal === 'function' && (
+            <TableRow key="totals" footer={true}>
+              {columns.map((col, colIdx) => {
+                const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+
+                return (
+                  <TableCell key={`footer_${col}`}>
+                    <CellContent footerCell={true}>{total}</CellContent>
+                  </TableCell>
+                )
+              })}
+            </TableRow>
+          )}
+        </TableView>
+        {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
+          <EditToolbar floating={true}>
+            <CancelButton onClick={onCancelEdit}>
+              <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+            </CancelButton>
+            <SaveButton onClick={onSaveEdit}>
+              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
+            </SaveButton>
+          </EditToolbar>
         )}
-      </TableView>
+      </>
     )
   }
 )

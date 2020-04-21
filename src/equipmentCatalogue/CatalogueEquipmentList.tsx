@@ -7,7 +7,7 @@ import {
 } from '../equipment/equipmentQuery'
 import { MessageView } from '../common/components/common'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
-import EquipmentList from '../equipment/EquipmentList'
+import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -43,14 +43,14 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
 
     let updateEquipmentData = useCallback(
-      async (equipmentId, equipmentInput, quotaId) => {
-        await execUpdateEquipment({
-          variables: {
-            equipmentId,
-            quotaId,
-            equipmentInput,
-          },
-        })
+      async (updates: EquipmentUpdate[]) => {
+        await Promise.all(
+          updates.map((update) =>
+            execUpdateEquipment({
+              variables: update,
+            })
+          )
+        )
 
         await onEquipmentChanged()
       },
