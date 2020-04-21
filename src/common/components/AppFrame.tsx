@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useLayoutEffect, useRef } from 'react'
 import styled from 'styled-components'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
@@ -21,7 +21,7 @@ const Main = styled.div`
   min-height: 100%;
   overflow-y: scroll;
   background: #f5f5f5;
-  
+
   > * {
     min-height: 100%;
   }
@@ -31,13 +31,46 @@ export type AppFrameProps = {
   children?: React.ReactNode
 }
 
+export type ScrollSubscriber = (scrollVal: number) => void
+
+const scrollSubscribers: ScrollSubscriber[] = []
+
+const scrollHandler = (e) => {
+  let scrollVal = e.target?.scrollTop || 0
+  scrollSubscribers.forEach((sub) => sub(scrollVal))
+}
+
+const subscribe = (sub: ScrollSubscriber) => {
+  if (!scrollSubscribers.includes(sub)) {
+    scrollSubscribers.push(sub)
+  }
+}
+
+export const ScrollContext = React.createContext(subscribe)
+
 const AppFrame = observer(({ children }: AppFrameProps) => {
+  let mainRef = useRef<any>(null)
+
+  useEffect(() => {
+    if (mainRef.current) {
+      mainRef.current?.addEventListener('scroll', scrollHandler, { passive: true })
+    }
+
+    return () => {
+      if (mainRef.current) {
+        mainRef.current?.removeEventListener('scroll', scrollHandler)
+      }
+    }
+  }, [mainRef.current])
+
   return (
     <AppFrameView>
       <Sidebar>
         <AppSidebar />
       </Sidebar>
-      <Main>{children}</Main>
+      <ScrollContext.Provider value={subscribe}>
+        <Main ref={mainRef}>{children}</Main>
+      </ScrollContext.Provider>
     </AppFrameView>
   )
 })

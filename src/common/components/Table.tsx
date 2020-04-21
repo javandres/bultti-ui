@@ -1,11 +1,12 @@
-import React from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
-import { Button, ButtonSize } from './Button'
+import { Button, ButtonSize, ButtonStyle } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
+import { ScrollContext } from './AppFrame'
 
 const TableView = styled.div`
   position: relative;
@@ -56,14 +57,29 @@ export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   border-radius: 0;
 `
 
-const CancelButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
-  position: static;
-  border: 1px solid white;
+const EditToolbar = styled.div<{ floating?: boolean }>`
+  position: ${(p) => (p.floating ? 'fixed' : 'static')};
+  bottom: 1rem;
+  border-radius: 10px;
+  background: white;
+  padding: 1rem 1rem;
+  width: ${(p) =>
+    p.floating ? 'calc(100% - 32rem - 3px)' : '100%'}; // Remove sidebar width when floating.
+  z-index: 100;
+  font-size: 1rem;
+  box-shadow: ${(p) => (p.floating ? '0 0 5px rgba(0,0,0,0.3)' : 'none')};
   display: flex;
 `
-const SaveButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })`
+
+const CancelButton = styled(Button)`
+  position: static;
+  display: flex;
+  color: var(--red);
+  margin-left: auto;
+`
+
+const SaveButton = styled(Button)`
   background: var(--green);
-  margin-left: 0.5rem;
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -130,16 +146,6 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   text-align: center;
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
-`
-
-const EditToolbar = styled.div<{ floating?: boolean }>`
-  position: ${(p) => (p.floating ? 'fixed' : 'static')};
-  bottom: 1rem;
-  border-radius: 10px;
-  background: white;
-  padding: 0.5rem 1rem;
-  width: calc(100% - 30rem - 3px);
-  z-index: 100;
 `
 
 type ItemRemover<ItemType = any> = false | (() => void)
@@ -211,6 +217,8 @@ const Table = observer(
     renderInput = defaultRenderInput,
     editableValues = [],
   }: PropTypes<ItemType>) => {
+    let tableViewRef = useRef(null)
+
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
     let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
@@ -245,9 +253,31 @@ const Table = observer(
       columnNames = columns.map((key) => get(columnLabels, key, key))
     }
 
+    let [currentScroll, setCurrentScroll] = useState(0)
+
+    const scrollSubscriber = useCallback((val) => {
+      setCurrentScroll(val)
+    }, [])
+
+    let subscribeToScroll = useContext(ScrollContext)
+
+    useEffect(() => {
+      subscribeToScroll(scrollSubscriber)
+    }, [scrollSubscriber, subscribeToScroll])
+
+    console.log(currentScroll)
+
+    let toolbarIsFloating = useMemo(() => {
+      if (!tableViewRef.current) {
+        return false
+      }
+
+      return true
+    }, [tableViewRef.current, currentScroll])
+
     return (
       <>
-        <TableView className={className}>
+        <TableView className={className} ref={tableViewRef}>
           <TableHeader>
             {indexCell && (
               <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
@@ -351,13 +381,21 @@ const Table = observer(
           )}
         </TableView>
         {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
-          <EditToolbar floating={true}>
-            <CancelButton onClick={onCancelEdit}>
-              <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-            </CancelButton>
-            <SaveButton onClick={onSaveEdit}>
+          <EditToolbar floating={toolbarIsFloating}>
+            <SaveButton
+              onClick={onSaveEdit}
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.NORMAL}>
               <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
+              Tallenna muutokset
             </SaveButton>
+            <CancelButton
+              onClick={onCancelEdit}
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
+              Peruuta
+            </CancelButton>
           </EditToolbar>
         )}
       </>
