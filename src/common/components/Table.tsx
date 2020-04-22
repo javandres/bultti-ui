@@ -44,7 +44,6 @@ const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
 `
 
 const EditInputWrapper = styled.div`
-  background: white;
   width: calc(100% + 1rem + 36px);
   border-radius: 5px;
   display: flex;
@@ -56,27 +55,31 @@ export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   padding: 0.25rem;
   border: 0;
   border-radius: 0;
+  background: transparent;
 `
 
 const EditToolbar = styled.div<{ floating?: boolean }>`
   position: ${(p) => (p.floating ? 'fixed' : 'static')};
   bottom: 1rem;
-  border-radius: 10px;
+  border-radius: ${(p) => (p.floating ? '0.5rem' : 0)};
   background: white;
-  padding: ${(p) => (p.floating ? '1rem' : '0 0 1rem')};
+  padding: ${(p) => (p.floating ? '1rem' : '0.25rem 1rem 1.25rem')};
+  margin: ${(p) => (p.floating ? 0 : '0 -1rem 1.25rem -1rem')};
   left: ${(p) => (p.floating ? '29rem' : 'auto')};
   width: ${(p) =>
-    p.floating ? 'calc(100% - 32rem - 2px)' : '100%'}; // Remove sidebar width when floating.
+    p.floating
+      ? 'calc(100% - 32rem - 2px)'
+      : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
   z-index: 100;
   font-size: 1rem;
   box-shadow: ${(p) => (p.floating ? '0 0 10px rgba(0,0,0,0.2)' : 'none')};
   border: ${(p) => (p.floating ? '1px solid var(--lighter-grey)' : 0)};
+  border-bottom: 1px solid var(--lighter-grey);
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
-  transition: padding 0.2s ease-out, position 0.2s ease-out, left 0.2s ease-out,
-    bottom 0.2s ease-out;
+  transition: padding 0.2s ease-out, left 0.2s ease-out, bottom 0.2s ease-out;
 `
 
 const ToolbarDescription = styled.div`
@@ -103,18 +106,24 @@ const SaveButton = styled(Button)`
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   display: flex;
-  border-bottom: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
   position: relative;
   transition: outline 0.1s ease-out;
   outline: ${(p) =>
     !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
+  z-index: ${(p) => (p.isEditing ? 101 : 'auto')};
 
   &:last-child {
     border-bottom: 0;
   }
 
   &:hover {
-    outline: ${(p) => (!p.footer ? `1px solid var(--light-blue)` : 'none')};
+    outline: ${(p) =>
+      !p.footer
+        ? p.isEditing
+          ? '1px solid var(--light-blue)'
+          : `1px solid var(--lighter-blue)`
+        : 'none'};
     border-bottom-color: transparent;
     z-index: 100;
 
@@ -287,7 +296,7 @@ const Table = observer(
       }
 
       let tableBox = tableViewRef.current?.getBoundingClientRect()
-      let tableBottomEdge = tableBox.bottom
+      let tableBottomEdge = tableBox.bottom + 75
 
       return currentScroll < tableBottomEdge
     }, [tableViewRef.current, currentScroll, pendingValues])
@@ -354,6 +363,7 @@ const Table = observer(
 
                     return (
                       <TableCell
+                        isEditing={!!editValue}
                         editable={editableValues?.includes(key)}
                         onDoubleClick={onStartValueEdit(key, val)}
                         key={`${rowKey}-${key}-${index}`}>
