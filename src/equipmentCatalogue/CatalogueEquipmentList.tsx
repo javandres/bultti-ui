@@ -79,7 +79,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}
-        editableValues={['percentageQuota']}
+        editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
       />
     ) : (
       <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
