@@ -1,12 +1,12 @@
 import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Router } from '@reach/router'
+import { Router, Redirect } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import PreInspections from './page/PreInspections'
 import PostInspection from './page/PostInspection'
-import PreInspectionReports from './page/PreInspectionReports'
+import PreInspectionReportsPage from './page/PreInspectionReportsPage'
 import PostInspectionReports from './page/PostInspectionReports'
 import AppFrame from './common/components/AppFrame'
 import SelectEditablePreInspection from './page/SelectEditablePreInspection'
@@ -28,7 +28,8 @@ const App: React.FC = observer(() => {
         <PreInspections path="pre-inspection" />
         <SelectEditablePreInspection path="pre-inspection/edit" />
         <EditPreInspection path="pre-inspection/edit/:preInspectionId/*" />
-        <PreInspectionReports path="pre-inspection/reports" />
+        <PreInspectionReportsPage path="pre-inspection/reports/:preInspectionId" />
+        <Redirect from="pre-inspection/reports" to="pre-inspection" />
         <PostInspection path="post-inspection" />
         <PostInspectionReports path="post-inspection/reports" />
       </Router>

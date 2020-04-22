@@ -75,10 +75,22 @@ export function useEditPreInspection(preInspectionId = '') {
       let useId = preInspectionId || altPreInspectionId || ''
 
       if (!useId) {
-        navigate(`/pre-inspection/edit`, { replace: true })
-      } else {
-        navigate(`/pre-inspection/edit/${useId}`)
+        return navigate(`/pre-inspection/edit`, { replace: true })
       }
+
+      return navigate(`/pre-inspection/edit/${useId}`)
+    },
+    [preInspectionId, navigate]
+  )
+}
+
+export function usePreInspectionReports(preInspectionId: string = '') {
+  let navigate = useNavigate()
+
+  return useCallback(
+    (altPreInspectionId?: string) => {
+      let useId = preInspectionId || altPreInspectionId || ''
+      return navigate(`/pre-inspection/reports/${useId}`)
     },
     [preInspectionId, navigate]
   )

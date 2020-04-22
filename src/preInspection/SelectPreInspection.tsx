@@ -12,7 +12,11 @@ import {
   SubSectionHeading,
 } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
-import { useCreatePreInspection, useRemovePreInspection } from './preInspectionUtils'
+import {
+  useCreatePreInspection,
+  usePreInspectionReports,
+  useRemovePreInspection,
+} from './preInspectionUtils'
 import { parseISO, format } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 
@@ -102,9 +106,7 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
   padding: 0.25rem 0;
   text-align: center;
   background: ${(p) =>
-    p.status === InspectionStatus.Draft
-      ? 'var(--blue)'
-      : 'var(--light-green)'};
+    p.status === InspectionStatus.Draft ? 'var(--blue)' : 'var(--light-green)'};
   color: white;
   margin: 0 0 1rem;
   border-radius: 5px;
@@ -170,6 +172,8 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     let createPreInspection = useCreatePreInspection(operator, season)
+
+    let goToPreInspectionReports = usePreInspectionReports()
 
     let onCreatePreInspection = useCallback(async () => {
       let createdPreInspection = await createPreInspection()
@@ -273,7 +277,10 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                             Korvaa
                           </Button>
                         )}
-                        <Button buttonStyle={ButtonStyle.NORMAL} size={ButtonSize.MEDIUM}>
+                        <Button
+                          onClick={() => goToPreInspectionReports(preInspection.id)}
+                          buttonStyle={ButtonStyle.NORMAL}
+                          size={ButtonSize.MEDIUM}>
                           Raportit
                         </Button>
                       </>
