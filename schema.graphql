@@ -14,6 +14,7 @@ type Departure {
   journeyStartTime: String!
   procurementUnits: [ProcurementUnit!]!
   routeId: String
+  routeLength: Int
 }
 
 type DepartureBlock {
@@ -106,6 +107,7 @@ type ExecutionRequirementQuota {
 }
 
 type ExecutionRequirementValue {
+  classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float
   emissionClass: Int!
@@ -115,6 +117,8 @@ type ExecutionRequirementValue {
   kilometersFulfilled: Float
   quotaFulfilled: Float
   quotaRequirement: Float
+  sanctionAmount: Float
+  sanctionThreshold: Float
 }
 
 type Mutation {

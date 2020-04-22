@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirement } from '../schema-types'
+import { ExecutionRequirement, ExecutionRequirementValue } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
@@ -50,7 +50,7 @@ const emissionClassLayoutColumnLabels = {
   'total': 'Yhteensä',
 }
 
-const valuesLayoutColumnLabels = {
+const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
   emissionClass: 'Päästöluokka',
   kilometerRequirement: 'Kilometrivaatimus',
   quotaRequirement: 'Prosenttiosuus',
@@ -60,6 +60,9 @@ const valuesLayoutColumnLabels = {
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   equipmentCountFulfilled: 'Toteuma kpl',
+  sanctionThreshold: 'Sanktioraja 5%',
+  sanctionAmount: 'Sanktiomäärä',
+  classSanctionAmount: 'PL sanktiomäärä',
 }
 
 const RequirementsTable: React.FC<PropTypes> = observer(

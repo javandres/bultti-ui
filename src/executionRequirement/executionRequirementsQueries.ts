@@ -73,6 +73,9 @@ export const executionRequirementsByAreaQuery = gql`
         cumulativeDifferencePercentage
         equipmentCount
         equipmentCountFulfilled
+        sanctionThreshold
+        sanctionAmount
+        classSanctionAmount
       }
     }
   }

@@ -330,6 +330,9 @@ export type ExecutionRequirementValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCount?: Maybe<Scalars['Int']>;
   equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
+  classSanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type ProcurementUnitRoute = {
@@ -346,6 +349,7 @@ export type Departure = {
   journeyEndTime: Scalars['String'];
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
+  routeLength?: Maybe<Scalars['Int']>;
   departureBlocks: Array<DepartureBlock>;
   procurementUnits: Array<ProcurementUnit>;
 };
