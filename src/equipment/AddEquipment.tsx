@@ -2,10 +2,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
-import ItemForm, { FieldValueDisplay } from '../common/input/ItemForm'
+import ItemForm from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
-import Input from '../common/input/Input'
-import EquipmentFormInput from './EquipmentFormInput'
+import Input, { TextInput } from '../common/input/Input'
+import { createEquipmentFormInput } from './EquipmentFormInput'
 import { omit } from 'lodash'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { searchEquipmentQuery } from './equipmentQuery'
@@ -28,27 +28,7 @@ export type PropTypes = {
   fieldLabels: { [key: string]: string }
 }
 
-export const renderEquipmentInput = (
-  key: string,
-  val: any,
-  onChange: (value: any, key: string) => unknown,
-  onAccept?: () => unknown,
-  onCancel?: () => unknown
-) => {
-  if (['id'].includes(key)) {
-    return <FieldValueDisplay>{val}</FieldValueDisplay>
-  }
-
-  return (
-    <EquipmentFormInput
-      value={val}
-      valueName={key}
-      onChange={onChange}
-      onAccept={onAccept}
-      onCancel={onCancel}
-    />
-  )
-}
+const renderEquipmentInput = createEquipmentFormInput(TextInput)
 
 const equipmentInputValues = {
   percentageQuota: (val) => emptyOrNumber(numval(val, true)),

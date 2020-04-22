@@ -16,23 +16,25 @@ export const TextInput = styled.input<{
     p.theme === 'light' ? (p.readOnly || p.disabled ? '#f8f8f8' : 'white') : 'white'};
   color: var(--dark-grey);
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   border-radius: 8px;
   border: ${(p) =>
     p.readOnly || p.disabled
       ? 0
       : p.theme === 'light'
-      ? '1px solid #eaeaea'
+      ? '1px solid #dadada'
       : '1px solid var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
   outline: 0;
+  transition: all 0.2s ease-out;
 
   ${(p) =>
     !p.readOnly
       ? css`
           &:focus {
-            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
+            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--white-grey)')};
+            transform: scale(1.01);
             border-color: var(--blue);
             color: var(--dark-grey);
           }

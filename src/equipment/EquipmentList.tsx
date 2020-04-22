@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Table, { EditValue, PendingValType } from '../common/components/Table'
+import Table, { EditValue, PendingValType, TableInput } from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
@@ -9,7 +9,7 @@ import { groupBy, orderBy } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
-import { renderEquipmentInput } from './AddEquipment'
+import { createEquipmentFormInput } from './EquipmentFormInput'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -26,6 +26,8 @@ export type PropTypes = {
   groupedColumnLabels: { [key: string]: string }
   editableValues?: string[]
 }
+
+const renderEquipmentInput = createEquipmentFormInput(TableInput)
 
 const EquipmentList: React.FC<PropTypes> = observer(
   ({

@@ -5,6 +5,7 @@ import { get } from 'lodash'
 import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
+import Modal from '../components/Modal'
 
 export const ControlledFormView = styled.div`
   display: flex;
@@ -116,34 +117,35 @@ const ItemForm: React.FC<PropTypes> = observer(
     )
 
     return (
-      <ControlledFormView>
-        {itemEntries.map(([key, val], index) => (
-          <FieldWrapper key={key}>
-            <FieldLabel>{get(labels, key, key)}</FieldLabel>
-            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(key, val, onValueChange(key))}
+      <Modal>
+        <ControlledFormView>
+          {itemEntries.map(([key, val], index) => (
+            <FieldWrapper key={key}>
+              <FieldLabel>{get(labels, key, key)}</FieldLabel>
+              {isReadOnly(key)
+                ? renderReadOnlyField(val)
+                : renderInput(key, val, onValueChange(key))}
+            </FieldWrapper>
+          ))}
+          <FieldWrapper
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              marginLeft: 'auto',
+            }}>
+            {children}
+            <ActionsWrapper>
+              <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
+                {doneLabel}
+              </Button>
+              <Button buttonStyle={ButtonStyle.SECONDARY} onClick={onCancel}>
+                Peruuta
+              </Button>
+            </ActionsWrapper>
           </FieldWrapper>
-        ))}
-        <FieldWrapper
-          style={{
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            marginLeft: 'auto',
-          }}>
-          {children}
-          <ActionsWrapper>
-            <Button
-              style={{ marginRight: '1rem' }}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={onCancel}>
-              Peruuta
-            </Button>
-            <Button disabled={doneDisabled} onClick={onDone}>
-              {doneLabel}
-            </Button>
-          </ActionsWrapper>
-        </FieldWrapper>
-      </ControlledFormView>
+        </ControlledFormView>
+      </Modal>
     )
   }
 )

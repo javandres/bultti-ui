@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { CellContent, TableInput } from '../common/components/Table'
+import { CellContent } from '../common/components/Table'
 import styled from 'styled-components'
 import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
+import { TextInput } from '../common/input/Input'
+import { FieldValueDisplay } from '../common/input/ItemForm'
 
 export const FormDropdown = styled(Dropdown)`
   width: 100%;
@@ -28,6 +30,7 @@ export const FormDropdown = styled(Dropdown)`
 type ValueType = string | number
 
 export type PropTypes = {
+  fieldComponent?: React.ElementType
   value: ValueType
   valueName: string
   onChange: (value: ValueType, key: string) => unknown
@@ -66,8 +69,31 @@ const typeValues: SelectValue[] = [
 const numericTypes = ['offeredPercentageQuota', 'percentageQuota', 'meterRequirement']
 const dateValues = ['registryDate']
 
+export const createEquipmentFormInput = (fieldComponent = TextInput) => (
+  key: string,
+  val: any,
+  onChange: (value: any, key: string) => unknown,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown
+) => {
+  if (['id'].includes(key)) {
+    return <FieldValueDisplay>{val}</FieldValueDisplay>
+  }
+
+  return (
+    <EquipmentFormInput
+      fieldComponent={fieldComponent}
+      value={val}
+      valueName={key}
+      onChange={onChange}
+      onAccept={onAccept}
+      onCancel={onCancel}
+    />
+  )
+}
+
 const EquipmentFormInput: React.FC<PropTypes> = observer(
-  ({ value, valueName, onChange, onAccept, onCancel }) => {
+  ({ value, valueName, onChange, onAccept, onCancel, fieldComponent = TextInput }) => {
     const isDisabled = valueName === 'id'
     const valueIsNumeric = numericTypes.includes(valueName)
 
@@ -149,8 +175,11 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
       )
     }
 
+    let FieldComponent = fieldComponent
+
     return (
-      <TableInput
+      <FieldComponent
+        theme="light"
         type={valueIsNumeric ? 'number' : 'text'}
         step={valueIsNumeric ? 0.01 : 1}
         value={value}

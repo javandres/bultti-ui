@@ -15,7 +15,6 @@ import { TabChildProps } from '../common/components/Tabs'
 import { PreInspectionContext } from './PreInspectionContext'
 import { useNavigate } from '@reach/router'
 import { ButtonStyle } from '../common/components/Button'
-import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 
 const EditPreInspectionView = styled.div`
