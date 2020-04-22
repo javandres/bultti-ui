@@ -52,8 +52,8 @@ const emissionClassLayoutColumnLabels = {
 
 const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
   emissionClass: 'Päästöluokka',
-  kilometerRequirement: 'Kilometrivaatimus',
-  quotaRequirement: 'Prosenttiosuus',
+  kilometerRequirement: 'Km vaatimus',
+  quotaRequirement: '% Osuus',
   equipmentCount: 'Vaatimus kpl',
   kilometersFulfilled: 'Toteuma km',
   quotaFulfilled: 'Toteuma % osuus',
@@ -62,7 +62,7 @@ const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: str
   equipmentCountFulfilled: 'Toteuma kpl',
   sanctionThreshold: 'Sanktioraja 5%',
   sanctionAmount: 'Sanktiomäärä',
-  classSanctionAmount: 'PL sanktiomäärä',
+  classSanctionAmount: 'PL/sanktiomäärä',
 }
 
 const RequirementsTable: React.FC<PropTypes> = observer(
@@ -111,6 +111,9 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         case 'quotaFulfilled':
         case 'differencePercentage':
         case 'cumulativeDifferencePercentage':
+        case 'sanctionThreshold':
+        case 'sanctionAmount':
+        case 'classSanctionAmount':
           unit = '%'
           break
         case 'kilometers':
@@ -131,7 +134,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
 
     let getColumnTotal = useCallback(
       (key: string) => {
-        if (key === 'emissionClass') {
+        if (['emissionClass', 'sanctionThreshold'].includes(key)) {
           return ''
         }
 
@@ -143,6 +146,8 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           case 'quotaFulfilled':
           case 'differencePercentage':
           case 'cumulativeDifferencePercentage':
+          case 'sanctionAmount':
+          case 'classSanctionAmount':
             return `${totalVal}%`
           case 'kilometers':
           case 'kilometerRequirement':
