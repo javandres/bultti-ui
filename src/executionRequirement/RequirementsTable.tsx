@@ -169,8 +169,9 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, [
             'totalKilometers',
-            'averageAgeWeighted',
-            'averageAgeWeightedFulfilled',
+            ...(tableLayout === RequirementsTableLayout.BY_VALUES
+              ? ['averageAgeWeighted', 'averageAgeWeightedFulfilled']
+              : ['averageAgeWeighted']),
           ])}
           labels={{
             totalKilometers: 'Suoritekilometrit yhteensä',

@@ -13,6 +13,14 @@ import { emptyOrNumber } from '../util/emptyOrNumber'
 import { numval } from '../util/numval'
 import { EquipmentInput } from '../schema-types'
 import { EquipmentWithQuota } from './equipmentUtils'
+import Modal from '../common/components/Modal'
+import styled from 'styled-components'
+
+const AddEquipmentFormWrapper = styled.div`
+  background: white;
+  padding: 1rem;
+  border-radius: 0.5rem;
+`
 
 type PendingEquipment = { _exists: boolean } & EquipmentInput
 
@@ -176,24 +184,26 @@ const AddEquipment: React.FC<PropTypes> = observer(
           </FlexRow>
         )}
         {pendingEquipment && (
-          <>
-            <SubSectionHeading>Lisää ajoneuvo</SubSectionHeading>
-            <ItemForm
-              item={pendingEquipment}
-              labels={fieldLabels}
-              readOnly={
-                pendingEquipment._exists
-                  ? Object.keys(fieldLabels || {}).filter((key) => !editableKeys.includes(key))
-                  : false
-              }
-              onChange={onEquipmentInputChange}
-              onDone={onAddEquipment}
-              onCancel={onCancelPendingEquipment}
-              doneDisabled={!equipmentIsValid(pendingEquipment)}
-              doneLabel="Lisää"
-              renderInput={renderEquipmentInput}
-            />
-          </>
+          <Modal>
+            <AddEquipmentFormWrapper>
+              <SubSectionHeading>Lisää ajoneuvo</SubSectionHeading>
+              <ItemForm
+                item={pendingEquipment}
+                labels={fieldLabels}
+                readOnly={
+                  pendingEquipment._exists
+                    ? Object.keys(fieldLabels || {}).filter((key) => !editableKeys.includes(key))
+                    : false
+                }
+                onChange={onEquipmentInputChange}
+                onDone={onAddEquipment}
+                onCancel={onCancelPendingEquipment}
+                doneDisabled={!equipmentIsValid(pendingEquipment)}
+                doneLabel="Lisää"
+                renderInput={renderEquipmentInput}
+              />
+            </AddEquipmentFormWrapper>
+          </Modal>
         )}
         {searchFormVisible && (
           <>

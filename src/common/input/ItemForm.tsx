@@ -5,7 +5,6 @@ import { get } from 'lodash'
 import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
-import Modal from '../components/Modal'
 
 export const ControlledFormView = styled.div`
   display: flex;
@@ -15,7 +14,6 @@ export const ControlledFormView = styled.div`
   border-bottom: 0;
   border-radius: 0.5rem;
   background: white;
-  box-shadow: 0 0 5px 0 rgba(0, 20, 50, 0.1);
 
   > *:nth-child(2n + 2n) {
     background-color: #fafafa;
@@ -117,35 +115,31 @@ const ItemForm: React.FC<PropTypes> = observer(
     )
 
     return (
-      <Modal>
-        <ControlledFormView>
-          {itemEntries.map(([key, val], index) => (
-            <FieldWrapper key={key}>
-              <FieldLabel>{get(labels, key, key)}</FieldLabel>
-              {isReadOnly(key)
-                ? renderReadOnlyField(val)
-                : renderInput(key, val, onValueChange(key))}
-            </FieldWrapper>
-          ))}
-          <FieldWrapper
-            style={{
-              flexDirection: 'row',
-              alignItems: 'flex-end',
-              justifyContent: 'space-between',
-              marginLeft: 'auto',
-            }}>
-            {children}
-            <ActionsWrapper>
-              <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
-                {doneLabel}
-              </Button>
-              <Button buttonStyle={ButtonStyle.SECONDARY} onClick={onCancel}>
-                Peruuta
-              </Button>
-            </ActionsWrapper>
+      <ControlledFormView>
+        {itemEntries.map(([key, val], index) => (
+          <FieldWrapper key={key}>
+            <FieldLabel>{get(labels, key, key)}</FieldLabel>
+            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(key, val, onValueChange(key))}
           </FieldWrapper>
-        </ControlledFormView>
-      </Modal>
+        ))}
+        <FieldWrapper
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-end',
+            justifyContent: 'space-between',
+            marginLeft: 'auto',
+          }}>
+          {children}
+          <ActionsWrapper>
+            <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
+              {doneLabel}
+            </Button>
+            <Button buttonStyle={ButtonStyle.SECONDARY} onClick={onCancel}>
+              Peruuta
+            </Button>
+          </ActionsWrapper>
+        </FieldWrapper>
+      </ControlledFormView>
     )
   }
 )
