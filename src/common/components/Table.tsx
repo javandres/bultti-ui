@@ -7,6 +7,7 @@ import { CrossThick } from '../icon/CrossThick'
 import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
+import { Info } from '../icon/Info'
 
 const TableView = styled.div`
   position: relative;
@@ -62,24 +63,42 @@ const EditToolbar = styled.div<{ floating?: boolean }>`
   bottom: 1rem;
   border-radius: 10px;
   background: white;
-  padding: 1rem 1rem;
+  padding: ${(p) => (p.floating ? '1rem' : '0 0 1rem')};
+  left: ${(p) => (p.floating ? '29rem' : 'auto')};
   width: ${(p) =>
-    p.floating ? 'calc(100% - 32rem - 3px)' : '100%'}; // Remove sidebar width when floating.
+    p.floating ? 'calc(100% - 32rem - 2px)' : '100%'}; // Remove sidebar width when floating.
   z-index: 100;
   font-size: 1rem;
-  box-shadow: ${(p) => (p.floating ? '0 0 5px rgba(0,0,0,0.3)' : 'none')};
+  box-shadow: ${(p) => (p.floating ? '0 0 10px rgba(0,0,0,0.2)' : 'none')};
+  border: ${(p) => (p.floating ? '1px solid var(--lighter-grey)' : 0)};
   display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  transition: padding 0.2s ease-out, position 0.2s ease-out, left 0.2s ease-out,
+    bottom 0.2s ease-out;
+`
+
+const ToolbarDescription = styled.div`
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+
+  svg {
+    margin-right: 0.75rem;
+  }
 `
 
 const CancelButton = styled(Button)`
   position: static;
   display: flex;
   color: var(--red);
-  margin-left: auto;
+  background: white;
 `
 
 const SaveButton = styled(Button)`
   background: var(--green);
+  margin-right: 1rem;
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -217,7 +236,7 @@ const Table = observer(
     renderInput = defaultRenderInput,
     editableValues = [],
   }: PropTypes<ItemType>) => {
-    let tableViewRef = useRef(null)
+    let tableViewRef = useRef<null | HTMLDivElement>(null)
 
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
@@ -254,26 +273,24 @@ const Table = observer(
     }
 
     let [currentScroll, setCurrentScroll] = useState(0)
-
-    const scrollSubscriber = useCallback((val) => {
-      setCurrentScroll(val)
-    }, [])
-
     let subscribeToScroll = useContext(ScrollContext)
 
     useEffect(() => {
-      subscribeToScroll(scrollSubscriber)
-    }, [scrollSubscriber, subscribeToScroll])
-
-    console.log(currentScroll)
+      if (pendingValues.length !== 0) {
+        subscribeToScroll(setCurrentScroll)
+      }
+    }, [subscribeToScroll, pendingValues])
 
     let toolbarIsFloating = useMemo(() => {
-      if (!tableViewRef.current) {
+      if (pendingValues.length === 0 || !tableViewRef.current) {
         return false
       }
 
-      return true
-    }, [tableViewRef.current, currentScroll])
+      let tableBox = tableViewRef.current?.getBoundingClientRect()
+      let tableBottomEdge = tableBox.bottom
+
+      return currentScroll < tableBottomEdge
+    }, [tableViewRef.current, currentScroll, pendingValues])
 
     return (
       <>
@@ -382,6 +399,10 @@ const Table = observer(
         </TableView>
         {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <EditToolbar floating={toolbarIsFloating}>
+            <ToolbarDescription>
+              <Info fill="var(--dark-grey)" width={20} height={20} />
+              Muista tallentaa taulukkoon tekemäsi muutokset.
+            </ToolbarDescription>
             <SaveButton
               onClick={onSaveEdit}
               size={ButtonSize.MEDIUM}

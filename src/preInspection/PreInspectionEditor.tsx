@@ -136,13 +136,6 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(({ refetchDat
             </FormColumn>
           </FormWrapper>
 
-          <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
-          <FormWrapper>
-            <FormColumn width="100%" minWidth="510px">
-              <PreInspectionExecutionRequirements />
-            </FormColumn>
-          </FormWrapper>
-
           <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
           <TransparentFormWrapper>
             <FormColumn width="100%" minWidth="510px">

@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
@@ -33,35 +33,40 @@ export type AppFrameProps = {
 
 export type ScrollSubscriber = (scrollVal: number) => void
 
-const scrollSubscribers: ScrollSubscriber[] = []
-
-const scrollHandler = (e) => {
-  let scrollVal = e.target?.scrollTop || 0
-  scrollSubscribers.forEach((sub) => sub(scrollVal))
-}
-
-const subscribe = (sub: ScrollSubscriber) => {
-  if (!scrollSubscribers.includes(sub)) {
-    scrollSubscribers.push(sub)
-  }
-}
-
-export const ScrollContext = React.createContext(subscribe)
+export const ScrollContext = React.createContext<(sub: ScrollSubscriber) => void>((sub) => {})
 
 const AppFrame = observer(({ children }: AppFrameProps) => {
-  let mainRef = useRef<any>(null)
+  let mainViewRef = useRef<any>(null)
+  const scrollSubscribers = useRef<ScrollSubscriber[]>([])
+
+  const scrollHandler = useCallback(
+    (e) => {
+      let scrollVal = e.target?.scrollTop || 0
+      scrollSubscribers.current.forEach((sub) => sub(scrollVal))
+    },
+    [scrollSubscribers.current]
+  )
+
+  const subscribe = useCallback(
+    (sub: ScrollSubscriber) => {
+      if (!scrollSubscribers.current.includes(sub)) {
+        scrollSubscribers.current.push(sub)
+      }
+    },
+    [scrollSubscribers.current]
+  )
 
   useEffect(() => {
-    if (mainRef.current) {
-      mainRef.current?.addEventListener('scroll', scrollHandler, { passive: true })
+    if (mainViewRef.current) {
+      mainViewRef.current?.addEventListener('scroll', scrollHandler, { passive: true })
     }
 
     return () => {
-      if (mainRef.current) {
-        mainRef.current?.removeEventListener('scroll', scrollHandler)
+      if (mainViewRef.current) {
+        mainViewRef.current?.removeEventListener('scroll', scrollHandler)
       }
     }
-  }, [mainRef.current])
+  }, [mainViewRef.current])
 
   return (
     <AppFrameView>
@@ -69,7 +74,7 @@ const AppFrame = observer(({ children }: AppFrameProps) => {
         <AppSidebar />
       </Sidebar>
       <ScrollContext.Provider value={subscribe}>
-        <Main ref={mainRef}>{children}</Main>
+        <Main ref={mainViewRef}>{children}</Main>
       </ScrollContext.Provider>
     </AppFrameView>
   )
