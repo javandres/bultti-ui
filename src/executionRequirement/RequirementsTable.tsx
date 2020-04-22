@@ -92,8 +92,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
 
     let renderDisplayValue = useCallback((key, val) => {
       let displayVal = round(val)
-      let displayUnit =
-        key === 'totalKilometers' ? 'km' : key === 'averageAgeWeighted' ? 'vuotta' : ''
+      let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
 
       return `${displayVal} ${displayUnit}`
     }, [])
@@ -166,11 +165,17 @@ const RequirementsTable: React.FC<PropTypes> = observer(
     return (
       <ExecutionRequirementsAreaContainer>
         <ValueDisplay
+          valuesPerRow={3}
           style={{ marginBottom: '1rem' }}
-          item={pick(executionRequirement, ['totalKilometers', 'averageAgeWeighted'])}
+          item={pick(executionRequirement, [
+            'totalKilometers',
+            'averageAgeWeighted',
+            'averageAgeWeightedFulfilled',
+          ])}
           labels={{
             totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
+            averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
           }}
           renderValue={renderDisplayValue}
         />

@@ -16,23 +16,23 @@ const ValueDisplayView = styled.div`
   > *:nth-child(even) {
     background-color: #fafafa;
   }
-
-  > *:nth-child(2) {
-    border-top-right-radius: 0.5rem;
-  }
 `
 
-const ValueWrapper = styled.div`
+const ValueWrapper = styled.div<{ widthFraction?: number }>`
   display: flex;
   flex-direction: column;
-  flex: 1 1 50%;
+  flex: 1 1 ${({ widthFraction = 2 }) => `${100 / Math.max(1, widthFraction)}%`};
   padding: 0.5rem 0.75rem;
   border-right: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
 
-  &:nth-child(2n),
+  &:nth-child(${({ widthFraction = 2 }) => widthFraction}n),
   &:last-child {
     border-right: 0;
+  }
+
+  &:nth-child(${({ widthFraction = 2 }) => widthFraction}) {
+    border-top-right-radius: 0.5rem;
   }
 `
 
@@ -56,6 +56,7 @@ export type PropTypes<ItemType = any> = {
   className?: string
   children?: React.ReactChild | false
   style?: CSSProperties
+  valuesPerRow?: number
 }
 
 const defaultRenderValue = (key, val) => val
@@ -71,6 +72,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
     children,
     style,
     objectPaths,
+    valuesPerRow = 2,
   }) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -98,7 +100,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
           }
 
           return (
-            <ValueWrapper key={key}>
+            <ValueWrapper widthFraction={valuesPerRow} key={key}>
               <ValueLabel>{get(labels, key, key)}</ValueLabel>
               <ValueView>{renderValue(key, displayValue)}</ValueView>
             </ValueWrapper>
