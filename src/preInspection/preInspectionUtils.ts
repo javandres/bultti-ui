@@ -2,8 +2,31 @@ import { useCallback } from 'react'
 import { InitialPreInspectionInput, PreInspection } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
-import { createPreInspectionMutation, removePreInspectionMutation } from './preInspectionQueries'
+import {
+  createPreInspectionMutation,
+  preInspectionQuery,
+  removePreInspectionMutation,
+} from './preInspectionQueries'
 import { useNavigate } from '@reach/router'
+import { useQueryData } from '../util/useQueryData'
+import { useRefetch } from '../util/useRefetch'
+
+export function usePreInspectionById(preInspectionId?: string) {
+  let { data, loading, error, refetch: refetcher } = useQueryData<PreInspection>(
+    preInspectionQuery,
+    {
+      skip: !preInspectionId,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        preInspectionId: preInspectionId,
+      },
+    }
+  )
+
+  let refetch = useRefetch(refetcher, false)
+
+  return { data, loading, error, refetch }
+}
 
 export function useCreatePreInspection(operator, season) {
   let [createPreInspection, { loading: createLoading }] = useMutationData(

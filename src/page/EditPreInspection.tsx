@@ -5,18 +5,13 @@ import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
-import { PreInspection } from '../schema-types'
 import PreviewPreInspection from '../preInspection/PreviewPreInspection'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
-import {
-  preInspectionQuery,
-  publishPreInspectionMutation,
-} from '../preInspection/preInspectionQueries'
-import { useQueryData } from '../util/useQueryData'
+import { publishPreInspectionMutation } from '../preInspection/preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
-import { useEditPreInspection } from '../preInspection/preInspectionUtils'
+import { useEditPreInspection, usePreInspectionById } from '../preInspection/preInspectionUtils'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -29,15 +24,8 @@ const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' 
   var [operator] = useStateValue('globalOperator')
   var editPreInspection = useEditPreInspection()
 
-  let { data: preInspection, loading: inspectionLoading, refetch } = useQueryData<PreInspection>(
-    preInspectionQuery,
-    {
-      skip: !preInspectionId,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        preInspectionId: preInspectionId,
-      },
-    }
+  let { data: preInspection, loading: inspectionLoading, refetch } = usePreInspectionById(
+    preInspectionId
   )
 
   let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
