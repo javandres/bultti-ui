@@ -4,14 +4,14 @@ import { observer } from 'mobx-react-lite'
 import { Router, Redirect } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
-import PreInspections from './page/PreInspections'
+import PreInspectionsPage from './page/PreInspectionsPage'
 import PostInspection from './page/PostInspection'
 import PreInspectionReportsPage from './page/PreInspectionReportsPage'
-import PostInspectionReports from './page/PostInspectionReports'
+import PostInspectionReportsPage from './page/PostInspectionReportsPage'
 import AppFrame from './common/components/AppFrame'
-import SelectEditablePreInspection from './page/SelectEditablePreInspection'
+import SelectPreInspectionPage from './page/SelectPreInspectionPage'
 import ProcurementUnitsPage from './page/ProcurementUnitsPage'
-import EditPreInspection from './page/EditPreInspection'
+import EditPreInspectionPage from './page/EditPreInspectionPage'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -25,13 +25,13 @@ const App: React.FC = observer(() => {
       <Router>
         <Index path="/" />
         <ProcurementUnitsPage path="procurement-units" />
-        <PreInspections path="pre-inspection" />
-        <SelectEditablePreInspection path="pre-inspection/edit" />
-        <EditPreInspection path="pre-inspection/edit/:preInspectionId/*" />
+        <PreInspectionsPage path="pre-inspection" />
+        <SelectPreInspectionPage path="pre-inspection/edit" />
+        <EditPreInspectionPage path="pre-inspection/edit/:preInspectionId/*" />
         <PreInspectionReportsPage path="pre-inspection/reports/:preInspectionId" />
         <Redirect from="pre-inspection/reports" to="pre-inspection" />
         <PostInspection path="post-inspection" />
-        <PostInspectionReports path="post-inspection/reports" />
+        <PostInspectionReportsPage path="post-inspection/reports" />
       </Router>
     </AppFrame>
   )

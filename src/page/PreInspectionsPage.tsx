@@ -14,7 +14,7 @@ type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
 
-const PreInspections: React.FC<PropTypes> = observer(() => {
+const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
   var [operator] = useStateValue('globalOperator')
   var navigate = useNavigate()
 
@@ -57,4 +57,4 @@ const PreInspections: React.FC<PropTypes> = observer(() => {
   )
 })
 
-export default PreInspections
+export default PreInspectionsPage

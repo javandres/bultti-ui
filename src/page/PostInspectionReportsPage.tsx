@@ -7,7 +7,7 @@ type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
 
-const PostInspectionReports: React.FC<PropTypes> = observer((props) => {
+const PostInspectionReportsPage: React.FC<PropTypes> = observer((props) => {
   return (
     <Page>
       <h3>Jälkitarkastus</h3>
@@ -17,4 +17,4 @@ const PostInspectionReports: React.FC<PropTypes> = observer((props) => {
   )
 })
 
-export default PostInspectionReports
+export default PostInspectionReportsPage

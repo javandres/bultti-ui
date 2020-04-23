@@ -19,7 +19,7 @@ export type PropTypes = {
   preInspectionId?: string
 } & RouteComponentProps
 
-const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' }) => {
+const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId = '' }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
   var editPreInspection = useEditPreInspection()
@@ -83,4 +83,4 @@ const EditPreInspection: React.FC<PropTypes> = observer(({ preInspectionId = '' 
   )
 })
 
-export default EditPreInspection
+export default EditPreInspectionPage

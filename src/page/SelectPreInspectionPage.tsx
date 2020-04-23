@@ -1,5 +1,4 @@
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import { Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
@@ -10,11 +9,9 @@ import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/
 import { useQueryData } from '../util/useQueryData'
 import { useEditPreInspection } from '../preInspection/preInspectionUtils'
 
-const CreatePreInspectionView = styled(Page)``
-
 export type PropTypes = {} & RouteComponentProps
 
-const SelectEditablePreInspection: React.FC<PropTypes> = observer(() => {
+const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
   var editPreInspection = useEditPreInspection()
@@ -41,7 +38,7 @@ const SelectEditablePreInspection: React.FC<PropTypes> = observer(() => {
   )
 
   return (
-    <CreatePreInspectionView>
+    <Page>
       <PageTitle>Valitse ennakkotarkastus muokattavaksi</PageTitle>
       <SelectPreInspection
         preInspections={preInspections}
@@ -49,8 +46,8 @@ const SelectEditablePreInspection: React.FC<PropTypes> = observer(() => {
         loading={loading}
         onSelect={onSelectPreInspection}
       />
-    </CreatePreInspectionView>
+    </Page>
   )
 })
 
-export default SelectEditablePreInspection
+export default SelectPreInspectionPage
