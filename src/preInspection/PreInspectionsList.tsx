@@ -52,12 +52,13 @@ const TimelineHeading = styled.div`
     content: '';
     display: block;
     position: absolute;
-    width: 1.51rem;
-    height: 1.51rem;
+    width: 1.1rem;
+    height: 1.1rem;
     top: -0.25rem;
     left: calc(-0.75rem - 1px);
     border-radius: 50%;
-    background: var(--blue);
+    background: white;
+    border: 3px solid var(--blue);
   }
 `
 
@@ -84,7 +85,7 @@ const TimelineCurrentTime = styled(TimelineHeading)`
     left: calc(-0.5rem - 2px);
     border-radius: 50%;
     border: 3px solid var(--blue);
-    background: white;
+    background: var(--blue);
   }
 `
 
@@ -113,12 +114,13 @@ const TimelinePreInspectionItem = styled(PreInspectionItem)<{ isCurrentlyInEffec
     content: '';
     display: ${(p) => (p.isCurrentlyInEffect ? 'block' : 'none')};
     position: absolute;
-    width: calc(1.5rem + 1px);
-    height: 1.5rem;
+    width: 1.1rem;
+    height: 1.1rem;
     border-radius: 50%;
     top: calc(50% - 0.75rem);
-    left: calc(-2.25rem - 2px);
-    background: var(--green);
+    left: calc(-2.5rem + 1px);
+    background: white;
+    border: 3px solid var(--green);
   }
 
   & + ${TimelineHeading} {

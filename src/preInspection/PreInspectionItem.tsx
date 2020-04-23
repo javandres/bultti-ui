@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { InspectionStatus, PreInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useNavigate } from '@reach/router'
-import { useEditPreInspection, useRemovePreInspection } from './preInspectionUtils'
+import {
+  useEditPreInspection,
+  usePreInspectionReports,
+  useRemovePreInspection,
+} from './preInspectionUtils'
 import ValueDisplay from '../common/components/ValueDisplay'
 
 const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
@@ -85,6 +89,8 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
     onPreInspectionUpdated
   )
 
+  let goToReports = usePreInspectionReports(preInspection.id)
+
   return (
     <PreInspectionItemView
       className={className}
@@ -118,7 +124,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
           <Button
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
-            onClick={() => navigate('pre-inspection/reports')}>
+            onClick={() => goToReports()}>
             Raportit
           </Button>
         )}
