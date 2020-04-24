@@ -57,9 +57,14 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId =
             Peruuta
           </Button>
         </PageTitle>
-        {!preInspection || !operator || !season ? (
+        {!operator || !season ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
+          </MessageContainer>
+        ) : !preInspection ? (
+          <MessageContainer>
+            <MessageView>Haettu ennakkotarkastus ei löytynyt.</MessageView>
+            <Button onClick={() => editPreInspection()}>Takaisin</Button>
           </MessageContainer>
         ) : (
           <Tabs>
