@@ -10,6 +10,8 @@ export const DepartureFragment = gql`
     journeyEndTime
     routeId
     routeLength
+    equipmentRegistryNumber
+    dayTypes
   }
 `
 

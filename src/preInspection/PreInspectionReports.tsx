@@ -37,9 +37,14 @@ const PreInspectionReports: React.FC<PropTypes> = observer(() => {
         <MessageView>Ei raportteja...</MessageView>
       )}
       <LoadingDisplay loading={reportsLoading} />
-      {reports.map((reportItem) => (
-        <ReportListItem key={reportItem.name} reportItem={reportItem} />
-      ))}
+      {preInspection &&
+        reports.map((reportItem) => (
+          <ReportListItem
+            key={reportItem.name}
+            preInspection={preInspection!}
+            reportItem={reportItem}
+          />
+        ))}
     </PreInspectionReportsView>
   )
 })

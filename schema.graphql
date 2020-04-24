@@ -9,8 +9,10 @@ union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequi
 
 type Departure {
   blockNumber: Int!
+  dayTypes: String
   departureBlocks: [DepartureBlock!]!
   direction: String
+  equipmentRegistryNumber: String
   id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
@@ -241,7 +243,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
-  preInspectionReportByName(preInspectionId: String!, reportName: String!): [Report!]
+  preInspectionReportByName(preInspectionId: String!, reportName: String!): Report
   preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
@@ -263,12 +265,14 @@ type Report {
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType!
   season: Season!
+  title: String!
 }
 
 type ReportListItem {
   description: String!
-  entity: String!
   name: String!
+  reportType: ReportType!
+  title: String!
 }
 
 type Season {

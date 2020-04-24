@@ -1,18 +1,21 @@
-import React, { useState } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ReportListItem as ReportListItemType } from '../schema-types'
-import ExpandableBox from '../common/components/ExpandableBox'
-
-const ReportListItemView = styled.div`
-  padding: 1rem;
-  border: 1px solid var(--lighter-grey);
-  border-radius: 0.5rem;
-  background: white;
-`
+import {
+  PreInspection,
+  Report,
+  ReportListItem as ReportListItemType,
+  ReportType,
+} from '../schema-types'
+import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
+import { useQueryData } from '../util/useQueryData'
+import { reportByName } from './reportQueries'
+import { LoadingDisplay } from '../common/components/Loading'
+import ListReport from './ListReport'
 
 const ReportTitle = styled.h3`
   margin-top: 0;
+  margin-bottom: 0.75rem;
 `
 
 const ReportDescription = styled.p`
@@ -21,23 +24,43 @@ const ReportDescription = styled.p`
 
 export type PropTypes = {
   reportItem: ReportListItemType
+  preInspection: PreInspection
 }
 
-const ReportListItem: React.FC<PropTypes> = observer(({ reportItem }) => {
-  const [isExpanded, setIsExpanded] = useState(true)
+const ReportListItem: React.FC<PropTypes> = observer(({ preInspection, reportItem }) => {
+  let { data: reportData, loading: reportLoading } = useQueryData<Report>(reportByName, {
+    variables: {
+      reportName: reportItem.name,
+      preInspectionId: preInspection?.id,
+    },
+  })
+
+  let ReportTypeComponent = useMemo(() => {
+    switch (reportItem.reportType) {
+      case ReportType.List:
+        return ListReport
+      default:
+        return ListReport
+    }
+  }, [reportItem.reportType])
 
   return (
-    <ReportListItemView>
-      <ExpandableBox
-        headerContent={
-          <>
+    <ExpandableSection
+      headerContent={
+        <>
+          <HeaderSection>
             <ReportTitle>{reportItem.name}</ReportTitle>
             <ReportDescription>{reportItem.description}</ReportDescription>
-          </>
-        }>
-        Report here...
-      </ExpandableBox>
-    </ReportListItemView>
+          </HeaderSection>
+        </>
+      }>
+      <>
+        <LoadingDisplay loading={reportLoading} />
+        {reportData && reportData?.reportEntities?.length !== 0 && (
+          <ReportTypeComponent items={reportData.reportEntities.slice(0, 100)} />
+        )}
+      </>
+    </ExpandableSection>
   )
 })
 

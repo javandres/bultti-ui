@@ -25,29 +25,12 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { FlexRow, SubSectionHeading } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
-import ExpandableBox from '../common/components/ExpandableBox'
+import ExpandableSection, {
+  HeaderHeading,
+  HeaderSection,
+} from '../common/components/ExpandableSection'
 
-const ProcurementUnitView = styled.div`
-  border: 1px solid var(--lighter-grey);
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-  background: white;
-`
-
-const HeaderSection = styled.div`
-  font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
-  border-right: 1px solid var(--lighter-grey);
-  flex: 1 1 50%;
-
-  &:last-child {
-    border-right: 0;
-  }
-`
-
-const Content = styled.div`
-  padding: 1rem;
-`
+const ProcurementUnitView = styled.div``
 
 const ProcurementUnitHeading = styled.h4`
   margin: 0;
@@ -56,17 +39,6 @@ const ProcurementUnitHeading = styled.h4`
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: center;
-`
-
-export const HeaderHeading = styled.h5`
-  font-size: 0.875rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  user-select: none;
-
-  &:first-child {
-    margin-top: 0;
-  }
 `
 
 export type PropTypes = {
@@ -206,7 +178,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         {loading ? (
           <Loading />
         ) : !procurementUnit ? null : (
-          <ExpandableBox
+          <ExpandableSection
             isExpanded={expanded}
             headerContent={
               <>
@@ -228,7 +200,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
               </>
             }>
-            <Content>
+            <>
               {showExecutionRequirements && hasEquipment && (
                 <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
               )}
@@ -291,8 +263,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 onCatalogueChanged={onCatalogueChanged}
                 editable={catalogueEditable}
               />
-            </Content>
-          </ExpandableBox>
+            </>
+          </ExpandableSection>
         )}
       </ProcurementUnitView>
     )

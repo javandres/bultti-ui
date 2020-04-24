@@ -43,7 +43,7 @@ export type Query = {
   departureBlock?: Maybe<DepartureBlock>;
   departureBlocksForPreInspection: Array<DepartureBlock>;
   availablePreInspectionReports: Array<ReportListItem>;
-  preInspectionReportByName?: Maybe<Array<Report>>;
+  preInspectionReportByName?: Maybe<Report>;
 };
 
 
@@ -366,6 +366,8 @@ export type Departure = {
   routeLength?: Maybe<Scalars['Int']>;
   departureBlocks: Array<DepartureBlock>;
   procurementUnits: Array<ProcurementUnit>;
+  equipmentRegistryNumber?: Maybe<Scalars['String']>;
+  dayTypes?: Maybe<Scalars['String']>;
 };
 
 export enum InspectionStatus {
@@ -408,20 +410,9 @@ export type EquipmentSearchResult = {
 export type ReportListItem = {
    __typename?: 'ReportListItem';
   name: Scalars['String'];
-  description: Scalars['String'];
-  entity: Scalars['String'];
-};
-
-export type Report = {
-   __typename?: 'Report';
-  name: Scalars['String'];
+  title: Scalars['String'];
   description: Scalars['String'];
   reportType: ReportType;
-  reportEntities: Array<ReportEntityUnion>;
-  season: Season;
-  operator: Operator;
-  preInspection?: Maybe<PreInspection>;
-  postInspection?: Maybe<PostInspection>;
 };
 
 export enum ReportType {
@@ -430,6 +421,19 @@ export enum ReportType {
   Summary = 'SUMMARY',
   ExecutionRequirement = 'EXECUTION_REQUIREMENT'
 }
+
+export type Report = {
+   __typename?: 'Report';
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  reportEntities: Array<ReportEntityUnion>;
+  season: Season;
+  operator: Operator;
+  preInspection?: Maybe<PreInspection>;
+  postInspection?: Maybe<PostInspection>;
+};
 
 export type ReportEntityUnion = Departure | Equipment | DeparturePair | ProcurementUnit | ExecutionRequirement;
 

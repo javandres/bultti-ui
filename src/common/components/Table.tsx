@@ -356,6 +356,10 @@ const Table = observer(
     }, [tableViewRef.current, currentScroll, pendingValues])
 
     let sortedItems = useMemo(() => {
+      if (!items || !Array.isArray(items)) {
+        return []
+      }
+
       if (sort.length === 0) {
         return items
       }

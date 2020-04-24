@@ -11,8 +11,9 @@ export const availableReportsQuery = gql`
   query preInspectionAvailableReports($preInspectionId: String!) {
     availablePreInspectionReports(preInspectionId: $preInspectionId) {
       description
-      entity
       name
+      reportType
+      title
     }
   }
 `
@@ -22,6 +23,8 @@ export const reportByName = gql`
     preInspectionReportByName(preInspectionId: $preInspectionId, reportName: $reportName) {
       description
       name
+      title
+      reportType
       operator {
         id
         operatorId
@@ -33,7 +36,6 @@ export const reportByName = gql`
         startDate
         endDate
       }
-      reportType
       reportEntities {
         ... on ProcurementUnit {
           ...ProcurementUnitFragment
