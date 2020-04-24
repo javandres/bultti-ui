@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
@@ -6,7 +6,6 @@ import {
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
 } from '../schema-types'
-import { ArrowDown } from '../common/icon/ArrowDown'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
@@ -26,23 +25,13 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { FlexRow, SubSectionHeading } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
+import ExpandableBox from '../common/components/ExpandableBox'
 
 const ProcurementUnitView = styled.div`
   border: 1px solid var(--lighter-grey);
   margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
-`
-
-const HeaderRow = styled.div<{ expanded?: boolean }>`
-  display: flex;
-  align-items: stretch;
-  justify-content: flex-start;
-  border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
-
-  > *:nth-child(even) {
-    background-color: #fafafa;
-  }
 `
 
 const HeaderSection = styled.div`
@@ -53,23 +42,6 @@ const HeaderSection = styled.div`
 
   &:last-child {
     border-right: 0;
-  }
-`
-
-const ExpandToggle = styled.button<{ expanded?: boolean }>`
-  background: transparent;
-  cursor: pointer;
-  border: 0;
-  flex: 0;
-  padding: 0.5rem 0.75rem;
-  outline: none;
-  display: flex;
-  align-items: center;
-  border-top-right-radius: 0.5rem;
-
-  > * {
-    transition: transform 0.1s ease-out;
-    transform: rotate(${(p) => (p.expanded ? '180deg' : '0deg')});
   }
 `
 
@@ -118,7 +90,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     procurementUnit: { id, procurementUnitId },
     expanded = true,
   }) => {
-    const [isExpanded, setIsExpanded] = useState(true)
     const [
       pendingProcurementUnit,
       setPendingProcurementUnit,
@@ -218,10 +189,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       setPendingProcurementUnit(null)
     }, [])
 
-    useEffect(() => {
-      setIsExpanded(expanded)
-    }, [expanded])
-
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
     const renderProcurementItemInput = useCallback((key: string, val: any, onChange) => {
@@ -239,97 +206,93 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         {loading ? (
           <Loading />
         ) : !procurementUnit ? null : (
-          <>
-            <HeaderRow expanded={isExpanded}>
-              <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
-              <HeaderSection>
-                <HeaderHeading>Reitit</HeaderHeading>
-                {(routes || [])
-                  .map((route) => route?.routeId)
-                  .filter((routeId) => !!routeId)
-                  .join(', ')}
-              </HeaderSection>
-              <HeaderSection>
-                <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
-                {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
-              </HeaderSection>
-              <HeaderSection>
-                <HeaderHeading>Voimassaoloaika</HeaderHeading>
-                {procurementUnit.startDate} - {procurementUnit.endDate}
-              </HeaderSection>
-              <ExpandToggle
-                expanded={isExpanded}
-                onClick={() => setIsExpanded((currentVal) => !currentVal)}>
-                <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
-              </ExpandToggle>
-            </HeaderRow>
-            {isExpanded && (
-              <Content>
-                {showExecutionRequirements && hasEquipment && (
-                  <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
-                )}
-                <FlexRow>
-                  <SubSectionHeading>Kohteen tiedot</SubSectionHeading>
-                  <Button
-                    onClick={onUpdate}
-                    style={{ marginLeft: 'auto' }}
-                    buttonStyle={ButtonStyle.SECONDARY}
-                    size={ButtonSize.SMALL}>
-                    Päivitä
-                  </Button>
-                </FlexRow>
-                {!pendingProcurementUnit ? (
-                  <>
-                    <ValueDisplay
-                      renderValue={(key, val) => {
-                        if (key === 'weeklyMeters') return `${val} metriä`
-                        if (key === 'medianAgeRequirement') return `${val} vuotta`
-                        return val
-                      }}
-                      item={procurementUnit}
-                      labels={procurementUnitLabels}>
-                      {catalogueEditable && (
-                        <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
-                          Muokkaa
-                        </Button>
-                      )}
-                    </ValueDisplay>
-                  </>
-                ) : catalogueEditable ? (
-                  <>
-                    <ItemForm
-                      item={pendingProcurementUnit}
-                      labels={procurementUnitLabels}
-                      onChange={onChangeProcurementUnit}
-                      onDone={onSaveProcurementUnit}
-                      onCancel={onCancelPendingUnit}
-                      doneLabel="Tallenna"
-                      doneDisabled={Object.values(pendingProcurementUnit).some(
-                        (val: number | string | undefined | null) =>
-                          val === null || typeof val === 'undefined' || val === ''
-                      )}
-                      renderInput={renderProcurementItemInput}>
-                      <Button
-                        size={ButtonSize.SMALL}
-                        buttonStyle={ButtonStyle.SECONDARY}
-                        onClick={onUpdateWeeklyMeters}>
-                        Päivitä suoritteet JOREsta
+          <ExpandableBox
+            isExpanded={expanded}
+            headerContent={
+              <>
+                <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
+                <HeaderSection>
+                  <HeaderHeading>Reitit</HeaderHeading>
+                  {(routes || [])
+                    .map((route) => route?.routeId)
+                    .filter((routeId) => !!routeId)
+                    .join(', ')}
+                </HeaderSection>
+                <HeaderSection>
+                  <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
+                  {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
+                </HeaderSection>
+                <HeaderSection>
+                  <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                  {procurementUnit.startDate} - {procurementUnit.endDate}
+                </HeaderSection>
+              </>
+            }>
+            <Content>
+              {showExecutionRequirements && hasEquipment && (
+                <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
+              )}
+              <FlexRow>
+                <SubSectionHeading>Kohteen tiedot</SubSectionHeading>
+                <Button
+                  onClick={onUpdate}
+                  style={{ marginLeft: 'auto' }}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  size={ButtonSize.SMALL}>
+                  Päivitä
+                </Button>
+              </FlexRow>
+              {!pendingProcurementUnit ? (
+                <>
+                  <ValueDisplay
+                    renderValue={(key, val) => {
+                      if (key === 'weeklyMeters') return `${val} metriä`
+                      if (key === 'medianAgeRequirement') return `${val} vuotta`
+                      return val
+                    }}
+                    item={procurementUnit}
+                    labels={procurementUnitLabels}>
+                    {catalogueEditable && (
+                      <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
+                        Muokkaa
                       </Button>
-                    </ItemForm>
-                  </>
-                ) : null}
-                <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
-                <EquipmentCatalogue
-                  startDate={inspectionStartDate}
-                  procurementUnitId={id}
-                  catalogue={activeCatalogue}
-                  operatorId={procurementUnit.operatorId}
-                  onCatalogueChanged={onCatalogueChanged}
-                  editable={catalogueEditable}
-                />
-              </Content>
-            )}
-          </>
+                    )}
+                  </ValueDisplay>
+                </>
+              ) : catalogueEditable ? (
+                <>
+                  <ItemForm
+                    item={pendingProcurementUnit}
+                    labels={procurementUnitLabels}
+                    onChange={onChangeProcurementUnit}
+                    onDone={onSaveProcurementUnit}
+                    onCancel={onCancelPendingUnit}
+                    doneLabel="Tallenna"
+                    doneDisabled={Object.values(pendingProcurementUnit).some(
+                      (val: number | string | undefined | null) =>
+                        val === null || typeof val === 'undefined' || val === ''
+                    )}
+                    renderInput={renderProcurementItemInput}>
+                    <Button
+                      size={ButtonSize.SMALL}
+                      buttonStyle={ButtonStyle.SECONDARY}
+                      onClick={onUpdateWeeklyMeters}>
+                      Päivitä suoritteet JOREsta
+                    </Button>
+                  </ItemForm>
+                </>
+              ) : null}
+              <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
+              <EquipmentCatalogue
+                startDate={inspectionStartDate}
+                procurementUnitId={id}
+                catalogue={activeCatalogue}
+                operatorId={procurementUnit.operatorId}
+                onCatalogueChanged={onCatalogueChanged}
+                editable={catalogueEditable}
+              />
+            </Content>
+          </ExpandableBox>
         )}
       </ProcurementUnitView>
     )

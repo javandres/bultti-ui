@@ -11,6 +11,8 @@ export const EquipmentFragment = gql`
     exteriorColor
     vehicleId
     type
+    uniqueVehicleId
+    hasInfoSystems
   }
 `
 

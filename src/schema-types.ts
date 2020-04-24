@@ -42,6 +42,8 @@ export type Query = {
   currentUser?: Maybe<User>;
   departureBlock?: Maybe<DepartureBlock>;
   departureBlocksForPreInspection: Array<DepartureBlock>;
+  availablePreInspectionReports: Array<ReportListItem>;
+  preInspectionReportByName?: Maybe<Array<Report>>;
 };
 
 
@@ -150,6 +152,17 @@ export type QueryDepartureBlocksForPreInspectionArgs = {
   preInspectionId: Scalars['String'];
 };
 
+
+export type QueryAvailablePreInspectionReportsArgs = {
+  preInspectionId: Scalars['String'];
+};
+
+
+export type QueryPreInspectionReportByNameArgs = {
+  preInspectionId: Scalars['String'];
+  reportName: Scalars['String'];
+};
+
 export type Operator = {
    __typename?: 'Operator';
   id: Scalars['Int'];
@@ -228,6 +241,7 @@ export type Equipment = {
   registryDate?: Maybe<Scalars['BulttiDate']>;
   type: Scalars['String'];
   exteriorColor: Scalars['String'];
+  hasInfoSystems: Scalars['Boolean'];
   emissionClass: Scalars['Int'];
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
   executionRequirementQuotas: Array<ExecutionRequirementQuota>;
@@ -389,6 +403,46 @@ export type EquipmentSearchResult = {
   exteriorColor: Scalars['String'];
   emissionClass: Scalars['Int'];
   _exists: Scalars['Boolean'];
+};
+
+export type ReportListItem = {
+   __typename?: 'ReportListItem';
+  name: Scalars['String'];
+  description: Scalars['String'];
+  entity: Scalars['String'];
+};
+
+export type Report = {
+   __typename?: 'Report';
+  name: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  reportEntities: Array<ReportEntityUnion>;
+  season: Season;
+  operator: Operator;
+  preInspection?: Maybe<PreInspection>;
+  postInspection?: Maybe<PostInspection>;
+};
+
+export enum ReportType {
+  List = 'LIST',
+  PairList = 'PAIR_LIST',
+  Summary = 'SUMMARY',
+  ExecutionRequirement = 'EXECUTION_REQUIREMENT'
+}
+
+export type ReportEntityUnion = Departure | Equipment | DeparturePair | ProcurementUnit | ExecutionRequirement;
+
+export type DeparturePair = {
+   __typename?: 'DeparturePair';
+  departureA: Departure;
+  departureB: Departure;
+};
+
+export type PostInspection = {
+   __typename?: 'PostInspection';
+  id: Scalars['ID'];
+  status: InspectionStatus;
 };
 
 export type Mutation = {

@@ -2,7 +2,6 @@ import React from 'react'
 import styled from 'styled-components'
 import { InspectionStatus, PreInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { useNavigate } from '@reach/router'
 import {
   useEditPreInspection,
   usePreInspectionReports,
@@ -83,7 +82,6 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
   onPreInspectionUpdated = () => {},
 }) => {
   let editPreInspection = useEditPreInspection(preInspection.id)
-  let navigate = useNavigate()
 
   let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
     onPreInspectionUpdated

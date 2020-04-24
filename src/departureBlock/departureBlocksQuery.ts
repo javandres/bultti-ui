@@ -1,4 +1,17 @@
 import gql from 'graphql-tag'
+import { EquipmentFragment } from '../equipment/equipmentQuery'
+
+export const DepartureFragment = gql`
+  fragment DepartureFragment on Departure {
+    id
+    blockNumber
+    direction
+    journeyStartTime
+    journeyEndTime
+    routeId
+    routeLength
+  }
+`
 
 export const departureBlocksQuery = gql`
   query departureBlocks($preInspectionId: String!) {
@@ -8,30 +21,20 @@ export const departureBlocksQuery = gql`
       blockNumber
       equipmentRegistryNumber
       departures {
-        id
-        blockNumber
-        direction
-        journeyStartTime
-        journeyEndTime
-        routeId
+        ...DepartureFragment
       }
       equipment {
-        id
-        model
-        operatorId
-        registryDate
-        registryNr
-        type
-        uniqueVehicleId
-        vehicleId
-        emissionClass
+        ...EquipmentFragment
       }
       operator {
+        id
         operatorId
         operatorName
       }
     }
   }
+  ${DepartureFragment}
+  ${EquipmentFragment}
 `
 
 export const uploadDepartureBlocksMutation = gql`

@@ -29,7 +29,7 @@ const App: React.FC = observer(() => {
         <SelectPreInspectionPage path="pre-inspection/edit" />
         <EditPreInspectionPage path="pre-inspection/edit/:preInspectionId/*" />
         <PreInspectionReportsPage path="pre-inspection/reports/:preInspectionId" />
-        <Redirect from="pre-inspection/reports" to="pre-inspection" />
+        <Redirect noThrow from="pre-inspection/reports" to="/pre-inspection" />
         <PostInspection path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
       </Router>

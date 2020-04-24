@@ -5,6 +5,8 @@ schema {
   mutation: Mutation
 }
 
+union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | ProcurementUnit
+
 type Departure {
   blockNumber: Int!
   departureBlocks: [DepartureBlock!]!
@@ -29,12 +31,18 @@ type DepartureBlock {
   preInspectionId: String!
 }
 
+type DeparturePair {
+  departureA: Departure!
+  departureB: Departure!
+}
+
 type Equipment {
   departureBlocks: [DepartureBlock!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   executionRequirementQuotas: [ExecutionRequirementQuota!]!
   exteriorColor: String!
+  hasInfoSystems: Boolean!
   id: ID!
   model: String!
   operator: Operator!
@@ -168,6 +176,11 @@ type Operator {
   procurementUnits: [ProcurementUnit!]!
 }
 
+type PostInspection {
+  id: ID!
+  status: InspectionStatus!
+}
+
 type PreInspection {
   createdAt: DateTime!
   createdBy: User!
@@ -212,6 +225,7 @@ type ProcurementUnitRoute {
 
 type Query {
   allPreInspections: [PreInspection!]!
+  availablePreInspectionReports(preInspectionId: String!): [ReportListItem!]!
   currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection!
   currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
   currentUser: User
@@ -227,6 +241,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
+  preInspectionReportByName(preInspectionId: String!, reportName: String!): [Report!]
   preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
@@ -237,6 +252,23 @@ type Query {
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   user(userId: Int!): User
   users: [User!]!
+}
+
+type Report {
+  description: String!
+  name: String!
+  operator: Operator!
+  postInspection: PostInspection
+  preInspection: PreInspection
+  reportEntities: [ReportEntityUnion!]!
+  reportType: ReportType!
+  season: Season!
+}
+
+type ReportListItem {
+  description: String!
+  entity: String!
+  name: String!
 }
 
 type Season {
@@ -284,6 +316,13 @@ enum InspectionStatus {
 enum OperatingAreaName {
   CENTER
   OTHER
+}
+
+enum ReportType {
+  EXECUTION_REQUIREMENT
+  LIST
+  PAIR_LIST
+  SUMMARY
 }
 
 enum UserRole {

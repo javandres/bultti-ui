@@ -1,6 +1,33 @@
 import gql from 'graphql-tag'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
+export const RequirementValueFragment = gql`
+  fragment RequirementValueFragment on ExecutionRequirementValue {
+    emissionClass
+    kilometerRequirement
+    kilometersFulfilled
+    quotaRequirement
+    quotaFulfilled
+    equipmentCount
+    equipmentCountFulfilled
+    sanctionAmount
+    sanctionThreshold
+    classSanctionAmount
+    cumulativeDifferencePercentage
+    differencePercentage
+  }
+`
+
+export const ExecutionRequirementFragment = gql`
+  fragment ExecutionRequirementFragment on ExecutionRequirement {
+    id
+    totalKilometers
+    totalKilometersFulfilled
+    averageAgeWeighted
+    averageAgeWeightedFulfilled
+  }
+`
+
 export const executionRequirementForProcurementUnitQuery = gql`
   query executionRequirementForProcurementUnit(
     $procurementUnitId: String!
@@ -10,11 +37,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       procurementUnitId: $procurementUnitId
       preInspectionId: $preInspectionId
     ) {
-      id
-      totalKilometers
-      totalKilometersFulfilled
-      averageAgeWeighted
-      averageAgeWeightedFulfilled
+      ...ExecutionRequirementFragment
       operator {
         id
         operatorId
@@ -33,27 +56,19 @@ export const executionRequirementForProcurementUnitQuery = gql`
         }
       }
       requirements {
-        emissionClass
-        kilometerRequirement
-        kilometersFulfilled
-        quotaRequirement
-        quotaFulfilled
-        equipmentCount
-        equipmentCountFulfilled
+        ...RequirementValueFragment
       }
     }
   }
+  ${ExecutionRequirementFragment}
   ${EquipmentFragment}
+  ${RequirementValueFragment}
 `
 
 export const executionRequirementsByAreaQuery = gql`
   query executionRequirementsByPreInspection($preInspectionId: String!) {
     executionRequirementsForPreInspectionAreas(preInspectionId: $preInspectionId) {
-      id
-      totalKilometers
-      averageAgeWeighted
-      averageAgeWeightedFulfilled
-      totalKilometersFulfilled
+      ...ExecutionRequirementFragment
       operator {
         id
         operatorId
@@ -64,21 +79,12 @@ export const executionRequirementsByAreaQuery = gql`
         name
       }
       requirements {
-        emissionClass
-        kilometerRequirement
-        quotaRequirement
-        kilometersFulfilled
-        quotaFulfilled
-        differencePercentage
-        cumulativeDifferencePercentage
-        equipmentCount
-        equipmentCountFulfilled
-        sanctionThreshold
-        sanctionAmount
-        classSanctionAmount
+        ...RequirementValueFragment
       }
     }
   }
+  ${ExecutionRequirementFragment}
+  ${RequirementValueFragment}
 `
 
 export const createExecutionRequirementsForPreInspectionMutation = gql`
@@ -95,15 +101,7 @@ export const createExecutionRequirementsForPreInspectionMutation = gql`
         operatorName
       }
       requirements {
-        emissionClass
-        equipmentCount
-        equipmentCountFulfilled
-        kilometerRequirement
-        kilometersFulfilled
-        quotaFulfilled
-        quotaRequirement
-        cumulativeDifferencePercentage
-        differencePercentage
+        ...RequirementValueFragment
       }
       procurementUnitRequirements {
         id
@@ -122,6 +120,7 @@ export const createExecutionRequirementsForPreInspectionMutation = gql`
     }
   }
   ${EquipmentFragment}
+  ${RequirementValueFragment}
 `
 
 export const createExecutionRequirementForProcurementUnitMutation = gql`

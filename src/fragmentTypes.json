@@ -1,5 +1,27 @@
 {
   "__schema": {
-    "types": []
+    "types": [
+      {
+        "kind": "UNION",
+        "name": "ReportEntityUnion",
+        "possibleTypes": [
+          {
+            "name": "Departure"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "DeparturePair"
+          },
+          {
+            "name": "ProcurementUnit"
+          },
+          {
+            "name": "ExecutionRequirement"
+          }
+        ]
+      }
+    ]
   }
 }

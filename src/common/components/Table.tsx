@@ -193,7 +193,7 @@ type ItemRemover<ItemType = any> = false | (() => void)
 export type PendingValType = string | number
 export type EditValue<ItemType = any> = { key: string; value: PendingValType; item: ItemType }
 
-export type PropTypes<ItemType = any> = {
+export type PropTypes<ItemType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
@@ -241,8 +241,10 @@ type SortConfig = {
   order: 'asc' | 'desc'
 }
 
+export type BaseItemType = any
+
 const Table = observer(
-  <ItemType extends any = any>({
+  <ItemType extends BaseItemType>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -447,7 +449,7 @@ const Table = observer(
                           <>
                             <EditInputWrapper>
                               {renderInput(
-                                key,
+                                key as keyof ItemType,
                                 editValue.value,
                                 onValueChange(key),
                                 onSaveEdit,
