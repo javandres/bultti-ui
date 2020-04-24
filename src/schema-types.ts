@@ -429,6 +429,7 @@ export type Report = {
   description: Scalars['String'];
   reportType: ReportType;
   reportEntities: Array<ReportEntityUnion>;
+  columnLabels?: Maybe<Scalars['String']>;
   season: Season;
   operator: Operator;
   preInspection?: Maybe<PreInspection>;

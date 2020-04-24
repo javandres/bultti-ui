@@ -8,12 +8,14 @@ const ListReportView = styled.div``
 
 export type PropTypes<T = any> = ReportComponentProps<T>
 
-const ListReport = observer(<ItemType extends any>({ items }: PropTypes<ItemType>) => {
-  return (
-    <ListReportView>
-      <Table<ItemType> items={items} />
-    </ListReportView>
-  )
-})
+const ListReport = observer(
+  <ItemType extends any>({ items, columnLabels }: PropTypes<ItemType>) => {
+    return (
+      <ListReportView>
+        <Table<ItemType> items={items} hideKeys={['id']} columnLabels={columnLabels} />
+      </ListReportView>
+    )
+  }
+)
 
 export default ListReport

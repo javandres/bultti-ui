@@ -44,6 +44,11 @@ const ReportListItem: React.FC<PropTypes> = observer(({ preInspection, reportIte
     }
   }, [reportItem.reportType])
 
+  let labels = useMemo(
+    () => (reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined),
+    [reportData]
+  )
+
   return (
     <ExpandableSection
       headerContent={
@@ -57,7 +62,10 @@ const ReportListItem: React.FC<PropTypes> = observer(({ preInspection, reportIte
       <>
         <LoadingDisplay loading={reportLoading} />
         {reportData && reportData?.reportEntities?.length !== 0 && (
-          <ReportTypeComponent items={reportData.reportEntities.slice(0, 100)} />
+          <ReportTypeComponent
+            items={reportData.reportEntities.slice(0, 100)}
+            columnLabels={labels}
+          />
         )}
       </>
     </ExpandableSection>

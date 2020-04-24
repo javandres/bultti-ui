@@ -257,6 +257,7 @@ type Query {
 }
 
 type Report {
+  columnLabels: String
   description: String!
   name: String!
   operator: Operator!

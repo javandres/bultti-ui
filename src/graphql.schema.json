@@ -4040,6 +4040,18 @@
             "deprecationReason": null
           },
           {
+            "name": "columnLabels",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "season",
             "description": null,
             "args": [],

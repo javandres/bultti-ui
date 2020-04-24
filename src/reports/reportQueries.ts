@@ -25,6 +25,7 @@ export const reportByName = gql`
       name
       title
       reportType
+      columnLabels
       operator {
         id
         operatorId
