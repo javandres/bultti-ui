@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
@@ -163,6 +163,18 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   padding: 0.5rem 0.5rem 0.4rem;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
+  border: 0;
+  border-right: 1px solid var(--lighter-grey);
+  font-family: inherit;
+  color: var(--darker-grey);
+  cursor: pointer;
+  text-align: left;
+  justify-content: flex-start;
+`
+
+const ColumnSortIndicator = styled.div`
+  margin-left: auto;
+  font-weight: normal;
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
@@ -224,6 +236,11 @@ const defaultRenderInput = (key, val, onChange) => (
   <TableInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
 )
 
+type SortConfig = {
+  column: string
+  order: 'asc' | 'desc'
+}
+
 const Table = observer(
   <ItemType extends any = any>({
     items,
@@ -246,11 +263,46 @@ const Table = observer(
     editableValues = [],
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
+    let [sort, setSort] = useState<SortConfig[]>([])
+
+    let sortByColumn = useCallback((columnName) => {
+      setSort((currentSort) => {
+        if (!Object.keys(items[0]).includes(columnName)) {
+          return currentSort
+        }
+
+        let currentColumnSortIndex = currentSort.findIndex((s) => s.column === columnName)
+        // New array instance so that the state update will actually trigger
+        let nextSort = [...currentSort]
+
+        let columnSortConfig: SortConfig = {
+          column: columnName,
+          order: 'asc', // Start sorting by asc
+        }
+
+        if (currentColumnSortIndex !== -1) {
+          columnSortConfig = nextSort.splice(currentColumnSortIndex, 1)[0]
+
+          // Reset the column after desc by returning the array without the sort config.
+          if (columnSortConfig.order === 'desc') {
+            return nextSort
+          }
+
+          // If a sort config for the column was found, that means it's currently asc sorted.
+          // The next order is desc.
+          columnSortConfig.order = 'desc'
+          nextSort.splice(currentColumnSortIndex, 0, columnSortConfig)
+        } else {
+          nextSort.push(columnSortConfig)
+        }
+
+        return nextSort
+      })
+    }, [])
 
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
     let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
-
     const columnLabelKeys = Object.keys(columnLabels)
 
     const columnKeysOrdering =
@@ -275,10 +327,10 @@ const Table = observer(
       }).filter((c) => !keysToHide.includes(c))
     }
 
-    let columnNames = columns
+    let columnNames = columns.map((key) => [key, key])
 
     if (columnLabelKeys.length !== 0) {
-      columnNames = columns.map((key) => get(columnLabels, key, key))
+      columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
     let [currentScroll, setCurrentScroll] = useState(0)
@@ -301,6 +353,18 @@ const Table = observer(
       return currentScroll < tableBottomEdge
     }, [tableViewRef.current, currentScroll, pendingValues])
 
+    let sortedItems = useMemo(() => {
+      if (sort.length === 0) {
+        return items
+      }
+
+      return orderBy(
+        items,
+        sort.map((s) => s.column),
+        sort.map((s) => s.order)
+      )
+    }, [items, sort])
+
     return (
       <>
         <TableView className={className} ref={tableViewRef}>
@@ -310,18 +374,30 @@ const Table = observer(
                 {indexCell}
               </ColumnHeaderCell>
             )}
-            {columnNames.map((colName) => {
+            {columnNames.map(([colKey, colName]) => {
               let isEditingColumn =
-                pendingValues.length !== 0 && pendingValues.map((val) => val.key).includes(colName)
+                pendingValues.length !== 0 && pendingValues.map((val) => val.key).includes(colKey)
+
+              let sortIndex = sort.findIndex((s) => s.column === colKey)
+              let sortConfig = sort[sortIndex]
 
               return (
-                <ColumnHeaderCell isEditing={isEditingColumn} key={colName}>
+                <ColumnHeaderCell
+                  as="button"
+                  isEditing={isEditingColumn}
+                  key={colName}
+                  onClick={() => sortByColumn(colKey)}>
                   {renderValue('', colName, true)}
+                  {sortIndex !== -1 && (
+                    <ColumnSortIndicator>
+                      {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
+                    </ColumnSortIndicator>
+                  )}
                 </ColumnHeaderCell>
               )
             })}
           </TableHeader>
-          {items.map((item, rowIndex) => {
+          {sortedItems.map((item, rowIndex) => {
             // Again, omit keys that start with an underscore.
             let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
 
