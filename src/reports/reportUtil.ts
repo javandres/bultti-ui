@@ -1,4 +1,4 @@
-export type ReportComponentProps<T = any> = {
+export type ReportComponentProps<T> = {
   items: T[]
   columnLabels?: { [key in keyof T]: string }
 }

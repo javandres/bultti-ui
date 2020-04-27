@@ -18,6 +18,7 @@ import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { useResizeObserver } from '../../util/useResizeObserver'
+import { MessageView } from './common'
 
 const TableView = styled.div`
   position: relative;
@@ -34,6 +35,12 @@ const TableView = styled.div`
   &:last-child {
     margin-bottom: 0;
   }
+`
+
+const TableEmptyView = styled(MessageView)`
+  background: #f8f8f8;
+  border-color: #ccc;
+  margin: 1rem !important;
 `
 
 const EditInputWrapper = styled.div`
@@ -100,6 +107,7 @@ const SaveButton = styled(Button)`
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   display: flex;
   border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
+  border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
   position: relative;
   transition: outline 0.1s ease-out;
   outline: ${(p) =>
@@ -193,9 +201,9 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
-type ItemRemover<ItemType = any> = undefined | false | null | (() => void)
+type ItemRemover = undefined | false | null | (() => void)
 
-export type CellValType = string | number
+export type CellValType = string | number | null
 export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
 export type PropTypes<ItemType> = {
@@ -205,7 +213,7 @@ export type PropTypes<ItemType> = {
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => undefined | ItemRemover<ItemType>
+  onRemoveRow?: (item: ItemType) => undefined | ItemRemover
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
@@ -256,17 +264,15 @@ type SortConfig = {
 type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
   isEditingRow: boolean
-  removeItem: ItemRemover<ItemType>
+  removeItem: ItemRemover
   onMakeEditable: (key: string, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
   itemEntries: [keyof ItemType, CellValType][]
   item: ItemType
 }
 
-export type BaseItemType = any
-
 const Table = observer(
-  <ItemType extends BaseItemType>({
+  <ItemType extends any>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -291,6 +297,9 @@ const Table = observer(
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
 
+    // Sort the table by some column. Multiple columns can be sorted by at the same time.
+    // Sorting is performed in the order that the columns were added to the sort config.
+    // Adding a column a second time switches its
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
         if (!Object.keys(items[0]).includes(columnName)) {
@@ -353,8 +362,10 @@ const Table = observer(
       }).filter((c) => !keysToHide.includes(c))
     }
 
+    // Column name array for the header row
     let columnNames = columns.map((key) => [key, key])
 
+    // Get user-facing names for the columns
     if (columnLabelKeys.length !== 0) {
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
@@ -538,7 +549,11 @@ const Table = observer(
         return (
           <TableRow key={rowKey ?? `row-${index}`} isEditing={isEditingRow} style={style}>
             {itemEntries.map(([key, val], index) => (
-              <TableCellComponent row={rowItem} cell={[key, val]} key={`${rowKey}_${index}`} />
+              <TableCellComponent
+                row={rowItem}
+                cell={[key as string, val]}
+                key={`${rowKey}_${index}`}
+              />
             ))}
             {!isEditingRow && removeItem && (
               <RowRemoveButton onClick={removeItem}>
@@ -555,10 +570,15 @@ const Table = observer(
     let { width = 0 } = useResizeObserver(rowsContainerRef)
 
     let rowHeight = 27
-    let gridColumnCount = columnNames.length
-    let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
+
+    // The table is empty if we don't have any items,
+    // OR
+    // When there is one item with only falsy values (which still gives the column names)
+    let tableIsEmpty =
+      items.length === 0 ||
+      (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
     return (
       <>
@@ -594,17 +614,18 @@ const Table = observer(
               )
             })}
           </TableHeader>
-
-          {virtualized ? (
-            <div
-              ref={rowsContainerRef}
-              style={{
-                position: 'relative',
-                width: '100%',
-              }}>
+          <div
+            ref={rowsContainerRef}
+            style={{
+              position: 'relative',
+              width: '100%',
+            }}>
+            {tableIsEmpty ? (
+              <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
+            ) : virtualized ? (
               <List
                 height={height}
-                width={gridColumnWidth * gridColumnCount}
+                width={width}
                 itemCount={rows.length}
                 itemSize={rowHeight}
                 layout="vertical"
@@ -612,12 +633,12 @@ const Table = observer(
                 itemKey={getListItemKey}>
                 {TableRowComponent}
               </List>
-            </div>
-          ) : (
-            rows.map((row, rowIndex) => (
-              <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
-            ))
-          )}
+            ) : (
+              rows.map((row, rowIndex) => (
+                <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+              ))
+            )}
+          </div>
           {typeof getColumnTotal === 'function' && (
             <TableRow key="totals" footer={true}>
               {columns.map((col, colIdx) => {
