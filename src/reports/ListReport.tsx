@@ -12,7 +12,12 @@ const ListReport = observer(
   <ItemType extends any>({ items, columnLabels }: PropTypes<ItemType>) => {
     return (
       <ListReportView>
-        <Table<ItemType> items={items} hideKeys={['id']} columnLabels={columnLabels} />
+        <Table<ItemType>
+          virtualized={true}
+          items={items}
+          hideKeys={['id']}
+          columnLabels={columnLabels}
+        />
       </ListReportView>
     )
   }

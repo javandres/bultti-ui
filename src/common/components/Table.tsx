@@ -1,4 +1,12 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, {
+  CSSProperties,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
@@ -8,6 +16,8 @@ import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
+import { FixedSizeList as List } from 'react-window'
+import AutoSizer from 'react-virtualized-auto-sizer'
 
 const TableView = styled.div`
   position: relative;
@@ -16,6 +26,8 @@ const TableView = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
+  height: 100%;
+  flex: 1 0;
 
   &:last-child {
     margin-bottom: 0;
@@ -138,7 +150,11 @@ const TableHeader = styled(TableRow)`
   border-bottom-color: var(--lighter-grey) !important;
 `
 
-const TableCell = styled.div<{ editable?: boolean; isEditing?: boolean }>`
+const TableCell = styled.div<{
+  editable?: boolean
+  isEditing?: boolean
+  isEditingRow?: boolean
+}>`
   flex: 1 1 calc(100% / 11);
   min-width: 45px;
   border-right: 1px solid var(--lighter-grey);
@@ -188,10 +204,10 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
-type ItemRemover<ItemType = any> = false | (() => void)
+type ItemRemover<ItemType = any> = undefined | false | null | (() => void)
 
-export type PendingValType = string | number
-export type EditValue<ItemType = any> = { key: string; value: PendingValType; item: ItemType }
+export type CellValType = string | number
+export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
 export type PropTypes<ItemType> = {
   items: ItemType[]
@@ -206,7 +222,7 @@ export type PropTypes<ItemType> = {
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
-  onEditValue?: (key: string, value: string | number, item: ItemType) => unknown
+  onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
   pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
@@ -218,6 +234,7 @@ export type PropTypes<ItemType> = {
     onAccept?: () => unknown,
     onCancel?: () => unknown
   ) => React.ReactChild
+  virtualized?: boolean
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -233,12 +250,27 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
 const defaultRenderValue = (key, val) => val
 
 const defaultRenderInput = (key, val, onChange) => (
-  <TableInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
+  <TableInput
+    theme="light"
+    value={val}
+    onChange={(e) => onChange(e.target.value)}
+    name={key}
+  />
 )
 
 type SortConfig = {
   column: string
   order: 'asc' | 'desc'
+}
+
+type TableRowWithDataAndFunctions<ItemType = any> = {
+  key: string
+  isEditingRow: boolean
+  removeItem: ItemRemover<ItemType>
+  onMakeEditable: (key: string, value: CellValType) => () => unknown
+  onValueChange: (key: string) => (value: CellValType) => unknown
+  itemEntries: [keyof ItemType, CellValType][]
+  item: ItemType
 }
 
 export type BaseItemType = any
@@ -263,6 +295,7 @@ const Table = observer(
     pendingValues = [],
     renderInput = defaultRenderInput,
     editableValues = [],
+    virtualized = false,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
@@ -371,6 +404,162 @@ const Table = observer(
       )
     }, [items, sort])
 
+    let getListItemKey = useCallback((index, data) => {
+      let item = data[index]
+      return item.key
+    }, [])
+
+    let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
+      () =>
+        sortedItems.map((item, rowIndex) => {
+          // Again, omit keys that start with an underscore.
+          let itemEntries = Object.entries(item).filter(
+            ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
+          )
+
+          if (columnKeysOrdering.length !== 0) {
+            itemEntries = orderBy(itemEntries, ([key]) => {
+              const labelIndex = columnKeysOrdering.indexOf(key)
+              return labelIndex === -1 ? 999 : labelIndex
+            })
+          }
+
+          const rowKey = keyFromItem(item)
+
+          let isEditingRow: boolean =
+            !!pendingValues &&
+            pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
+
+          const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
+
+          const onMakeEditable = (key: string, val: CellValType) => () => {
+            if (!isEditingRow && onEditValue) {
+              onEditValue(key, val, item)
+            }
+          }
+
+          const onValueChange = (key) => (nextValue) => {
+            if (isEditingRow && onEditValue) {
+              onEditValue(key, nextValue, item)
+            }
+          }
+
+          return {
+            key: rowKey,
+            isEditingRow,
+            removeItem: itemRemover,
+            onMakeEditable,
+            onValueChange,
+            itemEntries,
+            item,
+          }
+        }),
+      [
+        sortedItems,
+        pendingValues,
+        editableValues,
+        canRemoveRow,
+        onRemoveRow,
+        onEditValue,
+        keyFromItem,
+        columnKeysOrdering,
+      ]
+    )
+
+    let TableCellComponent = useCallback(
+      ({
+        row,
+        cell,
+      }: {
+        row: TableRowWithDataAndFunctions
+        cell: [keyof ItemType, CellValType]
+      }) => {
+        let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
+
+        if (!itemId) {
+          return null
+        }
+
+        let [key, val] = cell
+        let valueKey: string = key as string
+
+        let editValue =
+          pendingValues.length !== 0
+            ? pendingValues.find((val) => val.item.id === itemId && val.key === key)
+            : null
+
+        return (
+          <TableCell
+            isEditing={!!editValue}
+            isEditingRow={isEditingRow}
+            editable={editableValues?.includes(valueKey)}
+            onDoubleClick={onMakeEditable(valueKey, val)}>
+            {onEditValue && editValue ? (
+              <>
+                <EditInputWrapper>
+                  {renderInput(
+                    key as keyof ItemType,
+                    editValue.value,
+                    onValueChange(valueKey),
+                    onSaveEdit,
+                    onCancelEdit
+                  )}
+                </EditInputWrapper>
+              </>
+            ) : (
+              renderCell(valueKey, renderValue(valueKey, val, false, item), item)
+            )}
+          </TableCell>
+        )
+      },
+      [
+        onSaveEdit,
+        onCancelEdit,
+        pendingValues,
+        editableValues,
+        onEditValue,
+        renderInput,
+        renderCell,
+        renderValue,
+      ]
+    )
+
+    let TableRowComponent = useCallback(
+      ({
+        row,
+        style,
+        index,
+        data: allRows = [],
+      }: {
+        data?: TableRowWithDataAndFunctions[]
+        row?: TableRowWithDataAndFunctions
+        index: number
+        style?: CSSProperties
+      }) => {
+        let rowItem = row || allRows[index]
+
+        if (!rowItem) {
+          return null
+        }
+
+        let { itemEntries, key: rowKey, isEditingRow, removeItem } = rowItem
+
+        return (
+          <TableRow key={rowKey ?? `row-${index}`} isEditing={isEditingRow} style={style}>
+            {itemEntries.map(([key, val], index) => (
+              <TableCellComponent row={rowItem} cell={[key, val]} key={`${rowKey}_${index}`} />
+            ))}
+            {!isEditingRow && removeItem && (
+              <RemoveButton onClick={removeItem}>
+                <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+              </RemoveButton>
+            )}
+          </TableRow>
+        )
+      },
+      [TableCellComponent]
+    )
+
     return (
       <>
         <TableView className={className} ref={tableViewRef}>
@@ -382,7 +571,8 @@ const Table = observer(
             )}
             {columnNames.map(([colKey, colName]) => {
               let isEditingColumn =
-                pendingValues.length !== 0 && pendingValues.map((val) => val.key).includes(colKey)
+                pendingValues.length !== 0 &&
+                pendingValues.map((val) => val.key).includes(colKey)
 
               let sortIndex = sort.findIndex((s) => s.column === colKey)
               let sortConfig = sort[sortIndex]
@@ -403,78 +593,31 @@ const Table = observer(
               )
             })}
           </TableHeader>
-          {sortedItems.map((item, rowIndex) => {
-            // Again, omit keys that start with an underscore.
-            let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
 
-            if (columnKeysOrdering.length !== 0) {
-              itemEntries = orderBy(itemEntries, ([key]) => {
-                const labelIndex = columnKeysOrdering.indexOf(key)
-                return labelIndex === -1 ? 999 : labelIndex
-              })
-            }
+          {virtualized ? (
+            <AutoSizer>
+              {({ width }) => {
+                let gridColumnCount = columnNames.length
+                let gridColumnWidth =
+                  Math.max(100, width / Math.max(1, columnNames.length)) - 15 / gridColumnCount
 
-            const rowKey = keyFromItem(item)
-
-            let isEditingRow: boolean =
-              !!pendingValues && pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
-
-            const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
-
-            const onStartValueEdit = (key, val) => () => {
-              if (!isEditingRow && onEditValue) {
-                onEditValue(key, val, item)
-              }
-            }
-
-            const onValueChange = (key) => (nextValue) => {
-              if (isEditingRow && onEditValue) {
-                onEditValue(key, nextValue, item)
-              }
-            }
-
-            return (
-              <TableRow key={rowKey ?? `row-${rowIndex}`} isEditing={isEditingRow}>
-                {itemEntries
-                  .filter(([key]) => !keysToHide.includes(key))
-                  .map(([key, val], index) => {
-                    let editValue =
-                      pendingValues.length !== 0
-                        ? pendingValues.find((val) => val.item.id === item.id && val.key === key)
-                        : null
-
-                    return (
-                      <TableCell
-                        isEditing={!!editValue}
-                        editable={editableValues?.includes(key)}
-                        onDoubleClick={onStartValueEdit(key, val)}
-                        key={`${rowKey}-${key}-${index}`}>
-                        {onEditValue && editValue ? (
-                          <>
-                            <EditInputWrapper>
-                              {renderInput(
-                                key as keyof ItemType,
-                                editValue.value,
-                                onValueChange(key),
-                                onSaveEdit,
-                                onCancelEdit
-                              )}
-                            </EditInputWrapper>
-                          </>
-                        ) : (
-                          renderCell(key, renderValue(key, val, false, item), item)
-                        )}
-                      </TableCell>
-                    )
-                  })}
-                {!isEditingRow && itemRemover && (
-                  <RemoveButton onClick={itemRemover}>
-                    <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                  </RemoveButton>
-                )}
-              </TableRow>
-            )
-          })}
+                return (
+                  <List
+                    height={750}
+                    width={gridColumnWidth * gridColumnCount}
+                    itemCount={rows.length}
+                    itemSize={27}
+                    layout="vertical"
+                    itemData={rows}
+                    itemKey={getListItemKey}>
+                    {TableRowComponent}
+                  </List>
+                )
+              }}
+            </AutoSizer>
+          ) : (
+            rows.map((row, rowIndex) => <TableRowComponent row={row} index={rowIndex} />)
+          )}
           {typeof getColumnTotal === 'function' && (
             <TableRow key="totals" footer={true}>
               {columns.map((col, colIdx) => {

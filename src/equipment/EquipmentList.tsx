@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Table, { EditValue, PendingValType, TableInput } from '../common/components/Table'
+import Table, { EditValue, CellValType, TableInput } from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
@@ -43,7 +43,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
     const onEditValue = useCallback(
-      (key: string, value: PendingValType, item: EquipmentWithQuota) => {
+      (key: string, value: CellValType, item: EquipmentWithQuota) => {
         if (groupEquipment || !editableValues.includes(key)) {
           return
         }
@@ -87,7 +87,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
           updatedValues[val.key] = val.value
         }
 
-        updates.push({ equipmentId: itemId, equipmentInput: updatedValues, quotaId: item.quotaId })
+        updates.push({
+          equipmentId: itemId,
+          equipmentInput: updatedValues,
+          quotaId: item.quotaId,
+        })
       }
 
       await updateEquipment(updates)
@@ -144,7 +148,9 @@ const EquipmentList: React.FC<PropTypes> = observer(
       [equipment, equipmentGroups]
     )
 
-    let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [equipment])
+    let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [
+      equipment,
+    ])
 
     return equipment.length !== 0 ? (
       <>
