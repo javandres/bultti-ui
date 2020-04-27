@@ -38,7 +38,14 @@ export const groupedEquipmentColumnLabels = {
 }
 
 const CatalogueEquipmentList: React.FC<PropTypes> = observer(
-  ({ equipmentEditable, equipment, catalogueId, operatorId, startDate, onEquipmentChanged }) => {
+  ({
+    equipmentEditable,
+    equipment,
+    catalogueId,
+    operatorId,
+    startDate,
+    onEquipmentChanged,
+  }) => {
     let [execRemoveEquipment] = useMutationData(removeEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
 
@@ -74,8 +81,8 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     return equipment.length !== 0 ? (
       <EquipmentList
         equipment={equipment}
-        updateEquipment={updateEquipmentData}
-        removeEquipment={removeEquipment}
+        updateEquipment={equipmentEditable ? updateEquipmentData : undefined}
+        removeEquipment={equipmentEditable ? removeEquipment : undefined}
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}

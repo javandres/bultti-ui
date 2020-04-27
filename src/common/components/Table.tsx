@@ -414,7 +414,7 @@ const Table = observer(
 
     let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
       () =>
-        sortedItems.map((item, rowIndex) => {
+        sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
           let itemEntries = Object.entries(item).filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
@@ -569,9 +569,9 @@ const Table = observer(
     let rowHeight = 27
     let gridColumnCount = columnNames.length
     let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
-    let listHeight = rows.length * rowHeight
-    let maxHeight = window.innerHeight * 0.75
-    let height = Math.min(maxHeight, listHeight)
+    let listHeight = rows.length * rowHeight // height of all rows combined
+    let maxHeight = window.innerHeight * 0.75 // max 75vh
+    let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
 
     return (
       <>
@@ -628,7 +628,7 @@ const Table = observer(
             </div>
           ) : (
             rows.map((row, rowIndex) => (
-              <TableRowComponent key={row.key} row={row} index={rowIndex} />
+              <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
             ))
           )}
           {typeof getColumnTotal === 'function' && (

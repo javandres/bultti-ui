@@ -187,8 +187,13 @@ const RequirementsTable: React.FC<PropTypes> = observer(
               ? valuesLayoutColumnLabels
               : emissionClassLayoutColumnLabels
           }
-          columnOrder={tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']}
+          columnOrder={
+            tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']
+          }
           renderValue={renderTableValue}
+          keyFromItem={(item) =>
+            tableLayout === RequirementsTableLayout.BY_VALUES ? item.emissionClass : item.unit
+          }
           getColumnTotal={
             tableLayout === RequirementsTableLayout.BY_VALUES ? getColumnTotal : undefined
           }
