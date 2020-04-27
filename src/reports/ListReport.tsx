@@ -15,9 +15,14 @@ const ListReport = observer(
 
     return (
       <ListReportView>
-        <ReportTableFilters items={items} onFilterApplied={setFilteredItems} />
+        <ReportTableFilters
+          items={items}
+          onFilterApplied={setFilteredItems}
+          excludeFields={['id', '__typename']}
+        />
         <Table<ItemType>
           virtualized={true}
+          maxHeight={window.innerHeight * 0.6}
           items={filteredItems}
           hideKeys={['id']}
           columnLabels={columnLabels}

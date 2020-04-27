@@ -3,7 +3,7 @@ import { format, isValid } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
 
 export const strval = (val: any): string => {
-  if ((val !== 0 && !val) || isNaN(val)) {
+  if ((val !== 0 && !val) || (typeof val === 'number' && isNaN(val))) {
     return ''
   }
 

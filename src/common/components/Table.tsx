@@ -238,6 +238,7 @@ export type PropTypes<ItemType> = {
     onCancel?: () => unknown
   ) => React.ReactChild
   virtualized?: boolean
+  maxHeight?: number
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -299,6 +300,7 @@ const Table = observer(
     renderInput = defaultRenderInput,
     editableValues = [],
     virtualized = false,
+    maxHeight = window.innerHeight * 0.75,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
@@ -570,7 +572,6 @@ const Table = observer(
     let gridColumnCount = columnNames.length
     let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
     let listHeight = rows.length * rowHeight // height of all rows combined
-    let maxHeight = window.innerHeight * 0.75 // max 75vh
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
 
     return (
