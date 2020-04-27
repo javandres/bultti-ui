@@ -563,7 +563,7 @@ const Table = observer(
     return (
       <>
         <TableView className={className} ref={tableViewRef}>
-          <TableHeader>
+          <TableHeader style={{ paddingRight: virtualized ? 15 : 0 }}>
             {indexCell && (
               <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                 {indexCell}
@@ -595,11 +595,10 @@ const Table = observer(
           </TableHeader>
 
           {virtualized ? (
-            <AutoSizer>
+            <AutoSizer style={{ height: 750 }}>
               {({ width }) => {
                 let gridColumnCount = columnNames.length
-                let gridColumnWidth =
-                  Math.max(100, width / Math.max(1, columnNames.length)) - 15 / gridColumnCount
+                let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
 
                 return (
                   <List
@@ -616,7 +615,9 @@ const Table = observer(
               }}
             </AutoSizer>
           ) : (
-            rows.map((row, rowIndex) => <TableRowComponent row={row} index={rowIndex} />)
+            rows.map((row, rowIndex) => (
+              <TableRowComponent key={row.key} row={row} index={rowIndex} />
+            ))
           )}
           {typeof getColumnTotal === 'function' && (
             <TableRow key="totals" footer={true}>
