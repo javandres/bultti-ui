@@ -564,15 +564,20 @@ const Table = observer(
     )
 
     let rowsContainerRef = useRef(null)
-    let { width = 0, height = 0 } = useResizeObserver(rowsContainerRef)
+    let { width = 0 } = useResizeObserver(rowsContainerRef)
 
+    let rowHeight = 27
     let gridColumnCount = columnNames.length
     let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
+    let listHeight = rows.length * rowHeight
+    let maxHeight = window.innerHeight * 0.75
+    let height = Math.min(maxHeight, listHeight)
 
     return (
       <>
         <TableView className={className} ref={tableViewRef}>
-          <TableHeader style={{ paddingRight: virtualized ? 15 : 0 }}>
+          <TableHeader
+            style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
             {indexCell && (
               <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                 {indexCell}
@@ -608,15 +613,13 @@ const Table = observer(
               ref={rowsContainerRef}
               style={{
                 position: 'relative',
-                height: '75vh',
                 width: '100%',
-                maxHeight: '75vh',
               }}>
               <List
                 height={height}
                 width={gridColumnWidth * gridColumnCount}
                 itemCount={rows.length}
-                itemSize={27}
+                itemSize={rowHeight}
                 layout="vertical"
                 itemData={rows}
                 itemKey={getListItemKey}>
