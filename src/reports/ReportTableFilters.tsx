@@ -2,20 +2,30 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { compact, groupBy, lowerCase, omit } from 'lodash'
+import { compact, lowerCase, omit } from 'lodash'
 import { strval } from '../util/strval'
 import { ControlGroup } from '../common/components/form'
 import Dropdown from '../common/input/Dropdown'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
+import { CrossThick } from '../common/icon/CrossThick'
+import { text } from '../util/translate'
+import ToggleButton from '../common/input/ToggleButton'
+import { FlexRow, SubSectionHeading } from '../common/components/common'
 
 const ReportTableFiltersView = styled.div`
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 `
 
 const FilterButtonBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+`
+
+const FilterModeButton = styled(ToggleButton)`
+  flex: 0;
+  display: inline-flex;
+  margin-left: auto;
 `
 
 export type PropTypes<ItemType = any> = {
@@ -29,9 +39,21 @@ type FilterConfig = {
   filterValue: string
 }
 
+enum FilterMode {
+  INCLUSIVE,
+  EXCLUSIVE,
+}
+
 const ReportTableFilters = observer(
   ({ items, onFilterApplied, excludeFields = [] }: PropTypes) => {
     let [filters, setFilters] = useState<FilterConfig[]>([])
+    let [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.INCLUSIVE)
+
+    let toggleFilterMode = useCallback(() => {
+      setFilterMode((currentMode) =>
+        currentMode === FilterMode.INCLUSIVE ? FilterMode.EXCLUSIVE : FilterMode.INCLUSIVE
+      )
+    }, [])
 
     let onAddFilter = useCallback((field = '') => {
       setFilters((currentFilters) => {
@@ -91,23 +113,13 @@ const ReportTableFilters = observer(
         return
       }
 
-      let filteredItems: typeof items = []
-
-      let filterFieldGroups: [string, string[]][] = compact(
-        Object.entries(groupBy(filters, 'field')).map(([field, filterValues]) => {
-          if (!field) {
+      let filterFieldGroups: [string, string][] = compact(
+        filters.map(({ field, filterValue }) => {
+          if (!filterValue) {
             return null
           }
 
-          let appliedFilterValues = filterValues
-            .filter(({ filterValue }) => !!filterValue)
-            .map(({ filterValue }) => lowerCase(filterValue))
-
-          if (appliedFilterValues.length === 0) {
-            return null
-          }
-
-          return [field, appliedFilterValues]
+          return [field, filterValue]
         })
       )
 
@@ -116,28 +128,73 @@ const ReportTableFilters = observer(
         return
       }
 
-      for (let item of items) {
-        for (let [field, filterValues] of filterFieldGroups) {
-          let itemValue = lowerCase(strval(item[field]))
+      let filteredItems: typeof items = []
 
-          for (let filterValue of filterValues) {
-            if (itemValue.includes(filterValue)) {
-              filteredItems.push(item)
+      function matchValue(item, field, filterValue) {
+        let itemValue = lowerCase(strval(item[field]))
+
+        if (itemValue.includes(filterValue)) {
+          if (!filteredItems.includes(item)) {
+            filteredItems.push(item)
+          }
+
+          return true
+        }
+
+        return false
+      }
+
+      for (let [field, filterValue] of filterFieldGroups) {
+        let itemArray =
+          filteredItems.length === 0 || filterMode === FilterMode.INCLUSIVE
+            ? items
+            : filteredItems
+
+        if (filterMode === FilterMode.EXCLUSIVE) {
+          filteredItems = []
+        }
+
+        itemLoop: for (let item of itemArray) {
+          if (!field) {
+            for (let itemField in item) {
+              if (
+                item.hasOwnProperty(itemField) &&
+                !excludeFields.includes(itemField) && // Ensure the field is filterable
+                matchValue(item, itemField, filterValue) // Match and add to result
+              ) {
+                continue itemLoop
+              }
             }
+          } else {
+            matchValue(item, field, filterValue) // Match and add to result
           }
         }
       }
 
       onFilterApplied(filteredItems)
-    }, [items, filters])
+    }, [items, filters, filterMode])
 
-    let filterFieldOptions = useMemo(() => Object.keys(omit(items[0], excludeFields) || {}), [
-      items,
-      excludeFields,
-    ])
+    let filterFieldOptions = useMemo(
+      () => ['', ...Object.keys(omit(items[0], excludeFields) || {})],
+      [items, excludeFields]
+    )
 
     return (
       <ReportTableFiltersView>
+        <FlexRow style={{ marginBottom: '1rem' }}>
+          <SubSectionHeading style={{ marginTop: 0, marginBottom: 0 }}>
+            Filtteröinti
+          </SubSectionHeading>
+          <FilterModeButton
+            name="filter-mode"
+            isSwitch={true}
+            value="mode"
+            checked={filterMode === FilterMode.INCLUSIVE}
+            preLabel="Supistava"
+            onChange={toggleFilterMode}>
+            Laajentava
+          </FilterModeButton>
+        </FlexRow>
         {filters.map((filterConfig, index) => (
           <ControlGroup
             key={`${filterConfig.field}_${index}`}
@@ -148,7 +205,7 @@ const ReportTableFilters = observer(
               name="filter"
               type="text"
               theme="light"
-              label={`Filter on ${filterConfig.field}`}
+              label={`Filter on ${filterConfig.field || text('general.app.all')}`}
             />
             {filterFieldOptions.length !== 0 && (
               <Dropdown
@@ -156,17 +213,14 @@ const ReportTableFilters = observer(
                 items={filterFieldOptions}
                 selectedItem={filterConfig.field}
                 itemToString={(item) => item}
-                itemToLabel={(item) => item}
+                itemToLabel={(item) => (!item ? text('general.app.all') : item)}
                 onSelect={(nextField) => onChangeFilterField(index, nextField)}
               />
             )}
-            <div style={{ marginLeft: 'auto', alignSelf: 'flex-end', flex: 0 }}>
-              <Button
-                onClick={() => onRemoveFilter(index)}
-                buttonStyle={ButtonStyle.REMOVE}
-                size={ButtonSize.SMALL}>
-                Poista
-              </Button>
+            <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
+              <RemoveButton onClick={() => onRemoveFilter(index)}>
+                <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+              </RemoveButton>
             </div>
           </ControlGroup>
         ))}

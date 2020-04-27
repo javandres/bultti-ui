@@ -113,7 +113,9 @@ const props2style = (props: ButtonProps): ButtonSizeStyle & ButtonColorStyle => 
   }
 
   let paddingParts = selectedSizeValues.padding.split(' ')
-  let paddingLeft = loading ? selectedSizeValues.loadingPaddingLeft : (last(paddingParts) as string)
+  let paddingLeft = loading
+    ? selectedSizeValues.loadingPaddingLeft
+    : (last(paddingParts) as string)
 
   paddingParts.splice(paddingParts.length - 1, 1, paddingLeft)
 
@@ -188,7 +190,9 @@ export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string 
   }
 `
 
-const ButtonLoading = styled(LoadingDisplay).attrs({ inline: true })<{ buttonSize: ButtonSize }>`
+const ButtonLoading = styled(LoadingDisplay).attrs({ inline: true })<{
+  buttonSize: ButtonSize
+}>`
   display: flex;
   margin-right: ${({ buttonSize = ButtonSize.MEDIUM }) =>
     size2Style(buttonSize, '0.45rem', '0.5rem', '0.75rem')};
@@ -239,3 +243,20 @@ export const TextButton: React.FC<ButtonProps> = observer(
     )
   }
 )
+
+export const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
+  background: var(--red);
+  border: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  padding: 0;
+  line-height: 1;
+  align-items: baseline;
+  justify-content: center;
+  font-size: 0.75rem;
+
+  svg {
+    margin: 0;
+  }
+`

@@ -10,7 +10,7 @@ import React, {
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
-import { Button, ButtonSize, ButtonStyle } from './Button'
+import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
@@ -33,27 +33,6 @@ const TableView = styled.div`
 
   &:last-child {
     margin-bottom: 0;
-  }
-`
-
-const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
-  background: var(--red);
-  position: absolute;
-  border: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  padding: 0;
-  line-height: 1;
-  align-items: baseline;
-  justify-content: center;
-  font-size: 0.75rem;
-  left: 0.4rem;
-  top: 0.4rem;
-  display: none;
-
-  svg {
-    margin: 0;
   }
 `
 
@@ -145,6 +124,13 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
       display: flex;
     }
   }
+`
+
+const RowRemoveButton = styled(RemoveButton)`
+  position: absolute;
+  left: 0.4rem;
+  top: 0.4rem;
+  display: none;
 `
 
 const TableHeader = styled(TableRow)`
@@ -555,9 +541,9 @@ const Table = observer(
               <TableCellComponent row={rowItem} cell={[key, val]} key={`${rowKey}_${index}`} />
             ))}
             {!isEditingRow && removeItem && (
-              <RemoveButton onClick={removeItem}>
+              <RowRemoveButton onClick={removeItem}>
                 <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-              </RemoveButton>
+              </RowRemoveButton>
             )}
           </TableRow>
         )
