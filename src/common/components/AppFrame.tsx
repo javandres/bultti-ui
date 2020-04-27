@@ -21,10 +21,6 @@ const Main = styled.div`
   min-height: 100%;
   overflow-y: scroll;
   background: #f5f5f5;
-
-  > * {
-    min-height: 100%;
-  }
 `
 
 export type AppFrameProps = {

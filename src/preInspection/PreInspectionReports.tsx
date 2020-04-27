@@ -9,7 +9,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../reports/ReportListItem'
 
 const PreInspectionReportsView = styled.div`
-  min-height: 100%;
+  height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
 `

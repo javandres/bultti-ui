@@ -17,7 +17,7 @@ import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
-import AutoSizer from 'react-virtualized-auto-sizer'
+import { useResizeObserver } from '../../util/useResizeObserver'
 
 const TableView = styled.div`
   position: relative;
@@ -27,7 +27,9 @@ const TableView = styled.div`
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
   height: 100%;
-  flex: 1 0;
+  flex: 1 0 100%;
+  display: flex;
+  flex-direction: column;
 
   &:last-child {
     margin-bottom: 0;
@@ -148,6 +150,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
 const TableHeader = styled(TableRow)`
   outline: none !important;
   border-bottom-color: var(--lighter-grey) !important;
+  flex: 0;
 `
 
 const TableCell = styled.div<{
@@ -560,6 +563,12 @@ const Table = observer(
       [TableCellComponent]
     )
 
+    let rowsContainerRef = useRef(null)
+    let { width = 0, height = 0 } = useResizeObserver(rowsContainerRef)
+
+    let gridColumnCount = columnNames.length
+    let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
+
     return (
       <>
         <TableView className={className} ref={tableViewRef}>
@@ -595,25 +604,25 @@ const Table = observer(
           </TableHeader>
 
           {virtualized ? (
-            <AutoSizer style={{ height: 750 }}>
-              {({ width }) => {
-                let gridColumnCount = columnNames.length
-                let gridColumnWidth = Math.max(100, width / Math.max(1, columnNames.length))
-
-                return (
-                  <List
-                    height={750}
-                    width={gridColumnWidth * gridColumnCount}
-                    itemCount={rows.length}
-                    itemSize={27}
-                    layout="vertical"
-                    itemData={rows}
-                    itemKey={getListItemKey}>
-                    {TableRowComponent}
-                  </List>
-                )
-              }}
-            </AutoSizer>
+            <div
+              ref={rowsContainerRef}
+              style={{
+                position: 'relative',
+                height: '75vh',
+                width: '100%',
+                maxHeight: '75vh',
+              }}>
+              <List
+                height={height}
+                width={gridColumnWidth * gridColumnCount}
+                itemCount={rows.length}
+                itemSize={27}
+                layout="vertical"
+                itemData={rows}
+                itemKey={getListItemKey}>
+                {TableRowComponent}
+              </List>
+            </div>
           ) : (
             rows.map((row, rowIndex) => (
               <TableRowComponent key={row.key} row={row} index={rowIndex} />

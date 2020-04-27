@@ -17,7 +17,9 @@ const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
 
   if (authState !== AuthState.AUTHENTICATED) {
-    return <AuthGate loading={loading} unauthenticated={authState === AuthState.UNAUTHENTICATED} />
+    return (
+      <AuthGate loading={loading} unauthenticated={authState === AuthState.UNAUTHENTICATED} />
+    )
   }
 
   return (
