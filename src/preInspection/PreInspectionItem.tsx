@@ -7,7 +7,11 @@ import {
   usePreInspectionReports,
   useRemovePreInspection,
 } from './preInspectionUtils'
-import ValueDisplay from '../common/components/ValueDisplay'
+import ValueDisplay, {
+  PropTypes as ValueDisplayPropTypes,
+} from '../common/components/ValueDisplay'
+import { format, parseISO } from 'date-fns'
+import { READABLE_DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
 
 const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -34,7 +38,7 @@ const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?:
   flex: 0 0 calc(33.333% - 1rem);
 `
 
-const ItemContent = styled(ValueDisplay)`
+const ItemContent = styled(ValueDisplay)<ValueDisplayPropTypes>`
   margin-bottom: 1rem;
   line-height: 1.4;
 `
@@ -78,6 +82,21 @@ export type InspectionItemProps = {
   onPreInspectionUpdated?: () => unknown
 }
 
+const renderValue = (key, val) => {
+  switch (key) {
+    case 'createdAt':
+    case 'updatedAt':
+      return format(parseISO(val), READABLE_TIME_FORMAT)
+    case 'startDate':
+    case 'endDate':
+      return format(parseISO(val), READABLE_DATE_FORMAT)
+    case 'status':
+      return val === InspectionStatus.InProduction ? 'Tuotannossa' : 'Muokattavissa'
+    default:
+      return val
+  }
+}
+
 const PreInspectionItem: React.FC<InspectionItemProps> = ({
   preInspection,
   className,
@@ -102,6 +121,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
         item={preInspection}
         labels={itemTableHeadings}
         objectPaths={itemObjectDisplayPaths}
+        renderValue={renderValue}
       />
       {showActions && (
         <ButtonRow>
