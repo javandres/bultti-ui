@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps, useNavigate } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
 import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
 import PreInspectionsList from '../preInspection/PreInspectionsList'
 import { Plus } from '../common/icon/Plus'
@@ -9,6 +9,7 @@ import { Button } from '../common/components/Button'
 import { useQueryData } from '../util/useQueryData'
 import { preInspectionsByOperatorQuery } from '../preInspection/preInspectionQueries'
 import { PreInspection } from '../schema-types'
+import { navigateWithQueryString } from '../util/urlValue'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -16,7 +17,6 @@ type PropTypes = {
 
 const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
   var [operator] = useStateValue('globalOperator')
-  var navigate = useNavigate()
 
   let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
     preInspectionsByOperatorQuery,
@@ -36,7 +36,7 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
     <Page>
       <PageTitle>
         Ennakkotarkastukset
-        <Button onClick={() => navigate('pre-inspection/edit')}>
+        <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
           <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
         </Button>
       </PageTitle>

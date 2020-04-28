@@ -2,6 +2,8 @@ import get from 'lodash/get'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
 import { createHistory } from '@reach/router'
+import { isNumeric } from './isNumeric'
+import { numval } from './numval'
 
 /**
  * Make sure that all history operations happen through the specific history object
@@ -10,7 +12,7 @@ import { createHistory } from '@reach/router'
 // @ts-ignore
 export let history = createHistory(window)
 
-type UrlStateValue = string | boolean | null
+type UrlStateValue = string | boolean | number
 type UrlState = { [key: string]: UrlStateValue }
 type HistoryListener = (urlState: UrlState) => unknown
 
@@ -45,7 +47,7 @@ export const __setHistoryForTesting = (historyObj) => {
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
-export const setUrlValue = (key: string, val: UrlStateValue) => {
+export const setUrlValue = (key: string, val: UrlStateValue | null) => {
   const query = new URLSearchParams(history.location.search)
 
   if (val === null || typeof val === 'undefined') {
@@ -60,11 +62,15 @@ export const setUrlValue = (key: string, val: UrlStateValue) => {
   history.navigate(`${history.location.pathname}?${queryStr}`)
 }
 
+export const navigateWithQueryString = (navigateTo, opts?: any) => {
+  return history.navigate(`${navigateTo}${history.location.search}`, opts)
+}
+
 export const getUrlState = (): UrlState => {
   const query = new URLSearchParams(history.location.search)
   return fromPairs(
     Array.from(query.entries()).map(([key, value]) => {
-      let nextVal: string | boolean | number = value
+      let nextVal: UrlStateValue = value
 
       if (value === 'true') {
         nextVal = true
@@ -76,6 +82,10 @@ export const getUrlState = (): UrlState => {
 
       if (value === '' || typeof value === 'undefined') {
         nextVal = ''
+      }
+
+      if (isNumeric(value)) {
+        nextVal = numval(value, value.includes('.'))
       }
 
       return [key, nextVal]

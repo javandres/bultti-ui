@@ -3,9 +3,9 @@ import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { useLocation, useNavigate } from '@reach/router'
 import { useLazyQueryData } from './useLazyQueryData'
 import { pickGraphqlData } from './pickGraphqlData'
+import { getUrlValue, navigateWithQueryString, setUrlValue } from './urlValue'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -14,16 +14,13 @@ export enum AuthState {
 }
 
 export const useAuth = (): [AuthState, boolean] => {
-  let location = useLocation()
-  let navigate = useNavigate()
-
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [user, setUser] = useStateValue('user')
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const [fetchUser, { data: currentUser, loading: currentUserLoading }] = useLazyQueryData<User>(
-    currentUserQuery
-  )
+  const [fetchUser, { data: currentUser, loading: currentUserLoading }] = useLazyQueryData<
+    User
+  >(currentUserQuery)
 
   useEffect(() => {
     if (currentUser) {
@@ -34,16 +31,12 @@ export const useAuth = (): [AuthState, boolean] => {
     }
   }, [currentUser, fetchUser, setUser, currentUserLoading])
 
-  const { code, is_test = 'false' }: { code: string; is_test: string } = useMemo(
-    () =>
-      Array.from(new URL(location.href).searchParams.entries()).reduce(
-        (params, [key, value]) => {
-          params[key] = value
-          return params
-        },
-        { code: '', is_test: 'false' }
-      ),
-    [authState]
+  const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
+    () => ({
+      code: (getUrlValue('code', '') || '') as string,
+      is_test: (getUrlValue('is_test', false) || false) as boolean,
+    }),
+    [authState] // Re-evaluate after authState changes
   )
 
   useEffect(() => {
@@ -61,11 +54,13 @@ export const useAuth = (): [AuthState, boolean] => {
 
     if (code && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
+      setUrlValue('code', null)
+      setUrlValue('is_test', null)
 
       login({
         variables: {
           authorizationCode: code,
-          isTest: is_test === 'true',
+          isTest: is_test,
         },
       }).then(({ data }) => {
         const user = pickGraphqlData(data)
@@ -77,7 +72,7 @@ export const useAuth = (): [AuthState, boolean] => {
           setAuthState(AuthState.UNAUTHENTICATED)
         }
 
-        return navigate('/', { replace: true })
+        return navigateWithQueryString('/', { replace: true })
       })
     }
   }, [user, code, authState, login])

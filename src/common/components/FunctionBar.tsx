@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { AnyFunction } from '../../type/common'
 import { Button, ButtonSize } from './Button'
-import { navigate } from '@reach/router'
+import { navigateWithQueryString } from '../../util/urlValue'
 
 const FunctionBarView = styled.div`
   padding: 0.75rem 1rem;
@@ -42,7 +42,7 @@ const FunctionBar: React.FC<FunctionBarProps> = observer(({ functions }) => {
         }
 
         const linkPath: string = typeof fn.path !== 'undefined' ? fn.path : ''
-        const linkAction = linkPath ? () => navigate(linkPath) : fn.action
+        const linkAction = linkPath ? () => navigateWithQueryString(linkPath) : fn.action
 
         return (
           <FunctionButton key={fn.name} onClick={linkAction} size={ButtonSize.MEDIUM}>

@@ -7,9 +7,9 @@ import {
   preInspectionQuery,
   removePreInspectionMutation,
 } from './preInspectionQueries'
-import { useNavigate } from '@reach/router'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
+import { navigateWithQueryString } from '../util/urlValue'
 
 export function usePreInspectionById(preInspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<PreInspection>(
@@ -24,7 +24,6 @@ export function usePreInspectionById(preInspectionId?: string) {
   )
 
   let refetch = useRefetch(refetcher, false)
-
   return { data, loading, error, refetch }
 }
 
@@ -91,30 +90,26 @@ export function useRemovePreInspection(
 }
 
 export function useEditPreInspection(preInspectionId = '') {
-  let navigate = useNavigate()
-
   return useCallback(
     (altPreInspectionId = '') => {
       let useId = preInspectionId || altPreInspectionId || ''
 
       if (!useId) {
-        return navigate(`/pre-inspection/edit`, { replace: true })
+        return navigateWithQueryString(`/pre-inspection/edit`, { replace: true })
       }
 
-      return navigate(`/pre-inspection/edit/${useId}`)
+      return navigateWithQueryString(`/pre-inspection/edit/${useId}`)
     },
-    [preInspectionId, navigate]
+    [preInspectionId]
   )
 }
 
 export function usePreInspectionReports(preInspectionId: string = '') {
-  let navigate = useNavigate()
-
   return useCallback(
     (altPreInspectionId?: string) => {
       let useId = preInspectionId || altPreInspectionId || ''
-      return navigate(`/pre-inspection/reports/${useId}`)
+      return navigateWithQueryString(`/pre-inspection/reports/${useId}`)
     },
-    [preInspectionId, navigate]
+    [preInspectionId]
   )
 }
