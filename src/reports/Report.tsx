@@ -11,8 +11,17 @@ import {
 import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
+import { useRefetch } from '../util/useRefetch'
 
 const ReportView = styled.div``
+
+const ReportFunctionsRow = styled(FlexRow)`
+  padding: 0 1rem 0.5rem;
+  border-bottom: 1px solid var(--lighter-grey);
+  margin: -0.5rem -1rem 1rem;
+`
 
 export type PropTypes = {
   reportName: string
@@ -29,9 +38,10 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
     ? InspectionType.Post
     : undefined
 
-  let { data: reportData, loading: reportLoading } = useQueryData<ReportDataType>(
+  let { data: reportData, loading: reportLoading, refetch } = useQueryData<ReportDataType>(
     reportByName,
     {
+      notifyOnNetworkStatusChange: true,
       skip: !inspectionType || !inspectionId || !reportName,
       variables: {
         reportName: reportName,
@@ -40,6 +50,8 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
       },
     }
   )
+
+  let queueRefetch = useRefetch(refetch, false)
 
   let ReportTypeComponent = useMemo(() => {
     let reportDataItems = reportData?.reportEntities || []
@@ -59,8 +71,17 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
 
   return (
     <ReportView>
+      <ReportFunctionsRow>
+        <Button
+          style={{ marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={queueRefetch}>
+          Päivitä
+        </Button>
+      </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} />
-      {reportData && reportData?.reportEntities?.length !== 0 && ReportTypeComponent}
+      {reportData && ReportTypeComponent}
     </ReportView>
   )
 })

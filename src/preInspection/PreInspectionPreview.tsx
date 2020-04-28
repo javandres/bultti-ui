@@ -1,15 +1,13 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { FormColumn, FormWrapper } from '../common/components/form'
 import { TabChildProps } from '../common/components/Tabs'
 import PreInspectionMeta from './PreInspectionMeta'
 import { ButtonStyle } from '../common/components/Button'
 import { PreInspectionContext } from './PreInspectionContext'
 import { InspectionStatus } from '../schema-types'
-import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
-import { SectionHeading } from '../common/components/Typography'
+import PreInspectionReports from './PreInspectionReports'
 
 const PreviewPreInspectionView = styled.div``
 
@@ -57,12 +55,7 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(({ publishPreInspecti
         buttonAction={onPublish}
         buttonLabel="Julkaise"
       />
-      <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
-      <FormWrapper>
-        <FormColumn width="100%" minWidth="510px">
-          <PreInspectionExecutionRequirements />
-        </FormColumn>
-      </FormWrapper>
+      <PreInspectionReports showInfo={false} />
     </PreviewPreInspectionView>
   )
 })

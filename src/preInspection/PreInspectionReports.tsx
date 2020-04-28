@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { PreInspectionContext } from './PreInspectionContext'
-import { FlexColumn } from '../common/components/common'
 import styled from 'styled-components'
 import { useQueryData } from '../util/useQueryData'
 import { availablePreInspectionReportsQuery } from '../reports/reportQueries'
@@ -30,15 +29,11 @@ const ReportPreInspectionView = styled(PreInspectionItem)`
   }
 `
 
-const SubHeading = styled.h4`
-  margin: 0 1rem 1rem 0;
-`
-
 export type PropTypes = {
-  children?: React.ReactNode
+  showInfo?: boolean
 }
 
-const PreInspectionReports: React.FC<PropTypes> = observer(() => {
+const PreInspectionReports = observer(({ showInfo = true }: PropTypes) => {
   const [reportsExpanded, setReportsExpanded] = useState(false)
 
   const toggleReportsExpanded = useCallback(() => {
@@ -65,7 +60,7 @@ const PreInspectionReports: React.FC<PropTypes> = observer(() => {
       {!!preInspection && !reportsData && !reportsLoading && (
         <MessageView>Ei raportteja...</MessageView>
       )}
-      {preInspection && (
+      {showInfo && preInspection && (
         <>
           <SubSectionHeading>Ennakkotarkastuksen tiedot</SubSectionHeading>
           <ReportPreInspectionView preInspection={preInspection} showActions={false} />

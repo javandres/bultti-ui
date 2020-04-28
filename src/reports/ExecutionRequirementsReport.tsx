@@ -6,6 +6,7 @@ import RequirementsTable, {
 } from '../executionRequirement/RequirementsTable'
 import { ReportComponentProps } from './reportUtil'
 import { ExecutionRequirement } from '../schema-types'
+import { MessageView } from '../common/components/Messages'
 
 const ExecutionRequirementsReportView = styled.div``
 
@@ -31,6 +32,12 @@ const ExecutionRequirementsReport = observer(({ items }: PropTypes<ExecutionRequ
           />
         </React.Fragment>
       ))}
+      {items.length === 0 && (
+        <MessageView>
+          Suoritevaatimukset ei laskettu. Laske ennakkotarkastuksen suoritevaatimukset
+          ennakkotarkastuksen muokkaus-näkymästä.
+        </MessageView>
+      )}
     </ExecutionRequirementsReportView>
   )
 })

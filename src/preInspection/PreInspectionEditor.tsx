@@ -16,6 +16,7 @@ import { ButtonStyle } from '../common/components/Button'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { navigateWithQueryString } from '../util/urlValue'
 import { SectionHeading } from '../common/components/Typography'
+import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -130,14 +131,21 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
             <SectionHeading theme="light">Lähtöketjut</SectionHeading>
             <FormWrapper>
-              <FormColumn width="100%" minWidth="510px">
+              <FormColumn>
                 <DepartureBlocks />
+              </FormColumn>
+            </FormWrapper>
+
+            <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
+            <FormWrapper>
+              <FormColumn>
+                <PreInspectionExecutionRequirements />
               </FormColumn>
             </FormWrapper>
 
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
             <TransparentFormWrapper>
-              <FormColumn width="100%" minWidth="510px">
+              <FormColumn>
                 <ProcurementUnits />
               </FormColumn>
             </TransparentFormWrapper>

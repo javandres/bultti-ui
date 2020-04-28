@@ -5,7 +5,6 @@ import Checkbox from '../common/input/Checkbox'
 import UploadFile from '../common/input/UploadFile'
 import { LoadingDisplay } from '../common/components/Loading'
 import styled from 'styled-components'
-import Table, { CellContent } from '../common/components/Table'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { DayType, DepartureBlock } from '../schema-types'
@@ -41,15 +40,6 @@ const ResetButton = styled(Button).attrs(() => ({
   margin-left: auto;
 `
 
-const departureBlocksColumnLabels = {
-  blockNumber: 'Ketjunumero',
-  registryNumber: 'Rekisterinumero',
-  equipmentId: 'Ajoneuvon tiedot',
-  firstStartTime: 'Ensimmäinen lähtö',
-  lastEndTime: 'Viimeinen saapuminen',
-  routes: 'Reitit',
-}
-
 type PropTypes = {
   loading?: boolean
   selectableDayTypes?: string[]
@@ -73,7 +63,6 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     onBlocksChange,
   }) => {
     let [showBlocksLoading, setShowBlocksLoading] = useState(departureBlocks.length === 0)
-    let [blocksVisible, setBlocksVisibility] = useState(false)
 
     let preInspection = useContext(PreInspectionContext)
     let preInspectionId = preInspection?.id || ''
@@ -152,22 +141,6 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         onBlocksChange()
       }
     }, [dayTypeGroup, preInspectionId, removeDepartureBlocksForDays, onBlocksChange])
-
-    const onToggleBlocksVisibility = useCallback(() => {
-      setBlocksVisibility((currentVisible) => !currentVisible)
-    }, [])
-
-    const renderTableCell = useCallback(
-      (key, val) => {
-        return (
-          <CellContent
-            style={{ backgroundColor: !val ? 'var(--lighter-red)' : 'transparent' }}>
-            {val}
-          </CellContent>
-        )
-      },
-      [departureBlocks]
-    )
 
     // Loop through all blocks and find errors.
     let blockErrors = useMemo(
