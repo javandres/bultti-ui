@@ -4,6 +4,7 @@ import toString from 'lodash/toString'
 import { createHistory } from '@reach/router'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
+import { APP_PATH } from '../constants'
 
 /**
  * Make sure that all history operations happen through the specific history object
@@ -100,6 +101,10 @@ export const getUrlValue = (key: string, defaultValue: UrlStateValue = ''): UrlS
 
 export const getPathName = () => {
   return history.location.pathname
+}
+
+export const getAppRoot = () => {
+  return `${history.location.origin}${APP_PATH}${APP_PATH !== '/' ? '/' : ''}`
 }
 
 export const resetUrlState = (replace = false) => {

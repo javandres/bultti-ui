@@ -14,13 +14,14 @@ import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
+import DownloadReport from './DownloadReport'
 
 const ReportView = styled.div``
 
 const ReportFunctionsRow = styled(FlexRow)`
-  padding: 0 1rem 0.5rem;
+  padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
-  margin: -0.5rem -1rem 1rem;
+  margin: -0.25rem -1rem 1rem;
 `
 
 export type PropTypes = {
@@ -69,9 +70,23 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
     }
   }, [reportData])
 
+  let inspectionTypeStr: 'preinspection' | 'postInspection' | undefined =
+    inspectionType === InspectionType.Pre
+      ? 'preinspection'
+      : inspectionType === InspectionType.Post
+      ? 'postInspection'
+      : undefined
+
   return (
     <ReportView>
       <ReportFunctionsRow>
+        {inspectionTypeStr && inspectionId && (
+          <DownloadReport
+            reportName={reportName}
+            inspectionId={inspectionId}
+            inspectionType={inspectionTypeStr}
+          />
+        )}
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}

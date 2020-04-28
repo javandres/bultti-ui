@@ -18,9 +18,11 @@ const HeaderRow = styled.div<{ expanded?: boolean }>`
 
 export const HeaderSection = styled.div`
   font-size: 0.875rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem;
   border-right: 1px solid var(--lighter-grey);
   flex: 1 1 50%;
+  display: flex;
+  align-items: flex-start;
 
   &:nth-child(even) {
     background-color: #fafafa;

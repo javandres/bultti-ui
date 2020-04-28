@@ -41,13 +41,14 @@ const PreInspectionReports = observer(({ showInfo = true }: PropTypes) => {
   }, [])
 
   let preInspection = useContext(PreInspectionContext)
+  let preInspectionId = preInspection?.id || ''
 
   let { data: reportsData, loading: reportsLoading } = useQueryData(
     availablePreInspectionReportsQuery,
     {
-      skip: !preInspection,
+      skip: !preInspectionId,
       variables: {
-        preInspectionId: preInspection?.id,
+        preInspectionId,
       },
     }
   )
@@ -76,9 +77,11 @@ const PreInspectionReports = observer(({ showInfo = true }: PropTypes) => {
         reports.map((reportItem) => (
           <ReportListItem
             key={reportItem.name}
+            inspectionType="preinspection"
+            inspectionId={preInspectionId}
             reportData={reportItem}
             isExpanded={reportsExpanded}>
-            <Report reportName={reportItem.name} preInspectionId={preInspection?.id || ''} />
+            <Report reportName={reportItem.name} preInspectionId={preInspectionId} />
           </ReportListItem>
         ))}
     </PreInspectionReportsView>
