@@ -4,20 +4,19 @@ import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { ReportComponentProps } from './reportUtil'
 import ReportTableFilters from './ReportTableFilters'
-import { mapValues } from 'lodash'
+import { EmptyView } from '../common/components/common'
 
 const ListReportView = styled.div``
+
+const TableEmptyView = styled(EmptyView)`
+  margin: 1rem !important;
+`
 
 export type PropTypes<T> = ReportComponentProps<T>
 
 const ListReport = observer(
   <ItemType extends {}>({ items, columnLabels }: PropTypes<ItemType>) => {
     let [filteredItems, setFilteredItems] = useState(items)
-    let tableItems =
-      filteredItems.length === 0 && items.length !== 0
-        ? // Make an item with null values to give header labels but still an empty table.
-          [(mapValues(items[0], () => '') as unknown) as ItemType]
-        : filteredItems
 
     return (
       <ListReportView>
@@ -29,10 +28,11 @@ const ListReport = observer(
         <Table<ItemType>
           virtualized={true}
           maxHeight={window.innerHeight * 0.6}
-          items={tableItems}
+          items={filteredItems}
           hideKeys={['id']}
-          columnLabels={columnLabels}
-        />
+          columnLabels={columnLabels}>
+          <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
+        </Table>
       </ListReportView>
     )
   }

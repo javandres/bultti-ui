@@ -18,7 +18,6 @@ import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { useResizeObserver } from '../../util/useResizeObserver'
-import { MessageView } from './common'
 
 const TableView = styled.div`
   position: relative;
@@ -35,12 +34,6 @@ const TableView = styled.div`
   &:last-child {
     margin-bottom: 0;
   }
-`
-
-const TableEmptyView = styled(MessageView)`
-  background: #f8f8f8;
-  border-color: #ccc;
-  margin: 1rem !important;
 `
 
 const EditInputWrapper = styled.div`
@@ -233,6 +226,7 @@ export type PropTypes<ItemType> = {
   ) => React.ReactChild
   virtualized?: boolean
   maxHeight?: number
+  children?: React.ReactChild
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -293,6 +287,7 @@ const Table = observer(
     editableValues = [],
     virtualized = false,
     maxHeight = window.innerHeight * 0.75,
+    children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
@@ -337,7 +332,9 @@ const Table = observer(
 
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
-    let columns = Object.keys(omitBy(items[0] || {}, (val, key) => key.startsWith('_')))
+    let columns = Object.keys(
+      omitBy(items[0] || columnLabels, (val, key) => key.startsWith('_'))
+    )
     const columnLabelKeys = Object.keys(columnLabels)
 
     const columnKeysOrdering =
@@ -355,6 +352,7 @@ const Table = observer(
       keysToHide = difference(columns, columnLabelKeys)
     }
 
+    // Order the columns by the provided columnOrder
     if (columnKeysOrdering.length !== 0) {
       columns = orderBy(columns, (key) => {
         const labelIndex = columnKeysOrdering.indexOf(key)
@@ -370,6 +368,7 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
+    // Scroll listeners for the floating toolbar.
     let [currentScroll, setCurrentScroll] = useState(0)
     let subscribeToScroll = useContext(ScrollContext)
 
@@ -621,7 +620,7 @@ const Table = observer(
               width: '100%',
             }}>
             {tableIsEmpty ? (
-              <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
+              emptyContent
             ) : virtualized ? (
               <List
                 height={height}

@@ -120,27 +120,24 @@ export const MessageContainer = styled.div`
 `
 
 export const MessageView = styled.div`
-  margin-top: 1rem;
+  margin: 1rem 0;
   border-radius: 0.5rem;
   border: 1px solid var(--light-blue);
   color: var(--dark-grey);
   background: var(--lightest-blue);
   padding: 0.75rem;
-  margin-bottom: 1rem;
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 `
 
 export const ErrorView = styled(MessageView)`
   border: 1px solid var(--light-red);
   background: var(--lighter-red);
 `
+
+export const EmptyView = styled(MessageView)`
+  background: #f8f8f8;
+  border-color: #ccc;
+`
+
 export const MetaDisplay = styled.div`
   display: flex;
   margin-left: 1rem;
