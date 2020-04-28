@@ -140,7 +140,6 @@ export const EmptyView = styled(MessageView)`
 
 export const MetaDisplay = styled.div`
   display: flex;
-  margin-left: 1rem;
 `
 export const MetaItem = styled.div`
   padding: 0.5rem 0.75rem 0.2rem;

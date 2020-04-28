@@ -21,6 +21,7 @@ export type PropTypes = {
 }
 
 const Report = observer(({ reportName, preInspectionId, postInspectionId }: PropTypes) => {
+  // Decide which type of report to query for based on which ID was provided.
   let inspectionId = preInspectionId || postInspectionId || undefined
   let inspectionType = preInspectionId
     ? InspectionType.Pre

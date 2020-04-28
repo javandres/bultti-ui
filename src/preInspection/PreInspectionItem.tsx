@@ -22,7 +22,9 @@ const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?:
         ? 'var(--blue)'
         : 'var(--light-grey)'};
   box-shadow: ${(p) =>
-    p.status === InspectionStatus.InProduction && p.inEffect ? '0 0 5px 0 var(--green)' : 'none'};
+    p.status === InspectionStatus.InProduction && p.inEffect
+      ? '0 0 5px 0 var(--green)'
+      : 'none'};
   font-family: inherit;
   margin-right: 1rem;
   text-align: left;
@@ -71,6 +73,7 @@ const itemObjectDisplayPaths = {
 export type InspectionItemProps = {
   preInspection: PreInspection
   isCurrentlyInEffect?: boolean
+  showActions?: boolean
   className?: string
   onPreInspectionUpdated?: () => unknown
 }
@@ -80,6 +83,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
   className,
   isCurrentlyInEffect,
   onPreInspectionUpdated = () => {},
+  showActions = true,
 }) => {
   let editPreInspection = useEditPreInspection(preInspection.id)
 
@@ -99,34 +103,36 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
         labels={itemTableHeadings}
         objectPaths={itemObjectDisplayPaths}
       />
-      <ButtonRow>
-        {preInspection.status === InspectionStatus.Draft && (
-          <>
+      {showActions && (
+        <ButtonRow>
+          {preInspection.status === InspectionStatus.Draft && (
+            <>
+              <Button
+                buttonStyle={ButtonStyle.NORMAL}
+                size={ButtonSize.MEDIUM}
+                onClick={editPreInspection}>
+                Muokkaa
+              </Button>
+              <Button
+                style={{ marginLeft: 'auto', marginRight: 0 }}
+                loading={removeLoading}
+                buttonStyle={ButtonStyle.REMOVE}
+                size={ButtonSize.MEDIUM}
+                onClick={() => removePreInspection(preInspection)}>
+                Poista
+              </Button>
+            </>
+          )}
+          {preInspection.status === InspectionStatus.InProduction && (
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
-              onClick={editPreInspection}>
-              Muokkaa
+              onClick={() => goToReports()}>
+              Raportit
             </Button>
-            <Button
-              style={{ marginLeft: 'auto', marginRight: 0 }}
-              loading={removeLoading}
-              buttonStyle={ButtonStyle.REMOVE}
-              size={ButtonSize.MEDIUM}
-              onClick={() => removePreInspection(preInspection)}>
-              Poista
-            </Button>
-          </>
-        )}
-        {preInspection.status === InspectionStatus.InProduction && (
-          <Button
-            buttonStyle={ButtonStyle.NORMAL}
-            size={ButtonSize.MEDIUM}
-            onClick={() => goToReports()}>
-            Raportit
-          </Button>
-        )}
-      </ButtonRow>
+          )}
+        </ButtonRow>
+      )}
     </PreInspectionItemView>
   )
 }

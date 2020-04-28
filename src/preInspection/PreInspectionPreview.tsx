@@ -16,7 +16,7 @@ export type PropTypes = {
   publishPreInspection: (publishId: string) => unknown
 } & TabChildProps
 
-const PreviewPreInspection: React.FC<PropTypes> = observer(({ publishPreInspection }) => {
+const PreInspectionPreview: React.FC<PropTypes> = observer(({ publishPreInspection }) => {
   let preInspection = useContext(PreInspectionContext)
 
   let onPublish = useCallback(() => {
@@ -66,4 +66,4 @@ const PreviewPreInspection: React.FC<PropTypes> = observer(({ publishPreInspecti
   )
 })
 
-export default PreviewPreInspection
+export default PreInspectionPreview

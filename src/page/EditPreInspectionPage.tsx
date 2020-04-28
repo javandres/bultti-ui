@@ -5,13 +5,16 @@ import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
-import PreviewPreInspection from '../preInspection/PreviewPreInspection'
+import PreInspectionPreview from '../preInspection/PreInspectionPreview'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { publishPreInspectionMutation } from '../preInspection/preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
-import { useEditPreInspection, usePreInspectionById } from '../preInspection/preInspectionUtils'
+import {
+  useEditPreInspection,
+  usePreInspectionById,
+} from '../preInspection/preInspectionUtils'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -75,7 +78,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId =
               loading={inspectionLoading}
               refetchData={refetch}
             />
-            <PreviewPreInspection
+            <PreInspectionPreview
               path="preview"
               name="preview"
               label="Esikatsele"
