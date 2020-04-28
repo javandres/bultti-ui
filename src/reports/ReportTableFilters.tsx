@@ -25,7 +25,9 @@ const FilterButtonBar = styled.div`
 const FilterModeButton = styled(ToggleButton)`
   flex: 0;
   display: inline-flex;
+  align-self: flex-start;
   margin-left: auto;
+  padding: 0;
 `
 
 export type PropTypes<ItemType = any> = {
@@ -46,7 +48,7 @@ enum FilterMode {
 
 const ReportTableFilters = observer(
   ({ items, onFilterApplied, excludeFields = [] }: PropTypes) => {
-    let [filters, setFilters] = useState<FilterConfig[]>([])
+    let [filters, setFilters] = useState<FilterConfig[]>([{ field: '', filterValue: '' }])
     let [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.INCLUSIVE)
 
     let toggleFilterMode = useCallback(() => {
@@ -181,24 +183,26 @@ const ReportTableFilters = observer(
 
     return (
       <ReportTableFiltersView>
-        <FlexRow style={{ marginBottom: '1rem' }}>
+        <FlexRow style={{ marginBottom: '1.5rem' }}>
           <SubSectionHeading style={{ marginTop: 0, marginBottom: 0 }}>
             Filtteröinti
           </SubSectionHeading>
-          <FilterModeButton
-            name="filter-mode"
-            isSwitch={true}
-            value="mode"
-            checked={filterMode === FilterMode.INCLUSIVE}
-            preLabel="Supistava"
-            onChange={toggleFilterMode}>
-            Laajentava
-          </FilterModeButton>
+          {filters.length > 1 && (
+            <FilterModeButton
+              name="filter-mode"
+              isSwitch={true}
+              value="mode"
+              checked={filterMode === FilterMode.INCLUSIVE}
+              preLabel="Supistava"
+              onChange={toggleFilterMode}>
+              Laajentava
+            </FilterModeButton>
+          )}
         </FlexRow>
         {filters.map((filterConfig, index) => (
           <ControlGroup
             key={`${filterConfig.field}_${index}`}
-            style={{ width: '100%', marginBottom: '1rem' }}>
+            style={{ width: '100%', marginBottom: '1.5rem' }}>
             <Input
               value={filterConfig.filterValue}
               onChange={(nextVal) => onChangeFilter(index, nextVal)}
