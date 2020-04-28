@@ -7,7 +7,7 @@ import {
 } from '../executionRequirement/executionRequirementsQueries'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
-export const availableReportsQuery = gql`
+export const availablePreInspectionReportsQuery = gql`
   query preInspectionAvailableReports($preInspectionId: String!) {
     availablePreInspectionReports(preInspectionId: $preInspectionId) {
       description
@@ -19,8 +19,8 @@ export const availableReportsQuery = gql`
 `
 
 export const reportByName = gql`
-  query getPreInspectionReport($reportName: String!, $preInspectionId: String!) {
-    preInspectionReportByName(preInspectionId: $preInspectionId, reportName: $reportName) {
+  query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
+    preInspectionReportByName(preInspectionId: $inspectionId, reportName: $reportName) {
       description
       name
       title
@@ -46,6 +46,15 @@ export const reportByName = gql`
         }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
+          operator {
+            id
+            operatorId
+            operatorName
+          }
+          area {
+            id
+            name
+          }
           requirements {
             ...RequirementValueFragment
           }
