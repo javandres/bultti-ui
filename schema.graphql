@@ -174,13 +174,23 @@ type Operator {
   id: Int!
   operatorId: Int!
   operatorName: String!
+  postInspections: [PostInspection!]!
   preInspections: [PreInspection!]!
   procurementUnits: [ProcurementUnit!]!
 }
 
 type PostInspection {
+  endDate: BulttiDate!
   id: ID!
+  minStartDate: BulttiDate
+  operator: Operator!
+  operatorId: Int
+  season: Season!
+  seasonId: Int
+  startDate: BulttiDate!
   status: InspectionStatus!
+  version: Int!
+  versionStackIdentifier: String
 }
 
 type PreInspection {
@@ -240,10 +250,10 @@ type Query {
   executionRequirementForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(preInspectionId: String!): [ExecutionRequirement!]!
+  inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   preInspection(preInspectionId: String!): PreInspection
-  preInspectionReportByName(preInspectionId: String!, reportName: String!): Report
   preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
@@ -270,6 +280,7 @@ type Report {
 }
 
 type ReportListItem {
+  availableForInspections: [InspectionType!]!
   description: String!
   name: String!
   reportType: ReportType!
@@ -279,7 +290,8 @@ type ReportListItem {
 type Season {
   endDate: BulttiDate!
   id: ID!
-  preInspections: [PreInspection!]!
+  postInspections: [PostInspection!]
+  preInspections: [PreInspection!]
   season: String!
   startDate: BulttiDate!
 }
@@ -316,6 +328,11 @@ enum DayType {
 enum InspectionStatus {
   Draft
   InProduction
+}
+
+enum InspectionType {
+  POST
+  PRE
 }
 
 enum OperatingAreaName {

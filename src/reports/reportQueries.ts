@@ -19,8 +19,16 @@ export const availablePreInspectionReportsQuery = gql`
 `
 
 export const reportByName = gql`
-  query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
-    preInspectionReportByName(preInspectionId: $inspectionId, reportName: $reportName) {
+  query getPreInspectionReport(
+    $reportName: String!
+    $inspectionId: String!
+    $inspectionType: InspectionType!
+  ) {
+    inspectionReportByName(
+      inspectionId: $inspectionId
+      inspectionType: $inspectionType
+      reportName: $reportName
+    ) {
       description
       name
       title
@@ -46,15 +54,6 @@ export const reportByName = gql`
         }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
-          operator {
-            id
-            operatorId
-            operatorName
-          }
-          area {
-            id
-            name
-          }
           requirements {
             ...RequirementValueFragment
           }

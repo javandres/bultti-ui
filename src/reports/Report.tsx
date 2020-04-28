@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { reportByName } from './reportQueries'
-import { Report as ReportDataType, ReportType as ReportTypeEnum } from '../schema-types'
+import {
+  InspectionType,
+  Report as ReportDataType,
+  ReportType as ReportTypeEnum,
+} from '../schema-types'
 import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
@@ -12,17 +16,26 @@ const ReportView = styled.div``
 
 export type PropTypes = {
   reportName: string
-  inspectionId: string
+  preInspectionId?: string
+  postInspectionId?: string
 }
 
-const Report = observer(({ reportName, inspectionId }: PropTypes) => {
+const Report = observer(({ reportName, preInspectionId, postInspectionId }: PropTypes) => {
+  let inspectionId = preInspectionId || postInspectionId || undefined
+  let inspectionType = preInspectionId
+    ? InspectionType.Pre
+    : postInspectionId
+    ? InspectionType.Post
+    : undefined
+
   let { data: reportData, loading: reportLoading } = useQueryData<ReportDataType>(
     reportByName,
     {
-      skip: !inspectionId || !reportName,
+      skip: !inspectionType || !inspectionId || !reportName,
       variables: {
         reportName: reportName,
-        inspectionId: inspectionId,
+        inspectionId,
+        inspectionType,
       },
     }
   )

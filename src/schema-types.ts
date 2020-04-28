@@ -43,7 +43,7 @@ export type Query = {
   departureBlock?: Maybe<DepartureBlock>;
   departureBlocksForPreInspection: Array<DepartureBlock>;
   availablePreInspectionReports: Array<ReportListItem>;
-  preInspectionReportByName?: Maybe<Report>;
+  inspectionReportByName?: Maybe<Report>;
 };
 
 
@@ -158,8 +158,9 @@ export type QueryAvailablePreInspectionReportsArgs = {
 };
 
 
-export type QueryPreInspectionReportByNameArgs = {
-  preInspectionId: Scalars['String'];
+export type QueryInspectionReportByNameArgs = {
+  inspectionType: InspectionType;
+  inspectionId: Scalars['String'];
   reportName: Scalars['String'];
 };
 
@@ -169,6 +170,7 @@ export type Operator = {
   operatorId: Scalars['Int'];
   operatorName: Scalars['String'];
   preInspections: Array<PreInspection>;
+  postInspections: Array<PostInspection>;
   procurementUnits: Array<ProcurementUnit>;
   executionRequirements: Array<ExecutionRequirement>;
   equipment: Array<Equipment>;
@@ -203,8 +205,29 @@ export type Season = {
   season: Scalars['String'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
-  preInspections: Array<PreInspection>;
+  preInspections?: Maybe<Array<PreInspection>>;
+  postInspections?: Maybe<Array<PostInspection>>;
 };
+
+export type PostInspection = {
+   __typename?: 'PostInspection';
+  version: Scalars['Int'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  minStartDate?: Maybe<Scalars['BulttiDate']>;
+  versionStackIdentifier?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  status: InspectionStatus;
+  seasonId?: Maybe<Scalars['Int']>;
+  season: Season;
+  operatorId?: Maybe<Scalars['Int']>;
+  operator: Operator;
+};
+
+export enum InspectionStatus {
+  Draft = 'Draft',
+  InProduction = 'InProduction'
+}
 
 export type DepartureBlock = {
    __typename?: 'DepartureBlock';
@@ -370,11 +393,6 @@ export type Departure = {
   dayTypes?: Maybe<Scalars['String']>;
 };
 
-export enum InspectionStatus {
-  Draft = 'Draft',
-  InProduction = 'InProduction'
-}
-
 
 export type User = {
    __typename?: 'User';
@@ -413,6 +431,7 @@ export type ReportListItem = {
   title: Scalars['String'];
   description: Scalars['String'];
   reportType: ReportType;
+  availableForInspections: Array<InspectionType>;
 };
 
 export enum ReportType {
@@ -420,6 +439,11 @@ export enum ReportType {
   PairList = 'PAIR_LIST',
   Summary = 'SUMMARY',
   ExecutionRequirement = 'EXECUTION_REQUIREMENT'
+}
+
+export enum InspectionType {
+  Pre = 'PRE',
+  Post = 'POST'
 }
 
 export type Report = {
@@ -442,12 +466,6 @@ export type DeparturePair = {
    __typename?: 'DeparturePair';
   departureA: Departure;
   departureB: Departure;
-};
-
-export type PostInspection = {
-   __typename?: 'PostInspection';
-  id: Scalars['ID'];
-  status: InspectionStatus;
 };
 
 export type Mutation = {

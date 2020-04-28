@@ -9,6 +9,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../reports/ReportListItem'
 import Report from '../reports/Report'
 import { TextButton } from '../common/components/Button'
+import { ReportType } from '../schema-types'
 
 const PreInspectionReportsView = styled.div`
   height: 100%;
@@ -61,7 +62,7 @@ const PreInspectionReports: React.FC<PropTypes> = observer(() => {
             key={reportItem.name}
             reportData={reportItem}
             isExpanded={reportsExpanded}>
-            <Report reportName={reportItem.name} inspectionId={preInspection?.id || ''} />
+            <Report reportName={reportItem.name} preInspectionId={preInspection?.id || ''} />
           </ReportListItem>
         ))}
     </PreInspectionReportsView>

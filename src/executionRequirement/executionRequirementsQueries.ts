@@ -25,6 +25,15 @@ export const ExecutionRequirementFragment = gql`
     totalKilometersFulfilled
     averageAgeWeighted
     averageAgeWeightedFulfilled
+    operator {
+      id
+      operatorId
+      operatorName
+    }
+    area {
+      id
+      name
+    }
   }
 `
 
@@ -38,15 +47,6 @@ export const executionRequirementForProcurementUnitQuery = gql`
       preInspectionId: $preInspectionId
     ) {
       ...ExecutionRequirementFragment
-      operator {
-        id
-        operatorId
-        operatorName
-      }
-      area {
-        id
-        name
-      }
       equipmentQuotas {
         id
         meterRequirement
@@ -69,15 +69,6 @@ export const executionRequirementsByAreaQuery = gql`
   query executionRequirementsByPreInspection($preInspectionId: String!) {
     executionRequirementsForPreInspectionAreas(preInspectionId: $preInspectionId) {
       ...ExecutionRequirementFragment
-      operator {
-        id
-        operatorId
-        operatorName
-      }
-      area {
-        id
-        name
-      }
       requirements {
         ...RequirementValueFragment
       }
@@ -158,7 +149,9 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
 
 export const refreshExecutionRequirementForProcurementUnitMutation = gql`
   mutation refreshExecutionRequirementsForPreInspection($executionRequirementId: String!) {
-    refreshExecutionRequirementForProcurementUnit(executionRequirementId: $executionRequirementId) {
+    refreshExecutionRequirementForProcurementUnit(
+      executionRequirementId: $executionRequirementId
+    ) {
       id
       area {
         id
