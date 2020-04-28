@@ -1,8 +1,8 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Text } from '../../util/translate'
-import { Subtitle } from './common'
 import { useStateValue } from '../../state/useAppState'
+import { Subtitle } from './Typography'
 
 export type PropTypes = {}
 

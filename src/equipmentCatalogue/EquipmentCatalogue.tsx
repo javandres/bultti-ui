@@ -8,7 +8,6 @@ import {
 import ItemForm from '../common/input/ItemForm'
 import { Button } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
-import { MessageView } from '../common/components/common'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import {
   createEquipmentCatalogueMutation,
@@ -23,6 +22,7 @@ import {
 } from '../equipment/equipmentUtils'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import AddEquipment from '../equipment/AddEquipment'
+import { MessageView } from '../common/components/Messages'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -52,7 +52,9 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     )
 
     const preInspection = useContext(PreInspectionContext)
-    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(null)
+    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
+      null
+    )
 
     let { removeAllEquipment, addEquipment } = useEquipmentCrud(catalogue, onCatalogueChanged)
 
@@ -130,7 +132,9 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     }, [])
 
     const renderCatalogueInput = useCallback((key: string, val: any, onChange) => {
-      return <EquipmentCatalogueFormInput value={val || ''} valueName={key} onChange={onChange} />
+      return (
+        <EquipmentCatalogueFormInput value={val || ''} valueName={key} onChange={onChange} />
+      )
     }, [])
 
     const equipment: EquipmentWithQuota[] = useMemo(() => catalogueEquipment(catalogue), [

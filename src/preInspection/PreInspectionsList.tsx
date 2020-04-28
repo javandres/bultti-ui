@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { groupBy, orderBy, get } from 'lodash'
-import { FlexRow, Heading, MessageView } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import PreInspectionItem from './PreInspectionItem'
 import { InspectionStatus, PreInspection, Season } from '../schema-types'
 import { useCreatePreInspection, useEditPreInspection } from './preInspectionUtils'
@@ -12,6 +12,8 @@ import { format } from 'date-fns'
 import { isBetween } from '../util/isBetween'
 import Loading from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
+import { MessageView } from '../common/components/Messages'
+import { Heading } from '../common/components/Typography'
 
 const PreInspectionsListView = styled.div`
   min-height: 100%;
@@ -136,7 +138,11 @@ export type PropTypes = {
 
 let currentDate = format(new Date(), DATE_FORMAT)
 
-const PreInspectionsList: React.FC<PropTypes> = ({ preInspections, onUpdate, loading = false }) => {
+const PreInspectionsList: React.FC<PropTypes> = ({
+  preInspections,
+  onUpdate,
+  loading = false,
+}) => {
   var [season, setSeason] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 

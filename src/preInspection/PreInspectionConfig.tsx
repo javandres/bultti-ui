@@ -1,14 +1,14 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InputLabel, MessageContainer, MessageView } from '../common/components/common'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
 import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
-import { ControlGroup, FormColumn, FormWrapper } from '../common/components/form'
+import { ControlGroup, FormColumn, FormWrapper, InputLabel } from '../common/components/form'
 import { PreInspection } from '../schema-types'
 import { PreInspectionContext } from './PreInspectionContext'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 
 const PreInspectionConfigView = styled.div``
 
@@ -38,7 +38,12 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
                 onChange={onUpdateValue('startDate')}
                 label="Alku"
               />
-              <Input value={preInspection.endDate} label="Loppu" subLabel={true} disabled={true} />
+              <Input
+                value={preInspection.endDate}
+                label="Loppu"
+                subLabel={true}
+                disabled={true}
+              />
             </ControlGroup>
             <InputLabel theme="light">Tarkastusjakso</InputLabel>
             <ControlGroup>

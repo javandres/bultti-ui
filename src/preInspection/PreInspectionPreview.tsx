@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ErrorView, MessageContainer, SectionHeading } from '../common/components/common'
 import { FormColumn, FormWrapper } from '../common/components/form'
 import { TabChildProps } from '../common/components/Tabs'
 import PreInspectionMeta from './PreInspectionMeta'
@@ -9,6 +8,8 @@ import { ButtonStyle } from '../common/components/Button'
 import { PreInspectionContext } from './PreInspectionContext'
 import { InspectionStatus } from '../schema-types'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
+import { ErrorView, MessageContainer } from '../common/components/Messages'
+import { SectionHeading } from '../common/components/Typography'
 
 const PreviewPreInspectionView = styled.div``
 

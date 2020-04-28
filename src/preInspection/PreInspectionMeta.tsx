@@ -1,20 +1,22 @@
 import React, { useContext } from 'react'
 import { observer } from 'mobx-react-lite'
-import {
-  InputLabel,
-  LoadingMeta,
-  MetaDisplay,
-  MetaItem,
-  MetaLabel,
-  MetaValue,
-} from '../common/components/common'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { PreInspectionContext } from './PreInspectionContext'
 import styled from 'styled-components'
+import {
+  LoadingMeta,
+  MetaDisplay,
+  MetaItem,
+  MetaLabel,
+  MetaValue,
+} from '../common/components/MetaDisplay'
+import { InputLabel } from '../common/components/form'
 
-const PreInspectionMetaView = styled.div``
+const PreInspectionMetaView = styled.div`
+  margin-left: 1rem;
+`
 
 const MetaHeading = styled(InputLabel).attrs(() => ({ theme: 'light' }))`
   margin-top: 0;

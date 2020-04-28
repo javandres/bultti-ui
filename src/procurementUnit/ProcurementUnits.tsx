@@ -3,11 +3,12 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import ProcurementUnitItem from './ProcurementUnitItem'
 import { TextButton } from '../common/components/Button'
-import { FlexRow, MessageView } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { MessageView } from '../common/components/Messages'
 
 const ProcurementUnitsView = styled.div``
 

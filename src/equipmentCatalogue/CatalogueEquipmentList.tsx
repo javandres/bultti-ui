@@ -5,9 +5,9 @@ import {
   removeEquipmentMutation,
   updateEquipmentCatalogueQuotaMutation,
 } from '../equipment/equipmentQuery'
-import { MessageView } from '../common/components/common'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
+import { MessageView } from '../common/components/Messages'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]

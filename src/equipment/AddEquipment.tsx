@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { FlexRow, MessageView, SubSectionHeading } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import ItemForm from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
@@ -15,6 +15,8 @@ import { EquipmentInput } from '../schema-types'
 import { EquipmentWithQuota } from './equipmentUtils'
 import Modal from '../common/components/Modal'
 import styled from 'styled-components'
+import { MessageView } from '../common/components/Messages'
+import { SubSectionHeading } from '../common/components/Typography'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -74,7 +76,11 @@ const AddEquipment: React.FC<PropTypes> = observer(
 
     let doSearch = useCallback(async () => {
       if (searchVehicleId || searchRegistryNr) {
-        let useSearchTerm = searchVehicleId ? 'vehicleId' : searchRegistryNr ? 'registryNr' : null
+        let useSearchTerm = searchVehicleId
+          ? 'vehicleId'
+          : searchRegistryNr
+          ? 'registryNr'
+          : null
         let useSearchValue = searchVehicleId
           ? searchVehicleId
           : searchRegistryNr
@@ -173,14 +179,17 @@ const AddEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
-            {removeAllEquipment && !searchFormVisible && !searchResultActive && !pendingEquipment && (
-              <Button
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={removeAllEquipment}>
-                {removeLabel}
-              </Button>
-            )}
+            {removeAllEquipment &&
+              !searchFormVisible &&
+              !searchResultActive &&
+              !pendingEquipment && (
+                <Button
+                  style={{ marginLeft: 'auto' }}
+                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                  onClick={removeAllEquipment}>
+                  {removeLabel}
+                </Button>
+              )}
           </FlexRow>
         )}
         {pendingEquipment && (
@@ -192,7 +201,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 labels={fieldLabels}
                 readOnly={
                   pendingEquipment._exists
-                    ? Object.keys(fieldLabels || {}).filter((key) => !editableKeys.includes(key))
+                    ? Object.keys(fieldLabels || {}).filter(
+                        (key) => !editableKeys.includes(key)
+                      )
                     : false
                 }
                 onChange={onEquipmentInputChange}
@@ -212,20 +223,30 @@ const AddEquipment: React.FC<PropTypes> = observer(
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
               doneLabel={`Hae kalusto${
-                searchVehicleId ? ' kylkinumerolla' : searchRegistryNr ? ' rekisterinumerolla' : ''
+                searchVehicleId
+                  ? ' kylkinumerolla'
+                  : searchRegistryNr
+                  ? ' rekisterinumerolla'
+                  : ''
               }`}
               doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
                 {
                   label: 'Kylkinumero',
                   field: (
-                    <Input onChange={(val) => setSearchVehicleId(val)} value={searchVehicleId} />
+                    <Input
+                      onChange={(val) => setSearchVehicleId(val)}
+                      value={searchVehicleId}
+                    />
                   ),
                 },
                 {
                   label: 'Rekisterinumero',
                   field: (
-                    <Input onChange={(val) => setSearchRegistryNr(val)} value={searchRegistryNr} />
+                    <Input
+                      onChange={(val) => setSearchRegistryNr(val)}
+                      value={searchRegistryNr}
+                    />
                   ),
                 },
               ]}>

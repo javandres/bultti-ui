@@ -5,12 +5,7 @@ import { InspectionStatus, PreInspection } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import {
-  FlexRow,
-  MessageContainer,
-  MessageView,
-  SubSectionHeading,
-} from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
   useCreatePreInspection,
@@ -19,6 +14,8 @@ import {
 } from './preInspectionUtils'
 import { parseISO, format } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
+import { MessageContainer, MessageView } from '../common/components/Messages'
+import { SubSectionHeading } from '../common/components/Typography'
 
 const SelectPreInspectionView = styled.div``
 
@@ -210,9 +207,12 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
               {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                 <PreInspectionItem key="new" status="new">
                   <ItemContent style={{ marginTop: 0 }}>
-                    Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda uuden.
+                    Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda
+                    uuden.
                   </ItemContent>
-                  {preInspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
+                  {preInspections.some(
+                    (pi) => pi.status === InspectionStatus.InProduction
+                  ) && (
                     <ItemContent>
                       Uusi ennakkotarkastus korvaa nykyisen tuotannossa-olevan tarkastuksen.
                     </ItemContent>

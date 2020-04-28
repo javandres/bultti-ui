@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { SectionHeading } from '../common/components/common'
 import { Operator, PreInspectionInput, Season } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
@@ -16,6 +15,7 @@ import { PreInspectionContext } from './PreInspectionContext'
 import { ButtonStyle } from '../common/components/Button'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { navigateWithQueryString } from '../util/urlValue'
+import { SectionHeading } from '../common/components/Typography'
 
 const EditPreInspectionView = styled.div`
   width: 100%;

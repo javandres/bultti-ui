@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { ReportComponentProps } from './reportUtil'
 import ReportTableFilters from './ReportTableFilters'
-import { EmptyView } from '../common/components/common'
+import { EmptyView } from '../common/components/Messages'
 
 const ListReportView = styled.div``
 

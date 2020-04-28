@@ -5,8 +5,8 @@ import { text } from '../../util/translate'
 import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icon/ArrowDown'
 import { ThemeTypes } from '../../type/common'
-import { InputLabel } from '../components/common'
 import { observer } from 'mobx-react-lite'
+import { InputLabel } from '../components/form'
 
 const DropdownView = styled.div``
 
@@ -26,7 +26,11 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   border-radius: 8px;
   border: 1px solid
     ${(p) =>
-      p.theme === 'light' ? '#eaeaea' : p.disabled ? 'var(--lighter-grey)' : 'var(--dark-blue)'};
+      p.theme === 'light'
+        ? '#eaeaea'
+        : p.disabled
+        ? 'var(--lighter-grey)'
+        : 'var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
 
@@ -69,7 +73,8 @@ const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
 `
 
 const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
-  color: ${(p) => (p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white')};
+  color: ${(p) =>
+    p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
   cursor: pointer;
   padding: 0.75rem 1rem;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};

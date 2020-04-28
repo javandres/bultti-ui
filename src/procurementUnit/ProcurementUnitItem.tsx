@@ -22,13 +22,14 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import ProcurementUnitFormInput from './ProcurementUnitFormInput'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import { FlexRow, SubSectionHeading } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
+import { SubSectionHeading } from '../common/components/Typography'
 
 const ProcurementUnitView = styled.div``
 

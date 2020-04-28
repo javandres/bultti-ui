@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
+import { Page, PageTitle } from '../common/components/common'
 import PreInspectionsList from '../preInspection/PreInspectionsList'
 import { Plus } from '../common/icon/Plus'
 import { useStateValue } from '../state/useAppState'
@@ -10,6 +10,7 @@ import { useQueryData } from '../util/useQueryData'
 import { preInspectionsByOperatorQuery } from '../preInspection/preInspectionQueries'
 import { PreInspection } from '../schema-types'
 import { navigateWithQueryString } from '../util/urlValue'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 
 type PropTypes = {
   children?: React.ReactNode

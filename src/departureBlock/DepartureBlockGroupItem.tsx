@@ -7,16 +7,18 @@ import { LoadingDisplay } from '../common/components/Loading'
 import styled from 'styled-components'
 import Table, { CellContent } from '../common/components/Table'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
-import { Button, ButtonStyle, TextButton } from '../common/components/Button'
-import { ErrorView, FlexRow, MessageView } from '../common/components/common'
-import { DayType, Departure, DepartureBlock } from '../schema-types'
+import { Button, ButtonStyle } from '../common/components/Button'
+import { DayType, DepartureBlock } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { ErrorView } from '../common/components/Messages'
 
 const DepartureBlockGroupContainer = styled.div`
-  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
   padding-top: 1rem;
+  border-bottom: 1px solid var(--lighter-grey);
 
   &:first-child {
     padding-top: 0;
@@ -33,11 +35,9 @@ const DayTypeOption = styled.div`
   margin-right: 0.5rem;
 `
 
-const DepartureBlocksTable = styled(Table)`
-  margin-top: 1rem;
-`
-
-const ResetButton = styled(Button).attrs(() => ({ buttonStyle: ButtonStyle.SECONDARY_REMOVE }))`
+const ResetButton = styled(Button).attrs(() => ({
+  buttonStyle: ButtonStyle.SECONDARY_REMOVE,
+}))`
   margin-left: auto;
 `
 
@@ -108,7 +108,9 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     )
 
     let isLoading = useMemo(
-      () => removeBlocksLoading || ((showBlocksLoading || departureBlocks.length === 0) && loading),
+      () =>
+        removeBlocksLoading ||
+        ((showBlocksLoading || departureBlocks.length === 0) && loading),
       [loading, showBlocksLoading, departureBlocks, removeBlocksLoading]
     )
 
@@ -155,49 +157,11 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       setBlocksVisibility((currentVisible) => !currentVisible)
     }, [])
 
-    // Collect the data for display in the table.
-    let tableData = useMemo(() => {
-      const displayDayTypes = getEnabledDayTypes(dayTypeGroup)
-      const displayDayTypeBlocks = displayDayTypes[0]
-
-      if (!displayDayTypeBlocks) {
-        return []
-      }
-
-      return departureBlocks
-        .filter((block) => block.dayType === displayDayTypeBlocks)
-        .map((block) => {
-          const firstDeparture: Departure | undefined = block.departures[0]
-          const lastDeparture: Departure | undefined = block.departures[block.departures.length - 1]
-          const routes = block.departures.reduce((allRoutes: string[], departure) => {
-            const routeId = departure.routeId || ''
-
-            if (routeId && !allRoutes.includes(routeId)) {
-              allRoutes.push(routeId)
-            }
-
-            return allRoutes
-          }, [])
-
-          const equipmentId = block?.equipment?.uniqueVehicleId || ''
-
-          return {
-            id: block.id,
-            blockNumber: block.blockNumber,
-            dayTypes: displayDayTypes.join(', '),
-            registryNumber: block.equipmentRegistryNumber,
-            equipmentId: equipmentId,
-            firstStartTime: firstDeparture?.journeyStartTime || '',
-            lastEndTime: lastDeparture?.journeyEndTime || '',
-            routes: routes.join(', '),
-          }
-        })
-    }, [departureBlocks, dayTypeGroup])
-
     const renderTableCell = useCallback(
       (key, val) => {
         return (
-          <CellContent style={{ backgroundColor: !val ? 'var(--lighter-red)' : 'transparent' }}>
+          <CellContent
+            style={{ backgroundColor: !val ? 'var(--lighter-red)' : 'transparent' }}>
             {val}
           </CellContent>
         )
@@ -245,6 +209,11 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
               />
             </DayTypeOption>
           ))}
+          {departureBlocks.length !== 0 && !isLoading && isDisabled && (
+            <ResetButton style={{ marginLeft: 'auto' }} onClick={onReset}>
+              Poista kaikki ryhmän lähtöketjut
+            </ResetButton>
+          )}
         </DayTypesContainer>
         {((isDisabled && fileValue.length !== 0) || !isDisabled) && (
           <UploadFile
@@ -263,26 +232,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
               ([errorName, isError]) =>
                 isError && <ErrorView key={errorName}>{errorName}</ErrorView>
             )}
-            <FlexRow style={{ marginTop: '1rem' }}>
-              <TextButton onClick={onToggleBlocksVisibility} style={{ marginRight: '1rem' }}>
-                {blocksVisible ? 'Piilota lähdöt' : 'Näytä lähdöt'}
-              </TextButton>
-              {!isLoading && isDisabled && (
-                <ResetButton onClick={onReset}>Poista kaikki ryhmän lähtöketjut</ResetButton>
-              )}
-            </FlexRow>
           </>
         )}
-        {blocksVisible && tableData.length !== 0 ? (
-          <DepartureBlocksTable
-            renderCell={renderTableCell}
-            keyFromItem={(item) => item.id}
-            items={tableData}
-            columnLabels={departureBlocksColumnLabels}
-          />
-        ) : tableData.length === 0 ? (
-          <MessageView>Päiväryhmällä ei ole lähtöketjuja.</MessageView>
-        ) : null}
       </DepartureBlockGroupContainer>
     )
   }

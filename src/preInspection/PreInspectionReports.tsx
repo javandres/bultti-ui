@@ -1,12 +1,7 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { PreInspectionContext } from './PreInspectionContext'
-import {
-  ErrorView,
-  FlexColumn,
-  MessageView,
-  SubSectionHeading,
-} from '../common/components/common'
+import { FlexColumn } from '../common/components/common'
 import styled from 'styled-components'
 import { useQueryData } from '../util/useQueryData'
 import { availablePreInspectionReportsQuery } from '../reports/reportQueries'
@@ -15,6 +10,8 @@ import ReportListItem from '../reports/ReportListItem'
 import Report from '../reports/Report'
 import { TextButton } from '../common/components/Button'
 import PreInspectionItem from './PreInspectionItem'
+import { ErrorView, MessageView } from '../common/components/Messages'
+import { SubSectionHeading } from '../common/components/Typography'
 
 const PreInspectionReportsView = styled.div`
   height: 100%;

@@ -5,7 +5,7 @@ import {
   createExecutionRequirementsForPreInspectionMutation,
   executionRequirementsByAreaQuery,
 } from './executionRequirementsQueries'
-import { FlexRow, MessageView } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
@@ -14,6 +14,7 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useMutationData } from '../util/useMutationData'
 import { useRefetch } from '../util/useRefetch'
+import { MessageView } from '../common/components/Messages'
 
 const ExecutionRequirementsView = styled.div``
 
@@ -111,7 +112,9 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
-      {isLoading && areaExecutionRequirements.length === 0 && <LoadingDisplay loading={true} />}
+      {isLoading && areaExecutionRequirements.length === 0 && (
+        <LoadingDisplay loading={true} />
+      )}
       {areaExecutionRequirements.map((areaRequirements) => (
         <React.Fragment key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>

@@ -10,7 +10,8 @@ import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/compone
 import { CrossThick } from '../common/icon/CrossThick'
 import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
-import { FlexRow, SubSectionHeading } from '../common/components/common'
+import { FlexRow } from '../common/components/common'
+import { SubSectionHeading } from '../common/components/Typography'
 
 const ReportTableFiltersView = styled.div`
   margin-bottom: 1rem;

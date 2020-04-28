@@ -1,10 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
-import { MessageContainer, MessageView, Page, PageTitle } from '../common/components/common'
+import { Page, PageTitle } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useAppState } from '../state/useAppState'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 
 const ProcurementUnitsView = styled(Page)``
 

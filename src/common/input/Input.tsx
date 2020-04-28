@@ -1,8 +1,8 @@
 import React, { InputHTMLAttributes, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InputLabel } from '../components/common'
 import { ThemeTypes } from '../../type/common'
+import { InputLabel } from '../components/form'
 
 const InputView = styled.div``
 

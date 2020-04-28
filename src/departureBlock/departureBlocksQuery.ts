@@ -22,9 +22,6 @@ export const departureBlocksQuery = gql`
       dayType
       blockNumber
       equipmentRegistryNumber
-      departures {
-        ...DepartureFragment
-      }
       equipment {
         ...EquipmentFragment
       }
@@ -35,13 +32,20 @@ export const departureBlocksQuery = gql`
       }
     }
   }
-  ${DepartureFragment}
   ${EquipmentFragment}
 `
 
 export const uploadDepartureBlocksMutation = gql`
-  mutation uploadDepartureBlocks($file: Upload, $dayTypes: [DayType!]!, $inspectionId: String!) {
-    createDepartureBlockFromFile(file: $file, dayTypes: $dayTypes, preInspectionId: $inspectionId) {
+  mutation uploadDepartureBlocks(
+    $file: Upload
+    $dayTypes: [DayType!]!
+    $inspectionId: String!
+  ) {
+    createDepartureBlockFromFile(
+      file: $file
+      dayTypes: $dayTypes
+      preInspectionId: $inspectionId
+    ) {
       id
       dayType
     }
@@ -49,7 +53,10 @@ export const uploadDepartureBlocksMutation = gql`
 `
 
 export const removeDepartureBlocks = gql`
-  mutation removeDepartureBlocksForDayTypes($dayTypes: [DayType!]!, $preInspectionId: String!) {
+  mutation removeDepartureBlocksForDayTypes(
+    $dayTypes: [DayType!]!
+    $preInspectionId: String!
+  ) {
     removeDepartureBlocksForDayTypes(dayTypes: $dayTypes, preInspectionId: $preInspectionId)
   }
 `

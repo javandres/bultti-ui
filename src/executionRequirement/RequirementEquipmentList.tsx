@@ -2,11 +2,11 @@ import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import { updateEquipmentRequirementQuotaMutation } from '../equipment/equipmentQuery'
-import { MessageView } from '../common/components/common'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import { ExecutionRequirement } from '../schema-types'
 import { removeRequirementEquipmentMutation } from './executionRequirementsQueries'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
+import { MessageView } from '../common/components/Messages'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
