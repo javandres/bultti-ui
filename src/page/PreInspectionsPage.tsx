@@ -4,34 +4,17 @@ import { RouteComponentProps } from '@reach/router'
 import { Page, PageTitle } from '../common/components/common'
 import PreInspectionsList from '../preInspection/PreInspectionsList'
 import { Plus } from '../common/icon/Plus'
-import { useStateValue } from '../state/useAppState'
 import { Button } from '../common/components/Button'
-import { useQueryData } from '../util/useQueryData'
-import { preInspectionsByOperatorQuery } from '../preInspection/preInspectionQueries'
-import { PreInspection } from '../schema-types'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
+import { usePreInspections } from '../preInspection/preInspectionUtils'
 
 type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
 
 const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
-  var [operator] = useStateValue('globalOperator')
-
-  let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
-    preInspectionsByOperatorQuery,
-    {
-      skip: !operator,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        operatorId: operator?.operatorId,
-      },
-    }
-  )
-
-  let preInspections =
-    !!preInspectionsData && Array.isArray(preInspectionsData) ? preInspectionsData : []
+  let [{ operator, preInspections }, loading, refetch] = usePreInspections()
 
   return (
     <Page>

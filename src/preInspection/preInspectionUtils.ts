@@ -1,15 +1,17 @@
 import { useCallback } from 'react'
-import { InitialPreInspectionInput, PreInspection } from '../schema-types'
+import { InitialPreInspectionInput, Operator, PreInspection } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
   preInspectionQuery,
+  preInspectionsByOperatorQuery,
   removePreInspectionMutation,
 } from './preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
+import { useStateValue } from '../state/useAppState'
 
 export function usePreInspectionById(preInspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<PreInspection>(
@@ -112,4 +114,41 @@ export function usePreInspectionReports(preInspectionId: string = '') {
     },
     [preInspectionId]
   )
+}
+
+export function usePreInspections(
+  operator?: Operator
+): [
+  { preInspections: PreInspection[]; operator: Operator | undefined },
+  boolean,
+  () => unknown
+] {
+  var [globalOperator] = useStateValue('globalOperator')
+
+  let queryOperator = operator || globalOperator || undefined
+
+  let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
+    preInspectionsByOperatorQuery,
+    {
+      skip: !queryOperator,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: queryOperator?.operatorId,
+      },
+    }
+  )
+
+  let preInspections =
+    !!preInspectionsData && Array.isArray(preInspectionsData) ? preInspectionsData : []
+
+  let queueRefetch = useRefetch(refetch)
+
+  return [
+    {
+      preInspections,
+      operator: queryOperator,
+    },
+    loading,
+    queueRefetch,
+  ]
 }
