@@ -5,7 +5,7 @@ import {
   createExecutionRequirementsForPreInspectionMutation,
   executionRequirementsByAreaQuery,
 } from './executionRequirementsQueries'
-import { FlexRow } from '../common/components/common'
+import { PageSection, SectionTopBar } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
@@ -16,14 +16,19 @@ import { useMutationData } from '../util/useMutationData'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 
-const ExecutionRequirementsView = styled.div``
+const ExecutionRequirementsView = styled(PageSection)``
+
+const AreaWrapper = styled.div`
+  margin-bottom: 2rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
 
 const AreaHeading = styled.h4`
-  margin-bottom: 1rem;
-
-  &:first-child {
-    margin-top: 0;
-  }
+  margin-bottom: 0;
+  margin-top: 0;
 `
 
 const HeaderLoadingContainer = styled.div`
@@ -84,12 +89,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
 
   return (
     <ExecutionRequirementsView>
-      <FlexRow
-        style={{
-          margin: '0 -1rem 1rem',
-          padding: '0 1rem 0.5rem',
-          borderBottom: '1px solid var(--lighter-grey)',
-        }}>
+      <SectionTopBar>
         <HeaderLoadingContainer>
           <LoadingDisplay
             loading={isLoading && areaExecutionRequirements.length !== 0}
@@ -98,14 +98,14 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
         </HeaderLoadingContainer>
         {areaExecutionRequirements?.length !== 0 && (
           <Button
-            style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+            style={{ marginLeft: 'auto' }}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}
             onClick={onFetchRequirements}>
             Päivitä
           </Button>
         )}
-      </FlexRow>
+      </SectionTopBar>
       {!isLoading && areaExecutionRequirements?.length === 0 && (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
@@ -116,13 +116,13 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
         <LoadingDisplay loading={true} />
       )}
       {areaExecutionRequirements.map((areaRequirements) => (
-        <React.Fragment key={areaRequirements.area.id}>
+        <AreaWrapper key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>
           <RequirementsTable
             tableLayout={RequirementsTableLayout.BY_VALUES}
             executionRequirement={areaRequirements}
           />
-        </React.Fragment>
+        </AreaWrapper>
       ))}
     </ExecutionRequirementsView>
   )

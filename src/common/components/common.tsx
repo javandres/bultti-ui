@@ -5,8 +5,30 @@ import { StyledButton } from './Button'
 export const Page = styled.div``
 
 export const PageSection = styled.div`
-  padding: 0 1rem 0 1.5rem;
+  padding: 1rem;
   margin: 1rem 0;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid var(--lighter-grey);
+  width: 100%;
+`
+
+export const TransparentPageSection = styled(PageSection)`
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+`
+
+export const SectionTopBar = styled.div`
+  margin: -0.5rem -1rem 1rem;
+  padding: 0 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--lighter-grey);
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
 `
 
 export const PageTitle = styled.h2`

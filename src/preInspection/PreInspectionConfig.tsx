@@ -45,6 +45,8 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
                 disabled={true}
               />
             </ControlGroup>
+          </FormColumn>
+          <FormColumn>
             <InputLabel theme="light">Tarkastusjakso</InputLabel>
             <ControlGroup>
               <Input

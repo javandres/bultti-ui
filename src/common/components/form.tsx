@@ -13,11 +13,12 @@ export const FormColumn = styled(Column)`
 export const FormWrapper = styled(ColumnWrapper)`
   display: flex;
   padding: 0.5rem 1rem;
-  margin: 1rem;
+  margin: 1rem 0;
   background: white;
   border-radius: 0.5rem;
   border: 1px solid var(--lighter-grey);
 `
+
 export const TransparentFormWrapper = styled(FormWrapper)`
   padding: 0;
   background: transparent;
@@ -28,6 +29,7 @@ export const TransparentFormWrapper = styled(FormWrapper)`
     padding-top: 0;
   }
 `
+
 export const ControlGroup = styled.div`
   margin: 0 0 2rem;
   display: flex;

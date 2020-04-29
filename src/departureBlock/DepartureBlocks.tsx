@@ -3,16 +3,20 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference, flatten, groupBy, pick } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { defaultDayTypeGroup, getEnabledDayTypes, useDayTypeGroups } from './departureBlocksCommon'
+import {
+  defaultDayTypeGroup,
+  getEnabledDayTypes,
+  useDayTypeGroups,
+} from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
 import { departureBlocksQuery } from './departureBlocksQuery'
 import { DayType, DepartureBlock } from '../schema-types'
 import { normalDayTypes } from '../constants'
-import { FlexRow } from '../common/components/common'
+import { PageSection, SectionTopBar } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 
-const DepartureBlocksView = styled.div`
+const DepartureBlocksView = styled(PageSection)`
   margin-bottom: 0;
 `
 
@@ -72,26 +76,23 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
 
   return (
     <DepartureBlocksView>
-      <FlexRow
-        style={{
-          margin: '0 -1rem',
-          padding: '0 1rem 0.5rem',
-          borderBottom: '1px solid var(--lighter-grey)',
-        }}>
+      <SectionTopBar>
         {(departureBlocksData || []).length !== 0 && (
           <Button
             loading={departureBlocksLoading}
-            style={{ marginTop: '-1rem', marginLeft: 'auto' }}
+            style={{ marginLeft: 'auto' }}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}
             onClick={() => refetch()}>
             Päivitä
           </Button>
         )}
-      </FlexRow>
+      </SectionTopBar>
       {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
         let dayTypeBlocks = pick(departureBlockGroups, getEnabledDayTypes(dayTypeGroup))
-        let departureBlocksForDayTypes: DepartureBlock[] = flatten(Object.values(dayTypeBlocks))
+        let departureBlocksForDayTypes: DepartureBlock[] = flatten(
+          Object.values(dayTypeBlocks)
+        )
 
         return (
           <DepartureBlockGroupItem
@@ -107,8 +108,11 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
           />
         )
       })}
+
       {difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
-        <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
+        <div>
+          <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
+        </div>
       )}
     </DepartureBlocksView>
   )

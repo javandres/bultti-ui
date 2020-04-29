@@ -32,61 +32,64 @@ const ReportPreInspectionView = styled(PreInspectionItem)`
 
 export type PropTypes = {
   showInfo?: boolean
+  showItemActions?: boolean
 }
 
-const PreInspectionReports = observer(({ showInfo = true }: PropTypes) => {
-  const [reportsExpanded, setReportsExpanded] = useState(false)
+const PreInspectionReports = observer(
+  ({ showInfo = true, showItemActions = true }: PropTypes) => {
+    const [reportsExpanded, setReportsExpanded] = useState(false)
 
-  const toggleReportsExpanded = useCallback(() => {
-    setReportsExpanded((currentVal) => !currentVal)
-  }, [])
+    const toggleReportsExpanded = useCallback(() => {
+      setReportsExpanded((currentVal) => !currentVal)
+    }, [])
 
-  let preInspection = useContext(PreInspectionContext)
-  let preInspectionId = preInspection?.id || ''
+    let preInspection = useContext(PreInspectionContext)
+    let preInspectionId = preInspection?.id || ''
 
-  let { data: reportsData, loading: reportsLoading } = useQueryData(
-    availablePreInspectionReportsQuery,
-    {
-      skip: !preInspectionId,
-      variables: {
-        preInspectionId,
-      },
-    }
-  )
+    let { data: reportsData, loading: reportsLoading } = useQueryData(
+      availablePreInspectionReportsQuery,
+      {
+        skip: !preInspectionId,
+        variables: {
+          preInspectionId,
+        },
+      }
+    )
 
-  let reports = useMemo(() => reportsData || [], [reportsData])
+    let reports = useMemo(() => reportsData || [], [reportsData])
 
-  return (
-    <PreInspectionReportsView>
-      {!preInspection && <ErrorView>Ennakkotarkastus ei löydetty.</ErrorView>}
-      {!!preInspection && !reportsData && !reportsLoading && (
-        <MessageView>Ei raportteja...</MessageView>
-      )}
-      {showInfo && preInspection && (
-        <>
-          <SubSectionHeading>Ennakkotarkastuksen tiedot</SubSectionHeading>
-          <ReportPreInspectionView preInspection={preInspection} showActions={false} />
-        </>
-      )}
-      {reports.length !== 0 && (
-        <TextButton onClick={toggleReportsExpanded}>
-          {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
-        </TextButton>
-      )}
-      <LoadingDisplay loading={reportsLoading} />
-      {preInspection &&
-        reports.map((reportItem) => (
-          <ReportListItem
-            key={reportItem.name}
-            inspectionType={InspectionType.Pre}
-            inspectionId={preInspectionId}
-            reportData={reportItem}
-            isExpanded={reportsExpanded}>
-            <Report reportName={reportItem.name} preInspectionId={preInspectionId} />
-          </ReportListItem>
-        ))}
-    </PreInspectionReportsView>
-  )
-})
+    return (
+      <PreInspectionReportsView>
+        {!preInspection && <ErrorView>Ennakkotarkastus ei löydetty.</ErrorView>}
+        {!!preInspection && !reportsData && !reportsLoading && (
+          <MessageView>Ei raportteja...</MessageView>
+        )}
+        {showInfo && preInspection && (
+          <>
+            <SubSectionHeading>Ennakkotarkastuksen tiedot</SubSectionHeading>
+            <ReportPreInspectionView preInspection={preInspection} showActions={false} />
+          </>
+        )}
+        {reports.length !== 0 && (
+          <TextButton onClick={toggleReportsExpanded}>
+            {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
+          </TextButton>
+        )}
+        <LoadingDisplay loading={reportsLoading} />
+        {preInspection &&
+          reports.map((reportItem) => (
+            <ReportListItem
+              key={reportItem.name}
+              inspectionType={showItemActions ? InspectionType.Pre : undefined}
+              inspectionId={showItemActions ? preInspectionId : undefined}
+              reportData={reportItem}
+              isExpanded={reportsExpanded}>
+              <Report reportName={reportItem.name} preInspectionId={preInspectionId} />
+            </ReportListItem>
+          ))}
+      </PreInspectionReportsView>
+    )
+  }
+)
 
 export default PreInspectionReports

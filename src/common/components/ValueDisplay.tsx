@@ -13,7 +13,7 @@ const ValueDisplayView = styled.div`
   border-radius: 0.5rem;
   overflow: hidden;
 
-  > *:nth-child(even) {
+  > *:nth-child(2n) {
     background-color: #fafafa;
   }
 `

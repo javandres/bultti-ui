@@ -7,7 +7,6 @@ import { useMutationData } from '../util/useMutationData'
 import { updatePreInspectionMutation } from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
-import { FormColumn, FormWrapper, TransparentFormWrapper } from '../common/components/form'
 import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
@@ -17,9 +16,11 @@ import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { navigateWithQueryString } from '../util/urlValue'
 import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
+import { PageSection } from '../common/components/common'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
+  padding: 0 1.25rem;
 `
 
 type PreInspectionProps = {
@@ -130,26 +131,17 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             <PreInspectionConfig onUpdateValue={createUpdateCallback} />
 
             <SectionHeading theme="light">Lähtöketjut</SectionHeading>
-            <FormWrapper>
-              <FormColumn>
-                <DepartureBlocks />
-              </FormColumn>
-            </FormWrapper>
+            <DepartureBlocks />
 
             <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
-            <FormWrapper>
-              <FormColumn>
-                <PreInspectionExecutionRequirements />
-              </FormColumn>
-            </FormWrapper>
+            <PreInspectionExecutionRequirements />
 
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-            <TransparentFormWrapper>
-              <FormColumn>
-                <ProcurementUnits />
-              </FormColumn>
-            </TransparentFormWrapper>
-            <PreInspectionDevTools preInspection={preInspection} />
+            <ProcurementUnits />
+
+            <PageSection>
+              <PreInspectionDevTools preInspection={preInspection} />
+            </PageSection>
           </>
         )}
       </EditPreInspectionView>

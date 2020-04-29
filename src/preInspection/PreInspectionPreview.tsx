@@ -11,6 +11,10 @@ import PreInspectionReports from './PreInspectionReports'
 
 const PreviewPreInspectionView = styled.div``
 
+const PreviewMeta = styled(PreInspectionMeta)`
+  margin-left: 1rem;
+`
+
 export type PropTypes = {
   publishPreInspection: (publishId: string) => unknown
 } & TabChildProps
@@ -49,13 +53,13 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(({ publishPreInspecti
           ))}
         </MessageContainer>
       )}
-      <PreInspectionMeta
+      <PreviewMeta
         isLoading={false}
         buttonStyle={ButtonStyle.NORMAL}
         buttonAction={onPublish}
         buttonLabel="Julkaise"
       />
-      <PreInspectionReports showInfo={false} />
+      <PreInspectionReports showInfo={false} showItemActions={false} />
     </PreviewPreInspectionView>
   )
 })
