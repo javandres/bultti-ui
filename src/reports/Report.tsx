@@ -70,21 +70,14 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
     }
   }, [reportData])
 
-  let inspectionTypeStr: 'preinspection' | 'postInspection' | undefined =
-    inspectionType === InspectionType.Pre
-      ? 'preinspection'
-      : inspectionType === InspectionType.Post
-      ? 'postInspection'
-      : undefined
-
   return (
     <ReportView>
       <ReportFunctionsRow>
-        {inspectionTypeStr && inspectionId && (
+        {inspectionType && inspectionId && (
           <DownloadReport
             reportName={reportName}
             inspectionId={inspectionId}
-            inspectionType={inspectionTypeStr}
+            inspectionType={inspectionType}
           />
         )}
         <Button

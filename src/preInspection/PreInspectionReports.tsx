@@ -11,6 +11,7 @@ import { TextButton } from '../common/components/Button'
 import PreInspectionItem from './PreInspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubSectionHeading } from '../common/components/Typography'
+import { InspectionType } from '../schema-types'
 
 const PreInspectionReportsView = styled.div`
   height: 100%;
@@ -77,7 +78,7 @@ const PreInspectionReports = observer(({ showInfo = true }: PropTypes) => {
         reports.map((reportItem) => (
           <ReportListItem
             key={reportItem.name}
-            inspectionType="preinspection"
+            inspectionType={InspectionType.Pre}
             inspectionId={preInspectionId}
             reportData={reportItem}
             isExpanded={reportsExpanded}>

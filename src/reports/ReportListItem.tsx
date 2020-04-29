@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ReportListItem as ReportListItemType } from '../schema-types'
+import { InspectionType, ReportListItem as ReportListItemType } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
 import DownloadReport from './DownloadReport'
 
@@ -17,7 +17,7 @@ const ReportDescription = styled.p`
 export type PropTypes = {
   children: React.ReactChild
   reportData: ReportListItemType
-  inspectionType?: 'preinspection' | 'postInspection' | undefined
+  inspectionType?: InspectionType
   inspectionId?: string
   isExpanded?: boolean
 }

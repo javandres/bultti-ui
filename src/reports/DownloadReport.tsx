@@ -1,12 +1,27 @@
 import React, { CSSProperties, useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Button } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
+import styled from 'styled-components'
+import { InspectionType } from '../schema-types'
+
+const DownloadWrapper = styled.div`
+  position: relative;
+`
+
+const ErrorButton = styled(Button).attrs(() => ({
+  size: ButtonSize.MEDIUM,
+  buttonStyle: ButtonStyle.SECONDARY,
+}))`
+  background: var(--lighter-red);
+  border: 1px solid var(--light-red);
+  color: var(--red);
+`
 
 export type PropTypes = {
   inspectionId: string
-  inspectionType: 'preinspection' | 'postInspection'
+  inspectionType: InspectionType
   reportName: string
   className?: string
   style?: CSSProperties
@@ -15,30 +30,50 @@ export type PropTypes = {
 const DownloadReport = observer(
   ({ className, style, inspectionId, inspectionType, reportName }: PropTypes) => {
     let [loading, setLoading] = useState(false)
+    let [error, setError] = useState('')
 
     let onDownloadReport = useCallback(async () => {
+      let inspectionTypeStr =
+        inspectionType === InspectionType.Pre
+          ? 'preinspection'
+          : inspectionType === InspectionType.Post
+          ? 'postinspection'
+          : undefined
+
       setLoading(true)
 
-      let url = `${SERVER_URL}/report/${inspectionType}/${inspectionId}/${reportName}/excel`
+      let url = `${SERVER_URL}/reports/${inspectionTypeStr}/${inspectionId}/${reportName}/excel`
+
       let response = await fetch(url, {
         method: 'GET',
         credentials: 'include',
       })
 
-      let contentHeader = response.headers.get('Content-Disposition') || ''
-      let regex = /filename="(.+?(?="))/g // Extract filename from header
-      let name = (regex.exec(contentHeader) || ['', ''])[1] || 'raportti.xlsx'
+      if (response.ok) {
+        let contentHeader = response.headers.get('Content-Disposition') || ''
+        let regex = /filename="(.+?(?="))/g // Extract filename from header
+        let name = (regex.exec(contentHeader) || ['', ''])[1] || 'raportti.xlsx'
 
-      let fileBlob = await response.blob()
-      saveAs(fileBlob, name)
+        let fileBlob = await response.blob()
+        saveAs(fileBlob, name)
+      } else {
+        let errorText = response.statusText
+        setError(`${response.status} - ${errorText}`)
+      }
 
       setLoading(false)
     }, [inspectionId, inspectionType, reportName])
 
     return (
-      <Button loading={loading} className={className} style={style} onClick={onDownloadReport}>
-        Download excel
-      </Button>
+      <DownloadWrapper className={className} style={style}>
+        {error ? (
+          <ErrorButton onClick={() => setError('')}>{error}</ErrorButton>
+        ) : (
+          <Button loading={loading} onClick={onDownloadReport}>
+            Download excel
+          </Button>
+        )}
+      </DownloadWrapper>
     )
   }
 )
