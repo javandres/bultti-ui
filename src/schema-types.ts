@@ -188,7 +188,7 @@ export type PreInspection = {
   id: Scalars['ID'];
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;
-  seasonId?: Maybe<Scalars['Int']>;
+  seasonId?: Maybe<Scalars['String']>;
   season: Season;
   departureBlocks: Array<DepartureBlock>;
   executionRequirements: Array<ExecutionRequirement>;
@@ -218,7 +218,7 @@ export type PostInspection = {
   versionStackIdentifier?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   status: InspectionStatus;
-  seasonId?: Maybe<Scalars['Int']>;
+  seasonId?: Maybe<Scalars['String']>;
   season: Season;
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;

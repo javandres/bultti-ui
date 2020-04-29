@@ -9,6 +9,7 @@ export const preInspectionFragment = gql`
     minStartDate
     version
     operatorId
+    seasonId
     status
     operator {
       id
@@ -73,7 +74,10 @@ export const updatePreInspectionMutation = gql`
     $preInspectionId: String!
     $preInspectionInput: PreInspectionInput!
   ) {
-    updatePreInspection(preInspectionId: $preInspectionId, preInspection: $preInspectionInput) {
+    updatePreInspection(
+      preInspectionId: $preInspectionId
+      preInspection: $preInspectionInput
+    ) {
       ...PreInspectionFragment
     }
   }

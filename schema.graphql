@@ -186,7 +186,7 @@ type PostInspection {
   operator: Operator!
   operatorId: Int
   season: Season!
-  seasonId: Int
+  seasonId: String
   startDate: BulttiDate!
   status: InspectionStatus!
   version: Int!
@@ -204,7 +204,7 @@ type PreInspection {
   operator: Operator!
   operatorId: Int
   season: Season!
-  seasonId: Int
+  seasonId: String
   startDate: BulttiDate!
   status: InspectionStatus!
   updatedAt: DateTime!
