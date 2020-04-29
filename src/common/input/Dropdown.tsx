@@ -85,15 +85,19 @@ export type DropdownProps = {
   label?: string
   items: any[]
   onSelect: (selectedItem: any | null) => unknown
-  itemToString: string | ((item: any | null) => string)
-  itemToLabel: string | ((item: any | null) => string)
+  itemToString?: string | ((item: any | null) => string)
+  itemToLabel?: string | ((item: any | null) => string)
   selectedItem?: any
   className?: string
   style?: StyleHTMLAttributes<HTMLDivElement>
   theme?: ThemeTypes
 }
 
-function toString(item, converter) {
+function toString(item, converter?: string | ((item) => string)) {
+  if (typeof item === 'string') {
+    return item
+  }
+
   if (item && typeof converter === 'string') {
     return item[converter]
   }

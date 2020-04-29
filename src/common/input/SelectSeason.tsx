@@ -13,15 +13,24 @@ export type PropTypes = {
   value: null | Season | string
   onSelect: (season: null | Season) => void
   selectInitialId?: string
+  enableAll?: boolean
 }
-
-const UNSELECTED_VAL = '...'
 
 const valueIsSeason = (value: null | Season | string): value is Season =>
   !!value && typeof value !== 'string' && typeof value?.id !== 'undefined'
 
 const SelectSeason: React.FC<PropTypes> = observer(
-  ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
+  ({
+    enableAll = false,
+    onSelect,
+    value = null,
+    label,
+    className,
+    theme = 'light',
+    selectInitialId,
+  }) => {
+    let unselectedVal = enableAll ? 'Kaikki' : '...'
+
     let seasonsData = useSeasons()
 
     const seasons: Season[] = useMemo(() => {
@@ -32,14 +41,15 @@ const SelectSeason: React.FC<PropTypes> = observer(
         'desc'
       )
 
-      if (seasonsList[0]?.id !== '...') {
+      if (seasonsList[0]?.id !== unselectedVal) {
         const unselectedSeason: Season = {
-          id: UNSELECTED_VAL,
+          id: unselectedVal,
           season: '',
           startDate: '',
           endDate: '',
           preInspections: [],
         }
+
         seasonsList.unshift(unselectedSeason)
       }
 
@@ -48,19 +58,19 @@ const SelectSeason: React.FC<PropTypes> = observer(
       }
 
       return seasonsList
-    }, [seasonsData, value])
+    }, [seasonsData, value, unselectedVal])
 
     const onSelectSeason = useCallback(
       (selectedItem) => {
         let selectValue = selectedItem
 
-        if (!selectedItem || selectedItem?.id === UNSELECTED_VAL) {
+        if (!selectedItem || (!enableAll && selectedItem?.id === unselectedVal)) {
           selectValue = null
         }
 
         onSelect(selectValue)
       },
-      [onSelect]
+      [onSelect, enableAll]
     )
 
     // Auto-select the first season if there is only one.
@@ -74,9 +84,9 @@ const SelectSeason: React.FC<PropTypes> = observer(
       }
 
       if (!value && !initialSeason && seasons.length !== 0) {
-        onSelect(seasons.find((season) => season.id !== UNSELECTED_VAL) || null)
+        onSelect(seasons.find((season) => !enableAll && season.id !== unselectedVal) || null)
       }
-    }, [value, seasons, onSelect, selectInitialId])
+    }, [value, seasons, onSelect, selectInitialId, enableAll])
 
     const currentSeason = useMemo(() => {
       if (!!value && typeof value === 'string') {
