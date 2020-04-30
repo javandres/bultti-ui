@@ -18,6 +18,7 @@ import { MessageView } from '../common/components/Messages'
 
 const ExecutionRequirementsView = styled(PageSection)`
   min-height: 10rem;
+  position: relative;
 `
 
 const AreaWrapper = styled.div`
@@ -83,6 +84,8 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
     }
   }, [createPreInspectionRequirements, preInspection])
 
+  console.log(isLoading)
+
   return (
     <ExecutionRequirementsView>
       <SectionTopBar>
@@ -102,10 +105,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
-      <LoadingDisplay
-        loading={isLoading && areaExecutionRequirements.length === 0}
-        style={{ top: '-30%' }}
-      />
+      <LoadingDisplay loading={isLoading} style={{ top: '0' }} />
       {areaExecutionRequirements.map((areaRequirements) => (
         <AreaWrapper key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>

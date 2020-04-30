@@ -3,6 +3,7 @@ import {
   ApolloQueryResult,
   LazyQueryHookOptions,
   OperationVariables,
+  QueryHookOptions,
   QueryLazyOptions,
   useLazyQuery,
 } from '@apollo/client'
@@ -23,12 +24,18 @@ type QueryExecutor<TData, TVariables> = [
   }
 ]
 
+const defaultOptions = {
+  notifyOnNetworkStatusChange: true,
+}
+
 export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   query: DocumentNode,
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
-  let queryHookArr = useLazyQuery<TData, TVariables>(query, options)
+  let allOptions: QueryHookOptions<TData, TVariables> = { ...defaultOptions, ...options }
+  let queryHookArr = useLazyQuery<TData, TVariables>(query, allOptions)
+
   let [queryFn, { loading, error, data, refetch, called, networkStatus }] = queryHookArr || [
     () => {},
     {},
