@@ -16,7 +16,9 @@ import { useMutationData } from '../util/useMutationData'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 
-const ExecutionRequirementsView = styled(PageSection)``
+const ExecutionRequirementsView = styled(PageSection)`
+  min-height: 10rem;
+`
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -29,12 +31,6 @@ const AreaWrapper = styled.div`
 const AreaHeading = styled.h4`
   margin-bottom: 0;
   margin-top: 0;
-`
-
-const HeaderLoadingContainer = styled.div`
-  margin-top: -1.75rem;
-  position: relative;
-  top: 0.625rem;
 `
 
 export type PropTypes = {}
@@ -90,12 +86,6 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
   return (
     <ExecutionRequirementsView>
       <SectionTopBar>
-        <HeaderLoadingContainer>
-          <LoadingDisplay
-            loading={isLoading && areaExecutionRequirements.length !== 0}
-            inline={true}
-          />
-        </HeaderLoadingContainer>
         {areaExecutionRequirements?.length !== 0 && (
           <Button
             style={{ marginLeft: 'auto' }}
@@ -112,9 +102,10 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
         </>
       )}
-      {isLoading && areaExecutionRequirements.length === 0 && (
-        <LoadingDisplay loading={true} />
-      )}
+      <LoadingDisplay
+        loading={isLoading && areaExecutionRequirements.length === 0}
+        style={{ top: '-20%' }}
+      />
       {areaExecutionRequirements.map((areaRequirements) => (
         <AreaWrapper key={areaRequirements.area.id}>
           <AreaHeading>{areaRequirements.area.name}</AreaHeading>

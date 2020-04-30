@@ -18,6 +18,7 @@ const DepartureBlockGroupContainer = styled.div`
   margin-bottom: 1.5rem;
   padding-top: 1rem;
   border-bottom: 1px solid var(--lighter-grey);
+  position: relative;
 
   &:first-child {
     padding-top: 0;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { CSSProperties, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
 import { Colors } from '../../util/HSLColors'
@@ -45,9 +45,12 @@ const LoadingIndicator = styled.div<{ inline: boolean }>`
   }
 `
 
-const LoadingSafeDivComponent = ({ loading, ...props }) => <div {...props} />
+const LoadingSafeDivComponent = ({ loading, inline, ...props }) => <div {...props} />
 
-const LoadingContainer = styled(LoadingSafeDivComponent)<{ loading?: boolean }>`
+const LoadingContainer = styled(LoadingSafeDivComponent)<{
+  loading?: boolean
+  inline?: boolean
+}>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,15 +58,18 @@ const LoadingContainer = styled(LoadingSafeDivComponent)<{ loading?: boolean }>`
   pointer-events: none;
   user-select: none;
   transition: opacity 0.2s ease-out, transform 0.3s ease-out;
-  transform: translateY(-5rem);
-  z-index: 10;
+  transform: ${(p) => (p.inline ? 'translateY(-5rem)' : 'translate(-50%, -50%)')};
+  position: ${(p) => (p.inline ? 'static' : 'absolute')};
+  top: 2rem;
+  left: 50%;
+  z-index: 1000;
 
-  ${({ loading = false }) =>
+  ${({ loading = false, inline = false }) =>
     loading
       ? css`
           opacity: 1;
           pointer-events: all;
-          transform: translateY(0);
+          transform: ${inline ? 'translateY(0)' : 'translate(-50%, 5rem)'};
         `
       : ''};
 `
@@ -114,13 +120,14 @@ export default Loading
 type LoadingDisplayProps = {
   loading?: boolean
   className?: string
+  style?: CSSProperties
   inline?: boolean
   size?: number
   color?: string
 }
 
 export const LoadingDisplay = observer(
-  ({ loading = true, className, inline = false, size, color }: LoadingDisplayProps) => {
+  ({ style, loading = true, className, inline = false, size, color }: LoadingDisplayProps) => {
     const [isRendered, setIsRendered] = useState(loading)
     const timerRef = useRef(0)
 
@@ -143,7 +150,12 @@ export const LoadingDisplay = observer(
     }
 
     return (
-      <LoadingContainer data-testid="loading-container" className={className} loading={loading}>
+      <LoadingContainer
+        inline={inline}
+        data-testid="loading-container"
+        className={className}
+        style={style}
+        loading={loading}>
         <Loading inline={inline} size={size} color={color} />
       </LoadingContainer>
     )

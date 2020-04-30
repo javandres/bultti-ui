@@ -7,11 +7,11 @@ import DownloadReport from './DownloadReport'
 
 const ReportTitle = styled.h3`
   margin-top: 0;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
 `
 
 const ReportDescription = styled.p`
-  margin-bottom: 0;
+  margin: 0;
 `
 
 export type PropTypes = {
@@ -30,19 +30,19 @@ const ReportListItem: React.FC<PropTypes> = observer(
         headerContent={
           <>
             <HeaderSection>
-              <div>
-                <ReportTitle>{reportData.title}</ReportTitle>
-                <ReportDescription>{reportData.description}</ReportDescription>
-              </div>
-              {inspectionId && inspectionType && (
+              <ReportTitle>{reportData.title}</ReportTitle>
+              <ReportDescription>{reportData.description}</ReportDescription>
+            </HeaderSection>
+            {inspectionId && inspectionType && (
+              <HeaderSection style={{ flex: '1 1 auto', justifyContent: 'flex-end' }}>
                 <DownloadReport
                   style={{ marginLeft: 'auto', alignSelf: 'flex-end' }}
                   reportName={reportData.name}
                   inspectionType={inspectionType}
                   inspectionId={inspectionId}
                 />
-              )}
-            </HeaderSection>
+              </HeaderSection>
+            )}
           </>
         }>
         {report}

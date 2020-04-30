@@ -2,7 +2,9 @@ import styled from 'styled-components'
 import { TabsWrapper } from './Tabs'
 import { StyledButton } from './Button'
 
-export const Page = styled.div``
+export const Page = styled.div`
+  position: relative;
+`
 
 export const PageSection = styled.div`
   padding: 1rem;
@@ -13,6 +15,7 @@ export const PageSection = styled.div`
   border-radius: 0.5rem;
   border: 1px solid var(--lighter-grey);
   width: 100%;
+  position: relative;
 `
 
 export const TransparentPageSection = styled(PageSection)`

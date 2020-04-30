@@ -17,6 +17,7 @@ const PreInspectionReportsView = styled.div`
   height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
+  position: relative;
 `
 
 const ReportPreInspectionView = styled(PreInspectionItem)`

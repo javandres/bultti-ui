@@ -16,7 +16,10 @@ import { FlexRow } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import DownloadReport from './DownloadReport'
 
-const ReportView = styled.div``
+const ReportView = styled.div`
+  position: relative;
+  min-height: 10rem;
+`
 
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -88,7 +91,7 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
           Päivitä
         </Button>
       </ReportFunctionsRow>
-      <LoadingDisplay loading={reportLoading} />
+      <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
       {reportData && ReportTypeComponent}
     </ReportView>
   )

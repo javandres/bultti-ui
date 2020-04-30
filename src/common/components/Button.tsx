@@ -190,7 +190,7 @@ export const StyledTextButton = styled(DOMSafeButtonComponent)<{ color?: string 
   }
 `
 
-const ButtonLoading = styled(LoadingDisplay).attrs({ inline: true })<{
+const ButtonLoading = styled(LoadingDisplay).attrs(() => ({ inline: true }))<{
   buttonSize: ButtonSize
 }>`
   display: flex;

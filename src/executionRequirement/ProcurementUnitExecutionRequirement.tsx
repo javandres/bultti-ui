@@ -29,6 +29,7 @@ import { SubSectionHeading } from '../common/components/Typography'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-bottom: 2rem;
+  position: relative;
 `
 
 export type PropTypes = {

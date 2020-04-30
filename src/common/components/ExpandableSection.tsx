@@ -22,6 +22,7 @@ export const HeaderSection = styled.div`
   border-right: 1px solid var(--lighter-grey);
   flex: 1 1 50%;
   display: flex;
+  flex-direction: column;
   align-items: flex-start;
 
   &:nth-child(even) {

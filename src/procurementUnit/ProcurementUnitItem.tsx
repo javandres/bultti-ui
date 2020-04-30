@@ -15,7 +15,7 @@ import {
   updateProcurementUnitMutation,
   weeklyMetersFromJOREMutation,
 } from './procurementUnitsQuery'
-import Loading from '../common/components/Loading'
+import Loading, { LoadingDisplay } from '../common/components/Loading'
 import ItemForm from '../common/input/ItemForm'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -31,7 +31,10 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { SubSectionHeading } from '../common/components/Typography'
 
-const ProcurementUnitView = styled.div``
+const ProcurementUnitView = styled.div`
+  position: relative;
+  min-height: 5rem;
+`
 
 const ProcurementUnitHeading = styled.h4`
   margin: 0;
@@ -48,6 +51,7 @@ export type PropTypes = {
   startDate: string
   catalogueEditable: boolean
   showExecutionRequirements: boolean
+  className?: string
 }
 
 const procurementUnitLabels = {
@@ -62,6 +66,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     startDate,
     procurementUnit: { id, procurementUnitId },
     expanded = true,
+    className,
   }) => {
     const [
       pendingProcurementUnit,
@@ -175,10 +180,9 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     }, [refetchUnit])
 
     return (
-      <ProcurementUnitView className="className">
-        {loading ? (
-          <Loading />
-        ) : !procurementUnit ? null : (
+      <ProcurementUnitView className={className}>
+        <LoadingDisplay loading={loading} />
+        {procurementUnit && (
           <ExpandableSection
             isExpanded={expanded}
             headerContent={
