@@ -1,9 +1,14 @@
-import { LazyQueryHookOptions, QueryLazyOptions, useLazyQuery } from '@apollo/react-hooks'
+import {
+  ApolloError,
+  ApolloQueryResult,
+  LazyQueryHookOptions,
+  OperationVariables,
+  QueryLazyOptions,
+  useLazyQuery,
+} from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { pickGraphqlData } from './pickGraphqlData'
-import { OperationVariables } from '@apollo/react-common'
 import { useCallback, useMemo } from 'react'
-import { ApolloError, ApolloQueryResult } from 'apollo-client'
 
 type QueryExecutor<TData, TVariables> = [
   (
@@ -13,7 +18,7 @@ type QueryExecutor<TData, TVariables> = [
     data: null | TData
     loading: boolean
     error?: ApolloError
-    refetch: (variables?: TVariables | undefined) => Promise<ApolloQueryResult<TData>>
+    refetch?: (variables?: TVariables | undefined) => Promise<ApolloQueryResult<TData>>
     called: boolean
   }
 ]
@@ -24,19 +29,36 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
   let queryHookArr = useLazyQuery<TData, TVariables>(query, options)
-  let [queryFn, { loading, error, data, refetch, called }] = queryHookArr || [() => {}, {}]
+  let [queryFn, { loading, error, data, refetch, called, networkStatus }] = queryHookArr || [
+    () => {},
+    {},
+  ]
+
+  let availableRefetch = useCallback(
+    async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {
+      if (refetch) {
+        return refetch(variables)
+      }
+
+      return { data, loading, networkStatus }
+    },
+    [refetch, data, loading, networkStatus]
+  )
 
   let execLazyQuery = useCallback(
     (options?: QueryLazyOptions<TVariables> | undefined) => {
       if (called) {
-        return refetch(options?.variables)
+        return availableRefetch(options?.variables)
       }
 
       return Promise.resolve(queryFn(options))
     },
-    [queryFn, refetch, called]
+    [queryFn, availableRefetch, called]
   )
 
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
-  return [execLazyQuery, { data: pickedData, loading, error, refetch, called }]
+  return [
+    execLazyQuery,
+    { data: pickedData, loading, error, refetch: availableRefetch, called },
+  ]
 }

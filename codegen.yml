@@ -2,9 +2,11 @@ overwrite: true
 documents: null
 schema: http://localhost:4100/graphql
 generates:
-  ./src/fragmentTypes.json:
+  ./src/possibleTypes.ts:
     plugins:
       - fragment-matcher
+    config:
+      apolloClientVersion: 3
   ./src/schema-types.ts:
     plugins:
       - typescript

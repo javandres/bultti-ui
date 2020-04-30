@@ -8,7 +8,7 @@ import { UserStore } from './state/UserStore'
 import { createState } from './state/createState'
 import { UIStore } from './state/UIStore'
 import { createGraphqlClient } from './graphqlClient'
-import { ApolloProvider } from '@apollo/react-hooks'
+import { ApolloProvider } from '@apollo/client'
 import { LocationProvider } from '@reach/router'
 import { history } from './util/urlValue'
 

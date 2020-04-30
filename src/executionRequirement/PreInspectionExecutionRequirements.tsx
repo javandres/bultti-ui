@@ -104,7 +104,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
       )}
       <LoadingDisplay
         loading={isLoading && areaExecutionRequirements.length === 0}
-        style={{ top: '-20%' }}
+        style={{ top: '-30%' }}
       />
       {areaExecutionRequirements.map((areaRequirements) => (
         <AreaWrapper key={areaRequirements.area.id}>

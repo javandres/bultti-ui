@@ -15,7 +15,7 @@ import {
   updateProcurementUnitMutation,
   weeklyMetersFromJOREMutation,
 } from './procurementUnitsQuery'
-import Loading, { LoadingDisplay } from '../common/components/Loading'
+import { LoadingDisplay } from '../common/components/Loading'
 import ItemForm from '../common/input/ItemForm'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'

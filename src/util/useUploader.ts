@@ -1,9 +1,13 @@
-import { MutationHookOptions, useMutation } from '@apollo/react-hooks'
-import { MutationFunctionOptions, OperationVariables } from '@apollo/react-common'
+import {
+  MutationHookOptions,
+  useMutation,
+  MutationFunctionOptions,
+  OperationVariables,
+  ApolloError,
+} from '@apollo/client'
 import { DocumentNode, ExecutionResult } from 'graphql'
 import { useCallback, useMemo, useState } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
-import { ApolloError } from 'apollo-client'
 import { GraphQLError } from 'graphql/error/GraphQLError'
 
 type Uploader<TData, TVariables> = [

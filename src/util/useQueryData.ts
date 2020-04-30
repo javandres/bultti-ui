@@ -1,13 +1,15 @@
-import { useQuery } from '@apollo/react-hooks'
+import {
+  ApolloQueryResult,
+  OperationVariables,
+  QueryHookOptions,
+  useQuery,
+} from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { pickGraphqlData } from './pickGraphqlData'
-import { OperationVariables } from '@apollo/react-common'
-import { QueryHookOptions } from '@apollo/react-hooks/lib/types'
-import { useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 
 const defaultOptions = {
   notifyOnNetworkStatusChange: true,
-  partialRefetch: true,
 }
 
 export const useQueryData = <TData = any, TVariables = OperationVariables>(
@@ -16,8 +18,20 @@ export const useQueryData = <TData = any, TVariables = OperationVariables>(
   pickData = ''
 ) => {
   let allOptions: QueryHookOptions<TData, TVariables> = { ...defaultOptions, ...options }
+  let queryData = useQuery<TData, TVariables>(query, allOptions)
+  let { loading, error, data, refetch, networkStatus } = queryData || {}
 
-  let { loading, error, data, refetch } = useQuery<TData, TVariables>(query, allOptions)
+  let availableRefetch = useCallback(
+    async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {
+      if (refetch) {
+        return refetch(variables)
+      }
+
+      return { data, loading, networkStatus }
+    },
+    [refetch, data, loading, networkStatus]
+  )
+
   let pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
-  return { data: pickedData, loading, error, refetch }
+  return { data: pickedData, loading, error, refetch: availableRefetch }
 }
