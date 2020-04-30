@@ -98,9 +98,10 @@ const PreInspectionListItem = styled.button`
   cursor: pointer;
   color: var(--dark-grey);
   transform: scale(1);
-  transition: transform 0.1s ease-out;
+  transition: all 0.1s ease-out;
 
   &:hover {
+    background-color: #fafafa;
     transform: ${({ disabled = false }) => (!disabled ? 'scale(1.01)' : 'scale(1)')};
   }
 `
@@ -120,6 +121,8 @@ const InspectionVersion = styled.div`
   user-select: none;
 `
 
+const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
+
 export type PropTypes = RouteComponentProps
 
 const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
@@ -128,7 +131,9 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
   let [globalSeason] = useStateValue('globalSeason')
 
   let [selectedSeason, setSelectedSeason] = useState<Season | null>(globalSeason)
-  let [selectedDate, setSelectedDate] = useState<string>('Kaikki')
+  let [selectedDate, setSelectedDate] = useState<{ value: string; label: string }>(
+    defaultSelectedDate
+  )
 
   useEffect(() => {
     setSelectedSeason(globalSeason)
@@ -136,10 +141,13 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
 
   let startDateOptions = useMemo(
     () => [
-      'Kaikki',
+      defaultSelectedDate,
       ...preInspections
         .filter((p) => p.status === InspectionStatus.InProduction)
-        .map((p) => p.startDate),
+        .map((p) => ({
+          value: p.startDate,
+          label: format(parseISO(p.startDate), READABLE_DATE_FORMAT),
+        })),
     ],
     [preInspections]
   )
@@ -162,7 +170,11 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
         return false
       }
 
-      if (selectedDate && selectedDate !== 'Kaikki' && selectedDate !== p.startDate) {
+      if (
+        selectedDate &&
+        selectedDate.value !== 'kaikki' &&
+        selectedDate.value !== p.startDate
+      ) {
         return false
       }
 
@@ -196,7 +208,7 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
             <FilterControlGroup>
               <SelectSeason
                 enableAll={true}
-                label="Aikataulukausi"
+                label="Valitse aikataulukausi"
                 onSelect={setSelectedSeason}
                 value={selectedSeason}
               />
@@ -206,6 +218,8 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
                 label="Valitse tuotantopäivämäärä"
                 selectedItem={selectedDate}
                 items={startDateOptions}
+                itemToLabel="label"
+                itemToString="value"
                 onSelect={setSelectedDate}
               />
             </FilterControlGroup>
