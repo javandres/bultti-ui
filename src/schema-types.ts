@@ -40,8 +40,7 @@ export type Query = {
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
-  departureBlock?: Maybe<DepartureBlock>;
-  departureBlocksForPreInspection: Array<DepartureBlock>;
+  blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
   availablePreInspectionReports: Array<ReportListItem>;
   inspectionReportByName?: Maybe<Report>;
 };
@@ -143,12 +142,7 @@ export type QueryUserArgs = {
 };
 
 
-export type QueryDepartureBlockArgs = {
-  departureBlockId: Scalars['String'];
-};
-
-
-export type QueryDepartureBlocksForPreInspectionArgs = {
+export type QueryBlockDeparturesForPreInspectionArgs = {
   preInspectionId: Scalars['String'];
 };
 
@@ -175,7 +169,7 @@ export type Operator = {
   executionRequirements: Array<ExecutionRequirement>;
   equipment: Array<Equipment>;
   equipmentCatalogues: Array<EquipmentCatalogue>;
-  departureBlocks: Array<DepartureBlock>;
+  operatorBlockDepartures: Array<OperatorBlockDeparture>;
 };
 
 export type PreInspection = {
@@ -190,7 +184,7 @@ export type PreInspection = {
   operator: Operator;
   seasonId?: Maybe<Scalars['String']>;
   season: Season;
-  departureBlocks: Array<DepartureBlock>;
+  operatorBlockDepartures: Array<OperatorBlockDeparture>;
   executionRequirements: Array<ExecutionRequirement>;
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
@@ -229,17 +223,26 @@ export enum InspectionStatus {
   InProduction = 'InProduction'
 }
 
-export type DepartureBlock = {
-   __typename?: 'DepartureBlock';
+export type OperatorBlockDeparture = {
+   __typename?: 'OperatorBlockDeparture';
   id: Scalars['ID'];
   blockNumber: Scalars['Int'];
   dayType: DayType;
-  equipmentRegistryNumber?: Maybe<Scalars['String']>;
+  journeyType: Scalars['String'];
+  routeId?: Maybe<Scalars['String']>;
+  direction?: Maybe<Scalars['String']>;
+  journeyStartTime: Scalars['String'];
+  journeyEndTime: Scalars['String'];
+  registryNr?: Maybe<Scalars['String']>;
+  vehicleId?: Maybe<Scalars['String']>;
+  routeLength?: Maybe<Scalars['Int']>;
   operator: Operator;
   equipment?: Maybe<Equipment>;
+  procurementUnit?: Maybe<Array<ProcurementUnit>>;
   preInspectionId: Scalars['String'];
   preInspection: PreInspection;
-  departures: Array<Departure>;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
 };
 
 export enum DayType {
@@ -268,7 +271,8 @@ export type Equipment = {
   emissionClass: Scalars['Int'];
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
   executionRequirementQuotas: Array<ExecutionRequirementQuota>;
-  departureBlocks: Array<DepartureBlock>;
+  operatorBlockDepartures: Array<OperatorBlockDeparture>;
+  departures: Array<Departure>;
 };
 
 export type EquipmentCatalogueQuota = {
@@ -312,6 +316,7 @@ export type ProcurementUnit = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   departures: Array<Departure>;
+  operatorBlockDepartures: Array<OperatorBlockDeparture>;
   executionRequirements: Array<ExecutionRequirement>;
 };
 
@@ -381,16 +386,15 @@ export type ProcurementUnitRoute = {
 export type Departure = {
    __typename?: 'Departure';
   id: Scalars['ID'];
-  blockNumber: Scalars['Int'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
-  routeId?: Maybe<Scalars['String']>;
-  direction?: Maybe<Scalars['String']>;
+  routeId: Scalars['String'];
+  direction: Scalars['String'];
   routeLength?: Maybe<Scalars['Int']>;
-  departureBlocks: Array<DepartureBlock>;
+  dayType: Scalars['String'];
   procurementUnits: Array<ProcurementUnit>;
-  equipmentRegistryNumber?: Maybe<Scalars['String']>;
-  dayTypes?: Maybe<Scalars['String']>;
+  equipment?: Maybe<Equipment>;
+  registryNumber?: Maybe<Scalars['String']>;
 };
 
 
@@ -492,7 +496,7 @@ export type Mutation = {
   login?: Maybe<User>;
   logout: Scalars['Boolean'];
   removeEquipmentFromCatalogue: Scalars['Boolean'];
-  createDepartureBlockFromFile?: Maybe<Array<DepartureBlock>>;
+  createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
 };
@@ -620,7 +624,7 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
 };
 
 
-export type MutationCreateDepartureBlockFromFileArgs = {
+export type MutationCreateBlockDeparturesFromFileArgs = {
   preInspectionId: Scalars['String'];
   dayTypes: Array<DayType>;
   file?: Maybe<Scalars['Upload']>;

@@ -837,34 +837,7 @@
             "deprecationReason": null
           },
           {
-            "name": "departureBlock",
-            "description": null,
-            "args": [
-              {
-                "name": "departureBlockId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              }
-            ],
-            "type": {
-              "kind": "OBJECT",
-              "name": "DepartureBlock",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "departureBlocksForPreInspection",
+            "name": "blockDeparturesForPreInspection",
             "description": null,
             "args": [
               {
@@ -893,7 +866,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepartureBlock",
+                    "name": "OperatorBlockDeparture",
                     "ofType": null
                   }
                 }
@@ -1210,7 +1183,7 @@
             "deprecationReason": null
           },
           {
-            "name": "departureBlocks",
+            "name": "operatorBlockDepartures",
             "description": null,
             "args": [],
             "type": {
@@ -1224,7 +1197,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepartureBlock",
+                    "name": "OperatorBlockDeparture",
                     "ofType": null
                   }
                 }
@@ -1389,7 +1362,7 @@
             "deprecationReason": null
           },
           {
-            "name": "departureBlocks",
+            "name": "operatorBlockDepartures",
             "description": null,
             "args": [],
             "type": {
@@ -1403,7 +1376,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepartureBlock",
+                    "name": "OperatorBlockDeparture",
                     "ofType": null
                   }
                 }
@@ -1837,7 +1810,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "DepartureBlock",
+        "name": "OperatorBlockDeparture",
         "description": null,
         "fields": [
           {
@@ -1889,12 +1862,108 @@
             "deprecationReason": null
           },
           {
-            "name": "equipmentRegistryNumber",
+            "name": "journeyType",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "routeId",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "direction",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "journeyStartTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "journeyEndTime",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "registryNr",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "vehicleId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "routeLength",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1924,6 +1993,26 @@
               "kind": "OBJECT",
               "name": "Equipment",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "procurementUnit",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ProcurementUnit",
+                  "ofType": null
+                }
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1961,25 +2050,25 @@
             "deprecationReason": null
           },
           {
-            "name": "departures",
+            "name": "startDate",
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "Departure",
-                    "ofType": null
-                  }
-                }
-              }
+              "kind": "SCALAR",
+              "name": "BulttiDate",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "endDate",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDate",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2281,7 +2370,7 @@
             "deprecationReason": null
           },
           {
-            "name": "departureBlocks",
+            "name": "operatorBlockDepartures",
             "description": null,
             "args": [],
             "type": {
@@ -2295,7 +2384,31 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "DepartureBlock",
+                    "name": "OperatorBlockDeparture",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "departures",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "Departure",
                     "ofType": null
                   }
                 }
@@ -2859,6 +2972,30 @@
                   "ofType": {
                     "kind": "OBJECT",
                     "name": "Departure",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "operatorBlockDepartures",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "OBJECT",
+                    "name": "OperatorBlockDeparture",
                     "ofType": null
                   }
                 }
@@ -3573,22 +3710,6 @@
             "deprecationReason": null
           },
           {
-            "name": "blockNumber",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "journeyStartTime",
             "description": null,
             "args": [],
@@ -3625,9 +3746,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3637,9 +3762,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -3657,24 +3786,16 @@
             "deprecationReason": null
           },
           {
-            "name": "departureBlocks",
+            "name": "dayType",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "DepartureBlock",
-                    "ofType": null
-                  }
-                }
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -3705,19 +3826,19 @@
             "deprecationReason": null
           },
           {
-            "name": "equipmentRegistryNumber",
+            "name": "equipment",
             "description": null,
             "args": [],
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "OBJECT",
+              "name": "Equipment",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "dayTypes",
+            "name": "registryNumber",
             "description": null,
             "args": [],
             "type": {
@@ -5331,7 +5452,7 @@
             "deprecationReason": null
           },
           {
-            "name": "createDepartureBlockFromFile",
+            "name": "createBlockDeparturesFromFile",
             "description": null,
             "args": [
               {
@@ -5389,7 +5510,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "DepartureBlock",
+                  "name": "OperatorBlockDeparture",
                   "ofType": null
                 }
               }
