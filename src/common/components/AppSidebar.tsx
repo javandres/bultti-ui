@@ -17,6 +17,8 @@ import { useMutationData } from '../../util/useMutationData'
 import { logoutMutation } from '../query/authQueries'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import NavLink from './NavLink'
+import SelectSeason from '../input/SelectSeason'
+import Dropdown from '../input/Dropdown'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -58,7 +60,7 @@ const NavCategory = styled.div`
 `
 
 const CategoryTitle = styled.h3`
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   text-transform: uppercase;
   color: #eeeeee;
   margin: 0;
@@ -82,6 +84,28 @@ const UserDisplay = styled.div`
 `
 
 const GlobalFilters = styled.div``
+
+export const SidebarStyledSelect = styled(Dropdown)`
+  > label {
+    padding-left: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--dark-blue);
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    color: #eeeeee;
+  }
+
+  > div {
+    padding: 0 1rem 1rem;
+  }
+
+  ul {
+    left: 1rem;
+    width: calc(100% - 2rem);
+  }
+`
 
 /*const LangButton = styled(Button).attrs({
   small: true,
@@ -176,13 +200,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <NavLink to="post-inspection">
             <Search fill="white" width="1rem" height="1rem" />
             <Text>nav.list.postinspection</Text>
-          </NavLink>
-        </NavCategory>
-        <NavCategory>
-          <CategoryTitle>Dev stuff</CategoryTitle>
-          <NavLink to="vehicles">
-            <Search fill="white" width="1rem" height="1rem" />
-            Vehicles test page
           </NavLink>
         </NavCategory>
       </AppNav>

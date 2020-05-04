@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InspectionType, ReportListItem as ReportListItemType } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
-import DownloadReport from './DownloadReport'
 
 const ReportTitle = styled.h3`
   margin-top: 0;
@@ -28,22 +27,10 @@ const ReportListItem: React.FC<PropTypes> = observer(
       <ExpandableSection
         isExpanded={isExpanded}
         headerContent={
-          <>
-            <HeaderSection>
-              <ReportTitle>{reportData.title}</ReportTitle>
-              <ReportDescription>{reportData.description}</ReportDescription>
-            </HeaderSection>
-            {inspectionId && inspectionType && (
-              <HeaderSection style={{ flex: '1 1 auto', justifyContent: 'flex-end' }}>
-                <DownloadReport
-                  style={{ marginLeft: 'auto', alignSelf: 'flex-end' }}
-                  reportName={reportData.name}
-                  inspectionType={inspectionType}
-                  inspectionId={inspectionId}
-                />
-              </HeaderSection>
-            )}
-          </>
+          <HeaderSection>
+            <ReportTitle>{reportData.title}</ReportTitle>
+            <ReportDescription>{reportData.description}</ReportDescription>
+          </HeaderSection>
         }>
         {report}
       </ExpandableSection>

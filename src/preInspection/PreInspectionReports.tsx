@@ -10,7 +10,7 @@ import Report from '../reports/Report'
 import { TextButton } from '../common/components/Button'
 import PreInspectionItem from './PreInspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 import { InspectionType } from '../schema-types'
 
 const PreInspectionReportsView = styled.div`
@@ -67,7 +67,7 @@ const PreInspectionReports = observer(
         )}
         {showInfo && preInspection && (
           <>
-            <SubSectionHeading>Ennakkotarkastuksen tiedot</SubSectionHeading>
+            <SubHeading>Ennakkotarkastuksen tiedot</SubHeading>
             <ReportPreInspectionView preInspection={preInspection} showActions={false} />
           </>
         )}

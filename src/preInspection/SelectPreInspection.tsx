@@ -15,7 +15,7 @@ import {
 import { parseISO, format } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 
 const SelectPreInspectionView = styled.div``
 
@@ -81,7 +81,7 @@ const ButtonRow = styled.div`
   }
 `
 
-const InspectionTitle = styled(SubSectionHeading)`
+const InspectionTitle = styled(SubHeading)`
   margin-bottom: 1rem;
 `
 

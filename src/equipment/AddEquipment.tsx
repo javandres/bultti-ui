@@ -16,7 +16,7 @@ import { EquipmentWithQuota } from './equipmentUtils'
 import Modal from '../common/components/Modal'
 import styled from 'styled-components'
 import { MessageView } from '../common/components/Messages'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -195,7 +195,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {pendingEquipment && (
           <Modal>
             <AddEquipmentFormWrapper>
-              <SubSectionHeading>Lisää ajoneuvo</SubSectionHeading>
+              <SubHeading>Lisää ajoneuvo</SubHeading>
               <ItemForm
                 item={pendingEquipment}
                 labels={fieldLabels}
@@ -218,7 +218,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
         )}
         {searchFormVisible && (
           <>
-            <SubSectionHeading>Hae kylkinumerolla</SubSectionHeading>
+            <SubHeading>Hae kylkinumerolla</SubHeading>
             <InputForm
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}

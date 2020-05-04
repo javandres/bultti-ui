@@ -29,7 +29,7 @@ import ExpandableSection, {
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 
 const ProcurementUnitView = styled.div`
   position: relative;
@@ -210,7 +210,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
               )}
               <FlexRow>
-                <SubSectionHeading>Kohteen tiedot</SubSectionHeading>
+                <SubHeading>Kohteen tiedot</SubHeading>
                 <Button
                   onClick={onUpdate}
                   style={{ marginLeft: 'auto' }}
@@ -259,7 +259,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   </ItemForm>
                 </>
               ) : null}
-              <SubSectionHeading>Kalustoluettelo</SubSectionHeading>
+              <SubHeading>Kalustoluettelo</SubHeading>
               <EquipmentCatalogue
                 startDate={inspectionStartDate}
                 procurementUnitId={id}

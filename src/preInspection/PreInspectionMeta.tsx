@@ -15,7 +15,7 @@ import {
 import { InputLabel } from '../common/components/form'
 
 const PreInspectionMetaView = styled.div`
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
 `
 
 const MetaHeading = styled(InputLabel).attrs(() => ({ theme: 'light' }))`

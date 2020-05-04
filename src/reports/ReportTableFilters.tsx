@@ -11,7 +11,7 @@ import { CrossThick } from '../common/icon/CrossThick'
 import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 
 const ReportTableFiltersView = styled.div`
   margin-bottom: 1rem;
@@ -185,9 +185,7 @@ const ReportTableFilters = observer(
     return (
       <ReportTableFiltersView>
         <FlexRow style={{ marginBottom: '1.5rem' }}>
-          <SubSectionHeading style={{ marginTop: 0, marginBottom: 0 }}>
-            Filtteröinti
-          </SubSectionHeading>
+          <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
           {filters.length > 1 && (
             <FilterModeButton
               name="filter-mode"

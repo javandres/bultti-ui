@@ -25,7 +25,7 @@ import AddEquipment from '../equipment/AddEquipment'
 import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
-import { SubSectionHeading } from '../common/components/Typography'
+import { SubHeading } from '../common/components/Typography'
 
 const ProcurementUnitExecutionRequirementView = styled.div`
   margin-bottom: 2rem;
@@ -140,9 +140,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     return (
       <ProcurementUnitExecutionRequirementView>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
-          <SubSectionHeading style={{ marginBottom: 0 }}>
-            Kohteen suoritevaatimukset
-          </SubSectionHeading>
+          <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
               loading={isLoading}

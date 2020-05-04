@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
-import { Page, PageTitle } from '../common/components/common'
+import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import PreInspectionPreview from '../preInspection/PreInspectionPreview'
@@ -16,6 +16,7 @@ import {
   usePreInspectionById,
 } from '../preInspection/preInspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
+import { PageTitle } from '../common/components/Typography'
 
 const EditPreInspectionView = styled(Page)``
 

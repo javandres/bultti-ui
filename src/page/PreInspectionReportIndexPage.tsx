@@ -6,7 +6,7 @@ import {
   usePreInspections,
 } from '../preInspection/preInspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { Page, PageTitle } from '../common/components/common'
+import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { ControlGroup } from '../common/components/form'
@@ -19,6 +19,7 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import { orderBy } from 'lodash'
+import { PageTitle } from '../common/components/Typography'
 
 const PreInspectionReportIndexPageView = styled(Page)``
 

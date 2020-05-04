@@ -1,13 +1,14 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { Page, PageTitle } from '../common/components/common'
+import { Page } from '../common/components/common'
 import PreInspectionsList from '../preInspection/PreInspectionsList'
 import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { usePreInspections } from '../preInspection/preInspectionUtils'
+import { PageTitle } from '../common/components/Typography'
 
 type PropTypes = {
   children?: React.ReactNode
