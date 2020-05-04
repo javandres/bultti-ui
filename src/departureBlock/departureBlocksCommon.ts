@@ -1,4 +1,4 @@
-import { DayType, DepartureBlock } from '../schema-types'
+import { DayType } from '../schema-types'
 import { useCallback, useMemo, useState } from 'react'
 import { flatten, orderBy } from 'lodash'
 import { normalDayTypes } from '../constants'
@@ -32,9 +32,6 @@ export const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup): string[] =>
 
 export const isDayTypeEnabled = (dayType: DayType, dayTypeGroup: DayTypeGroup) =>
   getEnabledDayTypes(dayTypeGroup).includes(dayType)
-
-export const createDepartureBlockKey = (item: DepartureBlock, dayType = item.dayType) =>
-  `${item.id}/${dayType}`
 
 type DayTypeGroupsReturn = [
   DayTypeState,
@@ -123,7 +120,9 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
       setDayTypeGroups(orderDayTypeGroups(nextDayTypeGroups))
 
       if (setTo && enabledDayTypes.includes(dayType)) {
-        const existingIndex = nextDayTypeGroups.findIndex((dtg) => isDayTypeEnabled(dayType, dtg))
+        const existingIndex = nextDayTypeGroups.findIndex((dtg) =>
+          isDayTypeEnabled(dayType, dtg)
+        )
 
         nextDayTypeGroups = setDayTypeInGroup(dayType, existingIndex, false)
       }

@@ -17,7 +17,6 @@ import { useMutationData } from '../../util/useMutationData'
 import { logoutMutation } from '../query/authQueries'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import NavLink from './NavLink'
-import SelectSeason from '../input/SelectSeason'
 import Dropdown from '../input/Dropdown'
 
 const AppSidebarView = styled.div`

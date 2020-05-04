@@ -6,6 +6,7 @@ import { useDropzone } from 'react-dropzone'
 import { CircleCheckmark } from '../icon/CircleCheckmark'
 import { CrossThick } from '../icon/CrossThick'
 import { Button, ButtonStyle } from '../components/Button'
+import { FlexRow } from '../components/common'
 
 const UploadView = styled.div`
   margin: 0.5rem 0;
@@ -22,6 +23,7 @@ const UploadWrapper = styled.div<{ hasData?: boolean; isError?: boolean; isOk?: 
   outline: none;
   transition: padding 0.2s ease-out;
   display: flex;
+  flex-direction: column;
   align-items: center;
 `
 
@@ -58,6 +60,7 @@ const CurrentFile = styled.span`
   align-items: center;
   font-weight: bold;
   color: inherit;
+  align-self: center;
 `
 
 const IconWrapper = styled.span`
@@ -71,6 +74,10 @@ const ErrorMessage = styled.span`
   margin-top: 1rem;
   margin-bottom: -0.5rem;
   line-height: 1.4;
+`
+
+const UploadContentWrapper = styled(FlexRow)`
+  width: 100%;
 `
 
 const FileLoading = styled(Loading)`
@@ -87,9 +94,17 @@ export type PropTypes = {
 }
 
 const UploadFile: React.FC<PropTypes> = observer(
-  ({ uploader = [], label = 'Valitse tiedosto', className, onChange, value, disabled = false }) => {
+  ({
+    uploader = [],
+    label = 'Valitse tiedosto',
+    className,
+    onChange,
+    value,
+    disabled = false,
+  }) => {
     const prevUpload = useRef<string | null>('')
-    const [upload, state = { loading: false, called: false, error: undefined }] = uploader || []
+    const [upload, state = { loading: false, called: false, error: undefined }] =
+      uploader || []
 
     useEffect(() => {
       if (!disabled && value && value.length !== 0) {
@@ -154,35 +169,37 @@ const UploadFile: React.FC<PropTypes> = observer(
           <UploadInput {...getInputProps()} />
           {value.length !== 0 ? (
             <>
-              <CurrentFile>
-                {state.loading ? (
-                  <FileLoading inline={true} />
-                ) : (
-                  <IconWrapper>
-                    {state.error ? (
-                      <CrossThick width="1.5rem" height="1.5rem" fill="red" />
-                    ) : (
-                      <CircleCheckmark width="1.5rem" height="1.5rem" />
-                    )}
-                  </IconWrapper>
+              <UploadContentWrapper>
+                <CurrentFile>
+                  {state.loading ? (
+                    <FileLoading inline={true} />
+                  ) : (
+                    <IconWrapper>
+                      {state.error ? (
+                        <CrossThick width="1.5rem" height="1.5rem" fill="red" />
+                      ) : (
+                        <CircleCheckmark width="1.5rem" height="1.5rem" />
+                      )}
+                    </IconWrapper>
+                  )}
+                  {value[0].name}
+                </CurrentFile>
+                {!state.loading && !disabled && (
+                  <Button
+                    style={{ marginLeft: 'auto' }}
+                    buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                    onClick={onReset}>
+                    Tyhjennä
+                  </Button>
                 )}
-                {value[0].name}
-              </CurrentFile>
+              </UploadContentWrapper>
               {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
-              {!state.loading && !disabled && (
-                <Button
-                  style={{ marginLeft: 'auto' }}
-                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                  onClick={onReset}>
-                  Tyhjennä
-                </Button>
-              )}
             </>
           ) : (
-            <>
+            <UploadContentWrapper>
               <LabelText disabled={disabled}>{label}</LabelText>
               <InstructionText>Vedä tiedosto tähän tai valitse klikkaamalla.</InstructionText>
-            </>
+            </UploadContentWrapper>
           )}
         </UploadWrapper>
       </UploadView>

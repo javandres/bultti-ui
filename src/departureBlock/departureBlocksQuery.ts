@@ -1,8 +1,8 @@
 import gql from 'graphql-tag'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
-export const DepartureFragment = gql`
-  fragment DepartureFragment on Departure {
+export const OperatorBlockDepartureFragment = gql`
+  fragment OperatorBlockDepartureFragment on OperatorBlockDeparture {
     id
     blockNumber
     direction
@@ -10,18 +10,26 @@ export const DepartureFragment = gql`
     journeyEndTime
     routeId
     routeLength
-    equipmentRegistryNumber
-    dayTypes
+    registryNr
+    dayType
   }
 `
 
 export const departureBlocksQuery = gql`
   query departureBlocks($preInspectionId: String!) {
-    departureBlocksForPreInspection(preInspectionId: $preInspectionId) {
+    blockDeparturesForPreInspection(preInspectionId: $preInspectionId) {
       id
       dayType
       blockNumber
-      equipmentRegistryNumber
+      registryNr
+      direction
+      routeId
+      journeyStartTime
+      journeyEndTime
+      journeyType
+      routeLength
+      startDate
+      endDate
       equipment {
         ...EquipmentFragment
       }
@@ -41,7 +49,7 @@ export const uploadDepartureBlocksMutation = gql`
     $dayTypes: [DayType!]!
     $inspectionId: String!
   ) {
-    createDepartureBlockFromFile(
+    createBlockDeparturesFromFile(
       file: $file
       dayTypes: $dayTypes
       preInspectionId: $inspectionId

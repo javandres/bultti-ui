@@ -84,8 +84,6 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
     }
   }, [createPreInspectionRequirements, preInspection])
 
-  console.log(isLoading)
-
   return (
     <ExecutionRequirementsView>
       <SectionTopBar>
@@ -102,7 +100,11 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
       {!isLoading && areaExecutionRequirements?.length === 0 && (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
-          <Button onClick={onCreateRequirements}>Laske suoritevaatimukset ja toteumat</Button>
+          <div>
+            <Button onClick={onCreateRequirements}>
+              Laske suoritevaatimukset ja toteumat
+            </Button>
+          </div>
         </>
       )}
       <LoadingDisplay loading={isLoading} style={{ top: '0' }} />

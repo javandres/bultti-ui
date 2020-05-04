@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 import { ProcurementUnitFragment } from '../procurementUnit/procurementUnitsQuery'
-import { DepartureFragment } from '../departureBlock/departureBlocksQuery'
+import { OperatorBlockDepartureFragment } from '../departureBlock/departureBlocksQuery'
 import {
   ExecutionRequirementFragment,
   RequirementValueFragment,
@@ -50,7 +50,7 @@ export const reportByName = gql`
           ...ProcurementUnitFragment
         }
         ... on Departure {
-          ...DepartureFragment
+          ...OperatorBlockDepartureFragment
         }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
@@ -63,17 +63,17 @@ export const reportByName = gql`
         }
         ... on DeparturePair {
           departureA {
-            ...DepartureFragment
+            ...OperatorBlockDepartureFragment
           }
           departureB {
-            ...DepartureFragment
+            ...OperatorBlockDepartureFragment
           }
         }
       }
     }
   }
   ${ProcurementUnitFragment}
-  ${DepartureFragment}
+  ${OperatorBlockDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
   ${EquipmentFragment}
