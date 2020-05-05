@@ -74,6 +74,7 @@ const ErrorMessage = styled.span`
   margin-top: 1rem;
   margin-bottom: -0.5rem;
   line-height: 1.4;
+  width: 100%;
 `
 
 const UploadContentWrapper = styled(FlexRow)`

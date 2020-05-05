@@ -59,7 +59,7 @@ export const useAuth = (): [AuthState, boolean] => {
 
       login({
         variables: {
-          authorizationCode: code,
+          authorizationCode: code + '',
           isTest: is_test,
         },
       }).then(({ data }) => {
