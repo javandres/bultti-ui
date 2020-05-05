@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const ProcurementUnitFragment = gql`
@@ -65,7 +65,10 @@ export const updateProcurementUnitMutation = gql`
     $updatedData: ProcurementUnitEditInput!
     $procurementUnitId: String!
   ) {
-    updateProcurementUnit(procurementUnit: $updatedData, procurementUnitId: $procurementUnitId) {
+    updateProcurementUnit(
+      procurementUnit: $updatedData
+      procurementUnitId: $procurementUnitId
+    ) {
       ...ProcurementUnitFragment
     }
   }

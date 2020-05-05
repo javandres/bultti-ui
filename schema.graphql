@@ -5,7 +5,7 @@ schema {
   mutation: Mutation
 }
 
-union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | ProcurementUnit
+union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | OperatorBlockDeparture | ProcurementUnit
 
 type Departure {
   dayType: String!
@@ -15,7 +15,7 @@ type Departure {
   journeyEndTime: String!
   journeyStartTime: String!
   procurementUnits: [ProcurementUnit!]!
-  registryNumber: String
+  registryNr: String
   routeId: String!
   routeLength: Int
 }
@@ -247,6 +247,7 @@ type ProcurementUnitRoute {
 
 type Query {
   allPreInspections: [PreInspection!]!
+  availableDayTypes(preInspectionId: String!): [String!]!
   availablePreInspectionReports(preInspectionId: String!): [ReportListItem!]!
   blockDeparturesForPreInspection(preInspectionId: String!): [OperatorBlockDeparture!]!
   currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection!

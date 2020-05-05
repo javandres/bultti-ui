@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const createEquipmentCatalogueMutation = gql`

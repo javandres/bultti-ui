@@ -876,6 +876,45 @@
             "deprecationReason": null
           },
           {
+            "name": "availableDayTypes",
+            "description": null,
+            "args": [
+              {
+                "name": "preInspectionId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "availablePreInspectionReports",
             "description": null,
             "args": [
@@ -3838,7 +3877,7 @@
             "deprecationReason": null
           },
           {
-            "name": "registryNumber",
+            "name": "registryNr",
             "description": null,
             "args": [],
             "type": {
@@ -4533,6 +4572,11 @@
           {
             "kind": "OBJECT",
             "name": "ProcurementUnit",
+            "ofType": null
+          },
+          {
+            "kind": "OBJECT",
+            "name": "OperatorBlockDeparture",
             "ofType": null
           },
           {

@@ -4,7 +4,7 @@ import { useQueryData } from '../../util/useQueryData'
 import { Operator, User, UserRole } from '../../schema-types'
 import { text } from '../../util/translate'
 import Dropdown from './Dropdown'
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
 import { operatorIsAuthorized } from '../../util/operatorIsAuthorized'
@@ -66,7 +66,11 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
       // "..." and "all" options are not added if the operators list is only 1 long
 
-      if (!userIsOperator && allowAll && !['all', 'unselected'].includes(operatorList[0]?.id)) {
+      if (
+        !userIsOperator &&
+        allowAll &&
+        !['all', 'unselected'].includes(operatorList[0]?.id)
+      ) {
         operatorList.unshift({ id: 'all', operatorName: text('general.app.all') })
       } else if (
         !userIsOperator &&
@@ -108,7 +112,8 @@ const SelectOperator: React.FC<PropTypes> = observer(
     )
 
     const currentOperator = useMemo(
-      () => (!value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0]),
+      () =>
+        !value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0],
       [operators, value]
     )
 
@@ -120,7 +125,11 @@ const SelectOperator: React.FC<PropTypes> = observer(
         className={className}
         theme={theme}
         label={
-          !label ? (operators.length === 1 ? 'Liikennöitsijä' : 'Valitse liikennöitsijä') : label
+          !label
+            ? operators.length === 1
+              ? 'Liikennöitsijä'
+              : 'Valitse liikennöitsijä'
+            : label
         }
         items={operators}
         onSelect={onSelectOperator}

@@ -1,17 +1,13 @@
 import React, { useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { difference, flatten, groupBy, pick } from 'lodash'
+import { difference } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import {
-  defaultDayTypeGroup,
-  getEnabledDayTypes,
-  useDayTypeGroups,
-} from './departureBlocksCommon'
+import { defaultDayTypeGroup, useDayTypeGroups } from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
-import { departureBlocksQuery } from './departureBlocksQuery'
-import { DayType, OperatorBlockDeparture } from '../schema-types'
+import { availableDayTypesQuery } from './blockDeparturesQuery'
+import { DayType } from '../schema-types'
 import { normalDayTypes } from '../constants'
 import { PageSection, SectionTopBar } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
@@ -36,9 +32,10 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
   ] = useDayTypeGroups()
 
   // The main query that fetches the departure blocks.
-  let { data: blockDepartureData, loading: departureBlocksLoading, refetch } = useQueryData(
-    departureBlocksQuery,
+  let { data: availableDayTypesData, loading: departureBlocksLoading, refetch } = useQueryData(
+    availableDayTypesQuery,
     {
+      fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
       notifyOnNetworkStatusChange: true,
       skip: !preInspectionId,
       variables: {
@@ -47,17 +44,16 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
     }
   )
 
-  // Group blocks by dayType.
-  let departureDayTypeBlocks = useMemo(() => groupBy(blockDepartureData || [], 'dayType'), [
-    blockDepartureData,
+  // Ensure the available dayTypes are in an array
+  let dayTypesWithDepartures = useMemo(() => availableDayTypesData || [], [
+    availableDayTypesData,
   ])
 
   // Figure out which day types are selectable. The day type is selectable (or unselectable)
   // when it doesn't have any blocks attached to it.
   let selectableDayTypes = useMemo(() => {
-    let dayTypesWithBlocks = Object.keys(departureDayTypeBlocks)
-    return normalDayTypes.filter((dt) => !dayTypesWithBlocks.includes(dt))
-  }, [departureDayTypeBlocks])
+    return normalDayTypes.filter((dt) => !dayTypesWithDepartures.includes(dt))
+  }, [dayTypesWithDepartures])
 
   // Callback for when the block configuration changes, which will update the blocks query.
   // Called from each day type group item.
@@ -66,17 +62,17 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
   // Add a new dayType group for each departure block group
   // if the dayYpe doesn't already exist in a group.
   useEffect(() => {
-    for (let dayType of Object.keys(departureDayTypeBlocks)) {
+    for (let dayType of dayTypesWithDepartures) {
       if (!enabledDayTypes.includes(dayType)) {
         addDayTypeGroup(dayType as DayType)
       }
     }
-  }, [departureDayTypeBlocks, enabledDayTypes])
+  }, [dayTypesWithDepartures, enabledDayTypes])
 
   return (
     <DepartureBlocksView>
       <SectionTopBar>
-        {(blockDepartureData || []).length !== 0 && (
+        {dayTypesWithDepartures.length !== 0 && (
           <Button
             loading={departureBlocksLoading}
             style={{ marginLeft: 'auto' }}
@@ -88,17 +84,17 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
         )}
       </SectionTopBar>
       {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
-        let dayTypeBlocks = pick(departureDayTypeBlocks, getEnabledDayTypes(dayTypeGroup))
-        let departureBlocksForDayTypes: OperatorBlockDeparture[] = flatten(
-          Object.values(dayTypeBlocks)
-        )
+        let groupDayTypesDepartures = Object.entries(dayTypeGroup)
+          .filter(([, enabled]) => enabled)
+          .map(([dayType]) => dayType)
+          .filter((dayType) => dayTypesWithDepartures.includes(dayType))
 
         return (
           <DepartureBlockGroupItem
             key={`dayTypeGroup-${groupIndex}`}
             loading={departureBlocksLoading}
+            hasDepartures={groupDayTypesDepartures.length !== 0}
             selectableDayTypes={selectableDayTypes}
-            departures={departureBlocksForDayTypes}
             dayTypeGroup={dayTypeGroup}
             groupIndex={groupIndex}
             onAddDayType={addDayTypeToGroup}

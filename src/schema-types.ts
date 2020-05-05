@@ -41,6 +41,7 @@ export type Query = {
   users: Array<User>;
   currentUser?: Maybe<User>;
   blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
+  availableDayTypes: Array<Scalars['String']>;
   availablePreInspectionReports: Array<ReportListItem>;
   inspectionReportByName?: Maybe<Report>;
 };
@@ -143,6 +144,11 @@ export type QueryUserArgs = {
 
 
 export type QueryBlockDeparturesForPreInspectionArgs = {
+  preInspectionId: Scalars['String'];
+};
+
+
+export type QueryAvailableDayTypesArgs = {
   preInspectionId: Scalars['String'];
 };
 
@@ -394,7 +400,7 @@ export type Departure = {
   dayType: Scalars['String'];
   procurementUnits: Array<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
-  registryNumber?: Maybe<Scalars['String']>;
+  registryNr?: Maybe<Scalars['String']>;
 };
 
 
@@ -464,7 +470,7 @@ export type Report = {
   postInspection?: Maybe<PostInspection>;
 };
 
-export type ReportEntityUnion = Departure | Equipment | DeparturePair | ProcurementUnit | ExecutionRequirement;
+export type ReportEntityUnion = Departure | Equipment | DeparturePair | ProcurementUnit | OperatorBlockDeparture | ExecutionRequirement;
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';

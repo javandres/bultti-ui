@@ -10,11 +10,19 @@ export const MessageView = styled.div`
   color: var(--dark-grey);
   background: var(--lightest-blue);
   padding: 0.75rem;
+  line-height: 1.4;
 `
+
+export const SuccessView = styled(MessageView)`
+  border: 1px solid var(--light-green);
+  background: var(--lightest-green);
+`
+
 export const ErrorView = styled(MessageView)`
   border: 1px solid var(--light-red);
   background: var(--lighter-red);
 `
+
 export const EmptyView = styled(MessageView)`
   background: #f8f8f8;
   border-color: #ccc;

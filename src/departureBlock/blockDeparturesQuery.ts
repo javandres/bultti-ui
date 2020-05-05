@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const OperatorBlockDepartureFragment = gql`
@@ -15,13 +15,20 @@ export const OperatorBlockDepartureFragment = gql`
   }
 `
 
-export const departureBlocksQuery = gql`
-  query departureBlocks($preInspectionId: String!) {
+export const availableDayTypesQuery = gql`
+  query availableDayTypes($preInspectionId: String!) {
+    availableDayTypes(preInspectionId: $preInspectionId)
+  }
+`
+
+export const blockDeparturesQuery = gql`
+  query blockDepartures($preInspectionId: String!) {
     blockDeparturesForPreInspection(preInspectionId: $preInspectionId) {
       id
       dayType
       blockNumber
       registryNr
+      vehicleId
       direction
       routeId
       journeyStartTime

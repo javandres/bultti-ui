@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 export const seasonQuery = gql`
   query season($seasonId: String!) {

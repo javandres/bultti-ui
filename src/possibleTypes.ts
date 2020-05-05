@@ -12,6 +12,7 @@
       "Equipment",
       "DeparturePair",
       "ProcurementUnit",
+      "OperatorBlockDeparture",
       "ExecutionRequirement"
     ]
   }

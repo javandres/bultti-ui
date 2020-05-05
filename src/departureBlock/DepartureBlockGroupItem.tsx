@@ -7,11 +7,11 @@ import { LoadingDisplay } from '../common/components/Loading'
 import styled from 'styled-components'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle } from '../common/components/Button'
-import { DayType, OperatorBlockDeparture } from '../schema-types'
+import { DayType } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
-import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './departureBlocksQuery'
+import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './blockDeparturesQuery'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
-import { ErrorView } from '../common/components/Messages'
+import { ErrorView, SuccessView } from '../common/components/Messages'
 
 const DepartureBlockGroupContainer = styled.div`
   padding-bottom: 0.5rem;
@@ -22,6 +22,11 @@ const DepartureBlockGroupContainer = styled.div`
 
   &:first-child {
     padding-top: 0;
+  }
+
+  &:last-child {
+    border-bottom: 0;
+    margin-bottom: 0;
   }
 `
 
@@ -44,7 +49,7 @@ const ResetButton = styled(Button).attrs(() => ({
 type PropTypes = {
   loading?: boolean
   selectableDayTypes?: string[]
-  departures: OperatorBlockDeparture[]
+  hasDepartures: boolean
   dayTypeGroup: DayTypeGroup
   groupIndex: number
   onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
@@ -56,23 +61,23 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
   ({
     selectableDayTypes = [],
     dayTypeGroup,
-    departures = [],
-    loading,
+    loading = false,
     groupIndex,
     onAddDayType,
     onRemoveDayType,
     onBlocksChange,
+    hasDepartures,
   }) => {
-    let [showBlocksLoading, setShowBlocksLoading] = useState(departures.length === 0)
+    let [showBlocksLoading, setShowBlocksLoading] = useState(loading)
 
     let preInspection = useContext(PreInspectionContext)
     let preInspectionId = preInspection?.id || ''
 
     useEffect(() => {
-      if (!loading && departures.length !== 0) {
+      if (!loading) {
         setShowBlocksLoading(false)
       }
-    }, [departures, loading])
+    }, [loading])
 
     // The state of the file input.
     const [fileValue, setFileValue] = useState<File[]>([])
@@ -98,11 +103,12 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     )
 
     let isLoading = useMemo(
-      () => removeBlocksLoading || ((showBlocksLoading || departures.length === 0) && loading),
-      [loading, showBlocksLoading, departures, removeBlocksLoading]
+      () => removeBlocksLoading || ((hasDepartures || showBlocksLoading) && loading),
+      [loading, hasDepartures, showBlocksLoading, removeBlocksLoading]
     )
 
-    let isDisabled = useMemo(() => departures.length !== 0, [departures])
+    // The group is disabled when there are no departures.
+    let isDisabled = hasDepartures
 
     // Handle day type selection.
     const onDayTypeChange = useCallback(
@@ -141,28 +147,6 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       }
     }, [dayTypeGroup, preInspectionId, removeDepartureBlocksForDays, onBlocksChange])
 
-    // Loop through all blocks and find errors.
-    let blockErrors = useMemo(
-      () =>
-        departures.reduce(
-          (errors, block) => {
-            // If all checks are already failed, just return the errors.
-            if (Object.values(errors).every((val) => val)) {
-              return errors
-            }
-
-            // Check for missing equipment. It's the only check for now.
-            if (!block?.equipment) {
-              errors.missingEquipment = true
-            }
-
-            return errors
-          },
-          { missingEquipment: false }
-        ),
-      [departures]
-    )
-
     return (
       <DepartureBlockGroupContainer>
         <DayTypesContainer>
@@ -181,13 +165,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
               />
             </DayTypeOption>
           ))}
-          {departures.length !== 0 && !isLoading && isDisabled && (
+          {hasDepartures && !isLoading && (
             <ResetButton style={{ marginLeft: 'auto' }} onClick={onReset}>
               Poista kaikki ryhmän lähtöketjut
             </ResetButton>
           )}
         </DayTypesContainer>
-        {((isDisabled && fileValue.length !== 0) || !isDisabled) && (
+        {(!hasDepartures || fileValue.length !== 0) && (
           <UploadFile
             disabled={loading || isDisabled}
             label="Lataa lähtöketjutiedosto"
@@ -197,13 +181,12 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
           />
         )}
         <LoadingDisplay loading={isLoading} />
-        {departures.length !== 0 && (
+        {hasDepartures && (
           <>
+            <SuccessView>
+              Tällä päiväryhmällä on lähtöketjuja ja se ei ole muokattavissa.
+            </SuccessView>
             {uploadFileError && <ErrorView>{uploadFileError.message}</ErrorView>}
-            {Object.entries(blockErrors).map(
-              ([errorName, isError]) =>
-                isError && <ErrorView key={errorName}>{errorName}</ErrorView>
-            )}
           </>
         )}
       </DepartureBlockGroupContainer>

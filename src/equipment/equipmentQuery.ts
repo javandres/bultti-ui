@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import { gql } from '@apollo/client'
 
 export const EquipmentFragment = gql`
   fragment EquipmentFragment on Equipment {
@@ -68,7 +68,10 @@ export const createEquipmentMutation = gql`
 `
 
 export const updateEquipmentMutation = gql`
-  mutation updateEquipmentFromCatalogue($equipmentId: String!, $equipmentInput: EquipmentInput!) {
+  mutation updateEquipmentFromCatalogue(
+    $equipmentId: String!
+    $equipmentInput: EquipmentInput!
+  ) {
     updateEquipment(equipmentId: $equipmentId, equipment: $equipmentInput) {
       ...EquipmentFragment
       equipmentCatalogueQuotas {
