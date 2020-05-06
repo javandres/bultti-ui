@@ -11,8 +11,7 @@ import { getTotal } from '../util/getTotal'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
+  margin-bottom: 1rem;
 
   &:first-child {
     margin-top: 0;

@@ -4,8 +4,9 @@ import { observer } from 'mobx-react-lite'
 import {
   createExecutionRequirementsForPreInspectionMutation,
   executionRequirementsByAreaQuery,
+  removeExecutionRequirementMutation,
 } from './executionRequirementsQueries'
-import { PageSection, SectionTopBar } from '../common/components/common'
+import { PageSection, SectionTopBar, FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
@@ -59,6 +60,8 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
     }
   )
 
+  let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
+
   let onFetchRequirements = useCallback(async () => {
     if (preInspection && fetchRequirements) {
       await fetchRequirements({
@@ -83,6 +86,25 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
       queueRefetch()
     }
   }, [createPreInspectionRequirements, preInspection])
+
+  let onRemoveExecutionRequirement = useCallback(
+    async (requirementId) => {
+      if (
+        confirm(
+          'Olet poistamassa tämän alueen suoritevaatimukset. Poistat samalla siihen kuuluvat kilpailukohteiden vaatimukset. Oletko varma?'
+        )
+      ) {
+        await execRemoveExecutionRequirement({
+          variables: {
+            requirementId,
+          },
+        })
+
+        queueRefetch()
+      }
+    },
+    [execRemoveExecutionRequirement, queueRefetch]
+  )
 
   return (
     <ExecutionRequirementsView>
@@ -115,6 +137,14 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
             tableLayout={RequirementsTableLayout.BY_VALUES}
             executionRequirement={areaRequirements}
           />
+          <FlexRow>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+              onClick={() => onRemoveExecutionRequirement(areaRequirements.id)}>
+              Poista alueen suoritevaatimus
+            </Button>
+          </FlexRow>
         </AreaWrapper>
       ))}
     </ExecutionRequirementsView>
