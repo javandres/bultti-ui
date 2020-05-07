@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
 import { Operator, User, UserRole } from '../../schema-types'
-import { text } from '../../util/translate'
 import Dropdown from './Dropdown'
 import { gql } from '@apollo/client'
 import { compact } from 'lodash'
@@ -25,17 +24,19 @@ export type PropTypes = {
   className?: string
   theme?: 'light' | 'dark'
   allowAll?: boolean
-  value: null | Operator
+  value: null | Operator | number
   onSelect: (operator: null | Operator) => void
   selectInitialId?: number
 }
 
-export const operatorIsValid = (operator: Operator | null | undefined) => {
-  if (!operator) {
+const unselectedId = 0
+
+export const operatorIsValid = (operator: Operator | number | null | undefined) => {
+  if (!operator || typeof operator === 'number') {
     return false
   }
 
-  if (['all', 'unselected'].includes(operator?.id as any) || !isNumeric(operator?.id)) {
+  if (operator?.id === unselectedId || !isNumeric(operator?.id)) {
     return false
   }
 
@@ -43,60 +44,42 @@ export const operatorIsValid = (operator: Operator | null | undefined) => {
 }
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({
-    onSelect,
-    value = null,
-    label,
-    className,
-    theme = 'light',
-    allowAll = false,
-    selectInitialId,
-  }) => {
+  ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
     const { data } = useQueryData(operatorsQuery)
     const [user] = useStateValue<User>('user')
 
+    let userIsOperator = useMemo(() => user && user?.role === UserRole.OperatorUser, [user])
+
     const operators: Operator[] = useMemo(() => {
       let operatorList = !data ? [] : compact([...data])
-      let userIsOperator = user && user?.role === UserRole.OperatorUser
 
       // Limit the selection to the currently logged in operator if applicable
       if (userIsOperator) {
         operatorList = operatorList.filter((op) => operatorIsAuthorized(op, user))
       }
 
-      // "..." and "all" options are not added if the operators list is only 1 long
-
-      if (
-        !userIsOperator &&
-        allowAll &&
-        !['all', 'unselected'].includes(operatorList[0]?.id)
-      ) {
-        operatorList.unshift({ id: 'all', operatorName: text('general.app.all') })
-      } else if (
-        !userIsOperator &&
-        !allowAll &&
-        !['all', 'unselected'].includes(operatorList[0]?.id)
-      ) {
-        operatorList.unshift({ id: 'unselected', operatorName: '...' })
+      // The "..." option is not added if the operators list is only 1 long
+      if (operatorList[0]?.id !== unselectedId && operatorList.length !== 1) {
+        operatorList.unshift({ id: unselectedId, operatorName: '...' })
       }
 
       return operatorList
-    }, [user, data, allowAll])
+    }, [userIsOperator, data])
 
-    // Auto-select the first operator if there is only one.
+    // Auto-select the first operator if there is only one, or the initially selected id.
     useEffect(() => {
-      const firstOperator = operators[0]
+      // If the user is an operator user, preselect the first operator option.
+      if (userIsOperator) {
+        onSelect(operators.find(operatorIsValid) || null)
+      } else {
+        let initialOperator = operators.find((s) => s.id === selectInitialId)
 
-      if (!value && operators.length === 1 && operatorIsValid(firstOperator)) {
-        onSelect(operators[0])
-      } else if (!value && operators.length !== 0 && selectInitialId) {
-        let initialOperator = operators.find((op) => op.id === selectInitialId)
-
-        if (initialOperator) {
+        // Preselect the initial operator if there isn't a value already.
+        if (!operatorIsValid(value) && initialOperator) {
           onSelect(initialOperator)
         }
       }
-    }, [value, operators, onSelect, selectInitialId])
+    }, [userIsOperator, value, operators, onSelect, selectInitialId])
 
     const onSelectOperator = useCallback(
       (selectedItem) => {
@@ -111,11 +94,13 @@ const SelectOperator: React.FC<PropTypes> = observer(
       [onSelect]
     )
 
-    const currentOperator = useMemo(
-      () =>
-        !value ? operators[0] : operators.find((op) => value.id === op.id) || operators[0],
-      [operators, value]
-    )
+    const currentOperator = useMemo(() => {
+      let valueId = typeof value === 'number' ? value : value?.id
+
+      return !valueId
+        ? operators[0]
+        : operators.find((op) => valueId === op.id) || operators[0]
+    }, [operators, value])
 
     /* Disable if empty or only one item (in which case it will be auto-selected */
 

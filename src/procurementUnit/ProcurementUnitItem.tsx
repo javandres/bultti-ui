@@ -93,8 +93,6 @@ const ProcurementUnitItemContent = observer(
         },
       }) || {}
 
-    console.log(isVisible)
-
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
       () =>

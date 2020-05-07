@@ -8,6 +8,7 @@ import { Login } from '../common/icon/Login'
 import { Text } from '../util/translate'
 import { ButtonSize, ButtonStyle, StyledButton } from '../common/components/Button'
 import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
+import { getAppRoot, history } from '../util/urlValue'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -68,12 +69,15 @@ type PropTypes = {
 }
 
 const redirectToLogin = () => {
-  const authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
+  let authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
   window.location.assign(authUrl)
 }
 
 const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = false }) => {
   const openAuthForm = useCallback(() => {
+    let currentPath = '/' + history.location.href.replace(getAppRoot(), '')
+    sessionStorage.setItem('return_to_url', currentPath)
+
     redirectToLogin()
   }, [])
 

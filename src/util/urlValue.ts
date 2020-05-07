@@ -17,6 +17,8 @@ type UrlStateValue = string | boolean | number
 type UrlState = { [key: string]: UrlStateValue }
 type HistoryListener = (urlState: UrlState) => unknown
 
+const excludeQueryStringParams = ['scope', 'code', 'is_test']
+
 const historyChangeListeners: HistoryListener[] = []
 
 export const onHistoryChange = (cb) => {
@@ -45,6 +47,10 @@ export const __setHistoryForTesting = (historyObj) => {
   history = historyObj
 }
 
+export const navigate = (navigateTo: string, opts?: any) => {
+  history.navigate(navigateTo, opts)
+}
+
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
@@ -60,11 +66,7 @@ export const setUrlValue = (key: string, val: UrlStateValue | null) => {
   }
 
   const queryStr = query.toString()
-  history.navigate(`${history.location.pathname}?${queryStr}`)
-}
-
-export const navigateWithQueryString = (navigateTo, opts?: any) => {
-  return history.navigate(`${navigateTo}${history.location.search}`, opts)
+  return navigate(`${history.location.pathname}?${queryStr}`)
 }
 
 export const getUrlState = (): UrlState => {
@@ -108,11 +110,27 @@ export const getAppRoot = () => {
 }
 
 export const resetUrlState = (replace = false) => {
-  history.navigate('/', { replace })
+  return navigate('/', { replace })
 }
 
-// Used in Router Link to= props to retain the query path when clicking the link.
-export const pathWithQuery = (path = '', location = history.location) => {
-  let currentQuery = location.search
-  return path + currentQuery
+function excludeQueryParams(queryString = history.location.search) {
+  const query = new URLSearchParams(queryString)
+
+  for (let excludeVal of excludeQueryStringParams) {
+    query.delete(excludeVal)
+  }
+
+  return query
+}
+
+export const pathWithQuery = (path = '', location?: Location | string) => {
+  let locationWithQueryString = typeof location === 'string' ? new URL(location) : location
+
+  let currentQuery = excludeQueryParams(locationWithQueryString?.search)
+  return `${path}?${currentQuery.toString()}`
+}
+
+export const navigateWithQueryString = (navigateTo, opts?: any) => {
+  let path = pathWithQuery(navigateTo, history.location)
+  return navigate(path, opts)
 }

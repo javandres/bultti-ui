@@ -25,13 +25,14 @@ const Main = styled.div`
 
 export type AppFrameProps = {
   children?: React.ReactNode
+  isAuthenticated?: boolean
 }
 
 export type ScrollSubscriber = (scrollVal: number) => void
 
 export const ScrollContext = React.createContext<(sub: ScrollSubscriber) => void>((sub) => {})
 
-const AppFrame = observer(({ children }: AppFrameProps) => {
+const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps) => {
   let mainViewRef = useRef<any>(null)
   const scrollSubscribers = useRef<ScrollSubscriber[]>([])
 
@@ -66,12 +67,16 @@ const AppFrame = observer(({ children }: AppFrameProps) => {
 
   return (
     <AppFrameView>
-      <Sidebar>
-        <AppSidebar />
-      </Sidebar>
-      <ScrollContext.Provider value={subscribe}>
-        <Main ref={mainViewRef}>{children}</Main>
-      </ScrollContext.Provider>
+      {isAuthenticated && (
+        <>
+          <Sidebar>
+            <AppSidebar />
+          </Sidebar>
+          <ScrollContext.Provider value={subscribe}>
+            <Main ref={mainViewRef}>{children}</Main>
+          </ScrollContext.Provider>
+        </>
+      )}
     </AppFrameView>
   )
 })

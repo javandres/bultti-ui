@@ -24,7 +24,7 @@ const App: React.FC = observer(() => {
   }
 
   return (
-    <AppFrame>
+    <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
       <Router>
         <Index path="/" />
         <ProcurementUnitsPage path="procurement-units" />

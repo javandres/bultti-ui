@@ -75,7 +75,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
 
     // Auto-select the first season if there is only one.
     useEffect(() => {
-      let initialSeasonId = selectInitialId || typeof value === 'string' ? value : ''
+      let initialSeasonId = selectInitialId || (typeof value === 'string' ? value : '')
       let initialSeason = seasons.find((s) => s.id === initialSeasonId)
 
       // If no value or if we got a string value
