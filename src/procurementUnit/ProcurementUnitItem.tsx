@@ -13,7 +13,7 @@ import { useQueryData } from '../util/useQueryData'
 import {
   procurementUnitQuery,
   updateProcurementUnitMutation,
-  weeklyMetersFromJOREMutation,
+  weeklyMetersFromJoreMutation,
 } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import ItemForm from '../common/input/ItemForm'
@@ -101,8 +101,8 @@ const ProcurementUnitItemContent = observer(
 
     let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
 
-    const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
-      variables: { procurementUnitId },
+    const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJoreMutation, {
+      variables: { procurementUnitId, startDate },
     })
 
     const addDraftProcurementUnit = useCallback(() => {

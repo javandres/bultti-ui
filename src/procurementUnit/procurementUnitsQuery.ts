@@ -75,9 +75,12 @@ export const updateProcurementUnitMutation = gql`
   ${ProcurementUnitFragment}
 `
 
-export const weeklyMetersFromJOREMutation = gql`
-  mutation updateWeeklyMetersFromSource($procurementUnitId: String!) {
-    updateWeeklyMetersFromSource(procurementUnitId: $procurementUnitId) {
+export const weeklyMetersFromJoreMutation = gql`
+  mutation updateWeeklyMetersFromSource($procurementUnitId: String!, $startDate: String!) {
+    updateWeeklyMetersFromSource(
+      procurementUnitId: $procurementUnitId
+      startDate: $startDate
+    ) {
       id
       weeklyMeters
       weeklyKilometers

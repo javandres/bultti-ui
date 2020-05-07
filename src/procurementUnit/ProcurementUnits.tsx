@@ -21,6 +21,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
   const preInspection = useContext(PreInspectionContext)
   let { operatorId, startDate } = preInspection || props
 
+  console.log(startDate)
+
   let catalogueEditable = !preInspection
   let showExecutionRequirements = !!preInspection
 

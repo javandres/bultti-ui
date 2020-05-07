@@ -528,6 +528,7 @@ export type MutationGenerateEquipmentForPreInspectionArgs = {
 
 
 export type MutationUpdateWeeklyMetersFromSourceArgs = {
+  startDate: Scalars['String'];
   procurementUnitId: Scalars['String'];
 };
 
