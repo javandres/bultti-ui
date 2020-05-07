@@ -156,8 +156,6 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
   let openReports = usePreInspectionReports()
 
   let preInspectionsList = useMemo(() => {
-    console.log(selectedSeason, selectedDate)
-
     let filteredList = preInspections.filter((p) => {
       if (p.status !== InspectionStatus.InProduction) {
         return false

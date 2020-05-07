@@ -175,7 +175,6 @@ export type Operator = {
   executionRequirements: Array<ExecutionRequirement>;
   equipment: Array<Equipment>;
   equipmentCatalogues: Array<EquipmentCatalogue>;
-  operatorBlockDepartures: Array<OperatorBlockDeparture>;
 };
 
 export type PreInspection = {
@@ -190,7 +189,6 @@ export type PreInspection = {
   operator: Operator;
   seasonId?: Maybe<Scalars['String']>;
   season: Season;
-  operatorBlockDepartures: Array<OperatorBlockDeparture>;
   executionRequirements: Array<ExecutionRequirement>;
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
@@ -229,116 +227,6 @@ export enum InspectionStatus {
   InProduction = 'InProduction'
 }
 
-export type OperatorBlockDeparture = {
-   __typename?: 'OperatorBlockDeparture';
-  id: Scalars['ID'];
-  blockNumber: Scalars['Int'];
-  dayType: DayType;
-  journeyType: Scalars['String'];
-  routeId?: Maybe<Scalars['String']>;
-  direction?: Maybe<Scalars['String']>;
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  registryNr?: Maybe<Scalars['String']>;
-  vehicleId?: Maybe<Scalars['String']>;
-  routeLength?: Maybe<Scalars['Int']>;
-  operator: Operator;
-  equipment?: Maybe<Equipment>;
-  procurementUnit?: Maybe<Array<ProcurementUnit>>;
-  preInspectionId: Scalars['String'];
-  preInspection: PreInspection;
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
-};
-
-export enum DayType {
-  Ma = 'Ma',
-  Ti = 'Ti',
-  Ke = 'Ke',
-  To = 'To',
-  Pe = 'Pe',
-  La = 'La',
-  Su = 'Su'
-}
-
-export type Equipment = {
-   __typename?: 'Equipment';
-  id: Scalars['ID'];
-  vehicleId: Scalars['String'];
-  operatorId: Scalars['Int'];
-  uniqueVehicleId: Scalars['String'];
-  operator: Operator;
-  model: Scalars['String'];
-  registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDate']>;
-  type: Scalars['String'];
-  exteriorColor: Scalars['String'];
-  hasInfoSystems: Scalars['Boolean'];
-  emissionClass: Scalars['Int'];
-  equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
-  executionRequirementQuotas: Array<ExecutionRequirementQuota>;
-  operatorBlockDepartures: Array<OperatorBlockDeparture>;
-  departures: Array<Departure>;
-};
-
-export type EquipmentCatalogueQuota = {
-   __typename?: 'EquipmentCatalogueQuota';
-  id: Scalars['ID'];
-  percentageQuota: Scalars['Float'];
-  equipmentId: Scalars['String'];
-  equipmentCatalogueId: Scalars['String'];
-  equipment?: Maybe<Equipment>;
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
-  catalogueStartDate: Scalars['BulttiDate'];
-  catalogueEndDate: Scalars['BulttiDate'];
-};
-
-export type EquipmentCatalogue = {
-   __typename?: 'EquipmentCatalogue';
-  id: Scalars['ID'];
-  equipmentCatalogueId: Scalars['String'];
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  procurementUnitId: Scalars['String'];
-  procurementUnit: ProcurementUnit;
-  startDate: Scalars['String'];
-  endDate: Scalars['String'];
-  equipmentQuotas: Array<EquipmentCatalogueQuota>;
-};
-
-export type ProcurementUnit = {
-   __typename?: 'ProcurementUnit';
-  id: Scalars['ID'];
-  procurementUnitId: Scalars['String'];
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  equipmentCatalogues: Array<EquipmentCatalogue>;
-  weeklyMeters: Scalars['Float'];
-  weeklyKilometers: Scalars['Float'];
-  medianAgeRequirement: Scalars['Float'];
-  areaId: Scalars['Int'];
-  area: OperatingArea;
-  routes: Array<ProcurementUnitRoute>;
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  departures: Array<Departure>;
-  operatorBlockDepartures: Array<OperatorBlockDeparture>;
-  executionRequirements: Array<ExecutionRequirement>;
-};
-
-export type OperatingArea = {
-   __typename?: 'OperatingArea';
-  id: Scalars['Int'];
-  name: OperatingAreaName;
-  procurementUnits: Array<ProcurementUnit>;
-  executionRequirements: Array<ExecutionRequirement>;
-};
-
-export enum OperatingAreaName {
-  Center = 'CENTER',
-  Other = 'OTHER'
-}
-
 export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement';
   id: Scalars['ID'];
@@ -356,6 +244,82 @@ export type ExecutionRequirement = {
   requirements: Array<ExecutionRequirementValue>;
 };
 
+export type OperatingArea = {
+   __typename?: 'OperatingArea';
+  id: Scalars['Int'];
+  name: OperatingAreaName;
+  procurementUnits: Array<ProcurementUnit>;
+  executionRequirements: Array<ExecutionRequirement>;
+};
+
+export enum OperatingAreaName {
+  Center = 'CENTER',
+  Other = 'OTHER'
+}
+
+export type ProcurementUnit = {
+   __typename?: 'ProcurementUnit';
+  id: Scalars['ID'];
+  procurementUnitId: Scalars['String'];
+  operatorId: Scalars['Int'];
+  operator: Operator;
+  equipmentCatalogues: Array<EquipmentCatalogue>;
+  weeklyMeters: Scalars['Float'];
+  weeklyKilometers: Scalars['Float'];
+  medianAgeRequirement: Scalars['Float'];
+  areaId: Scalars['Int'];
+  area: OperatingArea;
+  routes: Array<ProcurementUnitRoute>;
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  departures: Array<Departure>;
+  executionRequirements: Array<ExecutionRequirement>;
+};
+
+export type EquipmentCatalogue = {
+   __typename?: 'EquipmentCatalogue';
+  id: Scalars['ID'];
+  equipmentCatalogueId: Scalars['String'];
+  operatorId: Scalars['Int'];
+  operator: Operator;
+  procurementUnitId: Scalars['String'];
+  procurementUnit: ProcurementUnit;
+  startDate: Scalars['String'];
+  endDate: Scalars['String'];
+  equipmentQuotas: Array<EquipmentCatalogueQuota>;
+};
+
+export type EquipmentCatalogueQuota = {
+   __typename?: 'EquipmentCatalogueQuota';
+  id: Scalars['ID'];
+  percentageQuota: Scalars['Float'];
+  equipmentId: Scalars['String'];
+  equipmentCatalogueId: Scalars['String'];
+  equipment?: Maybe<Equipment>;
+  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
+  catalogueStartDate: Scalars['BulttiDate'];
+  catalogueEndDate: Scalars['BulttiDate'];
+};
+
+export type Equipment = {
+   __typename?: 'Equipment';
+  id: Scalars['ID'];
+  vehicleId: Scalars['String'];
+  operatorId: Scalars['Int'];
+  uniqueVehicleId: Scalars['String'];
+  operator: Operator;
+  model: Scalars['String'];
+  registryNr?: Maybe<Scalars['String']>;
+  registryDate?: Maybe<Scalars['BulttiDate']>;
+  type: Scalars['String'];
+  exteriorColor: Scalars['String'];
+  hasInfoSystems: Scalars['Boolean'];
+  emissionClass: Scalars['Int'];
+  equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
+  executionRequirementQuotas: Array<ExecutionRequirementQuota>;
+  departures: Array<Departure>;
+};
+
 export type ExecutionRequirementQuota = {
    __typename?: 'ExecutionRequirementQuota';
   id: Scalars['ID'];
@@ -365,6 +329,36 @@ export type ExecutionRequirementQuota = {
   executionRequirementId: Scalars['String'];
   equipment: Equipment;
   executionRequirement: ExecutionRequirement;
+};
+
+export type Departure = {
+   __typename?: 'Departure';
+  id: Scalars['ID'];
+  journeyStartTime: Scalars['String'];
+  journeyEndTime: Scalars['String'];
+  routeId: Scalars['String'];
+  direction: Scalars['String'];
+  routeLength?: Maybe<Scalars['Int']>;
+  dayType: DayType;
+  procurementUnits: Array<ProcurementUnit>;
+  equipment?: Maybe<Equipment>;
+  registryNr?: Maybe<Scalars['String']>;
+};
+
+export enum DayType {
+  Ma = 'Ma',
+  Ti = 'Ti',
+  Ke = 'Ke',
+  To = 'To',
+  Pe = 'Pe',
+  La = 'La',
+  Su = 'Su'
+}
+
+export type ProcurementUnitRoute = {
+   __typename?: 'ProcurementUnitRoute';
+  routeId: Scalars['String'];
+  length: Scalars['Float'];
 };
 
 export type ExecutionRequirementValue = {
@@ -381,26 +375,6 @@ export type ExecutionRequirementValue = {
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;
-};
-
-export type ProcurementUnitRoute = {
-   __typename?: 'ProcurementUnitRoute';
-  routeId: Scalars['String'];
-  length: Scalars['Float'];
-};
-
-export type Departure = {
-   __typename?: 'Departure';
-  id: Scalars['ID'];
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  routeId: Scalars['String'];
-  direction: Scalars['String'];
-  routeLength?: Maybe<Scalars['Int']>;
-  dayType: Scalars['String'];
-  procurementUnits: Array<ProcurementUnit>;
-  equipment?: Maybe<Equipment>;
-  registryNr?: Maybe<Scalars['String']>;
 };
 
 
@@ -433,6 +407,29 @@ export type EquipmentSearchResult = {
   exteriorColor: Scalars['String'];
   emissionClass: Scalars['Int'];
   _exists: Scalars['Boolean'];
+};
+
+export type OperatorBlockDeparture = {
+   __typename?: 'OperatorBlockDeparture';
+  id: Scalars['ID'];
+  blockNumber: Scalars['Int'];
+  dayType: DayType;
+  journeyType: Scalars['String'];
+  routeId?: Maybe<Scalars['String']>;
+  direction?: Maybe<Scalars['String']>;
+  journeyStartTime: Scalars['String'];
+  journeyEndTime: Scalars['String'];
+  registryNr?: Maybe<Scalars['String']>;
+  vehicleId?: Maybe<Scalars['String']>;
+  routeLength?: Maybe<Scalars['Int']>;
+  operator: Operator;
+  equipment?: Maybe<Equipment>;
+  procurementUnitId?: Maybe<Scalars['String']>;
+  procurementUnit?: Maybe<Array<ProcurementUnit>>;
+  preInspectionId: Scalars['String'];
+  preInspection: PreInspection;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
 };
 
 export type ReportListItem = {

@@ -8,7 +8,7 @@ schema {
 union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | OperatorBlockDeparture | ProcurementUnit
 
 type Departure {
-  dayType: String!
+  dayType: DayType!
   direction: String!
   equipment: Equipment
   id: ID!
@@ -35,7 +35,6 @@ type Equipment {
   id: ID!
   model: String!
   operator: Operator!
-  operatorBlockDepartures: [OperatorBlockDeparture!]!
   operatorId: Int!
   registryDate: BulttiDate
   registryNr: String
@@ -159,7 +158,6 @@ type Operator {
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
   id: Int!
-  operatorBlockDepartures: [OperatorBlockDeparture!]!
   operatorId: Int!
   operatorName: String!
   postInspections: [PostInspection!]!
@@ -181,6 +179,7 @@ type OperatorBlockDeparture {
   preInspection: PreInspection!
   preInspectionId: String!
   procurementUnit: [ProcurementUnit!]
+  procurementUnitId: String
   registryNr: String
   routeId: String
   routeLength: Int
@@ -210,7 +209,6 @@ type PreInspection {
   id: ID!
   minStartDate: BulttiDate
   operator: Operator!
-  operatorBlockDepartures: [OperatorBlockDeparture!]!
   operatorId: Int
   season: Season!
   seasonId: String
@@ -231,7 +229,6 @@ type ProcurementUnit {
   id: ID!
   medianAgeRequirement: Float!
   operator: Operator!
-  operatorBlockDepartures: [OperatorBlockDeparture!]!
   operatorId: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!

@@ -18,6 +18,19 @@ export const availablePreInspectionReportsQuery = gql`
   }
 `
 
+export const DepartureFragment = gql`
+  fragment DepartureFragment on Departure {
+    id
+    dayType
+    routeId
+    direction
+    routeLength
+    journeyStartTime
+    journeyEndTime
+    registryNr
+  }
+`
+
 export const reportByName = gql`
   query getPreInspectionReport(
     $reportName: String!
@@ -46,10 +59,14 @@ export const reportByName = gql`
         endDate
       }
       reportEntities {
+        __typename
         ... on ProcurementUnit {
           ...ProcurementUnitFragment
         }
         ... on Departure {
+          ...DepartureFragment
+        }
+        ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment
         }
         ... on ExecutionRequirement {
@@ -63,10 +80,10 @@ export const reportByName = gql`
         }
         ... on DeparturePair {
           departureA {
-            ...OperatorBlockDepartureFragment
+            ...DepartureFragment
           }
           departureB {
-            ...OperatorBlockDepartureFragment
+            ...DepartureFragment
           }
         }
       }
@@ -74,6 +91,7 @@ export const reportByName = gql`
   }
   ${ProcurementUnitFragment}
   ${OperatorBlockDepartureFragment}
+  ${DepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
   ${EquipmentFragment}
