@@ -45,6 +45,10 @@ const ProcurementUnitHeading = styled.h4`
   align-items: center;
 `
 
+const ContentWrapper = styled.div`
+  position: relative;
+`
+
 export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
@@ -59,15 +63,20 @@ const procurementUnitLabels = {
   medianAgeRequirement: 'Keski-ikä vaatimus',
 }
 
-const ProcurementUnitItem: React.FC<PropTypes> = observer(
+type ContentPropTypes = {
+  showExecutionRequirements: boolean
+  startDate: string
+  procurementUnitId: string
+  catalogueEditable: boolean
+}
+
+const ProcurementUnitItemContent = observer(
   ({
-    catalogueEditable,
     showExecutionRequirements,
     startDate,
-    procurementUnit: { id, procurementUnitId },
-    expanded = true,
-    className,
-  }) => {
+    procurementUnitId,
+    catalogueEditable,
+  }: ContentPropTypes) => {
     const [
       pendingProcurementUnit,
       setPendingProcurementUnit,
@@ -77,11 +86,9 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     const { data: procurementUnit, loading, refetch: refetchUnit } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
         variables: {
-          procurementUnitId: id,
+          procurementUnitId,
         },
       }) || {}
-
-    const { routes = [] } = procurementUnit || {}
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -95,7 +102,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJOREMutation, {
-      variables: { procurementUnitId: id },
+      variables: { procurementUnitId },
     })
 
     const addDraftProcurementUnit = useCallback(() => {
@@ -111,7 +118,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       updateProcurementUnitMutation,
       {
         variables: {
-          procurementUnitId: id,
+          procurementUnitId,
           updatedData: null,
         },
       }
@@ -180,14 +187,100 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     }, [refetchUnit])
 
     return (
-      <ProcurementUnitView className={className}>
+      <ContentWrapper>
         <LoadingDisplay loading={loading} />
+        {procurementUnit && (
+          <>
+            {showExecutionRequirements && hasEquipment && (
+              <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
+            )}
+            <FlexRow>
+              <SubHeading>Kohteen tiedot</SubHeading>
+              <Button
+                onClick={onUpdate}
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}>
+                Päivitä
+              </Button>
+            </FlexRow>
+            {!pendingProcurementUnit ? (
+              <>
+                <ValueDisplay
+                  renderValue={(key, val) => {
+                    if (key === 'weeklyMeters') return `${val} metriä`
+                    if (key === 'medianAgeRequirement') return `${val} vuotta`
+                    return val
+                  }}
+                  item={procurementUnit}
+                  labels={procurementUnitLabels}>
+                  {catalogueEditable && (
+                    <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
+                      Muokkaa
+                    </Button>
+                  )}
+                </ValueDisplay>
+              </>
+            ) : catalogueEditable ? (
+              <>
+                <ItemForm
+                  item={pendingProcurementUnit}
+                  labels={procurementUnitLabels}
+                  onChange={onChangeProcurementUnit}
+                  onDone={onSaveProcurementUnit}
+                  onCancel={onCancelPendingUnit}
+                  doneLabel="Tallenna"
+                  doneDisabled={Object.values(pendingProcurementUnit).some(
+                    (val: number | string | undefined | null) =>
+                      val === null || typeof val === 'undefined' || val === ''
+                  )}
+                  renderInput={renderProcurementItemInput}>
+                  <Button
+                    size={ButtonSize.SMALL}
+                    buttonStyle={ButtonStyle.SECONDARY}
+                    onClick={onUpdateWeeklyMeters}>
+                    Päivitä suoritteet JOREsta
+                  </Button>
+                </ItemForm>
+              </>
+            ) : null}
+            <SubHeading>Kalustoluettelo</SubHeading>
+            <EquipmentCatalogue
+              startDate={inspectionStartDate}
+              procurementUnitId={procurementUnitId}
+              catalogue={activeCatalogue}
+              operatorId={procurementUnit.operatorId}
+              onCatalogueChanged={onCatalogueChanged}
+              editable={catalogueEditable}
+            />
+          </>
+        )}
+      </ContentWrapper>
+    )
+  }
+)
+
+const ProcurementUnitItem: React.FC<PropTypes> = observer(
+  ({
+    catalogueEditable,
+    showExecutionRequirements,
+    startDate,
+    procurementUnit,
+    expanded = true,
+    className,
+  }) => {
+    const { routes = [] } = procurementUnit || {}
+
+    return (
+      <ProcurementUnitView className={className}>
         {procurementUnit && (
           <ExpandableSection
             isExpanded={expanded}
             headerContent={
               <>
-                <ProcurementUnitHeading>{procurementUnitId}</ProcurementUnitHeading>
+                <ProcurementUnitHeading>
+                  {procurementUnit.procurementUnitId}
+                </ProcurementUnitHeading>
                 <HeaderSection>
                   <HeaderHeading>Reitit</HeaderHeading>
                   {(routes || [])
@@ -205,70 +298,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
               </>
             }>
-            <>
-              {showExecutionRequirements && hasEquipment && (
-                <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
-              )}
-              <FlexRow>
-                <SubHeading>Kohteen tiedot</SubHeading>
-                <Button
-                  onClick={onUpdate}
-                  style={{ marginLeft: 'auto' }}
-                  buttonStyle={ButtonStyle.SECONDARY}
-                  size={ButtonSize.SMALL}>
-                  Päivitä
-                </Button>
-              </FlexRow>
-              {!pendingProcurementUnit ? (
-                <>
-                  <ValueDisplay
-                    renderValue={(key, val) => {
-                      if (key === 'weeklyMeters') return `${val} metriä`
-                      if (key === 'medianAgeRequirement') return `${val} vuotta`
-                      return val
-                    }}
-                    item={procurementUnit}
-                    labels={procurementUnitLabels}>
-                    {catalogueEditable && (
-                      <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
-                        Muokkaa
-                      </Button>
-                    )}
-                  </ValueDisplay>
-                </>
-              ) : catalogueEditable ? (
-                <>
-                  <ItemForm
-                    item={pendingProcurementUnit}
-                    labels={procurementUnitLabels}
-                    onChange={onChangeProcurementUnit}
-                    onDone={onSaveProcurementUnit}
-                    onCancel={onCancelPendingUnit}
-                    doneLabel="Tallenna"
-                    doneDisabled={Object.values(pendingProcurementUnit).some(
-                      (val: number | string | undefined | null) =>
-                        val === null || typeof val === 'undefined' || val === ''
-                    )}
-                    renderInput={renderProcurementItemInput}>
-                    <Button
-                      size={ButtonSize.SMALL}
-                      buttonStyle={ButtonStyle.SECONDARY}
-                      onClick={onUpdateWeeklyMeters}>
-                      Päivitä suoritteet JOREsta
-                    </Button>
-                  </ItemForm>
-                </>
-              ) : null}
-              <SubHeading>Kalustoluettelo</SubHeading>
-              <EquipmentCatalogue
-                startDate={inspectionStartDate}
-                procurementUnitId={id}
-                catalogue={activeCatalogue}
-                operatorId={procurementUnit.operatorId}
-                onCatalogueChanged={onCatalogueChanged}
-                editable={catalogueEditable}
-              />
-            </>
+            <ProcurementUnitItemContent
+              showExecutionRequirements={showExecutionRequirements}
+              startDate={startDate}
+              procurementUnitId={procurementUnit.id}
+              catalogueEditable={catalogueEditable}
+            />
           </ExpandableSection>
         )}
       </ProcurementUnitView>
