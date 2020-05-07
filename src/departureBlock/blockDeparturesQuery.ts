@@ -35,16 +35,8 @@ export const blockDeparturesQuery = gql`
       journeyEndTime
       journeyType
       routeLength
-      startDate
-      endDate
-      equipment {
-        ...EquipmentFragment
-      }
-      operator {
-        id
-        operatorId
-        operatorName
-      }
+      equipmentId
+      operatorId
     }
   }
   ${EquipmentFragment}

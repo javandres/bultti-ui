@@ -336,8 +336,8 @@ export type Departure = {
   id: Scalars['ID'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
-  routeId: Scalars['String'];
-  direction: Scalars['String'];
+  routeId?: Maybe<Scalars['String']>;
+  direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
   dayType: DayType;
   procurementUnits: Array<ProcurementUnit>;
@@ -422,14 +422,10 @@ export type OperatorBlockDeparture = {
   registryNr?: Maybe<Scalars['String']>;
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
-  operator: Operator;
-  equipment?: Maybe<Equipment>;
+  operatorId?: Maybe<Scalars['String']>;
+  equipmentId?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
-  procurementUnit?: Maybe<Array<ProcurementUnit>>;
-  preInspectionId: Scalars['String'];
-  preInspection: PreInspection;
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
+  preInspectionId?: Maybe<Scalars['String']>;
 };
 
 export type ReportListItem = {

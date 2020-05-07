@@ -9,14 +9,14 @@ union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequi
 
 type Departure {
   dayType: DayType!
-  direction: String!
+  direction: String
   equipment: Equipment
   id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
   procurementUnits: [ProcurementUnit!]!
   registryNr: String
-  routeId: String!
+  routeId: String
   routeLength: Int
 }
 
@@ -169,21 +169,17 @@ type OperatorBlockDeparture {
   blockNumber: Int!
   dayType: DayType!
   direction: String
-  endDate: BulttiDate
-  equipment: Equipment
+  equipmentId: String
   id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
   journeyType: String!
-  operator: Operator!
-  preInspection: PreInspection!
-  preInspectionId: String!
-  procurementUnit: [ProcurementUnit!]
+  operatorId: String
+  preInspectionId: String
   procurementUnitId: String
   registryNr: String
   routeId: String
   routeLength: Int
-  startDate: BulttiDate
   vehicleId: String
 }
 
