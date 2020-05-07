@@ -54,8 +54,8 @@ const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
   border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
 `
 
-const ContentWrapper = styled.div`
-  padding: 1rem;
+const ContentWrapper = styled.div<{ expanded: boolean }>`
+  padding: ${(p) => (p.expanded ? '1rem' : '0')};
 `
 
 const ExpandToggle = styled.button<{ expanded?: boolean }>`
@@ -77,15 +77,20 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
 `
 
 export type PropTypes = {
-  children: React.ReactNode
+  children: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
   headerContent: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
   isExpanded?: boolean
   onToggleExpanded?: (expanded: boolean) => unknown
 }
 
 const ExpandableSection = observer(
-  ({ children, headerContent, isExpanded, onToggleExpanded = () => {} }: PropTypes) => {
-    const [expanded, setExpanded] = useState(true)
+  ({
+    children,
+    headerContent,
+    isExpanded = false,
+    onToggleExpanded = () => {},
+  }: PropTypes) => {
+    const [expanded, setExpanded] = useState(isExpanded)
 
     let onChangeExpanded = useCallback(() => {
       setExpanded((currentVal) => !currentVal)
@@ -112,7 +117,11 @@ const ExpandableSection = observer(
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
-        {expanded && <ContentWrapper>{children}</ContentWrapper>}
+        {(expanded || typeof children === 'function') && (
+          <ContentWrapper expanded={expanded}>
+            {typeof children === 'function' ? children(expanded) : children}
+          </ContentWrapper>
+        )}
       </ExpandableBoxView>
     )
   }

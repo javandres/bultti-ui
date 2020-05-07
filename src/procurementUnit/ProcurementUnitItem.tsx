@@ -68,6 +68,7 @@ type ContentPropTypes = {
   startDate: string
   procurementUnitId: string
   catalogueEditable: boolean
+  isVisible
 }
 
 const ProcurementUnitItemContent = observer(
@@ -76,6 +77,7 @@ const ProcurementUnitItemContent = observer(
     startDate,
     procurementUnitId,
     catalogueEditable,
+    isVisible,
   }: ContentPropTypes) => {
     const [
       pendingProcurementUnit,
@@ -85,10 +87,13 @@ const ProcurementUnitItemContent = observer(
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch: refetchUnit } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
+        skip: !procurementUnitId || !isVisible,
         variables: {
           procurementUnitId,
         },
       }) || {}
+
+    console.log(isVisible)
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -298,12 +303,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
               </>
             }>
-            <ProcurementUnitItemContent
-              showExecutionRequirements={showExecutionRequirements}
-              startDate={startDate}
-              procurementUnitId={procurementUnit.id}
-              catalogueEditable={catalogueEditable}
-            />
+            {(itemIsExpanded: boolean) => (
+              <ProcurementUnitItemContent
+                isVisible={itemIsExpanded}
+                showExecutionRequirements={showExecutionRequirements}
+                startDate={startDate}
+                procurementUnitId={procurementUnit.id}
+                catalogueEditable={catalogueEditable}
+              />
+            )}
           </ExpandableSection>
         )}
       </ProcurementUnitView>

@@ -28,14 +28,6 @@ type PreInspectionProps = {
   loading?: boolean
 } & TabChildProps
 
-function isOperator(value: any): value is Operator {
-  return typeof value?.operatorName !== 'undefined' && typeof value?.id === 'number'
-}
-
-function isSeason(value: any): value is Season {
-  return typeof value?.season !== 'undefined' && typeof value?.startDate !== 'undefined'
-}
-
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
   ({ refetchData, loading }) => {
     var preInspection = useContext(PreInspectionContext)
@@ -59,23 +51,12 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     // Update the pre-inspection on changes
     var updatePreInspectionValue = useCallback(
-      async (name: keyof PreInspectionInput, value: string | Operator | Season) => {
+      async (name: keyof PreInspectionInput, value: string) => {
         if (!isUpdating.current && preInspection && !loading) {
           isUpdating.current = true
 
           var preInspectionInput: PreInspectionInput = {}
-
-          // If value is Operator or Season, ignore the prop name and set the value ID with the appropriate key.
-          // If the season changed, also set the start and end dates from the new season.
-          if (isOperator(value)) {
-            preInspectionInput['operatorId'] = value.id
-          } else if (isSeason(value)) {
-            preInspectionInput['seasonId'] = value.id
-            preInspectionInput['startDate'] = value.startDate
-            preInspectionInput['endDate'] = value.endDate
-          } else {
-            preInspectionInput[name] = value
-          }
+          preInspectionInput[name] = value
 
           await updatePreInspection({
             variables: {
@@ -96,25 +77,24 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
       [updatePreInspectionValue]
     )
 
-    useEffect(() => {
-      if (preInspection && operator && season) {
-        if (!preInspection?.operator || preInspection?.operator?.id !== operator.id) {
-          updatePreInspectionValue('operatorId', operator)
-        }
-
-        let seasonId = typeof season === 'string' ? season : season?.id
-
-        if (!preInspection?.season || preInspection?.season?.id !== seasonId) {
-          updatePreInspectionValue('seasonId', season) // Works with a string season
-        }
-      }
-    }, [operator, season, preInspection])
-
     let onMetaButtonAction = useCallback(() => {
       if (preInspection) {
         navigateWithQueryString(`/pre-inspection/edit/${preInspection.id}/preview`)
       }
     }, [preInspection])
+
+    useEffect(() => {
+      if (!preInspection || !operator || !season) {
+        return
+      }
+
+      if (
+        preInspection.operatorId !== operator.operatorId ||
+        preInspection.seasonId !== season.id
+      ) {
+        navigateWithQueryString(`/pre-inspection/edit`)
+      }
+    }, [preInspection, operator, season])
 
     return (
       <EditPreInspectionView>
