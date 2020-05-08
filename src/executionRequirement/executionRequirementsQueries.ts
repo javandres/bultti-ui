@@ -65,7 +65,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
   ${RequirementValueFragment}
 `
 
-export const executionRequirementsByAreaQuery = gql`
+export const executionRequirementsForAreaQuery = gql`
   query executionRequirementsByPreInspection($preInspectionId: String!) {
     executionRequirementsForPreInspectionAreas(preInspectionId: $preInspectionId) {
       ...ExecutionRequirementFragment
@@ -75,42 +75,6 @@ export const executionRequirementsByAreaQuery = gql`
     }
   }
   ${ExecutionRequirementFragment}
-  ${RequirementValueFragment}
-`
-
-export const createExecutionRequirementsForPreInspectionMutation = gql`
-  mutation createExecutionRequirementsForPreInspection($preInspectionId: String!) {
-    createExecutionRequirementsForPreInspection(preInspectionId: $preInspectionId) {
-      id
-      area {
-        id
-        name
-      }
-      operator {
-        id
-        operatorId
-        operatorName
-      }
-      requirements {
-        ...RequirementValueFragment
-      }
-      procurementUnitRequirements {
-        id
-        area {
-          id
-          name
-        }
-        equipmentQuotas {
-          equipment {
-            ...EquipmentFragment
-          }
-          meterRequirement
-          percentageQuota
-        }
-      }
-    }
-  }
-  ${EquipmentFragment}
   ${RequirementValueFragment}
 `
 

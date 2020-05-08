@@ -229,7 +229,7 @@ export enum InspectionStatus {
 
 export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement';
-  id: Scalars['ID'];
+  id: Scalars['String'];
   area: OperatingArea;
   operator: Operator;
   preInspection: PreInspection;
@@ -487,7 +487,6 @@ export type Mutation = {
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
-  createExecutionRequirementsForPreInspection: Array<ExecutionRequirement>;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   removeAllEquipmentFromExecutionRequirement: ExecutionRequirement;
@@ -585,11 +584,6 @@ export type MutationRemoveAllEquipmentFromCatalogueArgs = {
 };
 
 
-export type MutationCreateExecutionRequirementsForPreInspectionArgs = {
-  preInspectionId: Scalars['String'];
-};
-
-
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
   preInspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
@@ -643,15 +637,13 @@ export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
 };
 
 export type InitialPreInspectionInput = {
-  operatorId: Scalars['Int'];
-  seasonId: Scalars['String'];
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
+  operatorId: Scalars['Int'];
+  seasonId: Scalars['String'];
 };
 
 export type PreInspectionInput = {
-  operatorId?: Maybe<Scalars['Int']>;
-  seasonId?: Maybe<Scalars['String']>;
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
 };

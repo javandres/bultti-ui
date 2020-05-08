@@ -83,7 +83,7 @@ type ExecutionRequirement {
   averageAgeWeighted: Float
   averageAgeWeightedFulfilled: Float
   equipmentQuotas: [ExecutionRequirementQuota!]!
-  id: ID!
+  id: String!
   operator: Operator!
   preInspection: PreInspection!
   procurementUnit: ProcurementUnit
@@ -122,7 +122,6 @@ type Mutation {
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [OperatorBlockDeparture!]
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
-  createExecutionRequirementsForPreInspection(preInspectionId: String!): [ExecutionRequirement!]!
   createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
   generateEquipmentForPreInspection(preInspectionId: String!): Boolean!
@@ -410,8 +409,6 @@ input InitialPreInspectionInput {
 
 input PreInspectionInput {
   endDate: BulttiDate
-  operatorId: Int
-  seasonId: String
   startDate: BulttiDate
 }
 
