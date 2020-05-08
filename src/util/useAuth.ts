@@ -5,7 +5,7 @@ import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
 import { useLazyQueryData } from './useLazyQueryData'
 import { pickGraphqlData } from './pickGraphqlData'
-import { getUrlValue, navigate, navigateWithQueryString, setUrlValue } from './urlValue'
+import { getUrlValue, navigate, setUrlValue } from './urlValue'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -72,14 +72,9 @@ export const useAuth = (): [AuthState, boolean] => {
           setAuthState(AuthState.UNAUTHENTICATED)
         }
 
-        let nextUrl = sessionStorage.getItem('return_to_url')
-
-        if (nextUrl) {
-          sessionStorage.removeItem('return_to_url')
-          navigate(nextUrl, { replace: true })
-        } else {
-          navigateWithQueryString('/', { replace: true })
-        }
+        let nextUrl = sessionStorage.getItem('return_to_url') || '/'
+        sessionStorage.removeItem('return_to_url')
+        navigate(nextUrl, { replace: true })
       })
     }
   }, [user, code, authState, login])
