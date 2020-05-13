@@ -8,21 +8,38 @@ schema {
 union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | OperatorBlockDeparture | ProcurementUnit
 
 type Departure {
+  allowedOverAge: Float
+  blockNumber: String
   dayType: DayType!
   direction: String
+  endStop: String
   equipment: Equipment
+  equipmentTypeRequired: Boolean
   id: ID!
+  infoSystems: Boolean
+  isTracked: Boolean
+  isTrunkRoute: Boolean
   journeyEndTime: String!
   journeyStartTime: String!
-  procurementUnits: [ProcurementUnit!]!
+  operatorOrder: Int
+  plannedEquipmentType: String
+  procurementUnit: ProcurementUnit!
+  recoveryTime: Int!
   registryNr: String
   routeId: String
   routeLength: Int
+  schemaId: String
+  schemaOrder: Int
+  startStop: String
+  terminalTime: Int!
+  trackReason: TrackReason!
 }
 
 type DeparturePair {
+  blockNumber: String
   departureA: Departure!
   departureB: Departure!
+  schemaId: String
 }
 
 type Equipment {
@@ -83,7 +100,7 @@ type ExecutionRequirement {
   averageAgeWeighted: Float
   averageAgeWeightedFulfilled: Float
   equipmentQuotas: [ExecutionRequirementQuota!]!
-  id: String!
+  id: ID!
   operator: Operator!
   preInspection: PreInspection!
   procurementUnit: ProcurementUnit
@@ -165,9 +182,10 @@ type Operator {
 }
 
 type OperatorBlockDeparture {
-  blockNumber: Int!
+  blockNumber: String!
   dayType: DayType!
   direction: String
+  endStop: String
   equipmentId: String
   id: ID!
   journeyEndTime: String!
@@ -179,6 +197,7 @@ type OperatorBlockDeparture {
   registryNr: String
   routeId: String
   routeLength: Int
+  startStop: String
   vehicleId: String
 }
 
@@ -217,7 +236,6 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea!
   areaId: Int!
-  departures: [Departure!]!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
@@ -347,6 +365,20 @@ enum ReportType {
   LIST
   PAIR_LIST
   SUMMARY
+}
+
+enum TrackReason {
+  DEADRUN_DETECTED
+  EQUIPMENT_AGE_VIOLATION
+  EQUIPMENT_TYPE_VIOLATION
+  EXTERIOR_COLOR_VIOLATION
+  FIRST_DEPARTURE_AFTER_DEADRUN
+  FIRST_DEPARTURE_IN_BLOCK
+  INFO_SYSTEMS_VIOLATION
+  MISSING_DEPARTURE
+  NOT_TRACKED
+  RECOVERY_VIOLATION
+  SUPERFLUOUS_DEPARTURE
 }
 
 enum UserRole {

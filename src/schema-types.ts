@@ -229,7 +229,7 @@ export enum InspectionStatus {
 
 export type ExecutionRequirement = {
    __typename?: 'ExecutionRequirement';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   area: OperatingArea;
   operator: Operator;
   preInspection: PreInspection;
@@ -272,7 +272,6 @@ export type ProcurementUnit = {
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
-  departures: Array<Departure>;
   executionRequirements: Array<ExecutionRequirement>;
 };
 
@@ -336,13 +335,28 @@ export type Departure = {
   id: Scalars['ID'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
+  terminalTime: Scalars['Int'];
+  recoveryTime: Scalars['Int'];
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
   dayType: DayType;
-  procurementUnits: Array<ProcurementUnit>;
-  equipment?: Maybe<Equipment>;
+  startStop?: Maybe<Scalars['String']>;
+  endStop?: Maybe<Scalars['String']>;
+  plannedEquipmentType?: Maybe<Scalars['String']>;
+  equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
   registryNr?: Maybe<Scalars['String']>;
+  isTrunkRoute?: Maybe<Scalars['Boolean']>;
+  infoSystems?: Maybe<Scalars['Boolean']>;
+  allowedOverAge?: Maybe<Scalars['Float']>;
+  blockNumber?: Maybe<Scalars['String']>;
+  operatorOrder?: Maybe<Scalars['Int']>;
+  schemaId?: Maybe<Scalars['String']>;
+  schemaOrder?: Maybe<Scalars['Int']>;
+  isTracked?: Maybe<Scalars['Boolean']>;
+  trackReason: TrackReason;
+  procurementUnit: ProcurementUnit;
+  equipment?: Maybe<Equipment>;
 };
 
 export enum DayType {
@@ -353,6 +367,20 @@ export enum DayType {
   Pe = 'Pe',
   La = 'La',
   Su = 'Su'
+}
+
+export enum TrackReason {
+  NotTracked = 'NOT_TRACKED',
+  FirstDepartureInBlock = 'FIRST_DEPARTURE_IN_BLOCK',
+  FirstDepartureAfterDeadrun = 'FIRST_DEPARTURE_AFTER_DEADRUN',
+  SuperfluousDeparture = 'SUPERFLUOUS_DEPARTURE',
+  MissingDeparture = 'MISSING_DEPARTURE',
+  RecoveryViolation = 'RECOVERY_VIOLATION',
+  DeadrunDetected = 'DEADRUN_DETECTED',
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION'
 }
 
 export type ProcurementUnitRoute = {
@@ -412,13 +440,15 @@ export type EquipmentSearchResult = {
 export type OperatorBlockDeparture = {
    __typename?: 'OperatorBlockDeparture';
   id: Scalars['ID'];
-  blockNumber: Scalars['Int'];
+  blockNumber: Scalars['String'];
   dayType: DayType;
   journeyType: Scalars['String'];
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
+  startStop?: Maybe<Scalars['String']>;
+  endStop?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
@@ -467,6 +497,8 @@ export type ReportEntityUnion = Departure | Equipment | DeparturePair | Procurem
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';
+  blockNumber?: Maybe<Scalars['String']>;
+  schemaId?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
 };

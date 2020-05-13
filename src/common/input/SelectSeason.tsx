@@ -30,7 +30,6 @@ const SelectSeason: React.FC<PropTypes> = observer(
     selectInitialId,
   }) => {
     let unselectedVal = enableAll ? 'Kaikki' : '...'
-
     let seasonsData = useSeasons()
 
     const seasons: Season[] = useMemo(() => {
@@ -94,7 +93,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
       }
 
       return value || seasons[0]
-    }, [seasons, value])
+    }, [seasons, value, selectInitialId])
 
     return (
       <Dropdown
