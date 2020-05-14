@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
@@ -12,7 +12,6 @@ import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
-import { useDebouncedCallback } from 'use-debounce'
 
 const ReportTableFiltersView = styled.div`
   margin-bottom: 1rem;
@@ -34,8 +33,8 @@ const FilterModeButton = styled(ToggleButton)`
 
 export type PropTypes<ItemType = any> = {
   items: ItemType[]
-  onFilterApplied: (items: ItemType[]) => unknown
   excludeFields?: string[]
+  children: (filteredItems: ItemType[]) => React.ReactChild
 }
 
 type FilterConfig = {
@@ -49,11 +48,7 @@ enum FilterMode {
 }
 
 const ReportTableFilters = observer(
-  <ItemType extends {}>({
-    items,
-    onFilterApplied,
-    excludeFields = [],
-  }: PropTypes<ItemType>) => {
+  <ItemType extends {}>({ items, children, excludeFields = [] }: PropTypes<ItemType>) => {
     let [filters, setFilters] = useState<FilterConfig[]>([{ field: '', filterValue: '' }])
     let [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.INCLUSIVE)
 
@@ -115,14 +110,9 @@ const ReportTableFilters = observer(
       })
     }, [])
 
-    let [debouncedFilterApplied] = useDebouncedCallback((filteredItems: ItemType[]) => {
-      onFilterApplied(filteredItems)
-    }, 1000)
-
-    useEffect(() => {
+    let currentFilteredItems = useMemo(() => {
       if (filters.length === 0 || !items || items.length === 0) {
-        debouncedFilterApplied(items)
-        return
+        return items
       }
 
       let filterFieldGroups: [string, string][] = compact(
@@ -136,8 +126,7 @@ const ReportTableFilters = observer(
       )
 
       if (filterFieldGroups.length === 0) {
-        debouncedFilterApplied(items)
-        return
+        return items
       }
 
       let filteredItems: typeof items = []
@@ -183,8 +172,8 @@ const ReportTableFilters = observer(
         }
       }
 
-      debouncedFilterApplied(filteredItems)
-    }, [items, filters, filterMode, debouncedFilterApplied])
+      return filteredItems
+    }, [items, filters, filterMode])
 
     let filterFieldOptions = useMemo(
       () => ['', ...Object.keys(omit(items[0], excludeFields) || {})],
@@ -192,59 +181,62 @@ const ReportTableFilters = observer(
     )
 
     return (
-      <ReportTableFiltersView>
-        <FlexRow style={{ marginBottom: '1.5rem' }}>
-          <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
-          {filters.length > 1 && (
-            <FilterModeButton
-              name="filter-mode"
-              isSwitch={true}
-              value="mode"
-              checked={filterMode === FilterMode.INCLUSIVE}
-              preLabel="Supistava"
-              onChange={toggleFilterMode}>
-              Laajentava
-            </FilterModeButton>
-          )}
-        </FlexRow>
-        {filters.map((filterConfig, index) => (
-          <ControlGroup
-            key={`${filterConfig.field}_${index}`}
-            style={{ width: '100%', marginBottom: '1.5rem' }}>
-            <Input
-              value={filterConfig.filterValue}
-              onChange={(nextVal) => onChangeFilter(index, nextVal)}
-              name="filter"
-              type="text"
-              theme="light"
-              label={`Filter on ${filterConfig.field || text('general.app.all')}`}
-            />
-            {filterFieldOptions.length !== 0 && (
-              <Dropdown
-                label="Field"
-                items={filterFieldOptions}
-                selectedItem={filterConfig.field}
-                itemToString={(item) => item}
-                itemToLabel={(item) => (!item ? text('general.app.all') : item)}
-                onSelect={(nextField) => onChangeFilterField(index, nextField)}
-              />
+      <>
+        <ReportTableFiltersView>
+          <FlexRow style={{ marginBottom: '1.5rem' }}>
+            <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
+            {filters.length > 1 && (
+              <FilterModeButton
+                name="filter-mode"
+                isSwitch={true}
+                value="mode"
+                checked={filterMode === FilterMode.INCLUSIVE}
+                preLabel="Supistava"
+                onChange={toggleFilterMode}>
+                Laajentava
+              </FilterModeButton>
             )}
-            <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
-              <RemoveButton onClick={() => onRemoveFilter(index)}>
-                <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-              </RemoveButton>
-            </div>
-          </ControlGroup>
-        ))}
-        <FilterButtonBar>
-          <Button
-            onClick={() => onAddFilter()}
-            buttonStyle={ButtonStyle.NORMAL}
-            size={ButtonSize.SMALL}>
-            Lisää kenttä
-          </Button>
-        </FilterButtonBar>
-      </ReportTableFiltersView>
+          </FlexRow>
+          {filters.map((filterConfig, index) => (
+            <ControlGroup
+              key={`${filterConfig.field}_${index}`}
+              style={{ width: '100%', marginBottom: '1.5rem' }}>
+              <Input
+                value={filterConfig.filterValue}
+                onChange={(nextVal) => onChangeFilter(index, nextVal)}
+                name="filter"
+                type="text"
+                theme="light"
+                label={`Filter on ${filterConfig.field || text('general.app.all')}`}
+              />
+              {filterFieldOptions.length !== 0 && (
+                <Dropdown
+                  label="Field"
+                  items={filterFieldOptions}
+                  selectedItem={filterConfig.field}
+                  itemToString={(item) => item}
+                  itemToLabel={(item) => (!item ? text('general.app.all') : item)}
+                  onSelect={(nextField) => onChangeFilterField(index, nextField)}
+                />
+              )}
+              <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
+                <RemoveButton onClick={() => onRemoveFilter(index)}>
+                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                </RemoveButton>
+              </div>
+            </ControlGroup>
+          ))}
+          <FilterButtonBar>
+            <Button
+              onClick={() => onAddFilter()}
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.SMALL}>
+              Lisää kenttä
+            </Button>
+          </FilterButtonBar>
+        </ReportTableFiltersView>
+        {children(currentFilteredItems)}
+      </>
     )
   }
 )

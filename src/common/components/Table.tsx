@@ -151,7 +151,6 @@ const TableCell = styled.div<{
   editable?: boolean
   isEditing?: boolean
   isEditingRow?: boolean
-  columnWidth?: number
 }>`
   flex: 1 1 auto;
   border-right: 1px solid var(--lighter-grey);
@@ -162,7 +161,6 @@ const TableCell = styled.div<{
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
-  width: ${(p) => (!p.columnWidth ? 'auto' : p.columnWidth + 'px')};
 
   &:last-of-type {
     border-right: 0;
@@ -311,16 +309,17 @@ const Table = observer(
     let setColumnWidth = useCallback((index, width, onlyIncrease = false) => {
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
-        let curWidth = nextWidths[index] || 0
+        let curWidth = nextWidths[index]
 
+        // Only set with if no width has been set yet for this column, or if it is different,
+        // or when onlyIncrease is true, if the new width is more than the current width.
         if (
-          // Only set with if no width has been set yet for this column, or if it is different,
-          (!curWidth || width !== curWidth) &&
-          // or if the onlyIncrease param is true, only set width if the new width is more
-          // than the currently set width.
-          (!onlyIncrease || (onlyIncrease && curWidth < width))
+          !curWidth ||
+          (!onlyIncrease && width !== curWidth) ||
+          (onlyIncrease && !!curWidth && curWidth < width)
         ) {
-          nextWidths.splice(index, 0, width)
+          let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
+          nextWidths.splice(index, deleteCount, width)
           return nextWidths
         }
 
@@ -329,12 +328,12 @@ const Table = observer(
     }, [])
 
     let setWidthFromCellRef = useCallback(
-      (ref, index, onlyIncrease = false) => {
+      (ref, index) => {
         if (ref) {
           let rect = ref.getBoundingClientRect()
 
           if (rect && rect.width) {
-            setColumnWidth(index, rect.width, onlyIncrease)
+            setColumnWidth(index, rect.width)
           }
         }
       },
@@ -544,8 +543,7 @@ const Table = observer(
 
         return (
           <TableCell
-            ref={(ref) => setWidthFromCellRef(ref, cellIndex, true)}
-            columnWidth={columnWidth}
+            style={{ width: columnWidth ? columnWidth + 'px' : 'auto' }}
             isEditing={!!editValue}
             isEditingRow={isEditingRow}
             editable={editableValues?.includes(valueKey)}
