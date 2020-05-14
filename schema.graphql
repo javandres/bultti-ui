@@ -15,7 +15,7 @@ type Departure {
   endStop: String
   equipment: Equipment
   equipmentTypeRequired: Boolean
-  id: ID!
+  id: ID
   infoSystems: Boolean
   isTracked: Boolean
   isTrunkRoute: Boolean

@@ -35,7 +35,8 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "styled-components": "^5.1.0",
-    "typescript": "3.8.3"
+    "typescript": "3.8.3",
+    "use-debounce": "^3.4.2"
   },
   "scripts": {
     "start": "BROWSER=none EXTEND_ESLINT=true PORT=3001 react-app-rewired start",

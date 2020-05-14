@@ -12,6 +12,7 @@ import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
+import { useDebouncedCallback } from 'use-debounce'
 
 const ReportTableFiltersView = styled.div`
   margin-bottom: 1rem;
@@ -48,7 +49,11 @@ enum FilterMode {
 }
 
 const ReportTableFilters = observer(
-  ({ items, onFilterApplied, excludeFields = [] }: PropTypes) => {
+  <ItemType extends {}>({
+    items,
+    onFilterApplied,
+    excludeFields = [],
+  }: PropTypes<ItemType>) => {
     let [filters, setFilters] = useState<FilterConfig[]>([{ field: '', filterValue: '' }])
     let [filterMode, setFilterMode] = useState<FilterMode>(FilterMode.INCLUSIVE)
 
@@ -110,9 +115,13 @@ const ReportTableFilters = observer(
       })
     }, [])
 
+    let [debouncedFilterApplied] = useDebouncedCallback((filteredItems: ItemType[]) => {
+      onFilterApplied(filteredItems)
+    }, 1000)
+
     useEffect(() => {
       if (filters.length === 0 || !items || items.length === 0) {
-        onFilterApplied(items)
+        debouncedFilterApplied(items)
         return
       }
 
@@ -127,7 +136,7 @@ const ReportTableFilters = observer(
       )
 
       if (filterFieldGroups.length === 0) {
-        onFilterApplied(items)
+        debouncedFilterApplied(items)
         return
       }
 
@@ -174,8 +183,8 @@ const ReportTableFilters = observer(
         }
       }
 
-      onFilterApplied(filteredItems)
-    }, [items, filters, filterMode])
+      debouncedFilterApplied(filteredItems)
+    }, [items, filters, filterMode, debouncedFilterApplied])
 
     let filterFieldOptions = useMemo(
       () => ['', ...Object.keys(omit(items[0], excludeFields) || {})],

@@ -332,7 +332,7 @@ export type ExecutionRequirementQuota = {
 
 export type Departure = {
    __typename?: 'Departure';
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
   terminalTime: Scalars['Int'];

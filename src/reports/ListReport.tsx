@@ -20,7 +20,7 @@ const ListReport = observer(
 
     return (
       <ListReportView>
-        <ReportTableFilters
+        <ReportTableFilters<ItemType>
           items={items}
           onFilterApplied={setFilteredItems}
           excludeFields={['id', '__typename']}
