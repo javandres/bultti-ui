@@ -28,6 +28,17 @@ export const DepartureFragment = gql`
     journeyStartTime
     journeyEndTime
     registryNr
+    endStop
+    isTrunkRoute
+    equipmentTypeRequired
+    operatorOrder
+    plannedEquipmentType
+    recoveryTime
+    schemaId
+    schemaOrder
+    trackReason
+    terminalTime
+    startStop
   }
 `
 

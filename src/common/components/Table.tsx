@@ -12,22 +12,24 @@ import { observer } from 'mobx-react-lite'
 import { difference, get, omitBy, orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
-import { TextInput } from '../input/Input'
 import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { useResizeObserver } from '../../util/useResizeObserver'
+import { TextInput } from '../input/Input'
 
-const TableView = styled.div`
+const TableWrapper = styled.div`
   position: relative;
   width: calc(100% + 2rem);
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
-  height: 100%;
-  flex: 1 0 100%;
+`
+
+const TableView = styled.div`
+  flex: 1 0 auto;
   display: flex;
   flex-direction: column;
 
@@ -144,9 +146,9 @@ const TableCell = styled.div<{
   editable?: boolean
   isEditing?: boolean
   isEditingRow?: boolean
+  columnWidth?: number
 }>`
-  flex: 1 1 calc(100% / 11);
-  min-width: 45px;
+  flex: 1 1 auto;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;
@@ -155,6 +157,7 @@ const TableCell = styled.div<{
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
+  width: ${(p) => (!p.columnWidth ? 'auto' : p.columnWidth + 'px')};
 
   &:last-of-type {
     border-right: 0;
@@ -166,7 +169,7 @@ const TableCell = styled.div<{
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0.5rem 0.5rem 0.4rem;
+  padding: 0.5rem 1.5rem 0.4rem 0.5rem;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
@@ -176,11 +179,18 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   cursor: pointer;
   text-align: left;
   justify-content: flex-start;
+  white-space: nowrap;
+  position: relative;
 `
 
 const ColumnSortIndicator = styled.div`
-  margin-left: auto;
+  position: absolute;
   font-weight: normal;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
@@ -291,6 +301,34 @@ const Table = observer(
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
+    let [columnWidths, setColumnWidths] = useState<number[]>([])
+
+    let setColumnWidth = useCallback((index, width) => {
+      setColumnWidths((currentWidths) => {
+        let nextWidths = [...currentWidths]
+        let curWidth = nextWidths[index] || 0
+
+        if (!curWidth || width !== curWidth) {
+          nextWidths.splice(index, 0, width)
+          return nextWidths
+        }
+
+        return currentWidths
+      })
+    }, [])
+
+    let setWidthFromCellRef = useCallback(
+      (ref, index) => {
+        if (ref) {
+          let rect = ref.getBoundingClientRect()
+
+          if (rect && rect.width) {
+            setColumnWidth(index, rect.width)
+          }
+        }
+      },
+      [setColumnWidth]
+    )
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -471,9 +509,11 @@ const Table = observer(
       ({
         row,
         cell,
+        cellIndex,
       }: {
         row: TableRowWithDataAndFunctions
         cell: [keyof ItemType, CellValType]
+        cellIndex: number
       }) => {
         let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
@@ -489,8 +529,11 @@ const Table = observer(
             ? pendingValues.find((val) => val.item.id === itemId && val.key === key)
             : null
 
+        let columnWidth = columnWidths[cellIndex] || 0
+
         return (
           <TableCell
+            columnWidth={columnWidth}
             isEditing={!!editValue}
             isEditingRow={isEditingRow}
             editable={editableValues?.includes(valueKey)}
@@ -522,6 +565,7 @@ const Table = observer(
         renderInput,
         renderCell,
         renderValue,
+        columnWidths,
       ]
     )
 
@@ -550,6 +594,7 @@ const Table = observer(
             {itemEntries.map(([key, val], index) => (
               <TableCellComponent
                 row={rowItem}
+                cellIndex={index}
                 cell={[key as string, val]}
                 key={`${rowKey}_${index}`}
               />
@@ -580,8 +625,8 @@ const Table = observer(
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
     return (
-      <>
-        <TableView className={className} ref={tableViewRef}>
+      <TableWrapper className={className}>
+        <TableView ref={tableViewRef}>
           <TableHeader
             style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
             {indexCell && (
@@ -589,7 +634,7 @@ const Table = observer(
                 {indexCell}
               </ColumnHeaderCell>
             )}
-            {columnNames.map(([colKey, colName]) => {
+            {columnNames.map(([colKey, colName], colIdx) => {
               let isEditingColumn =
                 pendingValues.length !== 0 &&
                 pendingValues.map((val) => val.key).includes(colKey)
@@ -599,6 +644,7 @@ const Table = observer(
 
               return (
                 <ColumnHeaderCell
+                  ref={(ref) => setWidthFromCellRef(ref, colIdx)}
                   as="button"
                   isEditing={isEditingColumn}
                   key={colName}
@@ -674,7 +720,7 @@ const Table = observer(
             </CancelButton>
           </EditToolbar>
         )}
-      </>
+      </TableWrapper>
     )
   }
 )
