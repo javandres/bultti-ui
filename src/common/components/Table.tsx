@@ -16,26 +16,31 @@ import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
-import { useResizeObserver } from '../../util/useResizeObserver'
 import { TextInput } from '../input/Input'
 
-const TableWrapper = styled.div`
+const TableWrapper = styled.div<{ height: number; rowHeight: number }>`
   position: relative;
   width: calc(100% + 2rem);
+  max-width: calc(100% + 2rem);
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
-`
-
-const TableView = styled.div`
-  flex: 1 0 auto;
-  display: flex;
-  flex-direction: column;
+  overflow-x: scroll;
+  height: ${(p) => p.height + p.rowHeight + 16}px;
 
   &:last-child {
     margin-bottom: 0;
   }
+`
+
+const TableView = styled.div<{ width: number }>`
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: ${(p) => p.width}px;
 `
 
 const EditInputWrapper = styled.div`
@@ -303,12 +308,18 @@ const Table = observer(
     let [sort, setSort] = useState<SortConfig[]>([])
     let [columnWidths, setColumnWidths] = useState<number[]>([])
 
-    let setColumnWidth = useCallback((index, width) => {
+    let setColumnWidth = useCallback((index, width, onlyIncrease = false) => {
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index] || 0
 
-        if (!curWidth || width !== curWidth) {
+        if (
+          // Only set with if no width has been set yet for this column, or if it is different,
+          (!curWidth || width !== curWidth) &&
+          // or if the onlyIncrease param is true, only set width if the new width is more
+          // than the currently set width.
+          (!onlyIncrease || (onlyIncrease && curWidth < width))
+        ) {
           nextWidths.splice(index, 0, width)
           return nextWidths
         }
@@ -318,12 +329,12 @@ const Table = observer(
     }, [])
 
     let setWidthFromCellRef = useCallback(
-      (ref, index) => {
+      (ref, index, onlyIncrease = false) => {
         if (ref) {
           let rect = ref.getBoundingClientRect()
 
           if (rect && rect.width) {
-            setColumnWidth(index, rect.width)
+            setColumnWidth(index, rect.width, onlyIncrease)
           }
         }
       },
@@ -533,6 +544,7 @@ const Table = observer(
 
         return (
           <TableCell
+            ref={(ref) => setWidthFromCellRef(ref, cellIndex, true)}
             columnWidth={columnWidth}
             isEditing={!!editValue}
             isEditingRow={isEditingRow}
@@ -610,12 +622,11 @@ const Table = observer(
       [TableCellComponent]
     )
 
-    let rowsContainerRef = useRef(null)
-    let { width = 0 } = useResizeObserver(rowsContainerRef)
-
+    let width = columnWidths.reduce((total, col) => total + col, 0)
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
+    let isScrolling = listHeight > maxHeight
 
     // The table is empty if we don't have any items,
     // OR
@@ -625,8 +636,8 @@ const Table = observer(
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
     return (
-      <TableWrapper className={className}>
-        <TableView ref={tableViewRef}>
+      <TableWrapper className={className} height={height} rowHeight={rowHeight}>
+        <TableView ref={tableViewRef} width={width + (isScrolling ? 15 : 0)}>
           <TableHeader
             style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
             {indexCell && (
@@ -659,18 +670,13 @@ const Table = observer(
               )
             })}
           </TableHeader>
-          <div
-            ref={rowsContainerRef}
-            style={{
-              position: 'relative',
-              width: '100%',
-            }}>
+          <div style={{ position: 'relative' }}>
             {tableIsEmpty ? (
               emptyContent
             ) : virtualized ? (
               <List
                 height={height}
-                width={width}
+                width={width + 15}
                 itemCount={rows.length}
                 itemSize={rowHeight}
                 layout="vertical"
