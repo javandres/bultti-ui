@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { difference, get, omitBy, orderBy } from 'lodash'
+import { difference, get, omitBy, orderBy, toString } from 'lodash'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { Checkmark2 } from '../icon/Checkmark2'
@@ -252,7 +252,7 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
   </>
 )
 
-const defaultRenderValue = (key, val) => val
+const defaultRenderValue = (key, val) => toString(val)
 
 const defaultRenderInput = (key, val, onChange) => (
   <TableInput
