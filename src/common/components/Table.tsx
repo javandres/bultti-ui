@@ -18,7 +18,7 @@ import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
 
-const TableWrapper = styled.div<{ height: number; rowHeight: number }>`
+const TableWrapper = styled.div<{ height: number }>`
   position: relative;
   width: calc(100% + 2rem);
   max-width: calc(100% + 2rem);
@@ -27,20 +27,20 @@ const TableWrapper = styled.div<{ height: number; rowHeight: number }>`
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
   overflow-x: scroll;
-  height: ${(p) => p.height + p.rowHeight + 16}px;
+  height: ${(p) => p.height}px;
 
   &:last-child {
     margin-bottom: 0;
   }
 `
 
-const TableView = styled.div<{ width: number }>`
+const TableView = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
   display: flex;
   flex-direction: column;
-  width: ${(p) => p.width}px;
+  width: 100%;
 `
 
 const EditInputWrapper = styled.div`
@@ -105,7 +105,11 @@ const SaveButton = styled(Button)`
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
+  width: 100%;
   display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex-wrap: nowrap;
   border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
   border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
   position: relative;
@@ -144,7 +148,6 @@ const RowRemoveButton = styled(RemoveButton)`
 const TableHeader = styled(TableRow)`
   outline: none !important;
   border-bottom-color: var(--lighter-grey) !important;
-  flex: 0;
 `
 
 const TableCell = styled.div<{
@@ -152,7 +155,7 @@ const TableCell = styled.div<{
   isEditing?: boolean
   isEditingRow?: boolean
 }>`
-  flex: 1 1 auto;
+  flex: 1 1;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;
@@ -183,6 +186,11 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   text-align: left;
   justify-content: flex-start;
   white-space: nowrap;
+  position: relative;
+`
+
+const TableBodyWrapper = styled.div`
+  width: 100%;
   position: relative;
 `
 
@@ -543,7 +551,7 @@ const Table = observer(
 
         return (
           <TableCell
-            style={{ width: columnWidth ? columnWidth + 'px' : 'auto' }}
+            style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}
             isEditing={!!editValue}
             isEditingRow={isEditingRow}
             editable={editableValues?.includes(valueKey)}
@@ -633,9 +641,14 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
+    let wrapperHeight =
+      typeof getColumnTotal !== 'undefined' ? height + rowHeight * 3 : height + rowHeight + 16
+
     return (
-      <TableWrapper className={className} height={height} rowHeight={rowHeight}>
-        <TableView ref={tableViewRef} width={width + (isScrolling ? 15 : 0)}>
+      <TableWrapper className={className} height={wrapperHeight}>
+        <TableView
+          ref={tableViewRef}
+          style={{ minWidth: width + (isScrolling ? 15 : 0) + 'px' }}>
           <TableHeader
             style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
             {indexCell && (
@@ -668,7 +681,7 @@ const Table = observer(
               )
             })}
           </TableHeader>
-          <div style={{ position: 'relative' }}>
+          <TableBodyWrapper>
             {tableIsEmpty ? (
               emptyContent
             ) : virtualized ? (
@@ -687,14 +700,17 @@ const Table = observer(
                 <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
               ))
             )}
-          </div>
+          </TableBodyWrapper>
           {typeof getColumnTotal === 'function' && (
             <TableRow key="totals" footer={true}>
               {columns.map((col, colIdx) => {
                 const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+                let columnWidth = columnWidths[colIdx] || 0
 
                 return (
-                  <TableCell key={`footer_${col}`}>
+                  <TableCell
+                    key={`footer_${col}`}
+                    style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
                     <CellContent footerCell={true}>{total}</CellContent>
                   </TableCell>
                 )
