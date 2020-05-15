@@ -61,6 +61,7 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
 const TabContentWrapper = styled.div<RouteComponentProps>`
   padding-top: 1.5rem;
   height: 100%;
+  overflow-x: hidden;
 `
 
 const progress = keyframes`

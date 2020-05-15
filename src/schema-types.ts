@@ -307,7 +307,7 @@ export type Equipment = {
   operatorId: Scalars['Int'];
   uniqueVehicleId: Scalars['String'];
   operator: Operator;
-  model: Scalars['String'];
+  model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
   registryDate?: Maybe<Scalars['BulttiDate']>;
   type: Scalars['String'];
@@ -332,7 +332,7 @@ export type ExecutionRequirementQuota = {
 
 export type Departure = {
    __typename?: 'Departure';
-  id?: Maybe<Scalars['ID']>;
+  id: Scalars['ID'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
   terminalTime: Scalars['Int'];
@@ -453,6 +453,7 @@ export type OperatorBlockDeparture = {
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
   operatorId?: Maybe<Scalars['String']>;
+  equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   preInspectionId?: Maybe<Scalars['String']>;

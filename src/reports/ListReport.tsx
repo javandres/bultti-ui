@@ -18,7 +18,7 @@ export type PropTypes<T> = ReportComponentProps<T>
 const ListReport = observer(
   <ItemType extends {}>({ items, columnLabels }: PropTypes<ItemType>) => {
     const renderCellValue = useCallback((key, val) => {
-      if (typeof val === 'boolean') {
+      if (typeof val === 'boolean' || typeof val === 'undefined' || val === null) {
         return (
           <span style={{ fontSize: '1.2rem', marginTop: '-3px', display: 'block' }}>
             {val ? '✓' : '⨯'}

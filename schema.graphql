@@ -15,7 +15,7 @@ type Departure {
   endStop: String
   equipment: Equipment
   equipmentTypeRequired: Boolean
-  id: ID
+  id: ID!
   infoSystems: Boolean
   isTracked: Boolean
   isTrunkRoute: Boolean
@@ -50,7 +50,7 @@ type Equipment {
   exteriorColor: String!
   hasInfoSystems: Boolean!
   id: ID!
-  model: String!
+  model: String
   operator: Operator!
   operatorId: Int!
   registryDate: BulttiDate
@@ -186,6 +186,7 @@ type OperatorBlockDeparture {
   dayType: DayType!
   direction: String
   endStop: String
+  equipment: Equipment
   equipmentId: String
   id: ID!
   journeyEndTime: String!
