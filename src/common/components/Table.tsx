@@ -211,6 +211,8 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   display: block;
   width: 100%;
   text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
@@ -336,12 +338,12 @@ const Table = observer(
     }, [])
 
     let setWidthFromCellRef = useCallback(
-      (ref, index) => {
+      (ref, index, onlyIncrease = false) => {
         if (ref) {
           let rect = ref.getBoundingClientRect()
 
           if (rect && rect.width) {
-            setColumnWidth(index, rect.width)
+            setColumnWidth(index, rect.width, onlyIncrease)
           }
         }
       },
@@ -528,10 +530,12 @@ const Table = observer(
         row,
         cell,
         cellIndex,
+        rowIndex,
       }: {
         row: TableRowWithDataAndFunctions
         cell: [keyof ItemType, CellValType]
         cellIndex: number
+        rowIndex: number
       }) => {
         let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
@@ -609,12 +613,13 @@ const Table = observer(
 
         return (
           <TableRow key={rowKey ?? `row-${index}`} isEditing={isEditingRow} style={style}>
-            {itemEntries.map(([key, val], index) => (
+            {itemEntries.map(([key, val], cellIndex) => (
               <TableCellComponent
                 row={rowItem}
-                cellIndex={index}
+                rowIndex={index}
+                cellIndex={cellIndex}
                 cell={[key as string, val]}
-                key={`${rowKey}_${index}`}
+                key={`${rowKey}_${cellIndex}`}
               />
             ))}
             {!isEditingRow && removeItem && (
