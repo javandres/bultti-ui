@@ -332,14 +332,6 @@ type User {
   role: UserRole!
 }
 
-type VersionedEntity {
-  endDate: BulttiDate!
-  minStartDate: BulttiDate
-  startDate: BulttiDate!
-  version: Int!
-  versionStackIdentifier: String
-}
-
 enum DayType {
   Ke
   La
@@ -393,29 +385,9 @@ enum UserRole {
   OPERATOR_USER
 }
 
-input DepartureBlockInput {
-  dayType: DayType!
-  departures: [DepartureInput!]!
-}
-
-input DepartureInput {
-  departureTime: String!
-  direction: String!
-  routeId: String!
-  vehicleId: String!
-}
-
 input EquipmentCatalogueInput {
   endDate: BulttiDate!
   startDate: BulttiDate!
-}
-
-input EquipmentCatalogueQuotaInput {
-  equipmentCatalogueId: String!
-  equipmentId: String!
-  id: ID
-  offeredPercentageQuota: Float
-  percentageQuota: Float
 }
 
 input EquipmentInput {
@@ -428,13 +400,6 @@ input EquipmentInput {
   registryNr: String
   type: String
   vehicleId: String
-}
-
-input ExecutionRequirementQuotaInput {
-  equipmentCatalogueId: String!
-  equipmentId: String!
-  id: ID
-  percentageQuota: Float
 }
 
 input InitialPreInspectionInput {
@@ -452,22 +417,6 @@ input PreInspectionInput {
 input ProcurementUnitEditInput {
   medianAgeRequirement: Float!
   weeklyMeters: Float!
-}
-
-input ProcurementUnitInput {
-  area: Int!
-  endDate: BulttiDate!
-  id: ID!
-  operatorId: Int!
-  procurementUnitId: ID!
-  routes: [ProcurementUnitRouteInput!]
-  startDate: BulttiDate!
-  weeklyMeters: Float!
-}
-
-input ProcurementUnitRouteInput {
-  length: Float!
-  routeId: String!
 }
 
 
