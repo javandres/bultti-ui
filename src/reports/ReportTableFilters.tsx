@@ -24,6 +24,12 @@ const FilterButtonBar = styled.div`
   justify-content: flex-start;
 `
 
+const ResultsCountView = styled.div`
+  margin-left: auto;
+  font-size: 0.875rem;
+  color: var(--grey);
+`
+
 const FilterModeButton = styled(ToggleButton)`
   flex: 0;
   display: inline-flex;
@@ -236,35 +242,41 @@ const ReportTableFilters = observer(
               </FilterModeButton>
             )}
           </FlexRow>
-          {liveFilters.map((filterConfig, index) => (
-            <ControlGroup
-              key={`${filterConfig.field}_${index}`}
-              style={{ width: '100%', marginBottom: '1.5rem' }}>
-              <Input
-                value={filterConfig.filterValue}
-                onChange={(nextVal) => onChangeFilter(index, nextVal)}
-                name="filter"
-                type="text"
-                theme="light"
-                label={`Filter on ${filterConfig.field || text('general.app.all')}`}
-              />
-              {filterFieldOptions.length !== 0 && (
-                <Dropdown
-                  label="Field"
-                  items={filterFieldOptions}
-                  selectedItem={filterConfig.field}
-                  itemToString={(item) => item.field}
-                  itemToLabel={(item) => item.label}
-                  onSelect={(nextField) => onChangeFilterField(index, nextField)}
+          {liveFilters.map((filterConfig, index) => {
+            let selectedFilterOption = filterFieldOptions.find(
+              (f) => f.field === filterConfig.field
+            )
+
+            return (
+              <ControlGroup
+                key={`${filterConfig.field}_${index}`}
+                style={{ width: '100%', marginBottom: '1.5rem' }}>
+                <Input
+                  value={filterConfig.filterValue}
+                  onChange={(nextVal) => onChangeFilter(index, nextVal)}
+                  name="filter"
+                  type="text"
+                  theme="light"
+                  label={`Filter on ${selectedFilterOption?.label || text('general.app.all')}`}
                 />
-              )}
-              <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
-                <RemoveButton onClick={() => onRemoveFilter(index)}>
-                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                </RemoveButton>
-              </div>
-            </ControlGroup>
-          ))}
+                {filterFieldOptions.length !== 0 && (
+                  <Dropdown
+                    label="Field"
+                    items={filterFieldOptions}
+                    selectedItem={selectedFilterOption}
+                    itemToString={(item) => item.field}
+                    itemToLabel={(item) => item.label}
+                    onSelect={(nextField) => onChangeFilterField(index, nextField)}
+                  />
+                )}
+                <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
+                  <RemoveButton onClick={() => onRemoveFilter(index)}>
+                    <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                  </RemoveButton>
+                </div>
+              </ControlGroup>
+            )
+          })}
           <FilterButtonBar>
             <Button
               onClick={() => onAddFilter()}
@@ -272,6 +284,7 @@ const ReportTableFilters = observer(
               size={ButtonSize.SMALL}>
               Lisää kenttä
             </Button>
+            <ResultsCountView>{currentFilteredItems.length} riviä</ResultsCountView>
           </FilterButtonBar>
         </ReportTableFiltersView>
         {children(currentFilteredItems)}
