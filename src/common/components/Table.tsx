@@ -155,7 +155,7 @@ const TableCell = styled.div<{
   isEditing?: boolean
   isEditingRow?: boolean
 }>`
-  flex: 1 1 auto;
+  flex: 1 0;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;

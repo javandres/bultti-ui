@@ -40,7 +40,7 @@ const ListReport = observer(
               virtualized={true}
               maxHeight={window.innerHeight * 0.6}
               items={filteredItems}
-              hideKeys={['id']}
+              hideKeys={!columnLabels ? ['id'] : undefined}
               renderValue={renderCellValue}
               columnLabels={columnLabels}>
               <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>

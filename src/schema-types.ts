@@ -356,7 +356,8 @@ export type Departure = {
   schemaOrder?: Maybe<Scalars['Int']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
-  procurementUnit: ProcurementUnit;
+  procurementUnitId?: Maybe<Scalars['String']>;
+  procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
 };
 
@@ -374,7 +375,7 @@ export enum TrackReason {
   NotTracked = 'NOT_TRACKED',
   FirstDepartureInBlock = 'FIRST_DEPARTURE_IN_BLOCK',
   FirstDepartureAfterDeadrun = 'FIRST_DEPARTURE_AFTER_DEADRUN',
-  SuperfluousDeparture = 'SUPERFLUOUS_DEPARTURE',
+  ExtraDeparture = 'EXTRA_DEPARTURE',
   MissingDeparture = 'MISSING_DEPARTURE',
   RecoveryViolation = 'RECOVERY_VIOLATION',
   DeadrunDetected = 'DEADRUN_DETECTED',
@@ -441,7 +442,7 @@ export type EquipmentSearchResult = {
 export type OperatorBlockDeparture = {
    __typename?: 'OperatorBlockDeparture';
   id: Scalars['ID'];
-  blockNumber: Scalars['String'];
+  blockNumber?: Maybe<Scalars['String']>;
   dayType: DayType;
   journeyType: Scalars['String'];
   routeId?: Maybe<Scalars['String']>;
@@ -497,10 +498,14 @@ export type ReportEntityUnion = Departure | Equipment | DeparturePair | Procurem
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';
+  pairId: Scalars['String'];
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
+  deadrunStartStop?: Maybe<Scalars['String']>;
+  deadrunEndStop?: Maybe<Scalars['String']>;
+  deadrunMinutes?: Maybe<Scalars['Int']>;
 };
 
 export type Mutation = {

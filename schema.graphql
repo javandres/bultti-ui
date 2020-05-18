@@ -24,7 +24,8 @@ type Departure {
   journeyStartTime: String!
   operatorOrder: Int
   plannedEquipmentType: String
-  procurementUnit: ProcurementUnit!
+  procurementUnit: ProcurementUnit
+  procurementUnitId: String
   recoveryTime: Int
   registryNr: String
   routeId: String
@@ -38,8 +39,12 @@ type Departure {
 
 type DeparturePair {
   blockNumber: String
+  deadrunEndStop: String
+  deadrunMinutes: Int
+  deadrunStartStop: String
   departureA: Departure!
   departureB: Departure!
+  pairId: String!
   schemaId: String
 }
 
@@ -183,7 +188,7 @@ type Operator {
 }
 
 type OperatorBlockDeparture {
-  blockNumber: String!
+  blockNumber: String
   dayType: DayType!
   direction: String
   equipment: Equipment
@@ -372,13 +377,13 @@ enum TrackReason {
   EQUIPMENT_AGE_VIOLATION
   EQUIPMENT_TYPE_VIOLATION
   EXTERIOR_COLOR_VIOLATION
+  EXTRA_DEPARTURE
   FIRST_DEPARTURE_AFTER_DEADRUN
   FIRST_DEPARTURE_IN_BLOCK
   INFO_SYSTEMS_VIOLATION
   MISSING_DEPARTURE
   NOT_TRACKED
   RECOVERY_VIOLATION
-  SUPERFLUOUS_DEPARTURE
 }
 
 enum UserRole {

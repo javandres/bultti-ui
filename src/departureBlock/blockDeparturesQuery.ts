@@ -12,6 +12,7 @@ export const OperatorBlockDepartureFragment = gql`
     routeLength
     registryNr
     dayType
+    schemaUnitId: procurementUnitId
   }
 `
 

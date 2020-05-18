@@ -24,6 +24,7 @@ export const HeaderSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  flex-wrap: wrap;
 
   &:nth-child(even) {
     background-color: #fafafa;
