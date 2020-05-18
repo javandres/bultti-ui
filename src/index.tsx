@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import 'mobx-react-lite/batchingForReactDom'
 import './index.css'
 import 'react-dates/initialize'
 import App from './App'

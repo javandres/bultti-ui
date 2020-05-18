@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Operator, PreInspectionInput, Season } from '../schema-types'
+import { PreInspectionInput } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
 import { updatePreInspectionMutation } from './preInspectionQueries'
