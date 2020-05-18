@@ -17,8 +17,9 @@ import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
+import { useDebounce } from 'use-debounce'
 
-const TableWrapper = styled.div<{ height: number }>`
+const TableWrapper = styled.div`
   position: relative;
   width: calc(100% + 2rem);
   max-width: calc(100% + 2rem);
@@ -27,7 +28,6 @@ const TableWrapper = styled.div<{ height: number }>`
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
   overflow-x: scroll;
-  height: ${(p) => p.height}px;
 
   &:last-child {
     margin-bottom: 0;
@@ -155,7 +155,7 @@ const TableCell = styled.div<{
   isEditing?: boolean
   isEditingRow?: boolean
 }>`
-  flex: 1 1;
+  flex: 1 1 auto;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;
@@ -175,7 +175,7 @@ const TableCell = styled.div<{
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0.5rem 1.5rem 0.4rem 0.5rem;
+  padding: 0.5rem 2.5rem 0.4rem 0.75rem;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
@@ -314,7 +314,8 @@ const Table = observer(
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [sort, setSort] = useState<SortConfig[]>([])
-    let [columnWidths, setColumnWidths] = useState<number[]>([])
+    let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
+    let [columnWidths] = useDebounce(liveColumnWidths, 500, { leading: true, trailing: false })
 
     let setColumnWidth = useCallback((index, width, onlyIncrease = false) => {
       setColumnWidths((currentWidths) => {
@@ -338,12 +339,12 @@ const Table = observer(
     }, [])
 
     let setWidthFromCellRef = useCallback(
-      (ref, index, onlyIncrease = false) => {
+      (index) => (ref) => {
         if (ref) {
           let rect = ref.getBoundingClientRect()
 
           if (rect && rect.width) {
-            setColumnWidth(index, rect.width, onlyIncrease)
+            setColumnWidth(index, rect.width)
           }
         }
       },
@@ -647,10 +648,10 @@ const Table = observer(
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
     let wrapperHeight =
-      typeof getColumnTotal !== 'undefined' ? height + rowHeight * 3 : height + rowHeight + 16
+      typeof getColumnTotal !== 'undefined' ? height + rowHeight * 3 : height + rowHeight + 17
 
     return (
-      <TableWrapper className={className} height={wrapperHeight}>
+      <TableWrapper className={className} style={{ height: wrapperHeight + 'px' }}>
         <TableView
           ref={tableViewRef}
           style={{ minWidth: width + (isScrolling ? 15 : 0) + 'px' }}>
@@ -671,7 +672,7 @@ const Table = observer(
 
               return (
                 <ColumnHeaderCell
-                  ref={(ref) => setWidthFromCellRef(ref, colIdx)}
+                  ref={setWidthFromCellRef(colIdx)}
                   as="button"
                   isEditing={isEditingColumn}
                   key={colName}

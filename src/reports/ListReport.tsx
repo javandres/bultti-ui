@@ -31,7 +31,10 @@ const ListReport = observer(
 
     return (
       <ListReportView>
-        <ReportTableFilters<ItemType> items={items} excludeFields={['id', '__typename']}>
+        <ReportTableFilters<ItemType>
+          items={items}
+          fieldLabels={columnLabels}
+          excludeFields={['id', '__typename']}>
           {(filteredItems) => (
             <Table<ItemType>
               virtualized={true}

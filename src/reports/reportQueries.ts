@@ -22,6 +22,7 @@ export const DepartureFragment = gql`
   fragment DepartureFragment on Departure {
     id
     dayType
+    blockNumber
     routeId
     direction
     routeLength
