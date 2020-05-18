@@ -335,8 +335,8 @@ export type Departure = {
   id: Scalars['ID'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
-  terminalTime: Scalars['Int'];
-  recoveryTime: Scalars['Int'];
+  terminalTime?: Maybe<Scalars['Int']>;
+  recoveryTime?: Maybe<Scalars['Int']>;
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
@@ -346,6 +346,7 @@ export type Departure = {
   plannedEquipmentType?: Maybe<Scalars['String']>;
   equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
   registryNr?: Maybe<Scalars['String']>;
+  equipmentRotation?: Maybe<Scalars['Int']>;
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   infoSystems?: Maybe<Scalars['Boolean']>;
   allowedOverAge?: Maybe<Scalars['Float']>;
@@ -447,8 +448,6 @@ export type OperatorBlockDeparture = {
   direction?: Maybe<Scalars['String']>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
-  startStop?: Maybe<Scalars['String']>;
-  endStop?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;

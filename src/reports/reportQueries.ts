@@ -28,6 +28,7 @@ export const DepartureFragment = gql`
     journeyStartTime
     journeyEndTime
     registryNr
+    equipmentRotation
     endStop
     isTrunkRoute
     equipmentTypeRequired

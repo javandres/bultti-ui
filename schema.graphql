@@ -14,6 +14,7 @@ type Departure {
   direction: String
   endStop: String
   equipment: Equipment
+  equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
   infoSystems: Boolean
@@ -24,14 +25,14 @@ type Departure {
   operatorOrder: Int
   plannedEquipmentType: String
   procurementUnit: ProcurementUnit!
-  recoveryTime: Int!
+  recoveryTime: Int
   registryNr: String
   routeId: String
   routeLength: Int
   schemaId: String
   schemaOrder: Int
   startStop: String
-  terminalTime: Int!
+  terminalTime: Int
   trackReason: TrackReason!
 }
 
@@ -185,7 +186,6 @@ type OperatorBlockDeparture {
   blockNumber: String!
   dayType: DayType!
   direction: String
-  endStop: String
   equipment: Equipment
   equipmentId: String
   id: ID!
@@ -198,7 +198,6 @@ type OperatorBlockDeparture {
   registryNr: String
   routeId: String
   routeLength: Int
-  startStop: String
   vehicleId: String
 }
 
