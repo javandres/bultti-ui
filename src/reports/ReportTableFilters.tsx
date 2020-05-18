@@ -89,23 +89,26 @@ const ReportTableFilters = observer(
       })
     }, [])
 
-    let onChangeFilterField = useCallback((index, setField) => {
-      if (!setField) {
-        return
-      }
-
-      setFilters((currentFilters) => {
-        let nextFilters = [...currentFilters]
-        let filterConfig = nextFilters[index]
-
-        if (filterConfig) {
-          filterConfig.field = setField
-          return nextFilters
+    let onChangeFilterField = useCallback(
+      (index, setField: { field: string; label: string }) => {
+        if (!setField) {
+          return
         }
 
-        return currentFilters
-      })
-    }, [])
+        setFilters((currentFilters) => {
+          let nextFilters = [...currentFilters]
+          let filterConfig = nextFilters[index]
+
+          if (filterConfig) {
+            filterConfig.field = setField.field
+            return nextFilters
+          }
+
+          return currentFilters
+        })
+      },
+      []
+    )
 
     let onRemoveFilter = useCallback((index) => {
       setFilters((currentFilters) => {
