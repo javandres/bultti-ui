@@ -248,8 +248,8 @@ export type OperatingArea = {
    __typename?: 'OperatingArea';
   id: Scalars['Int'];
   name: OperatingAreaName;
-  procurementUnits: Array<ProcurementUnit>;
-  executionRequirements: Array<ExecutionRequirement>;
+  procurementUnits?: Maybe<Array<ProcurementUnit>>;
+  executionRequirements?: Maybe<Array<ExecutionRequirement>>;
 };
 
 export enum OperatingAreaName {
@@ -495,7 +495,13 @@ export type Report = {
   postInspection?: Maybe<PostInspection>;
 };
 
-export type ReportEntityUnion = Departure | Equipment | DeparturePair | ProcurementUnit | OperatorBlockDeparture | ExecutionRequirement;
+export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | ProcurementUnit | OperatorBlockDeparture | ExecutionRequirement;
+
+export type MissingEquipment = {
+   __typename?: 'MissingEquipment';
+  registryNr?: Maybe<Scalars['String']>;
+  blockNumber?: Maybe<Scalars['String']>;
+};
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';

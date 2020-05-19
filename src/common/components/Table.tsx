@@ -117,6 +117,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   outline: ${(p) =>
     !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
   z-index: ${(p) => (p.isEditing ? 101 : 'auto')};
+  user-select: none;
 
   &:last-child {
     border-bottom: 0;

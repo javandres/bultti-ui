@@ -9,7 +9,7 @@
   "possibleTypes": {
     "ReportEntityUnion": [
       "Departure",
-      "Equipment",
+      "MissingEquipment",
       "DeparturePair",
       "ProcurementUnit",
       "OperatorBlockDeparture",

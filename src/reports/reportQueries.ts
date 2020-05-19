@@ -103,8 +103,9 @@ export const reportByName = gql`
             ...RequirementValueFragment
           }
         }
-        ... on Equipment {
-          ...EquipmentFragment
+        ... on MissingEquipment {
+          blockNumber
+          registryNr
         }
         ... on DeparturePair {
           id
@@ -129,5 +130,4 @@ export const reportByName = gql`
   ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
-  ${EquipmentFragment}
 `

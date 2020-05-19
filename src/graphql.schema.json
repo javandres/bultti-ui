@@ -2066,19 +2066,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "ProcurementUnit",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "ProcurementUnit",
+                  "ofType": null
                 }
               }
             },
@@ -2090,19 +2086,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "ExecutionRequirement",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "ExecutionRequirement",
+                  "ofType": null
                 }
               }
             },
@@ -4660,7 +4652,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "Equipment",
+            "name": "MissingEquipment",
             "ofType": null
           },
           {
@@ -4684,6 +4676,41 @@
             "ofType": null
           }
         ]
+      },
+      {
+        "kind": "OBJECT",
+        "name": "MissingEquipment",
+        "description": null,
+        "fields": [
+          {
+            "name": "registryNr",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "blockNumber",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
       },
       {
         "kind": "OBJECT",

@@ -1,4 +1,9 @@
-import { ApolloClient, InMemoryCache, ApolloLink } from '@apollo/client'
+import {
+  ApolloClient,
+  ApolloLink,
+  defaultDataIdFromObject,
+  InMemoryCache,
+} from '@apollo/client'
 import { onError } from '@apollo/link-error'
 import { GRAPHQL_PATH, SERVER_URL } from './constants'
 import { createUploadLink } from 'apollo-upload-client'
@@ -21,6 +26,20 @@ export const createGraphqlClient = async () => {
   })
 
   const cache = new InMemoryCache({
+    addTypename: true,
+    dataIdFromObject: (obj) => {
+      let typename = obj?.__typename
+
+      if ('id' in obj) {
+        return obj?.id + '' + typename
+      }
+
+      if ('registryNr' in obj) {
+        return obj.registryNr + '' + typename
+      }
+
+      return defaultDataIdFromObject(obj)
+    },
     possibleTypes: introspection.possibleTypes,
   })
 

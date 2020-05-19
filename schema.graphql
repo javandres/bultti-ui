@@ -5,7 +5,7 @@ schema {
   mutation: Mutation
 }
 
-union ReportEntityUnion = Departure | DeparturePair | Equipment | ExecutionRequirement | OperatorBlockDeparture | ProcurementUnit
+union ReportEntityUnion = Departure | DeparturePair | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture | ProcurementUnit
 
 type Departure {
   allowedOverAge: Float
@@ -141,6 +141,11 @@ type ExecutionRequirementValue {
   sanctionThreshold: Float
 }
 
+type MissingEquipment {
+  blockNumber: String
+  registryNr: String
+}
+
 type Mutation {
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [OperatorBlockDeparture!]
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment!
@@ -169,10 +174,10 @@ type Mutation {
 }
 
 type OperatingArea {
-  executionRequirements: [ExecutionRequirement!]!
+  executionRequirements: [ExecutionRequirement!]
   id: Int!
   name: OperatingAreaName!
-  procurementUnits: [ProcurementUnit!]!
+  procurementUnits: [ProcurementUnit!]
 }
 
 type Operator {
