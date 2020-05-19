@@ -38,7 +38,7 @@ const ListReport = observer(
           {(filteredItems) => (
             <Table<ItemType>
               virtualized={true}
-              maxHeight={window.innerHeight * 0.6}
+              maxHeight={window.innerHeight * 0.75}
               items={filteredItems}
               hideKeys={!columnLabels ? ['id'] : undefined}
               renderValue={renderCellValue}

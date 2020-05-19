@@ -254,7 +254,8 @@ export type OperatingArea = {
 
 export enum OperatingAreaName {
   Center = 'CENTER',
-  Other = 'OTHER'
+  Other = 'OTHER',
+  Unknown = 'UNKNOWN'
 }
 
 export type ProcurementUnit = {
@@ -498,7 +499,7 @@ export type ReportEntityUnion = Departure | Equipment | DeparturePair | Procurem
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';
-  pairId: Scalars['String'];
+  id: Scalars['String'];
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
   departureA: Departure;

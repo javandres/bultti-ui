@@ -45,6 +45,20 @@ export const DepartureFragment = gql`
   }
 `
 
+export const ShortDepartureFragment = gql`
+  fragment ShortDepartureFragment on Departure {
+    dayType
+    routeId
+    direction
+    journeyStartTime
+    journeyEndTime
+    registryNr
+    equipmentRotation
+    blockNumber
+    schemaId
+  }
+`
+
 export const reportByName = gql`
   query getPreInspectionReport(
     $reportName: String!
@@ -93,11 +107,17 @@ export const reportByName = gql`
           ...EquipmentFragment
         }
         ... on DeparturePair {
+          id
+          schemaId
+          blockNumber
+          deadrunStartStop
+          deadrunEndStop
+          deadrunMinutes
           departureA {
-            ...DepartureFragment
+            ...ShortDepartureFragment
           }
           departureB {
-            ...DepartureFragment
+            ...ShortDepartureFragment
           }
         }
       }
@@ -106,6 +126,7 @@ export const reportByName = gql`
   ${ProcurementUnitFragment}
   ${OperatorBlockDepartureFragment}
   ${DepartureFragment}
+  ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
   ${EquipmentFragment}

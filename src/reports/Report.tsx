@@ -15,6 +15,7 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import DownloadReport from './DownloadReport'
+import PairListReport from './PairListReport'
 
 const ReportView = styled.div`
   position: relative;
@@ -60,12 +61,13 @@ const Report = observer(({ reportName, preInspectionId, postInspectionId }: Prop
   let ReportTypeComponent = useMemo(() => {
     let reportDataItems = reportData?.reportEntities || []
 
+    let labels = reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined
+
     switch (reportData?.reportType) {
       case ReportTypeEnum.List:
-        let labels = reportData?.columnLabels
-          ? JSON.parse(reportData?.columnLabels)
-          : undefined
         return <ListReport items={reportDataItems} columnLabels={labels} />
+      case ReportTypeEnum.PairList:
+        return <PairListReport items={reportDataItems} columnLabels={labels} />
       case ReportTypeEnum.ExecutionRequirement:
         return <ExecutionRequirementsReport items={reportDataItems} />
       default:

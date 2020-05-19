@@ -2134,6 +2134,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "UNKNOWN",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -4685,7 +4691,7 @@
         "description": null,
         "fields": [
           {
-            "name": "pairId",
+            "name": "id",
             "description": null,
             "args": [],
             "type": {

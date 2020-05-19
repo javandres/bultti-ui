@@ -44,7 +44,7 @@ type DeparturePair {
   deadrunStartStop: String
   departureA: Departure!
   departureB: Departure!
-  pairId: String!
+  id: String!
   schemaId: String
 }
 
@@ -355,6 +355,7 @@ enum InspectionType {
 enum OperatingAreaName {
   CENTER
   OTHER
+  UNKNOWN
 }
 
 enum ReportType {
