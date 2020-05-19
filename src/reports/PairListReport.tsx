@@ -34,18 +34,19 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
     () =>
       items.map((pair) => {
         let departureAFields = mapKeys(
-          omit(pair.departureA, ['dayType', '__typename', 'id']),
+          omit(pair.departureA, ['dayType', '__typename', 'id', 'blockNumber', 'registryNr']),
           (val, key) => 'a_' + key // Prepend departure A props with a
         )
 
         let departureBFields = mapKeys(
-          omit(pair.departureB, ['dayType', '__typename', 'id']),
+          omit(pair.departureB, ['dayType', '__typename', 'id', 'blockNumber', 'registryNr']),
           (val, key) => 'b_' + key // Prepend departure B props with b
         )
 
         return {
           ...omit(pair, ['departureA', 'departureB']),
           dayType: pair.departureA.dayType,
+          registryNr: pair.departureA.registryNr,
           ...departureAFields,
           ...departureBFields,
         }
