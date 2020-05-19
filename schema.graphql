@@ -41,11 +41,11 @@ type DeparturePair {
   blockNumber: String
   deadrunEndStop: String
   deadrunMinutes: Int
+  deadrunPlannedBy: String
   deadrunStartStop: String
   departureA: Departure!
   departureB: Departure!
-  id: String!
-  schemaId: String
+  id: ID!
 }
 
 type Equipment {

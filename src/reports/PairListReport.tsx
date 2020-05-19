@@ -34,17 +34,18 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
     () =>
       items.map((pair) => {
         let departureAFields = mapKeys(
-          pair.departureA,
+          omit(pair.departureA, ['dayType', '__typename', 'id']),
           (val, key) => 'a_' + key // Prepend departure A props with a
         )
 
         let departureBFields = mapKeys(
-          pair.departureB,
+          omit(pair.departureB, ['dayType', '__typename', 'id']),
           (val, key) => 'b_' + key // Prepend departure B props with b
         )
 
         return {
           ...omit(pair, ['departureA', 'departureB']),
+          dayType: pair.departureA.dayType,
           ...departureAFields,
           ...departureBFields,
         }
@@ -69,7 +70,7 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
       <ReportTableFilters<any>
         items={rows}
         fieldLabels={pairLabels}
-        excludeFields={['id', '__typename', 'a___typename', 'b___typename']}>
+        excludeFields={['id', '__typename']}>
         {(filteredItems) => (
           <Table<any>
             virtualized={true}

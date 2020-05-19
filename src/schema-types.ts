@@ -499,14 +499,14 @@ export type ReportEntityUnion = Departure | Equipment | DeparturePair | Procurem
 
 export type DeparturePair = {
    __typename?: 'DeparturePair';
-  id: Scalars['String'];
+  id: Scalars['ID'];
   blockNumber?: Maybe<Scalars['String']>;
-  schemaId?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
   deadrunStartStop?: Maybe<Scalars['String']>;
   deadrunEndStop?: Maybe<Scalars['String']>;
   deadrunMinutes?: Maybe<Scalars['Int']>;
+  deadrunPlannedBy?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {

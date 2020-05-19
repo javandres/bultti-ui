@@ -108,11 +108,11 @@ export const reportByName = gql`
         }
         ... on DeparturePair {
           id
-          schemaId
           blockNumber
           deadrunStartStop
           deadrunEndStop
           deadrunMinutes
+          deadrunPlannedBy
           departureA {
             ...ShortDepartureFragment
           }

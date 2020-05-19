@@ -4699,7 +4699,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "ID",
                 "ofType": null
               }
             },
@@ -4708,18 +4708,6 @@
           },
           {
             "name": "blockNumber",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "schemaId",
             "description": null,
             "args": [],
             "type": {
@@ -4793,6 +4781,18 @@
             "type": {
               "kind": "SCALAR",
               "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "deadrunPlannedBy",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
