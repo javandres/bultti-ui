@@ -50,7 +50,7 @@ const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-  flex: 1 0 auto;
+  flex: 1 1 auto;
   border-right: 1px solid var(--lighter-grey);
   border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
 `

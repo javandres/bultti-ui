@@ -11,6 +11,7 @@ const ReportTitle = styled.h3`
 
 const ReportDescription = styled.p`
   margin: 0;
+  line-height: 1.4;
 `
 
 export type PropTypes = {
