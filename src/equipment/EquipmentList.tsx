@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Table, { EditValue, CellValType, TableInput } from '../common/components/Table'
+import Table, { CellValType, EditValue, TableInput } from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
@@ -9,7 +9,7 @@ import { groupBy, orderBy } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
-import { createEquipmentFormInput } from './EquipmentFormInput'
+import EquipmentFormInput from './EquipmentFormInput'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -26,8 +26,6 @@ export type PropTypes = {
   groupedColumnLabels: { [key: string]: string }
   editableValues?: string[]
 }
-
-const renderEquipmentInput = createEquipmentFormInput(TableInput)
 
 const EquipmentList: React.FC<PropTypes> = observer(
   ({
@@ -175,7 +173,16 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
-            renderInput={renderEquipmentInput}
+            renderInput={(key, val, onChange, onAccept, onCancel) => (
+              <EquipmentFormInput
+                fieldComponent={TableInput}
+                value={val}
+                valueName={key}
+                onChange={onChange}
+                onAccept={onAccept}
+                onCancel={onCancel}
+              />
+            )}
           />
         )}
         {groupEquipment && (

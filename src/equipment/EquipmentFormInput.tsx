@@ -6,7 +6,6 @@ import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
 import { TextInput } from '../common/input/Input'
-import { FieldValueDisplay } from '../common/input/ItemForm'
 
 export const FormDropdown = styled(Dropdown)`
   width: 100%;
@@ -69,29 +68,6 @@ const typeValues: SelectValue[] = [
 const numericTypes = ['offeredPercentageQuota', 'percentageQuota', 'meterRequirement']
 const dateValues = ['registryDate']
 
-export const createEquipmentFormInput = (fieldComponent = TextInput) => (
-  key: string,
-  val: any,
-  onChange: (value: any, key: string) => unknown,
-  onAccept?: () => unknown,
-  onCancel?: () => unknown
-) => {
-  if (['id'].includes(key)) {
-    return <FieldValueDisplay>{val}</FieldValueDisplay>
-  }
-
-  return (
-    <EquipmentFormInput
-      fieldComponent={fieldComponent}
-      value={val}
-      valueName={key}
-      onChange={onChange}
-      onAccept={onAccept}
-      onCancel={onCancel}
-    />
-  )
-}
-
 const EquipmentFormInput: React.FC<PropTypes> = observer(
   ({ value, valueName, onChange, onAccept, onCancel, fieldComponent = TextInput }) => {
     const isDisabled = valueName === 'id'
@@ -130,7 +106,7 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
             break
         }
       },
-      [onChangeValue, onAccept, onCancel]
+      [onAccept, onCancel]
     )
 
     const dropdownProps = useMemo(
@@ -153,7 +129,8 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
           {...dropdownProps}
           items={emissionClassValues}
           selectedItem={
-            emissionClassValues.find(({ name }) => name === value + '') || emissionClassValues[0]
+            emissionClassValues.find(({ name }) => name === value + '') ||
+            emissionClassValues[0]
           }
         />
       )
@@ -171,7 +148,12 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
 
     if (dateValues.includes(valueName)) {
       return (
-        <SelectDate onChange={onSelectValue} value={value as string} label="" name="registryDate" />
+        <SelectDate
+          onChange={onSelectValue}
+          value={value as string}
+          label=""
+          name="registryDate"
+        />
       )
     }
 

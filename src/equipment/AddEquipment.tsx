@@ -5,7 +5,7 @@ import { Button, ButtonStyle } from '../common/components/Button'
 import ItemForm from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
 import Input, { TextInput } from '../common/input/Input'
-import { createEquipmentFormInput } from './EquipmentFormInput'
+import EquipmentFormInput from './EquipmentFormInput'
 import { omit } from 'lodash'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { searchEquipmentQuery } from './equipmentQuery'
@@ -37,8 +37,6 @@ export type PropTypes = {
   editableKeys: string[]
   fieldLabels: { [key: string]: string }
 }
-
-const renderEquipmentInput = createEquipmentFormInput(TextInput)
 
 const equipmentInputValues = {
   percentageQuota: (val) => emptyOrNumber(numval(val, true)),
@@ -211,7 +209,14 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 onCancel={onCancelPendingEquipment}
                 doneDisabled={!equipmentIsValid(pendingEquipment)}
                 doneLabel="Lisää"
-                renderInput={renderEquipmentInput}
+                renderInput={(key, val, onChange) => (
+                  <EquipmentFormInput
+                    fieldComponent={TextInput}
+                    value={val}
+                    valueName={key}
+                    onChange={onChange}
+                  />
+                )}
               />
             </AddEquipmentFormWrapper>
           </Modal>

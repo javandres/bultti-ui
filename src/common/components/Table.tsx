@@ -43,12 +43,6 @@ const TableView = styled.div`
   width: 100%;
 `
 
-const EditInputWrapper = styled.div`
-  width: calc(100% + 1rem + 36px);
-  border-radius: 5px;
-  display: flex;
-`
-
 export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
   font-size: 0.75rem;
@@ -267,6 +261,7 @@ const defaultRenderValue = (key, val) => toString(val)
 
 const defaultRenderInput = (key, val, onChange) => (
   <TableInput
+    autoFocus
     theme="light"
     value={val}
     onChange={(e) => onChange(e.target.value)}
@@ -285,9 +280,122 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
   removeItem: ItemRemover
   onMakeEditable: (key: string, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
-  itemEntries: [keyof ItemType, CellValType][]
+  itemEntries: [string, CellValType][]
   item: ItemType
 }
+
+type RowPropTypes<ItemType = any> = {
+  data?: TableRowWithDataAndFunctions[]
+  row?: TableRowWithDataAndFunctions
+  index: number
+  style?: CSSProperties
+}
+
+type CellPropTypes<ItemType = any> = {
+  row: TableRowWithDataAndFunctions
+  cell: [keyof ItemType, CellValType]
+  cellIndex: number
+  rowId: string
+}
+
+type ContextTypes<ItemType> = {
+  pendingValues?: EditValue[]
+  columnWidths?: number[]
+  editableValues?: PropTypes<ItemType>['editableValues']
+  onEditValue?: PropTypes<ItemType>['onEditValue']
+  renderInput?: PropTypes<ItemType>['renderInput']
+  onSaveEdit?: PropTypes<ItemType>['onSaveEdit']
+  onCancelEdit?: PropTypes<ItemType>['onCancelEdit']
+  renderCell?: PropTypes<ItemType>['renderCell']
+  renderValue?: PropTypes<ItemType>['renderValue']
+}
+
+const TableContext = React.createContext<ContextTypes<any>>({})
+
+const TableCellComponent = observer(
+  <ItemType extends any>({ row, cell, cellIndex }: CellPropTypes<ItemType>) => {
+    let ctx = useContext(TableContext)
+    let {
+      pendingValues = [],
+      onEditValue,
+      columnWidths = [],
+      renderValue = defaultRenderValue,
+      editableValues,
+      onSaveEdit,
+      onCancelEdit,
+      renderCell = defaultRenderCellContent,
+      renderInput = defaultRenderInput,
+    } = ctx || {}
+
+    let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
+
+    let [key, val] = cell
+    let valueKey: string = key as string
+
+    let editValue =
+      pendingValues.length !== 0
+        ? pendingValues.find((val) => val.item.id === itemId && val.key === key)
+        : undefined
+
+    let columnWidth = columnWidths[cellIndex] || 0
+
+    return (
+      <TableCell
+        style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}
+        isEditing={!!editValue}
+        isEditingRow={isEditingRow}
+        editable={editableValues?.includes(valueKey)}
+        onDoubleClick={onMakeEditable(valueKey, val)}>
+        {onEditValue && editValue
+          ? renderInput(
+              key as keyof ItemType,
+              editValue.value,
+              onValueChange(valueKey),
+              onSaveEdit,
+              onCancelEdit
+            )
+          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
+      </TableCell>
+    )
+  }
+)
+
+const TableRowComponent = observer(
+  <ItemType extends any>({
+    row,
+    style,
+    index,
+    data: allRows = [],
+  }: RowPropTypes<ItemType>) => {
+    let rowItem = row || allRows[index]
+
+    if (!rowItem) {
+      return null
+    }
+
+    let { itemEntries, key: rowKey, isEditingRow, removeItem } = rowItem
+    let rowId = rowKey ?? `row-${index}`
+
+    return (
+      <TableRow key={rowId} isEditing={isEditingRow} style={style}>
+        {itemEntries.map(([key, val], cellIndex) => (
+          <TableCellComponent<ItemType>
+            key={`${rowId}_${key as string}`}
+            row={rowItem}
+            rowId={rowId}
+            cellIndex={cellIndex}
+            cell={[key as string, val]}
+          />
+        ))}
+        {!isEditingRow && removeItem && (
+          <RowRemoveButton onClick={removeItem}>
+            <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+          </RowRemoveButton>
+        )}
+      </TableRow>
+    )
+  }
+)
 
 const Table = observer(
   <ItemType extends any>({
@@ -474,7 +582,7 @@ const Table = observer(
       () =>
         sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
-          let itemEntries = Object.entries(item).filter(
+          let itemEntries: [string, CellValType][] = Object.entries(item).filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
           )
 
@@ -527,114 +635,6 @@ const Table = observer(
       ]
     )
 
-    let TableCellComponent = useCallback(
-      ({
-        row,
-        cell,
-        cellIndex,
-        rowIndex,
-      }: {
-        row: TableRowWithDataAndFunctions
-        cell: [keyof ItemType, CellValType]
-        cellIndex: number
-        rowIndex: number
-      }) => {
-        let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
-
-        if (!itemId) {
-          return null
-        }
-
-        let [key, val] = cell
-        let valueKey: string = key as string
-
-        let editValue =
-          pendingValues.length !== 0
-            ? pendingValues.find((val) => val.item.id === itemId && val.key === key)
-            : null
-
-        let columnWidth = columnWidths[cellIndex] || 0
-
-        return (
-          <TableCell
-            style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}
-            isEditing={!!editValue}
-            isEditingRow={isEditingRow}
-            editable={editableValues?.includes(valueKey)}
-            onDoubleClick={onMakeEditable(valueKey, val)}>
-            {onEditValue && editValue ? (
-              <>
-                <EditInputWrapper>
-                  {renderInput(
-                    key as keyof ItemType,
-                    editValue.value,
-                    onValueChange(valueKey),
-                    onSaveEdit,
-                    onCancelEdit
-                  )}
-                </EditInputWrapper>
-              </>
-            ) : (
-              renderCell(valueKey, renderValue(valueKey, val, false, item), item)
-            )}
-          </TableCell>
-        )
-      },
-      [
-        onSaveEdit,
-        onCancelEdit,
-        pendingValues,
-        editableValues,
-        onEditValue,
-        renderInput,
-        renderCell,
-        renderValue,
-        columnWidths,
-      ]
-    )
-
-    let TableRowComponent = useCallback(
-      ({
-        row,
-        style,
-        index,
-        data: allRows = [],
-      }: {
-        data?: TableRowWithDataAndFunctions[]
-        row?: TableRowWithDataAndFunctions
-        index: number
-        style?: CSSProperties
-      }) => {
-        let rowItem = row || allRows[index]
-
-        if (!rowItem) {
-          return null
-        }
-
-        let { itemEntries, key: rowKey, isEditingRow, removeItem } = rowItem
-
-        return (
-          <TableRow key={rowKey ?? `row-${index}`} isEditing={isEditingRow} style={style}>
-            {itemEntries.map(([key, val], cellIndex) => (
-              <TableCellComponent
-                row={rowItem}
-                rowIndex={index}
-                cellIndex={cellIndex}
-                cell={[key as string, val]}
-                key={`${rowKey}_${cellIndex}`}
-              />
-            ))}
-            {!isEditingRow && removeItem && (
-              <RowRemoveButton onClick={removeItem}>
-                <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-              </RowRemoveButton>
-            )}
-          </TableRow>
-        )
-      },
-      [TableCellComponent]
-    )
-
     let width = columnWidths.reduce((total, col) => total + col, 0)
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
@@ -651,103 +651,117 @@ const Table = observer(
     let wrapperHeight =
       typeof getColumnTotal !== 'undefined' ? height + rowHeight * 3 : height + rowHeight + 17
 
+    let contextValue = {
+      columnWidths,
+      editableValues,
+      pendingValues,
+      onEditValue,
+      onSaveEdit,
+      onCancelEdit,
+      renderCell,
+      renderInput,
+      renderValue,
+    }
+
     return (
-      <TableWrapper className={className} style={{ height: wrapperHeight + 'px' }}>
-        <TableView
-          ref={tableViewRef}
-          style={{ minWidth: width + (isScrolling ? 15 : 0) + 'px' }}>
-          <TableHeader
-            style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
-            {indexCell && (
-              <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
-                {indexCell}
-              </ColumnHeaderCell>
-            )}
-            {columnNames.map(([colKey, colName], colIdx) => {
-              let isEditingColumn =
-                pendingValues.length !== 0 &&
-                pendingValues.map((val) => val.key).includes(colKey)
-
-              let sortIndex = sort.findIndex((s) => s.column === colKey)
-              let sortConfig = sort[sortIndex]
-
-              return (
-                <ColumnHeaderCell
-                  ref={setWidthFromCellRef(colIdx)}
-                  as="button"
-                  isEditing={isEditingColumn}
-                  key={colName}
-                  onClick={() => sortByColumn(colKey)}>
-                  {renderValue('', colName, true)}
-                  {sortIndex !== -1 && (
-                    <ColumnSortIndicator>
-                      {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
-                    </ColumnSortIndicator>
-                  )}
+      <TableContext.Provider value={contextValue}>
+        <TableWrapper className={className} style={{ height: wrapperHeight + 'px' }}>
+          <TableView
+            ref={tableViewRef}
+            style={{ minWidth: width + (isScrolling ? 15 : 0) + 'px' }}>
+            <TableHeader
+              style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
+              {indexCell && (
+                <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
+                  {indexCell}
                 </ColumnHeaderCell>
-              )
-            })}
-          </TableHeader>
-          <TableBodyWrapper>
-            {tableIsEmpty ? (
-              emptyContent
-            ) : virtualized ? (
-              <List
-                height={height}
-                width={width + 15}
-                itemCount={rows.length}
-                itemSize={rowHeight}
-                layout="vertical"
-                itemData={rows}
-                itemKey={getListItemKey}>
-                {TableRowComponent}
-              </List>
-            ) : (
-              rows.map((row, rowIndex) => (
-                <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
-              ))
-            )}
-          </TableBodyWrapper>
-          {typeof getColumnTotal === 'function' && (
-            <TableRow key="totals" footer={true}>
-              {columns.map((col, colIdx) => {
-                const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                let columnWidth = columnWidths[colIdx] || 0
+              )}
+              {columnNames.map(([colKey, colName], colIdx) => {
+                let isEditingColumn =
+                  pendingValues.length !== 0 &&
+                  pendingValues.map((val) => val.key).includes(colKey)
+
+                let sortIndex = sort.findIndex((s) => s.column === colKey)
+                let sortConfig = sort[sortIndex]
 
                 return (
-                  <TableCell
-                    key={`footer_${col}`}
-                    style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
-                    <CellContent footerCell={true}>{total}</CellContent>
-                  </TableCell>
+                  <ColumnHeaderCell
+                    ref={setWidthFromCellRef(colIdx)}
+                    as="button"
+                    isEditing={isEditingColumn}
+                    key={colName}
+                    onClick={() => sortByColumn(colKey)}>
+                    {renderValue('', colName, true)}
+                    {sortIndex !== -1 && (
+                      <ColumnSortIndicator>
+                        {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
+                      </ColumnSortIndicator>
+                    )}
+                  </ColumnHeaderCell>
                 )
               })}
-            </TableRow>
+            </TableHeader>
+            <TableBodyWrapper>
+              {tableIsEmpty ? (
+                emptyContent
+              ) : virtualized ? (
+                <List
+                  height={height}
+                  width={width + 15}
+                  itemCount={rows.length}
+                  itemSize={rowHeight}
+                  layout="vertical"
+                  itemData={rows}
+                  itemKey={getListItemKey}>
+                  {TableRowComponent}
+                </List>
+              ) : (
+                rows.map((row, rowIndex) => (
+                  <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+                ))
+              )}
+            </TableBodyWrapper>
+            {typeof getColumnTotal === 'function' && (
+              <TableRow key="totals" footer={true}>
+                {columns.map((col, colIdx) => {
+                  const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+                  let columnWidth = columnWidths[colIdx] || 0
+
+                  return (
+                    <TableCell
+                      key={`footer_${col}`}
+                      style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
+                      <CellContent footerCell={true}>{total}</CellContent>
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )}
+          </TableView>
+          {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
+            <EditToolbar floating={toolbarIsFloating}>
+              <ToolbarDescription>
+                <Info fill="var(--dark-grey)" width={20} height={20} />
+                Muista tallentaa taulukkoon tekemäsi muutokset.
+              </ToolbarDescription>
+              <SaveButton
+                onClick={onSaveEdit}
+                size={ButtonSize.MEDIUM}
+                buttonStyle={ButtonStyle.NORMAL}>
+                <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
+                Tallenna muutokset
+              </SaveButton>
+              <CancelButton
+                onClick={onCancelEdit}
+                size={ButtonSize.MEDIUM}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+                <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
+                Peruuta
+              </CancelButton>
+            </EditToolbar>
           )}
-        </TableView>
-        {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
-          <EditToolbar floating={toolbarIsFloating}>
-            <ToolbarDescription>
-              <Info fill="var(--dark-grey)" width={20} height={20} />
-              Muista tallentaa taulukkoon tekemäsi muutokset.
-            </ToolbarDescription>
-            <SaveButton
-              onClick={onSaveEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.NORMAL}>
-              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-              Tallenna muutokset
-            </SaveButton>
-            <CancelButton
-              onClick={onCancelEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
-              Peruuta
-            </CancelButton>
-          </EditToolbar>
-        )}
-      </TableWrapper>
+        </TableWrapper>
+      </TableContext.Provider>
     )
   }
 )
