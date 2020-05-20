@@ -13,3 +13,32 @@ export const ENV = process.env.NODE_ENV || 'production'
 export const APP_PATH = '/'
 
 export const normalDayTypes = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
+
+function getScrollbarWidth() {
+  // Creating invisible container
+  const outer = document.createElement('div')
+
+  if (!outer) {
+    return 0
+  }
+
+  outer.style.visibility = 'hidden'
+  outer.style.overflow = 'scroll' // forcing scrollbar to appear
+  document.body.appendChild(outer)
+
+  // Creating inner element and placing it in the container
+  const inner = document.createElement('div')
+  outer.appendChild(inner)
+
+  // Calculating difference between container's full width and the child width
+  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth
+
+  if (outer.parentNode) {
+    // Removing temporary elements from the DOM
+    outer.parentNode?.removeChild(outer)
+  }
+
+  return scrollbarWidth
+}
+
+export const SCROLLBAR_WIDTH = getScrollbarWidth() + 1

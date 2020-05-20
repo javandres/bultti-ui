@@ -17,7 +17,8 @@ import { ScrollContext } from './AppFrame'
 import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
-import { useDebounce } from 'use-debounce'
+import { useDebounce, useDebouncedCallback } from 'use-debounce'
+import { SCROLLBAR_WIDTH } from '../../constants'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -59,10 +60,11 @@ const EditToolbar = styled.div<{ floating?: boolean }>`
   background: white;
   padding: ${(p) => (p.floating ? '1rem' : '0.25rem 1rem 1.25rem')};
   margin: ${(p) => (p.floating ? 0 : '0 -1rem 1.25rem -1rem')};
-  left: ${(p) => (p.floating ? '29rem' : 'auto')};
+  right: ${(p) => (p.floating ? '2rem' : 'auto')};
+  left: ${(p) => (p.floating ? '2rem' : 'auto')};
   width: ${(p) =>
     p.floating
-      ? 'calc(100% - 32rem - 2px)'
+      ? 'calc(100% - 4rem)'
       : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
   z-index: 100;
   font-size: 1rem;
@@ -103,6 +105,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: stretch;
+  height: 27px;
   flex-wrap: nowrap;
   border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
   border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
@@ -170,7 +173,7 @@ const TableCell = styled.div<{
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0.5rem 2.5rem 0.4rem 0.75rem;
+  padding: 0.5rem 1.75rem 0.4rem 0.75rem;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
@@ -418,7 +421,7 @@ const Table = observer(
     renderInput = defaultRenderInput,
     editableValues = [],
     virtualized = false,
-    maxHeight = window.innerHeight * 0.75,
+    maxHeight = window.innerHeight,
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
@@ -536,27 +539,6 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
-    // Scroll listeners for the floating toolbar.
-    let [currentScroll, setCurrentScroll] = useState(0)
-    let subscribeToScroll = useContext(ScrollContext)
-
-    useEffect(() => {
-      if (pendingValues.length !== 0) {
-        subscribeToScroll(setCurrentScroll)
-      }
-    }, [subscribeToScroll, pendingValues])
-
-    let toolbarIsFloating = useMemo(() => {
-      if (pendingValues.length === 0 || !tableViewRef.current) {
-        return false
-      }
-
-      let tableBox = tableViewRef.current?.getBoundingClientRect()
-      let tableBottomEdge = tableBox.bottom + 75
-
-      return currentScroll < tableBottomEdge
-    }, [tableViewRef.current, currentScroll, pendingValues])
-
     let sortedItems = useMemo(() => {
       if (!items || !Array.isArray(items)) {
         return []
@@ -641,15 +623,45 @@ const Table = observer(
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
     let isScrolling = listHeight > maxHeight
 
+    let wrapperHeight =
+      (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
+      SCROLLBAR_WIDTH +
+      1
+
+    // Scroll listeners for the floating toolbar.
+    let [currentScroll, setCurrentScroll] = useState(0)
+    let subscribeToScroll = useContext(ScrollContext)
+
+    let [debouncedSetScroll] = useDebouncedCallback(
+      (scrollTop: number, frameHeight: number) => {
+        setCurrentScroll(scrollTop - frameHeight)
+      },
+      50
+    )
+
+    useEffect(() => {
+      if (pendingValues.length !== 0) {
+        subscribeToScroll(debouncedSetScroll)
+      }
+    }, [subscribeToScroll, pendingValues, debouncedSetScroll])
+
+    let toolbarIsFloating = useMemo(() => {
+      if (pendingValues.length === 0 || !tableViewRef.current) {
+        return false
+      }
+
+      let tableBox = tableViewRef.current?.getBoundingClientRect()
+      let tableBottomEdge = tableBox.top + tableBox.height
+
+      return currentScroll < tableBottomEdge - 150
+    }, [tableViewRef.current, currentScroll, pendingValues])
+
     // The table is empty if we don't have any items,
     // OR
     // When there is one item with only falsy values (which still gives the column names)
     let tableIsEmpty =
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
-
-    let wrapperHeight =
-      typeof getColumnTotal !== 'undefined' ? height + rowHeight * 3 : height + rowHeight + 17
 
     let contextValue = {
       columnWidths,
@@ -665,12 +677,18 @@ const Table = observer(
 
     return (
       <TableContext.Provider value={contextValue}>
-        <TableWrapper className={className} style={{ height: wrapperHeight + 'px' }}>
+        <TableWrapper
+          className={className}
+          style={{ minHeight: wrapperHeight + 'px' }}
+          ref={tableViewRef}>
           <TableView
-            ref={tableViewRef}
-            style={{ minWidth: width + (isScrolling ? 15 : 0) + 'px' }}>
+            style={{
+              minWidth: width + (isScrolling && virtualized ? SCROLLBAR_WIDTH : 0) + 'px',
+            }}>
             <TableHeader
-              style={{ paddingRight: virtualized && maxHeight < listHeight ? 15 : 0 }}>
+              style={{
+                paddingRight: virtualized && maxHeight < listHeight ? SCROLLBAR_WIDTH : 0,
+              }}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -707,7 +725,7 @@ const Table = observer(
               ) : virtualized ? (
                 <List
                   height={height}
-                  width={width + 15}
+                  width={width + SCROLLBAR_WIDTH}
                   itemCount={rows.length}
                   itemSize={rowHeight}
                   layout="vertical"
@@ -738,29 +756,29 @@ const Table = observer(
               </TableRow>
             )}
           </TableView>
-          {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
-            <EditToolbar floating={toolbarIsFloating}>
-              <ToolbarDescription>
-                <Info fill="var(--dark-grey)" width={20} height={20} />
-                Muista tallentaa taulukkoon tekemäsi muutokset.
-              </ToolbarDescription>
-              <SaveButton
-                onClick={onSaveEdit}
-                size={ButtonSize.MEDIUM}
-                buttonStyle={ButtonStyle.NORMAL}>
-                <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-                Tallenna muutokset
-              </SaveButton>
-              <CancelButton
-                onClick={onCancelEdit}
-                size={ButtonSize.MEDIUM}
-                buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-                <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
-                Peruuta
-              </CancelButton>
-            </EditToolbar>
-          )}
         </TableWrapper>
+        {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
+          <EditToolbar floating={toolbarIsFloating}>
+            <ToolbarDescription>
+              <Info fill="var(--dark-grey)" width={20} height={20} />
+              Muista tallentaa taulukkoon tekemäsi muutokset.
+            </ToolbarDescription>
+            <SaveButton
+              onClick={onSaveEdit}
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.NORMAL}>
+              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
+              Tallenna muutokset
+            </SaveButton>
+            <CancelButton
+              onClick={onCancelEdit}
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
+              Peruuta
+            </CancelButton>
+          </EditToolbar>
+        )}
       </TableContext.Provider>
     )
   }

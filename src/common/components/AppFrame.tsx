@@ -28,7 +28,7 @@ export type AppFrameProps = {
   isAuthenticated?: boolean
 }
 
-export type ScrollSubscriber = (scrollVal: number) => void
+export type ScrollSubscriber = (scrollVal: number, frameHeight: number) => void
 
 export const ScrollContext = React.createContext<(sub: ScrollSubscriber) => void>((sub) => {})
 
@@ -39,7 +39,8 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
   const scrollHandler = useCallback(
     (e) => {
       let scrollVal = e.target?.scrollTop || 0
-      scrollSubscribers.current.forEach((sub) => sub(scrollVal))
+      let frameHeight = e.target?.offsetHeight || 0
+      scrollSubscribers.current.forEach((sub) => sub(scrollVal, frameHeight))
     },
     [scrollSubscribers.current]
   )
