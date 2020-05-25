@@ -162,6 +162,7 @@ const TableCell = styled.div<{
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
+  box-sizing: border-box;
 
   &:last-of-type {
     border-right: 0;
@@ -173,7 +174,7 @@ const TableCell = styled.div<{
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0.5rem 1.75rem 0.4rem 0.75rem;
+  padding: 0.5rem 25px 0.4rem 11px;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
@@ -344,7 +345,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}
+        style={{ minWidth: columnWidth ? `${columnWidth}px` : 'auto' }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={editableValues?.includes(valueKey)}
@@ -433,16 +434,17 @@ const Table = observer(
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index]
+        let nextWidth = Math.ceil(width)
 
         // Only set with if no width has been set yet for this column, or if it is different,
         // or when onlyIncrease is true, if the new width is more than the current width.
         if (
           !curWidth ||
-          (!onlyIncrease && width !== curWidth) ||
-          (onlyIncrease && !!curWidth && curWidth < width)
+          (!onlyIncrease && nextWidth !== curWidth) ||
+          (onlyIncrease && !!curWidth && curWidth < nextWidth)
         ) {
           let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, width)
+          nextWidths.splice(index, deleteCount, nextWidth)
           return nextWidths
         }
 
