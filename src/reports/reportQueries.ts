@@ -5,7 +5,6 @@ import {
   ExecutionRequirementFragment,
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
-import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const availablePreInspectionReportsQuery = gql`
   query preInspectionAvailableReports($preInspectionId: String!) {

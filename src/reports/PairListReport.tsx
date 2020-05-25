@@ -21,9 +21,17 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
   let pairLabels = useMemo(
     () =>
       Object.entries(columnLabels || {}).reduce((allLabels, [prop, label]) => {
+        if (!label) {
+          return allLabels
+        }
+
         allLabels[prop] = label // Keep the label without modifications for the pair object itself.
-        allLabels['a_' + prop] = 'A ' + label // One version of the prop prepended with a
-        allLabels['b_' + prop] = 'B ' + label // And another version of the prop prepended with b
+
+        // Some labels are separated already from the server.
+        if (!label.startsWith('A ') && !label.startsWith('B ')) {
+          allLabels['a_' + prop] = 'A ' + label // One version of the prop prepended with a
+          allLabels['b_' + prop] = 'B ' + label // And another version of the prop prepended with b
+        }
 
         return allLabels
       }, {}),

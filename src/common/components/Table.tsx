@@ -625,10 +625,12 @@ const Table = observer(
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
     let isScrolling = listHeight > maxHeight
 
-    let wrapperHeight =
+    let wrapperHeight = Math.max(
+      150,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
-      SCROLLBAR_WIDTH +
-      1
+        SCROLLBAR_WIDTH +
+        1
+    )
 
     // Scroll listeners for the floating toolbar.
     let [currentScroll, setCurrentScroll] = useState(0)
