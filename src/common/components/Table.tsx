@@ -109,6 +109,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   flex-wrap: nowrap;
   border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
   border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
+  border-right: 2px solid var(--lighter-grey);
   position: relative;
   transition: outline 0.1s ease-out;
   outline: ${(p) =>
@@ -159,14 +160,11 @@ const TableCell = styled.div<{
   align-items: stretch;
   justify-content: center;
   font-size: 0.75rem;
+  min-width: 5rem;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   box-sizing: border-box;
-
-  &:last-of-type {
-    border-right: 0;
-  }
 
   &:nth-child(odd) {
     background: rgba(0, 0, 0, 0.025);
@@ -345,7 +343,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ minWidth: columnWidth ? `${columnWidth}px` : 'auto' }}
+        style={{ width: columnWidth ? `${columnWidth}px` : 'auto' }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={editableValues?.includes(valueKey)}
@@ -752,7 +750,7 @@ const Table = observer(
                   return (
                     <TableCell
                       key={`footer_${col}`}
-                      style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
+                      style={{ width: columnWidth ? columnWidth + 'px' : 'auto' }}>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCell>
                   )
