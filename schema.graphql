@@ -5,7 +5,7 @@ schema {
   mutation: Mutation
 }
 
-union ReportEntityUnion = Departure | DeparturePair | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture | ProcurementUnit
+union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture
 
 type Departure {
   allowedOverAge: Float
@@ -14,6 +14,7 @@ type Departure {
   direction: String
   endStop: String
   equipment: Equipment
+  equipmentExteriorColor: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
@@ -51,6 +52,21 @@ type DeparturePair {
   overlapPlannedBy: String
   overlapSecondsA: Int
   overlapSecondsB: Int
+}
+
+type EmissionClassExecutionItem {
+  class1: Float
+  class10: Float
+  class2: Float
+  class3: Float
+  class4: Float
+  class5: Float
+  class6: Float
+  class7: Float
+  class8: Float
+  class9: Float
+  id: ID!
+  procurementUnitId: String
 }
 
 type Equipment {
@@ -115,6 +131,7 @@ type ExecutionRequirement {
   operator: Operator!
   preInspection: PreInspection!
   procurementUnit: ProcurementUnit
+  procurementUnitId: String
   procurementUnitRequirements: [ExecutionRequirement!]
   requirements: [ExecutionRequirementValue!]!
   totalKilometers: Float

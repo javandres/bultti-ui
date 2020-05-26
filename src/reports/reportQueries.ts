@@ -88,8 +88,19 @@ export const reportByName = gql`
       }
       reportEntities {
         __typename
-        ... on ProcurementUnit {
-          ...ProcurementUnitFragment
+        ... on EmissionClassExecutionItem {
+          id
+          procurementUnitId
+          class1
+          class2
+          class3
+          class4
+          class5
+          class6
+          class7
+          class8
+          class9
+          class10
         }
         ... on Departure {
           ...DepartureFragment
@@ -99,6 +110,7 @@ export const reportByName = gql`
         }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
+          procurementUnitId
           requirements {
             ...RequirementValueFragment
           }
@@ -124,7 +136,6 @@ export const reportByName = gql`
       }
     }
   }
-  ${ProcurementUnitFragment}
   ${OperatorBlockDepartureFragment}
   ${DepartureFragment}
   ${ShortDepartureFragment}

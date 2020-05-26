@@ -11,9 +11,9 @@
       "Departure",
       "MissingEquipment",
       "DeparturePair",
-      "ProcurementUnit",
       "OperatorBlockDeparture",
-      "ExecutionRequirement"
+      "ExecutionRequirement",
+      "EmissionClassExecutionItem"
     ]
   }
 };

@@ -6,6 +6,7 @@ import { ReportComponentProps } from './reportUtil'
 import ReportTableFilters from './ReportTableFilters'
 import { EmptyView } from '../common/components/Messages'
 import { toString } from 'lodash'
+import { round } from '../util/round'
 
 const ListReportView = styled.div``
 
@@ -24,6 +25,10 @@ const ListReport = observer(
             {val ? '✓' : '⨯'}
           </span>
         )
+      }
+
+      if (typeof val === 'number') {
+        return toString(round(val))
       }
 
       return toString(val)

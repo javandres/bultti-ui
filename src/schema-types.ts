@@ -235,6 +235,7 @@ export type ExecutionRequirement = {
   preInspection: PreInspection;
   equipmentQuotas: Array<ExecutionRequirementQuota>;
   procurementUnit?: Maybe<ProcurementUnit>;
+  procurementUnitId?: Maybe<Scalars['String']>;
   areaRequirement?: Maybe<ExecutionRequirement>;
   procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
   totalKilometers?: Maybe<Scalars['Float']>;
@@ -358,6 +359,7 @@ export type Departure = {
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
   observedEquipmentType?: Maybe<Scalars['String']>;
+  equipmentExteriorColor?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
@@ -496,7 +498,7 @@ export type Report = {
   postInspection?: Maybe<PostInspection>;
 };
 
-export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | ProcurementUnit | OperatorBlockDeparture | ExecutionRequirement;
+export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;
 
 export type MissingEquipment = {
    __typename?: 'MissingEquipment';
@@ -518,6 +520,22 @@ export type DeparturePair = {
   overlapSecondsA?: Maybe<Scalars['Int']>;
   overlapSecondsB?: Maybe<Scalars['Int']>;
   overlapPlannedBy?: Maybe<Scalars['String']>;
+};
+
+export type EmissionClassExecutionItem = {
+   __typename?: 'EmissionClassExecutionItem';
+  id: Scalars['ID'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  class1?: Maybe<Scalars['Float']>;
+  class2?: Maybe<Scalars['Float']>;
+  class3?: Maybe<Scalars['Float']>;
+  class4?: Maybe<Scalars['Float']>;
+  class5?: Maybe<Scalars['Float']>;
+  class6?: Maybe<Scalars['Float']>;
+  class7?: Maybe<Scalars['Float']>;
+  class8?: Maybe<Scalars['Float']>;
+  class9?: Maybe<Scalars['Float']>;
+  class10?: Maybe<Scalars['Float']>;
 };
 
 export type Mutation = {
