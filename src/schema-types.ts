@@ -358,11 +358,13 @@ export type Departure = {
   schemaOrder?: Maybe<Scalars['Int']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
-  observedEquipmentType?: Maybe<Scalars['String']>;
-  equipmentExteriorColor?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
+  observedEquipmentType?: Maybe<Scalars['String']>;
+  equipmentExteriorColor?: Maybe<Scalars['String']>;
+  registryDate?: Maybe<Scalars['BulttiDate']>;
+  equipmentAge?: Maybe<Scalars['Float']>;
 };
 
 export enum DayType {

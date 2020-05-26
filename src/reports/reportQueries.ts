@@ -104,6 +104,8 @@ export const reportByName = gql`
         }
         ... on Departure {
           ...DepartureFragment
+          equipmentAge
+          registryDate
         }
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment

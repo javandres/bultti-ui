@@ -14,6 +14,7 @@ type Departure {
   direction: String
   endStop: String
   equipment: Equipment
+  equipmentAge: Float
   equipmentExteriorColor: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
@@ -29,6 +30,7 @@ type Departure {
   procurementUnit: ProcurementUnit
   procurementUnitId: String
   recoveryTime: Int
+  registryDate: BulttiDate
   registryNr: String
   routeId: String
   routeLength: Int
