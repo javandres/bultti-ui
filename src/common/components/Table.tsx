@@ -19,6 +19,7 @@ import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
+import { useResizeObserver } from '../../util/useResizeObserver'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -28,7 +29,7 @@ const TableWrapper = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
-  overflow-x: scroll;
+  overflow-x: auto;
 
   &:last-child {
     margin-bottom: 0;
@@ -42,6 +43,7 @@ const TableView = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
+  overflow-x: hidden;
 `
 
 export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
@@ -109,7 +111,6 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   flex-wrap: nowrap;
   border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
   border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
-  border-right: 2px solid var(--lighter-grey);
   position: relative;
   transition: outline 0.1s ease-out;
   outline: ${(p) =>
@@ -160,11 +161,14 @@ const TableCell = styled.div<{
   align-items: stretch;
   justify-content: center;
   font-size: 0.75rem;
-  min-width: 5rem;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   box-sizing: border-box;
+
+  &:last-child {
+    border-right: 0;
+  }
 
   &:nth-child(odd) {
     background: rgba(0, 0, 0, 0.025);
@@ -343,7 +347,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ width: columnWidth ? `${columnWidth}px` : 'auto' }}
+        style={{ minWidth: columnWidth ? `${columnWidth}px` : 'auto' }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={editableValues?.includes(valueKey)}
@@ -424,6 +428,8 @@ const Table = observer(
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
+    let resizeRef = useRef(null)
+
     let [sort, setSort] = useState<SortConfig[]>([])
     let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
     let [columnWidths] = useDebounce(liveColumnWidths, 500, { leading: true, trailing: false })
@@ -617,17 +623,20 @@ const Table = observer(
       ]
     )
 
-    let width = columnWidths.reduce((total, col) => total + col, 0)
+    let wrapperRect = useResizeObserver(tableViewRef)
+
+    let width = columnWidths.reduce((total, col) => total + col, 0) - 1
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
     let isScrolling = listHeight > maxHeight
+    let isOverflowing = (wrapperRect?.width || 0) < width
 
     let wrapperHeight = Math.max(
       150,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
-        SCROLLBAR_WIDTH +
-        1
+        2 +
+        (isOverflowing ? SCROLLBAR_WIDTH : 0)
     )
 
     // Scroll listeners for the floating toolbar.
@@ -689,7 +698,7 @@ const Table = observer(
             }}>
             <TableHeader
               style={{
-                paddingRight: virtualized && maxHeight < listHeight ? SCROLLBAR_WIDTH : 0,
+                paddingRight: virtualized && isScrolling ? SCROLLBAR_WIDTH : 0,
               }}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
@@ -721,13 +730,14 @@ const Table = observer(
                 )
               })}
             </TableHeader>
-            <TableBodyWrapper>
+            <TableBodyWrapper ref={resizeRef}>
               {tableIsEmpty ? (
                 emptyContent
               ) : virtualized ? (
                 <List
+                  style={{ minWidth: '100%', overflowX: 'hidden' }}
                   height={height}
-                  width={width + SCROLLBAR_WIDTH}
+                  width={width + (isScrolling ? SCROLLBAR_WIDTH : 0)}
                   itemCount={rows.length}
                   itemSize={rowHeight}
                   layout="vertical"
@@ -750,7 +760,7 @@ const Table = observer(
                   return (
                     <TableCell
                       key={`footer_${col}`}
-                      style={{ width: columnWidth ? columnWidth + 'px' : 'auto' }}>
+                      style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCell>
                   )

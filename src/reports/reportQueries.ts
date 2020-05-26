@@ -34,6 +34,7 @@ export const DepartureFragment = gql`
     equipmentTypeRequired
     operatorOrder
     plannedEquipmentType
+    observedEquipmentType
     recoveryTime
     schemaUnitId: procurementUnitId
     schemaId

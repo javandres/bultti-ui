@@ -357,6 +357,7 @@ export type Departure = {
   schemaOrder?: Maybe<Scalars['Int']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
+  observedEquipmentType?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
@@ -507,12 +508,16 @@ export type DeparturePair = {
    __typename?: 'DeparturePair';
   id: Scalars['ID'];
   blockNumber?: Maybe<Scalars['String']>;
+  groupId?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
   deadrunStartStop?: Maybe<Scalars['String']>;
   deadrunEndStop?: Maybe<Scalars['String']>;
   deadrunMinutes?: Maybe<Scalars['Int']>;
   deadrunPlannedBy?: Maybe<Scalars['String']>;
+  overlapSecondsA?: Maybe<Scalars['Int']>;
+  overlapSecondsB?: Maybe<Scalars['Int']>;
+  overlapPlannedBy?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {

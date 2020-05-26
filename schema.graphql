@@ -22,6 +22,7 @@ type Departure {
   isTrunkRoute: Boolean
   journeyEndTime: String!
   journeyStartTime: String!
+  observedEquipmentType: String
   operatorOrder: Int
   plannedEquipmentType: String
   procurementUnit: ProcurementUnit
@@ -45,7 +46,11 @@ type DeparturePair {
   deadrunStartStop: String
   departureA: Departure!
   departureB: Departure!
+  groupId: String
   id: ID!
+  overlapPlannedBy: String
+  overlapSecondsA: Int
+  overlapSecondsB: Int
 }
 
 type Equipment {
