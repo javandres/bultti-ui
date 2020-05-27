@@ -3,10 +3,10 @@ set -e
 
 # Builds and deploys all images for the Azure environments
 
-ORG=${ORG:-hsldevcom}
+ORG=${ORG:-hsl}
 
 for TAG in dev stage production; do
-  DOCKER_IMAGE=$ORG/transitlog-ui:${TAG}
+  DOCKER_IMAGE=bulttiregistry.azurecr.io/$ORG/bultti-ui:${TAG}
 
   docker build --build-arg BUILD_ENV=${TAG} -t $DOCKER_IMAGE .
   docker push $DOCKER_IMAGE

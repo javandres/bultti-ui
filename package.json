@@ -14,6 +14,7 @@
     "@types/react-dom": "16.9.6",
     "@types/react-window": "^1.8.2",
     "apollo-upload-client": "^13.0.0",
+    "cross-env": "^7.0.2",
     "date-fns": "^2.12.0",
     "downshift": "^5.1.0",
     "extract-files": "^8.1.0",
@@ -42,8 +43,8 @@
   },
   "scripts": {
     "start": "BROWSER=none EXTEND_ESLINT=true PORT=3001 react-app-rewired start",
-    "production": "forever start -c \"yarn run serve -s -l 3001\" build && forever logs -f 0",
-    "build": "EXTEND_ESLINT=true PORT=3001 react-app-rewired build",
+    "production": "forever start -c \"cross-env-shell yarn run serve -s -l $PORT\" build && forever logs -f 0",
+    "build": "EXTEND_ESLINT=true react-app-rewired build",
     "test": "react-app-rewired test --env=jsdom",
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen --config codegen.yml",
