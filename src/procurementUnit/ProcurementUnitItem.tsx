@@ -299,6 +299,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>Voimassaoloaika</HeaderHeading>
                   {procurementUnit.startDate} - {procurementUnit.endDate}
                 </HeaderSection>
+                <HeaderSection>
+                  <HeaderHeading>Seuranta-alue</HeaderHeading>
+                  {procurementUnit?.area?.name}
+                </HeaderSection>
               </>
             }>
             {(itemIsExpanded: boolean) => (
