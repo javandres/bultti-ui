@@ -3,9 +3,10 @@ import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { useLazyQueryData } from './useLazyQueryData'
 import { pickGraphqlData } from './pickGraphqlData'
 import { getUrlValue, navigate, setUrlValue } from './urlValue'
+import { useQueryData } from './useQueryData'
+import { useRefetch } from './useRefetch'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -18,9 +19,9 @@ export const useAuth = (): [AuthState, boolean] => {
   const [user, setUser] = useStateValue('user')
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const [fetchUser, { data: currentUser, loading: currentUserLoading }] = useLazyQueryData<
-    User
-  >(currentUserQuery)
+  const { data: currentUser, refetch } = useQueryData<User>(currentUserQuery)
+
+  let fetchUser = useRefetch(refetch)
 
   useEffect(() => {
     if (currentUser) {
@@ -29,7 +30,7 @@ export const useAuth = (): [AuthState, boolean] => {
     } else if (authState === AuthState.UNAUTHENTICATED) {
       fetchUser()
     }
-  }, [currentUser, fetchUser, setUser, currentUserLoading])
+  }, [currentUser, fetchUser, setAuthState])
 
   const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
     () => ({

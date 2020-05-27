@@ -1,5 +1,4 @@
 import { gql } from '@apollo/client'
-import { ProcurementUnitFragment } from '../procurementUnit/procurementUnitsQuery'
 import { OperatorBlockDepartureFragment } from '../departureBlock/blockDeparturesQuery'
 import {
   ExecutionRequirementFragment,
