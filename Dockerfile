@@ -12,8 +12,7 @@ RUN yarn
 
 COPY . ${WORK}
 
-ARG BUILD_ENV=production
-COPY .env.${BUILD_ENV} ${WORK}/.env.production
+COPY .env.production ${WORK}
 
 # RUN yarn run test:ci
 RUN yarn run build

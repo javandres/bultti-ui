@@ -7,6 +7,6 @@ ORG=${ORG:-hsl}
 
 for TAG in dev stage; do
   DOCKER_IMAGE=bulttiregistry.azurecr.io/${ORG}/bultti-ui:${TAG}
-  docker build --build-arg BUILD_ENV=${TAG} -t ${DOCKER_IMAGE} .
+  docker build -t ${DOCKER_IMAGE} .
   docker push ${DOCKER_IMAGE}
 done

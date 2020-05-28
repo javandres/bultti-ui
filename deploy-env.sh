@@ -47,5 +47,5 @@ echo "Building for the $opt ($ENV) environment..."
 ORG=${ORG:-hsl}
 DOCKER_IMAGE=bulttiregistry.azurecr.io/${ORG}/bultti-ui:${ENV}
 
-docker build --build-arg BUILD_ENV=${ENV} -t ${DOCKER_IMAGE} .
+docker build -t ${DOCKER_IMAGE} .
 docker push ${DOCKER_IMAGE}
