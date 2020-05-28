@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
+import ErrorMessages from './ErrorMessages'
 
 const AppFrameView = styled.div`
   display: flex;
@@ -78,6 +79,7 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
           </ScrollContext.Provider>
         </>
       )}
+      <ErrorMessages />
     </AppFrameView>
   )
 })

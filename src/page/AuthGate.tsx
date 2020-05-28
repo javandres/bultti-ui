@@ -9,6 +9,7 @@ import { Text } from '../util/translate'
 import { ButtonSize, ButtonStyle, StyledButton } from '../common/components/Button'
 import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
 import { getAppRoot, history } from '../util/urlValue'
+import ErrorMessages from '../common/components/ErrorMessages'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -105,6 +106,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
           </ButtonWrapper>
         </>
       )}
+      <ErrorMessages />
     </LoadingScreen>
   )
 })

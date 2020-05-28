@@ -24,6 +24,7 @@ export const UIStore = (state): UIActions => {
       // proxy separate language state through app state
       return languageState.language
     },
+    errorMessage: '',
   }
 
   extendObservable(state, defaultState)
@@ -42,6 +43,10 @@ export const UIStore = (state): UIActions => {
     setUrlValue('season', typeof value === 'string' ? value : value?.id || '')
   })
 
+  const setErrorMessage = action((message: string) => {
+    state.errorMessage = message
+  })
+
   const onAppLoaded = action(() => {
     state.appLoaded = true
   })
@@ -51,5 +56,6 @@ export const UIStore = (state): UIActions => {
     globalSeason: setSeasonFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
+    errorMessage: setErrorMessage,
   }
 }
