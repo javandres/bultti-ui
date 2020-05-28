@@ -11,15 +11,30 @@ import { createUploadLink } from 'apollo-upload-client'
 import introspection from './possibleTypes'
 import { getAuthToken } from './util/authToken'
 
-export const createGraphqlClient = async () => {
-  const errorLink = onError(({ graphQLErrors, networkError }) => {
-    if (graphQLErrors)
-      graphQLErrors.forEach(({ message, locations, path }) =>
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        )
-      )
-    if (networkError) console.log(`[Network error]: ${networkError}`)
+export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
+  const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
+    let authenticationError = false
+
+    if (graphQLErrors) {
+      graphQLErrors.forEach((err) => {
+        let { message, extensions } = err
+        let code = extensions?.code || 'Server'
+
+        if (code === 'UNAUTHENTICATED') {
+          authenticationError = true
+        }
+
+        console.log(`[${code} error]: ${message}`)
+      })
+    }
+
+    if (operation.getContext()?.response?.status === 401) {
+      authenticationError = true
+    }
+
+    if (authenticationError) {
+      onAuthError()
+    }
   })
 
   const authLink = setContext((_, { headers }) => {

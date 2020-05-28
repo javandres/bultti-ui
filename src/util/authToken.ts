@@ -8,3 +8,7 @@ export function saveAuthToken(token) {
 export function getAuthToken() {
   return localStorage.getItem(AUTH_TOKEN_KEY)
 }
+
+export function removeAuthToken() {
+  return localStorage.removeItem(AUTH_TOKEN_KEY)
+}

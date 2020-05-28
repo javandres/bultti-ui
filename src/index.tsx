@@ -12,12 +12,19 @@ import { createGraphqlClient } from './graphqlClient'
 import { ApolloProvider } from '@apollo/client'
 import { LocationProvider } from '@reach/router'
 import { history } from './util/urlValue'
+import { removeAuthToken } from './util/authToken'
 
 const initializers = [UserStore, UIStore]
 
 const main = async () => {
   const state = await createState(initializers)
-  const client = await createGraphqlClient()
+
+  let onAuthError = () => {
+    removeAuthToken()
+    state.actions.user(null)
+  }
+
+  const client = await createGraphqlClient(onAuthError)
 
   ReactDOM.render(
     <LocationProvider history={history}>

@@ -61,7 +61,7 @@ export const useAuth = (): [AuthState, boolean] => {
   useEffect(() => {
     let currentAuthToken = getAuthToken()
 
-    if (currentAuthToken) {
+    if (!code && currentAuthToken) {
       if (user && authState === AuthState.AUTHENTICATED) {
         navigateNext()
         return
