@@ -5,6 +5,7 @@ const path = require('path')
 const pick = require('lodash/pick')
 const mapKeys = require('lodash/mapKeys')
 const mustacheExpress = require('mustache-express')
+const serialize = require('serialize-javascript')
 
 const app = express()
 app.use(express.static(path.join(__dirname, 'build')))
@@ -19,11 +20,17 @@ app.get('/check', function (req, res) {
 
 app.get('/*', function (req, res) {
   let envKeys = Object.keys(process.env).filter((key) => key.startsWith('REACT_APP'))
-  let env = mapKeys(pick(process.env, envKeys), (val, key) => key.replace('REACT_APP_', ''))
+  let env = pick(process.env, envKeys)
 
-  console.log(env)
+  let scriptEnv = `
+<script>
+    window._ENV = ${JSON.stringify(env)}
+</script>
+  `
 
-  res.render(path.join(__dirname, 'build', 'index.html'), env)
+  res.render(path.join(__dirname, 'build', 'index.html'), {
+    SCRIPT_ENV: scriptEnv,
+  })
 })
 
 app.listen(process.env.PORT || 3001, () =>
