@@ -560,7 +560,7 @@ export type Mutation = {
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   removeAllEquipmentFromExecutionRequirement: ExecutionRequirement;
   removeExecutionRequirement: Scalars['Boolean'];
-  login?: Maybe<User>;
+  login?: Maybe<Scalars['String']>;
   logout: Scalars['Boolean'];
   removeEquipmentFromCatalogue: Scalars['Boolean'];
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;

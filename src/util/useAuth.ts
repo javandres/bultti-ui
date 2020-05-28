@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { pickGraphqlData } from './pickGraphqlData'
 import { getUrlValue, navigate, setUrlValue } from './urlValue'
 import { useQueryData } from './useQueryData'
 import { useRefetch } from './useRefetch'
+import { getAuthToken, saveAuthToken } from './authToken'
+import { pickGraphqlData } from './pickGraphqlData'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -17,20 +18,37 @@ export enum AuthState {
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [user, setUser] = useStateValue('user')
+  // To prevent unwanted navigation, only set this to true when the app should
+  // navigate away from the login screen.
+  let shouldNavigate = useRef(false)
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const { data: currentUser, refetch } = useQueryData<User>(currentUserQuery)
+  const { data: fetchedUser, refetch, loading: currentUserLoading } = useQueryData<User>(
+    currentUserQuery
+  )
 
   let fetchUser = useRefetch(refetch)
 
+  let navigateNext = useCallback(() => {
+    if (shouldNavigate.current) {
+      shouldNavigate.current = false
+      let nextUrl = sessionStorage.getItem('return_to_url') || '/'
+      sessionStorage.removeItem('return_to_url')
+      navigate(nextUrl, { replace: true })
+    }
+  }, [navigate, shouldNavigate.current])
+
   useEffect(() => {
-    if (currentUser) {
-      setUser(currentUser)
-      setAuthState(AuthState.AUTHENTICATED)
-    } else if (authState === AuthState.UNAUTHENTICATED) {
+    if (fetchedUser && !user) {
+      setUser(fetchedUser)
+    }
+  }, [fetchedUser, user])
+
+  useEffect(() => {
+    if (getAuthToken() && !user && !fetchedUser && !currentUserLoading) {
       fetchUser()
     }
-  }, [currentUser, fetchUser, setAuthState])
+  }, [fetchedUser, fetchUser, user])
 
   const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
     () => ({
@@ -41,14 +59,21 @@ export const useAuth = (): [AuthState, boolean] => {
   )
 
   useEffect(() => {
-    if (user && authState === AuthState.AUTHENTICATED) {
-      return
+    let currentAuthToken = getAuthToken()
+
+    if (currentAuthToken) {
+      if (user && authState === AuthState.AUTHENTICATED) {
+        navigateNext()
+        return
+      }
+
+      if (user && authState === AuthState.UNAUTHENTICATED) {
+        setAuthState(AuthState.AUTHENTICATED)
+        return
+      }
     }
 
-    if (user && authState === AuthState.UNAUTHENTICATED) {
-      setAuthState(AuthState.AUTHENTICATED)
-      return
-    } else if (!user && authState === AuthState.AUTHENTICATED) {
+    if (!code && (!currentAuthToken || (!user && authState === AuthState.AUTHENTICATED))) {
       setAuthState(AuthState.UNAUTHENTICATED)
       return
     }
@@ -64,21 +89,20 @@ export const useAuth = (): [AuthState, boolean] => {
           isTest: is_test,
         },
       }).then(({ data }) => {
-        const user = pickGraphqlData(data)
+        let token = pickGraphqlData(data)
 
-        if (user) {
-          setUser(user)
+        if (token) {
+          saveAuthToken(token)
           setAuthState(AuthState.AUTHENTICATED)
+
+          shouldNavigate.current = true
+          fetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
         }
-
-        let nextUrl = sessionStorage.getItem('return_to_url') || '/'
-        sessionStorage.removeItem('return_to_url')
-        navigate(nextUrl, { replace: true })
       })
     }
-  }, [user, code, authState, login])
+  }, [user, code, authState, login, fetchUser, navigateNext])
 
   return [authState, loginLoading]
 }

@@ -177,7 +177,7 @@ type Mutation {
   createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
   generateEquipmentForPreInspection(preInspectionId: String!): Boolean!
-  login(authorizationCode: String!, isTest: Boolean, redirectUri: String): User
+  login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
   publishPreInspection(preInspectionId: String!): PreInspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement

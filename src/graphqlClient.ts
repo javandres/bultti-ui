@@ -5,9 +5,11 @@ import {
   InMemoryCache,
 } from '@apollo/client'
 import { onError } from '@apollo/link-error'
+import { setContext } from '@apollo/link-context'
 import { GRAPHQL_PATH, SERVER_URL } from './constants'
 import { createUploadLink } from 'apollo-upload-client'
 import introspection from './possibleTypes'
+import { getAuthToken } from './util/authToken'
 
 export const createGraphqlClient = async () => {
   const errorLink = onError(({ graphQLErrors, networkError }) => {
@@ -18,6 +20,18 @@ export const createGraphqlClient = async () => {
         )
       )
     if (networkError) console.log(`[Network error]: ${networkError}`)
+  })
+
+  const authLink = setContext((_, { headers }) => {
+    // get the authentication token from local storage if it exists
+    const token = getAuthToken()
+    // return the headers to the context so httpLink can read them
+    return {
+      headers: {
+        ...headers,
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    }
   })
 
   const httpLink = createUploadLink({
@@ -44,7 +58,7 @@ export const createGraphqlClient = async () => {
   })
 
   return new ApolloClient({
-    link: ApolloLink.from([errorLink, httpLink]),
+    link: ApolloLink.from([errorLink, authLink, httpLink]),
     cache,
   })
 }

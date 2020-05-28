@@ -5843,7 +5843,7 @@
                   "name": "Boolean",
                   "ofType": null
                 },
-                "defaultValue": null
+                "defaultValue": "false"
               },
               {
                 "name": "redirectUri",
@@ -5853,7 +5853,7 @@
                   "name": "String",
                   "ofType": null
                 },
-                "defaultValue": null
+                "defaultValue": "\"http://localhost:3001\""
               },
               {
                 "name": "authorizationCode",
@@ -5871,8 +5871,8 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "User",
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,
