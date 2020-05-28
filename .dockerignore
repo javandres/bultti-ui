@@ -9,6 +9,7 @@ LICENSE
 graphql.config.json
 travis-build.sh
 *.log
+.env
 .env.*.local
 .env.cypress
 tag-version.sh
