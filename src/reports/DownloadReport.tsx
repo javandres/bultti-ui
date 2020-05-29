@@ -5,6 +5,7 @@ import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
 import styled from 'styled-components'
 import { InspectionType } from '../schema-types'
+import { getAuthToken } from '../util/authToken'
 
 const DownloadWrapper = styled.div`
   position: relative;
@@ -43,10 +44,13 @@ const DownloadReport = observer(
       setLoading(true)
 
       let url = `${SERVER_URL}/reports/${inspectionTypeStr}/${inspectionId}/${reportName}/excel`
+      const token = getAuthToken()
 
       let response = await fetch(url, {
         method: 'GET',
-        credentials: 'include',
+        headers: {
+          authorization: token ? `Bearer ${token}` : '',
+        },
       })
 
       if (response.ok) {
