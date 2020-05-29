@@ -18,6 +18,7 @@ import { logoutMutation } from '../query/authQueries'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import NavLink from './NavLink'
 import Dropdown from '../input/Dropdown'
+import { removeAuthToken } from '../../util/authToken'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -136,6 +137,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
     let isLoggedOut = pickGraphqlData(result.data)
 
     if (isLoggedOut) {
+      removeAuthToken()
       setUser(null)
     }
   }, [])
