@@ -40,6 +40,7 @@ const TableView = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -164,11 +165,7 @@ const TableCell = styled.div<{
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
-  box-sizing: border-box;
-
-  &:last-child {
-    border-right: 0;
-  }
+  box-sizing: border-box !important;
 
   &:nth-child(odd) {
     background: rgba(0, 0, 0, 0.025);
@@ -176,7 +173,7 @@ const TableCell = styled.div<{
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0.5rem 25px 0.4rem 11px;
+  padding: 0;
   font-weight: bold;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
@@ -188,6 +185,12 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   justify-content: flex-start;
   white-space: nowrap;
   position: relative;
+  display: flex;
+`
+
+const HeaderCellContent = styled.div`
+  padding: 0.5rem 25px 0.4rem 11px;
+  width: 100%;
 `
 
 const TableBodyWrapper = styled.div`
@@ -347,7 +350,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ minWidth: columnWidth ? `${columnWidth}px` : 'auto' }}
+        style={{ minWidth: columnWidth ? `${columnWidth}px` : 0 }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={editableValues?.includes(valueKey)}
@@ -428,27 +431,21 @@ const Table = observer(
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
-    let resizeRef = useRef(null)
 
     let [sort, setSort] = useState<SortConfig[]>([])
     let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
     let [columnWidths] = useDebounce(liveColumnWidths, 500, { leading: true, trailing: false })
 
-    let setColumnWidth = useCallback((index, width, onlyIncrease = false) => {
+    let setColumnWidth = useCallback((index, width) => {
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index]
-        let nextWidth = Math.ceil(width)
 
         // Only set with if no width has been set yet for this column, or if it is different,
         // or when onlyIncrease is true, if the new width is more than the current width.
-        if (
-          !curWidth ||
-          (!onlyIncrease && nextWidth !== curWidth) ||
-          (onlyIncrease && !!curWidth && curWidth < nextWidth)
-        ) {
+        if (!curWidth || width !== curWidth) {
           let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, nextWidth)
+          nextWidths.splice(index, deleteCount, width)
           return nextWidths
         }
 
@@ -623,17 +620,25 @@ const Table = observer(
       ]
     )
 
+    // The table is empty if we don't have any items,
+    // OR
+    // When there is one item with only falsy values (which still gives the column names)
+    let tableIsEmpty =
+      items.length === 0 ||
+      (items.length === 1 && Object.values(items[0]).every((val) => !val))
+
     let wrapperRect = useResizeObserver(tableViewRef)
 
-    let width = columnWidths.reduce((total, col) => total + col, 0) - 1
+    let wrapperWidth = wrapperRect?.width || 0
+    let width = columnWidths.reduce((total, col) => total + col, 0)
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
     let isScrolling = listHeight > maxHeight
-    let isOverflowing = (wrapperRect?.width || 0) < width
+    let isOverflowing = wrapperWidth < width
 
     let wrapperHeight = Math.max(
-      150,
+      tableIsEmpty ? 150 : rowHeight,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
         2 +
         (isOverflowing ? SCROLLBAR_WIDTH : 0)
@@ -650,6 +655,7 @@ const Table = observer(
       50
     )
 
+    // Subscribe to the scroll position only when there are items being edited.
     useEffect(() => {
       if (pendingValues.length !== 0) {
         subscribeToScroll(debouncedSetScroll)
@@ -667,13 +673,6 @@ const Table = observer(
       return currentScroll < tableBottomEdge - 150
     }, [tableViewRef.current, currentScroll, pendingValues])
 
-    // The table is empty if we don't have any items,
-    // OR
-    // When there is one item with only falsy values (which still gives the column names)
-    let tableIsEmpty =
-      items.length === 0 ||
-      (items.length === 1 && Object.values(items[0]).every((val) => !val))
-
     let contextValue = {
       columnWidths,
       editableValues,
@@ -686,20 +685,17 @@ const Table = observer(
       renderValue,
     }
 
+    let tableViewWidth = width + (isScrolling && virtualized ? SCROLLBAR_WIDTH : 0)
+
     return (
       <TableContext.Provider value={contextValue}>
         <TableWrapper
           className={className}
           style={{ minHeight: wrapperHeight + 'px' }}
           ref={tableViewRef}>
-          <TableView
-            style={{
-              minWidth: width + (isScrolling && virtualized ? SCROLLBAR_WIDTH : 0) + 'px',
-            }}>
+          <TableView style={{ minWidth: tableViewWidth + 'px' }}>
             <TableHeader
-              style={{
-                paddingRight: virtualized && isScrolling ? SCROLLBAR_WIDTH : 0,
-              }}>
+              style={{ paddingRight: virtualized && isScrolling ? SCROLLBAR_WIDTH : 0 }}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -713,24 +709,33 @@ const Table = observer(
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
 
+                let columnWidth = columnWidths[colIdx]
+
                 return (
                   <ColumnHeaderCell
                     ref={setWidthFromCellRef(colIdx)}
                     as="button"
+                    style={
+                      typeof columnWidth !== 'undefined'
+                        ? { minWidth: columnWidth + 'px' }
+                        : {}
+                    }
                     isEditing={isEditingColumn}
                     key={colName}
                     onClick={() => sortByColumn(colKey)}>
-                    {renderValue('', colName, true)}
-                    {sortIndex !== -1 && (
-                      <ColumnSortIndicator>
-                        {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
-                      </ColumnSortIndicator>
-                    )}
+                    <HeaderCellContent>
+                      {renderValue('', colName, true)}
+                      {sortIndex !== -1 && (
+                        <ColumnSortIndicator>
+                          {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
+                        </ColumnSortIndicator>
+                      )}
+                    </HeaderCellContent>
                   </ColumnHeaderCell>
                 )
               })}
             </TableHeader>
-            <TableBodyWrapper ref={resizeRef}>
+            <TableBodyWrapper>
               {tableIsEmpty ? (
                 emptyContent
               ) : virtualized ? (
