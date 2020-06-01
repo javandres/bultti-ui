@@ -40,11 +40,11 @@ export const ExecutionRequirementFragment = gql`
 export const executionRequirementForProcurementUnitQuery = gql`
   query executionRequirementForProcurementUnit(
     $procurementUnitId: String!
-    $preInspectionId: String!
+    $inspectionId: String!
   ) {
     executionRequirementForProcurementUnit(
       procurementUnitId: $procurementUnitId
-      preInspectionId: $preInspectionId
+      inspectionId: $inspectionId
     ) {
       ...ExecutionRequirementFragment
       equipmentQuotas {
@@ -66,8 +66,8 @@ export const executionRequirementForProcurementUnitQuery = gql`
 `
 
 export const executionRequirementsForAreaQuery = gql`
-  query executionRequirementsByPreInspection($preInspectionId: String!) {
-    executionRequirementsForPreInspectionAreas(preInspectionId: $preInspectionId) {
+  query executionRequirementsByPreInspection($inspectionId: String!) {
+    executionRequirementsForPreInspectionAreas(inspectionId: $inspectionId) {
       ...ExecutionRequirementFragment
       requirements {
         ...RequirementValueFragment
@@ -81,11 +81,11 @@ export const executionRequirementsForAreaQuery = gql`
 export const createExecutionRequirementForProcurementUnitMutation = gql`
   mutation createExecutionRequirementsForPreInspection(
     $procurementUnitId: String!
-    $preInspectionId: String!
+    $inspectionId: String!
   ) {
     createExecutionRequirementsForProcurementUnit(
       procurementUnitId: $procurementUnitId
-      preInspectionId: $preInspectionId
+      inspectionId: $inspectionId
     ) {
       id
       area {

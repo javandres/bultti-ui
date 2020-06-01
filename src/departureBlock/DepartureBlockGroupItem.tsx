@@ -70,8 +70,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
   }) => {
     let [showBlocksLoading, setShowBlocksLoading] = useState(loading)
 
-    let preInspection = useContext(PreInspectionContext)
-    let preInspectionId = preInspection?.id || ''
+    let inspection = useContext(PreInspectionContext)
+    let inspectionId = inspection?.id || ''
 
     useEffect(() => {
       if (!loading) {
@@ -85,7 +85,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     // Create an upload handler for uploading the departure block file.
     const uploader = useUploader(uploadDepartureBlocksMutation, {
       variables: {
-        inspectionId: preInspectionId,
+        inspectionId: inspectionId,
         dayTypes: getEnabledDayTypes(dayTypeGroup),
       },
     })
@@ -139,13 +139,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
         await removeDepartureBlocksForDays({
           variables: {
             dayTypes: getEnabledDayTypes(dayTypeGroup),
-            preInspectionId: preInspectionId,
+            inspectionId: inspectionId,
           },
         })
 
         onBlocksChange()
       }
-    }, [dayTypeGroup, preInspectionId, removeDepartureBlocksForDays, onBlocksChange])
+    }, [dayTypeGroup, inspectionId, removeDepartureBlocksForDays, onBlocksChange])
 
     return (
       <DepartureBlockGroupContainer>

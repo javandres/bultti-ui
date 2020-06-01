@@ -20,24 +20,24 @@ export type PropTypes = {
 } & TabChildProps
 
 const PreInspectionPreview: React.FC<PropTypes> = observer(({ publishPreInspection }) => {
-  let preInspection = useContext(PreInspectionContext)
+  let inspection = useContext(PreInspectionContext)
 
   let onPublish = useCallback(() => {
-    if (preInspection) {
-      publishPreInspection(preInspection.id)
+    if (inspection) {
+      publishPreInspection(inspection.id)
     }
-  }, [preInspection, publishPreInspection])
+  }, [inspection, publishPreInspection])
 
   // Validate that the form has each dependent piece of data.
   let formCondition = useMemo(() => {
     return {
-      preInspection: !!preInspection,
-      status: preInspection?.status === InspectionStatus.Draft,
-      operator: !!preInspection?.operator,
-      startDate: !!preInspection?.startDate,
-      season: !!preInspection?.season,
+      inspection: !!inspection,
+      status: inspection?.status === InspectionStatus.Draft,
+      operator: !!inspection?.operator,
+      startDate: !!inspection?.startDate,
+      season: !!inspection?.season,
     }
-  }, [preInspection])
+  }, [inspection])
 
   // Validation issues that affect the form at this moment
   let activeBlockers = Object.entries(formCondition)

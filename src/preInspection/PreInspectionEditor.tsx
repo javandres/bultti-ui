@@ -12,11 +12,11 @@ import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
 import { PreInspectionContext } from './PreInspectionContext'
 import { ButtonStyle } from '../common/components/Button'
-import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { navigateWithQueryString } from '../util/urlValue'
 import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import { PageSection } from '../common/components/common'
+import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -30,7 +30,7 @@ type PreInspectionProps = {
 
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
   ({ refetchData, loading }) => {
-    var preInspection = useContext(PreInspectionContext)
+    var inspection = useContext(PreInspectionContext)
 
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
@@ -52,16 +52,16 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     // Update the pre-inspection on changes
     var updatePreInspectionValue = useCallback(
       async (name: keyof PreInspectionInput, value: string) => {
-        if (!isUpdating.current && preInspection && !loading) {
+        if (!isUpdating.current && inspection && !loading) {
           isUpdating.current = true
 
-          var preInspectionInput: PreInspectionInput = {}
-          preInspectionInput[name] = value
+          var inspectionInput: PreInspectionInput = {}
+          inspectionInput[name] = value
 
           await updatePreInspection({
             variables: {
-              preInspectionId: preInspection.id,
-              preInspectionInput,
+              inspectionId: inspection.id,
+              inspectionInput,
             },
           })
 
@@ -69,7 +69,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           await onPreInspectionChange()
         }
       },
-      [isUpdating.current, preInspection, loading, updatePreInspection]
+      [isUpdating.current, inspection, loading, updatePreInspection]
     )
 
     let createUpdateCallback = useCallback(
@@ -78,27 +78,24 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     )
 
     let onMetaButtonAction = useCallback(() => {
-      if (preInspection) {
-        navigateWithQueryString(`/pre-inspection/edit/${preInspection.id}/preview`)
+      if (inspection) {
+        navigateWithQueryString(`/pre-inspection/edit/${inspection.id}/preview`)
       }
-    }, [preInspection])
+    }, [inspection])
 
     useEffect(() => {
-      if (!preInspection || !operator || !season) {
+      if (!inspection || !operator || !season) {
         return
       }
 
-      if (
-        preInspection.operatorId !== operator.operatorId ||
-        preInspection.seasonId !== season.id
-      ) {
+      if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
         navigateWithQueryString(`/pre-inspection/edit`)
       }
-    }, [preInspection, operator, season])
+    }, [inspection, operator, season])
 
     return (
       <EditPreInspectionView>
-        {!!preInspection && (
+        {!!inspection && (
           <>
             <PreInspectionMeta
               isLoading={isLoading}
@@ -120,7 +117,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             <ProcurementUnits />
 
             <PageSection>
-              <PreInspectionDevTools preInspection={preInspection} />
+              <PreInspectionDevTools inspection={inspection} />
             </PageSection>
           </>
         )}

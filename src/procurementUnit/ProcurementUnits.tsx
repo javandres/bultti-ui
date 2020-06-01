@@ -18,11 +18,11 @@ export type PropTypes = {
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
-  const preInspection = useContext(PreInspectionContext)
-  let { operatorId, startDate } = preInspection || props
+  const inspection = useContext(PreInspectionContext)
+  let { operatorId, startDate } = inspection || props
 
-  let catalogueEditable = !preInspection
-  let showExecutionRequirements = !!preInspection
+  let catalogueEditable = !inspection
+  let showExecutionRequirements = !!inspection
 
   const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
 

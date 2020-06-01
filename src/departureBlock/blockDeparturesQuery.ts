@@ -17,14 +17,14 @@ export const OperatorBlockDepartureFragment = gql`
 `
 
 export const availableDayTypesQuery = gql`
-  query availableDayTypes($preInspectionId: String!) {
-    availableDayTypes(preInspectionId: $preInspectionId)
+  query availableDayTypes($inspectionId: String!) {
+    availableDayTypes(inspectionId: $inspectionId)
   }
 `
 
 export const blockDeparturesQuery = gql`
-  query blockDepartures($preInspectionId: String!) {
-    blockDeparturesForPreInspection(preInspectionId: $preInspectionId) {
+  query blockDepartures($inspectionId: String!) {
+    blockDeparturesForPreInspection(inspectionId: $inspectionId) {
       id
       dayType
       blockNumber
@@ -52,7 +52,7 @@ export const uploadDepartureBlocksMutation = gql`
     createBlockDeparturesFromFile(
       file: $file
       dayTypes: $dayTypes
-      preInspectionId: $inspectionId
+      inspectionId: $inspectionId
     ) {
       id
       dayType
@@ -61,10 +61,7 @@ export const uploadDepartureBlocksMutation = gql`
 `
 
 export const removeDepartureBlocks = gql`
-  mutation removeDepartureBlocksForDayTypes(
-    $dayTypes: [DayType!]!
-    $preInspectionId: String!
-  ) {
-    removeDepartureBlocksForDayTypes(dayTypes: $dayTypes, preInspectionId: $preInspectionId)
+  mutation removeDepartureBlocksForDayTypes($dayTypes: [DayType!]!, $inspectionId: String!) {
+    removeDepartureBlocksForDayTypes(dayTypes: $dayTypes, inspectionId: $inspectionId)
   }
 `

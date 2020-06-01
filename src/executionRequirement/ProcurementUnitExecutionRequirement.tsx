@@ -38,7 +38,7 @@ export type PropTypes = {
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
   ({ procurementUnit }) => {
-    let preInspection = useContext(PreInspectionContext)
+    let inspection = useContext(PreInspectionContext)
 
     let [
       fetchRequirements,
@@ -56,15 +56,15 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
 
     let onFetchRequirements = useCallback(async () => {
-      if (procurementUnit && preInspection && fetchRequirements) {
+      if (procurementUnit && inspection && fetchRequirements) {
         await fetchRequirements({
           variables: {
             procurementUnitId: procurementUnit.id,
-            preInspectionId: preInspection?.id,
+            inspectionId: inspection?.id,
           },
         })
       }
-    }, [fetchRequirements, procurementUnit, preInspection])
+    }, [fetchRequirements, procurementUnit, inspection])
 
     let queueRefetch = useRefetch(onFetchRequirements, true)
 
@@ -74,17 +74,17 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     let onCreateRequirements = useCallback(async () => {
-      if (preInspection) {
+      if (inspection) {
         await createExecutionRequirement({
           variables: {
             procurementUnitId: procurementUnit.id,
-            preInspectionId: preInspection?.id,
+            inspectionId: inspection?.id,
           },
         })
 
         queueRefetch()
       }
-    }, [createExecutionRequirement, preInspection])
+    }, [createExecutionRequirement, inspection])
 
     let onRefreshRequirements = useCallback(async () => {
       if (
@@ -131,8 +131,8 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     const inspectionStartDate = useMemo(
-      () => (preInspection ? parseISO(preInspection.startDate) : new Date()),
-      [preInspection]
+      () => (inspection ? parseISO(inspection.startDate) : new Date()),
+      [inspection]
     )
 
     let isLoading = requirementsLoading || createLoading || refreshLoading

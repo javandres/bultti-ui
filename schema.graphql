@@ -130,8 +130,8 @@ type ExecutionRequirement {
   averageAgeWeightedFulfilled: Float
   equipmentQuotas: [ExecutionRequirementQuota!]!
   id: ID!
+  inspection: Inspection!
   operator: Operator!
-  preInspection: PreInspection!
   procurementUnit: ProcurementUnit
   procurementUnitId: String
   procurementUnitRequirements: [ExecutionRequirement!]
@@ -165,34 +165,53 @@ type ExecutionRequirementValue {
   sanctionThreshold: Float
 }
 
+type Inspection {
+  createdAt: DateTime!
+  createdBy: User!
+  endDate: BulttiDate!
+  executionRequirements: [ExecutionRequirement!]!
+  id: ID!
+  inspectionType: InspectionType
+  minStartDate: BulttiDate
+  operator: Operator!
+  operatorId: Int
+  season: Season!
+  seasonId: String
+  startDate: BulttiDate!
+  status: InspectionStatus!
+  updatedAt: DateTime!
+  version: Int!
+  versionStackIdentifier: String
+}
+
 type MissingEquipment {
   blockNumber: String
   registryNr: String
 }
 
 type Mutation {
-  createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, preInspectionId: String!): [OperatorBlockDeparture!]
-  createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment!
+  createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
+  createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
-  createExecutionRequirementsForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
-  createPreInspection(preInspection: InitialPreInspectionInput!): PreInspection!
-  generateEquipmentForPreInspection(preInspectionId: String!): Boolean!
+  createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
+  createPreInspection(inspection: InitialPreInspectionInput!): Inspection!
+  generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
-  publishPreInspection(preInspectionId: String!): PreInspection!
+  publishPreInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
-  removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement!
-  removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, preInspectionId: String!): Boolean!
+  removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
+  removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, inspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
-  removePreInspection(preInspectionId: String!): Boolean!
+  removePreInspection(inspectionId: String!): Boolean!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
-  updatePreInspection(preInspection: PreInspectionInput!, preInspectionId: String!): PreInspection!
+  updatePreInspection(inspection: PreInspectionInput!, inspectionId: String!): Inspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
 }
@@ -209,10 +228,9 @@ type Operator {
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
   id: Int!
+  inspections: [Inspection!]!
   operatorId: Int!
   operatorName: String!
-  postInspections: [PostInspection!]!
-  preInspections: [PreInspection!]!
   procurementUnits: [ProcurementUnit!]!
 }
 
@@ -223,48 +241,16 @@ type OperatorBlockDeparture {
   equipment: Equipment
   equipmentId: String
   id: ID!
+  inspectionId: String
   journeyEndTime: String!
   journeyStartTime: String!
   journeyType: String!
   operatorId: String
-  preInspectionId: String
   procurementUnitId: String
   registryNr: String
   routeId: String
   routeLength: Int
   vehicleId: String
-}
-
-type PostInspection {
-  endDate: BulttiDate!
-  id: ID!
-  minStartDate: BulttiDate
-  operator: Operator!
-  operatorId: Int
-  season: Season!
-  seasonId: String
-  startDate: BulttiDate!
-  status: InspectionStatus!
-  version: Int!
-  versionStackIdentifier: String
-}
-
-type PreInspection {
-  createdAt: DateTime!
-  createdBy: User!
-  endDate: BulttiDate!
-  executionRequirements: [ExecutionRequirement!]!
-  id: ID!
-  minStartDate: BulttiDate
-  operator: Operator!
-  operatorId: Int
-  season: Season!
-  seasonId: String
-  startDate: BulttiDate!
-  status: InspectionStatus!
-  updatedAt: DateTime!
-  version: Int!
-  versionStackIdentifier: String
 }
 
 type ProcurementUnit {
@@ -290,25 +276,25 @@ type ProcurementUnitRoute {
 }
 
 type Query {
-  allPreInspections: [PreInspection!]!
-  availableDayTypes(preInspectionId: String!): [String!]!
-  availablePreInspectionReports(preInspectionId: String!): [ReportListItem!]!
-  blockDeparturesForPreInspection(preInspectionId: String!): [OperatorBlockDeparture!]!
-  currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): PreInspection!
-  currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
+  allPreInspections: [Inspection!]!
+  availableDayTypes(inspectionId: String!): [String!]!
+  availablePreInspectionReports(inspectionId: String!): [ReportListItem!]!
+  blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
+  currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): Inspection
+  currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
-  executionRequirementForProcurementUnit(preInspectionId: String!, procurementUnitId: String!): ExecutionRequirement
+  executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
-  executionRequirementsForPreInspectionAreas(preInspectionId: String!): [ExecutionRequirement!]!
+  executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
+  inspection(inspectionId: String!): Inspection
   inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
+  inspectionsByOperator(operatorId: Int!): [Inspection!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
-  preInspection(preInspectionId: String!): PreInspection
-  preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
@@ -323,10 +309,9 @@ type Query {
 type Report {
   columnLabels: String
   description: String!
+  inspection: Inspection
   name: String!
   operator: Operator!
-  postInspection: PostInspection
-  preInspection: PreInspection
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType!
   season: Season!
@@ -344,8 +329,7 @@ type ReportListItem {
 type Season {
   endDate: BulttiDate!
   id: ID!
-  postInspections: [PostInspection!]
-  preInspections: [PreInspection!]
+  inspections: [Inspection!]
   season: String!
   startDate: BulttiDate!
 }
@@ -354,10 +338,10 @@ type User {
   email: String!
   hslIdGroups: [String!]
   id: ID!
+  inspections: [Inspection!]!
   name: String!
   operatorIds: [Int!]
   organisation: String
-  preInspections: [PreInspection!]!
   role: UserRole!
 }
 
@@ -374,6 +358,7 @@ enum DayType {
 enum InspectionStatus {
   Draft
   InProduction
+  InReview
 }
 
 enum InspectionType {

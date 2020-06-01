@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { InspectionStatus, PreInspection } from '../schema-types'
+import { InspectionStatus, Inspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import {
   useEditPreInspection,
@@ -75,7 +75,7 @@ const itemObjectDisplayPaths = {
 }
 
 export type InspectionItemProps = {
-  preInspection: PreInspection
+  inspection: Inspection
   isCurrentlyInEffect?: boolean
   showActions?: boolean
   className?: string
@@ -98,34 +98,34 @@ const renderValue = (key, val) => {
 }
 
 const PreInspectionItem: React.FC<InspectionItemProps> = ({
-  preInspection,
+  inspection,
   className,
   isCurrentlyInEffect,
   onPreInspectionUpdated = () => {},
   showActions = true,
 }) => {
-  let editPreInspection = useEditPreInspection(preInspection.id)
+  let editPreInspection = useEditPreInspection(inspection.id)
 
   let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
     onPreInspectionUpdated
   )
 
-  let goToReports = usePreInspectionReports(preInspection.id)
+  let goToReports = usePreInspectionReports(inspection.id)
 
   return (
     <PreInspectionItemView
       className={className}
-      status={preInspection.status}
+      status={inspection.status}
       inEffect={isCurrentlyInEffect}>
       <ItemContent
-        item={preInspection}
+        item={inspection}
         labels={itemTableHeadings}
         objectPaths={itemObjectDisplayPaths}
         renderValue={renderValue}
       />
       {showActions && (
         <ButtonRow>
-          {preInspection.status === InspectionStatus.Draft && (
+          {inspection.status === InspectionStatus.Draft && (
             <>
               <Button
                 buttonStyle={ButtonStyle.NORMAL}
@@ -138,12 +138,12 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
                 loading={removeLoading}
                 buttonStyle={ButtonStyle.REMOVE}
                 size={ButtonSize.MEDIUM}
-                onClick={() => removePreInspection(preInspection)}>
+                onClick={() => removePreInspection(inspection)}>
                 Poista
               </Button>
             </>
           )}
-          {preInspection.status === InspectionStatus.InProduction && (
+          {inspection.status === InspectionStatus.InProduction && (
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}

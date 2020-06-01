@@ -33,8 +33,8 @@ const AreaHeading = styled.h4`
 export type PropTypes = {}
 
 const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
-  const preInspection = useContext(PreInspectionContext)
-  let { id } = preInspection || {}
+  const inspection = useContext(PreInspectionContext)
+  let { id } = inspection || {}
 
   let [
     previewRequirements,
@@ -42,19 +42,19 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
   ] = useLazyQueryData(executionRequirementsForAreaQuery, {
     notifyOnNetworkStatusChange: true,
     variables: {
-      preInspectionId: id,
+      inspectionId: id,
     },
   })
 
   let onPreviewRequirements = useCallback(async () => {
-    if (preInspection && previewRequirements) {
+    if (inspection && previewRequirements) {
       await previewRequirements({
         variables: {
-          preInspectionId: preInspection?.id,
+          inspectionId: inspection?.id,
         },
       })
     }
-  }, [previewRequirements, preInspection])
+  }, [previewRequirements, inspection])
 
   let queueRefetch = useRefetch(onPreviewRequirements, true)
 

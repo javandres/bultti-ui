@@ -6,7 +6,7 @@ import Input from '../common/input/Input'
 import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
 import { ControlGroup, FormColumn, FormWrapper, InputLabel } from '../common/components/form'
-import { PreInspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 import { PreInspectionContext } from './PreInspectionContext'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 
@@ -17,11 +17,11 @@ export type PropTypes = {
 }
 
 const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) => {
-  let preInspection: null | PreInspection = useContext(PreInspectionContext)
+  let inspection: null | Inspection = useContext(PreInspectionContext)
 
   return (
     <PreInspectionConfigView>
-      {!preInspection ? (
+      {!inspection ? (
         <MessageContainer>
           <MessageView>Ennakkotarkastus ei valittu.</MessageView>
         </MessageContainer>
@@ -32,14 +32,14 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
             <ControlGroup>
               <SelectDate
                 name="production_start"
-                value={preInspection.startDate}
-                minDate={preInspection.minStartDate}
-                maxDate={preInspection.season.endDate}
+                value={inspection.startDate}
+                minDate={inspection.minStartDate}
+                maxDate={inspection.season.endDate}
                 onChange={onUpdateValue('startDate')}
                 label="Alku"
               />
               <Input
-                value={preInspection.endDate}
+                value={inspection.endDate}
                 label="Loppu"
                 subLabel={true}
                 disabled={true}
@@ -50,13 +50,13 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
             <InputLabel theme="light">Tarkastusjakso</InputLabel>
             <ControlGroup>
               <Input
-                value={format(startOfISOWeek(parseISO(preInspection.startDate)), DATE_FORMAT)}
+                value={format(startOfISOWeek(parseISO(inspection.startDate)), DATE_FORMAT)}
                 label="Alku"
                 subLabel={true}
                 disabled={true}
               />
               <Input
-                value={format(endOfISOWeek(parseISO(preInspection.startDate)), DATE_FORMAT)}
+                value={format(endOfISOWeek(parseISO(inspection.startDate)), DATE_FORMAT)}
                 label="Loppu"
                 subLabel={true}
                 disabled={true}

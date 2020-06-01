@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { groupBy, orderBy, get } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import PreInspectionItem from './PreInspectionItem'
-import { InspectionStatus, PreInspection, Season } from '../schema-types'
+import { InspectionStatus, Inspection, Season } from '../schema-types'
 import { useCreatePreInspection, useEditPreInspection } from './preInspectionUtils'
 import { useStateValue } from '../state/useAppState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -131,7 +131,7 @@ const TimelinePreInspectionItem = styled(PreInspectionItem)<{ isCurrentlyInEffec
 `
 
 export type PropTypes = {
-  preInspections: PreInspection[]
+  inspections: Inspection[]
   loading?: boolean
   onUpdate: () => unknown
 }
@@ -139,7 +139,7 @@ export type PropTypes = {
 let currentDate = format(new Date(), DATE_FORMAT)
 
 const PreInspectionsList: React.FC<PropTypes> = ({
-  preInspections,
+  inspections,
   onUpdate,
   loading = false,
 }) => {
@@ -150,7 +150,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({
   seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
 
   const seasonGroups = groupBy(
-    orderBy(preInspections, ['startDate', 'version'], ['desc', 'desc']),
+    orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
     'season.id'
   )
 
@@ -180,7 +180,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({
 
         return curSeason
       }, null),
-    [preInspections]
+    [inspections]
   )
 
   return (
@@ -202,9 +202,9 @@ const PreInspectionsList: React.FC<PropTypes> = ({
       <PreInspectionsWrapper>
         {seasons.map((season) => {
           let { id: seasonId } = season
-          let preInspections: PreInspection[] = get(seasonGroups, seasonId, [])
+          let inspections: Inspection[] = get(seasonGroups, seasonId, [])
 
-          let maxProductionVersion = preInspections.reduce(
+          let maxProductionVersion = inspections.reduce(
             (maxVersion, { version, status }) =>
               status === InspectionStatus.InProduction && version > maxVersion
                 ? version
@@ -213,7 +213,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({
           )
 
           let renderCurrentTemporalLocationInSeason =
-            currentSeason?.id === seasonId && preInspections.length === 0
+            currentSeason?.id === seasonId && inspections.length === 0
 
           return (
             <React.Fragment key={seasonId}>
@@ -221,12 +221,12 @@ const PreInspectionsList: React.FC<PropTypes> = ({
               {renderCurrentTemporalLocationInSeason && (
                 <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
               )}
-              {!preInspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
+              {!inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
                   <TimelineMessage>
                     Tällä kaudella ei ole tuotannossa-olevaa ennakkotarkastusta.
                   </TimelineMessage>
-                  {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
+                  {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                     <TimelineActions>
                       <Button onClick={() => onCreatePreInspection(seasonId)}>
                         Luo uusi ennakkotarkastus
@@ -235,23 +235,23 @@ const PreInspectionsList: React.FC<PropTypes> = ({
                   )}
                 </>
               )}
-              {preInspections.map((preInspection) => {
+              {inspections.map((inspection) => {
                 let renderCurrentTemporalLocation =
                   currentSeason?.id === seasonId &&
-                  isBetween(currentDate, preInspection.startDate, preInspection.endDate)
+                  isBetween(currentDate, inspection.startDate, inspection.endDate)
 
                 return (
                   <React.Fragment
-                    key={preInspection.id + (renderCurrentTemporalLocation ? 'iamhere' : '')}>
+                    key={inspection.id + (renderCurrentTemporalLocation ? 'iamhere' : '')}>
                     {renderCurrentTemporalLocation && (
                       <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
                     )}
                     <TimelinePreInspectionItem
-                      preInspection={preInspection}
+                      inspection={inspection}
                       onPreInspectionUpdated={onUpdate}
                       isCurrentlyInEffect={
-                        preInspection.version === maxProductionVersion &&
-                        preInspection.status === InspectionStatus.InProduction
+                        inspection.version === maxProductionVersion &&
+                        inspection.status === InspectionStatus.InProduction
                       }
                     />
                   </React.Fragment>

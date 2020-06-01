@@ -9,19 +9,19 @@ import { usePreInspectionById } from '../preInspection/preInspectionUtils'
 import { PageTitle } from '../common/components/Typography'
 
 type PropTypes = {
-  preInspectionId?: string
+  inspectionId?: string
 } & RouteComponentProps
 
-const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ preInspectionId }) => {
-  let { data: preInspection, loading: inspectionLoading, refetch } = usePreInspectionById(
-    preInspectionId
+const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ inspectionId }) => {
+  let { data: inspection, loading: inspectionLoading, refetch } = usePreInspectionById(
+    inspectionId
   )
 
   return (
     <Page>
       <PageTitle>
         Ennakkotarkastuksen raportit
-        {!!preInspection && (
+        {!!inspection && (
           <Button
             loading={inspectionLoading}
             style={{ marginLeft: 'auto' }}
@@ -32,7 +32,7 @@ const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ preInspectionI
           </Button>
         )}
       </PageTitle>
-      <PreInspectionContext.Provider value={preInspection}>
+      <PreInspectionContext.Provider value={inspection}>
         <PreInspectionReports />
       </PreInspectionContext.Provider>
     </Page>

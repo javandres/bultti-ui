@@ -127,7 +127,7 @@ const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
 export type PropTypes = RouteComponentProps
 
 const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, preInspections }, loading, refetch] = usePreInspections()
+  let [{ operator, inspections }, loading, refetch] = usePreInspections()
 
   let [globalSeason] = useStateValue('globalSeason')
 
@@ -143,20 +143,20 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
   let startDateOptions = useMemo(
     () => [
       defaultSelectedDate,
-      ...preInspections
+      ...inspections
         .filter((p) => p.status === InspectionStatus.InProduction)
         .map((p) => ({
           value: p.startDate,
           label: format(parseISO(p.startDate), READABLE_DATE_FORMAT),
         })),
     ],
-    [preInspections]
+    [inspections]
   )
 
   let openReports = usePreInspectionReports()
 
-  let preInspectionsList = useMemo(() => {
-    let filteredList = preInspections.filter((p) => {
+  let inspectionsList = useMemo(() => {
+    let filteredList = inspections.filter((p) => {
       if (p.status !== InspectionStatus.InProduction) {
         return false
       }
@@ -181,7 +181,7 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
     })
 
     return orderBy(filteredList, 'startDate', 'desc')
-  }, [preInspections, selectedSeason, selectedDate])
+  }, [inspections, selectedSeason, selectedDate])
 
   return (
     <PreInspectionReportIndexPageView>
@@ -201,7 +201,7 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
         </MessageContainer>
       )}
       <LoadingDisplay loading={loading} />
-      {preInspections.length !== 0 && (
+      {inspections.length !== 0 && (
         <>
           <FilterBar>
             <FilterControlGroup>
@@ -224,20 +224,20 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
             </FilterControlGroup>
           </FilterBar>
           <PreInspectionListWrapper>
-            {preInspectionsList.map((preInspection) => (
+            {inspectionsList.map((inspection) => (
               <PreInspectionListItem
-                key={preInspection.id}
-                onClick={() => openReports(preInspection.id)}>
-                <InspectionVersion>{preInspection.version}</InspectionVersion>
+                key={inspection.id}
+                onClick={() => openReports(inspection.id)}>
+                <InspectionVersion>{inspection.version}</InspectionVersion>
                 <PreInspectionTitle>
-                  {preInspection.operator.operatorName} / {preInspection.seasonId}
+                  {inspection.operator.operatorName} / {inspection.seasonId}
                 </PreInspectionTitle>
                 <PreInspectionDates>
                   <StartDate>
-                    {format(parseISO(preInspection.startDate), READABLE_DATE_FORMAT)}
+                    {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
                   </StartDate>
                   <EndDate>
-                    {format(parseISO(preInspection.endDate), READABLE_DATE_FORMAT)}
+                    {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
                   </EndDate>
                 </PreInspectionDates>
                 <GoToReportsButton>

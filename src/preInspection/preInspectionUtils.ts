@@ -1,11 +1,11 @@
 import { useCallback } from 'react'
-import { InitialPreInspectionInput, Operator, PreInspection } from '../schema-types'
+import { InitialPreInspectionInput, Operator, Inspection } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
   createPreInspectionMutation,
-  preInspectionQuery,
-  preInspectionsByOperatorQuery,
+  inspectionQuery,
+  inspectionsByOperatorQuery,
   removePreInspectionMutation,
 } from './preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -13,14 +13,14 @@ import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 
-export function usePreInspectionById(preInspectionId?: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData<PreInspection>(
-    preInspectionQuery,
+export function usePreInspectionById(inspectionId?: string) {
+  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
+    inspectionQuery,
     {
-      skip: !preInspectionId,
+      skip: !inspectionId,
       notifyOnNetworkStatusChange: true,
       variables: {
-        preInspectionId: preInspectionId,
+        inspectionId: inspectionId,
       },
     }
   )
@@ -40,7 +40,7 @@ export function useCreatePreInspection(operator, season) {
       // A pre-inspection can be created when there is not one currently existing or loading
       if (operator && seasonId && !createLoading) {
         // InitialPreInspectionInput requires operator and season ID.
-        let preInspectionInput: InitialPreInspectionInput = {
+        let inspectionInput: InitialPreInspectionInput = {
           operatorId: operator.id,
           seasonId,
           startDate: season.startDate,
@@ -49,7 +49,7 @@ export function useCreatePreInspection(operator, season) {
 
         let createResult = await createPreInspection({
           variables: {
-            preInspectionInput,
+            inspectionInput,
           },
         })
 
@@ -70,15 +70,15 @@ export function useCreatePreInspection(operator, season) {
 
 export function useRemovePreInspection(
   afterRemove: () => unknown = () => {}
-): [(PreInspection?: PreInspection) => Promise<unknown>, { loading: boolean }] {
+): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
   let [removePreInspection, { loading }] = useMutationData(removePreInspectionMutation)
 
   let execRemove = useCallback(
-    async (preInspection?: PreInspection) => {
-      if (preInspection) {
+    async (inspection?: Inspection) => {
+      if (inspection) {
         await removePreInspection({
           variables: {
-            preInspectionId: preInspection.id,
+            inspectionId: inspection.id,
           },
         })
 
@@ -91,10 +91,10 @@ export function useRemovePreInspection(
   return [execRemove, { loading }]
 }
 
-export function useEditPreInspection(preInspectionId = '') {
+export function useEditPreInspection(inspectionId = '') {
   return useCallback(
-    (altPreInspectionId = '') => {
-      let useId = preInspectionId || altPreInspectionId || ''
+    (altInspectionId = '') => {
+      let useId = inspectionId || altInspectionId || ''
 
       if (!useId) {
         return navigateWithQueryString(`/pre-inspection/edit`, { replace: true })
@@ -102,33 +102,29 @@ export function useEditPreInspection(preInspectionId = '') {
 
       return navigateWithQueryString(`/pre-inspection/edit/${useId}`)
     },
-    [preInspectionId]
+    [inspectionId]
   )
 }
 
-export function usePreInspectionReports(preInspectionId: string = '') {
+export function usePreInspectionReports(inspectionId: string = '') {
   return useCallback(
-    (altPreInspectionId?: string) => {
-      let useId = preInspectionId || altPreInspectionId || ''
+    (altInspectionId?: string) => {
+      let useId = inspectionId || altInspectionId || ''
       return navigateWithQueryString(`/pre-inspection/reports/${useId}`)
     },
-    [preInspectionId]
+    [inspectionId]
   )
 }
 
 export function usePreInspections(
   operator?: Operator
-): [
-  { preInspections: PreInspection[]; operator: Operator | undefined },
-  boolean,
-  () => unknown
-] {
+): [{ inspections: Inspection[]; operator: Operator | undefined }, boolean, () => unknown] {
   var [globalOperator] = useStateValue('globalOperator')
 
   let queryOperator = operator || globalOperator || undefined
 
-  let { data: preInspectionsData, loading, refetch } = useQueryData<PreInspection>(
-    preInspectionsByOperatorQuery,
+  let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
+    inspectionsByOperatorQuery,
     {
       skip: !queryOperator,
       notifyOnNetworkStatusChange: true,
@@ -138,14 +134,13 @@ export function usePreInspections(
     }
   )
 
-  let preInspections =
-    !!preInspectionsData && Array.isArray(preInspectionsData) ? preInspectionsData : []
+  let inspections = !!inspectionsData && Array.isArray(inspectionsData) ? inspectionsData : []
 
   let queueRefetch = useRefetch(refetch)
 
   return [
     {
-      preInspections,
+      inspections,
       operator: queryOperator,
     },
     loading,

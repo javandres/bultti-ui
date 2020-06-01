@@ -51,7 +51,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
 
-    const preInspection = useContext(PreInspectionContext)
+    const inspection = useContext(PreInspectionContext)
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
       null
     )
@@ -69,10 +69,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       catalogueEditMode.current = CatalogueEditMode.CREATE
 
       setPendingCatalogue({
-        startDate: preInspection?.startDate,
-        endDate: preInspection?.endDate,
+        startDate: inspection?.startDate,
+        endDate: inspection?.endDate,
       })
-    }, [preInspection, editable])
+    }, [inspection, editable])
 
     const editCurrentCatalogue = useCallback(() => {
       if (!editable || !catalogue) {

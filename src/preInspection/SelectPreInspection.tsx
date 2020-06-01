@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InspectionStatus, PreInspection } from '../schema-types'
+import { InspectionStatus, Inspection } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -134,10 +134,10 @@ const DateTitle = styled.h6`
 `
 
 export type PropTypes = {
-  preInspections?: PreInspection[]
+  inspections?: Inspection[]
   refetchPreInspections: () => unknown
   loading?: boolean
-  onSelect: (value: PreInspection | null) => unknown
+  onSelect: (value: Inspection | null) => unknown
 }
 
 /**
@@ -149,18 +149,18 @@ export type PropTypes = {
  */
 
 const SelectPreInspection: React.FC<PropTypes> = observer(
-  ({ preInspections = [], refetchPreInspections, loading = false, onSelect }) => {
+  ({ inspections = [], refetchPreInspections, loading = false, onSelect }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
 
     // The highest version among current pre-inspections
     let maxVersion = useMemo(
       () =>
-        preInspections.reduce(
+        inspections.reduce(
           (maxVersion, { version }) => (version > maxVersion ? version : maxVersion),
           1
         ),
-      [preInspections]
+      [inspections]
     )
 
     let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
@@ -204,15 +204,13 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
               </Button>
             </HeaderRow>
             <PreInspectionItems>
-              {!preInspections.some((pi) => pi.status === InspectionStatus.Draft) && (
+              {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                 <PreInspectionItem key="new" status="new">
                   <ItemContent style={{ marginTop: 0 }}>
                     Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda
                     uuden.
                   </ItemContent>
-                  {preInspections.some(
-                    (pi) => pi.status === InspectionStatus.InProduction
-                  ) && (
+                  {inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                     <ItemContent>
                       Uusi ennakkotarkastus korvaa nykyisen tuotannossa-olevan tarkastuksen.
                     </ItemContent>
@@ -227,35 +225,35 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                   </ButtonRow>
                 </PreInspectionItem>
               )}
-              {orderBy(preInspections, 'version', 'desc').map((preInspection) => (
-                <PreInspectionItem key={preInspection.id} status={preInspection.status}>
+              {orderBy(inspections, 'version', 'desc').map((inspection) => (
+                <PreInspectionItem key={inspection.id} status={inspection.status}>
                   <ItemContent>
                     <InspectionTitle>
-                      {preInspection.operator.operatorName}, {preInspection.season.id}
+                      {inspection.operator.operatorName}, {inspection.season.id}
                     </InspectionTitle>
-                    <InspectionVersion>{preInspection.version}</InspectionVersion>
-                    <InspectionStatusDisplay status={preInspection.status}>
-                      {preInspection.status === InspectionStatus.Draft
+                    <InspectionVersion>{inspection.version}</InspectionVersion>
+                    <InspectionStatusDisplay status={inspection.status}>
+                      {inspection.status === InspectionStatus.Draft
                         ? 'Muokattavissa'
                         : 'Tuotannossa'}
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>
                       <DateTitle>Tuotantojakso</DateTitle>
                       <StartDate>
-                        {format(parseISO(preInspection.startDate), READABLE_DATE_FORMAT)}
+                        {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
                       </StartDate>
                       <EndDate>
-                        {format(parseISO(preInspection.endDate), READABLE_DATE_FORMAT)}
+                        {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
                       </EndDate>
                     </InspectionPeriodDisplay>
                   </ItemContent>
                   <ButtonRow>
-                    {preInspection.status === InspectionStatus.Draft ? (
+                    {inspection.status === InspectionStatus.Draft ? (
                       <>
                         <Button
                           buttonStyle={ButtonStyle.NORMAL}
                           size={ButtonSize.MEDIUM}
-                          onClick={() => onSelect(preInspection)}>
+                          onClick={() => onSelect(inspection)}>
                           Muokkaa
                         </Button>
                         <Button
@@ -263,13 +261,13 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           loading={removeLoading}
                           buttonStyle={ButtonStyle.REMOVE}
                           size={ButtonSize.MEDIUM}
-                          onClick={() => removePreInspection(preInspection)}>
+                          onClick={() => removePreInspection(inspection)}>
                           Poista
                         </Button>
                       </>
-                    ) : preInspection.status === InspectionStatus.InProduction ? (
+                    ) : inspection.status === InspectionStatus.InProduction ? (
                       <>
-                        {preInspection.version >= maxVersion && (
+                        {inspection.version >= maxVersion && (
                           <Button
                             buttonStyle={ButtonStyle.NORMAL}
                             size={ButtonSize.MEDIUM}
@@ -278,7 +276,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                           </Button>
                         )}
                         <Button
-                          onClick={() => goToPreInspectionReports(preInspection.id)}
+                          onClick={() => goToPreInspectionReports(inspection.id)}
                           buttonStyle={ButtonStyle.NORMAL}
                           size={ButtonSize.MEDIUM}>
                           Raportit

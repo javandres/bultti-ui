@@ -160,11 +160,11 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspection",
+            "name": "inspection",
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -180,14 +180,14 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "PreInspection",
+              "name": "Inspection",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "preInspectionsByOperator",
+            "name": "inspectionsByOperator",
             "description": null,
             "args": [
               {
@@ -216,7 +216,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PreInspection",
+                    "name": "Inspection",
                     "ofType": null
                   }
                 }
@@ -269,7 +269,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PreInspection",
+                    "name": "Inspection",
                     "ofType": null
                   }
                 }
@@ -312,13 +312,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PreInspection",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Inspection",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -338,7 +334,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PreInspection",
+                    "name": "Inspection",
                     "ofType": null
                   }
                 }
@@ -698,7 +694,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -739,7 +735,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -841,7 +837,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -880,7 +876,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -919,7 +915,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -1078,7 +1074,7 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspections",
+            "name": "inspections",
             "description": null,
             "args": [],
             "type": {
@@ -1092,31 +1088,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PreInspection",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "postInspections",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "PostInspection",
+                    "name": "Inspection",
                     "ofType": null
                   }
                 }
@@ -1229,7 +1201,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PreInspection",
+        "name": "Inspection",
         "description": null,
         "fields": [
           {
@@ -1316,6 +1288,18 @@
                 "name": "ID",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "inspectionType",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "ENUM",
+              "name": "InspectionType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1491,6 +1475,29 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "InspectionType",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "PRE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "POST",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "OBJECT",
         "name": "Season",
         "description": null,
@@ -1560,7 +1567,7 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspections",
+            "name": "inspections",
             "description": null,
             "args": [],
             "type": {
@@ -1571,27 +1578,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "PreInspection",
-                  "ofType": null
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "postInspections",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "OBJECT",
-                  "name": "PostInspection",
+                  "name": "Inspection",
                   "ofType": null
                 }
               }
@@ -1603,200 +1590,6 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "PostInspection",
-        "description": null,
-        "fields": [
-          {
-            "name": "version",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "startDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BulttiDate",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "endDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BulttiDate",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "minStartDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "BulttiDate",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "versionStackIdentifier",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "status",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "InspectionStatus",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "seasonId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "season",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Season",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operatorId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "operator",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Operator",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "InspectionStatus",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "Draft",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "InProduction",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {
@@ -1853,7 +1646,7 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspection",
+            "name": "inspection",
             "description": null,
             "args": [],
             "type": {
@@ -1861,7 +1654,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PreInspection",
+                "name": "Inspection",
                 "ofType": null
               }
             },
@@ -3823,6 +3616,35 @@
         "possibleTypes": null
       },
       {
+        "kind": "ENUM",
+        "name": "InspectionStatus",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "Draft",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "InReview",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "InProduction",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
         "kind": "SCALAR",
         "name": "DateTime",
         "description": "The javascript `Date` as string. Type represents date and time as the ISO Date string.",
@@ -3954,7 +3776,7 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspections",
+            "name": "inspections",
             "description": null,
             "args": [],
             "type": {
@@ -3968,7 +3790,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "PreInspection",
+                    "name": "Inspection",
                     "ofType": null
                   }
                 }
@@ -4355,7 +4177,7 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspectionId",
+            "name": "inspectionId",
             "description": null,
             "args": [],
             "type": {
@@ -4507,29 +4329,6 @@
         "possibleTypes": null
       },
       {
-        "kind": "ENUM",
-        "name": "InspectionType",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "PRE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "POST",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
-      },
-      {
         "kind": "OBJECT",
         "name": "Report",
         "description": null,
@@ -4667,24 +4466,12 @@
             "deprecationReason": null
           },
           {
-            "name": "preInspection",
+            "name": "inspection",
             "description": null,
             "args": [],
             "type": {
               "kind": "OBJECT",
-              "name": "PreInspection",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "postInspection",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PostInspection",
+              "name": "Inspection",
               "ofType": null
             },
             "isDeprecated": false,
@@ -5108,7 +4895,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspection",
+                "name": "inspection",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5127,7 +4914,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PreInspection",
+                "name": "Inspection",
                 "ofType": null
               }
             },
@@ -5139,7 +4926,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspection",
+                "name": "inspection",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5153,7 +4940,7 @@
                 "defaultValue": null
               },
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5172,7 +4959,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PreInspection",
+                "name": "Inspection",
                 "ofType": null
               }
             },
@@ -5184,7 +4971,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5203,7 +4990,7 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PreInspection",
+                "name": "Inspection",
                 "ofType": null
               }
             },
@@ -5215,7 +5002,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5246,7 +5033,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5416,13 +5203,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "Equipment",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "Equipment",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5706,7 +5489,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -5789,13 +5572,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ExecutionRequirement",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ExecutionRequirement",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5944,7 +5723,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -6011,7 +5790,7 @@
             "description": null,
             "args": [
               {
-                "name": "preInspectionId",
+                "name": "inspectionId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

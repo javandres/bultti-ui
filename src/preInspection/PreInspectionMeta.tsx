@@ -32,9 +32,9 @@ type PropTypes = {
 
 const PreInspectionMeta: React.FC<PropTypes> = observer(
   ({ className, isLoading, buttonAction, buttonStyle = ButtonStyle.NORMAL, buttonLabel }) => {
-    const preInspection = useContext(PreInspectionContext)
+    const inspection = useContext(PreInspectionContext)
 
-    if (!preInspection) {
+    if (!inspection) {
       return null
     }
 
@@ -46,19 +46,19 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(
           <MetaItem>
             <MetaLabel>Perustettu</MetaLabel>
             <MetaValue>
-              {format(parseISO(preInspection.createdAt), READABLE_TIME_FORMAT)}
+              {format(parseISO(inspection.createdAt), READABLE_TIME_FORMAT)}
             </MetaValue>
           </MetaItem>
           <MetaItem>
             <MetaLabel>Viimeksi muokattu</MetaLabel>
             <MetaValue>
-              {format(parseISO(preInspection.updatedAt), READABLE_TIME_FORMAT)}
+              {format(parseISO(inspection.updatedAt), READABLE_TIME_FORMAT)}
             </MetaValue>
           </MetaItem>
           <MetaItem>
             <MetaLabel>Käyttäjä</MetaLabel>
             <MetaValue>
-              {preInspection.createdBy?.name} ({preInspection.createdBy?.organisation})
+              {inspection.createdBy?.name} ({inspection.createdBy?.organisation})
             </MetaValue>
           </MetaItem>
           {buttonAction && (

@@ -44,15 +44,15 @@ const PreInspectionReports = observer(
       setReportsExpanded((currentVal) => !currentVal)
     }, [])
 
-    let preInspection = useContext(PreInspectionContext)
-    let preInspectionId = preInspection?.id || ''
+    let inspection = useContext(PreInspectionContext)
+    let inspectionId = inspection?.id || ''
 
     let { data: reportsData, loading: reportsLoading } = useQueryData(
       availablePreInspectionReportsQuery,
       {
-        skip: !preInspectionId,
+        skip: !inspectionId,
         variables: {
-          preInspectionId,
+          inspectionId,
         },
       }
     )
@@ -61,14 +61,14 @@ const PreInspectionReports = observer(
 
     return (
       <PreInspectionReportsView>
-        {!preInspection && <ErrorView>Ennakkotarkastus ei löydetty.</ErrorView>}
-        {!!preInspection && !reportsData && !reportsLoading && (
+        {!inspection && <ErrorView>Ennakkotarkastus ei löydetty.</ErrorView>}
+        {!!inspection && !reportsData && !reportsLoading && (
           <MessageView>Ei raportteja...</MessageView>
         )}
-        {showInfo && preInspection && (
+        {showInfo && inspection && (
           <>
             <SubHeading>Ennakkotarkastuksen tiedot</SubHeading>
-            <ReportPreInspectionView preInspection={preInspection} showActions={false} />
+            <ReportPreInspectionView inspection={inspection} showActions={false} />
           </>
         )}
         {reports.length !== 0 && (
@@ -77,15 +77,19 @@ const PreInspectionReports = observer(
           </TextButton>
         )}
         <LoadingDisplay loading={reportsLoading} />
-        {preInspection &&
+        {inspection &&
           reports.map((reportItem) => (
             <ReportListItem
               key={reportItem.name}
               inspectionType={showItemActions ? InspectionType.Pre : undefined}
-              inspectionId={showItemActions ? preInspectionId : undefined}
+              inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportItem}
               isExpanded={reportsExpanded}>
-              <Report reportName={reportItem.name} preInspectionId={preInspectionId} />
+              <Report
+                reportName={reportItem.name}
+                inspectionId={inspectionId}
+                inspectionType={InspectionType.Pre}
+              />
             </ReportListItem>
           ))}
       </PreInspectionReportsView>

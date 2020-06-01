@@ -30,24 +30,16 @@ const ReportFunctionsRow = styled(FlexRow)`
 
 export type PropTypes = {
   reportName: string
-  preInspectionId?: string
-  postInspectionId?: string
+  inspectionType: InspectionType
+  inspectionId: string
 }
 
-const Report = observer(({ reportName, preInspectionId, postInspectionId }: PropTypes) => {
-  // Decide which type of report to query for based on which ID was provided.
-  let inspectionId = preInspectionId || postInspectionId || undefined
-  let inspectionType = preInspectionId
-    ? InspectionType.Pre
-    : postInspectionId
-    ? InspectionType.Post
-    : undefined
-
+const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
   let { data: reportData, loading: reportLoading, refetch } = useQueryData<ReportDataType>(
     reportByName,
     {
       notifyOnNetworkStatusChange: true,
-      skip: !inspectionType || !inspectionId || !reportName,
+      skip: !inspectionId || !reportName,
       variables: {
         reportName: reportName,
         inspectionId,

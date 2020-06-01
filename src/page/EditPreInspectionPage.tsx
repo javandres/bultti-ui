@@ -21,16 +21,16 @@ import { PageTitle } from '../common/components/Typography'
 const EditPreInspectionView = styled(Page)``
 
 export type PropTypes = {
-  preInspectionId?: string
+  inspectionId?: string
 } & RouteComponentProps
 
-const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId = '' }) => {
+const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = '' }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
   var editPreInspection = useEditPreInspection()
 
-  let { data: preInspection, loading: inspectionLoading, refetch } = usePreInspectionById(
-    preInspectionId
+  let { data: inspection, loading: inspectionLoading, refetch } = usePreInspectionById(
+    inspectionId
   )
 
   let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
@@ -39,7 +39,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId =
     async (publishId: string) => {
       await publishPreInspection({
         variables: {
-          preInspectionId: publishId,
+          inspectionId: publishId,
         },
       })
 
@@ -51,7 +51,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId =
 
   return (
     <EditPreInspectionView>
-      <PreInspectionContext.Provider value={preInspection || null}>
+      <PreInspectionContext.Provider value={inspection || null}>
         <PageTitle>
           Uusi ennakkotarkastus
           <Button
@@ -66,7 +66,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ preInspectionId =
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
           </MessageContainer>
-        ) : !preInspection ? (
+        ) : !inspection ? (
           <MessageContainer>
             <MessageView>Haettu ennakkotarkastus ei löytynyt.</MessageView>
             <Button onClick={() => editPreInspection()}>Takaisin</Button>

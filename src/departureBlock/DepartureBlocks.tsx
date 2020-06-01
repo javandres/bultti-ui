@@ -20,8 +20,8 @@ const DepartureBlocksView = styled(PageSection)`
 type PropTypes = {}
 
 const DepartureBlocks: React.FC<PropTypes> = observer(() => {
-  const preInspection = useContext(PreInspectionContext)
-  const preInspectionId = preInspection?.id || ''
+  const inspection = useContext(PreInspectionContext)
+  const inspectionId = inspection?.id || ''
 
   // Create day type groups with the special hook. Day type groups are departure blocks grouped by dayType.
   // The hook contains logic to select and deselect the dayTypes.
@@ -37,9 +37,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
     {
       fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
       notifyOnNetworkStatusChange: true,
-      skip: !preInspectionId,
+      skip: !inspectionId,
       variables: {
-        preInspectionId: preInspectionId,
+        inspectionId: inspectionId,
       },
     }
   )

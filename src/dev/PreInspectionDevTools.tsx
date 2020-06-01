@@ -5,26 +5,26 @@ import { Button } from '../common/components/Button'
 import { gql } from '@apollo/client'
 import { ENV } from '../constants'
 import { useMutationData } from '../util/useMutationData'
-import { PreInspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 
-const PreInspectionDevToolsView = styled.div`
+const InspectionDevToolsView = styled.div`
   display: flex;
 `
 
 export type PropTypes = {
-  preInspection: PreInspection
+  inspection: Inspection
 }
 
 let generateEquipmentQuery = gql`
-  mutation generateEquipmentMutation($preInspectionId: String!) {
-    generateEquipmentForPreInspection(preInspectionId: $preInspectionId)
+  mutation generateEquipmentMutation($inspectionId: String!) {
+    generateEquipmentForPreInspection(inspectionId: $inspectionId)
   }
 `
 
-const PreInspectionDevTools: React.FC<PropTypes> = observer(({ preInspection }) => {
+const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection }) => {
   let [generateEquipment] = useMutationData(generateEquipmentQuery, {
     variables: {
-      preInspectionId: preInspection.id,
+      inspectionId: inspection.id,
     },
   })
 
@@ -33,10 +33,10 @@ const PreInspectionDevTools: React.FC<PropTypes> = observer(({ preInspection }) 
   }
 
   return (
-    <PreInspectionDevToolsView>
+    <InspectionDevToolsView>
       <Button onClick={() => generateEquipment()}>Generate equipment and catalogues</Button>
-    </PreInspectionDevToolsView>
+    </InspectionDevToolsView>
   )
 })
 
-export default PreInspectionDevTools
+export default InspectionDevTools

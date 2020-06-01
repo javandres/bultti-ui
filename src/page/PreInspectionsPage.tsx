@@ -15,7 +15,7 @@ type PropTypes = {
 } & RouteComponentProps
 
 const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, preInspections }, loading, refetch] = usePreInspections()
+  let [{ operator, inspections }, loading, refetch] = usePreInspections()
 
   return (
     <Page>
@@ -30,12 +30,8 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
           <MessageView>Valitse liikennöitsijä.</MessageView>
         </MessageContainer>
       ) : (
-        preInspections.length !== 0 && (
-          <PreInspectionsList
-            preInspections={preInspections}
-            loading={loading}
-            onUpdate={refetch}
-          />
+        inspections.length !== 0 && (
+          <PreInspectionsList inspections={inspections} loading={loading} onUpdate={refetch} />
         )
       )}
     </Page>

@@ -1,4 +1,4 @@
 import React from 'react'
-import { PreInspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 
-export const PreInspectionContext = React.createContext<PreInspection | null>(null)
+export const PreInspectionContext = React.createContext<Inspection | null>(null)

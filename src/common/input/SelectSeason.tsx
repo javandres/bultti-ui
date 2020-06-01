@@ -46,7 +46,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
           season: '',
           startDate: '',
           endDate: '',
-          preInspections: [],
+          inspections: [],
         }
 
         seasonsList.unshift(unselectedSeason)

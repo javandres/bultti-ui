@@ -3,7 +3,7 @@ import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
-import { PreInspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -17,7 +17,7 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
   var [operator] = useStateValue('globalOperator')
   var editPreInspection = useEditPreInspection()
 
-  let { data: preInspections, loading, refetch } = useQueryData<PreInspection>(
+  let { data: inspections, loading, refetch } = useQueryData<Inspection>(
     currentPreInspectionsByOperatorAndSeasonQuery,
     {
       skip: !operator || !season,
@@ -30,9 +30,9 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
   )
 
   let onSelectPreInspection = useCallback(
-    (preInspection) => {
-      if (preInspection?.id) {
-        editPreInspection(preInspection.id)
+    (inspection) => {
+      if (inspection?.id) {
+        editPreInspection(inspection.id)
       }
     },
     [editPreInspection]
@@ -42,7 +42,7 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
     <Page>
       <PageTitle>Valitse ennakkotarkastus muokattavaksi</PageTitle>
       <SelectPreInspection
-        preInspections={preInspections}
+        inspections={inspections}
         refetchPreInspections={refetch}
         loading={loading}
         onSelect={onSelectPreInspection}
