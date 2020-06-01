@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InspectionStatus, Inspection } from '../schema-types'
+import { Inspection, InspectionStatus, UserRole } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -12,10 +12,15 @@ import {
   usePreInspectionReports,
   useRemovePreInspection,
 } from './preInspectionUtils'
-import { parseISO, format } from 'date-fns'
+import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
+import { useMutationData } from '../util/useMutationData'
+import {
+  publishPreInspectionMutation,
+  rejectPreInspectionMutation,
+} from './preInspectionQueries'
 
 const SelectPreInspectionView = styled.div``
 
@@ -50,6 +55,8 @@ const PreInspectionItem = styled.div<StatusProps>`
         ? 'var(--blue)'
         : p.status === InspectionStatus.Draft
         ? 'var(--lighter-grey)'
+        : p.status === InspectionStatus.InReview
+        ? 'var(--yellow)'
         : 'var(--light-green)'};
   font-family: inherit;
   margin-right: 1rem;
@@ -103,8 +110,12 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
   padding: 0.25rem 0;
   text-align: center;
   background: ${(p) =>
-    p.status === InspectionStatus.Draft ? 'var(--blue)' : 'var(--light-green)'};
-  color: white;
+    p.status === InspectionStatus.Draft
+      ? 'var(--blue)'
+      : p.status === InspectionStatus.InReview
+      ? 'var(--yellow)'
+      : 'var(--light-green)'};
+  color: ${(p) => (p.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white')};
   margin: 0 0 1rem;
   border-radius: 5px;
 `
@@ -152,6 +163,7 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
   ({ inspections = [], refetchPreInspections, loading = false, onSelect }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
+    var [user] = useStateValue('user')
 
     // The highest version among current pre-inspections
     let maxVersion = useMemo(
@@ -181,6 +193,22 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
 
       await refetchPreInspections()
     }, [createPreInspection, refetchPreInspections, onSelect])
+
+    let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
+    let [rejectPreInspection] = useMutationData(rejectPreInspectionMutation)
+
+    let inspectionAction = useCallback(
+      async (action, inspectionId: string) => {
+        await action({
+          variables: {
+            inspectionId,
+          },
+        })
+
+        await refetchPreInspections()
+      },
+      [refetchPreInspections]
+    )
 
     return (
       <SelectPreInspectionView>
@@ -225,67 +253,105 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                   </ButtonRow>
                 </PreInspectionItem>
               )}
-              {orderBy(inspections, 'version', 'desc').map((inspection) => (
-                <PreInspectionItem key={inspection.id} status={inspection.status}>
-                  <ItemContent>
-                    <InspectionTitle>
-                      {inspection.operator.operatorName}, {inspection.season.id}
-                    </InspectionTitle>
-                    <InspectionVersion>{inspection.version}</InspectionVersion>
-                    <InspectionStatusDisplay status={inspection.status}>
-                      {inspection.status === InspectionStatus.Draft
-                        ? 'Muokattavissa'
-                        : 'Tuotannossa'}
-                    </InspectionStatusDisplay>
-                    <InspectionPeriodDisplay>
-                      <DateTitle>Tuotantojakso</DateTitle>
-                      <StartDate>
-                        {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
-                      </StartDate>
-                      <EndDate>
-                        {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
-                      </EndDate>
-                    </InspectionPeriodDisplay>
-                  </ItemContent>
-                  <ButtonRow>
-                    {inspection.status === InspectionStatus.Draft ? (
-                      <>
-                        <Button
-                          buttonStyle={ButtonStyle.NORMAL}
-                          size={ButtonSize.MEDIUM}
-                          onClick={() => onSelect(inspection)}>
-                          Muokkaa
-                        </Button>
-                        <Button
-                          style={{ marginLeft: 'auto', marginRight: 0 }}
-                          loading={removeLoading}
-                          buttonStyle={ButtonStyle.REMOVE}
-                          size={ButtonSize.MEDIUM}
-                          onClick={() => removePreInspection(inspection)}>
-                          Poista
-                        </Button>
-                      </>
-                    ) : inspection.status === InspectionStatus.InProduction ? (
-                      <>
-                        {inspection.version >= maxVersion && (
+              {orderBy(inspections, 'version', 'desc').map((inspection) => {
+                let userCanPublish =
+                  inspection.status === InspectionStatus.InReview &&
+                  user &&
+                  user.role === UserRole.Admin
+
+                return (
+                  <PreInspectionItem key={inspection.id} status={inspection.status}>
+                    <ItemContent>
+                      <InspectionTitle>
+                        {inspection.operator.operatorName}, {inspection.season.id}
+                      </InspectionTitle>
+                      <InspectionVersion>{inspection.version}</InspectionVersion>
+                      <InspectionStatusDisplay status={inspection.status}>
+                        {inspection.status === InspectionStatus.Draft
+                          ? 'Muokattavissa'
+                          : inspection.status === InspectionStatus.InReview
+                          ? 'Hyväksyttävänä'
+                          : 'Tuotannossa'}
+                      </InspectionStatusDisplay>
+                      <InspectionPeriodDisplay>
+                        <DateTitle>Tuotantojakso</DateTitle>
+                        <StartDate>
+                          {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
+                        </StartDate>
+                        <EndDate>
+                          {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
+                        </EndDate>
+                      </InspectionPeriodDisplay>
+                    </ItemContent>
+                    <ButtonRow>
+                      {inspection.status === InspectionStatus.Draft ? (
+                        <>
                           <Button
                             buttonStyle={ButtonStyle.NORMAL}
                             size={ButtonSize.MEDIUM}
-                            onClick={onCreatePreInspection}>
-                            Korvaa
+                            onClick={() => onSelect(inspection)}>
+                            Muokkaa
                           </Button>
-                        )}
-                        <Button
-                          onClick={() => goToPreInspectionReports(inspection.id)}
-                          buttonStyle={ButtonStyle.NORMAL}
-                          size={ButtonSize.MEDIUM}>
-                          Raportit
-                        </Button>
-                      </>
-                    ) : null}
-                  </ButtonRow>
-                </PreInspectionItem>
-              ))}
+                          <Button
+                            style={{ marginLeft: 'auto', marginRight: 0 }}
+                            loading={removeLoading}
+                            buttonStyle={ButtonStyle.REMOVE}
+                            size={ButtonSize.MEDIUM}
+                            onClick={() => removePreInspection(inspection)}>
+                            Poista
+                          </Button>
+                        </>
+                      ) : inspection.status === InspectionStatus.InReview ? (
+                        <>
+                          {userCanPublish && (
+                            <>
+                              <Button
+                                buttonStyle={ButtonStyle.NORMAL}
+                                size={ButtonSize.MEDIUM}
+                                onClick={() =>
+                                  inspectionAction(publishPreInspection, inspection.id)
+                                }>
+                                Julkaise
+                              </Button>
+                              <Button
+                                buttonStyle={ButtonStyle.REMOVE}
+                                size={ButtonSize.MEDIUM}
+                                onClick={() =>
+                                  inspectionAction(rejectPreInspection, inspection.id)
+                                }>
+                                Hylkää
+                              </Button>
+                            </>
+                          )}
+                          <Button
+                            onClick={() => goToPreInspectionReports(inspection.id)}
+                            buttonStyle={ButtonStyle.NORMAL}
+                            size={ButtonSize.MEDIUM}>
+                            Raportit
+                          </Button>
+                        </>
+                      ) : inspection.status === InspectionStatus.InProduction ? (
+                        <>
+                          {inspection.version >= maxVersion && (
+                            <Button
+                              buttonStyle={ButtonStyle.NORMAL}
+                              size={ButtonSize.MEDIUM}
+                              onClick={onCreatePreInspection}>
+                              Korvaa
+                            </Button>
+                          )}
+                          <Button
+                            onClick={() => goToPreInspectionReports(inspection.id)}
+                            buttonStyle={ButtonStyle.NORMAL}
+                            size={ButtonSize.MEDIUM}>
+                            Raportit
+                          </Button>
+                        </>
+                      ) : null}
+                    </ButtonRow>
+                  </PreInspectionItem>
+                )
+              })}
             </PreInspectionItems>
           </>
         )}

@@ -20,7 +20,7 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
   let { data: inspections, loading, refetch } = useQueryData<Inspection>(
     currentPreInspectionsByOperatorAndSeasonQuery,
     {
-      skip: !operator || !season,
+      skip: !operator || !season || !season?.id,
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: operator?.id,
