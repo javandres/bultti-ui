@@ -21,6 +21,7 @@ import {
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
 import { InspectionStatus, UserRole } from '../schema-types'
+import { useRefetch } from '../util/useRefetch'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -34,17 +35,19 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
   var [user] = useStateValue('user')
   var editPreInspection = useEditPreInspection()
 
-  console.log(user)
+  let {
+    data: inspection,
+    loading: inspectionLoading,
+    refetch: refetchInspection,
+  } = usePreInspectionById(inspectionId)
 
-  let { data: inspection, loading: inspectionLoading, refetch } = usePreInspectionById(
-    inspectionId
-  )
+  let refetch = useRefetch(refetchInspection)
 
   let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
   let [submitPreInspection] = useMutationData(submitPreInspectionMutation)
 
   let userCanPublish =
-    inspection.status === InspectionStatus.InReview && user && user.role === UserRole.Admin
+    inspection?.status === InspectionStatus.InReview && user && user.role === UserRole.Admin
 
   let inspectionAction = useCallback(
     async (publishId: string) => {
