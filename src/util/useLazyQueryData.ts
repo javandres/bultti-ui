@@ -33,7 +33,11 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ): QueryExecutor<TData, TVariables> => {
-  let allOptions: QueryHookOptions<TData, TVariables> = { ...defaultOptions, ...options }
+  let allOptions: QueryHookOptions<TData, TVariables> = {
+    errorPolicy: 'all',
+    ...defaultOptions,
+    ...options,
+  }
   let queryHookArr = useLazyQuery<TData, TVariables>(query, allOptions)
 
   let [queryFn, { loading, error, data, refetch, called, networkStatus }] = queryHookArr || [

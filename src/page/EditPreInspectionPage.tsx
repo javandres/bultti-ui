@@ -9,7 +9,10 @@ import PreInspectionPreview from '../preInspection/PreInspectionPreview'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
-import { publishPreInspectionMutation } from '../preInspection/preInspectionQueries'
+import {
+  publishPreInspectionMutation,
+  submitPreInspectionMutation,
+} from '../preInspection/preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import {
   useEditPreInspection,
@@ -17,6 +20,7 @@ import {
 } from '../preInspection/preInspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
+import { InspectionStatus, UserRole } from '../schema-types'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -27,17 +31,26 @@ export type PropTypes = {
 const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = '' }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
+  var [user] = useStateValue('user')
   var editPreInspection = useEditPreInspection()
+
+  console.log(user)
 
   let { data: inspection, loading: inspectionLoading, refetch } = usePreInspectionById(
     inspectionId
   )
 
   let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
+  let [submitPreInspection] = useMutationData(submitPreInspectionMutation)
 
-  let onPublish = useCallback(
+  let userCanPublish =
+    inspection.status === InspectionStatus.InReview && user && user.role === UserRole.Admin
+
+  let inspectionAction = useCallback(
     async (publishId: string) => {
-      await publishPreInspection({
+      let action = userCanPublish ? publishPreInspection : submitPreInspection
+
+      await action({
         variables: {
           inspectionId: publishId,
         },
@@ -46,7 +59,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
       await refetch()
       editPreInspection()
     },
-    [publishPreInspection, refetch, editPreInspection]
+    [submitPreInspection, refetch, editPreInspection, userCanPublish]
   )
 
   return (
@@ -84,7 +97,8 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
               path="preview"
               name="preview"
               label="Esikatsele"
-              publishPreInspection={onPublish}
+              onInspectionAction={inspectionAction}
+              inspectionActionLabel={userCanPublish ? 'Julkaise' : 'Valmis'}
             />
           </Tabs>
         )}

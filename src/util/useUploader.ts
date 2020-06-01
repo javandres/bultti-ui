@@ -32,7 +32,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
 
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
-    options
+    { errorPolicy: 'all', ...options }
   )
 
   const uploadFile = useCallback(

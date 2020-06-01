@@ -209,6 +209,7 @@ type Mutation {
   logout: Boolean!
   publishPreInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
+  rejectPreInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, inspectionId: String!): Boolean!
@@ -264,7 +265,7 @@ type OperatorBlockDeparture {
 }
 
 type ProcurementUnit {
-  area: OperatingArea!
+  area: OperatingArea
   areaId: Int!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!

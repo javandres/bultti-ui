@@ -17,7 +17,12 @@ export const useQueryData = <TData = any, TVariables = OperationVariables>(
   options: QueryHookOptions<TData, TVariables> = {},
   pickData = ''
 ) => {
-  let allOptions: QueryHookOptions<TData, TVariables> = { ...defaultOptions, ...options }
+  let allOptions: QueryHookOptions<TData, TVariables> = {
+    errorPolicy: 'all',
+    ...defaultOptions,
+    ...options,
+  }
+
   let queryData = useQuery<TData, TVariables>(query, allOptions)
   let { loading, error, data, refetch, networkStatus } = queryData || {}
 

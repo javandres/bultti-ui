@@ -85,9 +85,27 @@ export const updatePreInspectionMutation = gql`
   ${inspectionFragment}
 `
 
+export const submitPreInspectionMutation = gql`
+  mutation submitPreInspection($inspectionId: String!) {
+    submitPreInspection(inspectionId: $inspectionId) {
+      ...InspectionFragment
+    }
+  }
+  ${inspectionFragment}
+`
+
 export const publishPreInspectionMutation = gql`
   mutation publishPreInspection($inspectionId: String!) {
     publishPreInspection(inspectionId: $inspectionId) {
+      ...InspectionFragment
+    }
+  }
+  ${inspectionFragment}
+`
+
+export const rejectPreInspectionMutation = gql`
+  mutation rejectPreInspection($inspectionId: String!) {
+    rejectPreInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }

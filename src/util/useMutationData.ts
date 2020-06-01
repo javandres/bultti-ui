@@ -1,14 +1,15 @@
 import {
-  MutationHookOptions,
-  useMutation,
-  MutationFunctionOptions,
-  OperationVariables,
   ApolloError,
+  MutationFunctionOptions,
+  MutationHookOptions,
+  OperationVariables,
+  useMutation,
 } from '@apollo/client'
 import { DocumentNode, ExecutionResult } from 'graphql'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
 import { merge } from 'lodash'
+import { useStateValue } from '../state/useAppState'
 
 type Mutator<TData, TVariables> = [
   (overrideOptions?: MutationFunctionOptions<TData, TVariables>) => Promise<ExecutionResult>,
@@ -20,9 +21,11 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
 ): Mutator<TData, TVariables> => {
+  let [errorMessage, setErrorMessage] = useStateValue('errorMessage')
+
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
-    options
+    { errorPolicy: 'all', ...options }
   )
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
 
@@ -30,6 +33,12 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
     const finalOptions = merge({}, { variables: options.variables }, mutatorOptions)
     return mutationFn(finalOptions)
   }
+
+  useEffect(() => {
+    if (error && !errorMessage) {
+      setErrorMessage(error.message)
+    }
+  }, [error, errorMessage])
 
   return [execMutation, { data: pickedData, loading, error, called }]
 }

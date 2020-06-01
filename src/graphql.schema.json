@@ -2111,13 +2111,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "OperatingArea",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "OperatingArea",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5161,6 +5157,37 @@
           },
           {
             "name": "publishPreInspection",
+            "description": null,
+            "args": [
+              {
+                "name": "inspectionId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Inspection",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "rejectPreInspection",
             "description": null,
             "args": [
               {

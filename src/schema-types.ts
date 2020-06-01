@@ -254,7 +254,7 @@ export type ProcurementUnit = {
   weeklyKilometers: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
   areaId: Scalars['Int'];
-  area: OperatingArea;
+  area?: Maybe<OperatingArea>;
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
@@ -549,6 +549,7 @@ export type Mutation = {
   updatePreInspection: Inspection;
   submitPreInspection: Inspection;
   publishPreInspection: Inspection;
+  rejectPreInspection: Inspection;
   removePreInspection: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
   updateWeeklyMetersFromSource: ProcurementUnit;
@@ -590,6 +591,11 @@ export type MutationSubmitPreInspectionArgs = {
 
 
 export type MutationPublishPreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRejectPreInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 

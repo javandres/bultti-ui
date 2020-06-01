@@ -56,7 +56,7 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
 
   const cache = new InMemoryCache({
     addTypename: true,
-    dataIdFromObject: (obj) => {
+    dataIdFromObject: (obj, context) => {
       let typename = obj?.__typename
 
       if ('id' in obj) {
@@ -67,7 +67,7 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
         return obj.registryNr + '' + typename
       }
 
-      return defaultDataIdFromObject(obj)
+      return defaultDataIdFromObject(obj, context)
     },
     possibleTypes: introspection.possibleTypes,
   })
