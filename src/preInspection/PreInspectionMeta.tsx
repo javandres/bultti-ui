@@ -13,6 +13,7 @@ import {
   MetaValue,
 } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
+import { getCreatedBy } from './preInspectionUtils'
 
 const PreInspectionMetaView = styled.div`
   margin-bottom: 2.5rem;
@@ -38,6 +39,8 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(
       return null
     }
 
+    let createdBy = getCreatedBy(inspection)
+
     return (
       <PreInspectionMetaView className={className}>
         <MetaHeading>Ennakkotarkastuksen tiedot</MetaHeading>
@@ -55,12 +58,14 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(
               {format(parseISO(inspection.updatedAt), READABLE_TIME_FORMAT)}
             </MetaValue>
           </MetaItem>
-          <MetaItem>
-            <MetaLabel>Käyttäjä</MetaLabel>
-            <MetaValue>
-              {inspection.createdBy?.name} ({inspection.createdBy?.organisation})
-            </MetaValue>
-          </MetaItem>
+          {createdBy && (
+            <MetaItem>
+              <MetaLabel>Käyttäjä</MetaLabel>
+              <MetaValue>
+                {createdBy?.name} ({createdBy?.organisation})
+              </MetaValue>
+            </MetaItem>
+          )}
           {buttonAction && (
             <MetaItem style={{ marginLeft: 'auto', border: 'none' }}>
               <Button size={ButtonSize.LARGE} buttonStyle={buttonStyle} onClick={buttonAction}>

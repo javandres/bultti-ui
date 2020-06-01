@@ -193,7 +193,7 @@ export type Inspection = {
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  createdBy: User;
+  userRelations: Array<InspectionUserRelation>;
 };
 
 
@@ -404,6 +404,25 @@ export enum InspectionStatus {
 }
 
 
+export type InspectionUserRelation = {
+   __typename?: 'InspectionUserRelation';
+  id: Scalars['ID'];
+  relatedBy: InspectionUserRelationType;
+  inspection: Inspection;
+  user: User;
+  createdAt: Scalars['BulttiDate'];
+  updatedAt: Scalars['BulttiDate'];
+};
+
+export enum InspectionUserRelationType {
+  CreatedBy = 'CREATED_BY',
+  UpdatedBy = 'UPDATED_BY',
+  SubscribedTo = 'SUBSCRIBED_TO',
+  PublishedBy = 'PUBLISHED_BY',
+  RejectedBy = 'REJECTED_BY',
+  SubmittedBy = 'SUBMITTED_BY'
+}
+
 export type User = {
    __typename?: 'User';
   id: Scalars['ID'];
@@ -413,7 +432,7 @@ export type User = {
   organisation?: Maybe<Scalars['String']>;
   operatorIds?: Maybe<Array<Scalars['Int']>>;
   hslIdGroups?: Maybe<Array<Scalars['String']>>;
-  inspections: Array<Inspection>;
+  inspectionRelations: Array<InspectionUserRelation>;
 };
 
 export enum UserRole {
@@ -528,6 +547,7 @@ export type Mutation = {
    __typename?: 'Mutation';
   createPreInspection: Inspection;
   updatePreInspection: Inspection;
+  submitPreInspection: Inspection;
   publishPreInspection: Inspection;
   removePreInspection: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
@@ -560,6 +580,11 @@ export type MutationCreatePreInspectionArgs = {
 
 export type MutationUpdatePreInspectionArgs = {
   inspection: PreInspectionInput;
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationSubmitPreInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 

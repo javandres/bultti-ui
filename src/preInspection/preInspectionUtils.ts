@@ -1,5 +1,11 @@
 import { useCallback } from 'react'
-import { InitialPreInspectionInput, Operator, Inspection } from '../schema-types'
+import {
+  InitialPreInspectionInput,
+  Inspection,
+  InspectionStatus,
+  InspectionUserRelationType,
+  Operator,
+} from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -146,4 +152,26 @@ export function usePreInspections(
     loading,
     queueRefetch,
   ]
+}
+
+export function getCreatedBy(inspection?: Inspection) {
+  let userRelations = inspection?.userRelations || []
+  let createdRelation = userRelations.find(
+    (rel) => rel.relatedBy === InspectionUserRelationType.CreatedBy
+  )
+
+  return createdRelation ? createdRelation.user : undefined
+}
+
+export function getPublishedBy(inspection?: Inspection) {
+  if (!inspection || inspection.status !== InspectionStatus.InProduction) {
+    return undefined
+  }
+
+  let userRelations = inspection?.userRelations || []
+  let createdRelation = userRelations.find(
+    (rel) => rel.relatedBy === InspectionUserRelationType.PublishedBy
+  )
+
+  return createdRelation ? createdRelation.user : undefined
 }

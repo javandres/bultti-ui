@@ -1,8 +1,9 @@
 import React from 'react'
 import styled from 'styled-components'
-import { InspectionStatus, Inspection } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import {
+  getCreatedBy,
   useEditPreInspection,
   usePreInspectionReports,
   useRemovePreInspection,
@@ -111,6 +112,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
   )
 
   let goToReports = usePreInspectionReports(inspection.id)
+  let createdBy = getCreatedBy(inspection)
 
   return (
     <PreInspectionItemView
@@ -118,7 +120,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
       status={inspection.status}
       inEffect={isCurrentlyInEffect}>
       <ItemContent
-        item={inspection}
+        item={{ ...inspection, createdBy }}
         labels={itemTableHeadings}
         objectPaths={itemObjectDisplayPaths}
         renderValue={renderValue}

@@ -24,11 +24,18 @@ export const inspectionFragment = gql`
     }
     updatedAt
     createdAt
-    createdBy {
+    userRelations {
       id
-      name
-      organisation
-      email
+      createdAt
+      updatedAt
+      relatedBy
+      user {
+        id
+        email
+        name
+        organisation
+        role
+      }
     }
   }
 `

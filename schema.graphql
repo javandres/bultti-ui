@@ -167,7 +167,6 @@ type ExecutionRequirementValue {
 
 type Inspection {
   createdAt: DateTime!
-  createdBy: User!
   endDate: BulttiDate!
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
@@ -180,8 +179,18 @@ type Inspection {
   startDate: BulttiDate!
   status: InspectionStatus!
   updatedAt: DateTime!
+  userRelations: [InspectionUserRelation!]!
   version: Int!
   versionStackIdentifier: String
+}
+
+type InspectionUserRelation {
+  createdAt: BulttiDate!
+  id: ID!
+  inspection: Inspection!
+  relatedBy: InspectionUserRelationType!
+  updatedAt: BulttiDate!
+  user: User!
 }
 
 type MissingEquipment {
@@ -207,6 +216,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removePreInspection(inspectionId: String!): Boolean!
+  submitPreInspection(inspectionId: String!): Inspection!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
@@ -338,7 +348,7 @@ type User {
   email: String!
   hslIdGroups: [String!]
   id: ID!
-  inspections: [Inspection!]!
+  inspectionRelations: [InspectionUserRelation!]!
   name: String!
   operatorIds: [Int!]
   organisation: String
@@ -364,6 +374,15 @@ enum InspectionStatus {
 enum InspectionType {
   POST
   PRE
+}
+
+enum InspectionUserRelationType {
+  CREATED_BY
+  PUBLISHED_BY
+  REJECTED_BY
+  SUBMITTED_BY
+  SUBSCRIBED_TO
+  UPDATED_BY
 }
 
 enum OperatingAreaName {
