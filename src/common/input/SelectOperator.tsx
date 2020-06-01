@@ -70,7 +70,15 @@ const SelectOperator: React.FC<PropTypes> = observer(
     useEffect(() => {
       // If the user is an operator user, preselect the first operator option.
       if (userIsOperator) {
-        onSelect(operators.find(operatorIsValid) || null)
+        let userOperator = operators.find(operatorIsValid) || null
+        let valueIsSelected =
+          typeof value === 'number'
+            ? userOperator?.id === value
+            : userOperator?.id === value?.id
+
+        if (userOperator && (!value || !valueIsSelected)) {
+          onSelect(userOperator)
+        }
       } else {
         let initialOperator = operators.find((s) => s.id === selectInitialId)
 
