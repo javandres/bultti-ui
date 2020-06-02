@@ -18,6 +18,7 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { useMutationData } from '../util/useMutationData'
 import { publishInspectionMutation, rejectInspectionMutation } from './preInspectionQueries'
+import InspectionActions from './InspectionActions'
 
 const SelectPreInspectionView = styled.div``
 
@@ -280,72 +281,11 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                         </EndDate>
                       </InspectionPeriodDisplay>
                     </ItemContent>
-                    <ButtonRow>
-                      {inspection.status === InspectionStatus.Draft ? (
-                        <>
-                          <Button
-                            buttonStyle={ButtonStyle.NORMAL}
-                            size={ButtonSize.MEDIUM}
-                            onClick={() => onSelect(inspection)}>
-                            Muokkaa
-                          </Button>
-                          <Button
-                            style={{ marginLeft: 'auto', marginRight: 0 }}
-                            loading={removeLoading}
-                            buttonStyle={ButtonStyle.REMOVE}
-                            size={ButtonSize.MEDIUM}
-                            onClick={() => removePreInspection(inspection)}>
-                            Poista
-                          </Button>
-                        </>
-                      ) : inspection.status === InspectionStatus.InReview ? (
-                        <>
-                          {userCanPublish && (
-                            <>
-                              <Button
-                                buttonStyle={ButtonStyle.NORMAL}
-                                size={ButtonSize.MEDIUM}
-                                onClick={() =>
-                                  inspectionAction(publishPreInspection, inspection.id)
-                                }>
-                                Julkaise
-                              </Button>
-                              <Button
-                                buttonStyle={ButtonStyle.REMOVE}
-                                size={ButtonSize.MEDIUM}
-                                onClick={() =>
-                                  inspectionAction(rejectPreInspection, inspection.id)
-                                }>
-                                Hylkää
-                              </Button>
-                            </>
-                          )}
-                          <Button
-                            onClick={() => goToPreInspectionReports(inspection.id)}
-                            buttonStyle={ButtonStyle.NORMAL}
-                            size={ButtonSize.MEDIUM}>
-                            Raportit
-                          </Button>
-                        </>
-                      ) : inspection.status === InspectionStatus.InProduction ? (
-                        <>
-                          {inspection.version >= maxVersion && (
-                            <Button
-                              buttonStyle={ButtonStyle.NORMAL}
-                              size={ButtonSize.MEDIUM}
-                              onClick={onCreatePreInspection}>
-                              Korvaa
-                            </Button>
-                          )}
-                          <Button
-                            onClick={() => goToPreInspectionReports(inspection.id)}
-                            buttonStyle={ButtonStyle.NORMAL}
-                            size={ButtonSize.MEDIUM}>
-                            Raportit
-                          </Button>
-                        </>
-                      ) : null}
-                    </ButtonRow>
+                    <InspectionActions
+                      onRefresh={refetchPreInspections}
+                      inspection={inspection}
+                      onSelect={onSelect}
+                    />
                   </PreInspectionItem>
                 )
               })}

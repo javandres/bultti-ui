@@ -1,18 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Inspection, InspectionStatus } from '../schema-types'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import {
-  getCreatedBy,
-  useEditPreInspection,
-  usePreInspectionReports,
-  useRemovePreInspection,
-} from './preInspectionUtils'
+import { getCreatedBy, useEditPreInspection } from './preInspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
+import InspectionActions from './InspectionActions'
 
 const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -48,19 +43,10 @@ const ItemContent = styled(ValueDisplay)<ValueDisplayPropTypes>`
   line-height: 1.4;
 `
 
-const ButtonRow = styled.div`
+const InspectionActionsRow = styled(InspectionActions)`
   margin: auto -0.75rem 0;
-  padding: 0.75rem 1rem 0.75rem;
-  border-top: 1px solid var(--lighter-grey);
-  background: var(--white-grey);
-  display: flex;
-  align-items: center;
   border-bottom-left-radius: 0.5rem;
   border-bottom-right-radius: 0.5rem;
-
-  > * {
-    margin-right: 1rem;
-  }
 `
 
 const itemTableHeadings = {
@@ -118,12 +104,6 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
   showActions = true,
 }) => {
   let editPreInspection = useEditPreInspection(inspection.id)
-
-  let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
-    onPreInspectionUpdated
-  )
-
-  let goToReports = usePreInspectionReports(inspection.id)
   let createdBy = getCreatedBy(inspection)
 
   return (
@@ -138,34 +118,11 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
         renderValue={renderValue}
       />
       {showActions && (
-        <ButtonRow>
-          {inspection.status === InspectionStatus.Draft && (
-            <>
-              <Button
-                buttonStyle={ButtonStyle.NORMAL}
-                size={ButtonSize.MEDIUM}
-                onClick={editPreInspection}>
-                Muokkaa
-              </Button>
-              <Button
-                style={{ marginLeft: 'auto', marginRight: 0 }}
-                loading={removeLoading}
-                buttonStyle={ButtonStyle.REMOVE}
-                size={ButtonSize.MEDIUM}
-                onClick={() => removePreInspection(inspection)}>
-                Poista
-              </Button>
-            </>
-          )}
-          {inspection.status === InspectionStatus.InProduction && (
-            <Button
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}
-              onClick={() => goToReports()}>
-              Raportit
-            </Button>
-          )}
-        </ButtonRow>
+        <InspectionActionsRow
+          inspection={inspection}
+          onSelect={editPreInspection}
+          onRefresh={onPreInspectionUpdated}
+        />
       )}
     </PreInspectionItemView>
   )
