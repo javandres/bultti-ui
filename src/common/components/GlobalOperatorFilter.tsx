@@ -17,7 +17,7 @@ const GlobalOperatorFilter: React.FC = observer(() => {
     return initialVal ? parseInt(initialVal as string, 10) : undefined
   }, [user, location.search])
 
-  var userIsOperator = user && user?.role === UserRole.OperatorUser
+  var userIsOperator = user && user?.role === UserRole.Operator
 
   return (
     <SidebarStyledSelect

@@ -48,7 +48,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
     const { data } = useQueryData(operatorsQuery)
     const [user] = useStateValue<User>('user')
 
-    let userIsOperator = useMemo(() => user && user?.role === UserRole.OperatorUser, [user])
+    let userIsOperator = useMemo(() => user && user?.role === UserRole.Operator, [user])
 
     const operators: Operator[] = useMemo(() => {
       let operatorList = !data ? [] : compact([...data])

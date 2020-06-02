@@ -15,7 +15,7 @@ export type Scalars = {
 };
 
 export type Query = {
-   __typename?: 'Query';
+  __typename?: 'Query';
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
   season?: Maybe<Array<Season>>;
@@ -165,7 +165,7 @@ export type QueryInspectionReportByNameArgs = {
 };
 
 export type Operator = {
-   __typename?: 'Operator';
+  __typename?: 'Operator';
   id: Scalars['Int'];
   operatorId: Scalars['Int'];
   operatorName: Scalars['String'];
@@ -177,7 +177,7 @@ export type Operator = {
 };
 
 export type Inspection = {
-   __typename?: 'Inspection';
+  __typename?: 'Inspection';
   version: Scalars['Int'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
@@ -203,7 +203,7 @@ export enum InspectionType {
 }
 
 export type Season = {
-   __typename?: 'Season';
+  __typename?: 'Season';
   id: Scalars['ID'];
   season: Scalars['String'];
   startDate: Scalars['BulttiDate'];
@@ -212,7 +212,7 @@ export type Season = {
 };
 
 export type ExecutionRequirement = {
-   __typename?: 'ExecutionRequirement';
+  __typename?: 'ExecutionRequirement';
   id: Scalars['ID'];
   area: OperatingArea;
   operator: Operator;
@@ -230,7 +230,7 @@ export type ExecutionRequirement = {
 };
 
 export type OperatingArea = {
-   __typename?: 'OperatingArea';
+  __typename?: 'OperatingArea';
   id: Scalars['Int'];
   name: OperatingAreaName;
   procurementUnits?: Maybe<Array<ProcurementUnit>>;
@@ -244,7 +244,7 @@ export enum OperatingAreaName {
 }
 
 export type ProcurementUnit = {
-   __typename?: 'ProcurementUnit';
+  __typename?: 'ProcurementUnit';
   id: Scalars['ID'];
   procurementUnitId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -262,7 +262,7 @@ export type ProcurementUnit = {
 };
 
 export type EquipmentCatalogue = {
-   __typename?: 'EquipmentCatalogue';
+  __typename?: 'EquipmentCatalogue';
   id: Scalars['ID'];
   equipmentCatalogueId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -275,7 +275,7 @@ export type EquipmentCatalogue = {
 };
 
 export type EquipmentCatalogueQuota = {
-   __typename?: 'EquipmentCatalogueQuota';
+  __typename?: 'EquipmentCatalogueQuota';
   id: Scalars['ID'];
   percentageQuota: Scalars['Float'];
   equipmentId: Scalars['String'];
@@ -287,7 +287,7 @@ export type EquipmentCatalogueQuota = {
 };
 
 export type Equipment = {
-   __typename?: 'Equipment';
+  __typename?: 'Equipment';
   id: Scalars['ID'];
   vehicleId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -306,7 +306,7 @@ export type Equipment = {
 };
 
 export type ExecutionRequirementQuota = {
-   __typename?: 'ExecutionRequirementQuota';
+  __typename?: 'ExecutionRequirementQuota';
   id: Scalars['ID'];
   percentageQuota: Scalars['Float'];
   meterRequirement: Scalars['Float'];
@@ -317,7 +317,7 @@ export type ExecutionRequirementQuota = {
 };
 
 export type Departure = {
-   __typename?: 'Departure';
+  __typename?: 'Departure';
   id: Scalars['ID'];
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
@@ -376,13 +376,13 @@ export enum TrackReason {
 }
 
 export type ProcurementUnitRoute = {
-   __typename?: 'ProcurementUnitRoute';
+  __typename?: 'ProcurementUnitRoute';
   routeId: Scalars['String'];
   length: Scalars['Float'];
 };
 
 export type ExecutionRequirementValue = {
-   __typename?: 'ExecutionRequirementValue';
+  __typename?: 'ExecutionRequirementValue';
   emissionClass: Scalars['Int'];
   kilometerRequirement?: Maybe<Scalars['Float']>;
   quotaRequirement?: Maybe<Scalars['Float']>;
@@ -405,7 +405,7 @@ export enum InspectionStatus {
 
 
 export type InspectionUserRelation = {
-   __typename?: 'InspectionUserRelation';
+  __typename?: 'InspectionUserRelation';
   id: Scalars['ID'];
   relatedBy: InspectionUserRelationType;
   inspection: Inspection;
@@ -424,7 +424,7 @@ export enum InspectionUserRelationType {
 }
 
 export type User = {
-   __typename?: 'User';
+  __typename?: 'User';
   id: Scalars['ID'];
   name: Scalars['String'];
   email: Scalars['String'];
@@ -437,13 +437,13 @@ export type User = {
 
 export enum UserRole {
   Admin = 'ADMIN',
-  HslUser = 'HSL_USER',
-  OperatorUser = 'OPERATOR_USER',
-  BlockedUser = 'BLOCKED_USER'
+  Hsl = 'HSL',
+  Operator = 'OPERATOR',
+  Blocked = 'BLOCKED'
 }
 
 export type EquipmentSearchResult = {
-   __typename?: 'EquipmentSearchResult';
+  __typename?: 'EquipmentSearchResult';
   vehicleId: Scalars['String'];
   model: Scalars['String'];
   registryNr?: Maybe<Scalars['String']>;
@@ -455,7 +455,7 @@ export type EquipmentSearchResult = {
 };
 
 export type OperatorBlockDeparture = {
-   __typename?: 'OperatorBlockDeparture';
+  __typename?: 'OperatorBlockDeparture';
   id: Scalars['ID'];
   blockNumber?: Maybe<Scalars['String']>;
   dayType: DayType;
@@ -475,7 +475,7 @@ export type OperatorBlockDeparture = {
 };
 
 export type ReportListItem = {
-   __typename?: 'ReportListItem';
+  __typename?: 'ReportListItem';
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
@@ -491,7 +491,7 @@ export enum ReportType {
 }
 
 export type Report = {
-   __typename?: 'Report';
+  __typename?: 'Report';
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
@@ -506,13 +506,13 @@ export type Report = {
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;
 
 export type MissingEquipment = {
-   __typename?: 'MissingEquipment';
+  __typename?: 'MissingEquipment';
   registryNr?: Maybe<Scalars['String']>;
   blockNumber?: Maybe<Scalars['String']>;
 };
 
 export type DeparturePair = {
-   __typename?: 'DeparturePair';
+  __typename?: 'DeparturePair';
   id: Scalars['ID'];
   blockNumber?: Maybe<Scalars['String']>;
   groupId?: Maybe<Scalars['String']>;
@@ -528,7 +528,7 @@ export type DeparturePair = {
 };
 
 export type EmissionClassExecutionItem = {
-   __typename?: 'EmissionClassExecutionItem';
+  __typename?: 'EmissionClassExecutionItem';
   id: Scalars['ID'];
   procurementUnitId?: Maybe<Scalars['String']>;
   class1?: Maybe<Scalars['Float']>;
@@ -544,7 +544,7 @@ export type EmissionClassExecutionItem = {
 };
 
 export type Mutation = {
-   __typename?: 'Mutation';
+  __typename?: 'Mutation';
   createPreInspection: Inspection;
   updatePreInspection: Inspection;
   submitPreInspection: Inspection;
@@ -567,6 +567,7 @@ export type Mutation = {
   removeExecutionRequirement: Scalars['Boolean'];
   login?: Maybe<Scalars['String']>;
   logout: Scalars['Boolean'];
+  modifyUser: User;
   removeEquipmentFromCatalogue: Scalars['Boolean'];
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
@@ -696,6 +697,11 @@ export type MutationLoginArgs = {
 };
 
 
+export type MutationModifyUserArgs = {
+  userInput: UserInput;
+};
+
+
 export type MutationRemoveEquipmentFromCatalogueArgs = {
   catalogueId: Scalars['String'];
   equipmentId: Scalars['String'];
@@ -752,5 +758,15 @@ export type EquipmentInput = {
 export type EquipmentCatalogueInput = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+};
+
+export type UserInput = {
+  id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+  role?: Maybe<Scalars['String']>;
+  organisation?: Maybe<Scalars['String']>;
+  hslIdGroups?: Maybe<Scalars['String']>;
+  operatorIds?: Maybe<Scalars['String']>;
 };
 

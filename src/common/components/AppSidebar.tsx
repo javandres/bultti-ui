@@ -70,6 +70,7 @@ const CategoryTitle = styled.h3`
 `
 
 const UserBar = styled.div`
+  text-decoration: none;
   background: rgba(0, 0, 0, 0.15);
   padding: 0.75rem 1rem;
   display: flex;
@@ -81,6 +82,14 @@ const UserDisplay = styled.div`
   font-weight: bold;
   margin-left: 0.75rem;
   font-size: 0.875rem;
+`
+
+const UserLink = styled(Link)`
+  color: white;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  text-decoration: none;
 `
 
 const GlobalFilters = styled.div``
@@ -151,8 +160,10 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </h1>
       </AppTitle>
       <UserBar>
-        <User width="1rem" height="1rem" fill="white" />
-        {user && <UserDisplay>{user?.email}</UserDisplay>}
+        <UserLink to="user">
+          <User width="1rem" height="1rem" fill="white" />
+          {user && <UserDisplay>{user?.email}</UserDisplay>}
+        </UserLink>
         <Button
           style={{ marginLeft: 'auto' }}
           loading={logoutLoading}

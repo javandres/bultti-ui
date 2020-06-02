@@ -24,6 +24,15 @@ export const logoutMutation = gql`
   }
 `
 
+export const modifyUserMutation = gql`
+  mutation modifyUser($userInput: UserInput!) {
+    modifyUser(userInput: $userInput) {
+      ...UserFragment
+    }
+  }
+  ${UserFragment}
+`
+
 export const currentUserQuery = gql`
   query currentUser {
     currentUser {

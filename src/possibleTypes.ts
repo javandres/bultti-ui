@@ -4,7 +4,6 @@
           [key: string]: string[]
         }
       }
-
       const result: PossibleTypesResultData = {
   "possibleTypes": {
     "ReportEntityUnion": [
@@ -17,6 +16,5 @@
     ]
   }
 };
-
       export default result;
     

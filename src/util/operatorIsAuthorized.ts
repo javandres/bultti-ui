@@ -4,7 +4,7 @@ export const operatorIsAuthorized = (
   operator: Operator | null | undefined,
   user: User | null
 ) => {
-  if (operator && user && user.role === UserRole.OperatorUser) {
+  if (operator && user && user.role === UserRole.Operator) {
     const userOperators = user.operatorIds || []
     const selectedOperatorId = operator.id
 

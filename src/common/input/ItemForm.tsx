@@ -82,7 +82,13 @@ export type PropTypes<ItemType = any> = {
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
 
 const defaultRenderInput = (key, val, onChange) => (
-  <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
+  <TextInput
+    type="text"
+    theme="light"
+    value={val}
+    onChange={(e) => onChange(e.target.value)}
+    name={key}
+  />
 )
 
 const ItemForm: React.FC<PropTypes> = observer(

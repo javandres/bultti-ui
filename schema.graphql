@@ -207,6 +207,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
+  modifyUser(userInput: UserInput!): User!
   publishPreInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
   rejectPreInspection(inspectionId: String!): Inspection!
@@ -415,9 +416,9 @@ enum TrackReason {
 
 enum UserRole {
   ADMIN
-  BLOCKED_USER
-  HSL_USER
-  OPERATOR_USER
+  BLOCKED
+  HSL
+  OPERATOR
 }
 
 input EquipmentCatalogueInput {
@@ -452,6 +453,16 @@ input PreInspectionInput {
 input ProcurementUnitEditInput {
   medianAgeRequirement: Float!
   weeklyMeters: Float!
+}
+
+input UserInput {
+  email: String
+  hslIdGroups: String
+  id: ID!
+  name: String
+  operatorIds: String
+  organisation: String
+  role: String
 }
 
 
