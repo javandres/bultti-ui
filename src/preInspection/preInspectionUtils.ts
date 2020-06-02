@@ -178,3 +178,15 @@ export function getPublishedBy(inspection?: Inspection) {
 
   return createdRelation ? createdRelation.user : undefined
 }
+
+export function getInspectionStatusColor(inspection: Inspection) {
+  if (inspection.status === InspectionStatus.InReview) {
+    return 'var(--yellow)'
+  }
+
+  if (inspection.status === InspectionStatus.InProduction) {
+    return 'var(--green)'
+  }
+
+  return 'var(--light-grey)'
+}

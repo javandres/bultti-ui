@@ -25,10 +25,14 @@ const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?:
         ? 'var(--green)'
         : p.status === InspectionStatus.InProduction
         ? 'var(--blue)'
+        : p.status === InspectionStatus.InReview
+        ? 'var(--yellow)'
         : 'var(--light-grey)'};
   box-shadow: ${(p) =>
     p.status === InspectionStatus.InProduction && p.inEffect
       ? '0 0 5px 0 var(--green)'
+      : p.status === InspectionStatus.InReview
+      ? '0 0 5px 0 var(--yellow)'
       : 'none'};
   font-family: inherit;
   margin-right: 1rem;
@@ -92,7 +96,15 @@ const renderValue = (key, val) => {
     case 'endDate':
       return format(parseISO(val), READABLE_DATE_FORMAT)
     case 'status':
-      return val === InspectionStatus.InProduction ? 'Tuotannossa' : 'Muokattavissa'
+      if (val === InspectionStatus.InProduction) {
+        return 'Tuotannossa'
+      }
+
+      if (val === InspectionStatus.InReview) {
+        return 'Hyväksyttävänä'
+      }
+
+      return 'Muokattavissa'
     default:
       return val
   }
