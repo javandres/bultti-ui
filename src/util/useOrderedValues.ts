@@ -6,7 +6,7 @@ import { useMemo } from 'react'
  * Use hideKeys to hide any keys from the list.
  */
 
-export const useOrderedValues = (item, labels, order, hideKeys) => {
+export const useOrderedValues = (item, labels = {}, order, hideKeys) => {
   return useMemo(() => {
     let itemEntries = Object.entries(omitBy(item, (val, key) => key.startsWith('_')))
 

@@ -13,6 +13,7 @@ import SelectPreInspectionPage from './page/SelectPreInspectionPage'
 import ProcurementUnitsPage from './page/ProcurementUnitsPage'
 import EditPreInspectionPage from './page/EditPreInspectionPage'
 import PreInspectionReportIndexPage from './page/PreInspectionReportIndexPage'
+import UserPage from './page/UserPage'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -35,6 +36,7 @@ const App: React.FC = observer(() => {
         <PreInspectionReportIndexPage path="pre-inspection/reports" />
         <PostInspection path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
+        <UserPage path="user" />
       </Router>
     </AppFrame>
   )

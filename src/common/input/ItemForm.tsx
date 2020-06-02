@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { CSSProperties } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { TextInput } from './Input'
@@ -76,11 +76,12 @@ export type PropTypes<ItemType = any> = {
   hideKeys?: string[]
   keyFromItem?: (item: ItemType) => string
   renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
+  style?: CSSProperties
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
 
-const defaultRenderInput = (val, key, onChange) => (
+const defaultRenderInput = (key, val, onChange) => (
   <TextInput theme="light" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
 )
 
@@ -98,6 +99,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     doneDisabled = false,
     doneLabel = 'Valmis',
     renderInput = defaultRenderInput,
+    style,
   }) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -115,11 +117,13 @@ const ItemForm: React.FC<PropTypes> = observer(
     )
 
     return (
-      <ControlledFormView>
+      <ControlledFormView style={style}>
         {itemEntries.map(([key, val], index) => (
           <FieldWrapper key={key}>
             <FieldLabel>{get(labels, key, key)}</FieldLabel>
-            {isReadOnly(key) ? renderReadOnlyField(val) : renderInput(key, val, onValueChange(key))}
+            {isReadOnly(key)
+              ? renderReadOnlyField(val)
+              : renderInput(key, val, onValueChange(key))}
           </FieldWrapper>
         ))}
         <FieldWrapper

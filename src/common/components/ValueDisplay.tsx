@@ -59,7 +59,13 @@ export type PropTypes<ItemType = any> = {
   valuesPerRow?: number
 }
 
-const defaultRenderValue = (key, val) => val
+const defaultRenderValue = (key, val) => {
+  if (Array.isArray(val)) {
+    return val.join(', ')
+  }
+
+  return val
+}
 
 const ValueDisplay: React.FC<PropTypes> = observer(
   ({
