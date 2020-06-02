@@ -3,7 +3,7 @@ import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionType } from '../schema-types'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -20,11 +20,12 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
   let { data: inspections, loading, refetch } = useQueryData<Inspection>(
     currentPreInspectionsByOperatorAndSeasonQuery,
     {
-      skip: !operator || !season || !season?.id,
+      skip: !operator?.id || !season?.id,
       notifyOnNetworkStatusChange: true,
       variables: {
-        operatorId: operator?.id,
-        seasonId: typeof season === 'string' ? season : season?.id,
+        operatorId: operator?.id || 0,
+        seasonId: (typeof season === 'string' ? season : season?.id) || '',
+        inspectionType: InspectionType.Pre,
       },
     }
   )

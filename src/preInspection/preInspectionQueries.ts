@@ -11,6 +11,7 @@ export const inspectionFragment = gql`
     operatorId
     seasonId
     status
+    inspectionType
     operator {
       id
       operatorId
@@ -50,8 +51,16 @@ export const inspectionQuery = gql`
 `
 
 export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
-  query currentPreInspectionsByOperatorAndSeason($operatorId: Int!, $seasonId: String!) {
-    currentPreInspectionsByOperatorAndSeason(operatorId: $operatorId, seasonId: $seasonId) {
+  query currentInspectionsByOperatorAndSeason(
+    $operatorId: Int!
+    $seasonId: String!
+    $inspectionType: InspectionType!
+  ) {
+    currentInspectionsByOperatorAndSeason(
+      operatorId: $operatorId
+      seasonId: $seasonId
+      inspectionType: $inspectionType
+    ) {
       ...InspectionFragment
     }
   }
@@ -59,61 +68,61 @@ export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
 `
 
 export const inspectionsByOperatorQuery = gql`
-  query inspectionsByOperator($operatorId: Int!) {
-    inspectionsByOperator(operatorId: $operatorId) {
+  query inspectionsByOperator($operatorId: Int!, $inspectionType: InspectionType!) {
+    inspectionsByOperator(operatorId: $operatorId, inspectionType: $inspectionType) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const createPreInspectionMutation = gql`
-  mutation createPreInspection($inspectionInput: InitialPreInspectionInput!) {
-    createPreInspection(inspection: $inspectionInput) {
+export const createInspectionMutation = gql`
+  mutation createInspection($inspectionInput: InitialInspectionInput!) {
+    createInspection(inspection: $inspectionInput) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const updatePreInspectionMutation = gql`
-  mutation updatePreInspection($inspectionId: String!, $inspectionInput: PreInspectionInput!) {
-    updatePreInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
+export const updateInspectionMutation = gql`
+  mutation updateInspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
+    updateInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const submitPreInspectionMutation = gql`
-  mutation submitPreInspection($inspectionId: String!) {
-    submitPreInspection(inspectionId: $inspectionId) {
+export const submitInspectionMutation = gql`
+  mutation submitInspection($inspectionId: String!) {
+    submitInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const publishPreInspectionMutation = gql`
-  mutation publishPreInspection($inspectionId: String!) {
-    publishPreInspection(inspectionId: $inspectionId) {
+export const publishInspectionMutation = gql`
+  mutation publishInspection($inspectionId: String!) {
+    publishInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const rejectPreInspectionMutation = gql`
-  mutation rejectPreInspection($inspectionId: String!) {
-    rejectPreInspection(inspectionId: $inspectionId) {
+export const rejectInspectionMutation = gql`
+  mutation rejectInspection($inspectionId: String!) {
+    rejectInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }
   ${inspectionFragment}
 `
 
-export const removePreInspectionMutation = gql`
-  mutation removePreInspection($inspectionId: String!) {
-    removePreInspection(inspectionId: $inspectionId)
+export const removeInspectionMutation = gql`
+  mutation removeInspection($inspectionId: String!) {
+    removeInspection(inspectionId: $inspectionId)
   }
 `

@@ -1,10 +1,10 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { PreInspectionInput } from '../schema-types'
+import { InspectionInput } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
-import { updatePreInspectionMutation } from './preInspectionQueries'
+import { updateInspectionMutation } from './preInspectionQueries'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
 import PreInspectionMeta from './PreInspectionMeta'
@@ -40,7 +40,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     let [
       updatePreInspection,
       { loading: updateLoading, error: updateError },
-    ] = useMutationData(updatePreInspectionMutation)
+    ] = useMutationData(updateInspectionMutation)
 
     useEffect(() => {
       console.log(updateError)
@@ -56,11 +56,11 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     // Update the pre-inspection on changes
     var updatePreInspectionValue = useCallback(
-      async (name: keyof PreInspectionInput, value: string) => {
+      async (name: keyof InspectionInput, value: string) => {
         if (!isUpdating.current && inspection && !loading) {
           isUpdating.current = true
 
-          var inspectionInput: PreInspectionInput = {}
+          var inspectionInput: InspectionInput = {}
           inspectionInput[name] = value
 
           await updatePreInspection({

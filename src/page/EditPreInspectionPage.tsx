@@ -10,8 +10,8 @@ import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import {
-  publishPreInspectionMutation,
-  submitPreInspectionMutation,
+  publishInspectionMutation,
+  submitInspectionMutation,
 } from '../preInspection/preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import {
@@ -43,8 +43,8 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
 
   let refetch = useRefetch(refetchInspection)
 
-  let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
-  let [submitPreInspection] = useMutationData(submitPreInspectionMutation)
+  let [publishPreInspection] = useMutationData(publishInspectionMutation)
+  let [submitPreInspection] = useMutationData(submitInspectionMutation)
 
   let userCanPublish =
     inspection?.status === InspectionStatus.InReview && user && user.role === UserRole.Admin

@@ -1,18 +1,19 @@
 import { useCallback } from 'react'
 import {
-  InitialPreInspectionInput,
+  InitialInspectionInput,
   Inspection,
   InspectionStatus,
+  InspectionType,
   InspectionUserRelationType,
   Operator,
 } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
-  createPreInspectionMutation,
+  createInspectionMutation,
   inspectionQuery,
   inspectionsByOperatorQuery,
-  removePreInspectionMutation,
+  removeInspectionMutation,
 } from './preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
@@ -37,7 +38,7 @@ export function usePreInspectionById(inspectionId?: string) {
 
 export function useCreatePreInspection(operator, season) {
   let [createPreInspection, { loading: createLoading }] = useMutationData(
-    createPreInspectionMutation
+    createInspectionMutation
   )
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
@@ -45,12 +46,13 @@ export function useCreatePreInspection(operator, season) {
     async (seasonId = season?.id) => {
       // A pre-inspection can be created when there is not one currently existing or loading
       if (operator && seasonId && !createLoading) {
-        // InitialPreInspectionInput requires operator and season ID.
-        let inspectionInput: InitialPreInspectionInput = {
+        // InitialInspectionInput requires operator and season ID.
+        let inspectionInput: InitialInspectionInput = {
           operatorId: operator.id,
           seasonId,
           startDate: season.startDate,
           endDate: season.endDate,
+          inspectionType: InspectionType.Pre,
         }
 
         let createResult = await createPreInspection({
@@ -77,7 +79,7 @@ export function useCreatePreInspection(operator, season) {
 export function useRemovePreInspection(
   afterRemove: () => unknown = () => {}
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
-  let [removePreInspection, { loading }] = useMutationData(removePreInspectionMutation)
+  let [removePreInspection, { loading }] = useMutationData(removeInspectionMutation)
 
   let execRemove = useCallback(
     async (inspection?: Inspection) => {
@@ -136,6 +138,7 @@ export function usePreInspections(
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: queryOperator?.operatorId,
+        inspectionType: InspectionType.Pre,
       },
     }
   )

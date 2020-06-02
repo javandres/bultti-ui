@@ -20,11 +20,6 @@ export type Query = {
   operators: Array<Operator>;
   season?: Maybe<Array<Season>>;
   seasons: Array<Season>;
-  inspection?: Maybe<Inspection>;
-  inspectionsByOperator: Array<Inspection>;
-  currentPreInspectionsByOperatorAndSeason: Array<Inspection>;
-  currentPreInspectionByOperatorAndSeason?: Maybe<Inspection>;
-  allPreInspections: Array<Inspection>;
   procurementUnit?: Maybe<ProcurementUnit>;
   procurementUnitsByOperator: Array<ProcurementUnit>;
   singleEquipment?: Maybe<Equipment>;
@@ -44,6 +39,11 @@ export type Query = {
   availableDayTypes: Array<Scalars['String']>;
   availablePreInspectionReports: Array<ReportListItem>;
   inspectionReportByName?: Maybe<Report>;
+  inspection?: Maybe<Inspection>;
+  inspectionsByOperator: Array<Inspection>;
+  currentInspectionsByOperatorAndSeason: Array<Inspection>;
+  currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
+  allInspections: Array<Inspection>;
 };
 
 
@@ -59,28 +59,6 @@ export type QuerySeasonArgs = {
 
 export type QuerySeasonsArgs = {
   date: Scalars['BulttiDate'];
-};
-
-
-export type QueryInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type QueryInspectionsByOperatorArgs = {
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentPreInspectionsByOperatorAndSeasonArgs = {
-  seasonId: Scalars['String'];
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentPreInspectionByOperatorAndSeasonArgs = {
-  seasonId: Scalars['String'];
-  operatorId: Scalars['Int'];
 };
 
 
@@ -164,6 +142,36 @@ export type QueryInspectionReportByNameArgs = {
   reportName: Scalars['String'];
 };
 
+
+export type QueryInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryInspectionsByOperatorArgs = {
+  inspectionType: InspectionType;
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
+  inspectionType: InspectionType;
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
+  inspectionType: InspectionType;
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryAllInspectionsArgs = {
+  inspectionType: InspectionType;
+};
+
 export type Operator = {
   __typename?: 'Operator';
   id: Scalars['Int'];
@@ -178,11 +186,6 @@ export type Operator = {
 
 export type Inspection = {
   __typename?: 'Inspection';
-  version: Scalars['Int'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  minStartDate?: Maybe<Scalars['BulttiDate']>;
-  versionStackIdentifier?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   inspectionType?: Maybe<InspectionType>;
   operatorId?: Maybe<Scalars['Int']>;
@@ -194,8 +197,12 @@ export type Inspection = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
+  version: Scalars['Int'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  minStartDate?: Maybe<Scalars['BulttiDate']>;
+  versionStackIdentifier?: Maybe<Scalars['String']>;
 };
-
 
 export enum InspectionType {
   Pre = 'PRE',
@@ -210,6 +217,7 @@ export type Season = {
   endDate: Scalars['BulttiDate'];
   inspections?: Maybe<Array<Inspection>>;
 };
+
 
 export type ExecutionRequirement = {
   __typename?: 'ExecutionRequirement';
@@ -545,13 +553,6 @@ export type EmissionClassExecutionItem = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createPreInspection: Inspection;
-  updatePreInspection: Inspection;
-  submitPreInspection: Inspection;
-  publishPreInspection: Inspection;
-  rejectPreInspection: Inspection;
-  removePreInspection: Scalars['Boolean'];
-  generateEquipmentForPreInspection: Scalars['Boolean'];
   updateWeeklyMetersFromSource: ProcurementUnit;
   updateProcurementUnit: ProcurementUnit;
   createEquipment?: Maybe<Equipment>;
@@ -572,42 +573,13 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
-};
-
-
-export type MutationCreatePreInspectionArgs = {
-  inspection: InitialPreInspectionInput;
-};
-
-
-export type MutationUpdatePreInspectionArgs = {
-  inspection: PreInspectionInput;
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationSubmitPreInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationPublishPreInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationRejectPreInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationRemovePreInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationGenerateEquipmentForPreInspectionArgs = {
-  inspectionId: Scalars['String'];
+  createInspection: Inspection;
+  updateInspection: Inspection;
+  submitInspection: Inspection;
+  publishInspection: Inspection;
+  rejectInspection: Inspection;
+  removeInspection: Scalars['Boolean'];
+  generateEquipmentForPreInspection: Scalars['Boolean'];
 };
 
 
@@ -726,16 +698,40 @@ export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
   equipmentId: Scalars['String'];
 };
 
-export type InitialPreInspectionInput = {
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
-  operatorId: Scalars['Int'];
-  seasonId: Scalars['String'];
+
+export type MutationCreateInspectionArgs = {
+  inspection: InitialInspectionInput;
 };
 
-export type PreInspectionInput = {
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
+
+export type MutationUpdateInspectionArgs = {
+  inspection: InspectionInput;
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationSubmitInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationPublishInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRejectInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRemoveInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationGenerateEquipmentForPreInspectionArgs = {
+  inspectionId: Scalars['String'];
 };
 
 export type ProcurementUnitEditInput = {
@@ -770,3 +766,16 @@ export type UserInput = {
   operatorIds?: Maybe<Scalars['String']>;
 };
 
+
+export type InitialInspectionInput = {
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+  operatorId: Scalars['Int'];
+  seasonId: Scalars['String'];
+  inspectionType: InspectionType;
+};
+
+export type InspectionInput = {
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+};

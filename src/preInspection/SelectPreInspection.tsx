@@ -17,10 +17,7 @@ import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { useMutationData } from '../util/useMutationData'
-import {
-  publishPreInspectionMutation,
-  rejectPreInspectionMutation,
-} from './preInspectionQueries'
+import { publishInspectionMutation, rejectInspectionMutation } from './preInspectionQueries'
 
 const SelectPreInspectionView = styled.div``
 
@@ -194,8 +191,8 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
       await refetchPreInspections()
     }, [createPreInspection, refetchPreInspections, onSelect])
 
-    let [publishPreInspection] = useMutationData(publishPreInspectionMutation)
-    let [rejectPreInspection] = useMutationData(rejectPreInspectionMutation)
+    let [publishPreInspection] = useMutationData(publishInspectionMutation)
+    let [rejectPreInspection] = useMutationData(rejectInspectionMutation)
 
     let inspectionAction = useCallback(
       async (action, inspectionId: string) => {

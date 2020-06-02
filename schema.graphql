@@ -203,27 +203,27 @@ type Mutation {
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
-  createPreInspection(inspection: InitialPreInspectionInput!): Inspection!
+  createInspection(inspection: InitialInspectionInput!): Inspection!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
   modifyUser(userInput: UserInput!): User!
-  publishPreInspection(inspectionId: String!): Inspection!
+  publishInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
-  rejectPreInspection(inspectionId: String!): Inspection!
+  rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, inspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
-  removePreInspection(inspectionId: String!): Boolean!
-  submitPreInspection(inspectionId: String!): Inspection!
+  removeInspection(inspectionId: String!): Boolean!
+  submitInspection(inspectionId: String!): Inspection!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
-  updatePreInspection(inspection: PreInspectionInput!, inspectionId: String!): Inspection!
+  updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
 }
@@ -288,12 +288,12 @@ type ProcurementUnitRoute {
 }
 
 type Query {
-  allPreInspections: [Inspection!]!
+  allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
   availablePreInspectionReports(inspectionId: String!): [ReportListItem!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
-  currentPreInspectionByOperatorAndSeason(operatorId: Int!, seasonId: String!): Inspection
-  currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [Inspection!]!
+  currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
+  currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
@@ -304,7 +304,7 @@ type Query {
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
   inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
-  inspectionsByOperator(operatorId: Int!): [Inspection!]!
+  inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
@@ -438,14 +438,15 @@ input EquipmentInput {
   vehicleId: String
 }
 
-input InitialPreInspectionInput {
+input InitialInspectionInput {
   endDate: BulttiDate
+  inspectionType: InspectionType!
   operatorId: Int!
   seasonId: String!
   startDate: BulttiDate
 }
 
-input PreInspectionInput {
+input InspectionInput {
   endDate: BulttiDate
   startDate: BulttiDate
 }
