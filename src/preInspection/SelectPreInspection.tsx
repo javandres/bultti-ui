@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
-import { useCreatePreInspection } from './preInspectionUtils'
+import { useCreateInspection, useEditInspection } from './inspectionUtils'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -140,7 +140,6 @@ export type PropTypes = {
   inspections?: Inspection[]
   refetchPreInspections: () => unknown
   loading?: boolean
-  onSelect: (value: Inspection | null) => unknown
 }
 
 /**
@@ -152,22 +151,24 @@ export type PropTypes = {
  */
 
 const SelectPreInspection: React.FC<PropTypes> = observer(
-  ({ inspections = [], refetchPreInspections, loading = false, onSelect }) => {
+  ({ inspections = [], refetchPreInspections, loading = false }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
 
+    var editInspection = useEditInspection(InspectionType.Pre)
+
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
-    let createPreInspection = useCreatePreInspection(operator, season)
+    let createPreInspection = useCreateInspection(operator, season, InspectionType.Pre)
 
     let onCreatePreInspection = useCallback(async () => {
       let createdPreInspection = await createPreInspection()
 
       if (createdPreInspection) {
-        onSelect(createdPreInspection)
+        editInspection(createdPreInspection)
       }
 
       await refetchPreInspections()
-    }, [createPreInspection, refetchPreInspections, onSelect])
+    }, [createPreInspection, refetchPreInspections, editInspection])
 
     return (
       <SelectPreInspectionView>
@@ -239,7 +240,6 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                   <InspectionActions
                     onRefresh={refetchPreInspections}
                     inspection={inspection}
-                    onSelect={onSelect}
                   />
                 </PreInspectionItem>
               ))}

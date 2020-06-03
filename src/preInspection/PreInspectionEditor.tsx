@@ -11,12 +11,12 @@ import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
 import { PreInspectionContext } from './PreInspectionContext'
-import { ButtonStyle } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
+import InspectionActions from './InspectionActions'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -24,7 +24,7 @@ const EditPreInspectionView = styled.div`
 `
 
 type PreInspectionProps = {
-  refetchData?: () => unknown
+  refetchData: () => unknown
   loading?: boolean
 } & TabChildProps
 
@@ -40,12 +40,6 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     let [updatePreInspection, { loading: updateLoading }] = useMutationData(
       updateInspectionMutation
     )
-
-    let onPreInspectionChange = useCallback(() => {
-      if (refetchData) {
-        refetchData()
-      }
-    }, [refetchData])
 
     let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
@@ -66,22 +60,16 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           })
 
           isUpdating.current = false
-          await onPreInspectionChange()
+          await refetchData()
         }
       },
-      [isUpdating.current, inspection, loading, updatePreInspection]
+      [isUpdating.current, inspection, loading, updatePreInspection, refetchData]
     )
 
     let createUpdateCallback = useCallback(
       (name) => (value) => updatePreInspectionValue(name, value),
       [updatePreInspectionValue]
     )
-
-    let onMetaButtonAction = useCallback(() => {
-      if (inspection) {
-        navigateWithQueryString(`/pre-inspection/edit/${inspection.id}/preview`)
-      }
-    }, [inspection])
 
     useEffect(() => {
       if (!inspection || !operator || !season) {
@@ -97,12 +85,8 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
       <EditPreInspectionView>
         {!!inspection && (
           <>
-            <PreInspectionMeta
-              isLoading={isLoading}
-              buttonStyle={ButtonStyle.SECONDARY}
-              buttonAction={onMetaButtonAction}
-              buttonLabel="Esikatsele"
-            />
+            <InspectionActions inspection={inspection} onRefresh={refetchData} />
+            <PreInspectionMeta isLoading={isLoading} />
 
             <SectionHeading theme="light">Perustiedot</SectionHeading>
             <PreInspectionConfig onUpdateValue={createUpdateCallback} />

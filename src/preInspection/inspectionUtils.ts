@@ -6,6 +6,7 @@ import {
   InspectionType,
   InspectionUserRelationType,
   Operator,
+  Season,
 } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
@@ -20,7 +21,7 @@ import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 
-export function usePreInspectionById(inspectionId?: string) {
+export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
     inspectionQuery,
     {
@@ -36,8 +37,12 @@ export function usePreInspectionById(inspectionId?: string) {
   return { data, loading, error, refetch }
 }
 
-export function useCreatePreInspection(operator, season) {
-  let [createPreInspection, { loading: createLoading }] = useMutationData(
+export function useCreateInspection(
+  operator: Operator,
+  season: Season,
+  inspectionType: InspectionType
+) {
+  let [createInspection, { loading: createLoading }] = useMutationData(
     createInspectionMutation
   )
 
@@ -46,25 +51,25 @@ export function useCreatePreInspection(operator, season) {
     async (seasonId = season?.id) => {
       // A pre-inspection can be created when there is not one currently existing or loading
       if (operator && seasonId && !createLoading) {
-        // InitialInspectionInput requires operator and season ID.
+        // InitialInspectionInput requires operator, season ID and inspection type.
         let inspectionInput: InitialInspectionInput = {
           operatorId: operator.id,
           seasonId,
           startDate: season.startDate,
           endDate: season.endDate,
-          inspectionType: InspectionType.Pre,
+          inspectionType,
         }
 
-        let createResult = await createPreInspection({
+        let createResult = await createInspection({
           variables: {
             inspectionInput,
           },
         })
 
-        let newPreInspection = pickGraphqlData(createResult.data)
+        let newInspection = pickGraphqlData(createResult.data)
 
-        if (newPreInspection) {
-          return newPreInspection
+        if (newInspection) {
+          return newInspection
         } else {
           console.error(createResult.errors)
         }
@@ -76,15 +81,15 @@ export function useCreatePreInspection(operator, season) {
   )
 }
 
-export function useRemovePreInspection(
+export function useRemoveInspection(
   afterRemove: () => unknown = () => {}
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
-  let [removePreInspection, { loading }] = useMutationData(removeInspectionMutation)
+  let [removeInspection, { loading }] = useMutationData(removeInspectionMutation)
 
   let execRemove = useCallback(
     async (inspection?: Inspection) => {
       if (inspection) {
-        await removePreInspection({
+        await removeInspection({
           variables: {
             inspectionId: inspection.id,
           },
@@ -93,24 +98,25 @@ export function useRemovePreInspection(
         await afterRemove()
       }
     },
-    [removePreInspection, afterRemove]
+    [removeInspection, afterRemove]
   )
 
   return [execRemove, { loading }]
 }
 
-export function useEditPreInspection(inspectionId = '') {
+export function useEditInspection(inspectionType: InspectionType = InspectionType.Pre) {
   return useCallback(
-    (altInspectionId = '') => {
-      let useId = inspectionId || altInspectionId || ''
+    (inspection?: Inspection) => {
+      let pathSegment =
+        inspectionType === InspectionType.Pre ? 'pre-inspection' : 'post-inspection'
 
-      if (!useId) {
-        return navigateWithQueryString(`/pre-inspection/edit`, { replace: true })
+      if (inspection) {
+        return navigateWithQueryString(`/${pathSegment}/edit/${inspection.id}`)
       }
 
-      return navigateWithQueryString(`/pre-inspection/edit/${useId}`)
+      return navigateWithQueryString(`/${pathSegment}/edit`, { replace: true })
     },
-    [inspectionId]
+    [inspectionType]
   )
 }
 
@@ -119,6 +125,16 @@ export function usePreInspectionReports(inspectionId: string = '') {
     (altInspectionId?: string) => {
       let useId = inspectionId || altInspectionId || ''
       return navigateWithQueryString(`/pre-inspection/reports/${useId}`)
+    },
+    [inspectionId]
+  )
+}
+
+export function usePostInspectionReports(inspectionId: string = '') {
+  return useCallback(
+    (altInspectionId?: string) => {
+      let useId = inspectionId || altInspectionId || ''
+      return navigateWithQueryString(`/post-inspection/reports/${useId}`)
     },
     [inspectionId]
   )

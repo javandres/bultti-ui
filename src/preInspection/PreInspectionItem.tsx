@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Inspection, InspectionStatus } from '../schema-types'
-import { getCreatedBy, useEditPreInspection } from './preInspectionUtils'
+import { getCreatedBy } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
@@ -103,7 +103,6 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
   onPreInspectionUpdated = () => {},
   showActions = true,
 }) => {
-  let editPreInspection = useEditPreInspection(inspection.id)
   let createdBy = getCreatedBy(inspection)
 
   return (
@@ -118,11 +117,7 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
         renderValue={renderValue}
       />
       {showActions && (
-        <InspectionActionsRow
-          inspection={inspection}
-          onSelect={editPreInspection}
-          onRefresh={onPreInspectionUpdated}
-        />
+        <InspectionActionsRow inspection={inspection} onRefresh={onPreInspectionUpdated} />
       )}
     </PreInspectionItemView>
   )

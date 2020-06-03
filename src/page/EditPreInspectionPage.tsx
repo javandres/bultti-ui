@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
@@ -8,20 +8,12 @@ import Tabs from '../common/components/Tabs'
 import PreInspectionPreview from '../preInspection/PreInspectionPreview'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { useMutationData } from '../util/useMutationData'
-import {
-  publishInspectionMutation,
-  submitInspectionMutation,
-} from '../preInspection/preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
-import {
-  useEditPreInspection,
-  usePreInspectionById,
-} from '../preInspection/preInspectionUtils'
+import { useEditInspection, useInspectionById } from '../preInspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
-import { InspectionStatus, UserRole } from '../schema-types'
 import { useRefetch } from '../util/useRefetch'
+import { InspectionType } from '../schema-types'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -32,38 +24,15 @@ export type PropTypes = {
 const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = '' }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
-  var [user] = useStateValue('user')
-  var editPreInspection = useEditPreInspection()
+  var editPreInspection = useEditInspection(InspectionType.Pre)
 
   let {
     data: inspection,
     loading: inspectionLoading,
     refetch: refetchInspection,
-  } = usePreInspectionById(inspectionId)
+  } = useInspectionById(inspectionId)
 
   let refetch = useRefetch(refetchInspection)
-
-  let [publishPreInspection] = useMutationData(publishInspectionMutation)
-  let [submitPreInspection] = useMutationData(submitInspectionMutation)
-
-  let userCanPublish =
-    inspection?.status === InspectionStatus.InReview && user && user.role === UserRole.Admin
-
-  let inspectionAction = useCallback(
-    async (publishId: string) => {
-      let action = userCanPublish ? publishPreInspection : submitPreInspection
-
-      await action({
-        variables: {
-          inspectionId: publishId,
-        },
-      })
-
-      await refetch()
-      editPreInspection()
-    },
-    [submitPreInspection, refetch, editPreInspection, userCanPublish]
-  )
 
   return (
     <EditPreInspectionView>
@@ -100,8 +69,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
               path="preview"
               name="preview"
               label="Esikatsele"
-              onInspectionAction={inspectionAction}
-              inspectionActionLabel={userCanPublish ? 'Julkaise' : 'Valmis'}
+              refetchData={refetch}
             />
           </Tabs>
         )}

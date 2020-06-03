@@ -1,12 +1,18 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, UserRole } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { usePreInspectionReports, useRemovePreInspection } from './preInspectionUtils'
+import {
+  useEditInspection,
+  usePreInspectionReports,
+  useRemoveInspection,
+} from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import { publishInspectionMutation, rejectInspectionMutation } from './preInspectionQueries'
 import { useStateValue } from '../state/useAppState'
+import { useMatch } from '@reach/router'
+import { requireAdminUser } from '../util/userRoles'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -26,7 +32,6 @@ const ButtonRow = styled.div`
 export type PropTypes = {
   inspection: Inspection
   onRefresh: () => unknown
-  onSelect: (value: Inspection | null) => unknown
   draftActions?: React.ReactChild
   reviewActions?: React.ReactChild
   productionActions?: React.ReactChild
@@ -38,7 +43,6 @@ const InspectionActions = observer(
   ({
     inspection,
     onRefresh,
-    onSelect,
     draftActions,
     reviewActions,
     productionActions,
@@ -46,87 +50,85 @@ const InspectionActions = observer(
     style,
   }: PropTypes) => {
     var [user] = useStateValue('user')
+    var isEditing = useMatch(`edit/${inspection.id}`)
 
-    let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(onRefresh)
+    console.log(isEditing)
 
-    let goToPreInspectionReports = usePreInspectionReports()
+    var editInspection = useEditInspection(InspectionType.Pre)
+    var goToPreInspectionReports = usePreInspectionReports()
 
-    let [publishPreInspection] = useMutationData(publishInspectionMutation)
-    let [rejectPreInspection] = useMutationData(rejectInspectionMutation)
+    var [removePreInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
 
-    let inspectionAction = useCallback(
-      async (action, inspectionId: string) => {
-        await action({
-          variables: {
-            inspectionId,
-          },
-        })
+    var [publishPreInspection] = useMutationData(publishInspectionMutation)
+    var [rejectPreInspection] = useMutationData(rejectInspectionMutation)
 
-        await onRefresh()
-      },
-      [onRefresh]
-    )
+    var onPublishInspection = useCallback(async () => {
+      await publishPreInspection({
+        variables: {
+          inspectionId: inspection.id,
+        },
+      })
+
+      await onRefresh()
+    }, [onRefresh, inspection])
+
+    var onRejectInspection = useCallback(async () => {
+      await rejectPreInspection({
+        variables: {
+          inspectionId: inspection.id,
+        },
+      })
+
+      await onRefresh()
+    }, [onRefresh, inspection])
 
     let userCanPublish =
-      inspection.status === InspectionStatus.InReview && user && user.role === UserRole.Admin
+      inspection.status === InspectionStatus.InReview && requireAdminUser(user)
 
     return (
       <ButtonRow className={className} style={style}>
-        {inspection.status === InspectionStatus.Draft ? (
+        {!isEditing && (
+          <Button
+            buttonStyle={ButtonStyle.NORMAL}
+            size={ButtonSize.MEDIUM}
+            onClick={() => editInspection(inspection)}>
+            {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
+          </Button>
+        )}
+        {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
+          <Button
+            style={{ marginLeft: 'auto', marginRight: 0 }}
+            loading={removeLoading}
+            buttonStyle={ButtonStyle.REMOVE}
+            size={ButtonSize.MEDIUM}
+            onClick={() => removePreInspection(inspection)}>
+            Poista
+          </Button>
+        )}
+        {inspection.status === InspectionStatus.InReview && userCanPublish && (
           <>
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
-              onClick={() => onSelect(inspection)}>
-              Muokkaa
+              onClick={onPublishInspection}>
+              Julkaise
             </Button>
             <Button
-              style={{ marginLeft: 'auto', marginRight: 0 }}
-              loading={removeLoading}
               buttonStyle={ButtonStyle.REMOVE}
               size={ButtonSize.MEDIUM}
-              onClick={() => removePreInspection(inspection)}>
-              Poista
+              onClick={onRejectInspection}>
+              Hylkää
             </Button>
-            {draftActions}
           </>
-        ) : inspection.status === InspectionStatus.InReview ? (
-          <>
-            {userCanPublish && (
-              <>
-                <Button
-                  buttonStyle={ButtonStyle.NORMAL}
-                  size={ButtonSize.MEDIUM}
-                  onClick={() => inspectionAction(publishPreInspection, inspection.id)}>
-                  Julkaise
-                </Button>
-                <Button
-                  buttonStyle={ButtonStyle.REMOVE}
-                  size={ButtonSize.MEDIUM}
-                  onClick={() => inspectionAction(rejectPreInspection, inspection.id)}>
-                  Hylkää
-                </Button>
-              </>
-            )}
-            <Button
-              onClick={() => goToPreInspectionReports(inspection.id)}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}>
-              Raportit
-            </Button>
-            {reviewActions}
-          </>
-        ) : inspection.status === InspectionStatus.InProduction ? (
-          <>
-            <Button
-              onClick={() => goToPreInspectionReports(inspection.id)}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}>
-              Raportit
-            </Button>
-            {productionActions}
-          </>
-        ) : null}
+        )}
+        {inspection.status !== InspectionStatus.Draft && (
+          <Button
+            onClick={() => goToPreInspectionReports(inspection.id)}
+            buttonStyle={ButtonStyle.NORMAL}
+            size={ButtonSize.MEDIUM}>
+            Raportit
+          </Button>
+        )}
       </ButtonRow>
     )
   }

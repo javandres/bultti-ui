@@ -1,10 +1,10 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
-import { groupBy, orderBy, get } from 'lodash'
+import { get, groupBy, orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import PreInspectionItem from './PreInspectionItem'
-import { InspectionStatus, Inspection, Season } from '../schema-types'
-import { useCreatePreInspection, useEditPreInspection } from './preInspectionUtils'
+import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
+import { useCreateInspection, useEditInspection } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { DATE_FORMAT } from '../constants'
@@ -154,8 +154,8 @@ const PreInspectionsList: React.FC<PropTypes> = ({
     'season.id'
   )
 
-  let editPreInspection = useEditPreInspection()
-  let createPreInspection = useCreatePreInspection(operator, season)
+  let editPreInspection = useEditInspection(InspectionType.Pre)
+  let createPreInspection = useCreateInspection(operator, season, InspectionType.Pre)
 
   let onCreatePreInspection = useCallback(
     async (seasonId) => {
@@ -163,7 +163,7 @@ const PreInspectionsList: React.FC<PropTypes> = ({
       let createdPreInspection = await createPreInspection(seasonId)
 
       if (createdPreInspection) {
-        editPreInspection(createdPreInspection.id)
+        editPreInspection(createdPreInspection)
       } else {
         onUpdate()
       }

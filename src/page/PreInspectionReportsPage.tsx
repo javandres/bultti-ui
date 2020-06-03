@@ -5,7 +5,7 @@ import { Page } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import PreInspectionReports from '../preInspection/PreInspectionReports'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { usePreInspectionById } from '../preInspection/preInspectionUtils'
+import { useInspectionById } from '../preInspection/inspectionUtils'
 import { PageTitle } from '../common/components/Typography'
 
 type PropTypes = {
@@ -13,7 +13,7 @@ type PropTypes = {
 } & RouteComponentProps
 
 const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ inspectionId }) => {
-  let { data: inspection, loading: inspectionLoading, refetch } = usePreInspectionById(
+  let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
     inspectionId
   )
 

@@ -7,7 +7,7 @@ import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { usePreInspections } from '../preInspection/preInspectionUtils'
+import { usePreInspections } from '../preInspection/inspectionUtils'
 import { PageTitle } from '../common/components/Typography'
 
 type PropTypes = {
