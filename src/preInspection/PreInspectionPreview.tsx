@@ -7,7 +7,6 @@ import { PreInspectionContext } from './PreInspectionContext'
 import { InspectionStatus } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
 import PreInspectionReports from './PreInspectionReports'
-import InspectionActions from './InspectionActions'
 
 const PreviewPreInspectionView = styled.div``
 
@@ -15,18 +14,16 @@ const PreviewMeta = styled(PreInspectionMeta)`
   margin-left: 1rem;
 `
 
-export type PropTypes = {
-  refetchData: () => unknown
-} & TabChildProps
+export type PropTypes = {} & TabChildProps
 
-const PreInspectionPreview: React.FC<PropTypes> = observer(({ refetchData }) => {
+const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
   let inspection = useContext(PreInspectionContext)
 
   // Validate that the form has each dependent piece of data.
   let formCondition = useMemo(() => {
     return {
       inspection: !!inspection,
-      status: inspection?.status === InspectionStatus.Draft,
+      status: inspection?.status !== InspectionStatus.InProduction,
       operator: !!inspection?.operator,
       startDate: !!inspection?.startDate,
       season: !!inspection?.season,
@@ -40,7 +37,6 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(({ refetchData }) => 
 
   return (
     <PreviewPreInspectionView>
-      {inspection && <InspectionActions inspection={inspection} onRefresh={refetchData} />}
       {activeBlockers.length !== 0 && (
         <MessageContainer style={{ marginBottom: '1rem' }}>
           {activeBlockers.map((blockerName) => (

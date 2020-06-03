@@ -14,7 +14,7 @@ export type PropTypes = {
   catalogueId: string
   operatorId: number
   startDate: Date
-  onEquipmentChanged: () => Promise<void>
+  onEquipmentChanged: () => unknown
   equipmentEditable: boolean
 }
 
@@ -59,7 +59,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
           )
         )
 
-        await onEquipmentChanged()
+        onEquipmentChanged()
       },
       [execUpdateEquipment, onEquipmentChanged]
     )
@@ -73,7 +73,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
           },
         })
 
-        await onEquipmentChanged()
+        onEquipmentChanged()
       },
       [onEquipmentChanged, catalogueId, execRemoveEquipment]
     )

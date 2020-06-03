@@ -59,7 +59,7 @@ const spliceGroup = (groups, group, index) => {
   return nextDayTypeGroups
 }
 
-export const useDayTypeGroups = (): DayTypeGroupsReturn => {
+export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeState>([
     {
       ...defaultDayTypeGroup,
@@ -129,17 +129,29 @@ export const useDayTypeGroups = (): DayTypeGroupsReturn => {
 
       return nextDayTypeGroups
     },
-    [dayTypeGroups]
+    [dayTypeGroups, isEditable]
   )
 
   const removeDayTypeFromGroup = useCallback(
-    (dayType: DayType, groupIndex: number) => setDayTypeInGroup(dayType, groupIndex, false),
-    [dayTypeGroups, setDayTypeInGroup]
+    (dayType: DayType, groupIndex: number) => {
+      if (!isEditable) {
+        return dayTypeGroups
+      }
+
+      return setDayTypeInGroup(dayType, groupIndex, false)
+    },
+    [dayTypeGroups, setDayTypeInGroup, isEditable]
   )
 
   const addDayTypeToGroup = useCallback(
-    (dayType: DayType, groupIndex: number) => setDayTypeInGroup(dayType, groupIndex, true),
-    [dayTypeGroups, setDayTypeInGroup]
+    (dayType: DayType, groupIndex: number) => {
+      if (!isEditable) {
+        return dayTypeGroups
+      }
+
+      return setDayTypeInGroup(dayType, groupIndex, true)
+    },
+    [dayTypeGroups, setDayTypeInGroup, isEditable]
   )
 
   return [

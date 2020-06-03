@@ -34,10 +34,11 @@ const ProcurementUnitExecutionRequirementView = styled.div`
 
 export type PropTypes = {
   procurementUnit: ProcurementUnit
+  isEditable: boolean
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
-  ({ procurementUnit }) => {
+  ({ procurementUnit, isEditable }) => {
     let inspection = useContext(PreInspectionContext)
 
     let [
@@ -88,6 +89,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
     let onRefreshRequirements = useCallback(async () => {
       if (
+        isEditable &&
         procurementUnitRequirement &&
         confirm(
           'Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?'
@@ -101,10 +103,11 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
         queueRefetch()
       }
-    }, [procurementUnitRequirement, refreshExecutionRequirement])
+    }, [procurementUnitRequirement, refreshExecutionRequirement, isEditable])
 
     let removeExecutionRequirement = useCallback(async () => {
       if (
+        isEditable &&
         procurementUnitRequirement &&
         confirm('Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?')
       ) {
@@ -116,7 +119,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
         queueRefetch()
       }
-    }, [procurementUnitRequirement, execRemoveExecutionRequirement, queueRefetch])
+    }, [procurementUnitRequirement, execRemoveExecutionRequirement, queueRefetch, isEditable])
 
     const equipment: EquipmentWithQuota[] = useMemo(
       () =>
@@ -149,36 +152,41 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               size={ButtonSize.SMALL}>
               Päivitä
             </Button>
-            <Button
-              loading={refreshLoading}
-              onClick={onRefreshRequirements}
-              style={{ marginLeft: '0.5rem' }}
-              buttonStyle={ButtonStyle.SECONDARY}
-              size={ButtonSize.SMALL}>
-              Virkistä kalustoluettelosta
-            </Button>
+            {isEditable && (
+              <Button
+                loading={refreshLoading}
+                onClick={onRefreshRequirements}
+                style={{ marginLeft: '0.5rem' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}>
+                Virkistä kalustoluettelosta
+              </Button>
+            )}
           </div>
         </FlexRow>
         <LoadingDisplay loading={requirementsLoading} />
         {procurementUnitRequirement ? (
           <>
             <RequirementEquipmentList
+              isEditable={isEditable}
               startDate={inspectionStartDate}
               onEquipmentChanged={queueRefetch}
               equipment={equipment}
               executionRequirement={procurementUnitRequirement}
             />
-            <AddEquipment
-              operatorId={procurementUnitRequirement.operator.id}
-              equipment={equipment}
-              onEquipmentChanged={queueRefetch}
-              hasEquipment={hasEquipment}
-              addEquipment={addEquipment}
-              removeAllEquipment={removeExecutionRequirement}
-              removeLabel="Poista suoritevaatimus"
-              editableKeys={['percentageQuota']}
-              fieldLabels={equipmentColumnLabels}
-            />
+            {isEditable && (
+              <AddEquipment
+                operatorId={procurementUnitRequirement.operator.id}
+                equipment={equipment}
+                onEquipmentChanged={queueRefetch}
+                hasEquipment={hasEquipment}
+                addEquipment={addEquipment}
+                removeAllEquipment={removeExecutionRequirement}
+                removeLabel="Poista suoritevaatimus"
+                editableKeys={['percentageQuota']}
+                fieldLabels={equipmentColumnLabels}
+              />
+            )}
             <RequirementsTable executionRequirement={procurementUnitRequirement} />
           </>
         ) : (

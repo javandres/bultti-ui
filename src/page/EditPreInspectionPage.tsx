@@ -14,8 +14,15 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import { InspectionType } from '../schema-types'
+import InspectionActions from '../preInspection/InspectionActions'
 
 const EditPreInspectionView = styled(Page)``
+
+const InspectionActionsRow = styled(InspectionActions)`
+  border-top: 0;
+  margin: -0.875rem 0 0.25rem;
+  padding: 0.5rem 1rem 1rem;
+`
 
 export type PropTypes = {
   inspectionId?: string
@@ -57,21 +64,21 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
             <Button onClick={() => editPreInspection()}>Takaisin</Button>
           </MessageContainer>
         ) : (
-          <Tabs>
-            <PreInspectionEditor
-              name="create"
-              path="/"
-              label="Muokkaa"
-              loading={inspectionLoading}
-              refetchData={refetch}
-            />
-            <PreInspectionPreview
-              path="preview"
-              name="preview"
-              label="Esikatsele"
-              refetchData={refetch}
-            />
-          </Tabs>
+          <>
+            {inspection && (
+              <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+            )}
+            <Tabs>
+              <PreInspectionEditor
+                name="create"
+                path="/"
+                label="Muokkaa"
+                loading={inspectionLoading}
+                refetchData={refetch}
+              />
+              <PreInspectionPreview path="preview" name="preview" label="Esikatsele" />
+            </Tabs>
+          </>
         )}
       </PreInspectionContext.Provider>
     </EditPreInspectionView>

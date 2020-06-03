@@ -24,4 +24,5 @@ export const MetaLabel = styled.h6`
 `
 export const MetaValue = styled.div`
   font-size: 0.875rem;
+  margin-bottom: 0.25rem;
 `

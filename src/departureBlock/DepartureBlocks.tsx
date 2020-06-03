@@ -17,9 +17,11 @@ const DepartureBlocksView = styled(PageSection)`
   margin-bottom: 0;
 `
 
-type PropTypes = {}
+type PropTypes = {
+  isEditable: boolean
+}
 
-const DepartureBlocks: React.FC<PropTypes> = observer(() => {
+const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable }) => {
   const inspection = useContext(PreInspectionContext)
   const inspectionId = inspection?.id || ''
 
@@ -29,7 +31,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
     dayTypeGroups,
     enabledDayTypes,
     { addDayTypeToGroup, removeDayTypeFromGroup, addDayTypeGroup },
-  ] = useDayTypeGroups()
+  ] = useDayTypeGroups(isEditable)
 
   // The main query that fetches the departure blocks.
   let { data: availableDayTypesData, loading: departureBlocksLoading, refetch } = useQueryData(
@@ -92,6 +94,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
         return (
           <DepartureBlockGroupItem
             key={`dayTypeGroup-${groupIndex}`}
+            isEditable={isEditable}
             loading={departureBlocksLoading}
             hasDepartures={groupDayTypesDepartures.length !== 0}
             selectableDayTypes={selectableDayTypes}
@@ -104,11 +107,12 @@ const DepartureBlocks: React.FC<PropTypes> = observer(() => {
         )
       })}
 
-      {difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
-        <div>
-          <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
-        </div>
-      )}
+      {isEditable &&
+        difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
+          <div>
+            <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
+          </div>
+        )}
     </DepartureBlocksView>
   )
 })

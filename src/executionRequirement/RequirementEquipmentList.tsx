@@ -13,6 +13,7 @@ export type PropTypes = {
   executionRequirement: ExecutionRequirement
   startDate: Date
   onEquipmentChanged: () => unknown
+  isEditable: boolean
 }
 
 export const equipmentColumnLabels = {
@@ -37,48 +38,52 @@ export const groupedEquipmentColumnLabels = {
 }
 
 const RequirementEquipmentList: React.FC<PropTypes> = observer(
-  ({ equipment, executionRequirement, startDate, onEquipmentChanged }) => {
+  ({ equipment, executionRequirement, startDate, onEquipmentChanged, isEditable }) => {
     let [execRemoveEquipment] = useMutationData(removeRequirementEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentRequirementQuotaMutation)
 
     let updateEquipmentData = useCallback(
       async (updates: EquipmentUpdate[]) => {
-        await Promise.all(
-          updates.map((update) =>
-            execUpdateEquipment({
-              variables: update,
-            })
+        if (isEditable) {
+          await Promise.all(
+            updates.map((update) =>
+              execUpdateEquipment({
+                variables: update,
+              })
+            )
           )
-        )
 
-        await onEquipmentChanged()
+          await onEquipmentChanged()
+        }
       },
-      [execUpdateEquipment, onEquipmentChanged]
+      [execUpdateEquipment, onEquipmentChanged, isEditable]
     )
 
     const removeEquipment = useCallback(
       async (equipmentId: string) => {
-        await execRemoveEquipment({
-          variables: {
-            equipmentId,
-            requirementId: executionRequirement.id,
-          },
-        })
+        if (isEditable) {
+          await execRemoveEquipment({
+            variables: {
+              equipmentId,
+              requirementId: executionRequirement.id,
+            },
+          })
 
-        await onEquipmentChanged()
+          await onEquipmentChanged()
+        }
       },
-      [onEquipmentChanged, executionRequirement, execRemoveEquipment]
+      [onEquipmentChanged, executionRequirement, execRemoveEquipment, isEditable]
     )
 
     return equipment.length !== 0 ? (
       <EquipmentList
         equipment={equipment}
         updateEquipment={updateEquipmentData}
-        removeEquipment={removeEquipment}
+        removeEquipment={!isEditable ? undefined : removeEquipment}
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}
-        editableValues={['percentageQuota', 'meterRequirement']}
+        editableValues={!isEditable ? undefined : ['percentageQuota', 'meterRequirement']}
       />
     ) : (
       <MessageView>Suoritevaatimukseen ei ole liitetty ajoneuvoja.</MessageView>

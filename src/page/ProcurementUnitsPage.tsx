@@ -31,6 +31,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
       ) : (
         <Content>
           <ProcurementUnits
+            requirementsEditable={false}
             operatorId={globalOperator?.id || 0}
             startDate={globalSeason?.startDate || ''}
           />

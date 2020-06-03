@@ -48,6 +48,7 @@ const ResetButton = styled(Button).attrs(() => ({
 
 type PropTypes = {
   loading?: boolean
+  isEditable: boolean
   selectableDayTypes?: string[]
   hasDepartures: boolean
   dayTypeGroup: DayTypeGroup
@@ -59,6 +60,7 @@ type PropTypes = {
 
 const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
   ({
+    isEditable,
     selectableDayTypes = [],
     dayTypeGroup,
     loading = false,
@@ -129,6 +131,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     // Reset the file value (upload input value) and remove all blocks from the group.
     const onReset = useCallback(async () => {
       if (
+        isEditable &&
         confirm(
           'Olet poistamassa kaikki tähän päiväryhmään kuuluvat lähtöketjut. Uusi lähtöketjutiedosto on ladattava. Ok?'
         )
@@ -145,7 +148,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
 
         onBlocksChange()
       }
-    }, [dayTypeGroup, inspectionId, removeDepartureBlocksForDays, onBlocksChange])
+    }, [dayTypeGroup, inspectionId, removeDepartureBlocksForDays, onBlocksChange, isEditable])
 
     return (
       <DepartureBlockGroupContainer>
@@ -154,6 +157,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
             <DayTypeOption key={dt}>
               <Checkbox
                 disabled={
+                  !isEditable ||
                   isDisabled ||
                   (selectableDayTypes?.length !== 0 && !selectableDayTypes.includes(dt))
                 }
@@ -165,13 +169,13 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
               />
             </DayTypeOption>
           ))}
-          {hasDepartures && !isLoading && (
+          {isEditable && hasDepartures && !isLoading && (
             <ResetButton style={{ marginLeft: 'auto' }} onClick={onReset}>
               Poista kaikki ryhmän lähtöketjut
             </ResetButton>
           )}
         </DayTypesContainer>
-        {(!hasDepartures || fileValue.length !== 0) && (
+        {isEditable && (!hasDepartures || fileValue.length !== 0) && (
           <UploadFile
             disabled={loading || isDisabled}
             label="Lataa lähtöketjutiedosto"

@@ -31,7 +31,7 @@ export type PropTypes = {
   startDate: Date
   catalogue?: EquipmentCatalogueType
   operatorId: number
-  onCatalogueChanged: () => Promise<void>
+  onCatalogueChanged: () => unknown
   editable: boolean
 }
 
@@ -117,7 +117,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         })
       }
 
-      await onCatalogueChanged()
+      onCatalogueChanged()
     }, [
       operatorId,
       procurementUnitId,

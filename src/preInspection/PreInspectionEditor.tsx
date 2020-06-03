@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InspectionInput } from '../schema-types'
+import { InspectionInput, InspectionStatus } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
 import { updateInspectionMutation } from './preInspectionQueries'
@@ -16,7 +16,6 @@ import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
-import InspectionActions from './InspectionActions'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -31,6 +30,7 @@ type PreInspectionProps = {
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
   ({ refetchData, loading }) => {
     var inspection = useContext(PreInspectionContext)
+    var isEditable = inspection?.status === InspectionStatus.Draft
 
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
@@ -46,7 +46,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     // Update the pre-inspection on changes
     var updatePreInspectionValue = useCallback(
       async (name: keyof InspectionInput, value: string) => {
-        if (!isUpdating.current && inspection && !loading) {
+        if (isEditable && !isUpdating.current && inspection && !loading) {
           isUpdating.current = true
 
           var inspectionInput: InspectionInput = {}
@@ -67,7 +67,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     )
 
     let createUpdateCallback = useCallback(
-      (name) => (value) => updatePreInspectionValue(name, value),
+      (name) => (value) => (isEditable ? updatePreInspectionValue(name, value) : () => {}),
       [updatePreInspectionValue]
     )
 
@@ -85,20 +85,22 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
       <EditPreInspectionView>
         {!!inspection && (
           <>
-            <InspectionActions inspection={inspection} onRefresh={refetchData} />
             <PreInspectionMeta isLoading={isLoading} />
 
             <SectionHeading theme="light">Perustiedot</SectionHeading>
-            <PreInspectionConfig onUpdateValue={createUpdateCallback} />
+            <PreInspectionConfig
+              isEditable={isEditable}
+              onUpdateValue={createUpdateCallback}
+            />
 
             <SectionHeading theme="light">Lähtöketjut</SectionHeading>
-            <DepartureBlocks />
+            <DepartureBlocks isEditable={isEditable} />
 
             <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
             <PreInspectionExecutionRequirements />
 
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-            <ProcurementUnits />
+            <ProcurementUnits requirementsEditable={isEditable} />
 
             <PageSection>
               <PreInspectionDevTools inspection={inspection} />

@@ -79,7 +79,7 @@ export const executionRequirementsForAreaQuery = gql`
 `
 
 export const createExecutionRequirementForProcurementUnitMutation = gql`
-  mutation createExecutionRequirementsForPreInspection(
+  mutation createExecutionRequirementsForProcurementUnit(
     $procurementUnitId: String!
     $inspectionId: String!
   ) {

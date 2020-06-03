@@ -15,11 +15,13 @@ const ProcurementUnitsView = styled(TransparentPageSection)``
 export type PropTypes = {
   operatorId?: number
   startDate?: string
+  requirementsEditable: boolean
 }
 
-const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
+const ProcurementUnits: React.FC<PropTypes> = observer((props) => {
   const inspection = useContext(PreInspectionContext)
-  let { operatorId, startDate } = inspection || props
+  let { operatorId, startDate } = inspection || props || {}
+  let { requirementsEditable = true } = props
 
   let catalogueEditable = !inspection
   let showExecutionRequirements = !!inspection
@@ -64,6 +66,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props = {}) => {
           </FlexRow>
           {procurementUnits.map((procurementUnit) => (
             <ProcurementUnitItem
+              requirementsEditable={requirementsEditable}
               catalogueEditable={catalogueEditable}
               showExecutionRequirements={showExecutionRequirements}
               key={procurementUnit.id}

@@ -30,6 +30,7 @@ import ExpandableSection, {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
+import { useRefetch } from '../util/useRefetch'
 
 const ProcurementUnitView = styled.div`
   position: relative;
@@ -54,6 +55,7 @@ export type PropTypes = {
   expanded?: boolean
   startDate: string
   catalogueEditable: boolean
+  requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
 }
@@ -68,6 +70,7 @@ type ContentPropTypes = {
   startDate: string
   procurementUnitId: string
   catalogueEditable: boolean
+  requirementsEditable: boolean
   isVisible
 }
 
@@ -77,6 +80,7 @@ const ProcurementUnitItemContent = observer(
     startDate,
     procurementUnitId,
     catalogueEditable,
+    requirementsEditable,
     isVisible,
   }: ContentPropTypes) => {
     const [
@@ -85,13 +89,15 @@ const ProcurementUnitItemContent = observer(
     ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading, refetch: refetchUnit } =
+    const { data: procurementUnit, loading, refetch: refetchUnitData } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
         skip: !procurementUnitId || !isVisible,
         variables: {
           procurementUnitId,
         },
       }) || {}
+
+    let refetchUnit = useRefetch(refetchUnitData)
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -109,13 +115,15 @@ const ProcurementUnitItemContent = observer(
     })
 
     const addDraftProcurementUnit = useCallback(() => {
-      const inputRow: ProcurementUnitEditInput = {
-        weeklyMeters: procurementUnit.weeklyMeters ?? 0,
-        medianAgeRequirement: procurementUnit.medianAgeRequirement ?? 0,
-      }
+      if (catalogueEditable) {
+        const inputRow: ProcurementUnitEditInput = {
+          weeklyMeters: procurementUnit.weeklyMeters ?? 0,
+          medianAgeRequirement: procurementUnit.medianAgeRequirement ?? 0,
+        }
 
-      setPendingProcurementUnit(inputRow)
-    }, [procurementUnit])
+        setPendingProcurementUnit(inputRow)
+      }
+    }, [procurementUnit, catalogueEditable])
 
     const [updateProcurementUnit] = useMutationData<ProcurementUnitEditInput>(
       updateProcurementUnitMutation,
@@ -127,11 +135,16 @@ const ProcurementUnitItemContent = observer(
       }
     )
 
-    const onChangeProcurementUnit = useCallback((key: string, nextValue) => {
-      setPendingProcurementUnit((currentPending) =>
-        !currentPending ? null : { ...currentPending, [key]: nextValue }
-      )
-    }, [])
+    const onChangeProcurementUnit = useCallback(
+      (key: string, nextValue) => {
+        if (catalogueEditable) {
+          setPendingProcurementUnit((currentPending) =>
+            !currentPending ? null : { ...currentPending, [key]: nextValue }
+          )
+        }
+      },
+      [catalogueEditable]
+    )
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (
@@ -151,12 +164,6 @@ const ProcurementUnitItemContent = observer(
       }
     }, [catalogueEditable, updateWeeklyMeters])
 
-    const onCatalogueChanged = useCallback(async () => {
-      if (refetchUnit) {
-        await refetchUnit()
-      }
-    }, [refetchUnit])
-
     const onSaveProcurementUnit = useCallback(async () => {
       if (!catalogueEditable || !procurementUnitId || !pendingProcurementUnit) {
         return
@@ -170,8 +177,8 @@ const ProcurementUnitItemContent = observer(
         },
       })
 
-      await onCatalogueChanged()
-    }, [pendingProcurementUnit, onCatalogueChanged, catalogueEditable])
+      await refetchUnit()
+    }, [pendingProcurementUnit, refetchUnit, catalogueEditable])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
@@ -183,24 +190,21 @@ const ProcurementUnitItemContent = observer(
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
-    let onUpdate = useCallback(async () => {
-      if (refetchUnit) {
-        await refetchUnit()
-      }
-    }, [refetchUnit])
-
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
         {procurementUnit && (
           <>
             {showExecutionRequirements && hasEquipment && (
-              <ProcurementUnitExecutionRequirement procurementUnit={procurementUnit} />
+              <ProcurementUnitExecutionRequirement
+                isEditable={requirementsEditable}
+                procurementUnit={procurementUnit}
+              />
             )}
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
               <Button
-                onClick={onUpdate}
+                onClick={refetchUnit}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}>
@@ -253,7 +257,7 @@ const ProcurementUnitItemContent = observer(
               procurementUnitId={procurementUnitId}
               catalogue={activeCatalogue}
               operatorId={procurementUnit.operatorId}
-              onCatalogueChanged={onCatalogueChanged}
+              onCatalogueChanged={refetchUnit}
               editable={catalogueEditable}
             />
           </>
@@ -266,6 +270,7 @@ const ProcurementUnitItemContent = observer(
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({
     catalogueEditable,
+    requirementsEditable,
     showExecutionRequirements,
     startDate,
     procurementUnit,
@@ -311,6 +316,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}
                 procurementUnitId={procurementUnit.id}
+                requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
               />
             )}

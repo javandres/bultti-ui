@@ -13,10 +13,11 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 const PreInspectionConfigView = styled.div``
 
 export type PropTypes = {
+  isEditable: boolean
   onUpdateValue: (name: string) => (value: any) => void
 }
 
-const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) => {
+const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEditable }) => {
   let inspection: null | Inspection = useContext(PreInspectionContext)
 
   return (
@@ -30,14 +31,23 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue }) =>
           <FormColumn>
             <InputLabel theme="light">Tuotantojakso</InputLabel>
             <ControlGroup>
-              <SelectDate
-                name="production_start"
-                value={inspection.startDate}
-                minDate={inspection.minStartDate}
-                maxDate={inspection.season.endDate}
-                onChange={onUpdateValue('startDate')}
-                label="Alku"
-              />
+              {isEditable ? (
+                <SelectDate
+                  name="production_start"
+                  value={inspection.startDate}
+                  minDate={inspection.minStartDate}
+                  maxDate={inspection.season.endDate}
+                  onChange={onUpdateValue('startDate')}
+                  label="Alku"
+                />
+              ) : (
+                <Input
+                  value={inspection.startDate}
+                  label="Alku"
+                  subLabel={true}
+                  disabled={true}
+                />
+              )}
               <Input
                 value={inspection.endDate}
                 label="Loppu"
