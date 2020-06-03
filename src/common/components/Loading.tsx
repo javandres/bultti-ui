@@ -58,7 +58,7 @@ const LoadingContainer = styled(LoadingSafeDivComponent)<{
   pointer-events: none;
   user-select: none;
   transition: opacity 0.2s ease-out, transform 0.3s ease-out;
-  transform: ${(p) => (p.inline ? 'translateY(-5rem)' : 'translate(-50%, -50%)')};
+  transform: scale(2);
   position: ${(p) => (p.inline ? 'static' : 'absolute')};
   top: 2rem;
   left: 50%;
@@ -69,7 +69,7 @@ const LoadingContainer = styled(LoadingSafeDivComponent)<{
       ? css`
           opacity: 1;
           pointer-events: all;
-          transform: ${inline ? 'translateY(0)' : 'translate(-50%, 5rem)'};
+          transform: scale(1);
         `
       : ''};
 `
