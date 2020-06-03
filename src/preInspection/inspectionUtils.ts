@@ -196,6 +196,10 @@ export function getPublishedBy(inspection?: Inspection) {
 }
 
 export function getInspectionStatusColor(inspection: Inspection) {
+  if (inspection.status === InspectionStatus.Draft) {
+    return 'var(--blue)'
+  }
+
   if (inspection.status === InspectionStatus.InReview) {
     return 'var(--yellow)'
   }

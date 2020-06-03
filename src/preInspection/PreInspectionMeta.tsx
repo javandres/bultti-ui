@@ -12,7 +12,9 @@ import {
   MetaValue,
 } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getCreatedBy } from './inspectionUtils'
+import { getCreatedBy, getInspectionStatusColor } from './inspectionUtils'
+import { InspectionStatus } from '../schema-types'
+import { translate } from '../util/translate'
 
 const PreInspectionMetaView = styled.div`
   margin-bottom: 2.5rem;
@@ -41,6 +43,16 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ className, isLoading 
       <MetaHeading>Ennakkotarkastuksen tiedot</MetaHeading>
       <MetaDisplay>
         <LoadingMeta inline={true} loading={isLoading} />
+        <MetaItem
+          style={{
+            backgroundColor: getInspectionStatusColor(inspection),
+            borderColor: getInspectionStatusColor(inspection),
+            color:
+              inspection.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white',
+          }}>
+          <MetaLabel>Tarkastuksen tila</MetaLabel>
+          <MetaValue>{translate(inspection.status)}</MetaValue>
+        </MetaItem>
         <MetaItem>
           <MetaLabel>Perustettu</MetaLabel>
           <MetaValue>{format(parseISO(inspection.createdAt), READABLE_TIME_FORMAT)}</MetaValue>

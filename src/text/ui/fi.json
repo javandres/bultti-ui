@@ -15,5 +15,9 @@
   "nav.list.postinspection": "Jälkitarkastukset",
   "nav.reports": "Raportit",
   "nav.new.preinspection": "Uusi ennakkotarkastus",
-  "nav.new.postinspection": "Uusi jälkitarkastus"
+  "nav.new.postinspection": "Uusi jälkitarkastus",
+
+  "Draft": "Muokattavissa",
+  "InReview": "Hyväksyttävänä",
+  "InProduction": "Tuotannossa"
 }
