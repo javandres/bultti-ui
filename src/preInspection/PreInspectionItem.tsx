@@ -52,8 +52,10 @@ const InspectionActionsRow = styled(InspectionActions)`
 const itemTableHeadings = {
   createdAt: 'Luontiaika',
   updatedAt: 'Viimeksi päivitetty',
-  startDate: 'Tuotanto-aika alkaa',
-  endDate: 'Tuotanto-aika loppuu',
+  startDate: 'Tuotantokausi alkaa',
+  endDate: 'Tuotantokausi loppuu',
+  inspectionStartDate: 'Tarkastuskausi alkaa',
+  inspectionEndDate: 'Tarkastuskausi loppuu',
   version: 'Versio',
   status: 'Tila',
   createdBy: 'Luonut käyttäjä',
@@ -79,7 +81,9 @@ const renderValue = (key, val) => {
     case 'updatedAt':
       return format(parseISO(val), READABLE_TIME_FORMAT)
     case 'startDate':
+    case 'inspectionStartDate':
     case 'endDate':
+    case 'inspectionEndDate':
       return format(parseISO(val), READABLE_DATE_FORMAT)
     case 'status':
       if (val === InspectionStatus.InProduction) {
