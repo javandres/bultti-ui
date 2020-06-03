@@ -45,10 +45,11 @@ export type PropTypes = {
   onChange: AnyFunction
   label?: string
   name?: string
+  disabled?: boolean
 }
 
 const SelectDate: React.FC<PropTypes> = observer(
-  ({ value = '', maxDate, minDate, onChange, label, name }) => {
+  ({ disabled = false, value = '', maxDate, minDate, onChange, label, name }) => {
     let [inputValue, setInputValue] = useState(value)
 
     const minMoment = useMemo(() => (minDate ? moment(minDate, DATE_FORMAT_MOMENT) : false), [
@@ -172,21 +173,24 @@ const SelectDate: React.FC<PropTypes> = observer(
               onFocus={onOpenPicker}
               onBlur={applyInputValue}
               onEnterPress={applyInputValue}
+              disabled={disabled}
             />
           </InputContainer>
-          <DatePickerWrapper focused={focused}>
-            <DayPickerSingleDateController
-              date={valueMoment}
-              onDateChange={onDateChange}
-              onOutsideClick={onClosePicker}
-              focused={focused}
-              onFocusChange={onOpenPicker}
-              numberOfMonths={1}
-              firstDayOfWeek={1}
-              isDayBlocked={dateIsBlocked}
-              hideKeyboardShortcutsPanel={true}
-            />
-          </DatePickerWrapper>
+          {!disabled && (
+            <DatePickerWrapper focused={focused}>
+              <DayPickerSingleDateController
+                date={valueMoment}
+                onDateChange={onDateChange}
+                onOutsideClick={onClosePicker}
+                focused={focused}
+                onFocusChange={onOpenPicker}
+                numberOfMonths={1}
+                firstDayOfWeek={1}
+                isDayBlocked={dateIsBlocked}
+                hideKeyboardShortcutsPanel={true}
+              />
+            </DatePickerWrapper>
+          )}
         </InputWrapper>
       </>
     )

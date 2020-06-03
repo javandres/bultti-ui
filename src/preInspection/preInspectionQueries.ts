@@ -6,6 +6,8 @@ export const inspectionFragment = gql`
     createdAt
     startDate
     endDate
+    inspectionStartDate
+    inspectionEndDate
     minStartDate
     version
     operatorId

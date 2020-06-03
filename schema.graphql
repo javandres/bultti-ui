@@ -170,6 +170,8 @@ type Inspection {
   endDate: BulttiDate!
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
+  inspectionEndDate: BulttiDate
+  inspectionStartDate: BulttiDate
   inspectionType: InspectionType
   minStartDate: BulttiDate
   operator: Operator!
@@ -442,12 +444,16 @@ input InitialInspectionInput {
   endDate: BulttiDate
   inspectionType: InspectionType!
   operatorId: Int!
+  productionEndDate: BulttiDate
+  productionStartDate: BulttiDate
   seasonId: String!
   startDate: BulttiDate
 }
 
 input InspectionInput {
   endDate: BulttiDate
+  productionEndDate: BulttiDate
+  productionStartDate: BulttiDate
   startDate: BulttiDate
 }
 

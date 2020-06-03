@@ -198,6 +198,8 @@ export type Inspection = {
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
+  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   minStartDate?: Maybe<Scalars['BulttiDate']>;
@@ -770,6 +772,8 @@ export type UserInput = {
 export type InitialInspectionInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
+  productionStartDate?: Maybe<Scalars['BulttiDate']>;
+  productionEndDate?: Maybe<Scalars['BulttiDate']>;
   operatorId: Scalars['Int'];
   seasonId: Scalars['String'];
   inspectionType: InspectionType;
@@ -778,4 +782,6 @@ export type InitialInspectionInput = {
 export type InspectionInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
+  productionStartDate?: Maybe<Scalars['BulttiDate']>;
+  productionEndDate?: Maybe<Scalars['BulttiDate']>;
 };

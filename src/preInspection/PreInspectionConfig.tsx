@@ -3,8 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
-import { endOfISOWeek, format, parseISO, startOfISOWeek } from 'date-fns'
-import { DATE_FORMAT } from '../constants'
 import { ControlGroup, FormColumn, FormWrapper, InputLabel } from '../common/components/form'
 import { Inspection } from '../schema-types'
 import { PreInspectionContext } from './PreInspectionContext'
@@ -31,23 +29,15 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
           <FormColumn>
             <InputLabel theme="light">Tuotantojakso</InputLabel>
             <ControlGroup>
-              {isEditable ? (
-                <SelectDate
-                  name="production_start"
-                  value={inspection.startDate}
-                  minDate={inspection.minStartDate}
-                  maxDate={inspection.season.endDate}
-                  onChange={onUpdateValue('startDate')}
-                  label="Alku"
-                />
-              ) : (
-                <Input
-                  value={inspection.startDate}
-                  label="Alku"
-                  subLabel={true}
-                  disabled={true}
-                />
-              )}
+              <SelectDate
+                name="production_start"
+                value={inspection.startDate}
+                minDate={inspection.minStartDate}
+                maxDate={inspection.season.endDate}
+                onChange={onUpdateValue('startDate')}
+                label="Alku"
+                disabled={!isEditable}
+              />
               <Input
                 value={inspection.endDate}
                 label="Loppu"
@@ -59,17 +49,20 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
           <FormColumn>
             <InputLabel theme="light">Tarkastusjakso</InputLabel>
             <ControlGroup>
-              <Input
-                value={format(startOfISOWeek(parseISO(inspection.startDate)), DATE_FORMAT)}
+              <SelectDate
+                name="inspection_start"
+                value={inspection.inspectionStartDate}
+                onChange={onUpdateValue('inspectionStartDate')}
                 label="Alku"
-                subLabel={true}
-                disabled={true}
+                disabled={!isEditable}
               />
-              <Input
-                value={format(endOfISOWeek(parseISO(inspection.startDate)), DATE_FORMAT)}
+              <SelectDate
+                name="inspection_end"
+                value={inspection.inspectionEndDate}
+                minDate={inspection.inspectionStartDate}
+                onChange={onUpdateValue('inspectionEndDate')}
                 label="Loppu"
-                subLabel={true}
-                disabled={true}
+                disabled={!isEditable}
               />
             </ControlGroup>
           </FormColumn>
