@@ -37,10 +37,9 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     let isUpdating = useRef(false)
 
-    let [
-      updatePreInspection,
-      { loading: updateLoading, error: updateError },
-    ] = useMutationData(updateInspectionMutation)
+    let [updatePreInspection, { loading: updateLoading }] = useMutationData(
+      updateInspectionMutation
+    )
 
     let onPreInspectionChange = useCallback(() => {
       if (refetchData) {

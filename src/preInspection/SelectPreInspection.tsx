@@ -1,23 +1,17 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, UserRole } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import Loading from '../common/components/Loading'
 import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
-import {
-  useCreatePreInspection,
-  usePreInspectionReports,
-  useRemovePreInspection,
-} from './preInspectionUtils'
+import { useCreatePreInspection } from './preInspectionUtils'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
-import { useMutationData } from '../util/useMutationData'
-import { publishInspectionMutation, rejectInspectionMutation } from './preInspectionQueries'
 import InspectionActions from './InspectionActions'
 
 const SelectPreInspectionView = styled.div``
@@ -161,26 +155,9 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
   ({ inspections = [], refetchPreInspections, loading = false, onSelect }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
-    var [user] = useStateValue('user')
-
-    // The highest version among current pre-inspections
-    let maxVersion = useMemo(
-      () =>
-        inspections.reduce(
-          (maxVersion, { version }) => (version > maxVersion ? version : maxVersion),
-          1
-        ),
-      [inspections]
-    )
-
-    let [removePreInspection, { loading: removeLoading }] = useRemovePreInspection(
-      refetchPreInspections
-    )
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     let createPreInspection = useCreatePreInspection(operator, season)
-
-    let goToPreInspectionReports = usePreInspectionReports()
 
     let onCreatePreInspection = useCallback(async () => {
       let createdPreInspection = await createPreInspection()
@@ -191,22 +168,6 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
 
       await refetchPreInspections()
     }, [createPreInspection, refetchPreInspections, onSelect])
-
-    let [publishPreInspection] = useMutationData(publishInspectionMutation)
-    let [rejectPreInspection] = useMutationData(rejectInspectionMutation)
-
-    let inspectionAction = useCallback(
-      async (action, inspectionId: string) => {
-        await action({
-          variables: {
-            inspectionId,
-          },
-        })
-
-        await refetchPreInspections()
-      },
-      [refetchPreInspections]
-    )
 
     return (
       <SelectPreInspectionView>
@@ -251,44 +212,37 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                   </ButtonRow>
                 </PreInspectionItem>
               )}
-              {orderBy(inspections, 'version', 'desc').map((inspection) => {
-                let userCanPublish =
-                  inspection.status === InspectionStatus.InReview &&
-                  user &&
-                  user.role === UserRole.Admin
-
-                return (
-                  <PreInspectionItem key={inspection.id} status={inspection.status}>
-                    <ItemContent>
-                      <InspectionTitle>
-                        {inspection.operator.operatorName}, {inspection.season.id}
-                      </InspectionTitle>
-                      <InspectionVersion>{inspection.version}</InspectionVersion>
-                      <InspectionStatusDisplay status={inspection.status}>
-                        {inspection.status === InspectionStatus.Draft
-                          ? 'Muokattavissa'
-                          : inspection.status === InspectionStatus.InReview
-                          ? 'Hyväksyttävänä'
-                          : 'Tuotannossa'}
-                      </InspectionStatusDisplay>
-                      <InspectionPeriodDisplay>
-                        <DateTitle>Tuotantojakso</DateTitle>
-                        <StartDate>
-                          {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
-                        </StartDate>
-                        <EndDate>
-                          {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
-                        </EndDate>
-                      </InspectionPeriodDisplay>
-                    </ItemContent>
-                    <InspectionActions
-                      onRefresh={refetchPreInspections}
-                      inspection={inspection}
-                      onSelect={onSelect}
-                    />
-                  </PreInspectionItem>
-                )
-              })}
+              {orderBy(inspections, 'version', 'desc').map((inspection) => (
+                <PreInspectionItem key={inspection.id} status={inspection.status}>
+                  <ItemContent>
+                    <InspectionTitle>
+                      {inspection.operator.operatorName}, {inspection.season.id}
+                    </InspectionTitle>
+                    <InspectionVersion>{inspection.version}</InspectionVersion>
+                    <InspectionStatusDisplay status={inspection.status}>
+                      {inspection.status === InspectionStatus.Draft
+                        ? 'Muokattavissa'
+                        : inspection.status === InspectionStatus.InReview
+                        ? 'Hyväksyttävänä'
+                        : 'Tuotannossa'}
+                    </InspectionStatusDisplay>
+                    <InspectionPeriodDisplay>
+                      <DateTitle>Tuotantojakso</DateTitle>
+                      <StartDate>
+                        {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
+                      </StartDate>
+                      <EndDate>
+                        {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
+                      </EndDate>
+                    </InspectionPeriodDisplay>
+                  </ItemContent>
+                  <InspectionActions
+                    onRefresh={refetchPreInspections}
+                    inspection={inspection}
+                    onSelect={onSelect}
+                  />
+                </PreInspectionItem>
+              ))}
             </PreInspectionItems>
           </>
         )}
