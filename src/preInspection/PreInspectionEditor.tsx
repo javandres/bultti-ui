@@ -21,7 +21,7 @@ import InspectionUsers from './InspectionUsers'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
-  padding: 0 1.25rem;
+  padding: 0 0.75rem;
 `
 
 type PreInspectionProps = {
@@ -89,19 +89,13 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
         {!!inspection && (
           <>
             <PreInspectionMeta />
-
             <InspectionUsers />
-
-            <SectionHeading theme="light">Perustiedot</SectionHeading>
             <PreInspectionConfig
               isEditable={isEditable}
               onUpdateValue={createUpdateCallback}
             />
-
             <DepartureBlocks isEditable={isEditable} />
-
             <PreInspectionExecutionRequirements />
-
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
             <ProcurementUnits requirementsEditable={isEditable} />
 

@@ -1,14 +1,13 @@
 import React, { useContext } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
-import { ControlGroup, FormColumn, FormWrapper, InputLabel } from '../common/components/form'
+import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection } from '../schema-types'
 import { PreInspectionContext } from './PreInspectionContext'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-
-const PreInspectionConfigView = styled.div``
+import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
+import { FlexRow } from '../common/components/common'
 
 export type PropTypes = {
   isEditable: boolean
@@ -19,13 +18,16 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
   let inspection: null | Inspection = useContext(PreInspectionContext)
 
   return (
-    <PreInspectionConfigView>
+    <ExpandableSection
+      headerContent={
+        <HeaderMainHeading style={{ borderRight: 0 }}>Perustiedot</HeaderMainHeading>
+      }>
       {!inspection ? (
         <MessageContainer>
           <MessageView>Ennakkotarkastus ei valittu.</MessageView>
         </MessageContainer>
       ) : (
-        <FormWrapper>
+        <FlexRow>
           <FormColumn>
             <InputLabel theme="light">Tuotantojakso</InputLabel>
             <ControlGroup>
@@ -66,9 +68,9 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
               />
             </ControlGroup>
           </FormColumn>
-        </FormWrapper>
+        </FlexRow>
       )}
-    </PreInspectionConfigView>
+    </ExpandableSection>
   )
 })
 

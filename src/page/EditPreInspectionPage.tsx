@@ -26,11 +26,11 @@ const EditPreInspectionView = styled(Page)``
 const InspectionActionsRow = styled(InspectionActions)`
   border-top: 0;
   margin: 0 0 0.5rem;
-  padding: 0.5rem 1rem 1rem;
+  padding: 0.5rem 0.7rem 1rem;
 `
 
 const StatusBox = styled.div`
-  margin: -0.75rem 1rem 1rem;
+  margin: -0.75rem 0.7rem 1rem;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
 `

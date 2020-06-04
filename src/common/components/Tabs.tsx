@@ -45,7 +45,7 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
   cursor: pointer;
   outline: 0;
   padding: 0.7rem 3px;
-  margin: 0 0.25rem;
+  margin: 0 0.7rem;
   position: relative;
   overflow: hidden;
 
