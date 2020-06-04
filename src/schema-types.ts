@@ -44,6 +44,7 @@ export type Query = {
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
   allInspections: Array<Inspection>;
+  inspectionUserRelations: Array<InspectionUserRelation>;
 };
 
 
@@ -170,6 +171,11 @@ export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
 
 export type QueryAllInspectionsArgs = {
   inspectionType: InspectionType;
+};
+
+
+export type QueryInspectionUserRelationsArgs = {
+  inspectionId: Scalars['String'];
 };
 
 export type Operator = {
@@ -582,6 +588,7 @@ export type Mutation = {
   publishInspection: Inspection;
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
+  toggleUserSubscribed: InspectionUserRelation;
   generateEquipmentForPreInspection: Scalars['Boolean'];
 };
 
@@ -729,6 +736,12 @@ export type MutationRejectInspectionArgs = {
 
 
 export type MutationRemoveInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationToggleUserSubscribedArgs = {
+  userId: Scalars['String'];
   inspectionId: Scalars['String'];
 };
 

@@ -13,6 +13,14 @@ import { READABLE_TIME_FORMAT } from '../constants'
 import Checkbox, { CheckboxLabel } from '../common/input/Checkbox'
 import { InspectionUserRelation, InspectionUserRelationType } from '../schema-types'
 import { orderBy } from 'lodash'
+import { useMutationData } from '../util/useMutationData'
+import {
+  inspectionUserRelationsQuery,
+  toggleUserInspectionSubscription,
+} from './preInspectionQueries'
+import { useQueryData } from '../util/useQueryData'
+import { LoadingDisplay } from '../common/components/Loading'
+import { useRefetch } from '../util/useRefetch'
 
 const UserList = styled.div`
   margin: -1rem -1rem 0;
@@ -20,7 +28,7 @@ const UserList = styled.div`
 
 const UserRow = styled.div`
   margin: 0;
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   background: var(--white-grey);
   border-bottom: 1px solid var(--lightest-grey);
 
@@ -76,14 +84,44 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
   var [user] = useStateValue('user')
   var inspection = useContext(PreInspectionContext)
 
-  let allRelations = orderBy(inspection?.userRelations || [], 'updatedAt', 'desc')
-  let onToggleSubscribed = useCallback((relationId: string, subscribed: boolean) => {}, [])
+  let { data: inspectionRelations, loading: relationsLoading, refetch } = useQueryData(
+    inspectionUserRelationsQuery,
+    {
+      skip: !inspection,
+      variables: {
+        inspectionId: inspection?.id,
+      },
+    }
+  )
 
+  let refetchRelations = useRefetch(refetch)
+
+  let allRelations = orderBy(inspectionRelations || [], 'updatedAt', 'desc')
   let ownRelations = allRelations.filter((rel) => rel.user.email === user.email)
 
   let subscriptionRelation = ownRelations.find(
     (rel) => rel.relatedBy === InspectionUserRelationType.SubscribedTo
   )
+
+  let isSubscribed =
+    subscriptionRelation?.subscribed || ownRelations.some((rel) => rel.subscribed)
+
+  let [toggleSubscribed, { loading: userSubscribedLoading }] = useMutationData(
+    toggleUserInspectionSubscription
+  )
+
+  let onToggleSubscribed = useCallback(async () => {
+    if (inspection && user) {
+      await toggleSubscribed({
+        variables: {
+          inspectionId: inspection.id,
+          userId: user.id,
+        },
+      })
+
+      refetchRelations()
+    }
+  }, [inspection, user, toggleSubscribed, refetchRelations])
 
   return (
     <ExpandableSection
@@ -101,6 +139,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
           </HeaderSection>
         </>
       }>
+      <LoadingDisplay loading={relationsLoading} />
       {inspection && (
         <UserList>
           <UserRow>
@@ -111,21 +150,17 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
                 {user.name}
               </RowUserName>
               <SubscribedCheckbox
-                label="Subscribed"
-                onChange={(e) =>
-                  onToggleSubscribed(
-                    subscriptionRelation?.id || '',
-                    !subscriptionRelation?.subscribed || true
-                  )
-                }
-                checked={subscriptionRelation?.subscribed || false}
+                loading={userSubscribedLoading}
+                label={isSubscribed ? 'Tilattu' : 'Ei tilattu'}
+                onChange={onToggleSubscribed}
+                checked={isSubscribed}
                 name="subscribed"
                 value="rel_subscribed"
               />
             </RowContent>
           </UserRow>
           {allRelations.map((rel: InspectionUserRelation) => (
-            <UserRow>
+            <UserRow key={rel.id}>
               <RowTitle>
                 {rel.relatedBy}
                 <TitleTimestamp>
@@ -135,10 +170,17 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
               <RowContent>
                 <RowUserName>
                   <UserRoleBadge>{rel.user.role}</UserRoleBadge>
-                  {rel.user.name}, {rel.user.organisation}
+                  {rel.user.name} @ {rel.user.organisation}
                   <br />
                   {rel.user.email}
                 </RowUserName>
+                <SubscribedCheckbox
+                  label={rel?.subscribed || false ? 'Tilattu' : 'Ei tilattu'}
+                  disabled={true}
+                  checked={rel?.subscribed || false}
+                  name="subscribed"
+                  value="rel_subscribed"
+                />
               </RowContent>
             </UserRow>
           ))}

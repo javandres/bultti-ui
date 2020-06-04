@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { UserFragment } from '../common/query/authQueries'
 
 export const inspectionFragment = gql`
   fragment InspectionFragment on Inspection {
@@ -122,6 +123,43 @@ export const rejectInspectionMutation = gql`
     }
   }
   ${inspectionFragment}
+`
+
+export const inspectionUserRelationsQuery = gql`
+  query inspectionUserRelations($inspectionId: String!) {
+    inspectionUserRelations(inspectionId: $inspectionId) {
+      id
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      inspection {
+        id
+      }
+      user {
+        ...UserFragment
+      }
+    }
+  }
+  ${UserFragment}
+`
+
+export const toggleUserInspectionSubscription = gql`
+  mutation toggleUserSubscribed($inspectionId: String!, $userId: String!) {
+    toggleUserSubscribed(inspectionId: $inspectionId, userId: $userId) {
+      id
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      inspection {
+        id
+      }
+      user {
+        id
+      }
+    }
+  }
 `
 
 export const removeInspectionMutation = gql`

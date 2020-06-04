@@ -222,6 +222,7 @@ type Mutation {
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
   submitInspection(inspectionId: String!): Inspection!
+  toggleUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation!
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
@@ -307,6 +308,7 @@ type Query {
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
   inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
+  inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!

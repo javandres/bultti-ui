@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client'
 
-const UserFragment = gql`
+export const UserFragment = gql`
   fragment UserFragment on User {
     id
     email
@@ -9,6 +9,12 @@ const UserFragment = gql`
     operatorIds
     organisation
     role
+    inspectionRelations {
+      id
+      inspection {
+        id
+      }
+    }
   }
 `
 

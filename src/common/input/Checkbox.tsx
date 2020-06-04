@@ -1,6 +1,7 @@
 import React, { ChangeEventHandler, CSSProperties } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
+import { LoadingDisplay } from '../components/Loading'
 
 const CheckboxView = styled.div``
 
@@ -23,22 +24,36 @@ const LabelText = styled.span`
   align-items: center;
 `
 
+const CheckboxLoading = styled(LoadingDisplay).attrs(() => ({ inline: true }))`
+  display: flex;
+  margin-right: 0.45rem;
+  margin-left: -0.45rem;
+`
+
 export type PropTypes = {
   checked: boolean
   disabled?: boolean
-  onChange: ChangeEventHandler<HTMLInputElement>
+  onChange?: ChangeEventHandler<HTMLInputElement>
   value: string
   name: string
   label: string
+  loading?: boolean
   className?: string
   style?: CSSProperties
 }
 
 const Checkbox: React.FC<PropTypes> = observer(
-  ({ className, style, disabled = false, checked, onChange, value, name, label }) => {
+  ({ className, style, disabled = false, loading, checked, onChange, value, name, label }) => {
+    let loadingColor = 'white'
+
+    if (!checked) {
+      loadingColor = 'var(--blue)'
+    }
+
     return (
       <CheckboxView className={className} style={style}>
         <CheckboxLabel checked={checked}>
+          <CheckboxLoading loading={!!loading} color={loadingColor} size={15} />{' '}
           <LabelText>{label}</LabelText>
           <CheckboxInput
             type="checkbox"
