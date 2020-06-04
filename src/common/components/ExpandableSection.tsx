@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ArrowDown } from '../icon/ArrowDown'
+import { SectionHeading } from './Typography'
 
 const ExpandableBoxView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -33,6 +34,24 @@ export const HeaderSection = styled.div`
   &:last-child {
     border-right: 0;
   }
+`
+
+export const HeaderMainHeading = styled(SectionHeading)`
+  margin: 0;
+  padding: 0.7rem 0.75rem;
+  flex: 1 1 50%;
+  border-right: 1px solid var(--lighter-grey);
+  display: flex;
+  align-items: center;
+`
+
+export const HeaderBoldHeading = styled.h4`
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  flex: 1 1 50%;
+  border-right: 1px solid var(--lighter-grey);
+  display: flex;
+  align-items: center;
 `
 
 export const HeaderHeading = styled.h5`

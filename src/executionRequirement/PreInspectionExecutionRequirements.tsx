@@ -2,7 +2,6 @@ import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { executionRequirementsForAreaQuery } from './executionRequirementsQueries'
-import { PageSection, SectionTopBar } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
@@ -11,8 +10,12 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
+import ExpandableSection, {
+  HeaderMainHeading,
+  HeaderSection,
+} from '../common/components/ExpandableSection'
 
-const ExecutionRequirementsView = styled(PageSection)`
+const ExecutionRequirementsView = styled.div`
   min-height: 10rem;
   position: relative;
 `
@@ -64,18 +67,23 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
   )
 
   return (
-    <ExecutionRequirementsView>
-      <SectionTopBar>
-        {areaExecutionRequirements?.length !== 0 && (
-          <Button
-            style={{ marginLeft: 'auto' }}
-            buttonStyle={ButtonStyle.SECONDARY}
-            size={ButtonSize.SMALL}
-            onClick={queueRefetch}>
-            Päivitä
-          </Button>
-        )}
-      </SectionTopBar>
+    <ExpandableSection
+      headerContent={
+        <>
+          <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
+          <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
+            {areaExecutionRequirements?.length !== 0 && (
+              <Button
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}
+                onClick={queueRefetch}>
+                Päivitä
+              </Button>
+            )}
+          </HeaderSection>
+        </>
+      }>
       {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
         <>
           <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
@@ -96,7 +104,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           />
         </AreaWrapper>
       ))}
-    </ExecutionRequirementsView>
+    </ExpandableSection>
   )
 })
 

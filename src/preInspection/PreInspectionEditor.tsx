@@ -16,6 +16,7 @@ import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
 import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -83,9 +84,10 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     return (
       <EditPreInspectionView>
+        <LoadingDisplay loading={isLoading} />
         {!!inspection && (
           <>
-            <PreInspectionMeta isLoading={isLoading} />
+            <PreInspectionMeta />
 
             <SectionHeading theme="light">Perustiedot</SectionHeading>
             <PreInspectionConfig
@@ -93,10 +95,8 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
               onUpdateValue={createUpdateCallback}
             />
 
-            <SectionHeading theme="light">Lähtöketjut</SectionHeading>
             <DepartureBlocks isEditable={isEditable} />
 
-            <SectionHeading theme="light">Suoritevaatimus</SectionHeading>
             <PreInspectionExecutionRequirements />
 
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>

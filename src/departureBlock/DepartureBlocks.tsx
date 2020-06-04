@@ -9,11 +9,14 @@ import { useQueryData } from '../util/useQueryData'
 import { availableDayTypesQuery } from './blockDeparturesQuery'
 import { DayType } from '../schema-types'
 import { normalDayTypes } from '../constants'
-import { PageSection, SectionTopBar } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { useRefetch } from '../util/useRefetch'
+import ExpandableSection, {
+  HeaderMainHeading,
+  HeaderSection,
+} from '../common/components/ExpandableSection'
 
-const DepartureBlocksView = styled(PageSection)`
+const DepartureBlocksView = styled.div`
   margin-bottom: 0;
 `
 
@@ -72,48 +75,55 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable }) => {
   }, [dayTypesWithDepartures, enabledDayTypes])
 
   return (
-    <DepartureBlocksView>
-      <SectionTopBar>
-        {dayTypesWithDepartures.length !== 0 && (
-          <Button
-            loading={departureBlocksLoading}
-            style={{ marginLeft: 'auto' }}
-            buttonStyle={ButtonStyle.SECONDARY}
-            size={ButtonSize.SMALL}
-            onClick={() => refetch()}>
-            Päivitä
-          </Button>
-        )}
-      </SectionTopBar>
-      {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
-        let groupDayTypesDepartures = Object.entries(dayTypeGroup)
-          .filter(([, enabled]) => enabled)
-          .map(([dayType]) => dayType)
-          .filter((dayType) => dayTypesWithDepartures.includes(dayType))
+    <ExpandableSection
+      headerContent={
+        <>
+          <HeaderMainHeading>Lähtöketjut</HeaderMainHeading>
+          <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
+            {dayTypesWithDepartures.length !== 0 && (
+              <Button
+                loading={departureBlocksLoading}
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}
+                onClick={() => refetch()}>
+                Päivitä
+              </Button>
+            )}
+          </HeaderSection>
+        </>
+      }>
+      <DepartureBlocksView>
+        {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
+          let groupDayTypesDepartures = Object.entries(dayTypeGroup)
+            .filter(([, enabled]) => enabled)
+            .map(([dayType]) => dayType)
+            .filter((dayType) => dayTypesWithDepartures.includes(dayType))
 
-        return (
-          <DepartureBlockGroupItem
-            key={`dayTypeGroup-${groupIndex}`}
-            isEditable={isEditable}
-            loading={departureBlocksLoading}
-            hasDepartures={groupDayTypesDepartures.length !== 0}
-            selectableDayTypes={selectableDayTypes}
-            dayTypeGroup={dayTypeGroup}
-            groupIndex={groupIndex}
-            onAddDayType={addDayTypeToGroup}
-            onRemoveDayType={removeDayTypeFromGroup}
-            onBlocksChange={onBlocksChange}
-          />
-        )
-      })}
+          return (
+            <DepartureBlockGroupItem
+              key={`dayTypeGroup-${groupIndex}`}
+              isEditable={isEditable}
+              loading={departureBlocksLoading}
+              hasDepartures={groupDayTypesDepartures.length !== 0}
+              selectableDayTypes={selectableDayTypes}
+              dayTypeGroup={dayTypeGroup}
+              groupIndex={groupIndex}
+              onAddDayType={addDayTypeToGroup}
+              onRemoveDayType={removeDayTypeFromGroup}
+              onBlocksChange={onBlocksChange}
+            />
+          )
+        })}
 
-      {isEditable &&
-        difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
-          <div>
-            <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
-          </div>
-        )}
-    </DepartureBlocksView>
+        {isEditable &&
+          difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
+            <div>
+              <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
+            </div>
+          )}
+      </DepartureBlocksView>
+    </ExpandableSection>
   )
 })
 

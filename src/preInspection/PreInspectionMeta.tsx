@@ -25,11 +25,10 @@ const MetaHeading = styled(InputLabel).attrs(() => ({ theme: 'light' }))`
 `
 
 type PropTypes = {
-  isLoading?: boolean
   className?: string
 }
 
-const PreInspectionMeta: React.FC<PropTypes> = observer(({ className, isLoading }) => {
+const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
   const inspection = useContext(PreInspectionContext)
 
   if (!inspection) {
@@ -42,7 +41,6 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ className, isLoading 
     <PreInspectionMetaView className={className}>
       <MetaHeading>Ennakkotarkastuksen tiedot</MetaHeading>
       <MetaDisplay>
-        <LoadingMeta inline={true} loading={isLoading} />
         <MetaItem
           style={{
             backgroundColor: getInspectionStatusColor(inspection),

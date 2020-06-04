@@ -27,6 +27,7 @@ import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
   HeaderHeading,
+  HeaderBoldHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
@@ -286,9 +287,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             isExpanded={expanded}
             headerContent={
               <>
-                <ProcurementUnitHeading>
-                  {procurementUnit.procurementUnitId}
-                </ProcurementUnitHeading>
+                <HeaderBoldHeading>{procurementUnit.procurementUnitId}</HeaderBoldHeading>
                 <HeaderSection>
                   <HeaderHeading>Reitit</HeaderHeading>
                   {(routes || [])

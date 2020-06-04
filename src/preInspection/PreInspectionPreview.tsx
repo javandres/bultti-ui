@@ -44,7 +44,7 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
           ))}
         </MessageContainer>
       )}
-      <PreviewMeta isLoading={false} />
+      <PreviewMeta />
       <PreInspectionReports showInfo={false} showItemActions={false} />
     </PreviewPreInspectionView>
   )
