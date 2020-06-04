@@ -418,6 +418,7 @@ export type InspectionUserRelation = {
   __typename?: 'InspectionUserRelation';
   id: Scalars['ID'];
   relatedBy: InspectionUserRelationType;
+  subscribed: Scalars['Boolean'];
   inspection: Inspection;
   user: User;
   createdAt: Scalars['BulttiDate'];
@@ -772,8 +773,8 @@ export type UserInput = {
 export type InitialInspectionInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
-  productionStartDate?: Maybe<Scalars['BulttiDate']>;
-  productionEndDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
   operatorId: Scalars['Int'];
   seasonId: Scalars['String'];
   inspectionType: InspectionType;
@@ -782,6 +783,6 @@ export type InitialInspectionInput = {
 export type InspectionInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
-  productionStartDate?: Maybe<Scalars['BulttiDate']>;
-  productionEndDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
 };

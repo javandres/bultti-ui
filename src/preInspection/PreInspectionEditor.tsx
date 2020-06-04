@@ -17,6 +17,7 @@ import PreInspectionExecutionRequirements from '../executionRequirement/PreInspe
 import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { LoadingDisplay } from '../common/components/Loading'
+import InspectionUsers from './InspectionUsers'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
@@ -88,6 +89,8 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
         {!!inspection && (
           <>
             <PreInspectionMeta />
+
+            <InspectionUsers />
 
             <SectionHeading theme="light">Perustiedot</SectionHeading>
             <PreInspectionConfig

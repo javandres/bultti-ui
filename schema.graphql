@@ -191,6 +191,7 @@ type InspectionUserRelation {
   id: ID!
   inspection: Inspection!
   relatedBy: InspectionUserRelationType!
+  subscribed: Boolean!
   updatedAt: BulttiDate!
   user: User!
 }
@@ -442,18 +443,18 @@ input EquipmentInput {
 
 input InitialInspectionInput {
   endDate: BulttiDate
+  inspectionEndDate: BulttiDate
+  inspectionStartDate: BulttiDate
   inspectionType: InspectionType!
   operatorId: Int!
-  productionEndDate: BulttiDate
-  productionStartDate: BulttiDate
   seasonId: String!
   startDate: BulttiDate
 }
 
 input InspectionInput {
   endDate: BulttiDate
-  productionEndDate: BulttiDate
-  productionStartDate: BulttiDate
+  inspectionEndDate: BulttiDate
+  inspectionStartDate: BulttiDate
   startDate: BulttiDate
 }
 

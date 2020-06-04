@@ -14,7 +14,6 @@ import ProcurementUnitsPage from './page/ProcurementUnitsPage'
 import EditPreInspectionPage from './page/EditPreInspectionPage'
 import PreInspectionReportIndexPage from './page/PreInspectionReportIndexPage'
 import UserPage from './page/UserPage'
-import InspectionUsersPage from './page/InspectionUsersPage'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -38,7 +37,6 @@ const App: React.FC = observer(() => {
         <PostInspection path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
         <UserPage path="user" />
-        <InspectionUsersPage path="inspection/users/:inspectionId" />
       </Router>
     </AppFrame>
   )

@@ -3777,6 +3777,22 @@
             "deprecationReason": null
           },
           {
+            "name": "subscribed",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "inspection",
             "description": null,
             "args": [],
@@ -6522,7 +6538,7 @@
             "defaultValue": null
           },
           {
-            "name": "productionStartDate",
+            "name": "inspectionStartDate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6532,7 +6548,7 @@
             "defaultValue": null
           },
           {
-            "name": "productionEndDate",
+            "name": "inspectionEndDate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6615,7 +6631,7 @@
             "defaultValue": null
           },
           {
-            "name": "productionStartDate",
+            "name": "inspectionStartDate",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -6625,7 +6641,7 @@
             "defaultValue": null
           },
           {
-            "name": "productionEndDate",
+            "name": "inspectionEndDate",
             "description": null,
             "type": {
               "kind": "SCALAR",
