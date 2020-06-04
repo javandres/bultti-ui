@@ -3833,7 +3833,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "BulttiDate",
+                "name": "DateTime",
                 "ofType": null
               }
             },
@@ -3849,7 +3849,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "BulttiDate",
+                "name": "DateTime",
                 "ofType": null
               }
             },

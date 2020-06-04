@@ -32,6 +32,7 @@ export const inspectionFragment = gql`
       createdAt
       updatedAt
       relatedBy
+      subscribed
       user {
         id
         email

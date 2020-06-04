@@ -187,12 +187,12 @@ type Inspection {
 }
 
 type InspectionUserRelation {
-  createdAt: BulttiDate!
+  createdAt: DateTime!
   id: ID!
   inspection: Inspection!
   relatedBy: InspectionUserRelationType!
   subscribed: Boolean!
-  updatedAt: BulttiDate!
+  updatedAt: DateTime!
   user: User!
 }
 

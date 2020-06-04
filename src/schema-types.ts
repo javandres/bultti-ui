@@ -421,8 +421,8 @@ export type InspectionUserRelation = {
   subscribed: Scalars['Boolean'];
   inspection: Inspection;
   user: User;
-  createdAt: Scalars['BulttiDate'];
-  updatedAt: Scalars['BulttiDate'];
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export enum InspectionUserRelationType {

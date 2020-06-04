@@ -1,7 +1,6 @@
-import React, { useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import ExpandableSection, {
@@ -9,30 +8,82 @@ import ExpandableSection, {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { PreInspectionContext } from './PreInspectionContext'
+import { format, parseISO } from 'date-fns'
+import { READABLE_TIME_FORMAT } from '../constants'
+import Checkbox, { CheckboxLabel } from '../common/input/Checkbox'
+import { InspectionUserRelation, InspectionUserRelationType } from '../schema-types'
+import { orderBy } from 'lodash'
 
-const UserList = styled.div``
+const UserList = styled.div`
+  margin: -1rem -1rem 0;
+`
 
 const UserRow = styled.div`
-  margin: 0 0 1.5rem;
+  margin: 0;
+  padding: 1rem;
+  background: var(--white-grey);
+  border-bottom: 1px solid var(--lightest-grey);
+
+  &:nth-child(odd) {
+    background: white;
+  }
 `
 
 const RowTitle = styled.h5`
   margin: 0 0 0.5rem;
+  font-size: 1rem;
 `
 
-const TitleTimestamp = styled.span``
+const TitleTimestamp = styled.span`
+  display: inline-block;
+  margin-left: 1rem;
+  font-weight: normal;
+  font-size: 0.875rem;
+`
 
-const RowUserValue = styled.div``
+const RowContent = styled.div`
+  display: flex;
+  align-items: center;
+`
 
-export type PropTypes = {
-  inspectionId?: string
-} & RouteComponentProps
+const RowUserName = styled.div`
+  line-height: 1.6;
+  margin: 0;
+`
 
-const InspectionUsers = observer(({ inspectionId }: PropTypes) => {
+const UserRoleBadge = styled.div`
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 5px;
+  background: var(--lighter-grey);
+  color: var(--dark-grey);
+  font-size: 0.75rem;
+  margin-right: 0.5rem;
+  line-height: 1.35;
+`
+
+const SubscribedCheckbox = styled(Checkbox)`
+  margin-left: auto;
+
+  ${CheckboxLabel} {
+    font-size: 0.875rem;
+  }
+`
+
+export type PropTypes = {}
+
+const InspectionUsers: React.FC<PropTypes> = observer(() => {
   var [user] = useStateValue('user')
   var inspection = useContext(PreInspectionContext)
 
-  let allUsers = inspection?.userRelations || []
+  let allRelations = orderBy(inspection?.userRelations || [], 'updatedAt', 'desc')
+  let onToggleSubscribed = useCallback((relationId: string, subscribed: boolean) => {}, [])
+
+  let ownRelations = allRelations.filter((rel) => rel.user.email === user.email)
+
+  let subscriptionRelation = ownRelations.find(
+    (rel) => rel.relatedBy === InspectionUserRelationType.SubscribedTo
+  )
 
   return (
     <ExpandableSection
@@ -52,15 +103,43 @@ const InspectionUsers = observer(({ inspectionId }: PropTypes) => {
       }>
       {inspection && (
         <UserList>
-          {allUsers.map((rel) => (
+          <UserRow>
+            <RowTitle>Sinä</RowTitle>
+            <RowContent>
+              <RowUserName>
+                <UserRoleBadge>{user.role}</UserRoleBadge>
+                {user.name}
+              </RowUserName>
+              <SubscribedCheckbox
+                label="Subscribed"
+                onChange={(e) =>
+                  onToggleSubscribed(
+                    subscriptionRelation?.id || '',
+                    !subscriptionRelation?.subscribed || true
+                  )
+                }
+                checked={subscriptionRelation?.subscribed || false}
+                name="subscribed"
+                value="rel_subscribed"
+              />
+            </RowContent>
+          </UserRow>
+          {allRelations.map((rel: InspectionUserRelation) => (
             <UserRow>
               <RowTitle>
-                <TitleTimestamp>{rel.updatedAt}</TitleTimestamp>
                 {rel.relatedBy}
+                <TitleTimestamp>
+                  {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
+                </TitleTimestamp>
               </RowTitle>
-              <RowUserValue>
-                {rel.user.name}, {rel.user.organisation}, {rel.user.email}
-              </RowUserValue>
+              <RowContent>
+                <RowUserName>
+                  <UserRoleBadge>{rel.user.role}</UserRoleBadge>
+                  {rel.user.name}, {rel.user.organisation}
+                  <br />
+                  {rel.user.email}
+                </RowUserName>
+              </RowContent>
             </UserRow>
           ))}
         </UserList>
