@@ -12,7 +12,7 @@ import {
   MetaValue,
 } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getCreatedBy, getInspectionStatusColor } from './inspectionUtils'
+import { getAllUpdatedBy, getCreatedBy, getInspectionStatusColor } from './inspectionUtils'
 import { InspectionStatus } from '../schema-types'
 import { translate } from '../util/translate'
 
@@ -36,37 +36,36 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
   }
 
   let createdBy = getCreatedBy(inspection)
+  let modifiedBy = getAllUpdatedBy(inspection)[0]
 
   return (
     <PreInspectionMetaView className={className}>
       <MetaHeading>Ennakkotarkastuksen tiedot</MetaHeading>
       <MetaDisplay>
-        <MetaItem
-          style={{
-            backgroundColor: getInspectionStatusColor(inspection),
-            borderColor: getInspectionStatusColor(inspection),
-            color:
-              inspection.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white',
-          }}>
-          <MetaLabel>Tarkastuksen tila</MetaLabel>
-          <MetaValue>{translate(inspection.status)}</MetaValue>
-        </MetaItem>
         <MetaItem>
           <MetaLabel>Perustettu</MetaLabel>
           <MetaValue>{format(parseISO(inspection.createdAt), READABLE_TIME_FORMAT)}</MetaValue>
+          {createdBy && (
+            <>
+              <MetaLabel>Käyttäjä</MetaLabel>
+              <MetaValue>
+                {createdBy?.name} ({createdBy?.organisation})
+              </MetaValue>
+            </>
+          )}
         </MetaItem>
         <MetaItem>
           <MetaLabel>Viimeksi muokattu</MetaLabel>
           <MetaValue>{format(parseISO(inspection.updatedAt), READABLE_TIME_FORMAT)}</MetaValue>
+          {modifiedBy && (
+            <>
+              <MetaLabel>Käyttäjä</MetaLabel>
+              <MetaValue>
+                {modifiedBy.name} ({modifiedBy.organisation})
+              </MetaValue>
+            </>
+          )}
         </MetaItem>
-        {createdBy && (
-          <MetaItem>
-            <MetaLabel>Käyttäjä</MetaLabel>
-            <MetaValue>
-              {createdBy?.name} ({createdBy?.organisation})
-            </MetaValue>
-          </MetaItem>
-        )}
       </MetaDisplay>
     </PreInspectionMetaView>
   )

@@ -9,19 +9,30 @@ import PreInspectionPreview from '../preInspection/PreInspectionPreview'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { useEditInspection, useInspectionById } from '../preInspection/inspectionUtils'
+import {
+  getInspectionStatusColor,
+  useEditInspection,
+  useInspectionById,
+} from '../preInspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
-import { InspectionType } from '../schema-types'
+import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../preInspection/InspectionActions'
+import { translate } from '../util/translate'
 
 const EditPreInspectionView = styled(Page)``
 
 const InspectionActionsRow = styled(InspectionActions)`
   border-top: 0;
-  margin: -0.875rem 0 0.25rem;
+  margin: 0 0 0.5rem;
   padding: 0.5rem 1rem 1rem;
+`
+
+const StatusBox = styled.div`
+  margin: calc(-1.5rem + 5px) 5px 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
 `
 
 export type PropTypes = {
@@ -66,7 +77,20 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
         ) : (
           <>
             {inspection && (
-              <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+              <>
+                <StatusBox
+                  style={{
+                    backgroundColor: getInspectionStatusColor(inspection),
+                    borderColor: getInspectionStatusColor(inspection),
+                    color:
+                      inspection.status === InspectionStatus.InReview
+                        ? 'var(--dark-grey)'
+                        : 'white',
+                  }}>
+                  <strong>{translate(inspection.status)}</strong>
+                </StatusBox>
+                <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+              </>
             )}
             <Tabs>
               <PreInspectionEditor

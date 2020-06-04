@@ -7,6 +7,7 @@ import {
   InspectionUserRelationType,
   Operator,
   Season,
+  User,
 } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
@@ -20,6 +21,7 @@ import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
+import { orderBy } from 'lodash'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -173,7 +175,16 @@ export function usePreInspections(
   ]
 }
 
-export function getCreatedBy(inspection?: Inspection) {
+export function getAllUpdatedBy(inspection?: Inspection): User[] {
+  let userRelations = inspection?.userRelations || []
+  let updatedRelations = userRelations.filter(
+    (rel) => rel.relatedBy === InspectionUserRelationType.UpdatedBy
+  )
+
+  return orderBy(updatedRelations, 'updatedAt', 'desc').map((rel) => rel.user)
+}
+
+export function getCreatedBy(inspection?: Inspection): User | undefined {
   let userRelations = inspection?.userRelations || []
   let createdRelation = userRelations.find(
     (rel) => rel.relatedBy === InspectionUserRelationType.CreatedBy
