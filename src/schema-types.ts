@@ -353,14 +353,14 @@ export type Departure = {
   infoSystems?: Maybe<Scalars['Boolean']>;
   allowedOverAge?: Maybe<Scalars['Float']>;
   blockNumber?: Maybe<Scalars['String']>;
-  operatorOrder?: Maybe<Scalars['Int']>;
   schemaId?: Maybe<Scalars['String']>;
-  schemaOrder?: Maybe<Scalars['Int']>;
-  isTracked?: Maybe<Scalars['Boolean']>;
-  trackReason: TrackReason;
   procurementUnitId?: Maybe<Scalars['String']>;
   procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
+  inspection?: Maybe<Inspection>;
+  inspectionId?: Maybe<Scalars['String']>;
+  isTracked?: Maybe<Scalars['Boolean']>;
+  trackReason: TrackReason;
   observedEquipmentType?: Maybe<Scalars['String']>;
   equipmentExteriorColor?: Maybe<Scalars['String']>;
   registryDate?: Maybe<Scalars['BulttiDate']>;
@@ -588,7 +588,7 @@ export type Mutation = {
   publishInspection: Inspection;
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
-  toggleUserSubscribed: InspectionUserRelation;
+  toggleUserSubscribed?: Maybe<InspectionUserRelation>;
   generateEquipmentForPreInspection: Scalars['Boolean'];
 };
 

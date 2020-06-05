@@ -31,13 +31,11 @@ export const DepartureFragment = gql`
     endStop
     isTrunkRoute
     equipmentTypeRequired
-    operatorOrder
     plannedEquipmentType
     observedEquipmentType
     recoveryTime
     schemaUnitId: procurementUnitId
     schemaId
-    schemaOrder
     trackReason
     terminalTime
     startStop

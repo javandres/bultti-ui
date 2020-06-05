@@ -20,12 +20,13 @@ type Departure {
   equipmentTypeRequired: Boolean
   id: ID!
   infoSystems: Boolean
+  inspection: Inspection
+  inspectionId: String
   isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String!
   journeyStartTime: String!
   observedEquipmentType: String
-  operatorOrder: Int
   plannedEquipmentType: String
   procurementUnit: ProcurementUnit
   procurementUnitId: String
@@ -35,7 +36,6 @@ type Departure {
   routeId: String
   routeLength: Int
   schemaId: String
-  schemaOrder: Int
   startStop: String
   terminalTime: Int
   trackReason: TrackReason!
@@ -222,7 +222,7 @@ type Mutation {
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
   submitInspection(inspectionId: String!): Inspection!
-  toggleUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation!
+  toggleUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
