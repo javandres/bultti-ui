@@ -83,7 +83,7 @@ const LoadingIndicator = styled.div`
   background-image: linear-gradient(
     to right,
     rgba(0, 0, 0, 0) 20%,
-    var(--lighter-green) 50%,
+    var(--light-blue) 50%,
     rgba(0, 0, 0, 0) 80%
   );
   z-index: 0;
@@ -97,9 +97,9 @@ const TabLabel = styled.span`
 const decorate = flow(observer)
 
 export type TabChildProps = {
-  name: string
-  label: string
-  path: string
+  name?: string
+  label?: string
+  path?: string
   loading?: boolean
   testId?: string
 }

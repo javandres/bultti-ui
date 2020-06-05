@@ -4,17 +4,9 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
 import { PreInspectionContext } from './PreInspectionContext'
 import styled from 'styled-components'
-import {
-  LoadingMeta,
-  MetaDisplay,
-  MetaItem,
-  MetaLabel,
-  MetaValue,
-} from '../common/components/MetaDisplay'
+import { MetaDisplay, MetaItem, MetaLabel, MetaValue } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getAllUpdatedBy, getCreatedBy, getInspectionStatusColor } from './inspectionUtils'
-import { InspectionStatus } from '../schema-types'
-import { translate } from '../util/translate'
+import { getAllUpdatedBy, getCreatedBy } from './inspectionUtils'
 
 const PreInspectionMetaView = styled.div`
   margin-bottom: 2.5rem;
@@ -36,7 +28,7 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
   }
 
   let createdBy = getCreatedBy(inspection)
-  let modifiedBy = getAllUpdatedBy(inspection)[0]
+  let modifiedBy = getAllUpdatedBy(inspection)[0] || createdBy
 
   return (
     <PreInspectionMetaView className={className}>

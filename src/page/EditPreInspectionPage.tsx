@@ -69,7 +69,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
           </MessageContainer>
-        ) : !inspection ? (
+        ) : !inspection && !inspectionLoading ? (
           <MessageContainer>
             <MessageView>Haettu ennakkotarkastus ei löytynyt.</MessageView>
             <Button onClick={() => editPreInspection()}>Takaisin</Button>
@@ -92,16 +92,20 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
                 <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
               </>
             )}
-            <Tabs>
-              <PreInspectionEditor
-                name="create"
-                path="/"
-                label="Muokkaa"
-                loading={inspectionLoading}
-                refetchData={refetch}
-              />
-              <PreInspectionPreview path="preview" name="preview" label="Esikatsele" />
-            </Tabs>
+            {inspection?.status === InspectionStatus.InProduction ? (
+              <PreInspectionEditor refetchData={refetch} />
+            ) : (
+              <Tabs>
+                <PreInspectionEditor
+                  name="create"
+                  path="/"
+                  label="Muokkaa"
+                  loading={inspectionLoading}
+                  refetchData={refetch}
+                />
+                <PreInspectionPreview path="preview" name="preview" label="Esikatsele" />
+              </Tabs>
+            )}
           </>
         )}
       </PreInspectionContext.Provider>
