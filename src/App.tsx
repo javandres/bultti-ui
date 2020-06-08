@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Router } from '@reach/router'
+import { RouteComponentProps, Router } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import PreInspectionsPage from './page/PreInspectionsPage'
@@ -14,6 +14,18 @@ import ProcurementUnitsPage from './page/ProcurementUnitsPage'
 import EditPreInspectionPage from './page/EditPreInspectionPage'
 import PreInspectionReportIndexPage from './page/PreInspectionReportIndexPage'
 import UserPage from './page/UserPage'
+import ReportsPage from './page/ReportsPage'
+import { Page } from './common/components/common'
+import { PageTitle } from './common/components/Typography'
+
+const Todo: React.FC<RouteComponentProps> = () => {
+  return (
+    <Page>
+      <PageTitle>TODO</PageTitle>
+      Placeholder page for future planned content.
+    </Page>
+  )
+}
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -37,6 +49,8 @@ const App: React.FC = observer(() => {
         <PostInspection path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
         <UserPage path="user" />
+        <ReportsPage path="reports" />
+        <Todo path="contracts" />
       </Router>
     </AppFrame>
   )

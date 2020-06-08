@@ -15,11 +15,6 @@ import ExpandableSection, {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 
-const ExecutionRequirementsView = styled.div`
-  min-height: 10rem;
-  position: relative;
-`
-
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
 

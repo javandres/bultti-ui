@@ -16,6 +16,7 @@ type Departure {
   equipment: Equipment
   equipmentAge: Float
   equipmentExteriorColor: String
+  equipmentId: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
@@ -294,7 +295,7 @@ type ProcurementUnitRoute {
 type Query {
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  availablePreInspectionReports(inspectionId: String!): [ReportListItem!]!
+  availablePreInspectionReports: [ReportListItem!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
@@ -326,12 +327,15 @@ type Query {
 type Report {
   columnLabels: String
   description: String!
+  id: ID!
   inspection: Inspection
+  inspectionTypes: [InspectionType!]
   name: String!
-  operator: Operator!
+  operator: Operator
+  params: String
   reportEntities: [ReportEntityUnion!]!
-  reportType: ReportType!
-  season: Season!
+  reportType: ReportType
+  season: Season
   title: String!
 }
 
@@ -346,7 +350,7 @@ type ReportListItem {
 type Season {
   endDate: BulttiDate!
   id: ID!
-  inspections: [Inspection!]
+  inspections: [Inspection!]!
   season: String!
   startDate: BulttiDate!
 }

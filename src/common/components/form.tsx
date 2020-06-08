@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Column, ColumnWrapper } from './common'
+import { Column } from './common'
 import { ThemeTypes } from '../../type/common'
 
 export const FormColumn = styled(Column)`

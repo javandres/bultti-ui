@@ -11,9 +11,12 @@
   "nav.list.procurementunits": "Muokkaa kilpailukohteet",
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
+  "nav.category.reports_contracts": "Raportit ja sopimukset",
   "nav.list.preinspection": "Ennakkotarkastukset",
   "nav.list.postinspection": "Jälkitarkastukset",
   "nav.reports": "Raportit",
+  "nav.reports.edit": "Muokkaa raportit",
+  "nav.contracts.edit": "Muokkaa sopimukset",
   "nav.new.preinspection": "Uusi ennakkotarkastus",
   "nav.new.postinspection": "Uusi jälkitarkastus",
 

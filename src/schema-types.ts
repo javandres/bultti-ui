@@ -132,11 +132,6 @@ export type QueryAvailableDayTypesArgs = {
 };
 
 
-export type QueryAvailablePreInspectionReportsArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
 export type QueryInspectionReportByNameArgs = {
   inspectionType: InspectionType;
   inspectionId: Scalars['String'];
@@ -223,7 +218,7 @@ export type Season = {
   season: Scalars['String'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
-  inspections?: Maybe<Array<Inspection>>;
+  inspections: Array<Inspection>;
 };
 
 
@@ -357,6 +352,7 @@ export type Departure = {
   procurementUnitId?: Maybe<Scalars['String']>;
   procurementUnit?: Maybe<ProcurementUnit>;
   equipment?: Maybe<Equipment>;
+  equipmentId?: Maybe<Scalars['String']>;
   inspection?: Maybe<Inspection>;
   inspectionId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
@@ -509,15 +505,18 @@ export enum ReportType {
 
 export type Report = {
   __typename?: 'Report';
+  id: Scalars['ID'];
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
-  reportEntities: Array<ReportEntityUnion>;
+  reportType?: Maybe<ReportType>;
   columnLabels?: Maybe<Scalars['String']>;
-  season: Season;
-  operator: Operator;
+  params?: Maybe<Scalars['String']>;
+  inspectionTypes?: Maybe<Array<InspectionType>>;
+  season?: Maybe<Season>;
+  operator?: Maybe<Operator>;
   inspection?: Maybe<Inspection>;
+  reportEntities: Array<ReportEntityUnion>;
 };
 
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;

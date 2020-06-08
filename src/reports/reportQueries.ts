@@ -6,8 +6,8 @@ import {
 } from '../executionRequirement/executionRequirementsQueries'
 
 export const availablePreInspectionReportsQuery = gql`
-  query inspectionAvailableReports($inspectionId: String!) {
-    availablePreInspectionReports(inspectionId: $inspectionId) {
+  query inspectionAvailableReports {
+    availablePreInspectionReports {
       description
       name
       reportType

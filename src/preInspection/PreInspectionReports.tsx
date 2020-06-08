@@ -48,13 +48,7 @@ const PreInspectionReports = observer(
     let inspectionId = inspection?.id || ''
 
     let { data: reportsData, loading: reportsLoading } = useQueryData(
-      availablePreInspectionReportsQuery,
-      {
-        skip: !inspectionId,
-        variables: {
-          inspectionId,
-        },
-      }
+      availablePreInspectionReportsQuery
     )
 
     let reports = useMemo(() => reportsData || [], [reportsData])

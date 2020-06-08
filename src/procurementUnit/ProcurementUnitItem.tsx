@@ -26,8 +26,8 @@ import { FlexRow } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
-  HeaderHeading,
   HeaderBoldHeading,
+  HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
@@ -36,15 +36,6 @@ import { useRefetch } from '../util/useRefetch'
 const ProcurementUnitView = styled.div`
   position: relative;
   min-height: 5rem;
-`
-
-const ProcurementUnitHeading = styled.h4`
-  margin: 0;
-  padding: 0.5rem 0.75rem;
-  flex: 1 1 50%;
-  border-right: 1px solid var(--lighter-grey);
-  display: flex;
-  align-items: center;
 `
 
 const ContentWrapper = styled.div`

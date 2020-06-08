@@ -190,6 +190,19 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </NavCategory>
         <NavCategory>
           <CategoryTitle>
+            <Text>nav.category.reports_contracts</Text>
+          </CategoryTitle>
+          <NavLink to="reports">
+            <Menu fill="white" width="1rem" height="1rem" />
+            <Text>nav.reports.edit</Text>
+          </NavLink>
+          <NavLink to="contracts">
+            <Menu fill="white" width="1rem" height="1rem" />
+            <Text>nav.contracts.edit</Text>
+          </NavLink>
+        </NavCategory>
+        <NavCategory>
+          <CategoryTitle>
             <Text>nav.category.preinspection</Text>
           </CategoryTitle>
           <NavLink to="pre-inspection">
