@@ -5,13 +5,15 @@ import {
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
 
-export const availablePreInspectionReportsQuery = gql`
-  query inspectionAvailableReports {
-    availablePreInspectionReports {
+export const reportsQuery = gql`
+  query inspectionReports($inspectionType: InspectionType) {
+    reports(inspectionType: $inspectionType) {
+      id
       description
       name
-      reportType
       title
+      reportType
+      inspectionTypes
     }
   }
 `

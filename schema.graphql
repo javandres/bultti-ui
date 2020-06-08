@@ -295,7 +295,6 @@ type ProcurementUnitRoute {
 type Query {
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  availablePreInspectionReports: [ReportListItem!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
@@ -316,6 +315,8 @@ type Query {
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
+  reportCreatorOptions: [ReportCreatorOption!]!
+  reports(inspectionType: InspectionType): [Report!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
@@ -339,12 +340,9 @@ type Report {
   title: String!
 }
 
-type ReportListItem {
-  availableForInspections: [InspectionType!]!
-  description: String!
+type ReportCreatorOption {
+  inspectionTypes: [InspectionType!]!
   name: String!
-  reportType: ReportType!
-  title: String!
 }
 
 type Season {

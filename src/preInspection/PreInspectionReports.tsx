@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { PreInspectionContext } from './PreInspectionContext'
 import styled from 'styled-components'
 import { useQueryData } from '../util/useQueryData'
-import { availablePreInspectionReportsQuery } from '../reports/reportQueries'
+import { reportsQuery } from '../reports/reportQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../reports/ReportListItem'
 import Report from '../reports/Report'
@@ -47,9 +47,11 @@ const PreInspectionReports = observer(
     let inspection = useContext(PreInspectionContext)
     let inspectionId = inspection?.id || ''
 
-    let { data: reportsData, loading: reportsLoading } = useQueryData(
-      availablePreInspectionReportsQuery
-    )
+    let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {
+      variables: {
+        inspectionType: InspectionType.Pre,
+      },
+    })
 
     let reports = useMemo(() => reportsData || [], [reportsData])
 

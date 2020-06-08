@@ -37,7 +37,8 @@ export type Query = {
   currentUser?: Maybe<User>;
   blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
   availableDayTypes: Array<Scalars['String']>;
-  availablePreInspectionReports: Array<ReportListItem>;
+  reports: Array<Report>;
+  reportCreatorOptions: Array<ReportCreatorOption>;
   inspectionReportByName?: Maybe<Report>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
@@ -129,6 +130,11 @@ export type QueryBlockDeparturesForPreInspectionArgs = {
 
 export type QueryAvailableDayTypesArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type QueryReportsArgs = {
+  inspectionType?: Maybe<InspectionType>;
 };
 
 
@@ -487,36 +493,20 @@ export type OperatorBlockDeparture = {
   inspectionId?: Maybe<Scalars['String']>;
 };
 
-export type ReportListItem = {
-  __typename?: 'ReportListItem';
-  name: Scalars['String'];
-  title: Scalars['String'];
-  description: Scalars['String'];
-  reportType: ReportType;
-  availableForInspections: Array<InspectionType>;
-};
-
-export enum ReportType {
-  List = 'LIST',
-  PairList = 'PAIR_LIST',
-  Summary = 'SUMMARY',
-  ExecutionRequirement = 'EXECUTION_REQUIREMENT'
-}
-
 export type Report = {
   __typename?: 'Report';
   id: Scalars['ID'];
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType?: Maybe<ReportType>;
   columnLabels?: Maybe<Scalars['String']>;
   params?: Maybe<Scalars['String']>;
-  inspectionTypes?: Maybe<Array<InspectionType>>;
   season?: Maybe<Season>;
   operator?: Maybe<Operator>;
   inspection?: Maybe<Inspection>;
   reportEntities: Array<ReportEntityUnion>;
+  inspectionTypes?: Maybe<Array<InspectionType>>;
+  reportType?: Maybe<ReportType>;
 };
 
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;
@@ -557,6 +547,19 @@ export type EmissionClassExecutionItem = {
   class8?: Maybe<Scalars['Float']>;
   class9?: Maybe<Scalars['Float']>;
   class10?: Maybe<Scalars['Float']>;
+};
+
+export enum ReportType {
+  List = 'LIST',
+  PairList = 'PAIR_LIST',
+  Summary = 'SUMMARY',
+  ExecutionRequirement = 'EXECUTION_REQUIREMENT'
+}
+
+export type ReportCreatorOption = {
+  __typename?: 'ReportCreatorOption';
+  name: Scalars['String'];
+  inspectionTypes: Array<InspectionType>;
 };
 
 export type Mutation = {
