@@ -211,6 +211,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
+  modifyReport(reportInput: ReportInput!): Report!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
@@ -465,6 +466,13 @@ input InspectionInput {
 input ProcurementUnitEditInput {
   medianAgeRequirement: Float!
   weeklyMeters: Float!
+}
+
+input ReportInput {
+  description: String!
+  id: ID!
+  name: String!
+  title: String!
 }
 
 input UserInput {

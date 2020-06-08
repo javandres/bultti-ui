@@ -584,6 +584,7 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
+  modifyReport: Report;
   createInspection: Inspection;
   updateInspection: Inspection;
   submitInspection: Inspection;
@@ -711,6 +712,11 @@ export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
 };
 
 
+export type MutationModifyReportArgs = {
+  reportInput: ReportInput;
+};
+
+
 export type MutationCreateInspectionArgs = {
   inspection: InitialInspectionInput;
 };
@@ -784,6 +790,13 @@ export type UserInput = {
   operatorIds?: Maybe<Scalars['String']>;
 };
 
+
+export type ReportInput = {
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+};
 
 export type InitialInspectionInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;

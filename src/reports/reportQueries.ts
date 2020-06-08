@@ -12,6 +12,8 @@ export const reportsQuery = gql`
       description
       name
       title
+      columnLabels
+      params
       reportType
       inspectionTypes
     }
