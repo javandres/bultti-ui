@@ -168,6 +168,9 @@ export const modifyReportMutation = gql`
       title
       columnLabels
       params
+      inspectionTypes
+      reportType
+      _defaultParams
     }
   }
 `

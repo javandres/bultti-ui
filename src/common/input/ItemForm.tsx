@@ -39,6 +39,10 @@ export const FieldWrapper = styled.div<{ frameless?: boolean }>`
     padding-left: ${(p) => (p.frameless ? '1.5rem' : '0')};
   }
 
+  &:last-child {
+    padding-bottom: ${(p) => (p.frameless ? '0' : '0.5rem')};
+  }
+
   > * {
     width: 100%;
   }

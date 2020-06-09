@@ -27,7 +27,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
   let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery)
   let reports = useMemo(() => reportsData || [], [reportsData])
 
-  const [reportsExpanded, setReportsExpanded] = useState(false)
+  const [reportsExpanded, setReportsExpanded] = useState(true)
 
   const toggleReportsExpanded = useCallback(() => {
     setReportsExpanded((currentVal) => !currentVal)
@@ -45,7 +45,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
         )}
         {reports.map((reportItem) => (
           <ReportListItem
-            key={reportItem.name}
+            key={reportItem.id}
             reportData={reportItem}
             isExpanded={reportsExpanded}>
             <ReportEditor report={reportItem} />

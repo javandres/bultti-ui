@@ -1,4 +1,4 @@
-import React, { StyleHTMLAttributes, useCallback, useMemo, useState } from 'react'
+import React, { CSSProperties, useCallback, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useCombobox } from 'downshift'
 import { Button, ButtonSize } from '../components/Button'
@@ -18,6 +18,10 @@ const AutoCompleteInput = styled(TextInput)`
 
   &:focus {
     transform: none;
+
+    & + * {
+      border-color: var(--blue) !important;
+    }
   }
 `
 
@@ -40,6 +44,7 @@ const MenuButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   justify-content: flex-start;
   position: relative;
   z-index: 120;
+  transition: all 0.2s ease-out;
 
   svg {
     margin: 0;
@@ -102,7 +107,7 @@ export type AutoCompleteProps = {
   itemToLabel?: string | ((item: any | null) => string)
   selectedItem?: any
   className?: string
-  style?: StyleHTMLAttributes<HTMLDivElement>
+  style?: CSSProperties
   theme?: ThemeTypes
 }
 
@@ -142,9 +147,14 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
     const onSelectFn = useCallback(
       ({ selectedItem: nextItem = '' }) => {
         onSelect(nextItem)
+        setCurrentValue(toString(nextItem, toString))
       },
       [onSelect]
     )
+
+    const onBlur = useCallback(() => {
+      onSelect(currentValue)
+    }, [currentValue])
 
     let currentItems = useMemo(
       () => items.filter((item) => toString(item, itemToString).startsWith(currentValue)),
@@ -177,7 +187,12 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
           </InputLabel>
         )}
         <AutoCompleteWrapper {...getComboboxProps()}>
-          <AutoCompleteInput theme="light" {...getInputProps()} />
+          <AutoCompleteInput
+            theme="light"
+            {...getInputProps()}
+            disabled={disabled}
+            onBlur={onBlur}
+          />
           <MenuButton
             {...getToggleButtonProps({
               disabled,

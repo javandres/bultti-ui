@@ -116,7 +116,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
 
   let onCancel = useCallback(() => {
     setPendingReport(createReportInput(report))
-  }, [])
+  }, [report])
 
   let { data: reportCreatorsData } = useQueryData(reportCreatorNamesQuery)
 
