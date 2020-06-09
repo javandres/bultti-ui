@@ -499,8 +499,8 @@ export type Report = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  columnLabels?: Maybe<Scalars['String']>;
   params?: Maybe<Scalars['String']>;
+  columnLabels?: Maybe<Scalars['String']>;
   season?: Maybe<Season>;
   operator?: Maybe<Operator>;
   inspection?: Maybe<Inspection>;
@@ -796,6 +796,7 @@ export type ReportInput = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
+  params: Scalars['String'];
 };
 
 export type InitialInspectionInput = {

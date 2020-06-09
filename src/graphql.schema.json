@@ -4594,7 +4594,7 @@
             "deprecationReason": null
           },
           {
-            "name": "columnLabels",
+            "name": "params",
             "description": null,
             "args": [],
             "type": {
@@ -4606,7 +4606,7 @@
             "deprecationReason": null
           },
           {
-            "name": "params",
+            "name": "columnLabels",
             "description": null,
             "args": [],
             "type": {
@@ -6696,6 +6696,20 @@
           },
           {
             "name": "description",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "params",
             "description": null,
             "type": {
               "kind": "NON_NULL",

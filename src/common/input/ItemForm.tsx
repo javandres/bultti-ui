@@ -29,15 +29,22 @@ export const FieldWrapper = styled.div<{ frameless?: boolean }>`
   flex-direction: column;
   flex: 1 1 50%;
   width: auto;
-  padding: ${(p) => (p.frameless ? '0' : '0.5rem 0.75rem')};
+  padding: ${(p) => (p.frameless ? '0 0 1.5rem' : '0.5rem 0.75rem')};
   border-right: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
   border-bottom: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
 
   &:nth-child(2n),
   &:last-child {
     border-right: 0;
-    padding-bottom: ${(p) => (p.frameless ? '1rem' : '0')};
     padding-left: ${(p) => (p.frameless ? '1.5rem' : '0')};
+  }
+
+  > * {
+    width: 100%;
+  }
+
+  textarea {
+    resize: vertical;
   }
 `
 

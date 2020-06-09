@@ -8,6 +8,7 @@ import { modifyReportMutation, reportCreatorNamesQuery } from './reportQueries'
 import { TextArea, TextInput } from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import AutoComplete from '../common/input/AutoCompleteInput'
+import KeyValueInput, { ValuesType } from '../common/input/KeyValueInput'
 
 const ReportEditorView = styled.div``
 
@@ -21,6 +22,7 @@ function createReportInput(report: Report): ReportInput {
     description: report.description,
     name: report.name,
     title: report.title,
+    params: report.params || '',
   }
 }
 
@@ -53,6 +55,13 @@ const renderEditorField = (reportCreatorNames: string[] = []) => (
     )
   }
 
+  if (key === 'params') {
+    let values = !!val ? JSON.parse(val) : {}
+    let changeHandler = (values: ValuesType) => onChange(JSON.stringify(values))
+
+    return <KeyValueInput values={values} onChange={changeHandler} />
+  }
+
   return (
     <TextInput
       type="text"
@@ -68,6 +77,7 @@ let formLabels = {
   name: 'Tunniste',
   title: 'Nimi',
   description: 'Kuvaus',
+  params: 'Parametrit',
 }
 
 const ReportEditor = observer(({ report }: PropTypes) => {
@@ -104,9 +114,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
     setPendingReport(createReportInput(report))
   }, [])
 
-  let { data: reportCreatorsData, loading: namesLoading } = useQueryData(
-    reportCreatorNamesQuery
-  )
+  let { data: reportCreatorsData } = useQueryData(reportCreatorNamesQuery)
 
   let reportCreatorNames = (reportCreatorsData || []).map(({ name }) => name)
 
@@ -114,7 +122,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
     <ReportEditorView>
       <ItemForm
         item={pendingReport}
-        hideKeys={['id', 'columnLabels', 'params', 'inspectionTypes', 'reportType']}
+        hideKeys={['id', 'inspectionTypes', 'reportType']}
         labels={formLabels}
         onChange={onChange}
         onDone={onDone}

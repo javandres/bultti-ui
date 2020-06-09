@@ -472,6 +472,7 @@ input ReportInput {
   description: String!
   id: ID!
   name: String!
+  params: String!
   title: String!
 }
 
