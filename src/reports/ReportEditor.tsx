@@ -4,8 +4,10 @@ import { observer } from 'mobx-react-lite'
 import { Report, ReportInput } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { modifyReportMutation } from './reportQueries'
+import { modifyReportMutation, reportCreatorNamesQuery } from './reportQueries'
 import { TextArea, TextInput } from '../common/input/Input'
+import { useQueryData } from '../util/useQueryData'
+import AutoComplete from '../common/input/AutoCompleteInput'
 
 const ReportEditorView = styled.div``
 
@@ -22,7 +24,11 @@ function createReportInput(report: Report): ReportInput {
   }
 }
 
-const renderEditorField = (key: string, val: any, onChange: (val: any) => void) => {
+const renderEditorField = (reportCreatorNames: string[] = []) => (
+  key: string,
+  val: any,
+  onChange: (val: any) => void
+) => {
   if (key === 'description') {
     return (
       <TextArea
@@ -31,6 +37,18 @@ const renderEditorField = (key: string, val: any, onChange: (val: any) => void) 
         onChange={(e) => onChange(e.target.value)}
         name={key}
         style={{ width: '100%' }}
+      />
+    )
+  }
+
+  if (key === 'name') {
+    return (
+      <AutoComplete
+        selectedItem={val}
+        items={reportCreatorNames}
+        onSelect={onChange}
+        itemToString={(item) => item}
+        itemToLabel={(item) => item}
       />
     )
   }
@@ -56,6 +74,8 @@ const ReportEditor = observer(({ report }: PropTypes) => {
   let [pendingReport, setPendingReport] = useState(createReportInput(report))
 
   let onChange = useCallback((key, nextValue) => {
+    console.log(nextValue)
+
     setPendingReport((currentVal) => ({
       ...currentVal,
       [key]: nextValue,
@@ -84,6 +104,12 @@ const ReportEditor = observer(({ report }: PropTypes) => {
     setPendingReport(createReportInput(report))
   }, [])
 
+  let { data: reportCreatorsData, loading: namesLoading } = useQueryData(
+    reportCreatorNamesQuery
+  )
+
+  let reportCreatorNames = (reportCreatorsData || []).map(({ name }) => name)
+
   return (
     <ReportEditorView>
       <ItemForm
@@ -94,7 +120,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
         onDone={onDone}
         onCancel={onCancel}
         frameless={true}
-        renderInput={renderEditorField}
+        renderInput={renderEditorField(reportCreatorNames)}
       />
     </ReportEditorView>
   )

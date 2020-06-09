@@ -20,6 +20,15 @@ export const reportsQuery = gql`
   }
 `
 
+export const reportCreatorNamesQuery = gql`
+  query reportCreatorNames {
+    reportCreatorOptions {
+      name
+      inspectionTypes
+    }
+  }
+`
+
 export const DepartureFragment = gql`
   fragment DepartureFragment on Departure {
     id
