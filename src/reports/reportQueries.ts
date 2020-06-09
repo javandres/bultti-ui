@@ -16,6 +16,7 @@ export const reportsQuery = gql`
       params
       reportType
       inspectionTypes
+      _defaultParams
     }
   }
 `
@@ -25,6 +26,8 @@ export const reportCreatorNamesQuery = gql`
     reportCreatorOptions {
       name
       inspectionTypes
+      params
+      reportType
     }
   }
 `

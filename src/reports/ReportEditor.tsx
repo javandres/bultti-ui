@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Report, ReportInput } from '../schema-types'
@@ -26,7 +26,7 @@ function createReportInput(report: Report): ReportInput {
   }
 }
 
-const renderEditorField = (reportCreatorNames: string[] = []) => (
+const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}) => (
   key: string,
   val: any,
   onChange: (val: any) => void
@@ -59,7 +59,13 @@ const renderEditorField = (reportCreatorNames: string[] = []) => (
     let values = !!val ? JSON.parse(val) : {}
     let changeHandler = (values: ValuesType) => onChange(JSON.stringify(values))
 
-    return <KeyValueInput values={values} onChange={changeHandler} />
+    return (
+      <KeyValueInput
+        values={values}
+        onChange={changeHandler}
+        readOnlyKeys={Object.keys(defaultParams)}
+      />
+    )
   }
 
   return (
@@ -84,20 +90,18 @@ const ReportEditor = observer(({ report }: PropTypes) => {
   let [pendingReport, setPendingReport] = useState(createReportInput(report))
 
   let onChange = useCallback((key, nextValue) => {
-    console.log(nextValue)
-
     setPendingReport((currentVal) => ({
       ...currentVal,
       [key]: nextValue,
     }))
   }, [])
 
-  let [modifyReport, { data: nextReport, loading: reportLoading }] = useMutationData(
+  let [modifyReport, { data: nextReport, loading: mutationLoading }] = useMutationData(
     modifyReportMutation
   )
 
   useEffect(() => {
-    if (nextReport && !reportLoading) {
+    if (nextReport && !mutationLoading) {
       setPendingReport(createReportInput(nextReport))
     }
   }, [nextReport])
@@ -117,6 +121,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
   let { data: reportCreatorsData } = useQueryData(reportCreatorNamesQuery)
 
   let reportCreatorNames = (reportCreatorsData || []).map(({ name }) => name)
+  let defaultParams = useMemo(() => JSON.parse(report?._defaultParams || '{}'), [report])
 
   return (
     <ReportEditorView>
@@ -128,7 +133,8 @@ const ReportEditor = observer(({ report }: PropTypes) => {
         onDone={onDone}
         onCancel={onCancel}
         frameless={true}
-        renderInput={renderEditorField(reportCreatorNames)}
+        loading={mutationLoading}
+        renderInput={renderEditorField(reportCreatorNames, defaultParams)}
       />
     </ReportEditorView>
   )

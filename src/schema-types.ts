@@ -507,6 +507,7 @@ export type Report = {
   reportEntities: Array<ReportEntityUnion>;
   inspectionTypes?: Maybe<Array<InspectionType>>;
   reportType?: Maybe<ReportType>;
+  _defaultParams?: Maybe<Scalars['String']>;
 };
 
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;
@@ -560,6 +561,9 @@ export type ReportCreatorOption = {
   __typename?: 'ReportCreatorOption';
   name: Scalars['String'];
   inspectionTypes: Array<InspectionType>;
+  reportType: ReportType;
+  columnLabels: Scalars['String'];
+  params: Scalars['String'];
 };
 
 export type Mutation = {

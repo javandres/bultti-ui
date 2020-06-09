@@ -89,6 +89,7 @@ export type PropTypes<ItemType = any> = {
   renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
   style?: CSSProperties
   frameless?: boolean
+  loading?: boolean
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
@@ -115,10 +116,11 @@ const ItemForm: React.FC<PropTypes> = observer(
     onDone,
     onCancel,
     doneDisabled = false,
-    doneLabel = 'Valmis',
+    doneLabel = 'Tallenna',
     renderInput = defaultRenderInput,
     style,
     frameless = false,
+    loading = false,
   }) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -154,10 +156,14 @@ const ItemForm: React.FC<PropTypes> = observer(
           }}>
           {children}
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
+            <Button
+              loading={loading}
+              style={{ marginRight: '1rem' }}
+              disabled={doneDisabled}
+              onClick={onDone}>
               {doneLabel}
             </Button>
-            <Button buttonStyle={ButtonStyle.SECONDARY} onClick={onCancel}>
+            <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
               Peruuta
             </Button>
           </ActionsWrapper>

@@ -327,6 +327,7 @@ type Query {
 }
 
 type Report {
+  _defaultParams: String
   columnLabels: String
   description: String!
   id: ID!
@@ -342,8 +343,11 @@ type Report {
 }
 
 type ReportCreatorOption {
+  columnLabels: String!
   inspectionTypes: [InspectionType!]!
   name: String!
+  params: String!
+  reportType: ReportType!
 }
 
 type Season {
