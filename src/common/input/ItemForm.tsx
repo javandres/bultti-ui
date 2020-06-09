@@ -6,11 +6,11 @@ import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
 
-export const ControlledFormView = styled.div`
+export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  border: 1px solid var(--lighter-grey);
+  border: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
   border-bottom: 0;
   border-radius: 0.5rem;
   background: white;
@@ -24,17 +24,20 @@ export const ControlledFormView = styled.div`
   }
 `
 
-export const FieldWrapper = styled.div`
+export const FieldWrapper = styled.div<{ frameless?: boolean }>`
   display: flex;
   flex-direction: column;
   flex: 1 1 50%;
-  padding: 0.5rem 0.75rem;
-  border-right: 1px solid var(--lighter-grey);
-  border-bottom: 1px solid var(--lighter-grey);
+  width: auto;
+  padding: ${(p) => (p.frameless ? '0' : '0.5rem 0.75rem')};
+  border-right: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
+  border-bottom: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
 
   &:nth-child(2n),
   &:last-child {
     border-right: 0;
+    padding-bottom: ${(p) => (p.frameless ? '1rem' : '0')};
+    padding-left: ${(p) => (p.frameless ? '1.5rem' : '0')};
   }
 `
 
@@ -74,9 +77,11 @@ export type PropTypes<ItemType = any> = {
   labels?: { [key in keyof ItemType]: string }
   order?: string[]
   hideKeys?: string[]
+  editableValues?: string[]
   keyFromItem?: (item: ItemType) => string
   renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
   style?: CSSProperties
+  frameless?: boolean
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
@@ -106,6 +111,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     doneLabel = 'Valmis',
     renderInput = defaultRenderInput,
     style,
+    frameless = false,
   }) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -117,15 +123,14 @@ const ItemForm: React.FC<PropTypes> = observer(
     )
 
     let isReadOnly = useCallback(
-      (key) =>
-        readOnly === true ? true : Array.isArray(readOnly) ? readOnly.includes(key) : false,
+      (key) => (typeof readOnly === 'boolean' ? readOnly : (readOnly || []).includes(key)),
       [readOnly]
     )
 
     return (
-      <ControlledFormView style={style}>
+      <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => (
-          <FieldWrapper key={key}>
+          <FieldWrapper key={key} frameless={frameless}>
             <FieldLabel>{get(labels, key, key)}</FieldLabel>
             {isReadOnly(key)
               ? renderReadOnlyField(val)
@@ -133,6 +138,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           </FieldWrapper>
         ))}
         <FieldWrapper
+          frameless={frameless}
           style={{
             flexDirection: 'row',
             alignItems: 'flex-end',

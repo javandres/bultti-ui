@@ -70,6 +70,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
         onChange={onChange}
         onDone={onDone}
         onCancel={onCancel}
+        readOnly={['email', 'hslIdGroups']}
         style={{ marginRight: '1rem', marginLeft: '1rem' }}
         item={pendingUser}
       />

@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Report, Report, ReportInput } from '../schema-types'
+import { Report, ReportInput } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { modifyReportMutation } from '../common/query/authQueries'
+import { modifyReportMutation } from './reportQueries'
+import { TextArea, TextInput } from '../common/input/Input'
 
 const ReportEditorView = styled.div``
 
@@ -19,6 +20,36 @@ function createReportInput(report: Report): ReportInput {
     name: report.name,
     title: report.title,
   }
+}
+
+const renderEditorField = (key: string, val: any, onChange: (val: any) => void) => {
+  if (key === 'description') {
+    return (
+      <TextArea
+        value={val}
+        theme="light"
+        onChange={(e) => onChange(e.target.value)}
+        name={key}
+        style={{ width: '100%' }}
+      />
+    )
+  }
+
+  return (
+    <TextInput
+      type="text"
+      theme="light"
+      value={val}
+      onChange={(e) => onChange(e.target.value)}
+      name={key}
+    />
+  )
+}
+
+let formLabels = {
+  name: 'Tunniste',
+  title: 'Nimi',
+  description: 'Kuvaus',
 }
 
 const ReportEditor = observer(({ report }: PropTypes) => {
@@ -37,7 +68,6 @@ const ReportEditor = observer(({ report }: PropTypes) => {
 
   useEffect(() => {
     if (nextReport && !reportLoading) {
-      setReport(nextReport)
       setPendingReport(createReportInput(nextReport))
     }
   }, [nextReport])
@@ -56,7 +86,16 @@ const ReportEditor = observer(({ report }: PropTypes) => {
 
   return (
     <ReportEditorView>
-      <ItemForm item={report} hideKeys={['id', 'columnLabels', 'params']} />
+      <ItemForm
+        item={pendingReport}
+        hideKeys={['id', 'columnLabels', 'params', 'inspectionTypes', 'reportType']}
+        labels={formLabels}
+        onChange={onChange}
+        onDone={onDone}
+        onCancel={onCancel}
+        frameless={true}
+        renderInput={renderEditorField}
+      />
     </ReportEditorView>
   )
 })

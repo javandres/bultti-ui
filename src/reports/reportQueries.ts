@@ -74,6 +74,7 @@ export const reportByName = gql`
       description
       name
       title
+      params
       reportType
       columnLabels
       operator {
@@ -144,4 +145,17 @@ export const reportByName = gql`
   ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
+`
+
+export const modifyReportMutation = gql`
+  mutation modifyReport($reportInput: ReportInput!) {
+    modifyReport(reportInput: $reportInput) {
+      id
+      description
+      name
+      title
+      columnLabels
+      params
+    }
+  }
 `

@@ -42,6 +42,8 @@ export const TextInput = styled.input<{
       : ''}
 `
 
+export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea' }))``
+
 export type PropTypes = {
   className?: string
   label?: string

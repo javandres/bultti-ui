@@ -37,7 +37,11 @@ export const useOrderedValues = (
       itemEntries = orderBy(itemEntries, ([key]) => {
         const labelIndex = inputOrdering.indexOf(key)
         return labelIndex === -1 ? 999 : labelIndex
-      }).filter(([key]) => !keysToHide.includes(key))
+      })
+    }
+
+    if (keysToHide && keysToHide.length !== 0) {
+      itemEntries = itemEntries.filter(([key]) => !keysToHide.includes(key))
     }
 
     return itemEntries
