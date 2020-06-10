@@ -1,19 +1,21 @@
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { svgSize } from '../../util/svg'
+import { merge } from 'lodash'
 
 type IconProps = {
   fill?: string
   height?: string | number
   width?: string | number
-} & {
-  [propName: string]: string | number
+  style?: CSSProperties
 }
 
-export function ArrowDown({ fill, height, width, ...rest }: IconProps) {
+export function ArrowDown({ fill, height, width, style, ...rest }: IconProps) {
+  let styleProp = style || {}
+
   return (
     <svg
       {...rest}
-      {...svgSize(height, width)}
+      {...merge({ style: {} }, { style: styleProp }, svgSize(height, width))}
       viewBox="0 0 32 20"
       version="1.1"
       preserveAspectRatio="xMidYMid meet">

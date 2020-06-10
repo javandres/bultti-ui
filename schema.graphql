@@ -223,6 +223,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
+  setReportsOrder(reportOrders: [ReportOrderInput!]!): [Report!]!
   submitInspection(inspectionId: String!): Inspection!
   toggleUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
@@ -335,6 +336,7 @@ type Report {
   inspectionTypes: [InspectionType!]
   name: String!
   operator: Operator
+  order: Int!
   params: String
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType
@@ -478,6 +480,11 @@ input ReportInput {
   name: String!
   params: String!
   title: String!
+}
+
+input ReportOrderInput {
+  id: ID!
+  order: Int!
 }
 
 input UserInput {

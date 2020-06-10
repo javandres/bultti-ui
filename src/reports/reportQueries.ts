@@ -5,20 +5,28 @@ import {
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
 
+export const ReportFragment = gql`
+  fragment ReportFragment on Report {
+    id
+    description
+    name
+    title
+    columnLabels
+    params
+    reportType
+    inspectionTypes
+    order
+    _defaultParams
+  }
+`
+
 export const reportsQuery = gql`
   query inspectionReports($inspectionType: InspectionType) {
     reports(inspectionType: $inspectionType) {
-      id
-      description
-      name
-      title
-      columnLabels
-      params
-      reportType
-      inspectionTypes
-      _defaultParams
+      ...ReportFragment
     }
   }
+  ${ReportFragment}
 `
 
 export const reportCreatorNamesQuery = gql`
@@ -83,12 +91,7 @@ export const reportByName = gql`
       inspectionType: $inspectionType
       reportName: $reportName
     ) {
-      description
-      name
-      title
-      params
-      reportType
-      columnLabels
+      ...ReportFragment
       operator {
         id
         operatorId
@@ -152,6 +155,7 @@ export const reportByName = gql`
       }
     }
   }
+  ${ReportFragment}
   ${OperatorBlockDepartureFragment}
   ${DepartureFragment}
   ${ShortDepartureFragment}
@@ -162,15 +166,17 @@ export const reportByName = gql`
 export const modifyReportMutation = gql`
   mutation modifyReport($reportInput: ReportInput!) {
     modifyReport(reportInput: $reportInput) {
+      ...ReportFragment
+    }
+  }
+  ${ReportFragment}
+`
+
+export const updateReportOrderMutation = gql`
+  mutation setReportsOrder($reportOrders: [ReportOrderInput!]!) {
+    setReportsOrder(reportOrders: $reportOrders) {
       id
-      description
-      name
-      title
-      columnLabels
-      params
-      inspectionTypes
-      reportType
-      _defaultParams
+      order
     }
   }
 `

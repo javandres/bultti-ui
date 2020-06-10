@@ -16,6 +16,7 @@ const ReportDescription = styled.p`
 
 export type PropTypes = {
   children: React.ReactChild
+  headerContent?: React.ReactChild
   reportData: Report
   inspectionType?: InspectionType
   inspectionId?: string
@@ -23,15 +24,25 @@ export type PropTypes = {
 }
 
 const ReportListItem: React.FC<PropTypes> = observer(
-  ({ reportData, children: report, isExpanded = false, inspectionId, inspectionType }) => {
+  ({
+    reportData,
+    children: report,
+    headerContent,
+    isExpanded = false,
+    inspectionId,
+    inspectionType,
+  }) => {
     return (
       <ExpandableSection
         isExpanded={isExpanded}
         headerContent={
-          <HeaderSection>
-            <ReportTitle>{reportData.title}</ReportTitle>
-            <ReportDescription>{reportData.description}</ReportDescription>
-          </HeaderSection>
+          <>
+            <HeaderSection>
+              <ReportTitle>{reportData.title}</ReportTitle>
+              <ReportDescription>{reportData.description}</ReportDescription>
+            </HeaderSection>
+            {headerContent}
+          </>
         }>
         {report}
       </ExpandableSection>

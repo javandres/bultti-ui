@@ -499,6 +499,7 @@ export type Report = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
+  order: Scalars['Int'];
   params?: Maybe<Scalars['String']>;
   columnLabels?: Maybe<Scalars['String']>;
   season?: Maybe<Season>;
@@ -589,6 +590,7 @@ export type Mutation = {
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
   modifyReport: Report;
+  setReportsOrder: Array<Report>;
   createInspection: Inspection;
   updateInspection: Inspection;
   submitInspection: Inspection;
@@ -721,6 +723,11 @@ export type MutationModifyReportArgs = {
 };
 
 
+export type MutationSetReportsOrderArgs = {
+  reportOrders: Array<ReportOrderInput>;
+};
+
+
 export type MutationCreateInspectionArgs = {
   inspection: InitialInspectionInput;
 };
@@ -801,6 +808,11 @@ export type ReportInput = {
   title: Scalars['String'];
   description: Scalars['String'];
   params: Scalars['String'];
+};
+
+export type ReportOrderInput = {
+  id: Scalars['ID'];
+  order: Scalars['Int'];
 };
 
 export type InitialInspectionInput = {
