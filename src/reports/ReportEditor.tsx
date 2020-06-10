@@ -14,6 +14,7 @@ const ReportEditorView = styled.div``
 
 export type PropTypes = {
   report: Report
+  onCancel?: () => unknown
 }
 
 function createReportInput(report: Report): ReportInput {
@@ -23,6 +24,7 @@ function createReportInput(report: Report): ReportInput {
     name: report.name,
     title: report.title,
     params: report.params || '',
+    order: report.order || 0,
   }
 }
 
@@ -86,8 +88,12 @@ let formLabels = {
   params: 'Parametrit',
 }
 
-const ReportEditor = observer(({ report }: PropTypes) => {
+const ReportEditor = observer(({ report, onCancel }: PropTypes) => {
   let [pendingReport, setPendingReport] = useState(createReportInput(report))
+
+  let pendingReportValid = useMemo(() => !!pendingReport.name && !!pendingReport.title, [
+    pendingReport,
+  ])
 
   let onChange = useCallback((key, nextValue) => {
     setPendingReport((currentVal) => ({
@@ -96,7 +102,7 @@ const ReportEditor = observer(({ report }: PropTypes) => {
     }))
   }, [])
 
-  let [modifyReport, { data: nextReport, loading: mutationLoading }] = useMutationData(
+  let [modifyReport, { data: nextReport, loading: mutationLoading, error }] = useMutationData(
     modifyReportMutation
   )
 
@@ -107,16 +113,22 @@ const ReportEditor = observer(({ report }: PropTypes) => {
   }, [nextReport])
 
   let onDone = useCallback(() => {
-    modifyReport({
-      variables: {
-        reportInput: pendingReport,
-      },
-    })
-  }, [pendingReport])
+    if (pendingReportValid) {
+      modifyReport({
+        variables: {
+          reportInput: pendingReport,
+        },
+      })
+    }
+  }, [pendingReport, pendingReportValid])
 
-  let onCancel = useCallback(() => {
+  let onCancelEdit = useCallback(() => {
     setPendingReport(createReportInput(report))
-  }, [report])
+
+    if (onCancel) {
+      onCancel()
+    }
+  }, [report, onCancel])
 
   let { data: reportCreatorsData } = useQueryData(reportCreatorNamesQuery)
 
@@ -127,13 +139,14 @@ const ReportEditor = observer(({ report }: PropTypes) => {
     <ReportEditorView>
       <ItemForm
         item={pendingReport}
-        hideKeys={['id', 'inspectionTypes', 'reportType']}
+        hideKeys={['id', 'inspectionTypes', 'reportType', 'order']}
         labels={formLabels}
         onChange={onChange}
         onDone={onDone}
-        onCancel={onCancel}
+        onCancel={onCancelEdit}
         frameless={true}
         loading={mutationLoading}
+        doneDisabled={!pendingReportValid}
         renderInput={renderEditorField(reportCreatorNames, defaultParams)}
       />
     </ReportEditorView>

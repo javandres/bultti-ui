@@ -3,15 +3,15 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { PageTitle } from '../common/components/Typography'
-import { Page } from '../common/components/common'
+import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { reportsQuery, updateReportOrderMutation } from '../reports/reportQueries'
 import { MessageView } from '../common/components/Messages'
-import { TextButton } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
 import { orderBy } from 'lodash'
 import { ArrowDown } from '../common/icon/ArrowDown'
 import { useMutationData } from '../util/useMutationData'
-import { ReportOrderInput } from '../schema-types'
+import { Report, ReportOrderInput } from '../schema-types'
 import ReportEditor from '../reports/ReportEditor'
 import ReportListItem from '../reports/ReportListItem'
 
@@ -52,6 +52,8 @@ export type PropTypes = {
 } & RouteComponentProps
 
 const ReportsPage = observer(({ children }: PropTypes) => {
+  let [newReport, setNewReport] = useState<Partial<Report> | null>(null)
+
   let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery)
 
   let [updateReportOrder] = useMutationData(updateReportOrderMutation)
@@ -94,18 +96,26 @@ const ReportsPage = observer(({ children }: PropTypes) => {
 
       if (reorderDirection === 'up') {
         nextOrder = Math.max(0, changedReport.order - 1)
-        nextAdjacentOrder = nextOrder + 1
+        nextAdjacentOrder = Math.min(reportOrders.length - 1, nextOrder + 1)
       }
 
       if (reorderDirection === 'down') {
-        nextOrder = changedReport.order + 1
+        nextOrder = Math.min(reportOrders.length - 1, changedReport.order + 1)
         nextAdjacentOrder = Math.max(0, nextOrder - 1)
+      }
+
+      // Exit if no change was made
+      if (nextOrder === changedReport.order) {
+        return
       }
 
       changedReport.order = nextOrder
       let adjacentReport = nextReportOrders.splice(nextOrder, 1, changedReport)[0]
-      adjacentReport.order = nextAdjacentOrder
-      nextReportOrders.splice(nextAdjacentOrder, 0, adjacentReport)
+
+      if (adjacentReport) {
+        adjacentReport.order = nextAdjacentOrder
+        nextReportOrders.splice(nextAdjacentOrder, 0, adjacentReport)
+      }
 
       setReportOrders(nextReportOrders)
 
@@ -124,15 +134,41 @@ const ReportsPage = observer(({ children }: PropTypes) => {
     setReportsExpanded((currentVal) => !currentVal)
   }, [])
 
+  const onCreateNewReport = useCallback(() => {
+    setNewReport({
+      title: 'Uusi raportti',
+      order: Math.max(0, reportOrders.length - 1),
+    })
+  }, [reportOrders])
+
   return (
     <ReportsPageView>
       <PageTitle>Raportit</PageTitle>
       {!reportsData && !reportsLoading && <MessageView>Ei raportteja...</MessageView>}
       <ReportContentView>
-        {reports.length !== 0 && (
-          <TextButton onClick={toggleReportsExpanded}>
-            {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
-          </TextButton>
+        <FlexRow style={{ marginBottom: '1.5rem' }}>
+          {reports.length !== 0 && (
+            <TextButton onClick={toggleReportsExpanded}>
+              {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
+            </TextButton>
+          )}
+          {!newReport && (
+            <Button
+              onClick={onCreateNewReport}
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.MEDIUM}
+              style={{ marginLeft: 'auto' }}>
+              Uusi raportti
+            </Button>
+          )}
+        </FlexRow>
+        {newReport && (
+          <ReportListItem
+            key="new"
+            reportData={newReport as Report}
+            isExpanded={reportsExpanded}>
+            <ReportEditor onCancel={() => setNewReport(null)} report={newReport as Report} />
+          </ReportListItem>
         )}
         {orderedReports.map((reportItem) => (
           <ReportListItem

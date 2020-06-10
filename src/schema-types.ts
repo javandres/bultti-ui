@@ -803,11 +803,12 @@ export type UserInput = {
 
 
 export type ReportInput = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
   params: Scalars['String'];
+  order?: Maybe<Scalars['Int']>;
 };
 
 export type ReportOrderInput = {
