@@ -208,6 +208,7 @@ type Mutation {
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection!
+  createReport(reportInput: ReportInput!): Report!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!

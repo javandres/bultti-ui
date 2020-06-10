@@ -4,12 +4,16 @@ import { observer } from 'mobx-react-lite'
 import { Report, ReportInput } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { modifyReportMutation, reportCreatorNamesQuery, reportsQuery } from './reportQueries'
+import {
+  createReportMutation,
+  modifyReportMutation,
+  reportCreatorNamesQuery,
+  reportsQuery,
+} from './reportQueries'
 import { TextArea, TextInput } from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import AutoComplete from '../common/input/AutoCompleteInput'
 import KeyValueInput, { ValuesType } from '../common/input/KeyValueInput'
-import { orderBy } from 'lodash'
 
 const ReportEditorView = styled.div``
 
@@ -105,26 +109,21 @@ const ReportEditor = observer(({ report, onCancel, isNew = false }: PropTypes) =
   }, [])
 
   let [modifyReport, { data: nextReport, loading: modifyLoading }] = useMutationData(
-    modifyReportMutation,
-    {
-      update: (cache, { data: { modifyReport } }) => {
-        console.log(modifyReport)
-
-        if (!isNew) {
-          return
-        }
-
-        let { reports } = cache.readQuery({ query: reportsQuery }) || {}
-
-        cache.writeQuery({
-          query: reportsQuery,
-          data: { reports: orderBy([...reports, modifyReport], 'order') },
-        })
-      },
-    }
+    modifyReportMutation
   )
 
-  let isLoading = modifyLoading
+  let [createReport, { loading: createLoading }] = useMutationData(createReportMutation, {
+    update: (cache, { data: { createReport } }) => {
+      let { reports } = cache.readQuery({ query: reportsQuery }) || {}
+
+      cache.writeQuery({
+        query: reportsQuery,
+        data: { reports: [...reports, createReport] },
+      })
+    },
+  })
+
+  let isLoading = modifyLoading || createLoading
 
   useEffect(() => {
     if (nextReport && !isLoading) {
@@ -134,17 +133,19 @@ const ReportEditor = observer(({ report, onCancel, isNew = false }: PropTypes) =
 
   let onDone = useCallback(async () => {
     if (pendingReportValid) {
-      await modifyReport({
+      let mutationFn = isNew ? createReport : modifyReport
+
+      await mutationFn({
         variables: {
           reportInput: pendingReport,
         },
       })
 
-      if (onCancel) {
+      if (isNew && onCancel) {
         onCancel()
       }
     }
-  }, [pendingReport, pendingReportValid, onCancel])
+  }, [pendingReport, pendingReportValid, onCancel, isNew])
 
   let onCancelEdit = useCallback(() => {
     setPendingReport(createReportInput(report))

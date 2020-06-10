@@ -589,6 +589,7 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
+  createReport: Report;
   modifyReport: Report;
   setReportsOrder: Array<Report>;
   createInspection: Inspection;
@@ -715,6 +716,11 @@ export type MutationRemoveDepartureBlocksForDayTypesArgs = {
 export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
   equipmentId: Scalars['String'];
+};
+
+
+export type MutationCreateReportArgs = {
+  reportInput: ReportInput;
 };
 
 

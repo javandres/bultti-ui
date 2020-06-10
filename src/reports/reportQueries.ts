@@ -172,6 +172,15 @@ export const modifyReportMutation = gql`
   ${ReportFragment}
 `
 
+export const createReportMutation = gql`
+  mutation createReport($reportInput: ReportInput!) {
+    createReport(reportInput: $reportInput) {
+      ...ReportFragment
+    }
+  }
+  ${ReportFragment}
+`
+
 export const updateReportOrderMutation = gql`
   mutation setReportsOrder($reportOrders: [ReportOrderInput!]!) {
     setReportsOrder(reportOrders: $reportOrders) {
