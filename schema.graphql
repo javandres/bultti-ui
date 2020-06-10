@@ -7,6 +7,37 @@ schema {
 
 union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture
 
+type Contract {
+  createdAt: DateTime!
+  description: String
+  endDate: BulttiDate!
+  id: ID!
+  operator: Operator!
+  operatorId: Int
+  procurementUnits: [ProcurementUnit!]!
+  rules: [ContractRule!]
+  startDate: BulttiDate!
+  updatedAt: DateTime!
+  userRelations: [ContractUserRelation!]!
+}
+
+type ContractRule {
+  description: String!
+  name: String!
+  type: RuleType!
+  value: String!
+}
+
+type ContractUserRelation {
+  contract: Contract!
+  createdAt: DateTime!
+  id: ID!
+  relatedBy: ContractUserRelationType!
+  subscribed: Boolean!
+  updatedAt: DateTime!
+  user: User!
+}
+
 type Departure {
   allowedOverAge: Float
   blockNumber: String
@@ -204,6 +235,7 @@ type MissingEquipment {
 
 type Mutation {
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
+  createContract(contractInput: ContractInput!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
@@ -212,6 +244,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
+  modifyContract(contractInput: ContractInput!): Contract!
   modifyReport(reportInput: ReportInput!): Report!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
@@ -244,6 +277,7 @@ type OperatingArea {
 }
 
 type Operator {
+  contracts: [Contract!]!
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
@@ -276,6 +310,7 @@ type OperatorBlockDeparture {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int!
+  contracts: [Contract!]!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
@@ -299,6 +334,9 @@ type Query {
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
+  contract(contractId: String!): Contract
+  contracts(date: BulttiDate, operatorId: Int): [Contract!]!
+  contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
@@ -362,6 +400,7 @@ type Season {
 }
 
 type User {
+  contractRelations: [ContractUserRelation!]!
   email: String!
   hslIdGroups: [String!]
   id: ID!
@@ -370,6 +409,12 @@ type User {
   operatorIds: [Int!]
   organisation: String
   role: UserRole!
+}
+
+enum ContractUserRelationType {
+  CREATED_BY
+  SUBSCRIBED_TO
+  UPDATED_BY
 }
 
 enum DayType {
@@ -415,6 +460,12 @@ enum ReportType {
   SUMMARY
 }
 
+enum RuleType {
+  CONDITIONAL_VALUE
+  ENUM_VALUE
+  SCALAR_VALUE
+}
+
 enum TrackReason {
   DEADRUN_DETECTED
   EQUIPMENT_AGE_VIOLATION
@@ -434,6 +485,23 @@ enum UserRole {
   BLOCKED
   HSL
   OPERATOR
+}
+
+input ContractInput {
+  description: String
+  endDate: BulttiDate
+  id: ID
+  operatorId: Int
+  procurementUnitIds: [String!]
+  rules: [ContractRuleInput!]
+  startDate: BulttiDate
+}
+
+input ContractRuleInput {
+  description: String
+  name: String
+  type: RuleType
+  value: String
 }
 
 input EquipmentCatalogueInput {
@@ -496,7 +564,7 @@ input UserInput {
   name: String
   operatorIds: String
   organisation: String
-  role: String
+  role: UserRole
 }
 
 

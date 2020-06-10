@@ -5,15 +5,15 @@ import { RouteComponentProps } from '@reach/router'
 import { PageTitle } from '../common/components/Typography'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
-import { reportsQuery, updateReportOrderMutation } from '../reports/reportQueries'
+import { reportsQuery, updateReportOrderMutation } from '../report/reportQueries'
 import { MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
 import { orderBy } from 'lodash'
 import { ArrowDown } from '../common/icon/ArrowDown'
 import { useMutationData } from '../util/useMutationData'
 import { Report, ReportOrderInput } from '../schema-types'
-import ReportEditor from '../reports/ReportEditor'
-import ReportListItem from '../reports/ReportListItem'
+import ReportEditor from '../report/ReportEditor'
+import ReportListItem from '../report/ReportListItem'
 
 const ReportsPageView = styled(Page)``
 
@@ -141,12 +141,14 @@ const ReportsPage = observer(({ children }: PropTypes) => {
     })
   }, [reportOrders])
 
+  let existingNames = useMemo(() => reports.map((r) => r.name), [reports])
+
   return (
     <ReportsPageView>
       <PageTitle>Raportit</PageTitle>
       {!reportsData && !reportsLoading && <MessageView>Ei raportteja...</MessageView>}
       <ReportContentView>
-        <FlexRow style={{ marginBottom: '1.5rem' }}>
+        <FlexRow>
           {reports.length !== 0 && (
             <TextButton onClick={toggleReportsExpanded}>
               {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
@@ -165,6 +167,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
         {newReport && (
           <ReportListItem key="new" reportData={newReport as Report} isExpanded={true}>
             <ReportEditor
+              existingNames={existingNames}
               isNew={true}
               onCancel={() => setNewReport(null)}
               report={newReport as Report}
