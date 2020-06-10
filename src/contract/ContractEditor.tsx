@@ -12,6 +12,8 @@ import {
 import { TextArea, TextInput } from '../common/input/Input'
 import KeyValueInput from '../common/input/KeyValueInput'
 import { useStateValue } from '../state/useAppState'
+import SelectDate from '../common/input/SelectDate'
+import SelectOperator from '../common/input/SelectOperator'
 
 const ContractEditorView = styled.div``
 
@@ -49,6 +51,16 @@ const renderEditorField = () => (key: string, val: any, onChange: (val: any) => 
   // TODO: Rules input UI
   if (key === 'rules') {
     return <KeyValueInput values={val} onChange={onChange} />
+  }
+
+  if (['startDate', 'endDate'].includes(key)) {
+    return <SelectDate name={key} value={val} onChange={onChange} />
+  }
+
+  if (key === 'operatorId') {
+    let onChangeOperator = (operator) => onChange(operator?.id || operator)
+
+    return <SelectOperator value={val} onSelect={onChangeOperator} />
   }
 
   return (

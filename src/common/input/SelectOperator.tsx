@@ -117,13 +117,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
         disabled={operators.length < 2}
         className={className}
         theme={theme}
-        label={
-          !label
-            ? operators.length === 1
-              ? 'Liikennöitsijä'
-              : 'Valitse liikennöitsijä'
-            : label
-        }
+        label={label || undefined}
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}

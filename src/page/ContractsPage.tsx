@@ -52,6 +52,7 @@ const ContractPage = observer(({ children }: PropTypes) => {
     }
 
     setNewContract({
+      operatorId: operator?.id,
       startDate: format(new Date(), DATE_FORMAT),
       endDate: format(addYears(new Date(), 1), DATE_FORMAT),
     })
