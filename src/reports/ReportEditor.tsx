@@ -4,17 +4,19 @@ import { observer } from 'mobx-react-lite'
 import { Report, ReportInput } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { modifyReportMutation, reportCreatorNamesQuery } from './reportQueries'
+import { modifyReportMutation, reportCreatorNamesQuery, reportsQuery } from './reportQueries'
 import { TextArea, TextInput } from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import AutoComplete from '../common/input/AutoCompleteInput'
 import KeyValueInput, { ValuesType } from '../common/input/KeyValueInput'
+import { orderBy } from 'lodash'
 
 const ReportEditorView = styled.div``
 
 export type PropTypes = {
   report: Report
   onCancel?: () => unknown
+  isNew?: boolean
 }
 
 function createReportInput(report: Report): ReportInput {
@@ -88,7 +90,7 @@ let formLabels = {
   params: 'Parametrit',
 }
 
-const ReportEditor = observer(({ report, onCancel }: PropTypes) => {
+const ReportEditor = observer(({ report, onCancel, isNew = false }: PropTypes) => {
   let [pendingReport, setPendingReport] = useState(createReportInput(report))
 
   let pendingReportValid = useMemo(() => !!pendingReport.name && !!pendingReport.title, [
@@ -102,25 +104,47 @@ const ReportEditor = observer(({ report, onCancel }: PropTypes) => {
     }))
   }, [])
 
-  let [modifyReport, { data: nextReport, loading: mutationLoading, error }] = useMutationData(
-    modifyReportMutation
+  let [modifyReport, { data: nextReport, loading: modifyLoading }] = useMutationData(
+    modifyReportMutation,
+    {
+      update: (cache, { data: { modifyReport } }) => {
+        console.log(modifyReport)
+
+        if (!isNew) {
+          return
+        }
+
+        let { reports } = cache.readQuery({ query: reportsQuery }) || {}
+
+        cache.writeQuery({
+          query: reportsQuery,
+          data: { reports: orderBy([...reports, modifyReport], 'order') },
+        })
+      },
+    }
   )
 
+  let isLoading = modifyLoading
+
   useEffect(() => {
-    if (nextReport && !mutationLoading) {
+    if (nextReport && !isLoading) {
       setPendingReport(createReportInput(nextReport))
     }
   }, [nextReport])
 
-  let onDone = useCallback(() => {
+  let onDone = useCallback(async () => {
     if (pendingReportValid) {
-      modifyReport({
+      await modifyReport({
         variables: {
           reportInput: pendingReport,
         },
       })
+
+      if (onCancel) {
+        onCancel()
+      }
     }
-  }, [pendingReport, pendingReportValid])
+  }, [pendingReport, pendingReportValid, onCancel])
 
   let onCancelEdit = useCallback(() => {
     setPendingReport(createReportInput(report))
@@ -145,7 +169,7 @@ const ReportEditor = observer(({ report, onCancel }: PropTypes) => {
         onDone={onDone}
         onCancel={onCancelEdit}
         frameless={true}
-        loading={mutationLoading}
+        loading={isLoading}
         doneDisabled={!pendingReportValid}
         renderInput={renderEditorField(reportCreatorNames, defaultParams)}
       />

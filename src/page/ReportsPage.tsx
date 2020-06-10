@@ -137,7 +137,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
   const onCreateNewReport = useCallback(() => {
     setNewReport({
       title: 'Uusi raportti',
-      order: Math.max(0, reportOrders.length - 1),
+      order: Math.max(0, (reportOrders[reportOrders.length - 1]?.order || -1) + 1),
     })
   }, [reportOrders])
 
@@ -163,11 +163,12 @@ const ReportsPage = observer(({ children }: PropTypes) => {
           )}
         </FlexRow>
         {newReport && (
-          <ReportListItem
-            key="new"
-            reportData={newReport as Report}
-            isExpanded={reportsExpanded}>
-            <ReportEditor onCancel={() => setNewReport(null)} report={newReport as Report} />
+          <ReportListItem key="new" reportData={newReport as Report} isExpanded={true}>
+            <ReportEditor
+              isNew={true}
+              onCancel={() => setNewReport(null)}
+              report={newReport as Report}
+            />
           </ReportListItem>
         )}
         {orderedReports.map((reportItem) => (
