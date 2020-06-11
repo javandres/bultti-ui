@@ -10,10 +10,10 @@ import {
   modifyContractMutation,
 } from './contractQueries'
 import { TextArea, TextInput } from '../common/input/Input'
-import KeyValueInput from '../common/input/KeyValueInput'
-import { useStateValue } from '../state/useAppState'
 import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
+import ContractRuleEditor from './ContractRuleEditor'
+import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 
 const ContractEditorView = styled.div``
 
@@ -35,7 +35,11 @@ function createContractInput(contract: Contract): ContractInput {
   }
 }
 
-const renderEditorField = () => (key: string, val: any, onChange: (val: any) => void) => {
+const renderEditorField = (contract: Contract) => (
+  key: string,
+  val: any,
+  onChange: (val: any) => void
+) => {
   if (key === 'description') {
     return (
       <TextArea
@@ -48,9 +52,12 @@ const renderEditorField = () => (key: string, val: any, onChange: (val: any) => 
     )
   }
 
-  // TODO: Rules input UI
   if (key === 'rules') {
-    return <KeyValueInput values={val} onChange={onChange} />
+    return <ContractRuleEditor contract={contract} />
+  }
+
+  if (key === 'procurementUnitIds') {
+    return <ContractProcurementUnitsEditor contract={contract} />
   }
 
   if (['startDate', 'endDate'].includes(key)) {
@@ -59,7 +66,6 @@ const renderEditorField = () => (key: string, val: any, onChange: (val: any) => 
 
   if (key === 'operatorId') {
     let onChangeOperator = (operator) => onChange(operator?.id || operator)
-
     return <SelectOperator value={val} onSelect={onChangeOperator} />
   }
 
@@ -75,17 +81,15 @@ const renderEditorField = () => (key: string, val: any, onChange: (val: any) => 
 }
 
 let formLabels = {
-  startDate: 'Alkupäivä',
-  endDate: 'Loppupäivä',
+  startDate: 'Sopimus alkaa',
+  endDate: 'Sopimus loppuu',
   description: 'Kuvaus',
   operatorId: 'Liikennöitsijä',
-  procurementUnitIds: 'Kilpailukohteita',
+  procurementUnitIds: 'Kilpailukohteet',
   rules: 'Sopimuksen säännöt',
 }
 
 const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
-  let [operator] = useStateValue('globalOperator')
-
   let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
   let pendingContractValid = useMemo(
@@ -159,7 +163,8 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
         frameless={true}
         loading={isLoading}
         doneDisabled={!pendingContractValid}
-        renderInput={renderEditorField()}
+        fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
+        renderInput={renderEditorField(contract)}
       />
     </ContractEditorView>
   )

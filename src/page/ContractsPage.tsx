@@ -53,6 +53,7 @@ const ContractPage = observer(({ children }: PropTypes) => {
 
     setNewContract({
       operatorId: operator?.id,
+      operator,
       startDate: format(new Date(), DATE_FORMAT),
       endDate: format(addYears(new Date(), 1), DATE_FORMAT),
     })
@@ -71,11 +72,12 @@ const ContractPage = observer(({ children }: PropTypes) => {
           )}
           {!newContract && (
             <Button
+              disabled={!operator}
               onClick={onCreateNewContract}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               style={{ marginLeft: 'auto' }}>
-              Uusi sopimus
+              {!operator ? 'Valitse liikennöitsijä' : 'Uusi sopimus'}
             </Button>
           )}
         </FlexRow>

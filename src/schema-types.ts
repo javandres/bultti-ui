@@ -49,6 +49,7 @@ export type Query = {
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
+  contractProcurementUnitOptions: Array<ProcurementUnitOption>;
 };
 
 
@@ -198,6 +199,12 @@ export type QueryContractArgs = {
   contractId: Scalars['String'];
 };
 
+
+export type QueryContractProcurementUnitOptionsArgs = {
+  date: Scalars['BulttiDate'];
+  operatorId: Scalars['Int'];
+};
+
 export type Operator = {
   __typename?: 'Operator';
   id: Scalars['Int'];
@@ -337,6 +344,8 @@ export type Equipment = {
   type: Scalars['String'];
   exteriorColor: Scalars['String'];
   hasInfoSystems: Scalars['Boolean'];
+  option: Scalars['Boolean'];
+  approvedOverage: Scalars['Boolean'];
   emissionClass: Scalars['Int'];
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
   executionRequirementQuotas: Array<ExecutionRequirementQuota>;
@@ -496,15 +505,19 @@ export enum InspectionUserRelationType {
 export type ContractRule = {
   __typename?: 'ContractRule';
   name: Scalars['String'];
+  category?: Maybe<Scalars['String']>;
   type: RuleType;
   value: Scalars['String'];
+  options?: Maybe<Scalars['String']>;
+  condition?: Maybe<Scalars['String']>;
   description: Scalars['String'];
 };
 
 export enum RuleType {
   ScalarValue = 'SCALAR_VALUE',
   ConditionalValue = 'CONDITIONAL_VALUE',
-  EnumValue = 'ENUM_VALUE'
+  EnumValue = 'ENUM_VALUE',
+  MultiValue = 'MULTI_VALUE'
 }
 
 export type ExecutionRequirementValue = {
@@ -633,6 +646,16 @@ export type ReportCreatorOption = {
   reportType: ReportType;
   columnLabels: Scalars['String'];
   params: Scalars['String'];
+};
+
+export type ProcurementUnitOption = {
+  __typename?: 'ProcurementUnitOption';
+  id: Scalars['String'];
+  name: Scalars['String'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  routes: Array<Scalars['String']>;
+  medianAgeRequirement?: Maybe<Scalars['Float']>;
 };
 
 export type Mutation = {

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Contract } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
+import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 
 const ContractTitle = styled.h3`
@@ -31,9 +32,12 @@ const ContractListItem: React.FC<PropTypes> = observer(
           <>
             <HeaderSection>
               <ContractTitle>
-                {contractData?.operator?.operatorName || 'Uusi sopimus'} /{' '}
-                {(contractData?.startDate, READABLE_DATE_FORMAT)} -{' '}
-                {(contractData?.endDate, READABLE_DATE_FORMAT)}
+                {contractData?.operator?.operatorName || 'Uusi sopimus'}
+                <br />
+                <span style={{ fontWeight: 'normal' }}>
+                  {format(parseISO(contractData?.startDate), READABLE_DATE_FORMAT)} -{' '}
+                  {format(parseISO(contractData?.endDate), READABLE_DATE_FORMAT)}
+                </span>
               </ContractTitle>
               <ContractDescription>{contractData.description}</ContractDescription>
             </HeaderSection>

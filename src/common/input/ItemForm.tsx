@@ -24,10 +24,10 @@ export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   }
 `
 
-export const FieldWrapper = styled.div<{ frameless?: boolean }>`
+export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolean }>`
   display: flex;
   flex-direction: column;
-  flex: 1 1 50%;
+  flex: ${(p) => (p.fullWidth ? '1 0 100%' : '1 1 50%')};
   width: auto;
   padding: ${(p) => (p.frameless ? '0 0 1.5rem' : '0.5rem 0.75rem')};
   border-right: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
@@ -94,6 +94,7 @@ export type PropTypes<ItemType = any> = {
   style?: CSSProperties
   frameless?: boolean
   loading?: boolean
+  fullWidthFields?: string[]
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
@@ -125,6 +126,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     style,
     frameless = false,
     loading = false,
+    fullWidthFields = [],
   }) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -143,7 +145,10 @@ const ItemForm: React.FC<PropTypes> = observer(
     return (
       <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => (
-          <FieldWrapper key={key} frameless={frameless}>
+          <FieldWrapper
+            key={key}
+            frameless={frameless}
+            fullWidth={fullWidthFields?.includes(key)}>
             <FieldLabel>{get(labels, key, key)}</FieldLabel>
             {isReadOnly(key)
               ? renderReadOnlyField(val)
@@ -151,6 +156,7 @@ const ItemForm: React.FC<PropTypes> = observer(
           </FieldWrapper>
         ))}
         <FieldWrapper
+          fullWidth={fullWidthFields?.includes('actions')}
           frameless={frameless}
           style={{
             flexDirection: 'row',

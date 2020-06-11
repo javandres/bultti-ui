@@ -22,8 +22,11 @@ type Contract {
 }
 
 type ContractRule {
+  category: String
+  condition: String
   description: String!
   name: String!
+  options: String
   type: RuleType!
   value: String!
 }
@@ -104,6 +107,7 @@ type EmissionClassExecutionItem {
 }
 
 type Equipment {
+  approvedOverage: Boolean!
   departures: [Departure!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
@@ -114,6 +118,7 @@ type Equipment {
   model: String
   operator: Operator!
   operatorId: Int!
+  option: Boolean!
   registryDate: BulttiDate
   registryNr: String
   type: String!
@@ -325,6 +330,15 @@ type ProcurementUnit {
   weeklyMeters: Float!
 }
 
+type ProcurementUnitOption {
+  endDate: BulttiDate!
+  id: String!
+  medianAgeRequirement: Float
+  name: String!
+  routes: [String!]!
+  startDate: BulttiDate!
+}
+
 type ProcurementUnitRoute {
   length: Float!
   routeId: String!
@@ -335,6 +349,7 @@ type Query {
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   contract(contractId: String!): Contract
+  contractProcurementUnitOptions(date: BulttiDate!, operatorId: Int!): [ProcurementUnitOption!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
@@ -463,6 +478,7 @@ enum ReportType {
 enum RuleType {
   CONDITIONAL_VALUE
   ENUM_VALUE
+  MULTI_VALUE
   SCALAR_VALUE
 }
 

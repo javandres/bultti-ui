@@ -42,7 +42,7 @@ export const TextInput = styled.input<{
       : ''}
 `
 
-export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea', rows: 5 }))`
+export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea', rows: 3 }))`
   line-height: 1.4;
 `
 

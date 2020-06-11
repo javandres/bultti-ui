@@ -58,6 +58,19 @@ export const contractsQuery = gql`
   ${ContractFragment}
 `
 
+export const procurementUnitOptionsQuery = gql`
+  query contractProcurementUnitOptions($operatorId: Int!, $date: BulttiDate!) {
+    contractProcurementUnitOptions(operatorId: $operatorId, date: $date) {
+      id
+      name
+      startDate
+      endDate
+      routes
+      medianAgeRequirement
+    }
+  }
+`
+
 export const modifyContractMutation = gql`
   mutation modifyContract($contractInput: ContractInput!) {
     modifyContract(contractInput: $contractInput) {
