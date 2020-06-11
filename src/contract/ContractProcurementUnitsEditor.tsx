@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Contract } from '../schema-types'
@@ -9,6 +9,7 @@ import {
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
+import Checkbox from '../common/input/Checkbox'
 
 const ContractProcurementUnitsEditorView = styled.div`
   width: 100%;
@@ -27,9 +28,22 @@ const ProcurementUnitOption = styled.div`
 
 export type PropTypes = {
   contract: Contract
+  onChange: (includedUnitIds: string[]) => unknown
 }
 
 const ContractProcurementUnitsEditor = observer(({ contract }: PropTypes) => {
+  let [includedUnitIds, setIncludedUnitIds] = useState<string[]>([])
+
+  useMemo(() => {
+    if (contract && includedUnitIds.length === 0) {
+      let currentIncluded = (contract?.procurementUnits || []).map((unit) => unit.id)
+
+      if (currentIncluded.length !== 0) {
+        setIncludedUnitIds(currentIncluded)
+      }
+    }
+  }, [contract, includedUnitIds])
+
   let { data: procurementUnitOptions } = useQueryData(procurementUnitOptionsQuery, {
     skip: !contract || !contract?.operatorId || !contract?.startDate,
     variables: {
@@ -38,12 +52,19 @@ const ContractProcurementUnitsEditor = observer(({ contract }: PropTypes) => {
     },
   })
 
-  let includedUnits = useMemo(
-    () => (contract?.procurementUnits || []).map((unit) => unit.id),
-    [contract]
-  )
-
   let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
+
+  let onToggleUnitInclusion = useCallback((unitId) => {
+    setIncludedUnitIds((currentVal) => {
+      let nextIncludedIds = [...currentVal]
+
+      if (nextIncludedIds.includes(unitId)) {
+      } else {
+        nextIncludedIds.push(unitId)
+      }
+      return nextIncludedIds
+    })
+  }, [])
 
   return (
     <ContractProcurementUnitsEditorView>
@@ -59,8 +80,13 @@ const ContractProcurementUnitsEditor = observer(({ contract }: PropTypes) => {
             {unitOption.startDate} - {unitOption.endDate}
           </HeaderSection>
           <HeaderSection>
-            <HeaderHeading>Sopimuksessa mukana</HeaderHeading>
-            {includedUnits.includes(unitOption.id) ? 'Mukana' : 'Ei mukana'}
+            <Checkbox
+              value="unit_included"
+              name="unit_included"
+              label="Sopimuksessa mukana"
+              checked={includedUnitIds.includes(unitOption.id)}
+              onChange={() => onToggleUnitInclusion(unitOption.id)}
+            />
           </HeaderSection>
         </ProcurementUnitOption>
       ))}

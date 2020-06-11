@@ -57,7 +57,7 @@ const renderEditorField = (contract: Contract) => (
   }
 
   if (key === 'procurementUnitIds') {
-    return <ContractProcurementUnitsEditor contract={contract} />
+    return <ContractProcurementUnitsEditor contract={contract} onChange={onChange} />
   }
 
   if (['startDate', 'endDate'].includes(key)) {
