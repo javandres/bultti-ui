@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Contract } from '../schema-types'
+import { ContractInput } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
 import {
@@ -27,22 +27,12 @@ const ProcurementUnitOption = styled.div`
 `
 
 export type PropTypes = {
-  contract: Contract
+  contract: ContractInput
   onChange: (includedUnitIds: string[]) => unknown
 }
 
-const ContractProcurementUnitsEditor = observer(({ contract }: PropTypes) => {
-  let [includedUnitIds, setIncludedUnitIds] = useState<string[]>([])
-
-  useMemo(() => {
-    if (contract && includedUnitIds.length === 0) {
-      let currentIncluded = (contract?.procurementUnits || []).map((unit) => unit.id)
-
-      if (currentIncluded.length !== 0) {
-        setIncludedUnitIds(currentIncluded)
-      }
-    }
-  }, [contract, includedUnitIds])
+const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTypes) => {
+  let includedUnitIds = useMemo(() => contract?.procurementUnitIds || [], [contract])
 
   let { data: procurementUnitOptions } = useQueryData(procurementUnitOptionsQuery, {
     skip: !contract || !contract?.operatorId || !contract?.startDate,
@@ -54,17 +44,21 @@ const ContractProcurementUnitsEditor = observer(({ contract }: PropTypes) => {
 
   let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
 
-  let onToggleUnitInclusion = useCallback((unitId) => {
-    setIncludedUnitIds((currentVal) => {
-      let nextIncludedIds = [...currentVal]
+  let onToggleUnitInclusion = useCallback(
+    (unitId) => {
+      let nextIncludedIds = [...includedUnitIds]
 
       if (nextIncludedIds.includes(unitId)) {
+        let currentIdx = nextIncludedIds.findIndex(unitId)
+        nextIncludedIds.splice(currentIdx, 1)
       } else {
         nextIncludedIds.push(unitId)
       }
-      return nextIncludedIds
-    })
-  }, [])
+
+      onChange(nextIncludedIds)
+    },
+    [includedUnitIds, onChange]
+  )
 
   return (
     <ContractProcurementUnitsEditorView>

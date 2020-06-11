@@ -35,7 +35,7 @@ function createContractInput(contract: Contract): ContractInput {
   }
 }
 
-const renderEditorField = (contract: Contract) => (
+const renderEditorField = (contract: ContractInput) => (
   key: string,
   val: any,
   onChange: (val: any) => void
@@ -110,10 +110,15 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
 
   let [createContract, { loading: createLoading }] = useMutationData(createContractMutation, {
     update: (cache, { data: { createContract } }) => {
-      let { contracts } = cache.readQuery({ query: contractsQuery }) || {}
+      let { contracts = [] } =
+        cache.readQuery({
+          query: contractsQuery,
+          variables: { operatorId: createContract?.operatorId },
+        }) || {}
 
       cache.writeQuery({
         query: contractsQuery,
+        variables: { operatorId: createContract?.operatorId },
         data: { contracts: [...contracts, createContract] },
       })
     },
@@ -136,6 +141,8 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
           contractInput: pendingContract,
         },
       })
+
+      setPendingContract(createContractInput(contract))
 
       if (isNew && onCancel) {
         onCancel()
@@ -164,7 +171,7 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
         loading={isLoading}
         doneDisabled={!pendingContractValid}
         fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
-        renderInput={renderEditorField(contract)}
+        renderInput={renderEditorField(pendingContract)}
       />
     </ContractEditorView>
   )
