@@ -297,7 +297,7 @@ export type ProcurementUnit = {
   weeklyMeters: Scalars['Float'];
   weeklyKilometers: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
-  areaId: Scalars['Int'];
+  areaId?: Maybe<Scalars['Int']>;
   area?: Maybe<OperatingArea>;
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDate'];
@@ -656,6 +656,7 @@ export type ProcurementUnitOption = {
   endDate: Scalars['BulttiDate'];
   routes: Array<Scalars['String']>;
   medianAgeRequirement?: Maybe<Scalars['Float']>;
+  areaName?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {

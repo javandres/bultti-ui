@@ -314,7 +314,7 @@ type OperatorBlockDeparture {
 
 type ProcurementUnit {
   area: OperatingArea
-  areaId: Int!
+  areaId: Int
   contracts: [Contract!]!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
@@ -331,6 +331,7 @@ type ProcurementUnit {
 }
 
 type ProcurementUnitOption {
+  areaName: String
   endDate: BulttiDate!
   id: String!
   medianAgeRequirement: Float

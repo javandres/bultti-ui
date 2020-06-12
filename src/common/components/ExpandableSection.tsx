@@ -74,7 +74,7 @@ const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
   border-bottom: ${(p) => (p.expanded ? '1px solid var(--lighter-grey)' : '0')};
 `
 
-const ContentWrapper = styled.div<{ expanded: boolean }>`
+export const ContentWrapper = styled.div<{ expanded: boolean }>`
   padding: ${(p) => (p.expanded ? '1rem' : '0')};
 `
 
@@ -101,6 +101,7 @@ export type PropTypes = {
   headerContent?: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
   isExpanded?: boolean
   onToggleExpanded?: (expanded: boolean) => unknown
+  className?: string
 }
 
 const ExpandableSection = observer(
@@ -109,6 +110,7 @@ const ExpandableSection = observer(
     headerContent,
     isExpanded = false,
     onToggleExpanded = () => {},
+    className,
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
@@ -128,7 +130,7 @@ const ExpandableSection = observer(
     }, [isExpanded])
 
     return (
-      <ExpandableBoxView>
+      <ExpandableBoxView className={className}>
         <HeaderRow>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded}>

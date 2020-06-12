@@ -67,6 +67,7 @@ export const procurementUnitOptionsQuery = gql`
       endDate
       routes
       medianAgeRequirement
+      areaName
     }
   }
 `
