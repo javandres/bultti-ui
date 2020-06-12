@@ -1,4 +1,4 @@
-import React, { StyleHTMLAttributes, useCallback } from 'react'
+import React, { CSSProperties, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import { useSelect } from 'downshift'
 import { text } from '../../util/translate'
@@ -89,7 +89,7 @@ export type DropdownProps = {
   itemToLabel?: string | ((item: any | null) => string)
   selectedItem?: any
   className?: string
-  style?: StyleHTMLAttributes<HTMLDivElement>
+  style?: CSSProperties
   theme?: ThemeTypes
 }
 
