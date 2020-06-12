@@ -53,7 +53,7 @@ const renderEditorField = (contract: ContractInput) => (
   }
 
   if (key === 'rules') {
-    return <ContractRuleEditor contract={contract} />
+    return <ContractRuleEditor contract={contract} onChange={onChange} />
   }
 
   if (key === 'procurementUnitIds') {

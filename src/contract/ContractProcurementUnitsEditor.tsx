@@ -6,6 +6,7 @@ import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
 import ExpandableSection, {
   ContentWrapper,
+  ExpandToggle,
   HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
@@ -13,9 +14,26 @@ import ExpandableSection, {
 import Checkbox from '../common/input/Checkbox'
 
 const ContractProcurementUnitsEditorView = styled(ExpandableSection)`
+  margin-top: -2.5rem;
+  border: 0;
+  background: transparent;
+
   ${ContentWrapper} {
     padding: 0;
   }
+
+  ${ExpandToggle} {
+    padding: 1rem;
+    border-radius: 0.25rem;
+    background: var(--white-grey);
+    margin-bottom: 0.5rem;
+  }
+`
+
+const UnitContentWrapper = styled.div`
+  border-radius: 0.5rem;
+  border: 1px solid var(--lighter-grey);
+  overflow: hidden;
 `
 
 const ProcurementUnitOption = styled.div`
@@ -26,8 +44,8 @@ const ProcurementUnitOption = styled.div`
   align-items: stretch;
   justify-content: flex-start;
 
-  &:first-child {
-    border-top: 1px solid var(--lighter-grey);
+  &:last-child {
+    border-bottom: 0;
   }
 `
 
@@ -67,47 +85,49 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
 
   return (
     <ContractProcurementUnitsEditorView>
-      {unitOptions.map((unitOption) => {
-        let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
-        let fullRoutesString = routes.join(', ')
+      <UnitContentWrapper>
+        {unitOptions.map((unitOption) => {
+          let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
+          let fullRoutesString = routes.join(', ')
 
-        let shortRoutes = routes.slice(0, 3)
+          let shortRoutes = routes.slice(0, 3)
 
-        if (routes.length > shortRoutes.length) {
-          shortRoutes.push('...')
-        }
+          if (routes.length > shortRoutes.length) {
+            shortRoutes.push('...')
+          }
 
-        let shortRoutesString = shortRoutes.join(', ')
+          let shortRoutesString = shortRoutes.join(', ')
 
-        return (
-          <ProcurementUnitOption key={unitOption.id}>
-            <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
-              {unitOption.name}
-            </HeaderBoldHeading>
-            <HeaderSection title={fullRoutesString}>
-              <HeaderHeading>Reitit</HeaderHeading>
-              {shortRoutesString}
-            </HeaderSection>
-            <HeaderSection>
-              <HeaderHeading>Voimassaoloaika</HeaderHeading>
-              {unitOption.startDate} - {unitOption.endDate}
-            </HeaderSection>
-            <HeaderSection style={{ flex: '1 0 7rem' }}>
-              <HeaderHeading>Alue</HeaderHeading>
-              {unitOption?.areaName || 'OTHER'}
-            </HeaderSection>
-            <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Checkbox
-                value="unit_included"
-                name="unit_included"
-                label="Sopimuksessa mukana"
-                checked={includedUnitIds.includes(unitOption.id)}
-                onChange={() => onToggleUnitInclusion(unitOption.id)}
-              />
-            </HeaderSection>
-          </ProcurementUnitOption>
-        )
-      })}
+          return (
+            <ProcurementUnitOption key={unitOption.id}>
+              <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
+                {unitOption.name}
+              </HeaderBoldHeading>
+              <HeaderSection title={fullRoutesString}>
+                <HeaderHeading>Reitit</HeaderHeading>
+                {shortRoutesString}
+              </HeaderSection>
+              <HeaderSection>
+                <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                {unitOption.startDate} - {unitOption.endDate}
+              </HeaderSection>
+              <HeaderSection style={{ flex: '1 0 7rem' }}>
+                <HeaderHeading>Alue</HeaderHeading>
+                {unitOption?.areaName || 'OTHER'}
+              </HeaderSection>
+              <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
+                <Checkbox
+                  value="unit_included"
+                  name="unit_included"
+                  label="Sopimuksessa mukana"
+                  checked={includedUnitIds.includes(unitOption.id)}
+                  onChange={() => onToggleUnitInclusion(unitOption.id)}
+                />
+              </HeaderSection>
+            </ProcurementUnitOption>
+          )
+        })}
+      </UnitContentWrapper>
     </ContractProcurementUnitsEditorView>
   )
 })

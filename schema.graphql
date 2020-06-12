@@ -356,6 +356,7 @@ type Query {
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
+  defaultContractRules: [ContractRule!]!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -515,10 +516,13 @@ input ContractInput {
 }
 
 input ContractRuleInput {
-  description: String
-  name: String
-  type: RuleType
-  value: String
+  category: String
+  condition: String
+  description: String!
+  name: String!
+  options: String
+  type: RuleType!
+  value: String!
 }
 
 input EquipmentCatalogueInput {

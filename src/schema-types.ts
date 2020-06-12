@@ -50,6 +50,7 @@ export type Query = {
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
+  defaultContractRules: Array<ContractRule>;
 };
 
 
@@ -954,8 +955,11 @@ export type ContractInput = {
 };
 
 export type ContractRuleInput = {
-  name?: Maybe<Scalars['String']>;
-  type?: Maybe<RuleType>;
-  value?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  category?: Maybe<Scalars['String']>;
+  type: RuleType;
+  value: Scalars['String'];
+  options?: Maybe<Scalars['String']>;
+  condition?: Maybe<Scalars['String']>;
+  description: Scalars['String'];
 };

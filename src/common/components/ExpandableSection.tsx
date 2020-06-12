@@ -78,7 +78,7 @@ export const ContentWrapper = styled.div<{ expanded: boolean }>`
   padding: ${(p) => (p.expanded ? '1rem' : '0')};
 `
 
-const ExpandToggle = styled.button<{ expanded?: boolean }>`
+export const ExpandToggle = styled.button<{ expanded?: boolean }>`
   background: transparent;
   cursor: pointer;
   border: 0;
