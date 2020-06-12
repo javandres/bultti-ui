@@ -8,7 +8,7 @@ import { READABLE_DATE_FORMAT } from '../constants'
 
 const ContractTitle = styled.h3`
   margin-top: 0;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 `
 
 const ContractDescription = styled.p`

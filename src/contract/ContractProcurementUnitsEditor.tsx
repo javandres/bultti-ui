@@ -4,17 +4,14 @@ import { observer } from 'mobx-react-lite'
 import { ContractInput } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
-import {
+import ExpandableSection, {
   HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import Checkbox from '../common/input/Checkbox'
 
-const ContractProcurementUnitsEditorView = styled.div`
-  width: 100%;
-  flex: 1 0 100%;
-`
+const ContractProcurementUnitsEditorView = styled(ExpandableSection)<{ expanded?: boolean }>``
 
 const ProcurementUnitOption = styled.div`
   border: 1px solid var(--lighter-grey);

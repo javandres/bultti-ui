@@ -40,7 +40,7 @@ const ContractPage = observer(({ children }: PropTypes) => {
   // Contract ordered by their `order` prop.
   let contracts = useMemo(() => contractsData || [], [contractsData])
 
-  const [contractsExpanded, setContractExpanded] = useState(true)
+  const [contractsExpanded, setContractExpanded] = useState(false)
 
   const toggleContractExpanded = useCallback(() => {
     setContractExpanded((currentVal) => !currentVal)

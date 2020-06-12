@@ -3,7 +3,9 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ContractInput } from '../schema-types'
 
-const ContractRuleEditorView = styled.div``
+const ContractRuleEditorView = styled.div`
+  width: 100%;
+`
 
 export type PropTypes = {
   contract: ContractInput

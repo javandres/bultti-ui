@@ -36,7 +36,7 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
   &:nth-child(2n),
   &:last-child {
     border-right: 0;
-    padding-left: ${(p) => (p.frameless ? '1.5rem' : '0')};
+    padding-left: ${(p) => (p.frameless && !p.fullWidth ? '1.5rem' : '0')};
   }
 
   &:last-child {

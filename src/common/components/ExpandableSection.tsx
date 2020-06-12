@@ -11,7 +11,7 @@ const ExpandableBoxView = styled.div`
   background: white;
 `
 
-const HeaderRow = styled.div<{ expanded?: boolean }>`
+const HeaderRow = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
@@ -98,7 +98,7 @@ const ExpandToggle = styled.button<{ expanded?: boolean }>`
 
 export type PropTypes = {
   children: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
-  headerContent: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
+  headerContent?: React.ReactNode | ((expanded?: boolean) => React.ReactNode)
   isExpanded?: boolean
   onToggleExpanded?: (expanded: boolean) => unknown
 }
@@ -129,10 +129,12 @@ const ExpandableSection = observer(
 
     return (
       <ExpandableBoxView>
-        <HeaderRow expanded={expanded}>
-          <HeaderContentWrapper expanded={expanded}>
-            {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
-          </HeaderContentWrapper>
+        <HeaderRow>
+          {headerContent && (
+            <HeaderContentWrapper expanded={expanded}>
+              {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
+            </HeaderContentWrapper>
+          )}
           <ExpandToggle expanded={expanded} onClick={onChangeExpanded}>
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
