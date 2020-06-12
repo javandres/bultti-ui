@@ -188,7 +188,7 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
               !(
                 rule._isNew ||
                 !ruleUpdateBuffer?.name ||
-                !allowNameEdit.includes(ruleUpdateBuffer?.category || '')
+                allowNameEdit.includes(ruleUpdateBuffer?.category || '')
               )
             }
             label="Säännön nimi"
