@@ -8,7 +8,7 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { useQueryData } from '../util/useQueryData'
 import { defaultContractRulesQuery } from './contractQueries'
-import { createRuleId, createRuleValueId, mergeRules } from './contractUtils'
+import { createRuleId } from './contractUtils'
 import { groupBy, omit } from 'lodash'
 import Input, { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
@@ -234,34 +234,48 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
 }
 
 const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
+  let isDirty = useRef(false)
   let { data: defaultRules } = useQueryData(defaultContractRulesQuery)
 
   let rules: ContractRuleInput[] = useMemo(
-    () => mergeRules(contract?.rules || [], defaultRules || []),
-    [defaultRules, contract]
+    () =>
+      ((contract?.rules || []).length === 0
+        ? defaultRules || []
+        : contract?.rules
+      ).map((defRule) => omit(defRule, ['__typename'])),
+    [defaultRules, contract.rules]
   )
 
   let [pendingRules, setPendingRules] = useState<ContractRuleInput[]>([])
   let [newPendingRule, setNewPendingRule] = useState<PendingRule | null>(null)
 
   useEffect(() => {
-    if (pendingRules.length === 0 && rules.length !== 0) {
+    if (rules.length !== 0) {
       setPendingRules(rules)
+      isDirty.current = false
     }
-  }, [pendingRules, rules])
+  }, [rules])
+
+  useEffect(() => {
+    if (pendingRules.length !== 0 && isDirty.current) {
+      onChange(pendingRules)
+    }
+  }, [pendingRules, isDirty.current])
 
   let onRuleChange = useCallback((rule: ContractRuleInput) => {
-    let ruleId = createRuleValueId(rule)
+    let ruleId = createRuleId(rule)
 
     setPendingRules(
       producer((draftRules) => {
-        let draftRuleIndex = draftRules.findIndex((dr) => createRuleValueId(dr) === ruleId)
+        let draftRuleIndex = draftRules.findIndex((dr) => createRuleId(dr) === ruleId)
 
         if (draftRuleIndex !== -1) {
           draftRules.splice(draftRuleIndex, 1, rule)
         }
       })
     )
+
+    isDirty.current = true
   }, [])
 
   let onCreateNewRule = useCallback(() => {
@@ -287,6 +301,7 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
     })
 
     setNewPendingRule(null)
+    isDirty.current = true
   }, [newPendingRule])
 
   return (

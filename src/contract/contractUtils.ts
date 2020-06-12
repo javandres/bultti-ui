@@ -21,7 +21,7 @@ export function mergeRules(targetSet: ContractRule[], sourceSet: ContractRule[])
   for (let rule of targetSet) {
     let ruleId = createRuleId(rule)
     // Get a source rule based on name and category.
-    let sourceRule = sourceSet.find((r) => createRuleId(rule) === ruleId)
+    let sourceRule = sourceSet.find((sourceRule) => createRuleId(sourceRule) === ruleId)
 
     // Choose the sourceRule if the value is different.
     if (sourceRule && createRuleValueId(sourceRule) !== createRuleValueId(rule)) {
