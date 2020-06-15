@@ -4,35 +4,16 @@ import { observer } from 'mobx-react-lite'
 import { ContractInput } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
-import ExpandableSection, {
-  ContentWrapper,
-  ExpandToggle,
+import {
   HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import Checkbox from '../common/input/Checkbox'
 
-const ContractProcurementUnitsEditorView = styled(ExpandableSection)`
-  margin-top: -2.5rem;
-  border: 0;
-  background: transparent;
-
-  ${ContentWrapper} {
-    padding: 0;
-  }
-
-  ${ExpandToggle} {
-    padding: 1rem;
-    border-radius: 0.25rem;
-    background: var(--white-grey);
-    margin-bottom: 0.5rem;
-  }
-`
+const ContractProcurementUnitsEditorView = styled.div``
 
 const UnitContentWrapper = styled.div`
-  border-radius: 0.5rem;
-  border: 1px solid var(--lighter-grey);
   overflow: hidden;
 `
 
@@ -43,6 +24,10 @@ const ProcurementUnitOption = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
+
+  &:first-child {
+    border-top: 1px solid var(--lighter-grey);
+  }
 
   &:last-child {
     border-bottom: 0;
@@ -66,6 +51,8 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
   })
 
   let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
+
+  console.log(unitOptions)
 
   let onToggleUnitInclusion = useCallback(
     (unitId) => {

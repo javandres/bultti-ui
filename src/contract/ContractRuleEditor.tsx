@@ -2,10 +2,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ContractInput, ContractRuleInput, RuleType } from '../schema-types'
-import ExpandableSection, {
-  ContentWrapper,
-  ExpandToggle,
-} from '../common/components/ExpandableSection'
 import { useQueryData } from '../util/useQueryData'
 import { defaultContractRulesQuery } from './contractQueries'
 import { createRuleId } from './contractUtils'
@@ -16,22 +12,7 @@ import { FlexRow } from '../common/components/common'
 import { Button } from '../common/components/Button'
 import producer from 'immer'
 
-const ContractRuleEditorView = styled(ExpandableSection)`
-  margin-top: -2.75rem;
-  border: 0;
-  background: transparent;
-
-  ${ContentWrapper} {
-    padding: 0;
-  }
-
-  ${ExpandToggle} {
-    padding: 1rem;
-    border-radius: 0.25rem;
-    background: var(--white-grey);
-    margin-bottom: 0.5rem;
-  }
-`
+const ContractRuleEditorView = styled.div``
 
 const CategoryTitle = styled.h4`
   text-transform: capitalize;
@@ -48,12 +29,20 @@ const CategoryFooter = styled(FlexRow)`
 
 const RuleCategory = styled.div`
   margin: 1rem 0;
-  border: 1px solid var(--lighter-grey);
-  border-radius: 0.5rem;
+  border-top: 1px solid var(--lighter-grey);
 
   &:first-child {
     margin-top: 0;
   }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+const ToolRow = styled(FlexRow)`
+  border-top: 1px solid var(--lighter-grey);
+  padding: 1rem 1rem 0;
 `
 
 const RuleRow = styled.div`
@@ -301,9 +290,9 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
           </CategoryFooter>
         </RuleCategory>
       ) : (
-        <FlexRow>
+        <ToolRow>
           <Button onClick={onCreateNewRule}>Uusi sääntö</Button>
-        </FlexRow>
+        </ToolRow>
       )}
       {Object.entries(groupBy(pendingRules, 'category')).map(([category, rules]) => {
         return (

@@ -76,6 +76,8 @@ export const ActionsWrapper = styled.div`
   flex-direction: row;
 `
 
+type LabelsType<ItemType> = { [key in keyof ItemType]: string }
+
 export type PropTypes<ItemType = any> = {
   item: ItemType
   children?: React.ReactChild
@@ -85,11 +87,16 @@ export type PropTypes<ItemType = any> = {
   readOnly?: boolean | string[]
   doneLabel?: string
   doneDisabled?: boolean
-  labels?: { [key in keyof ItemType]: string }
+  labels?: LabelsType<ItemType>
   order?: string[]
   hideKeys?: string[]
   editableValues?: string[]
   keyFromItem?: (item: ItemType) => string
+  renderLabel?: (
+    key: string,
+    val: any,
+    labels: LabelsType<ItemType>
+  ) => React.ReactChild | false
   renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
   style?: CSSProperties
   frameless?: boolean
@@ -109,6 +116,10 @@ const defaultRenderInput = (key, val, onChange) => (
   />
 )
 
+const defaultRenderLabel = (key, val, labels) => (
+  <FieldLabel>{get(labels, key, key)}</FieldLabel>
+)
+
 const ItemForm: React.FC<PropTypes> = observer(
   ({
     item,
@@ -123,6 +134,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     doneDisabled = false,
     doneLabel = 'Tallenna',
     renderInput = defaultRenderInput,
+    renderLabel = defaultRenderLabel,
     style,
     frameless = false,
     loading = false,
@@ -144,17 +156,21 @@ const ItemForm: React.FC<PropTypes> = observer(
 
     return (
       <ControlledFormView style={style} frameless={frameless}>
-        {itemEntries.map(([key, val], index) => (
-          <FieldWrapper
-            key={key}
-            frameless={frameless}
-            fullWidth={fullWidthFields?.includes(key)}>
-            <FieldLabel>{get(labels, key, key)}</FieldLabel>
-            {isReadOnly(key)
-              ? renderReadOnlyField(val)
-              : renderInput(key, val, onValueChange(key))}
-          </FieldWrapper>
-        ))}
+        {itemEntries.map(([key, val], index) => {
+          let renderedLabel = renderLabel(key, val, labels)
+
+          return (
+            <FieldWrapper
+              key={key}
+              frameless={frameless}
+              fullWidth={fullWidthFields?.includes(key)}>
+              {renderedLabel !== false && renderedLabel}
+              {isReadOnly(key)
+                ? renderReadOnlyField(val)
+                : renderInput(key, val, onValueChange(key))}
+            </FieldWrapper>
+          )
+        })}
         <FieldWrapper
           fullWidth={fullWidthFields?.includes('actions')}
           frameless={frameless}

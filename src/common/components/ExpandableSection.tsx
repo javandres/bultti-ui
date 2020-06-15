@@ -11,7 +11,7 @@ const ExpandableBoxView = styled.div`
   background: white;
 `
 
-const HeaderRow = styled.div`
+export const HeaderRow = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
@@ -43,6 +43,10 @@ export const HeaderMainHeading = styled(SectionHeading)`
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: center;
+
+  &:last-child {
+    border-right: 0;
+  }
 `
 
 export const HeaderBoldHeading = styled.h4`
@@ -65,7 +69,7 @@ export const HeaderHeading = styled.h5`
   }
 `
 
-const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
+export const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;

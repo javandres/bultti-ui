@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Contract, ContractInput } from '../schema-types'
-import ItemForm from '../common/input/ItemForm'
+import ItemForm, { FieldLabel } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
   contractsQuery,
@@ -14,8 +14,32 @@ import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
 import ContractRuleEditor from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
+import ExpandableSection, {
+  ContentWrapper,
+  HeaderContentWrapper,
+  HeaderMainHeading,
+  HeaderRow,
+} from '../common/components/ExpandableSection'
+import { get } from 'lodash'
 
 const ContractEditorView = styled.div``
+
+const ExpandableFormSection = styled(ExpandableSection)`
+  background: transparent;
+
+  ${HeaderRow} {
+    border-radius: 0.5rem;
+    background: white;
+  }
+
+  ${HeaderContentWrapper} {
+    border-bottom: 0 !important;
+  }
+
+  ${ContentWrapper} {
+    padding: 0;
+  }
+`
 
 export type PropTypes = {
   contract: Contract
@@ -53,11 +77,20 @@ const renderEditorField = (contract: ContractInput) => (
   }
 
   if (key === 'rules') {
-    return <ContractRuleEditor contract={contract} onChange={onChange} />
+    return (
+      <ExpandableFormSection headerContent={<HeaderMainHeading>Säännöt</HeaderMainHeading>}>
+        <ContractRuleEditor contract={contract} onChange={onChange} />
+      </ExpandableFormSection>
+    )
   }
 
   if (key === 'procurementUnitIds') {
-    return <ContractProcurementUnitsEditor contract={contract} onChange={onChange} />
+    return (
+      <ExpandableFormSection
+        headerContent={<HeaderMainHeading>Kilpailukohteet</HeaderMainHeading>}>
+        <ContractProcurementUnitsEditor contract={contract} onChange={onChange} />
+      </ExpandableFormSection>
+    )
   }
 
   if (['startDate', 'endDate'].includes(key)) {
@@ -89,6 +122,14 @@ let formLabels = {
   rules: 'Sopimuksen säännöt',
 }
 
+const renderEditorLabel = (key, val, labels) => {
+  if (['rules', 'procurementUnitIds'].includes(key)) {
+    return false
+  }
+
+  return <FieldLabel>{get(labels, key, key)}</FieldLabel>
+}
+
 const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
   let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
@@ -101,10 +142,22 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
     if (key === 'rules') {
       console.log(nextValue)
     }
-    setPendingContract((currentVal) => ({
-      ...currentVal,
-      [key]: nextValue,
-    }))
+
+    setPendingContract((currentVal) => {
+      let nextProcurementUnits =
+        key === 'procurementUnitIds' ? nextValue : currentVal.procurementUnitIds
+
+      // Reset procurement units if operatorId changes.
+      if (key === 'operatorId') {
+        nextProcurementUnits = []
+      }
+
+      return {
+        ...currentVal,
+        [key]: nextValue,
+        procurementUnitIds: nextProcurementUnits,
+      }
+    })
   }, [])
 
   let [modifyContract, { data: nextContract, loading: modifyLoading }] = useMutationData(
@@ -174,6 +227,7 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
         loading={isLoading}
         doneDisabled={!pendingContractValid}
         fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
+        renderLabel={renderEditorLabel}
         renderInput={renderEditorField(pendingContract)}
       />
     </ContractEditorView>
