@@ -105,8 +105,8 @@ export type PropTypes = {
   onChange: (rules: ContractRuleInput[]) => unknown
 }
 
-// Rule categories for which editing rule names is allowed.
-const allowNameEdit = ['equipmentType']
+// Rule categories for which editing rule names and adding/removing rules is allowed.
+const categoryAllowFullEdit = ['equipmentType']
 
 type PendingRule = ContractRuleInput & { _isNew?: boolean }
 
@@ -129,26 +129,21 @@ type RowProps = {
 }
 
 const RuleEditorRow = ({ rule, onChange }: RowProps) => {
-  let isFlushing = useRef(false)
-  let isDirty = useRef(false)
-
   let [ruleUpdateBuffer, setBuffer] = useState<PendingRule | null>(null)
 
   useEffect(() => {
     setBuffer({ ...rule })
-    isDirty.current = false
   }, [rule])
 
   let onChangeProp = useCallback(
     (prop) => (evtOrValue) => {
       let nextVal = evtOrValue?.target?.value || evtOrValue
+
       setBuffer((currentRule) => {
         let nextRule = { ...(currentRule || rule) }
         nextRule[prop] = nextVal
         return nextRule
       })
-
-      isDirty.current = true
     },
     [rule]
   )
@@ -159,25 +154,15 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
     }
   }, [ruleUpdateBuffer, onChange])
 
-  useEffect(() => {
-    if (!isFlushing.current && isDirty.current) {
-      isFlushing.current = true
-      setTimeout(() => {
-        flushBuffer()
-        isFlushing.current = false
-      }, 500)
-    }
-  }, [ruleUpdateBuffer, isFlushing.current, isDirty.current])
-
   return (
-    <RuleRow>
+    <RuleRow onBlur={flushBuffer}>
       {rule._isNew && (
         <Dropdown
           style={{ marginBottom: '1rem' }}
-          items={allowNameEdit}
+          items={categoryAllowFullEdit}
           onSelect={onChangeProp('category')}
           label="Kategoria"
-          selectedItem={ruleUpdateBuffer?.category || allowNameEdit[0]}
+          selectedItem={ruleUpdateBuffer?.category || categoryAllowFullEdit[0]}
         />
       )}
       <RuleInputGroup>
@@ -188,7 +173,7 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
               !(
                 rule._isNew ||
                 !ruleUpdateBuffer?.name ||
-                allowNameEdit.includes(ruleUpdateBuffer?.category || '')
+                categoryAllowFullEdit.includes(ruleUpdateBuffer?.category || '')
               )
             }
             label="Säännön nimi"
@@ -237,6 +222,7 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
   let isDirty = useRef(false)
   let { data: defaultRules } = useQueryData(defaultContractRulesQuery)
 
+  // Populate the rules editor
   let rules: ContractRuleInput[] = useMemo(
     () =>
       ((contract?.rules || []).length === 0

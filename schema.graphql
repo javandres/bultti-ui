@@ -22,13 +22,13 @@ type Contract {
 }
 
 type ContractRule {
-  category: String
+  category: String!
   condition: String
-  description: String!
+  description: String
   name: String!
   options: String
   type: RuleType!
-  value: String!
+  value: String
 }
 
 type ContractUserRelation {
@@ -516,13 +516,13 @@ input ContractInput {
 }
 
 input ContractRuleInput {
-  category: String
+  category: String!
   condition: String
-  description: String!
+  description: String
   name: String!
   options: String
   type: RuleType!
-  value: String!
+  value: String
 }
 
 input EquipmentCatalogueInput {

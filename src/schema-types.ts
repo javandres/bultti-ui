@@ -506,12 +506,12 @@ export enum InspectionUserRelationType {
 export type ContractRule = {
   __typename?: 'ContractRule';
   name: Scalars['String'];
-  category?: Maybe<Scalars['String']>;
+  category: Scalars['String'];
   type: RuleType;
-  value: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
   options?: Maybe<Scalars['String']>;
   condition?: Maybe<Scalars['String']>;
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
 };
 
 export enum RuleType {
@@ -956,10 +956,10 @@ export type ContractInput = {
 
 export type ContractRuleInput = {
   name: Scalars['String'];
-  category?: Maybe<Scalars['String']>;
+  category: Scalars['String'];
   type: RuleType;
-  value: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
   options?: Maybe<Scalars['String']>;
   condition?: Maybe<Scalars['String']>;
-  description: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
 };

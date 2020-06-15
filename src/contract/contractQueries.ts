@@ -45,6 +45,9 @@ export const ContractFragment = gql`
       type
       value
       description
+      condition
+      options
+      category
     }
   }
 `
