@@ -67,7 +67,7 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
       let nextIncludedIds = [...includedUnitIds]
 
       if (nextIncludedIds.includes(unitId)) {
-        let currentIdx = nextIncludedIds.findIndex(unitId)
+        let currentIdx = nextIncludedIds.findIndex((id) => id === unitId)
         nextIncludedIds.splice(currentIdx, 1)
       } else {
         nextIncludedIds.push(unitId)

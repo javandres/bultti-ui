@@ -20,7 +20,8 @@ import ExpandableSection, {
   HeaderContentWrapper,
   HeaderRow,
 } from '../common/components/ExpandableSection'
-import { get } from 'lodash'
+import { get, orderBy } from 'lodash'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const ContractEditorView = styled.div``
 
@@ -60,8 +61,11 @@ function createContractInput(contract: Contract): ContractInput {
     startDate: contract.startDate,
     endDate: contract.endDate,
     operatorId: contract.operatorId,
-    procurementUnitIds: (contract?.procurementUnits || []).map((pu) => pu.id),
-    rules: (contract?.rules || []).map(createRuleInput),
+    procurementUnitIds: orderBy(
+      (contract?.procurementUnits || []).map((pu) => pu.id),
+      'procurementUnitId'
+    ),
+    rules: orderBy((contract?.rules || []).map(createRuleInput), 'name'),
   }
 }
 
@@ -142,7 +146,14 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
   let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
+  // TODO: Fix diff
   let isDirty = useMemo(() => {
+    // Allow pending state to be set if falsy
+    if (!pendingContract) {
+      return false
+    }
+
+    // New contracts are always dirty
     if (isNew) {
       return true
     }
@@ -153,10 +164,10 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   }, [pendingContract, contract, isNew])
 
   useEffect(() => {
-    if (contract) {
+    if (contract && !isDirty) {
       setPendingContract(createContractInput(contract))
     }
-  }, [contract])
+  }, [contract, isDirty])
 
   let pendingContractValid = useMemo(
     () => !!pendingContract.startDate && !!pendingContract.endDate,
@@ -209,11 +220,17 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
     if (pendingContractValid) {
       let mutationFn = isNew ? createContract : modifyContract
 
-      await mutationFn({
+      let result = await mutationFn({
         variables: {
           contractInput: pendingContract,
         },
       })
+
+      let nextContract = pickGraphqlData(result.data)
+
+      if (nextContract) {
+        setPendingContract(createContractInput(nextContract))
+      }
 
       if (isNew && onCancel) {
         onCancel()
