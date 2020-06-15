@@ -142,6 +142,22 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
   let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
+  let isDirty = useMemo(() => {
+    if (isNew) {
+      return true
+    }
+
+    let pendingJson = JSON.stringify(pendingContract)
+    let currentJson = JSON.stringify(createContractInput(contract))
+    return currentJson !== pendingJson
+  }, [pendingContract, contract, isNew])
+
+  useEffect(() => {
+    if (contract) {
+      setPendingContract(createContractInput(contract))
+    }
+  }, [contract])
+
   let pendingContractValid = useMemo(
     () => !!pendingContract.startDate && !!pendingContract.endDate,
     [pendingContract]
@@ -165,14 +181,11 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
     })
   }, [])
 
-  let [modifyContract, { data: nextContract, loading: modifyLoading }] = useMutationData(
-    modifyContractMutation,
-    {
-      refetchQueries: [
-        { query: contractsQuery, variables: { operatorId: contract?.operatorId } },
-      ],
-    }
-  )
+  let [modifyContract, { loading: modifyLoading }] = useMutationData(modifyContractMutation, {
+    refetchQueries: [
+      { query: contractsQuery, variables: { operatorId: contract?.operatorId } },
+    ],
+  })
 
   let [createContract, { loading: createLoading }] = useMutationData(createContractMutation, {
     update: (cache, { data: { createContract } }) => {
@@ -192,12 +205,6 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
 
   let isLoading = modifyLoading || createLoading
 
-  useEffect(() => {
-    if (nextContract && !isLoading) {
-      setPendingContract(createContractInput(nextContract))
-    }
-  }, [nextContract])
-
   let onDone = useCallback(async () => {
     if (pendingContractValid) {
       let mutationFn = isNew ? createContract : modifyContract
@@ -207,8 +214,6 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
           contractInput: pendingContract,
         },
       })
-
-      setPendingContract(createContractInput(contract))
 
       if (isNew && onCancel) {
         onCancel()
@@ -223,16 +228,6 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
       onCancel()
     }
   }, [contract, onCancel])
-
-  let isDirty = useMemo(() => {
-    if (isNew) {
-      return true
-    }
-
-    let pendingJson = JSON.stringify(pendingContract)
-    let currentJson = JSON.stringify(createContractInput(contract))
-    return currentJson !== pendingJson
-  }, [pendingContract, contract, isNew])
 
   return (
     <ContractEditorView>
