@@ -139,8 +139,6 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   )
 
   let onChange = useCallback((key, nextValue) => {
-    console.log(key, nextValue)
-
     setPendingContract((currentVal) => {
       let nextProcurementUnits =
         key === 'procurementUnitIds' ? nextValue : currentVal.procurementUnitIds
@@ -212,6 +210,12 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
     }
   }, [contract, onCancel])
 
+  let isDirty = useMemo(() => {
+    let pendingJson = JSON.stringify(pendingContract)
+    let currentJson = JSON.stringify(createContractInput(contract))
+    return currentJson !== pendingJson
+  }, [pendingContract, contract])
+
   return (
     <ContractEditorView>
       <ItemForm
@@ -227,6 +231,7 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
         fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
         renderLabel={renderEditorLabel}
         renderInput={renderEditorField(pendingContract)}
+        showButtons={isDirty}
       />
     </ContractEditorView>
   )

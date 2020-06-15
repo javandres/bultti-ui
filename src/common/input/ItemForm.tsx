@@ -102,6 +102,7 @@ export type PropTypes<ItemType = any> = {
   frameless?: boolean
   loading?: boolean
   fullWidthFields?: string[]
+  showButtons?: boolean
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
@@ -139,6 +140,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     frameless = false,
     loading = false,
     fullWidthFields = [],
+    showButtons = true,
   }) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -171,29 +173,31 @@ const ItemForm: React.FC<PropTypes> = observer(
             </FieldWrapper>
           )
         })}
-        <FieldWrapper
-          fullWidth={fullWidthFields?.includes('actions')}
-          frameless={frameless}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'flex-end',
-            justifyContent: 'space-between',
-            marginLeft: 'auto',
-          }}>
-          {children}
-          <ActionsWrapper>
-            <Button
-              loading={loading}
-              style={{ marginRight: '1rem' }}
-              disabled={doneDisabled}
-              onClick={onDone}>
-              {doneLabel}
-            </Button>
-            <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
-              Peruuta
-            </Button>
-          </ActionsWrapper>
-        </FieldWrapper>
+        {showButtons && (
+          <FieldWrapper
+            fullWidth={fullWidthFields?.includes('actions')}
+            frameless={frameless}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'space-between',
+              marginLeft: 'auto',
+            }}>
+            {children}
+            <ActionsWrapper>
+              <Button
+                loading={loading}
+                style={{ marginRight: '1rem' }}
+                disabled={doneDisabled}
+                onClick={onDone}>
+                {doneLabel}
+              </Button>
+              <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
+                Peruuta
+              </Button>
+            </ActionsWrapper>
+          </FieldWrapper>
+        )}
       </ControlledFormView>
     )
   }

@@ -10,11 +10,16 @@ import {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import Checkbox from '../common/input/Checkbox'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
 const UnitContentWrapper = styled.div`
   overflow: hidden;
+`
+
+const EmptyView = styled(MessageContainer)`
+  border-top: 1px solid var(--lighter-grey);
 `
 
 const ProcurementUnitOption = styled.div`
@@ -52,8 +57,6 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
 
   let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
 
-  console.log(unitOptions)
-
   let onToggleUnitInclusion = useCallback(
     (unitId) => {
       let nextIncludedIds = [...includedUnitIds]
@@ -73,6 +76,11 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
   return (
     <ContractProcurementUnitsEditorView>
       <UnitContentWrapper>
+        {unitOptions.length === 0 && (
+          <EmptyView>
+            <MessageView>Ei kilpailukohteita</MessageView>
+          </EmptyView>
+        )}
         {unitOptions.map((unitOption) => {
           let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
           let fullRoutesString = routes.join(', ')
