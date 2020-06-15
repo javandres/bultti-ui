@@ -139,9 +139,7 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   )
 
   let onChange = useCallback((key, nextValue) => {
-    if (key === 'rules') {
-      console.log(nextValue)
-    }
+    console.log(key, nextValue)
 
     setPendingContract((currentVal) => {
       let nextProcurementUnits =

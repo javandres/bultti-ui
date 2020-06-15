@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ContractInput, ContractRuleInput, RuleType } from '../schema-types'
@@ -9,8 +9,9 @@ import { groupBy, omit } from 'lodash'
 import Input, { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
 import { FlexRow } from '../common/components/common'
-import { Button } from '../common/components/Button'
+import { Button, ButtonStyle } from '../common/components/Button'
 import producer from 'immer'
+import produce from 'immer'
 
 const ContractRuleEditorView = styled.div``
 
@@ -25,6 +26,14 @@ const CategoryTitle = styled.h4`
 const CategoryFooter = styled(FlexRow)`
   padding: 0.75rem 1rem;
   justify-content: flex-end;
+
+  & > * {
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
+  }
 `
 
 const RuleCategory = styled.div`
@@ -81,7 +90,7 @@ const RuleInputGroup = styled.div`
 `
 
 const RuleInputWrapper = styled.div`
-  flex: 1 1 auto;
+  flex: 1 0 50%;
   margin-right: 1rem;
 
   &:last-child {
@@ -115,9 +124,10 @@ function createPendingRule(): PendingRule {
 type RowProps = {
   rule: PendingRule
   onChange: (nextRule: PendingRule) => unknown
+  useBuffer?: boolean
 }
 
-const RuleEditorRow = ({ rule, onChange }: RowProps) => {
+const RuleEditorRow = ({ rule, onChange, useBuffer = true }: RowProps) => {
   let [ruleUpdateBuffer, setBuffer] = useState<PendingRule | null>(null)
 
   useEffect(() => {
@@ -125,23 +135,27 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
   }, [rule])
 
   let onChangeProp = useCallback(
-    (prop) => (evtOrValue) => {
+    (prop: string) => (evtOrValue) => {
       let nextVal = evtOrValue?.target?.value || evtOrValue
 
-      setBuffer((currentRule) => {
-        let nextRule = { ...(currentRule || rule) }
-        nextRule[prop] = nextVal
-        return nextRule
+      let createNextRule = produce((draftRule) => {
+        draftRule[prop] = nextVal
       })
+
+      if (useBuffer) {
+        setBuffer(createNextRule)
+      } else {
+        onChange(createNextRule(rule))
+      }
     },
-    [rule]
+    [rule, useBuffer, onChange]
   )
 
   let flushBuffer = useCallback(() => {
-    if (ruleUpdateBuffer) {
+    if (ruleUpdateBuffer && useBuffer) {
       onChange(ruleUpdateBuffer)
     }
-  }, [ruleUpdateBuffer, onChange])
+  }, [ruleUpdateBuffer, onChange, useBuffer])
 
   return (
     <RuleRow onBlur={flushBuffer}>
@@ -186,14 +200,16 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
         onChange={onChangeProp('description')}
       />
       <RuleInputGroup>
-        <RuleInputWrapper>
-          <Input
-            value={ruleUpdateBuffer?.condition || ''}
-            label="Ehto"
-            name="condition"
-            onChange={onChangeProp('condition')}
-          />
-        </RuleInputWrapper>
+        {rule.type === RuleType.ConditionalValue && (
+          <RuleInputWrapper>
+            <Input
+              value={ruleUpdateBuffer?.condition || ''}
+              label="Ehto"
+              name="condition"
+              onChange={onChangeProp('condition')}
+            />
+          </RuleInputWrapper>
+        )}
         <RuleInputWrapper>
           <Input
             value={ruleUpdateBuffer?.value || ''}
@@ -208,10 +224,10 @@ const RuleEditorRow = ({ rule, onChange }: RowProps) => {
 }
 
 const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
-  let isDirty = useRef(false)
   let { data: defaultRules } = useQueryData(defaultContractRulesQuery)
 
-  // Populate the rules editor
+  // Populate the rules editor. If no rules in the contract, use the default rules.
+  // Remove __typename from all rule objects.
   let rules: ContractRuleInput[] = useMemo(
     () =>
       ((contract?.rules || []).length === 0
@@ -221,37 +237,26 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
     [defaultRules, contract.rules]
   )
 
-  let [pendingRules, setPendingRules] = useState<ContractRuleInput[]>([])
   let [newPendingRule, setNewPendingRule] = useState<PendingRule | null>(null)
 
-  useEffect(() => {
-    if (rules.length !== 0) {
-      setPendingRules(rules)
-      isDirty.current = false
-    }
-  }, [rules])
+  let onRuleChange = useCallback(
+    (rule: ContractRuleInput) => {
+      let ruleId = createRuleId(rule)
 
-  useEffect(() => {
-    if (pendingRules.length !== 0 && isDirty.current) {
-      onChange(pendingRules)
-    }
-  }, [pendingRules, isDirty.current])
-
-  let onRuleChange = useCallback((rule: ContractRuleInput) => {
-    let ruleId = createRuleId(rule)
-
-    setPendingRules(
-      producer((draftRules) => {
+      let createNextValue = producer((draftRules) => {
         let draftRuleIndex = draftRules.findIndex((dr) => createRuleId(dr) === ruleId)
 
         if (draftRuleIndex !== -1) {
           draftRules.splice(draftRuleIndex, 1, rule)
+        } else {
+          draftRules.push(rule)
         }
       })
-    )
 
-    isDirty.current = true
-  }, [])
+      onChange(createNextValue(rules))
+    },
+    [rules]
+  )
 
   let onCreateNewRule = useCallback(() => {
     setNewPendingRule((currentPending) => {
@@ -264,29 +269,45 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
   }, [])
 
   let onSaveNewRule = useCallback(() => {
-    setPendingRules((currentRules) => {
-      if (!newPendingRule) {
-        return currentRules
-      }
-
-      let nextRules = [...currentRules]
-      nextRules.push(omit(newPendingRule, '_isNew'))
-
-      return nextRules
-    })
-
+    onRuleChange(omit(newPendingRule, '_isNew'))
     setNewPendingRule(null)
-    isDirty.current = true
-  }, [newPendingRule])
+  }, [newPendingRule, onRuleChange])
+
+  let onRemoveRule = useCallback(
+    (rule) => {
+      let createNextValue = produce((draftRules) => {
+        let ruleId = createRuleId(rule)
+        let ruleIdx = draftRules.findIndex((r) => createRuleId(r) === ruleId)
+
+        if (ruleIdx !== -1) {
+          draftRules.splice(ruleIdx, 1)
+        }
+      })
+
+      onChange(createNextValue(rules))
+    },
+    [rules]
+  )
+
+  let rulesByCategory = useMemo(() => Object.entries(groupBy(rules, 'category')), [rules])
 
   return (
     <ContractRuleEditorView>
       {newPendingRule ? (
         <RuleCategory>
           <CategoryTitle>{newPendingRule?.category || 'Ei kategoriaa'}</CategoryTitle>
-          <RuleEditorRow rule={newPendingRule} onChange={setNewPendingRule} />
+          <RuleEditorRow
+            rule={newPendingRule}
+            onChange={setNewPendingRule}
+            useBuffer={false}
+          />
           <CategoryFooter>
             <Button onClick={onSaveNewRule}>Lisää sääntö</Button>
+            <Button
+              onClick={() => setNewPendingRule(null)}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+              Peruuta
+            </Button>
           </CategoryFooter>
         </RuleCategory>
       ) : (
@@ -294,12 +315,17 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
           <Button onClick={onCreateNewRule}>Uusi sääntö</Button>
         </ToolRow>
       )}
-      {Object.entries(groupBy(pendingRules, 'category')).map(([category, rules]) => {
+      {rulesByCategory.map(([category, rules]) => {
         return (
           <RuleCategory key={category}>
             <CategoryTitle>{category}</CategoryTitle>
             {rules.map((rule) => (
-              <RuleEditorRow rule={rule} onChange={onRuleChange} key={createRuleId(rule)} />
+              <RuleEditorRow
+                rule={rule}
+                onChange={onRuleChange}
+                useBuffer={true}
+                key={createRuleId(rule)}
+              />
             ))}
           </RuleCategory>
         )
