@@ -9,9 +9,10 @@ import { groupBy } from 'lodash'
 import Input, { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
 import { FlexRow } from '../common/components/common'
-import { Button, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonStyle, RemoveButton } from '../common/components/Button'
 import producer from 'immer'
 import produce from 'immer'
+import { CrossThick } from '../common/icon/CrossThick'
 
 const ContractRuleEditorView = styled.div``
 
@@ -57,6 +58,7 @@ const ToolRow = styled(FlexRow)`
 const RuleRow = styled.div`
   padding: 1.5rem 1rem;
   border-bottom: 1px solid var(--lighter-grey);
+  position: relative;
 
   &:nth-child(even) {
     background: var(--white-grey);
@@ -79,6 +81,7 @@ const RuleName = styled(Input)`
 
 const RuleDescription = styled(Input)`
   margin-bottom: 1rem;
+  width: 100%;
 `
 
 const RuleInputGroup = styled.div`
@@ -90,12 +93,18 @@ const RuleInputGroup = styled.div`
 `
 
 const RuleInputWrapper = styled.div`
-  flex: 1 0 50%;
+  flex: 1 0 calc(50% - 1rem);
   margin-right: 1rem;
 
   &:last-child {
     margin-right: 0;
   }
+`
+
+const RemoveRuleButton = styled(RemoveButton)`
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
 `
 
 export type PropTypes = {
@@ -127,10 +136,11 @@ function createPendingRule(): PendingRule {
 type RowProps = {
   rule: PendingRule
   onChange: (nextRule: PendingRule) => unknown
+  onRemove?: (rule: PendingRule) => unknown
   useBuffer?: boolean
 }
 
-const RuleEditorRow = ({ rule, onChange, useBuffer = true }: RowProps) => {
+const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps) => {
   let [ruleUpdateBuffer, setBuffer] = useState<PendingRule | null>(null)
 
   useEffect(() => {
@@ -162,66 +172,75 @@ const RuleEditorRow = ({ rule, onChange, useBuffer = true }: RowProps) => {
 
   return (
     <RuleRow onBlur={flushBuffer}>
-      {rule._isNew && (
-        <Dropdown
-          style={{ marginBottom: '1rem' }}
-          items={categoryAllowFullEdit}
-          onSelect={onChangeProp('category')}
-          label="Kategoria"
-          selectedItem={ruleUpdateBuffer?.category}
-        />
-      )}
-      <RuleInputGroup>
-        <RuleInputWrapper>
-          <RuleName
-            onChange={onChangeProp('name')}
-            disabled={
-              !(
-                rule._isNew ||
-                !ruleUpdateBuffer?.name ||
-                categoryAllowFullEdit.includes(ruleUpdateBuffer?.category || '')
-              )
-            }
-            label="Säännön nimi"
-            value={ruleUpdateBuffer?.name || ''}
-          />
-        </RuleInputWrapper>
+      <div>
         {rule._isNew && (
+          <Dropdown
+            style={{ marginBottom: '1rem' }}
+            items={categoryAllowFullEdit}
+            onSelect={onChangeProp('category')}
+            label="Kategoria"
+            selectedItem={ruleUpdateBuffer?.category}
+          />
+        )}
+        <RuleInputGroup>
           <RuleInputWrapper>
-            <Dropdown
-              items={Object.values(RuleType)}
-              onSelect={onChangeProp('type')}
-              label="Säännön tyyppi"
-              selectedItem={ruleUpdateBuffer?.type || RuleType.ScalarValue}
+            <RuleName
+              onChange={onChangeProp('name')}
+              disabled={
+                !(
+                  rule._isNew ||
+                  !ruleUpdateBuffer?.name ||
+                  categoryAllowFullEdit.includes(ruleUpdateBuffer?.category || '')
+                )
+              }
+              label="Säännön nimi"
+              value={ruleUpdateBuffer?.name || ''}
             />
           </RuleInputWrapper>
-        )}
-      </RuleInputGroup>
-      <RuleDescription
-        label="Kuvaus"
-        value={ruleUpdateBuffer?.description || ''}
-        onChange={onChangeProp('description')}
-      />
-      <RuleInputGroup>
-        {rule.type === RuleType.ConditionalValue && (
+          {rule._isNew && (
+            <RuleInputWrapper>
+              <Dropdown
+                items={Object.values(RuleType)}
+                onSelect={onChangeProp('type')}
+                label="Säännön tyyppi"
+                selectedItem={ruleUpdateBuffer?.type || RuleType.ScalarValue}
+              />
+            </RuleInputWrapper>
+          )}
+        </RuleInputGroup>
+        <RuleInputGroup>
+          <RuleDescription
+            label="Kuvaus"
+            value={ruleUpdateBuffer?.description || ''}
+            onChange={onChangeProp('description')}
+          />
+        </RuleInputGroup>
+        <RuleInputGroup>
+          {rule.type === RuleType.ConditionalValue && (
+            <RuleInputWrapper>
+              <Input
+                value={ruleUpdateBuffer?.condition || ''}
+                label="Ehto"
+                name="condition"
+                onChange={onChangeProp('condition')}
+              />
+            </RuleInputWrapper>
+          )}
           <RuleInputWrapper>
             <Input
-              value={ruleUpdateBuffer?.condition || ''}
-              label="Ehto"
-              name="condition"
-              onChange={onChangeProp('condition')}
+              value={ruleUpdateBuffer?.value || ''}
+              label="Arvo"
+              name="value"
+              onChange={onChangeProp('value')}
             />
           </RuleInputWrapper>
-        )}
-        <RuleInputWrapper>
-          <Input
-            value={ruleUpdateBuffer?.value || ''}
-            label="Arvo"
-            name="value"
-            onChange={onChangeProp('value')}
-          />
-        </RuleInputWrapper>
-      </RuleInputGroup>
+        </RuleInputGroup>
+      </div>
+      {onRemove && categoryAllowFullEdit.includes(rule.category) && (
+        <RemoveRuleButton onClick={() => onRemove(rule)}>
+          <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+        </RemoveRuleButton>
+      )}
     </RuleRow>
   )
 }
@@ -345,6 +364,7 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
             <CategoryTitle>{category}</CategoryTitle>
             {rules.map((rule) => (
               <RuleEditorRow
+                onRemove={onRemoveRule}
                 rule={rule}
                 onChange={onRuleChange}
                 useBuffer={true}
