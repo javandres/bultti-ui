@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ContractInput, ContractRuleInput, RuleType } from '../schema-types'
+import { ContractInput, ContractRule, ContractRuleInput, RuleType } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { defaultContractRulesQuery } from './contractQueries'
 import { createRuleId } from './contractUtils'
-import { groupBy, omit } from 'lodash'
+import { groupBy } from 'lodash'
 import Input, { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
 import { FlexRow } from '../common/components/common'
@@ -108,17 +108,20 @@ const categoryAllowFullEdit = ['equipmentType']
 
 type PendingRule = ContractRuleInput & { _isNew?: boolean }
 
-function createPendingRule(): PendingRule {
+export function createRuleInput(rule?: ContractRule): ContractRuleInput {
   return {
-    _isNew: true,
-    category: '',
-    condition: '',
-    description: '',
-    name: '',
-    options: '',
-    type: RuleType.ScalarValue,
-    value: '',
+    category: rule?.category || '',
+    condition: rule?.condition || '',
+    description: rule?.description || '',
+    name: rule?.name || '',
+    options: rule?.options || '',
+    type: rule?.type || RuleType.ScalarValue,
+    value: rule?.value || '',
   }
+}
+
+function createPendingRule(): PendingRule {
+  return { ...createRuleInput(), _isNew: true }
 }
 
 type RowProps = {
@@ -227,17 +230,16 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
   let { data: defaultRules } = useQueryData(defaultContractRulesQuery)
 
   // Populate the rules editor. If no rules in the contract, use the default rules.
-  // Remove __typename from all rule objects.
+  // Remove __typename from all rule objects by creating rule input objects.
   let rules: ContractRuleInput[] = useMemo(
     () =>
-      ((contract?.rules || []).length === 0
-        ? defaultRules || []
-        : contract?.rules
-      ).map((defRule) => omit(defRule, ['__typename'])),
+      ((contract?.rules || []).length === 0 ? defaultRules || [] : contract?.rules).map(
+        createRuleInput
+      ),
     [defaultRules, contract.rules]
   )
 
-  let [newPendingRule, setNewPendingRule] = useState<PendingRule | null>(null)
+  let [newPendingRule, setNewPendingRule] = useState<PendingRule | undefined>(undefined)
 
   let onRuleChange = useCallback(
     (rule: ContractRuleInput) => {
@@ -269,8 +271,8 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
   }, [])
 
   let onSaveNewRule = useCallback(() => {
-    onRuleChange(omit(newPendingRule, '_isNew'))
-    setNewPendingRule(null)
+    onRuleChange(createRuleInput(newPendingRule))
+    setNewPendingRule(undefined)
   }, [newPendingRule, onRuleChange])
 
   let onRemoveRule = useCallback(
@@ -304,7 +306,7 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
           <CategoryFooter>
             <Button onClick={onSaveNewRule}>Lisää sääntö</Button>
             <Button
-              onClick={() => setNewPendingRule(null)}
+              onClick={() => setNewPendingRule(undefined)}
               buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
               Peruuta
             </Button>

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import 'react-dates/lib/css/_datepicker.css'
 import moment, { Moment } from 'moment'
@@ -90,6 +90,13 @@ const SelectDate: React.FC<PropTypes> = observer(
       let validInput = getValidDate(inputValue)
       return validInput ? validInput.format(DATE_FORMAT_MOMENT) : value
     }, [inputValue, value, getValidDate])
+
+    useEffect(() => {
+      if (inputValue !== value) {
+        let validDate = getValidDate(value)?.format(DATE_FORMAT_MOMENT)
+        setInputValue(validDate || '')
+      }
+    }, [value])
 
     const inputName = useMemo(
       () => name || label?.toLowerCase()?.replace(' ', '_') || 'unnamed_input',

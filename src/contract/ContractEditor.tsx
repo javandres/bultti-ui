@@ -12,7 +12,7 @@ import {
 import { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
-import ContractRuleEditor from './ContractRuleEditor'
+import ContractRuleEditor, { createRuleInput } from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
@@ -55,7 +55,7 @@ function createContractInput(contract: Contract): ContractInput {
     endDate: contract.endDate,
     operatorId: contract.operatorId,
     procurementUnitIds: (contract?.procurementUnits || []).map((pu) => pu.id),
-    rules: contract?.rules || [],
+    rules: (contract?.rules || []).map(createRuleInput),
   }
 }
 
