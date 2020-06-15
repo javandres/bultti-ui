@@ -186,6 +186,7 @@ const SelectDate: React.FC<PropTypes> = observer(
           {!disabled && (
             <DatePickerWrapper focused={focused}>
               <DayPickerSingleDateController
+                initialVisibleMonth={() => valueMoment}
                 date={valueMoment}
                 onDateChange={onDateChange}
                 onOutsideClick={onClosePicker}

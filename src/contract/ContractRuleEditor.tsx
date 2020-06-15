@@ -110,7 +110,7 @@ type PendingRule = ContractRuleInput & { _isNew?: boolean }
 
 export function createRuleInput(rule?: ContractRule): ContractRuleInput {
   return {
-    category: rule?.category || '',
+    category: rule?.category || categoryAllowFullEdit[0] || '',
     condition: rule?.condition || '',
     description: rule?.description || '',
     name: rule?.name || '',
@@ -168,7 +168,7 @@ const RuleEditorRow = ({ rule, onChange, useBuffer = true }: RowProps) => {
           items={categoryAllowFullEdit}
           onSelect={onChangeProp('category')}
           label="Kategoria"
-          selectedItem={ruleUpdateBuffer?.category || categoryAllowFullEdit[0]}
+          selectedItem={ruleUpdateBuffer?.category}
         />
       )}
       <RuleInputGroup>
@@ -270,10 +270,30 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
     })
   }, [])
 
+  let newRuleIsValid = useMemo(
+    () =>
+      // It needs to have a name
+      newPendingRule?.name &&
+      // And a defined value (can be '' or falsy but not undefined)
+      typeof newPendingRule?.value !== 'undefined' &&
+      // And a category
+      newPendingRule?.category &&
+      // And if the ruleType is conditional, it needs to have a condition.
+      (newPendingRule?.type !== RuleType.ConditionalValue ||
+        (newPendingRule?.type === RuleType.ConditionalValue && !!newPendingRule?.condition)) &&
+      // And if the ruleType is enum or multi, it needs to have options.
+      (![RuleType.EnumValue, RuleType.MultiValue].includes(newPendingRule?.type || '') ||
+        ([RuleType.EnumValue, RuleType.MultiValue].includes(newPendingRule?.type || '') &&
+          newPendingRule?.options)),
+    [newPendingRule]
+  )
+
   let onSaveNewRule = useCallback(() => {
-    onRuleChange(createRuleInput(newPendingRule))
-    setNewPendingRule(undefined)
-  }, [newPendingRule, onRuleChange])
+    if (newRuleIsValid) {
+      onRuleChange(createRuleInput(newPendingRule))
+      setNewPendingRule(undefined)
+    }
+  }, [newPendingRule, newRuleIsValid, onRuleChange])
 
   let onRemoveRule = useCallback(
     (rule) => {
@@ -304,7 +324,9 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
             useBuffer={false}
           />
           <CategoryFooter>
-            <Button onClick={onSaveNewRule}>Lisää sääntö</Button>
+            <Button disabled={!newRuleIsValid} onClick={onSaveNewRule}>
+              Lisää sääntö
+            </Button>
             <Button
               onClick={() => setNewPendingRule(undefined)}
               buttonStyle={ButtonStyle.SECONDARY_REMOVE}>

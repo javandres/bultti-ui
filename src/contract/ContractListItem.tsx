@@ -7,12 +7,15 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 
 const ContractTitle = styled.h3`
-  margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin: 0;
 `
 
 const ContractDescription = styled.p`
-  margin: 0;
+  margin: 0 0 1rem;
+  padding: 0.75rem;
+  background: var(--white-grey);
+  border-radius: 0.5rem;
+  border: 1px solid var(--lighter-grey);
   line-height: 1.4;
 `
 
@@ -33,13 +36,11 @@ const ContractListItem: React.FC<PropTypes> = observer(
             <HeaderSection>
               <ContractTitle>
                 {contractData?.operator?.operatorName || 'Uusi sopimus'}
-                <br />
-                <span style={{ fontWeight: 'normal' }}>
-                  {format(parseISO(contractData?.startDate), READABLE_DATE_FORMAT)} -{' '}
-                  {format(parseISO(contractData?.endDate), READABLE_DATE_FORMAT)}
-                </span>
               </ContractTitle>
-              <ContractDescription>{contractData.description}</ContractDescription>
+            </HeaderSection>
+            <HeaderSection>
+              {format(parseISO(contractData?.startDate), READABLE_DATE_FORMAT)} -{' '}
+              {format(parseISO(contractData?.endDate), READABLE_DATE_FORMAT)}
             </HeaderSection>
             {headerContent}
           </>

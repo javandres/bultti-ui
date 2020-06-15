@@ -16,8 +16,8 @@ import ContractRuleEditor, { createRuleInput } from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
+  HeaderBoldHeading,
   HeaderContentWrapper,
-  HeaderMainHeading,
   HeaderRow,
 } from '../common/components/ExpandableSection'
 import { get } from 'lodash'
@@ -26,6 +26,7 @@ const ContractEditorView = styled.div``
 
 const ExpandableFormSection = styled(ExpandableSection)`
   background: transparent;
+  margin-top: 0;
 
   ${HeaderRow} {
     border-radius: 0.5rem;
@@ -41,9 +42,14 @@ const ExpandableFormSection = styled(ExpandableSection)`
   }
 `
 
+const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
+  padding: 0.75rem;
+`
+
 export type PropTypes = {
   contract: Contract
   onCancel?: () => unknown
+  onRefresh?: () => unknown
   isNew?: boolean
 }
 
@@ -78,7 +84,8 @@ const renderEditorField = (contract: ContractInput) => (
 
   if (key === 'rules') {
     return (
-      <ExpandableFormSection headerContent={<HeaderMainHeading>Säännöt</HeaderMainHeading>}>
+      <ExpandableFormSection
+        headerContent={<ExpandableFormSectionHeading>Säännöt</ExpandableFormSectionHeading>}>
         <ContractRuleEditor contract={contract} onChange={onChange} />
       </ExpandableFormSection>
     )
@@ -87,7 +94,9 @@ const renderEditorField = (contract: ContractInput) => (
   if (key === 'procurementUnitIds') {
     return (
       <ExpandableFormSection
-        headerContent={<HeaderMainHeading>Kilpailukohteet</HeaderMainHeading>}>
+        headerContent={
+          <ExpandableFormSectionHeading>Kilpailukohteet</ExpandableFormSectionHeading>
+        }>
         <ContractProcurementUnitsEditor contract={contract} onChange={onChange} />
       </ExpandableFormSection>
     )
@@ -157,7 +166,12 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   }, [])
 
   let [modifyContract, { data: nextContract, loading: modifyLoading }] = useMutationData(
-    modifyContractMutation
+    modifyContractMutation,
+    {
+      refetchQueries: [
+        { query: contractsQuery, variables: { operatorId: contract?.operatorId } },
+      ],
+    }
   )
 
   let [createContract, { loading: createLoading }] = useMutationData(createContractMutation, {
@@ -211,10 +225,14 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   }, [contract, onCancel])
 
   let isDirty = useMemo(() => {
+    if (isNew) {
+      return true
+    }
+
     let pendingJson = JSON.stringify(pendingContract)
     let currentJson = JSON.stringify(createContractInput(contract))
     return currentJson !== pendingJson
-  }, [pendingContract, contract])
+  }, [pendingContract, contract, isNew])
 
   return (
     <ContractEditorView>

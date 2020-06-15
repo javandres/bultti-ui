@@ -56,6 +56,10 @@ export const HeaderBoldHeading = styled.h4`
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: center;
+
+  &:last-child {
+    border-right: 0;
+  }
 `
 
 export const HeaderHeading = styled.h5`

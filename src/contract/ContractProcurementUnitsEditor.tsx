@@ -11,11 +11,13 @@ import {
 } from '../common/components/ExpandableSection'
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
 const UnitContentWrapper = styled.div`
   overflow: hidden;
+  position: relative;
 `
 
 const EmptyView = styled(MessageContainer)`
@@ -47,13 +49,16 @@ export type PropTypes = {
 const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTypes) => {
   let includedUnitIds = useMemo(() => contract?.procurementUnitIds || [], [contract])
 
-  let { data: procurementUnitOptions } = useQueryData(procurementUnitOptionsQuery, {
-    skip: !contract || !contract?.operatorId || !contract?.startDate,
-    variables: {
-      operatorId: contract?.operatorId,
-      date: contract?.startDate,
-    },
-  })
+  let { data: procurementUnitOptions, loading: unitsLoading } = useQueryData(
+    procurementUnitOptionsQuery,
+    {
+      skip: !contract || !contract?.operatorId || !contract?.startDate,
+      variables: {
+        operatorId: contract?.operatorId,
+        date: contract?.startDate,
+      },
+    }
+  )
 
   let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
 
@@ -76,7 +81,8 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
   return (
     <ContractProcurementUnitsEditorView>
       <UnitContentWrapper>
-        {unitOptions.length === 0 && (
+        <LoadingDisplay loading={unitsLoading} />
+        {unitOptions.length === 0 && !unitsLoading && (
           <EmptyView>
             <MessageView>Ei kilpailukohteita</MessageView>
           </EmptyView>

@@ -72,12 +72,13 @@ const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
   opacity: ${(p) => (p.isOpen ? 1 : 0)};
 `
 
-const OperatorSuggestion = styled.li<{ highlighted: boolean }>`
+const DropdownItem = styled.li<{ highlighted: boolean }>`
   color: ${(p) =>
     p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
   cursor: pointer;
   padding: 0.75rem 1rem;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
+  user-select: none;
 `
 
 export type DropdownProps = {
@@ -164,7 +165,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
           {!disabled && isOpen && (
             <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
               {items.map((item, index) => (
-                <OperatorSuggestion
+                <DropdownItem
                   theme={theme}
                   highlighted={highlightedIndex === index}
                   {...getItemProps({
@@ -173,7 +174,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
                     item,
                   })}>
                   {toString(item, itemToLabel)}
-                </OperatorSuggestion>
+                </DropdownItem>
               ))}
             </SuggestionsList>
           )}
