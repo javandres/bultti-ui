@@ -146,13 +146,7 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
   let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
-  // TODO: Fix diff
   let isDirty = useMemo(() => {
-    // Allow pending state to be set if falsy
-    if (!pendingContract) {
-      return false
-    }
-
     // New contracts are always dirty
     if (isNew) {
       return true
@@ -161,23 +155,23 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
     let pendingJson = JSON.stringify(pendingContract)
     let currentJson = JSON.stringify(createContractInput(contract))
     return currentJson !== pendingJson
-  }, [pendingContract, contract, isNew])
+  }, [pendingContract, contract])
 
   useEffect(() => {
-    if (contract && !isDirty) {
+    if (contract) {
       setPendingContract(createContractInput(contract))
     }
-  }, [contract, isDirty])
+  }, [contract])
 
   let pendingContractValid = useMemo(
-    () => !!pendingContract.startDate && !!pendingContract.endDate,
+    () => !!pendingContract?.startDate && !!pendingContract?.endDate,
     [pendingContract]
   )
 
   let onChange = useCallback((key, nextValue) => {
     setPendingContract((currentVal) => {
       let nextProcurementUnits =
-        key === 'procurementUnitIds' ? nextValue : currentVal.procurementUnitIds
+        key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
 
       // Reset procurement units if operatorId changes.
       if (key === 'operatorId') {
