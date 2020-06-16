@@ -38,21 +38,13 @@ const CategoryFooter = styled(FlexRow)`
 `
 
 const RuleCategory = styled.div`
-  margin: 1rem 0;
+  margin: 0;
   border-top: 1px solid var(--lighter-grey);
-
-  &:first-child {
-    margin-top: 0;
-  }
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 `
 
 const ToolRow = styled(FlexRow)`
   border-top: 1px solid var(--lighter-grey);
-  padding: 1rem 1rem 0;
+  padding: 1rem;
 `
 
 const RuleRow = styled.div`
