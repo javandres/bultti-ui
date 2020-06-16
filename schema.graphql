@@ -316,6 +316,7 @@ type ProcurementUnit {
   area: OperatingArea
   areaId: Int
   contracts: [Contract!]!
+  currentContract: Contract
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!

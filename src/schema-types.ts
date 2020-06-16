@@ -305,6 +305,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate'];
   executionRequirements: Array<ExecutionRequirement>;
   contracts: Array<Contract>;
+  currentContract?: Maybe<Contract>;
 };
 
 export type EquipmentCatalogue = {

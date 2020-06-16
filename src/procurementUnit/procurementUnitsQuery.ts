@@ -19,6 +19,15 @@ export const ProcurementUnitFragment = gql`
       length
       routeId
     }
+    currentContract {
+      id
+      operatorId
+      createdAt
+      updatedAt
+      description
+      startDate
+      endDate
+    }
   }
 `
 

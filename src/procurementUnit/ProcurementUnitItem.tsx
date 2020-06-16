@@ -32,6 +32,7 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
+import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
 const ProcurementUnitView = styled.div`
   position: relative;
@@ -269,7 +270,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     expanded = true,
     className,
   }) => {
-    const { routes = [] } = procurementUnit || {}
+    const { currentContract, routes = [] } = procurementUnit || {}
 
     return (
       <ProcurementUnitView className={className}>
@@ -290,13 +291,27 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
                   {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
                 </HeaderSection>
-                <HeaderSection>
+                <HeaderSection style={{ flexGrow: 2 }}>
                   <HeaderHeading>Voimassaoloaika</HeaderHeading>
-                  {procurementUnit.startDate} - {procurementUnit.endDate}
+                  <DateRangeDisplay
+                    startDate={procurementUnit.startDate}
+                    endDate={procurementUnit.endDate}
+                  />
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
                   {procurementUnit?.area?.name}
+                </HeaderSection>
+                <HeaderSection style={{ flexGrow: 2 }}>
+                  <HeaderHeading>Sopimus</HeaderHeading>
+                  {currentContract ? (
+                    <DateRangeDisplay
+                      startDate={currentContract.startDate}
+                      endDate={currentContract.endDate}
+                    />
+                  ) : (
+                    'Ei voimassaolevaa sopimusta.'
+                  )}
                 </HeaderSection>
               </>
             }>

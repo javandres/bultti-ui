@@ -17,6 +17,7 @@ import { READABLE_DATE_FORMAT } from '../constants'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/Typography'
+import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
 const PreInspectionReportIndexPageView = styled(Page)``
 
@@ -35,24 +36,6 @@ const FilterControlGroup = styled(ControlGroup)`
 
   &:last-child {
     margin-right: 0;
-  }
-`
-
-const StartDate = styled.span`
-  margin-right: 0.75rem;
-  display: inline-block;
-  font-size: 1rem;
-
-  &:after {
-    content: '➔';
-    display: inline-block;
-    margin-left: 0.75rem;
-  }
-`
-
-const EndDate = styled(StartDate)`
-  &:after {
-    content: '';
   }
 `
 
@@ -79,7 +62,7 @@ const PreInspectionTitle = styled.h4`
   margin: 0 1rem 0 0;
 `
 
-const PreInspectionDates = styled.div``
+const PreInspectionDates = styled(DateRangeDisplay)``
 
 const PreInspectionListItem = styled.button`
   font-family: inherit;
@@ -229,14 +212,10 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
                 <PreInspectionTitle>
                   {inspection.operator.operatorName} / {inspection.seasonId}
                 </PreInspectionTitle>
-                <PreInspectionDates>
-                  <StartDate>
-                    {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
-                  </StartDate>
-                  <EndDate>
-                    {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
-                  </EndDate>
-                </PreInspectionDates>
+                <PreInspectionDates
+                  startDate={inspection.startDate}
+                  endDate={inspection.endDate}
+                />
                 <GoToReportsButton>
                   <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
                 </GoToReportsButton>
