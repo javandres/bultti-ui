@@ -6,6 +6,7 @@ import {
   InspectionType,
   InspectionUserRelationType,
   Operator,
+  ProcurementUnit,
   Season,
   User,
 } from '../schema-types'
@@ -22,6 +23,7 @@ import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
+import { isAfter, isBefore } from '../util/isBetween'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -220,4 +222,53 @@ export function getInspectionStatusColor(inspection: Inspection) {
   }
 
   return 'var(--light-grey)'
+}
+
+enum PreInspectionProblems {
+  NOT_PRE = 'Not pre-inspection.',
+  INVALID_PRODUCTION_TIME = 'The production time range is invalid',
+  INVALID_INSPECTION_TIME = 'The inspection time range is invalid',
+  MISSING_CONTRACTS = 'Some units do not have effective contracts.',
+  MISSING_DEPARTURE_BLOCKS = 'Departure blocks not provided.',
+  MISSING_EQUIPMENT_CATALOGUES = 'Some units do not have equipment catalogues or they are empty.',
+  MISSING_REQUIREMENT_CATALOGUES = 'Some units do not have requirement catalogues or they are empty.',
+}
+
+export function validatePreInspection(
+  inspection: Inspection,
+  procurementUnits: ProcurementUnit[]
+) {
+  let errors: PreInspectionProblems[] = []
+
+  if (inspection.inspectionType !== InspectionType.Pre) {
+    errors.push(PreInspectionProblems.NOT_PRE)
+  }
+
+  if (inspection.minStartDate && isBefore(inspection.startDate, inspection.minStartDate)) {
+    errors.push(PreInspectionProblems.INVALID_PRODUCTION_TIME)
+  }
+
+  if (
+    !inspection.inspectionStartDate ||
+    !inspection.inspectionEndDate ||
+    isBefore(inspection.inspectionStartDate, inspection.startDate) ||
+    isAfter(inspection.inspectionEndDate, inspection.endDate)
+  ) {
+    errors.push(PreInspectionProblems.INVALID_INSPECTION_TIME)
+  }
+
+  if (
+    procurementUnits.some(
+      (unit) =>
+        !unit.currentContract ||
+        isBefore(unit.currentContract.endDate, inspection.inspectionStartDate) ||
+        isAfter(unit.currentContract.startDate, inspection.inspectionEndDate)
+    )
+  ) {
+    errors.push(PreInspectionProblems.MISSING_CONTRACTS)
+  }
+
+  // TODO: More checks
+
+  return errors
 }
