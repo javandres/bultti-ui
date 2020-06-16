@@ -17,7 +17,6 @@ import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
   HeaderBoldHeading,
-  HeaderContentWrapper,
   HeaderRow,
 } from '../common/components/ExpandableSection'
 import { get, orderBy } from 'lodash'
@@ -31,11 +30,6 @@ const ExpandableFormSection = styled(ExpandableSection)`
 
   ${HeaderRow} {
     border-radius: 0.5rem;
-    background: white;
-  }
-
-  ${HeaderContentWrapper} {
-    border-bottom: 0 !important;
   }
 
   ${ContentWrapper} {

@@ -1,7 +1,10 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ContractInput } from '../schema-types'
+import {
+  ContractInput,
+  ProcurementUnitOption as ProcurementUnitOptionType,
+} from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
 import {
@@ -12,6 +15,7 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
+import { isAfter, isBefore, parseISO } from 'date-fns'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -31,10 +35,6 @@ const ProcurementUnitOption = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
-
-  &:first-child {
-    border-top: 1px solid var(--lighter-grey);
-  }
 
   &:last-child {
     border-bottom: 0;
@@ -60,7 +60,9 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
     }
   )
 
-  let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
+  let unitOptions = useMemo<ProcurementUnitOptionType[]>(() => procurementUnitOptions || [], [
+    procurementUnitOptions,
+  ])
 
   let onToggleUnitInclusion = useCallback(
     (unitId) => {
@@ -78,6 +80,9 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
     [includedUnitIds, onChange]
   )
 
+  let contractStart = parseISO(contract.startDate)
+  let contractEnd = parseISO(contract.endDate)
+
   return (
     <ContractProcurementUnitsEditorView>
       <UnitContentWrapper>
@@ -89,6 +94,15 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
         )}
         {unitOptions.map((unitOption) => {
           let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
+
+          let currentContractStart = !unitOption.currentContractStart
+            ? undefined
+            : parseISO(unitOption.currentContractStart)
+
+          let currentContractEnd = !unitOption.currentContractEnd
+            ? undefined
+            : parseISO(unitOption.currentContractEnd)
+
           let fullRoutesString = routes.join(', ')
 
           let shortRoutes = routes.slice(0, 3)
@@ -98,6 +112,14 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
           }
 
           let shortRoutesString = shortRoutes.join(', ')
+          let isSelected = includedUnitIds.includes(unitOption.id)
+
+          let isCurrentContract = unitOption.currentContractId === contract.id
+          let isEnabled =
+            isCurrentContract ||
+            !unitOption?.currentContractId ||
+            (currentContractEnd && isBefore(currentContractEnd, contractStart)) ||
+            (currentContractStart && isAfter(currentContractStart, contractEnd))
 
           return (
             <ProcurementUnitOption key={unitOption.id}>
@@ -117,13 +139,18 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
                 {unitOption?.areaName || 'OTHER'}
               </HeaderSection>
               <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-                <Checkbox
-                  value="unit_included"
-                  name="unit_included"
-                  label="Sopimuksessa mukana"
-                  checked={includedUnitIds.includes(unitOption.id)}
-                  onChange={() => onToggleUnitInclusion(unitOption.id)}
-                />
+                {isEnabled ? (
+                  <Checkbox
+                    value="unit_included"
+                    name="unit_included"
+                    label="Sopimuksessa mukana"
+                    disabled={!isEnabled}
+                    checked={isSelected}
+                    onChange={() => onToggleUnitInclusion(unitOption.id)}
+                  />
+                ) : (
+                  'Kohde on toisessa sopimuksessa.'
+                )}
               </HeaderSection>
             </ProcurementUnitOption>
           )

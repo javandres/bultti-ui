@@ -658,6 +658,9 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   medianAgeRequirement?: Maybe<Scalars['Float']>;
   areaName?: Maybe<Scalars['String']>;
+  currentContractId?: Maybe<Scalars['String']>;
+  currentContractStart?: Maybe<Scalars['BulttiDate']>;
+  currentContractEnd?: Maybe<Scalars['BulttiDate']>;
 };
 
 export type Mutation = {

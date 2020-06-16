@@ -43,7 +43,6 @@ const RuleCategory = styled.div`
 `
 
 const ToolRow = styled(FlexRow)`
-  border-top: 1px solid var(--lighter-grey);
   padding: 1rem;
 `
 

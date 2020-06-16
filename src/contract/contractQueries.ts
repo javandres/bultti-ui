@@ -71,6 +71,9 @@ export const procurementUnitOptionsQuery = gql`
       routes
       medianAgeRequirement
       areaName
+      currentContractId
+      currentContractStart
+      currentContractEnd
     }
   }
 `

@@ -332,6 +332,9 @@ type ProcurementUnit {
 
 type ProcurementUnitOption {
   areaName: String
+  currentContractEnd: BulttiDate
+  currentContractId: String
+  currentContractStart: BulttiDate
   endDate: BulttiDate!
   id: String!
   medianAgeRequirement: Float
