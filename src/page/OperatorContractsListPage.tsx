@@ -27,7 +27,7 @@ export type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
 
-const ContractPage = observer(({ children }: PropTypes) => {
+const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
@@ -37,7 +37,6 @@ const ContractPage = observer(({ children }: PropTypes) => {
     },
   })
 
-  // Contract ordered by their `order` prop.
   let contracts = useMemo(() => contractsData || [], [contractsData])
 
   const [contractsExpanded, setContractExpanded] = useState(false)
@@ -103,4 +102,4 @@ const ContractPage = observer(({ children }: PropTypes) => {
   )
 })
 
-export default ContractPage
+export default OperatorContractsListPage
