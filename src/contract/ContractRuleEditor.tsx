@@ -40,6 +40,10 @@ const CategoryFooter = styled(FlexRow)`
 const RuleCategory = styled.div`
   margin: 0;
   border-top: 1px solid var(--lighter-grey);
+
+  &:first-child {
+    border-top: 0;
+  }
 `
 
 const ToolRow = styled(FlexRow)`

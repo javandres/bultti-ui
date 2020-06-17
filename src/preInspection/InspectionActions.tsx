@@ -40,15 +40,18 @@ const ButtonRow = styled.div`
   }
 `
 
+type Actions = 'publish' | 'reject' | 'submit' | 'remove'
+
 export type PropTypes = {
   inspection: Inspection
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
+  disabledActions?: Actions[]
 }
 
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style }: PropTypes) => {
+  ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [user] = useStateValue('user')
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
@@ -71,6 +74,10 @@ const InspectionActions = observer(
     )
 
     var onSubmitInspection = useCallback(async () => {
+      if (disabledActions.includes('submit')) {
+        return
+      }
+
       await submitPreInspection({
         variables: {
           inspectionId: inspection.id,
@@ -78,9 +85,13 @@ const InspectionActions = observer(
       })
 
       await onRefresh()
-    }, [onRefresh, inspection])
+    }, [onRefresh, inspection, disabledActions])
 
     var onPublishInspection = useCallback(async () => {
+      if (disabledActions.includes('publish')) {
+        return
+      }
+
       await publishPreInspection({
         variables: {
           inspectionId: inspection.id,
@@ -88,9 +99,13 @@ const InspectionActions = observer(
       })
 
       await onRefresh()
-    }, [onRefresh, inspection])
+    }, [onRefresh, inspection, disabledActions])
 
     var onRejectInspection = useCallback(async () => {
+      if (disabledActions.includes('reject')) {
+        return
+      }
+
       await rejectPreInspection({
         variables: {
           inspectionId: inspection.id,
@@ -98,7 +113,7 @@ const InspectionActions = observer(
       })
 
       await onRefresh()
-    }, [onRefresh, inspection])
+    }, [onRefresh, inspection, disabledActions])
 
     let userCanPublish =
       inspection.status === InspectionStatus.InReview && requireAdminUser(user)
@@ -125,6 +140,7 @@ const InspectionActions = observer(
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <Button
+              disabled={disabledActions.includes('submit')}
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
@@ -135,6 +151,7 @@ const InspectionActions = observer(
 
         {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
           <Button
+            disabled={disabledActions.includes('remove')}
             style={{ marginLeft: 'auto', marginRight: 0 }}
             loading={removeLoading}
             buttonStyle={ButtonStyle.REMOVE}
@@ -146,6 +163,7 @@ const InspectionActions = observer(
         {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
           <>
             <Button
+              disabled={disabledActions.includes('publish')}
               style={{ marginLeft: 'auto' }}
               loading={publishLoading}
               buttonStyle={ButtonStyle.NORMAL}
@@ -154,6 +172,7 @@ const InspectionActions = observer(
               Julkaise
             </Button>
             <Button
+              disabled={disabledActions.includes('reject')}
               style={{ marginLeft: 'auto', marginRight: 0 }}
               loading={rejectLoading}
               buttonStyle={ButtonStyle.REMOVE}
