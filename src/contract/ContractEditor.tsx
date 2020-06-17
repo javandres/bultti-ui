@@ -71,7 +71,7 @@ const renderEditorField = (contract: ContractInput) => (
   if (key === 'description') {
     return (
       <TextArea
-        value={val}
+        value={val || ''}
         theme="light"
         onChange={(e) => onChange(e.target.value)}
         name={key}
@@ -181,9 +181,13 @@ const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropType
   }, [])
 
   let [modifyContract, { loading: modifyLoading }] = useMutationData(modifyContractMutation, {
-    refetchQueries: [
-      { query: contractsQuery, variables: { operatorId: contract?.operatorId } },
-    ],
+    refetchQueries: ({ data }) => {
+      let mutationResult = pickGraphqlData(data)
+      return [
+        { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
+        'contractProcurementUnitOptions',
+      ]
+    },
   })
 
   let [createContract, { loading: createLoading }] = useMutationData(createContractMutation, {

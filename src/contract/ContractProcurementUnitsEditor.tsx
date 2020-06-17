@@ -15,7 +15,8 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { isAfter, isBefore, parseISO } from 'date-fns'
+import { parseISO } from 'date-fns'
+import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -38,6 +39,18 @@ const ProcurementUnitOption = styled.div`
 
   &:last-child {
     border-bottom: 0;
+  }
+`
+
+const CurrentContractDisplay = styled.div`
+  font-size: 0.75rem;
+
+  > * {
+    margin-top: 0.25rem;
+  }
+
+  * {
+    font-size: inherit;
   }
 `
 
@@ -80,9 +93,6 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
     [includedUnitIds, onChange]
   )
 
-  let contractStart = parseISO(contract.startDate)
-  let contractEnd = parseISO(contract.endDate)
-
   return (
     <ContractProcurementUnitsEditorView>
       <UnitContentWrapper>
@@ -95,16 +105,16 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
         {unitOptions.map((unitOption) => {
           let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
 
-          let currentContractStart = !unitOption.currentContractStart
-            ? undefined
-            : parseISO(unitOption.currentContractStart)
+          let {
+            currentContractId,
+            currentContractStart: currentStart,
+            currentContractEnd: currentEnd,
+          } = unitOption
 
-          let currentContractEnd = !unitOption.currentContractEnd
-            ? undefined
-            : parseISO(unitOption.currentContractEnd)
+          let currentContractStart = !currentStart ? undefined : parseISO(currentStart)
+          let currentContractEnd = !currentEnd ? undefined : parseISO(currentEnd)
 
           let fullRoutesString = routes.join(', ')
-
           let shortRoutes = routes.slice(0, 3)
 
           if (routes.length > shortRoutes.length) {
@@ -112,14 +122,11 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
           }
 
           let shortRoutesString = shortRoutes.join(', ')
+
           let isSelected = includedUnitIds.includes(unitOption.id)
 
-          let isCurrentContract = unitOption.currentContractId === contract.id
-          let isEnabled =
-            isCurrentContract ||
-            !unitOption?.currentContractId ||
-            (currentContractEnd && isBefore(currentContractEnd, contractStart)) ||
-            (currentContractStart && isAfter(currentContractStart, contractEnd))
+          let isCurrentContract = currentContractId === contract.id
+          let canSelectUnit = !currentContractId || isCurrentContract
 
           return (
             <ProcurementUnitOption key={unitOption.id}>
@@ -139,17 +146,23 @@ const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTyp
                 {unitOption?.areaName || 'OTHER'}
               </HeaderSection>
               <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-                {isEnabled ? (
+                {canSelectUnit && (
                   <Checkbox
                     value="unit_included"
                     name="unit_included"
                     label="Sopimuksessa mukana"
-                    disabled={!isEnabled}
                     checked={isSelected}
                     onChange={() => onToggleUnitInclusion(unitOption.id)}
                   />
-                ) : (
-                  'Kohde on toisessa sopimuksessa.'
+                )}
+                {currentContractStart && currentContractEnd && !isCurrentContract && (
+                  <CurrentContractDisplay>
+                    Nykyinen sopimus:
+                    <DateRangeDisplay
+                      startDate={currentContractStart}
+                      endDate={currentContractEnd}
+                    />
+                  </CurrentContractDisplay>
                 )}
               </HeaderSection>
             </ProcurementUnitOption>
