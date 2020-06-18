@@ -67,6 +67,7 @@ export const FieldValueDisplay = styled.div`
   background: transparent;
   display: block;
   width: 100%;
+  line-height: 1.4;
 `
 
 export const ActionsWrapper = styled.div`

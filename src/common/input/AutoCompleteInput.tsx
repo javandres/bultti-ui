@@ -31,7 +31,7 @@ const AutoCompleteWrapper = styled.div`
 `
 
 const MenuButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
-  inverted: ThemeTypes
+  theme: ThemeTypes
   disabled?: boolean
 }>`
   background: ${(p) => (p.disabled ? 'transparent' : 'var(--white-grey)')};
@@ -193,13 +193,15 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
             disabled={disabled}
             onBlur={onBlur}
           />
-          <MenuButton
-            {...getToggleButtonProps({
-              disabled,
-            })}
-            inverted={theme === 'dark'}>
-            <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
-          </MenuButton>
+          {!disabled && (
+            <MenuButton
+              {...getToggleButtonProps({
+                disabled,
+              })}
+              theme={theme}>
+              <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
+            </MenuButton>
+          )}
           {!disabled && (
             <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
               {currentItems.map((item, index) => (

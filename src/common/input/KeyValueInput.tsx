@@ -48,12 +48,12 @@ const KeyValueInput = observer(
     let keyValuePairs = useMemo(() => {
       let entries = Object.entries(values || {})
 
-      if (!values || entries.length === 0 || !!entries[entries.length - 1][0]) {
+      if (!readOnly && (!values || entries.length === 0 || !!entries[entries.length - 1][0])) {
         entries.push(['', ''])
       }
 
       return entries
-    }, [values])
+    }, [values, readOnly])
 
     let onKeyChange = useCallback(
       (key) => (e) => {
@@ -82,6 +82,7 @@ const KeyValueInput = observer(
 
     return (
       <KeyValueInputView>
+        {keyValuePairs.length === 0 && <>(Ei arvoja)</>}
         {keyValuePairs.map(([key, value], index) => {
           let isReadOnlyKey = readOnly || readOnlyKeys.includes(key)
           let isReadOnlyValue = readOnly || readOnlyValues.includes(key)

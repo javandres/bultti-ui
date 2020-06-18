@@ -14,6 +14,8 @@ import { useMutationData } from '../util/useMutationData'
 import { Report, ReportOrderInput } from '../schema-types'
 import ReportEditor from '../report/ReportEditor'
 import ReportListItem from '../report/ReportListItem'
+import { useStateValue } from '../state/useAppState'
+import { requireHSLUser } from '../util/userRoles'
 
 const ReportsPageView = styled(Page)``
 
@@ -52,6 +54,7 @@ export type PropTypes = {
 } & RouteComponentProps
 
 const ReportsPage = observer(({ children }: PropTypes) => {
+  let [user] = useStateValue('user')
   let [newReport, setNewReport] = useState<Partial<Report> | null>(null)
 
   let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery)
@@ -142,11 +145,12 @@ const ReportsPage = observer(({ children }: PropTypes) => {
   }, [reportOrders])
 
   let existingNames = useMemo(() => reports.map((r) => r.name), [reports])
+  let userCanEdit = requireHSLUser(user)
 
   return (
     <ReportsPageView>
       <PageTitle>Raportit</PageTitle>
-      {!reportsData && !reportsLoading && <MessageView>Ei raportteja...</MessageView>}
+      {!reportsData && !reportsLoading && <MessageView>Ei raportteja.</MessageView>}
       <ReportContentView>
         <FlexRow>
           {reports.length !== 0 && (
@@ -154,7 +158,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
               {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
             </TextButton>
           )}
-          {!newReport && (
+          {userCanEdit && !newReport && (
             <Button
               onClick={onCreateNewReport}
               buttonStyle={ButtonStyle.NORMAL}
@@ -164,9 +168,10 @@ const ReportsPage = observer(({ children }: PropTypes) => {
             </Button>
           )}
         </FlexRow>
-        {newReport && (
+        {userCanEdit && newReport && (
           <ReportListItem key="new" reportData={newReport as Report} isExpanded={true}>
             <ReportEditor
+              readOnly={false}
               existingNames={existingNames}
               isNew={true}
               onCancel={() => setNewReport(null)}
@@ -194,7 +199,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
                 </OrderButton>
               </OrderSection>
             }>
-            <ReportEditor report={reportItem} />
+            <ReportEditor readOnly={!userCanEdit} report={reportItem} />
           </ReportListItem>
         ))}
       </ReportContentView>

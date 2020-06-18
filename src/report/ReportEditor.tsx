@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Report, ReportInput } from '../schema-types'
-import ItemForm from '../common/input/ItemForm'
+import ItemForm, { FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
   createReportMutation,
@@ -23,6 +23,7 @@ export type PropTypes = {
   onCancel?: () => unknown
   isNew?: boolean
   existingNames?: string[]
+  readOnly: boolean
 }
 
 function createReportInput(report: Report): ReportInput {
@@ -39,16 +40,19 @@ function createReportInput(report: Report): ReportInput {
 const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}) => (
   key: string,
   val: any,
-  onChange: (val: any) => void
+  onChange: (val: any) => void,
+  readOnly: boolean
 ) => {
-  if (key === 'description') {
+  if (key === 'params') {
+    let values = !!val ? JSON.parse(val) : {}
+    let changeHandler = (values: ValuesType) => onChange(JSON.stringify(values))
+
     return (
-      <TextArea
-        value={val}
-        theme="light"
-        onChange={(e) => onChange(e.target.value)}
-        name={key}
-        style={{ width: '100%' }}
+      <KeyValueInput
+        readOnly={readOnly}
+        values={values}
+        onChange={changeHandler}
+        readOnlyKeys={Object.keys(defaultParams)}
       />
     )
   }
@@ -56,6 +60,7 @@ const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}
   if (key === 'name') {
     return (
       <AutoComplete
+        disabled={readOnly}
         selectedItem={val}
         items={reportCreatorNames}
         onSelect={onChange}
@@ -65,15 +70,18 @@ const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}
     )
   }
 
-  if (key === 'params') {
-    let values = !!val ? JSON.parse(val) : {}
-    let changeHandler = (values: ValuesType) => onChange(JSON.stringify(values))
+  if (readOnly) {
+    return <FieldValueDisplay>{val}</FieldValueDisplay>
+  }
 
+  if (key === 'description') {
     return (
-      <KeyValueInput
-        values={values}
-        onChange={changeHandler}
-        readOnlyKeys={Object.keys(defaultParams)}
+      <TextArea
+        value={val}
+        theme="light"
+        onChange={(e) => onChange(e.target.value)}
+        name={key}
+        style={{ width: '100%' }}
       />
     )
   }
@@ -97,7 +105,7 @@ let formLabels = {
 }
 
 const ReportEditor = observer(
-  ({ report, onCancel, isNew = false, existingNames = [] }: PropTypes) => {
+  ({ report, onCancel, isNew = false, existingNames = [], readOnly }: PropTypes) => {
     let [pendingReport, setPendingReport] = useState(createReportInput(report))
 
     let pendingReportValid = useMemo(() => !!pendingReport.name && !!pendingReport.title, [
@@ -182,6 +190,7 @@ const ReportEditor = observer(
           onCancel={onCancelEdit}
           frameless={true}
           loading={isLoading}
+          readOnly={readOnly}
           doneDisabled={!pendingReportValid}
           renderInput={renderEditorField(reportCreatorNames, defaultParams)}
         />
