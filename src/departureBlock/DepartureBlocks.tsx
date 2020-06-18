@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { difference } from 'lodash'
@@ -22,9 +22,10 @@ const DepartureBlocksView = styled.div`
 
 type PropTypes = {
   isEditable: boolean
+  onUpdate: () => unknown
 }
 
-const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable }) => {
+const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate }) => {
   const inspection = useContext(PreInspectionContext)
   const inspectionId = inspection?.id || ''
 
@@ -37,17 +38,18 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable }) => {
   ] = useDayTypeGroups(isEditable)
 
   // The main query that fetches the departure blocks.
-  let { data: availableDayTypesData, loading: departureBlocksLoading, refetch } = useQueryData(
-    availableDayTypesQuery,
-    {
-      fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
-      notifyOnNetworkStatusChange: true,
-      skip: !inspectionId,
-      variables: {
-        inspectionId: inspectionId,
-      },
-    }
-  )
+  let {
+    data: availableDayTypesData,
+    loading: departureBlocksLoading,
+    refetch: refetchBlocks,
+  } = useQueryData(availableDayTypesQuery, {
+    fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
+    notifyOnNetworkStatusChange: true,
+    skip: !inspectionId,
+    variables: {
+      inspectionId: inspectionId,
+    },
+  })
 
   // Ensure the available dayTypes are in an array
   let dayTypesWithDepartures = useMemo(() => availableDayTypesData || [], [
@@ -62,7 +64,12 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable }) => {
 
   // Callback for when the block configuration changes, which will update the blocks query.
   // Called from each day type group item.
-  let onBlocksChange = useRefetch(refetch)
+  let refetch = useRefetch(refetchBlocks)
+
+  let onBlocksChange = useCallback(() => {
+    refetch()
+    onUpdate()
+  }, [refetch, onUpdate])
 
   // Add a new dayType group for each departure block group
   // if the dayYpe doesn't already exist in a group.

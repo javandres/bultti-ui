@@ -94,7 +94,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
               isEditable={isEditable}
               onUpdateValue={createUpdateCallback}
             />
-            <DepartureBlocks isEditable={isEditable} />
+            <DepartureBlocks onUpdate={refetchData} isEditable={isEditable} />
             <PreInspectionExecutionRequirements />
             <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
             <ProcurementUnits requirementsEditable={isEditable} />
