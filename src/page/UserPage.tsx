@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
@@ -49,6 +49,12 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     }
   }, [nextUser])
 
+  let isDirty = useMemo(() => {
+    let userJson = JSON.stringify(createUserInput(user))
+    let pendingJson = JSON.stringify(pendingUser)
+    return userJson !== pendingJson
+  }, [user, pendingUser])
+
   let onDone = useCallback(() => {
     modifyUser({
       variables: {
@@ -66,6 +72,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
       <PageTitle>Käyttäjä</PageTitle>
       <LoadingDisplay loading={userLoading} />
       <ItemForm
+        showButtons={isDirty}
         hideKeys={['id']}
         onChange={onChange}
         onDone={onDone}

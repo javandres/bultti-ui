@@ -55,122 +55,127 @@ const CurrentContractDisplay = styled.div`
 `
 
 export type PropTypes = {
+  readOnly: boolean
   contract: ContractInput
   onChange: (includedUnitIds: string[]) => unknown
 }
 
-const ContractProcurementUnitsEditor = observer(({ contract, onChange }: PropTypes) => {
-  let includedUnitIds = useMemo(() => contract?.procurementUnitIds || [], [contract])
+const ContractProcurementUnitsEditor = observer(
+  ({ contract, onChange, readOnly }: PropTypes) => {
+    let includedUnitIds = useMemo(() => contract?.procurementUnitIds || [], [contract])
 
-  let { data: procurementUnitOptions, loading: unitsLoading } = useQueryData(
-    procurementUnitOptionsQuery,
-    {
-      skip: !contract || !contract?.operatorId || !contract?.startDate,
-      variables: {
-        operatorId: contract?.operatorId,
-        date: contract?.startDate,
-      },
-    }
-  )
-
-  let unitOptions = useMemo<ProcurementUnitOptionType[]>(() => procurementUnitOptions || [], [
-    procurementUnitOptions,
-  ])
-
-  let onToggleUnitInclusion = useCallback(
-    (unitId) => {
-      let nextIncludedIds = [...includedUnitIds]
-
-      if (nextIncludedIds.includes(unitId)) {
-        let currentIdx = nextIncludedIds.findIndex((id) => id === unitId)
-        nextIncludedIds.splice(currentIdx, 1)
-      } else {
-        nextIncludedIds.push(unitId)
+    let { data: procurementUnitOptions, loading: unitsLoading } = useQueryData(
+      procurementUnitOptionsQuery,
+      {
+        skip: !contract || !contract?.operatorId || !contract?.startDate,
+        variables: {
+          operatorId: contract?.operatorId,
+          date: contract?.startDate,
+        },
       }
+    )
 
-      onChange(nextIncludedIds)
-    },
-    [includedUnitIds, onChange]
-  )
+    let unitOptions = useMemo<ProcurementUnitOptionType[]>(
+      () => procurementUnitOptions || [],
+      [procurementUnitOptions]
+    )
 
-  return (
-    <ContractProcurementUnitsEditorView>
-      <UnitContentWrapper>
-        <LoadingDisplay loading={unitsLoading} />
-        {unitOptions.length === 0 && !unitsLoading && (
-          <EmptyView>
-            <MessageView>Ei kilpailukohteita</MessageView>
-          </EmptyView>
-        )}
-        {unitOptions.map((unitOption) => {
-          let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
+    let onToggleUnitInclusion = useCallback(
+      (unitId) => {
+        let nextIncludedIds = [...includedUnitIds]
 
-          let {
-            currentContractId,
-            currentContractStart: currentStart,
-            currentContractEnd: currentEnd,
-          } = unitOption
+        if (nextIncludedIds.includes(unitId)) {
+          let currentIdx = nextIncludedIds.findIndex((id) => id === unitId)
+          nextIncludedIds.splice(currentIdx, 1)
+        } else {
+          nextIncludedIds.push(unitId)
+        }
 
-          let currentContractStart = !currentStart ? undefined : parseISO(currentStart)
-          let currentContractEnd = !currentEnd ? undefined : parseISO(currentEnd)
+        onChange(nextIncludedIds)
+      },
+      [includedUnitIds, onChange]
+    )
 
-          let fullRoutesString = routes.join(', ')
-          let shortRoutes = routes.slice(0, 3)
+    return (
+      <ContractProcurementUnitsEditorView>
+        <UnitContentWrapper>
+          <LoadingDisplay loading={unitsLoading} />
+          {unitOptions.length === 0 && !unitsLoading && (
+            <EmptyView>
+              <MessageView>Ei kilpailukohteita</MessageView>
+            </EmptyView>
+          )}
+          {unitOptions.map((unitOption) => {
+            let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
 
-          if (routes.length > shortRoutes.length) {
-            shortRoutes.push('...')
-          }
+            let {
+              currentContractId,
+              currentContractStart: currentStart,
+              currentContractEnd: currentEnd,
+            } = unitOption
 
-          let shortRoutesString = shortRoutes.join(', ')
+            let currentContractStart = !currentStart ? undefined : parseISO(currentStart)
+            let currentContractEnd = !currentEnd ? undefined : parseISO(currentEnd)
 
-          let isSelected = includedUnitIds.includes(unitOption.id)
+            let fullRoutesString = routes.join(', ')
+            let shortRoutes = routes.slice(0, 3)
 
-          let isCurrentContract = currentContractId === contract.id
-          let canSelectUnit = !currentContractId || isCurrentContract
+            if (routes.length > shortRoutes.length) {
+              shortRoutes.push('...')
+            }
 
-          return (
-            <ProcurementUnitOption key={unitOption.id}>
-              <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
-                {unitOption.name}
-              </HeaderBoldHeading>
-              <HeaderSection title={fullRoutesString}>
-                <HeaderHeading>Reitit</HeaderHeading>
-                {shortRoutesString}
-              </HeaderSection>
-              <HeaderSection>
-                <HeaderHeading>Voimassaoloaika</HeaderHeading>
-                {unitOption.startDate} - {unitOption.endDate}
-              </HeaderSection>
-              <HeaderSection style={{ flex: '1 0 7rem' }}>
-                <HeaderHeading>Alue</HeaderHeading>
-                {unitOption?.areaName || 'OTHER'}
-              </HeaderSection>
-              <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-                {canSelectUnit && (
-                  <Checkbox
-                    value="unit_included"
-                    name="unit_included"
-                    label="Sopimuksessa mukana"
-                    checked={isSelected}
-                    onChange={() => onToggleUnitInclusion(unitOption.id)}
-                  />
-                )}
-                {currentContractStart && currentContractEnd && !isCurrentContract && (
-                  <CurrentContractDisplay>
-                    Nykyinen sopimus:
-                    <DateRangeDisplay
-                      startDate={currentContractStart}
-                      endDate={currentContractEnd}
+            let shortRoutesString = shortRoutes.join(', ')
+
+            let isSelected = includedUnitIds.includes(unitOption.id)
+
+            let isCurrentContract = currentContractId === contract.id
+            let canSelectUnit = !currentContractId || isCurrentContract
+
+            return (
+              <ProcurementUnitOption key={unitOption.id}>
+                <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
+                  {unitOption.name}
+                </HeaderBoldHeading>
+                <HeaderSection title={fullRoutesString}>
+                  <HeaderHeading>Reitit</HeaderHeading>
+                  {shortRoutesString}
+                </HeaderSection>
+                <HeaderSection>
+                  <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                  {unitOption.startDate} - {unitOption.endDate}
+                </HeaderSection>
+                <HeaderSection style={{ flex: '1 0 7rem' }}>
+                  <HeaderHeading>Alue</HeaderHeading>
+                  {unitOption?.areaName || 'OTHER'}
+                </HeaderSection>
+                <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
+                  {canSelectUnit && (
+                    <Checkbox
+                      disabled={readOnly}
+                      value="unit_included"
+                      name="unit_included"
+                      label="Sopimuksessa mukana"
+                      checked={isSelected}
+                      onChange={() => onToggleUnitInclusion(unitOption.id)}
                     />
-                  </CurrentContractDisplay>
-                )}
-              </HeaderSection>
-            </ProcurementUnitOption>
-          )
-        })}
-      </UnitContentWrapper>
-    </ContractProcurementUnitsEditorView>
-  )
-})
+                  )}
+                  {currentContractStart && currentContractEnd && !isCurrentContract && (
+                    <CurrentContractDisplay>
+                      Nykyinen sopimus:
+                      <DateRangeDisplay
+                        startDate={currentContractStart}
+                        endDate={currentContractEnd}
+                      />
+                    </CurrentContractDisplay>
+                  )}
+                </HeaderSection>
+              </ProcurementUnitOption>
+            )
+          })}
+        </UnitContentWrapper>
+      </ContractProcurementUnitsEditorView>
+    )
+  }
+)
 
 export default ContractProcurementUnitsEditor

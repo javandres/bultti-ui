@@ -29,14 +29,15 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
   flex-direction: column;
   flex: ${(p) => (p.fullWidth ? '1 0 100%' : '1 1 50%')};
   width: auto;
-  padding: ${(p) => (p.frameless ? '0 0 1.5rem' : '0.5rem 0.75rem')};
+  padding: ${(p) => (p.frameless ? '0 0 1.5rem' : '1rem')};
   border-right: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
   border-bottom: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
 
   &:nth-child(2n),
   &:last-child {
     border-right: 0;
-    padding-left: ${(p) => (p.frameless && !p.fullWidth ? '1.5rem' : '0')};
+    padding-left: ${(p) =>
+      p.frameless && !p.fullWidth ? '1.5rem' : p.frameless ? 0 : '1rem'};
   }
 
   &:last-child {
@@ -61,7 +62,7 @@ export const FieldLabel = styled.label`
 `
 
 export const FieldValueDisplay = styled.div`
-  padding: 0.5rem 0.15rem;
+  padding: 0.5rem 0;
   border: 0;
   background: transparent;
   display: block;
@@ -97,7 +98,12 @@ export type PropTypes<ItemType = any> = {
     val: any,
     labels: LabelsType<ItemType>
   ) => React.ReactChild | false
-  renderInput?: (key: string, val: any, onChange: (val: any) => void) => React.ReactChild
+  renderInput?: (
+    key: string,
+    val: any,
+    onChange: (val: any) => void,
+    readOnly: boolean
+  ) => React.ReactChild
   style?: CSSProperties
   frameless?: boolean
   loading?: boolean
@@ -107,15 +113,18 @@ export type PropTypes<ItemType = any> = {
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
 
-const defaultRenderInput = (key, val, onChange) => (
-  <TextInput
-    type="text"
-    theme="light"
-    value={val}
-    onChange={(e) => onChange(e.target.value)}
-    name={key}
-  />
-)
+const defaultRenderInput = (key, val, onChange, readOnly = false) =>
+  readOnly ? (
+    renderReadOnlyField(val)
+  ) : (
+    <TextInput
+      type="text"
+      theme="light"
+      value={val}
+      onChange={(e) => onChange(e.target.value)}
+      name={key}
+    />
+  )
 
 const defaultRenderLabel = (key, val, labels) => (
   <FieldLabel>{get(labels, key, key)}</FieldLabel>
@@ -167,9 +176,7 @@ const ItemForm: React.FC<PropTypes> = observer(
               frameless={frameless}
               fullWidth={fullWidthFields?.includes(key)}>
               {renderedLabel !== false && renderedLabel}
-              {isReadOnly(key)
-                ? renderReadOnlyField(val)
-                : renderInput(key, val, onValueChange(key))}
+              {renderInput(key, val, onValueChange(key), isReadOnly(key))}
             </FieldWrapper>
           )
         })}

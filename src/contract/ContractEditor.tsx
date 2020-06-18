@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Contract, ContractInput } from '../schema-types'
-import ItemForm, { FieldLabel } from '../common/input/ItemForm'
+import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
   contractsQuery,
@@ -46,6 +46,7 @@ export type PropTypes = {
   onCancel?: () => unknown
   onRefresh?: () => unknown
   isNew?: boolean
+  editable: boolean
 }
 
 function createContractInput(contract: Contract): ContractInput {
@@ -66,8 +67,49 @@ function createContractInput(contract: Contract): ContractInput {
 const renderEditorField = (contract: ContractInput) => (
   key: string,
   val: any,
-  onChange: (val: any) => void
+  onChange: (val: any) => void,
+  readOnly: boolean
 ) => {
+  if (key === 'rules') {
+    return (
+      <ExpandableFormSection
+        headerContent={<ExpandableFormSectionHeading>Säännöt</ExpandableFormSectionHeading>}>
+        <ContractRuleEditor readOnly={readOnly} contract={contract} onChange={onChange} />
+      </ExpandableFormSection>
+    )
+  }
+
+  if (key === 'procurementUnitIds') {
+    return (
+      <ExpandableFormSection
+        headerContent={
+          <ExpandableFormSectionHeading>Kilpailukohteet</ExpandableFormSectionHeading>
+        }>
+        <ContractProcurementUnitsEditor
+          readOnly={readOnly}
+          contract={contract}
+          onChange={onChange}
+        />
+      </ExpandableFormSection>
+    )
+  }
+
+  if (key === 'operatorId') {
+    let onChangeOperator = (operator) => onChange(operator?.id || operator)
+    return (
+      <SelectOperator
+        disabled={readOnly}
+        style={{ color: 'var(--dark-grey)' }}
+        value={val}
+        onSelect={onChangeOperator}
+      />
+    )
+  }
+
+  if (readOnly) {
+    return <FieldValueDisplay>{val}</FieldValueDisplay>
+  }
+
   if (key === 'description') {
     return (
       <TextArea
@@ -80,33 +122,8 @@ const renderEditorField = (contract: ContractInput) => (
     )
   }
 
-  if (key === 'rules') {
-    return (
-      <ExpandableFormSection
-        headerContent={<ExpandableFormSectionHeading>Säännöt</ExpandableFormSectionHeading>}>
-        <ContractRuleEditor contract={contract} onChange={onChange} />
-      </ExpandableFormSection>
-    )
-  }
-
-  if (key === 'procurementUnitIds') {
-    return (
-      <ExpandableFormSection
-        headerContent={
-          <ExpandableFormSectionHeading>Kilpailukohteet</ExpandableFormSectionHeading>
-        }>
-        <ContractProcurementUnitsEditor contract={contract} onChange={onChange} />
-      </ExpandableFormSection>
-    )
-  }
-
   if (['startDate', 'endDate'].includes(key)) {
     return <SelectDate name={key} value={val} onChange={onChange} />
-  }
-
-  if (key === 'operatorId') {
-    let onChangeOperator = (operator) => onChange(operator?.id || operator)
-    return <SelectOperator value={val} onSelect={onChangeOperator} />
   }
 
   return (
@@ -137,126 +154,135 @@ const renderEditorLabel = (key, val, labels) => {
   return <FieldLabel>{get(labels, key, key)}</FieldLabel>
 }
 
-const ContractEditor = observer(({ contract, onCancel, isNew = false }: PropTypes) => {
-  let [pendingContract, setPendingContract] = useState(createContractInput(contract))
+const ContractEditor = observer(
+  ({ contract, onCancel, isNew = false, editable }: PropTypes) => {
+    let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
-  let isDirty = useMemo(() => {
-    // New contracts are always dirty
-    if (isNew) {
-      return true
-    }
-
-    let pendingJson = JSON.stringify(pendingContract)
-    let currentJson = JSON.stringify(createContractInput(contract))
-    return currentJson !== pendingJson
-  }, [pendingContract, contract])
-
-  useEffect(() => {
-    if (contract) {
-      setPendingContract(createContractInput(contract))
-    }
-  }, [contract])
-
-  let pendingContractValid = useMemo(
-    () => !!pendingContract?.startDate && !!pendingContract?.endDate,
-    [pendingContract]
-  )
-
-  let onChange = useCallback((key, nextValue) => {
-    setPendingContract((currentVal) => {
-      let nextProcurementUnits =
-        key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
-
-      // Reset procurement units if operatorId changes.
-      if (key === 'operatorId') {
-        nextProcurementUnits = []
+    let isDirty = useMemo(() => {
+      // New contracts are always dirty
+      if (isNew) {
+        return true
       }
 
-      return {
-        ...currentVal,
-        [key]: nextValue,
-        procurementUnitIds: nextProcurementUnits,
+      let pendingJson = JSON.stringify(pendingContract)
+      let currentJson = JSON.stringify(createContractInput(contract))
+      return currentJson !== pendingJson
+    }, [pendingContract, contract])
+
+    useEffect(() => {
+      if (contract) {
+        setPendingContract(createContractInput(contract))
       }
-    })
-  }, [])
+    }, [contract])
 
-  let [modifyContract, { loading: modifyLoading }] = useMutationData(modifyContractMutation, {
-    refetchQueries: ({ data }) => {
-      let mutationResult = pickGraphqlData(data)
-      return [
-        { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
-        'contractProcurementUnitOptions',
-      ]
-    },
-  })
+    let pendingContractValid = useMemo(
+      () => !!pendingContract?.startDate && !!pendingContract?.endDate,
+      [pendingContract]
+    )
 
-  let [createContract, { loading: createLoading }] = useMutationData(createContractMutation, {
-    update: (cache, { data: { createContract } }) => {
-      let { contracts = [] } =
-        cache.readQuery({
-          query: contractsQuery,
-          variables: { operatorId: createContract?.operatorId },
-        }) || {}
+    let onChange = useCallback((key, nextValue) => {
+      setPendingContract((currentVal) => {
+        let nextProcurementUnits =
+          key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
 
-      cache.writeQuery({
-        query: contractsQuery,
-        variables: { operatorId: createContract?.operatorId },
-        data: { contracts: [...contracts, createContract] },
+        // Reset procurement units if operatorId changes.
+        if (key === 'operatorId') {
+          nextProcurementUnits = []
+        }
+
+        return {
+          ...currentVal,
+          [key]: nextValue,
+          procurementUnitIds: nextProcurementUnits,
+        }
       })
-    },
-  })
+    }, [])
 
-  let isLoading = modifyLoading || createLoading
-
-  let onDone = useCallback(async () => {
-    if (pendingContractValid) {
-      let mutationFn = isNew ? createContract : modifyContract
-
-      let result = await mutationFn({
-        variables: {
-          contractInput: pendingContract,
+    let [modifyContract, { loading: modifyLoading }] = useMutationData(
+      modifyContractMutation,
+      {
+        refetchQueries: ({ data }) => {
+          let mutationResult = pickGraphqlData(data)
+          return [
+            { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
+            'contractProcurementUnitOptions',
+          ]
         },
-      })
-
-      let nextContract = pickGraphqlData(result.data)
-
-      if (nextContract) {
-        setPendingContract(createContractInput(nextContract))
       }
+    )
 
-      if (isNew && onCancel) {
+    let [createContract, { loading: createLoading }] = useMutationData(
+      createContractMutation,
+      {
+        update: (cache, { data: { createContract } }) => {
+          let { contracts = [] } =
+            cache.readQuery({
+              query: contractsQuery,
+              variables: { operatorId: createContract?.operatorId },
+            }) || {}
+
+          cache.writeQuery({
+            query: contractsQuery,
+            variables: { operatorId: createContract?.operatorId },
+            data: { contracts: [...contracts, createContract] },
+          })
+        },
+      }
+    )
+
+    let isLoading = modifyLoading || createLoading
+
+    let onDone = useCallback(async () => {
+      if (pendingContractValid) {
+        let mutationFn = isNew ? createContract : modifyContract
+
+        let result = await mutationFn({
+          variables: {
+            contractInput: pendingContract,
+          },
+        })
+
+        let nextContract = pickGraphqlData(result.data)
+
+        if (nextContract) {
+          setPendingContract(createContractInput(nextContract))
+        }
+
+        if (isNew && onCancel) {
+          onCancel()
+        }
+      }
+    }, [pendingContract, pendingContractValid, onCancel, isNew])
+
+    let onCancelEdit = useCallback(() => {
+      setPendingContract(createContractInput(contract))
+
+      if (onCancel) {
         onCancel()
       }
-    }
-  }, [pendingContract, pendingContractValid, onCancel, isNew])
+    }, [contract, onCancel])
 
-  let onCancelEdit = useCallback(() => {
-    setPendingContract(createContractInput(contract))
-
-    if (onCancel) {
-      onCancel()
-    }
-  }, [contract, onCancel])
-
-  return (
-    <ContractEditorView>
-      <ItemForm
-        item={pendingContract}
-        hideKeys={['id']}
-        labels={formLabels}
-        onChange={onChange}
-        onDone={onDone}
-        onCancel={onCancelEdit}
-        frameless={true}
-        loading={isLoading}
-        doneDisabled={!pendingContractValid}
-        fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
-        renderLabel={renderEditorLabel}
-        renderInput={renderEditorField(pendingContract)}
-        showButtons={isDirty}
-      />
-    </ContractEditorView>
-  )
-})
+    return (
+      <ContractEditorView>
+        <ItemForm
+          item={pendingContract}
+          hideKeys={['id']}
+          labels={formLabels}
+          onChange={onChange}
+          onDone={onDone}
+          onCancel={onCancelEdit}
+          frameless={true}
+          loading={isLoading}
+          readOnly={!editable}
+          doneDisabled={!pendingContractValid}
+          fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
+          renderLabel={renderEditorLabel}
+          renderInput={renderEditorField(pendingContract)}
+          showButtons={isDirty}
+        />
+      </ContractEditorView>
+    )
+  }
+)
 
 export default ContractEditor

@@ -239,6 +239,7 @@ export type Inspection = {
   endDate: Scalars['BulttiDate'];
   minStartDate?: Maybe<Scalars['BulttiDate']>;
   versionStackIdentifier?: Maybe<Scalars['String']>;
+  inspectionErrors?: Maybe<Array<InspectionValidationError>>;
 };
 
 export enum InspectionType {
@@ -542,6 +543,18 @@ export enum InspectionStatus {
   Draft = 'Draft',
   InReview = 'InReview',
   InProduction = 'InProduction'
+}
+
+export enum InspectionValidationError {
+  NotPre = 'NOT_PRE',
+  NotPost = 'NOT_POST',
+  InvalidProductionTime = 'INVALID_PRODUCTION_TIME',
+  InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
+  MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
+  MissingContracts = 'MISSING_CONTRACTS',
+  MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
+  MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
+  MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS'
 }
 
 export type EquipmentSearchResult = {

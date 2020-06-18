@@ -20,7 +20,7 @@ export const TextInput = styled.input<{
   border-radius: 8px;
   border: ${(p) =>
     p.readOnly || p.disabled
-      ? 0
+      ? '1px solid #ededed'
       : p.theme === 'light'
       ? '1px solid #dadada'
       : '1px solid var(--dark-blue)'};

@@ -55,10 +55,6 @@ const RuleRow = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   position: relative;
 
-  &:nth-child(even) {
-    background: var(--white-grey);
-  }
-
   &:last-child {
     border-bottom: 0;
   }
@@ -103,6 +99,7 @@ const RemoveRuleButton = styled(RemoveButton)`
 `
 
 export type PropTypes = {
+  readOnly: boolean
   contract: ContractInput
   onChange: (rules: ContractRuleInput[]) => unknown
 }
@@ -129,13 +126,14 @@ function createPendingRule(): PendingRule {
 }
 
 type RowProps = {
+  readOnly: boolean
   rule: PendingRule
   onChange: (nextRule: PendingRule) => unknown
   onRemove?: (rule: PendingRule) => unknown
   useBuffer?: boolean
 }
 
-const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps) => {
+const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true, readOnly }: RowProps) => {
   let [ruleUpdateBuffer, setBuffer] = useState<PendingRule | null>(null)
 
   useEffect(() => {
@@ -170,6 +168,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
       <div>
         {rule._isNew && (
           <Dropdown
+            disabled={readOnly}
             style={{ marginBottom: '1rem' }}
             items={categoryAllowFullEdit}
             onSelect={onChangeProp('category')}
@@ -181,6 +180,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
           <RuleInputWrapper>
             <RuleName
               onChange={onChangeProp('name')}
+              readOnly={readOnly}
               disabled={
                 !(
                   rule._isNew ||
@@ -205,6 +205,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
         </RuleInputGroup>
         <RuleInputGroup>
           <RuleDescription
+            disabled={readOnly}
             label="Kuvaus"
             value={ruleUpdateBuffer?.description || ''}
             onChange={onChangeProp('description')}
@@ -214,6 +215,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
           {rule.type === RuleType.ConditionalValue && (
             <RuleInputWrapper>
               <Input
+                readOnly={readOnly}
                 value={ruleUpdateBuffer?.condition || ''}
                 label="Ehto"
                 name="condition"
@@ -223,6 +225,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
           )}
           <RuleInputWrapper>
             <Input
+              readOnly={readOnly}
               value={ruleUpdateBuffer?.value || ''}
               label="Arvo"
               name="value"
@@ -231,7 +234,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
           </RuleInputWrapper>
         </RuleInputGroup>
       </div>
-      {onRemove && categoryAllowFullEdit.includes(rule.category) && (
+      {!readOnly && onRemove && categoryAllowFullEdit.includes(rule.category) && (
         <RemoveRuleButton onClick={() => onRemove(rule)}>
           <CrossThick fill="white" width="0.5rem" height="0.5rem" />
         </RemoveRuleButton>
@@ -240,7 +243,7 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true }: RowProps)
   )
 }
 
-const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
+const ContractRuleEditor = observer(({ contract, onChange, readOnly }: PropTypes) => {
   let { data: defaultRules } = useQueryData(defaultContractRulesQuery)
 
   // Populate the rules editor. If no rules in the contract, use the default rules.
@@ -329,10 +332,11 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
 
   return (
     <ContractRuleEditorView>
-      {newPendingRule ? (
+      {!readOnly && newPendingRule ? (
         <RuleCategory>
           <CategoryTitle>{newPendingRule?.category || 'Ei kategoriaa'}</CategoryTitle>
           <RuleEditorRow
+            readOnly={false}
             rule={newPendingRule}
             onChange={setNewPendingRule}
             useBuffer={false}
@@ -348,17 +352,18 @@ const ContractRuleEditor = observer(({ contract, onChange }: PropTypes) => {
             </Button>
           </CategoryFooter>
         </RuleCategory>
-      ) : (
+      ) : !readOnly ? (
         <ToolRow>
           <Button onClick={onCreateNewRule}>Uusi sääntö</Button>
         </ToolRow>
-      )}
+      ) : null}
       {rulesByCategory.map(([category, rules]) => {
         return (
           <RuleCategory key={category}>
             <CategoryTitle>{category}</CategoryTitle>
             {rules.map((rule) => (
               <RuleEditorRow
+                readOnly={readOnly}
                 onRemove={onRemoveRule}
                 rule={rule}
                 onChange={onRuleChange}

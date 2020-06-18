@@ -15,7 +15,7 @@ const SelectWrapper = styled.div`
 `
 
 const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
-  inverted: ThemeTypes
+  theme: ThemeTypes
   disabled?: boolean
 }>`
   background: ${(p) => (p.disabled ? 'transparent' : 'white')};
@@ -158,7 +158,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
             {...getToggleButtonProps({
               disabled,
             })}
-            inverted={theme === 'dark'}>
+            theme={theme}>
             {toString(currentlySelected, itemToLabel) || text('general.app.all')}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>

@@ -14,7 +14,7 @@ import {
   useEditInspection,
   useInspectionById,
 } from '../preInspection/inspectionUtils'
-import { MessageContainer, MessageView } from '../common/components/Messages'
+import { ErrorView, MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import { InspectionStatus, InspectionType } from '../schema-types'
@@ -51,6 +51,8 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
   } = useInspectionById(inspectionId)
 
   let refetch = useRefetch(refetchInspection)
+
+  let hasErrors = inspection?.inspectionErrors?.length !== 0
 
   return (
     <EditPreInspectionView>
@@ -89,8 +91,19 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
                   }}>
                   <strong>{translate(inspection.status)}</strong>
                 </StatusBox>
-                <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+                <InspectionActionsRow
+                  inspection={inspection}
+                  onRefresh={refetch}
+                  disabledActions={hasErrors ? ['submit', 'publish'] : []}
+                />
               </>
+            )}
+            {hasErrors && (
+              <MessageContainer>
+                {(inspection?.inspectionErrors || []).map((err) => (
+                  <ErrorView key={err}>{err}</ErrorView>
+                ))}
+              </MessageContainer>
             )}
             {inspection?.status === InspectionStatus.InProduction ? (
               <PreInspectionEditor refetchData={refetch} />

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
 import { Operator, User, UserRole } from '../../schema-types'
@@ -22,21 +22,24 @@ const operatorsQuery = gql`
 export type PropTypes = {
   label?: string | null
   className?: string
+  style?: CSSProperties
   theme?: 'light' | 'dark'
-  allowAll?: boolean
   value: null | Operator | number
   onSelect: (operator: null | Operator) => void
   selectInitialId?: number
+  disabled?: boolean
 }
 
 const unselectedId = 0
+const unselectedName = '...'
 
 export const operatorIsValid = (operator: Operator | number | null | undefined) => {
-  if (!operator || typeof operator === 'number') {
-    return false
-  }
-
-  if (operator?.id === unselectedId || !isNumeric(operator?.id)) {
+  if (
+    !operator ||
+    typeof operator === 'number' ||
+    operator?.id === unselectedId ||
+    !isNumeric(operator?.id)
+  ) {
     return false
   }
 
@@ -44,7 +47,16 @@ export const operatorIsValid = (operator: Operator | number | null | undefined) 
 }
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({ onSelect, value = null, label, className, theme = 'light', selectInitialId }) => {
+  ({
+    onSelect,
+    value = null,
+    label,
+    className,
+    style,
+    theme = 'light',
+    disabled = false,
+    selectInitialId,
+  }) => {
     const { data } = useQueryData(operatorsQuery)
     const [user] = useStateValue<User>('user')
 
@@ -60,7 +72,10 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
       // The "..." option is not added if the operators list is only 1 long
       if (operatorList[0]?.id !== unselectedId && operatorList.length !== 1) {
-        operatorList.unshift({ id: unselectedId, operatorName: '...' })
+        operatorList.unshift({
+          id: unselectedId,
+          operatorName: unselectedName,
+        })
       }
 
       return operatorList
@@ -93,7 +108,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
       (selectedItem) => {
         let selectValue = selectedItem
 
-        if (!selectedItem || !operatorIsValid(selectValue)) {
+        if (!selectedItem || !operatorIsValid(selectedItem)) {
           selectValue = null
         }
 
@@ -114,8 +129,9 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
     return (
       <Dropdown
-        disabled={operators.length < 2}
+        disabled={disabled || operators.length < 2}
         className={className}
+        style={style}
         theme={theme}
         label={label || undefined}
         items={operators}

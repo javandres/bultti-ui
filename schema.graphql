@@ -208,6 +208,7 @@ type Inspection {
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
   inspectionEndDate: BulttiDate
+  inspectionErrors: [InspectionValidationError!]
   inspectionStartDate: BulttiDate
   inspectionType: InspectionType
   minStartDate: BulttiDate
@@ -466,6 +467,18 @@ enum InspectionUserRelationType {
   SUBMITTED_BY
   SUBSCRIBED_TO
   UPDATED_BY
+}
+
+enum InspectionValidationError {
+  INVALID_INSPECTION_TIME
+  INVALID_PRODUCTION_TIME
+  MISSING_BLOCK_DEPARTURES
+  MISSING_CONTRACTS
+  MISSING_EQUIPMENT_CATALOGUES
+  MISSING_EXECUTION_REQUIREMENTS
+  MISSING_REQUIREMENT_QUOTAS
+  NOT_POST
+  NOT_PRE
 }
 
 enum OperatingAreaName {

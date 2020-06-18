@@ -6,7 +6,7 @@ import { PageTitle } from '../common/components/Typography'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { contractsQuery } from '../contract/contractQueries'
-import { MessageView } from '../common/components/Messages'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
 import { Contract } from '../schema-types'
 import ContractEditor from '../contract/ContractEditor'
@@ -14,6 +14,7 @@ import ContractListItem from '../contract/ContractListItem'
 import { useStateValue } from '../state/useAppState'
 import { DATE_FORMAT } from '../constants'
 import { addYears, format } from 'date-fns'
+import { requireAdminUser } from '../util/userRoles'
 
 const ContractPageView = styled(Page)``
 
@@ -29,6 +30,7 @@ export type PropTypes = {
 
 const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
+  let [user] = useStateValue('user')
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
   let { data: contractsData, loading: contractsLoading } = useQueryData(contractsQuery, {
@@ -61,7 +63,11 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   return (
     <ContractPageView>
       <PageTitle>Sopimukset</PageTitle>
-      {!contractsData && !contractsLoading && <MessageView>Ei sopimuksia...</MessageView>}
+      {contracts.length === 0 && !contractsLoading && (
+        <MessageContainer>
+          <MessageView>Ei sopimuksia.</MessageView>
+        </MessageContainer>
+      )}
       <ContractContentView>
         <FlexRow>
           {contracts.length !== 0 && (
@@ -69,21 +75,22 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
               {contractsExpanded ? 'Piilota kaikki sopimukset' : 'Näytä kaikki sopimukset'}
             </TextButton>
           )}
-          {!newContract && (
+          {!newContract && !!operator && requireAdminUser(user) && (
             <Button
               disabled={!operator}
               onClick={onCreateNewContract}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               style={{ marginLeft: 'auto' }}>
-              {!operator ? 'Valitse liikennöitsijä' : 'Uusi sopimus'}
+              Uusi sopimus
             </Button>
           )}
         </FlexRow>
-        {newContract && (
+        {newContract && requireAdminUser(user) && (
           <ContractListItem key="new" contractData={newContract as Contract} isExpanded={true}>
             <ContractEditor
               isNew={true}
+              editable={true}
               onCancel={() => setNewContract(null)}
               contract={newContract as Contract}
             />
@@ -94,7 +101,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             key={contractItem.id}
             contractData={contractItem}
             isExpanded={contractsExpanded}>
-            <ContractEditor contract={contractItem} />
+            <ContractEditor editable={requireAdminUser(user)} contract={contractItem} />
           </ContractListItem>
         ))}
       </ContractContentView>

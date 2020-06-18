@@ -15,6 +15,7 @@ export const inspectionFragment = gql`
     seasonId
     status
     inspectionType
+    inspectionErrors
     operator {
       id
       operatorId
