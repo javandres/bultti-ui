@@ -35,10 +35,11 @@ const ProcurementUnitExecutionRequirementView = styled.div`
 export type PropTypes = {
   procurementUnit: ProcurementUnit
   isEditable: boolean
+  onUpdate: () => unknown
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
-  ({ procurementUnit, isEditable }) => {
+  ({ procurementUnit, isEditable, onUpdate }) => {
     let inspection = useContext(PreInspectionContext)
 
     let [
@@ -67,12 +68,17 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       }
     }, [fetchRequirements, procurementUnit, inspection])
 
-    let queueRefetch = useRefetch(onFetchRequirements, true)
+    let updateRequirements = useRefetch(onFetchRequirements, true)
 
-    let { addEquipment } = useEquipmentCrud(
-      procurementUnitRequirement || undefined,
-      queueRefetch
-    )
+    let update = useCallback(() => {
+      updateRequirements()
+
+      if (onUpdate) {
+        onUpdate()
+      }
+    }, [updateRequirements, onUpdate])
+
+    let { addEquipment } = useEquipmentCrud(procurementUnitRequirement || undefined, update)
 
     let onCreateRequirements = useCallback(async () => {
       if (inspection) {
@@ -83,7 +89,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           },
         })
 
-        queueRefetch()
+        update()
       }
     }, [createExecutionRequirement, inspection])
 
@@ -101,7 +107,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           },
         })
 
-        queueRefetch()
+        update()
       }
     }, [procurementUnitRequirement, refreshExecutionRequirement, isEditable])
 
@@ -117,9 +123,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           },
         })
 
-        queueRefetch()
+        update()
       }
-    }, [procurementUnitRequirement, execRemoveExecutionRequirement, queueRefetch, isEditable])
+    }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
     const equipment: EquipmentWithQuota[] = useMemo(
       () =>
@@ -147,7 +153,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
               loading={isLoading}
-              onClick={queueRefetch}
+              onClick={update}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}>
               Päivitä
@@ -170,7 +176,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             <RequirementEquipmentList
               isEditable={isEditable}
               startDate={inspectionStartDate}
-              onEquipmentChanged={queueRefetch}
+              onEquipmentChanged={update}
               equipment={equipment}
               executionRequirement={procurementUnitRequirement}
             />
@@ -178,7 +184,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <AddEquipment
                 operatorId={procurementUnitRequirement.operator.id}
                 equipment={equipment}
-                onEquipmentChanged={queueRefetch}
+                onEquipmentChanged={update}
                 hasEquipment={hasEquipment}
                 addEquipment={addEquipment}
                 removeAllEquipment={removeExecutionRequirement}

@@ -201,6 +201,7 @@ const ProcurementUnitItemContent = observer(
           <>
             {showExecutionRequirements && hasEquipment && (
               <ProcurementUnitExecutionRequirement
+                onUpdate={onUpdate}
                 isEditable={requirementsEditable}
                 procurementUnit={procurementUnit}
               />
