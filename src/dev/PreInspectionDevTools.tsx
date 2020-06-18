@@ -13,6 +13,7 @@ const InspectionDevToolsView = styled.div`
 
 export type PropTypes = {
   inspection: Inspection
+  onUpdate: () => unknown
 }
 
 let generateEquipmentQuery = gql`
@@ -21,11 +22,12 @@ let generateEquipmentQuery = gql`
   }
 `
 
-const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection }) => {
+const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection, onUpdate }) => {
   let [generateEquipment] = useMutationData(generateEquipmentQuery, {
     variables: {
       inspectionId: inspection.id,
     },
+    onCompleted: () => onUpdate(),
   })
 
   if (ENV !== 'development') {

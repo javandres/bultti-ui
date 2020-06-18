@@ -51,6 +51,7 @@ export type PropTypes = {
   requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
+  onUpdate?: () => unknown
 }
 
 const procurementUnitLabels = {
@@ -64,7 +65,8 @@ type ContentPropTypes = {
   procurementUnitId: string
   catalogueEditable: boolean
   requirementsEditable: boolean
-  isVisible
+  isVisible: boolean
+  onUpdate?: () => unknown
 }
 
 const ProcurementUnitItemContent = observer(
@@ -75,6 +77,7 @@ const ProcurementUnitItemContent = observer(
     catalogueEditable,
     requirementsEditable,
     isVisible,
+    onUpdate,
   }: ContentPropTypes) => {
     const [
       pendingProcurementUnit,
@@ -90,7 +93,15 @@ const ProcurementUnitItemContent = observer(
         },
       }) || {}
 
-    let refetchUnit = useRefetch(refetchUnitData)
+    let refetch = useRefetch(refetchUnitData)
+
+    let updateUnit = useCallback(() => {
+      refetch()
+
+      if (onUpdate) {
+        onUpdate()
+      }
+    }, [refetch, onUpdate])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
@@ -170,8 +181,8 @@ const ProcurementUnitItemContent = observer(
         },
       })
 
-      await refetchUnit()
-    }, [pendingProcurementUnit, refetchUnit, catalogueEditable])
+      await updateUnit()
+    }, [pendingProcurementUnit, updateUnit, catalogueEditable])
 
     const onCancelPendingUnit = useCallback(() => {
       setPendingProcurementUnit(null)
@@ -197,7 +208,7 @@ const ProcurementUnitItemContent = observer(
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
               <Button
-                onClick={refetchUnit}
+                onClick={updateUnit}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}>
@@ -250,7 +261,7 @@ const ProcurementUnitItemContent = observer(
               procurementUnitId={procurementUnitId}
               catalogue={activeCatalogue}
               operatorId={procurementUnit.operatorId}
-              onCatalogueChanged={refetchUnit}
+              onCatalogueChanged={updateUnit}
               editable={catalogueEditable}
             />
           </>
@@ -269,6 +280,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     procurementUnit,
     expanded = true,
     className,
+    onUpdate,
   }) => {
     const { currentContract, routes = [] } = procurementUnit || {}
 
@@ -317,6 +329,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             }>
             {(itemIsExpanded: boolean) => (
               <ProcurementUnitItemContent
+                onUpdate={onUpdate}
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}

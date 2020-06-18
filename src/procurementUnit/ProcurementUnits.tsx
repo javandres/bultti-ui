@@ -16,12 +16,13 @@ export type PropTypes = {
   operatorId?: number
   startDate?: string
   requirementsEditable: boolean
+  onUpdate?: () => unknown
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer((props) => {
   const inspection = useContext(PreInspectionContext)
   let { operatorId, startDate } = inspection || props || {}
-  let { requirementsEditable = true } = props
+  let { requirementsEditable = true, onUpdate } = props
 
   let catalogueEditable = !inspection
   let showExecutionRequirements = !!inspection
