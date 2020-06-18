@@ -35,7 +35,7 @@ const ProcurementUnitExecutionRequirementView = styled.div`
 export type PropTypes = {
   procurementUnit: ProcurementUnit
   isEditable: boolean
-  onUpdate: () => unknown
+  onUpdate?: () => unknown
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(

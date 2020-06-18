@@ -35,6 +35,17 @@ const StatusBox = styled.div`
   border-radius: 0.5rem;
 `
 
+const HeaderButtons = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+
+  > * {
+    margin-left: 1rem;
+  }
+`
+
 export type PropTypes = {
   inspectionId?: string
 } & RouteComponentProps
@@ -59,13 +70,20 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
       <PreInspectionContext.Provider value={inspection || null}>
         <PageTitle>
           Uusi ennakkotarkastus
-          <Button
-            style={{ marginLeft: 'auto' }}
-            size={ButtonSize.MEDIUM}
-            buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-            onClick={() => editPreInspection()}>
-            Peruuta
-          </Button>
+          <HeaderButtons>
+            <Button
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.SECONDARY}
+              onClick={() => refetch()}>
+              Päivitä
+            </Button>
+            <Button
+              size={ButtonSize.MEDIUM}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+              onClick={() => editPreInspection()}>
+              Peruuta
+            </Button>
+          </HeaderButtons>
         </PageTitle>
         {!operator || !season ? (
           <MessageContainer>
