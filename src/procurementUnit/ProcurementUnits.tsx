@@ -67,6 +67,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer((props) => {
           </FlexRow>
           {procurementUnits.map((procurementUnit) => (
             <ProcurementUnitItem
+              onUpdate={onUpdate}
               requirementsEditable={requirementsEditable}
               catalogueEditable={catalogueEditable}
               showExecutionRequirements={showExecutionRequirements}

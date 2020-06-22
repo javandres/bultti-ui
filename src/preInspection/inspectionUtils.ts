@@ -6,7 +6,6 @@ import {
   InspectionType,
   InspectionUserRelationType,
   Operator,
-  ProcurementUnit,
   Season,
   User,
 } from '../schema-types'
@@ -23,7 +22,6 @@ import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
-import { isAfter, isBefore } from '../util/isBetween'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(

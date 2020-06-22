@@ -10,15 +10,6 @@ const ContractTitle = styled.h3`
   margin: 0;
 `
 
-const ContractDescription = styled.p`
-  margin: 0 0 1rem;
-  padding: 0.75rem;
-  background: var(--white-grey);
-  border-radius: 0.5rem;
-  border: 1px solid var(--lighter-grey);
-  line-height: 1.4;
-`
-
 export type PropTypes = {
   children: React.ReactChild
   headerContent?: React.ReactChild
