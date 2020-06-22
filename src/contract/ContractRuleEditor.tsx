@@ -61,8 +61,6 @@ const RuleRow = styled.div`
 `
 
 const RuleName = styled(Input)`
-  margin-bottom: 1rem;
-
   ${TextInput}:disabled {
     border: 0;
     background: transparent;
@@ -71,7 +69,6 @@ const RuleName = styled(Input)`
 `
 
 const RuleDescription = styled(Input)`
-  margin-bottom: 1rem;
   width: 100%;
 `
 
@@ -81,6 +78,11 @@ const RuleInputGroup = styled.div`
   flex-direction: row;
   align-items: stretch;
   width: 100%;
+  margin-bottom: 1rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 `
 
 const RuleInputWrapper = styled.div`
@@ -211,6 +213,28 @@ const RuleEditorRow = ({ rule, onChange, onRemove, useBuffer = true, readOnly }:
             onChange={onChangeProp('description')}
           />
         </RuleInputGroup>
+        {[RuleType.ConditionalValue, RuleType.MultiValue, RuleType.EnumValue].includes(
+          rule.type
+        ) && (
+          <RuleInputGroup>
+            <RuleInputWrapper>
+              <Input
+                readOnly={readOnly}
+                disabled={
+                  !(
+                    rule._isNew ||
+                    !ruleUpdateBuffer?.options ||
+                    categoryAllowFullEdit.includes(ruleUpdateBuffer?.category || '')
+                  )
+                }
+                value={ruleUpdateBuffer?.options || ''}
+                label="Vaihtoehdot"
+                name="options"
+                onChange={onChangeProp('options')}
+              />
+            </RuleInputWrapper>
+          </RuleInputGroup>
+        )}
         <RuleInputGroup>
           {rule.type === RuleType.ConditionalValue && (
             <RuleInputWrapper>
