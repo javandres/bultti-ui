@@ -1,4 +1,6 @@
 import { ContractRule } from '../schema-types'
+import { useCallback } from 'react'
+import { navigateWithQueryString } from '../util/urlValue'
 
 export function createRuleId(rule: ContractRule) {
   return `${rule.category}:${rule.name}`
@@ -32,4 +34,14 @@ export function mergeRules(targetSet: ContractRule[], sourceSet: ContractRule[])
   }
 
   return nextRules
+}
+
+export function useContractPage(contractId: string = '') {
+  return useCallback(
+    (altContractId?: string) => {
+      let useId = contractId || altContractId || ''
+      return navigateWithQueryString(`/contract/${useId}`)
+    },
+    [contractId]
+  )
 }

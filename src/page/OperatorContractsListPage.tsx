@@ -13,10 +13,14 @@ import { requireAdminUser } from '../util/userRoles'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
+import { orderBy } from 'lodash'
 
 const ContractPageView = styled(Page)``
 
 const ContractContentView = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
   height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
@@ -78,7 +82,9 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
     },
   })
 
-  let contracts = useMemo(() => contractsData || [], [contractsData])
+  let contracts = useMemo(() => orderBy(contractsData || [], 'startDate', 'desc'), [
+    contractsData,
+  ])
 
   const onOpenContract = useCallback((contractId) => {
     return navigateWithQueryString(`/contract/${contractId}`)
@@ -90,8 +96,6 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
     }
 
     onOpenContract('new')
-
-    /**/
   }, [operator])
 
   return (
@@ -102,19 +106,19 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
           <MessageView>Ei sopimuksia.</MessageView>
         </MessageContainer>
       )}
-      <ContractContentView>
-        <FlexRow>
-          {!!operator && requireAdminUser(user) && (
-            <Button
-              disabled={!operator}
-              onClick={onCreateNewContract}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}
-              style={{ marginLeft: 'auto' }}>
-              Uusi sopimus
-            </Button>
-          )}
+      {!!operator && requireAdminUser(user) && (
+        <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
+          <Button
+            disabled={!operator}
+            onClick={onCreateNewContract}
+            buttonStyle={ButtonStyle.NORMAL}
+            size={ButtonSize.MEDIUM}
+            style={{ marginLeft: 'auto' }}>
+            Uusi sopimus
+          </Button>
         </FlexRow>
+      )}
+      <ContractContentView>
         {contracts.map((contractItem) => (
           <ContractListItem
             key={contractItem.id}

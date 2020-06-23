@@ -5,6 +5,7 @@ import { Contract, ContractInput } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
+  contractQuery,
   contractsQuery,
   createContractMutation,
   modifyContractMutation,
@@ -14,15 +15,25 @@ import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
 import ContractRuleEditor, { createRuleInput } from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
-import ExpandableSection, { HeaderBoldHeading } from '../common/components/ExpandableSection'
+import ExpandableSection, {
+  ContentWrapper,
+  HeaderBoldHeading,
+} from '../common/components/ExpandableSection'
 import { get, orderBy } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import ContractUsers from './ContractUsers'
+import { useContractPage } from './contractUtils'
 
-const ContractEditorView = styled.div``
+const ContractEditorView = styled.div`
+  padding: 0 1rem;
+`
 
 const ExpandableFormSection = styled(ExpandableSection)`
-  background: transparent;
+  margin-top: 0;
+
+  ${ContentWrapper} {
+    padding-top: 0;
+  }
 `
 
 const ContractUsersEditor = styled(ContractUsers)`
@@ -91,6 +102,7 @@ const renderEditorField = (contract: ContractInput) => (
     let onChangeOperator = (operator) => onChange(operator?.id || operator)
     return (
       <SelectOperator
+        useUnselected={false}
         disabled={readOnly}
         style={{ color: 'var(--dark-grey)' }}
         value={val}
@@ -198,6 +210,7 @@ const ContractEditor = observer(
           let mutationResult = pickGraphqlData(data)
           return [
             { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
+            { query: contractQuery, variables: { contractId: mutationResult?.id } },
             'contractProcurementUnitOptions',
           ]
         },
@@ -208,22 +221,26 @@ const ContractEditor = observer(
       createContractMutation,
       {
         update: (cache, { data: { createContract } }) => {
-          let { contracts = [] } =
+          let { contract } =
             cache.readQuery({
               query: contractsQuery,
               variables: { operatorId: createContract?.operatorId },
             }) || {}
 
-          cache.writeQuery({
-            query: contractsQuery,
-            variables: { operatorId: createContract?.operatorId },
-            data: { contracts: [...contracts, createContract] },
-          })
+          if (contract) {
+            cache.writeQuery({
+              query: contractQuery,
+              variables: { contractId: createContract.id },
+              data: { contract: createContract },
+            })
+          }
         },
       }
     )
 
     let isLoading = modifyLoading || createLoading
+
+    let goToContract = useContractPage()
 
     let onDone = useCallback(async () => {
       if (pendingContractValid) {
@@ -235,17 +252,21 @@ const ContractEditor = observer(
           },
         })
 
+        if (onCancel) {
+          onCancel()
+        }
+
         let nextContract = pickGraphqlData(result.data)
 
         if (nextContract) {
-          setPendingContract(createContractInput(nextContract))
-        }
-
-        if (isNew && onCancel) {
-          onCancel()
+          if (!isNew) {
+            setPendingContract(createContractInput(nextContract))
+          } else {
+            goToContract(nextContract.id)
+          }
         }
       }
-    }, [pendingContract, pendingContractValid, onCancel, isNew])
+    }, [pendingContract, pendingContractValid, onCancel, isNew, goToContract])
 
     let onCancelEdit = useCallback(() => {
       setPendingContract(createContractInput(contract))
@@ -257,7 +278,7 @@ const ContractEditor = observer(
 
     return (
       <ContractEditorView>
-        <ContractUsersEditor contractId={contract.id} />
+        {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
           item={pendingContract}
           hideKeys={['id']}
@@ -265,7 +286,6 @@ const ContractEditor = observer(
           onChange={onChange}
           onDone={onDone}
           onCancel={onCancelEdit}
-          frameless={true}
           loading={isLoading}
           readOnly={!editable}
           doneDisabled={!pendingContractValid}

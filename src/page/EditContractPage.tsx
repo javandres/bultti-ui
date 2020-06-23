@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
@@ -13,6 +13,7 @@ import { addYears, format } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
 import { PageTitle } from '../common/components/Typography'
 import { Page } from '../common/components/common'
+import { useRefetch } from '../util/useRefetch'
 
 const EditContractPageView = styled(Page)``
 
@@ -24,12 +25,17 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [user] = useStateValue('user')
 
-  let { data: existingContract, loading } = useQueryData(contractQuery, {
-    skip: !contractId || contractId === 'new',
-    variables: { contractId },
-  })
-
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
+
+  let { data: existingContract, loading, refetch: refetchContract } = useQueryData(
+    contractQuery,
+    {
+      skip: !contractId || contractId === 'new',
+      variables: { contractId },
+    }
+  )
+
+  let refetch = useRefetch(refetchContract)
 
   useEffect(() => {
     if (contractId === 'new' && !newContract && !!operator) {
@@ -48,12 +54,18 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
     contractId,
   ])
 
+  let onCancel = useCallback(() => {
+    setNewContract(null)
+  }, [])
+
   return (
     <EditContractPageView>
       <PageTitle>Muokkaa sopimus</PageTitle>
       <LoadingDisplay loading={loading} />
       {!!contractData && (
         <ContractEditor
+          onRefresh={refetch}
+          onCancel={onCancel}
           editable={requireAdminUser(user)}
           contract={contractData}
           isNew={contractId === 'new'}

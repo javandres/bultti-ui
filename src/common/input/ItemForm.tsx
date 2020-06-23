@@ -30,7 +30,7 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
   flex: ${(p) => (p.fullWidth ? '1 0 100%' : '1 1 50%')};
   width: auto;
   padding: ${(p) => (p.frameless ? '0 0 1.5rem' : '1rem')};
-  border-right: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
+  border-right: ${(p) => (p.frameless || p.fullWidth ? '0' : '1px solid var(--lighter-grey)')};
   border-bottom: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
 
   &:nth-child(2n),
@@ -41,7 +41,7 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
   }
 
   &:last-child {
-    padding-bottom: ${(p) => (p.frameless ? '0' : '0.5rem')};
+    padding-bottom: ${(p) => (p.frameless ? '0' : '1rem')};
   }
 
   > * {

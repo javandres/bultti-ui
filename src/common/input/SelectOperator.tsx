@@ -28,6 +28,7 @@ export type PropTypes = {
   onSelect: (operator: null | Operator) => void
   selectInitialId?: number
   disabled?: boolean
+  useUnselected?: boolean
 }
 
 const unselectedId = 0
@@ -56,6 +57,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
     theme = 'light',
     disabled = false,
     selectInitialId,
+    useUnselected = true,
   }) => {
     const { data } = useQueryData(operatorsQuery)
     const [user] = useStateValue<User>('user')
@@ -71,7 +73,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
       }
 
       // The "..." option is not added if the operators list is only 1 long
-      if (operatorList[0]?.id !== unselectedId && operatorList.length !== 1) {
+      if (useUnselected && operatorList[0]?.id !== unselectedId && operatorList.length !== 1) {
         operatorList.unshift({
           id: unselectedId,
           operatorName: unselectedName,
@@ -79,7 +81,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
       }
 
       return operatorList
-    }, [userIsOperator, data])
+    }, [userIsOperator, data, useUnselected])
 
     // Auto-select the first operator if there is only one, or the initially selected id.
     useEffect(() => {

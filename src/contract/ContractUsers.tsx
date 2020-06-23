@@ -24,6 +24,7 @@ const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) 
   let { data: contractRelations, loading: relationsLoading, refetch } = useQueryData(
     contractUserRelationsQuery,
     {
+      skip: !contractId,
       variables: {
         contractId,
       },

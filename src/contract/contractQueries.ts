@@ -65,7 +65,7 @@ export const ContractFragment = gql`
 `
 
 export const contractQuery = gql`
-  query contracts($contractId: String!) {
+  query contract($contractId: String!) {
     contract(contractId: $contractId) {
       ...ContractFragment
     }
