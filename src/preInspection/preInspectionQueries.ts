@@ -146,8 +146,8 @@ export const inspectionUserRelationsQuery = gql`
 `
 
 export const toggleUserInspectionSubscription = gql`
-  mutation toggleUserSubscribed($inspectionId: String!, $userId: String!) {
-    toggleUserSubscribed(inspectionId: $inspectionId, userId: $userId) {
+  mutation InspectionUserSubscribed($inspectionId: String!, $userId: String!) {
+    toggleInspectionUserSubscribed(inspectionId: $inspectionId, userId: $userId) {
       id
       createdAt
       updatedAt

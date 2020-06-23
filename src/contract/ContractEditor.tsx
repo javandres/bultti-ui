@@ -21,6 +21,7 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { get, orderBy } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import ContractUsers from './ContractUsers'
 
 const ContractEditorView = styled.div``
 
@@ -35,6 +36,11 @@ const ExpandableFormSection = styled(ExpandableSection)`
   ${ContentWrapper} {
     padding: 0;
   }
+`
+
+const ContractUsersEditor = styled(ContractUsers)`
+  margin-top: 0;
+  margin-bottom: 2rem;
 `
 
 const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
@@ -264,6 +270,7 @@ const ContractEditor = observer(
 
     return (
       <ContractEditorView>
+        <ContractUsersEditor contractId={contract.id} />
         <ItemForm
           item={pendingContract}
           hideKeys={['id']}

@@ -51,6 +51,7 @@ export type Query = {
   contract?: Maybe<Contract>;
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
   defaultContractRules: Array<ContractRule>;
+  contractUserRelations: Array<ContractUserRelation>;
 };
 
 
@@ -204,6 +205,11 @@ export type QueryContractArgs = {
 export type QueryContractProcurementUnitOptionsArgs = {
   date: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
+};
+
+
+export type QueryContractUserRelationsArgs = {
+  contractId: Scalars['String'];
 };
 
 export type Operator = {
@@ -414,6 +420,7 @@ export enum DayType {
 
 export enum TrackReason {
   NotTracked = 'NOT_TRACKED',
+  DefaultTracked = 'DEFAULT_TRACKED',
   FirstDepartureInBlock = 'FIRST_DEPARTURE_IN_BLOCK',
   FirstDepartureAfterDeadrun = 'FIRST_DEPARTURE_AFTER_DEADRUN',
   ExtraDeparture = 'EXTRA_DEPARTURE',
@@ -586,6 +593,7 @@ export type OperatorBlockDeparture = {
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
+  procurementUnit?: Maybe<ProcurementUnit>;
   inspectionId?: Maybe<Scalars['String']>;
 };
 
@@ -708,8 +716,9 @@ export type Mutation = {
   publishInspection: Inspection;
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
-  toggleUserSubscribed?: Maybe<InspectionUserRelation>;
+  toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
   generateEquipmentForPreInspection: Scalars['Boolean'];
+  toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
   createContract: Contract;
   modifyContract: Contract;
 };
@@ -877,7 +886,7 @@ export type MutationRemoveInspectionArgs = {
 };
 
 
-export type MutationToggleUserSubscribedArgs = {
+export type MutationToggleInspectionUserSubscribedArgs = {
   userId: Scalars['String'];
   inspectionId: Scalars['String'];
 };
@@ -885,6 +894,12 @@ export type MutationToggleUserSubscribedArgs = {
 
 export type MutationGenerateEquipmentForPreInspectionArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type MutationToggleContractUserSubscribedArgs = {
+  userId: Scalars['String'];
+  contractId: Scalars['String'];
 };
 
 

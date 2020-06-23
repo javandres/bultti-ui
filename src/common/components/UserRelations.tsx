@@ -110,33 +110,26 @@ const UserRelations = observer(
             />
           </RowContent>
         </UserRow>
-        {allRelations.map((rel) => (
-          <UserRow key={rel.id}>
-            <RowTitle>
-              {rel.relatedBy}
-              <TitleTimestamp>
-                {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
-              </TitleTimestamp>
-            </RowTitle>
-            <RowContent>
-              <RowUserName>
-                <UserRoleBadge>{rel.user.role}</UserRoleBadge>
-                {rel.user.name} @ {rel.user.organisation}
-                <br />
-                {rel.user.email}
-              </RowUserName>
-              {rel === subscriptionRelation && (
-                <SubscribedCheckbox
-                  label={rel?.subscribed || false ? 'Tilattu' : 'Ei tilattu'}
-                  disabled={true}
-                  checked={rel?.subscribed || false}
-                  name="subscribed"
-                  value="rel_subscribed"
-                />
-              )}
-            </RowContent>
-          </UserRow>
-        ))}
+        {allRelations.map((rel) =>
+          rel === subscriptionRelation ? null : (
+            <UserRow key={rel.id}>
+              <RowTitle>
+                {rel.relatedBy}
+                <TitleTimestamp>
+                  {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
+                </TitleTimestamp>
+              </RowTitle>
+              <RowContent>
+                <RowUserName>
+                  <UserRoleBadge>{rel.user.role}</UserRoleBadge>
+                  {rel.user.name} / {rel.user.organisation}
+                  <br />
+                  {rel.user.email}
+                </RowUserName>
+              </RowContent>
+            </UserRow>
+          )
+        )}
       </UserList>
     )
   }

@@ -1,4 +1,5 @@
 import { gql } from '@apollo/client'
+import { UserFragment } from '../common/query/authQueries'
 
 export const ContractFragment = gql`
   fragment ContractFragment on Contract {
@@ -108,4 +109,41 @@ export const createContractMutation = gql`
     }
   }
   ${ContractFragment}
+`
+
+export const contractUserRelationsQuery = gql`
+  query contractUserRelations($contractId: String!) {
+    contractUserRelations(contractId: $contractId) {
+      id
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      contract {
+        id
+      }
+      user {
+        ...UserFragment
+      }
+    }
+  }
+  ${UserFragment}
+`
+
+export const toggleContractUserSubscription = gql`
+  mutation toggleContractUserSubscribed($contractId: String!, $userId: String!) {
+    toggleContractUserSubscribed(contractId: $contractId, userId: $userId) {
+      id
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      contract {
+        id
+      }
+      user {
+        id
+      }
+    }
+  }
 `

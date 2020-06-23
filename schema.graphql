@@ -265,7 +265,8 @@ type Mutation {
   removeInspection(inspectionId: String!): Boolean!
   setReportsOrder(reportOrders: [ReportOrderInput!]!): [Report!]!
   submitInspection(inspectionId: String!): Inspection!
-  toggleUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
+  toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
+  toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
@@ -306,6 +307,7 @@ type OperatorBlockDeparture {
   journeyStartTime: String!
   journeyType: String!
   operatorId: String
+  procurementUnit: ProcurementUnit
   procurementUnitId: String
   registryNr: String
   routeId: String
@@ -356,6 +358,7 @@ type Query {
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(date: BulttiDate!, operatorId: Int!): [ProcurementUnitOption!]!
+  contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
@@ -503,6 +506,7 @@ enum RuleType {
 
 enum TrackReason {
   DEADRUN_DETECTED
+  DEFAULT_TRACKED
   EQUIPMENT_AGE_VIOLATION
   EQUIPMENT_TYPE_VIOLATION
   EXTERIOR_COLOR_VIOLATION
