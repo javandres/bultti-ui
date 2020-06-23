@@ -14,11 +14,7 @@ import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
 import ContractRuleEditor, { createRuleInput } from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
-import ExpandableSection, {
-  ContentWrapper,
-  HeaderBoldHeading,
-  HeaderRow,
-} from '../common/components/ExpandableSection'
+import ExpandableSection, { HeaderBoldHeading } from '../common/components/ExpandableSection'
 import { get, orderBy } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import ContractUsers from './ContractUsers'
@@ -27,15 +23,6 @@ const ContractEditorView = styled.div``
 
 const ExpandableFormSection = styled(ExpandableSection)`
   background: transparent;
-  margin-top: 0;
-
-  ${HeaderRow} {
-    border-radius: 0.5rem;
-  }
-
-  ${ContentWrapper} {
-    padding: 0;
-  }
 `
 
 const ContractUsersEditor = styled(ContractUsers)`

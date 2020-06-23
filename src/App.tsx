@@ -18,6 +18,7 @@ import ReportsPage from './page/ReportsPage'
 import { Page } from './common/components/common'
 import { PageTitle } from './common/components/Typography'
 import OperatorContractsListPage from './page/OperatorContractsListPage'
+import EditContractPage from './page/EditContractPage'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -51,6 +52,7 @@ const App: React.FC = observer(() => {
         <PostInspectionReportsPage path="post-inspection/reports" />
         <UserPage path="user" />
         <OperatorContractsListPage path="contracts" />
+        <EditContractPage path="contract/:contractId" />
         <ReportsPage path="reports" />
         <Todo path="contracts" />
       </Router>

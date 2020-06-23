@@ -64,6 +64,15 @@ export const ContractFragment = gql`
   ${ContractUserRelationFragment}
 `
 
+export const contractQuery = gql`
+  query contracts($contractId: String!) {
+    contract(contractId: $contractId) {
+      ...ContractFragment
+    }
+  }
+  ${ContractFragment}
+`
+
 export const contractsQuery = gql`
   query contracts($operatorId: Int) {
     contracts(operatorId: $operatorId) {

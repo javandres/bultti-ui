@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
@@ -7,14 +7,12 @@ import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
-import { Contract } from '../schema-types'
-import ContractEditor from '../contract/ContractEditor'
-import ContractListItem from '../contract/ContractListItem'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { DATE_FORMAT } from '../constants'
-import { addYears, format } from 'date-fns'
 import { requireAdminUser } from '../util/userRoles'
+import { ArrowRight } from '../common/icon/ArrowRight'
+import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const ContractPageView = styled(Page)``
 
@@ -24,6 +22,48 @@ const ContractContentView = styled.div`
   margin-bottom: 2rem;
 `
 
+const ContractTitle = styled.h4`
+  margin: 0 1rem 0 0;
+`
+
+const ContractDates = styled(DateRangeDisplay)``
+
+const ContractListItem = styled.button`
+  font-family: inherit;
+  background: white;
+  border-radius: 0.5rem;
+  border: 1px solid var(--lighter-grey);
+  padding: 1rem 0.5rem 1rem 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--dark-grey);
+  transform: scale(1);
+  transition: all 0.1s ease-out;
+
+  &:hover {
+    background-color: #fafafa;
+    transform: ${({ disabled = false }) => (!disabled ? 'scale(1.01)' : 'scale(1)')};
+  }
+`
+
+const GoToContractButton = styled.div`
+  background: transparent;
+  border: 0;
+  flex: 0;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  align-items: center;
+  border-top-right-radius: 0.5rem;
+  margin-left: auto;
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
+`
+
 export type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
@@ -31,7 +71,6 @@ export type PropTypes = {
 const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [user] = useStateValue('user')
-  let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
   let { data: contractsData, loading: contractsLoading } = useQueryData(contractsQuery, {
     variables: {
@@ -41,10 +80,8 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
 
   let contracts = useMemo(() => contractsData || [], [contractsData])
 
-  const [contractsExpanded, setContractExpanded] = useState(false)
-
-  const toggleContractExpanded = useCallback(() => {
-    setContractExpanded((currentVal) => !currentVal)
+  const onOpenContract = useCallback((contractId) => {
+    return navigateWithQueryString(`/contract/${contractId}`)
   }, [])
 
   const onCreateNewContract = useCallback(() => {
@@ -52,12 +89,9 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
       return
     }
 
-    setNewContract({
-      operatorId: operator?.id,
-      operator,
-      startDate: format(new Date(), DATE_FORMAT),
-      endDate: format(addYears(new Date(), 1), DATE_FORMAT),
-    })
+    onOpenContract('new')
+
+    /**/
   }, [operator])
 
   return (
@@ -70,12 +104,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
       )}
       <ContractContentView>
         <FlexRow>
-          {contracts.length !== 0 && (
-            <TextButton onClick={toggleContractExpanded}>
-              {contractsExpanded ? 'Piilota kaikki sopimukset' : 'Näytä kaikki sopimukset'}
-            </TextButton>
-          )}
-          {!newContract && !!operator && requireAdminUser(user) && (
+          {!!operator && requireAdminUser(user) && (
             <Button
               disabled={!operator}
               onClick={onCreateNewContract}
@@ -86,22 +115,15 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             </Button>
           )}
         </FlexRow>
-        {newContract && requireAdminUser(user) && (
-          <ContractListItem key="new" contractData={newContract as Contract} isExpanded={true}>
-            <ContractEditor
-              isNew={true}
-              editable={true}
-              onCancel={() => setNewContract(null)}
-              contract={newContract as Contract}
-            />
-          </ContractListItem>
-        )}
         {contracts.map((contractItem) => (
           <ContractListItem
             key={contractItem.id}
-            contractData={contractItem}
-            isExpanded={contractsExpanded}>
-            <ContractEditor editable={requireAdminUser(user)} contract={contractItem} />
+            onClick={() => onOpenContract(contractItem.id)}>
+            <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
+            <ContractDates startDate={contractItem.startDate} endDate={contractItem.endDate} />
+            <GoToContractButton>
+              <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
+            </GoToContractButton>
           </ContractListItem>
         ))}
       </ContractContentView>
