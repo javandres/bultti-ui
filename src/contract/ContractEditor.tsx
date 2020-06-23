@@ -23,6 +23,8 @@ import { get, orderBy } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -278,6 +280,17 @@ const ContractEditor = observer(
 
     return (
       <ContractEditorView>
+        <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
+          <Button
+            style={{ marginLeft: 'auto', marginRight: 0 }}
+            buttonStyle={ButtonStyle.REMOVE}
+            size={ButtonSize.MEDIUM}
+            onClick={() => {
+              /* TODO */
+            }}>
+            Poista
+          </Button>
+        </FlexRow>
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
           item={pendingContract}
