@@ -62,7 +62,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
               style={{ marginLeft: 'auto' }}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => {}}>
+              onClick={refetchRelations}>
               Päivitä
             </Button>
           </HeaderSection>

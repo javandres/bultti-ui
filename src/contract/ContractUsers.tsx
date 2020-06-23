@@ -60,7 +60,7 @@ const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) 
               style={{ marginLeft: 'auto' }}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={() => {}}>
+              onClick={refetchRelations}>
               Päivitä
             </Button>
           </HeaderSection>
