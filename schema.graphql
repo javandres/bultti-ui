@@ -258,6 +258,7 @@ type Mutation {
   rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
+  removeContract(contractId: String!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, inspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!

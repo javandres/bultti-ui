@@ -5,7 +5,6 @@ import { usePreInspectionReports, usePreInspections } from '../preInspection/ins
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
 import { InspectionStatus, Season } from '../schema-types'

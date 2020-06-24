@@ -721,6 +721,7 @@ export type Mutation = {
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
   createContract: Contract;
   modifyContract: Contract;
+  removeContract: Scalars['Boolean'];
 };
 
 
@@ -910,6 +911,11 @@ export type MutationCreateContractArgs = {
 
 export type MutationModifyContractArgs = {
   contractInput: ContractInput;
+};
+
+
+export type MutationRemoveContractArgs = {
+  contractId: Scalars['String'];
 };
 
 export type ProcurementUnitEditInput = {

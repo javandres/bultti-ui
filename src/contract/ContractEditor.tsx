@@ -9,6 +9,7 @@ import {
   contractsQuery,
   createContractMutation,
   modifyContractMutation,
+  removeContractMutation,
 } from './contractQueries'
 import { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
@@ -25,6 +26,8 @@ import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
+import { navigateWithQueryString, pathWithQuery } from '../util/urlValue'
+import { useNavigate } from '@reach/router'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -49,8 +52,8 @@ const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
 
 export type PropTypes = {
   contract: Contract
-  onCancel?: () => unknown
-  onRefresh?: () => unknown
+  onReset: () => unknown
+  onRefresh: () => unknown
   isNew?: boolean
   editable: boolean
 }
@@ -162,7 +165,7 @@ const renderEditorLabel = (key, val, labels) => {
 }
 
 const ContractEditor = observer(
-  ({ contract, onCancel, isNew = false, editable }: PropTypes) => {
+  ({ contract, onReset, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
     let isDirty = useMemo(() => {
@@ -254,9 +257,7 @@ const ContractEditor = observer(
           },
         })
 
-        if (onCancel) {
-          onCancel()
-        }
+        onReset()
 
         let nextContract = pickGraphqlData(result.data)
 
@@ -268,26 +269,38 @@ const ContractEditor = observer(
           }
         }
       }
-    }, [pendingContract, pendingContractValid, onCancel, isNew, goToContract])
+    }, [pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
     let onCancelEdit = useCallback(() => {
       setPendingContract(createContractInput(contract))
+      onReset()
+    }, [contract, onReset])
 
-      if (onCancel) {
-        onCancel()
+    let [removeContract, { loading: removeLoading }] = useMutationData(removeContractMutation)
+
+    let execRemove = useCallback(async () => {
+      if (!isNew && confirm('Haluatko varmasti poistaa sopimuksen?')) {
+        let result = await removeContract({
+          variables: {
+            contractId: contract.id,
+          },
+        })
+
+        if (pickGraphqlData(result.data)) {
+          await navigateWithQueryString('/contract', { replace: true })
+        }
       }
-    }, [contract, onCancel])
+    }, [removeContract, contract, isNew])
 
     return (
       <ContractEditorView>
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
           <Button
+            loading={removeLoading}
             style={{ marginLeft: 'auto', marginRight: 0 }}
             buttonStyle={ButtonStyle.REMOVE}
             size={ButtonSize.MEDIUM}
-            onClick={() => {
-              /* TODO */
-            }}>
+            onClick={execRemove}>
             Poista
           </Button>
         </FlexRow>

@@ -148,3 +148,9 @@ export const toggleContractUserSubscription = gql`
   }
   ${ContractUserRelationFragment}
 `
+
+export const removeContractMutation = gql`
+  mutation removeContract($contractId: String!) {
+    removeContract(contractId: $contractId)
+  }
+`

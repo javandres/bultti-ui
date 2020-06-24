@@ -51,7 +51,7 @@ const App: React.FC = observer(() => {
         <PostInspection path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
         <UserPage path="user" />
-        <OperatorContractsListPage path="contracts" />
+        <OperatorContractsListPage path="contract" />
         <EditContractPage path="contract/:contractId" />
         <ReportsPage path="reports" />
         <Todo path="contracts" />

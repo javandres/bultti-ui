@@ -14,6 +14,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { Page } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import { PageTitle } from '../common/components/PageTitle'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const EditContractPageView = styled(Page)``
 
@@ -21,15 +22,25 @@ export type PropTypes = {
   contractId?: string
 } & RouteComponentProps
 
-const EditContractPage = observer(({ contractId }: PropTypes) => {
+const EditContractPage = observer(({ contractId, location }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [user] = useStateValue('user')
 
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
+  let onCancel = useCallback(() => {
+    setNewContract(null)
+  }, [])
+
   let { data: existingContract, loading, refetch: refetchContract } = useQueryData(
     contractQuery,
     {
+      onError: () => {
+        if (contractId !== 'new') {
+          console.log('Exiting')
+          navigateWithQueryString('../', location)
+        }
+      },
       skip: !contractId || contractId === 'new',
       variables: { contractId },
     }
@@ -54,10 +65,6 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
     contractId,
   ])
 
-  let onCancel = useCallback(() => {
-    setNewContract(null)
-  }, [])
-
   return (
     <EditContractPageView>
       <PageTitle loading={loading} onRefresh={refetch}>
@@ -67,7 +74,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
       {!!contractData && (
         <ContractEditor
           onRefresh={refetch}
-          onCancel={onCancel}
+          onReset={onCancel}
           editable={requireAdminUser(user)}
           contract={contractData}
           isNew={contractId === 'new'}
