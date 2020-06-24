@@ -6,11 +6,11 @@ import PreInspectionItem from './PreInspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { useCreateInspection, useEditInspection } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button } from '../common/components/Button'
 import { DATE_FORMAT } from '../constants'
 import { format } from 'date-fns'
 import { isBetween } from '../util/isBetween'
-import Loading from '../common/components/Loading'
+import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
 import { Heading } from '../common/components/Typography'
@@ -185,18 +185,11 @@ const PreInspectionsList: React.FC<PropTypes> = ({
 
   return (
     <PreInspectionsListView>
+      <LoadingDisplay loading={loading} />
       <HeaderRow>
         <Heading style={{ marginRight: '1rem', marginBottom: 0, marginTop: 0 }}>
           Liikennöitsijän ennakkotarkastukset
         </Heading>
-        {loading && <Loading size={25} inline={true} />}
-        <Button
-          style={{ marginLeft: 'auto' }}
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}
-          onClick={() => onUpdate()}>
-          Päivitä
-        </Button>
       </HeaderRow>
 
       <PreInspectionsWrapper>
