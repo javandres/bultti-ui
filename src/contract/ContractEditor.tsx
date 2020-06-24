@@ -9,6 +9,7 @@ import {
   contractsQuery,
   createContractMutation,
   modifyContractMutation,
+  procurementUnitOptionsQuery,
   removeContractMutation,
 } from './contractQueries'
 import { TextArea, TextInput } from '../common/input/Input'
@@ -214,7 +215,13 @@ const ContractEditor = observer(
           return [
             { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
             { query: contractQuery, variables: { contractId: mutationResult?.id } },
-            'contractProcurementUnitOptions',
+            {
+              query: procurementUnitOptionsQuery,
+              variables: {
+                operatorId: mutationResult?.operatorId,
+                date: mutationResult?.startDate,
+              },
+            },
           ]
         },
       }
