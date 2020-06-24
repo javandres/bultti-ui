@@ -16,6 +16,7 @@ const PageTitleView = styled.h2`
   background: white;
   display: flex;
   align-items: center;
+  justify-content: flex-start;
 
   & + ${TabsWrapper} {
     border-top: 1px solid white;
@@ -53,10 +54,17 @@ export type PropTypes = {
   showBackLink?: boolean
   onRefresh?: () => unknown
   loading?: boolean
+  headerButtons?: React.ReactNode
 }
 
 export const PageTitle = observer(
-  ({ children, showBackLink = true, onRefresh, loading = false }: PropTypes) => {
+  ({
+    children,
+    showBackLink = true,
+    onRefresh,
+    loading = false,
+    headerButtons,
+  }: PropTypes) => {
     let canGoBack = useMemo(() => !!showBackLink && history.location.pathname !== '/', [
       showBackLink,
       history,
@@ -80,6 +88,7 @@ export const PageTitle = observer(
               Päivitä
             </Button>
           )}
+          {headerButtons}
         </HeaderButtons>
       </PageTitleView>
     )

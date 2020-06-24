@@ -19,11 +19,15 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
 
   return (
     <Page>
-      <PageTitle loading={loading} onRefresh={refetch}>
+      <PageTitle
+        loading={loading}
+        onRefresh={refetch}
+        headerButtons={
+          <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
+            <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
+          </Button>
+        }>
         Ennakkotarkastukset
-        <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
-          <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
-        </Button>
       </PageTitle>
       {!operator ? (
         <MessageContainer>
