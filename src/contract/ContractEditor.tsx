@@ -35,7 +35,7 @@ const ExpandableFormSection = styled(ExpandableSection)`
   margin-top: 0;
 
   ${ContentWrapper} {
-    padding-top: 0;
+    padding: 0;
   }
 `
 
