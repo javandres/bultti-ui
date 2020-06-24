@@ -18,7 +18,7 @@ import { ErrorView, MessageContainer, MessageView } from '../common/components/M
 import { useRefetch } from '../util/useRefetch'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../preInspection/InspectionActions'
-import { translate } from '../util/translate'
+import { text, translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 
 const EditPreInspectionView = styled(Page)``
@@ -94,7 +94,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
             {hasErrors && (
               <MessageContainer>
                 {(inspection?.inspectionErrors || []).map((err) => (
-                  <ErrorView key={err}>{err}</ErrorView>
+                  <ErrorView key={err}>{text(err)}</ErrorView>
                 ))}
               </MessageContainer>
             )}

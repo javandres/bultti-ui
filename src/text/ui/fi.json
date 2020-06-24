@@ -4,6 +4,11 @@
   "general.app.login": "Kirjaudu sisään",
   "general.app.logout": "Kirjaudu ulos",
   "general.app.all": "Kaikki",
+  "general.app.update": "Päivitä",
+  "general.app.edit": "Muokkaa",
+  "general.app.preview": "Esikatsele",
+  "general.app.remove": "Poista",
+  "general.validity_period": "Voimassaoloaika",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
@@ -20,7 +25,32 @@
   "nav.new.preinspection": "Uusi ennakkotarkastus",
   "nav.new.postinspection": "Uusi jälkitarkastus",
 
+  "title.users": "Käyttäjät",
+  "title.basic_information": "Perustiedot",
+  "title.departure_blocks": "Lähtöketjut",
+  "title.execution_requirements": "Suoritevaatimukset",
+  "title.procurement_units": "Kilpailukohteet",
+  "title.routes": "Reitit",
+  "title.contract": "Sopimus",
+
+  "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
+  "inspection.units.area": "Seuranta-alue",
+  "inspection.units.view_all": "Näytä kaikki kilpailukohteet",
+  "inspection.units.hide_all": "Piilota kaikki kilpailukohteet",
+  "inspection.pre.new": "Uusi ennakkotarkastus",
+  "inspection.post.new": "Uusi jälkitarkastus",
+
   "Draft": "Muokattavissa",
   "InReview": "Hyväksyttävänä",
-  "InProduction": "Tuotannossa"
+  "InProduction": "Tuotannossa",
+
+  "NOT_PRE": "Tarkastus ei ole ennakko-tarkastus",
+  "NOT_POST": "Tarkastus ei ole jälkitarkastus",
+  "INVALID_PRODUCTION_TIME": "Tuotantoaika väärä",
+  "INVALID_INSPECTION_TIME": "Tarkastusaika väärä",
+  "MISSING_BLOCK_DEPARTURES": "Lähtöketjut puuttuu",
+  "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
+  "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaolevaa sopimusta.",
+  "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
+  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
 }
