@@ -1,26 +1,4 @@
 import styled from 'styled-components'
-import { TabsWrapper } from './Tabs'
-import { StyledButton } from './Button'
-
-export const PageTitle = styled.h2`
-  border-bottom: 1px solid var(--lighter-grey);
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  margin-left: 0;
-  margin-top: 0;
-  background: white;
-  display: flex;
-  align-items: center;
-
-  & + ${TabsWrapper} {
-    border-top: 1px solid white;
-    margin-top: calc(-1.5rem - 1px);
-  }
-
-  & > ${StyledButton} {
-    margin-left: auto;
-  }
-`
 
 export const Heading = styled.h3`
   margin-bottom: 1rem;

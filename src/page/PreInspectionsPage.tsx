@@ -8,7 +8,7 @@ import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { usePreInspections } from '../preInspection/inspectionUtils'
-import { PageTitle } from '../common/components/Typography'
+import { PageTitle } from '../common/components/PageTitle'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -19,7 +19,7 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
 
   return (
     <Page>
-      <PageTitle>
+      <PageTitle loading={loading} onRefresh={refetch}>
         Ennakkotarkastukset
         <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
           <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>

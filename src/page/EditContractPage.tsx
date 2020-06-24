@@ -11,23 +11,11 @@ import { DATE_FORMAT } from '../constants'
 import { requireAdminUser } from '../util/userRoles'
 import { addYears, format } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
-import { PageTitle } from '../common/components/Typography'
 import { Page } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { PageTitle } from '../common/components/PageTitle'
 
 const EditContractPageView = styled(Page)``
-
-const HeaderButtons = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-
-  > * {
-    margin-left: 1rem;
-  }
-`
 
 export type PropTypes = {
   contractId?: string
@@ -72,24 +60,8 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
 
   return (
     <EditContractPageView>
-      <PageTitle>
+      <PageTitle loading={loading} onRefresh={refetch}>
         Muokkaa sopimus
-        <HeaderButtons>
-          <Button
-            size={ButtonSize.MEDIUM}
-            buttonStyle={ButtonStyle.SECONDARY}
-            onClick={refetch}>
-            Päivitä
-          </Button>
-          <Button
-            size={ButtonSize.MEDIUM}
-            buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-            onClick={() => {
-              /* TODO */
-            }}>
-            Peruuta
-          </Button>
-        </HeaderButtons>
       </PageTitle>
       <LoadingDisplay loading={loading} />
       {!!contractData && (

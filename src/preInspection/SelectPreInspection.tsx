@@ -182,14 +182,6 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
               <ListHeading>
                 {operator.operatorName} / {typeof season === 'string' ? season : season?.id}
               </ListHeading>
-              {loading && <Loading size={25} inline={true} />}
-              <Button
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}
-                onClick={() => refetchPreInspections()}>
-                Päivitä
-              </Button>
             </HeaderRow>
             <PreInspectionItems>
               {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (

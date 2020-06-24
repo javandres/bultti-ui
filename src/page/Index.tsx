@@ -2,7 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
-import { PageTitle } from '../common/components/Typography'
+import { PageTitle } from '../common/components/PageTitle'
 
 type PropTypes = {
   children?: React.ReactNode

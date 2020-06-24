@@ -7,7 +7,7 @@ import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import PreInspectionPreview from '../preInspection/PreInspectionPreview'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionStatusColor,
@@ -15,11 +15,11 @@ import {
   useInspectionById,
 } from '../preInspection/inspectionUtils'
 import { ErrorView, MessageContainer, MessageView } from '../common/components/Messages'
-import { PageTitle } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../preInspection/InspectionActions'
 import { translate } from '../util/translate'
+import { PageTitle } from '../common/components/PageTitle'
 
 const EditPreInspectionView = styled(Page)``
 
@@ -33,17 +33,6 @@ const StatusBox = styled.div`
   margin: -0.75rem 0.7rem 1rem;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
-`
-
-const HeaderButtons = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  margin-left: auto;
-
-  > * {
-    margin-left: 1rem;
-  }
 `
 
 export type PropTypes = {
@@ -68,22 +57,8 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
   return (
     <EditPreInspectionView>
       <PreInspectionContext.Provider value={inspection || null}>
-        <PageTitle>
+        <PageTitle loading={inspectionLoading} onRefresh={refetch}>
           Uusi ennakkotarkastus
-          <HeaderButtons>
-            <Button
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={() => refetch()}>
-              Päivitä
-            </Button>
-            <Button
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-              onClick={() => editPreInspection()}>
-              Peruuta
-            </Button>
-          </HeaderButtons>
         </PageTitle>
         {!operator || !season ? (
           <MessageContainer>

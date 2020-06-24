@@ -4,12 +4,12 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
-import { PageTitle } from '../common/components/Typography'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import { modifyUserMutation } from '../common/query/authQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import { User, UserInput } from '../schema-types'
+import { PageTitle } from '../common/components/PageTitle'
 
 const UserPageView = styled(Page)``
 

@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import { useAppState } from '../state/useAppState'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { PageTitle } from '../common/components/Typography'
+import { PageTitle } from '../common/components/PageTitle'
 
 const ProcurementUnitsView = styled(Page)``
 

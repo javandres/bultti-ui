@@ -7,7 +7,7 @@ import { Inspection, InspectionType } from '../schema-types'
 import SelectPreInspection from '../preInspection/SelectPreInspection'
 import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
-import { PageTitle } from '../common/components/Typography'
+import { PageTitle } from '../common/components/PageTitle'
 
 export type PropTypes = {} & RouteComponentProps
 
@@ -30,7 +30,9 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
 
   return (
     <Page>
-      <PageTitle>Valitse ennakkotarkastus muokattavaksi</PageTitle>
+      <PageTitle loading={loading} onRefresh={refetch}>
+        Valitse ennakkotarkastus muokattavaksi
+      </PageTitle>
       <SelectPreInspection
         inspections={inspections}
         refetchPreInspections={refetch}

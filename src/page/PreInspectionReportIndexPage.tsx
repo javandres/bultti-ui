@@ -16,8 +16,8 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import { orderBy } from 'lodash'
-import { PageTitle } from '../common/components/Typography'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { PageTitle } from '../common/components/PageTitle'
 
 const PreInspectionReportIndexPageView = styled(Page)``
 
@@ -120,19 +120,6 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
     setSelectedSeason(globalSeason)
   }, [globalSeason])
 
-  let startDateOptions = useMemo(
-    () => [
-      defaultSelectedDate,
-      ...inspections
-        .filter((p) => p.status === InspectionStatus.InProduction)
-        .map((p) => ({
-          value: p.startDate,
-          label: format(parseISO(p.startDate), READABLE_DATE_FORMAT),
-        })),
-    ],
-    [inspections]
-  )
-
   let openReports = usePreInspectionReports()
 
   let inspectionsList = useMemo(() => {
@@ -163,17 +150,21 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
     return orderBy(filteredList, 'startDate', 'desc')
   }, [inspections, selectedSeason, selectedDate])
 
+  let startDateOptions = useMemo(
+    () => [
+      defaultSelectedDate,
+      ...inspectionsList.map((p) => ({
+        value: p.startDate,
+        label: format(parseISO(p.startDate), READABLE_DATE_FORMAT),
+      })),
+    ],
+    [inspectionsList]
+  )
+
   return (
     <PreInspectionReportIndexPageView>
-      <PageTitle>
+      <PageTitle loading={loading} onRefresh={refetch}>
         Ennakkotarkastuksien raportit
-        <Button
-          style={{ marginLeft: 'auto' }}
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}
-          onClick={refetch}>
-          Päivitä
-        </Button>
       </PageTitle>
       {!operator && (
         <MessageContainer>

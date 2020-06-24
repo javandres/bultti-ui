@@ -16,9 +16,9 @@ import PreInspectionReportIndexPage from './page/PreInspectionReportIndexPage'
 import UserPage from './page/UserPage'
 import ReportsPage from './page/ReportsPage'
 import { Page } from './common/components/common'
-import { PageTitle } from './common/components/Typography'
 import OperatorContractsListPage from './page/OperatorContractsListPage'
 import EditContractPage from './page/EditContractPage'
+import { PageTitle } from './common/components/PageTitle'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (

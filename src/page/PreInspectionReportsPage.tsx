@@ -4,9 +4,8 @@ import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import PreInspectionReports from '../preInspection/PreInspectionReports'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useInspectionById } from '../preInspection/inspectionUtils'
-import { PageTitle } from '../common/components/Typography'
+import { PageTitle } from '../common/components/PageTitle'
 
 type PropTypes = {
   inspectionId?: string
@@ -19,18 +18,8 @@ const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ inspectionId }
 
   return (
     <Page>
-      <PageTitle>
+      <PageTitle loading={inspectionLoading} onRefresh={refetch}>
         Ennakkotarkastuksen raportit
-        {!!inspection && (
-          <Button
-            loading={inspectionLoading}
-            style={{ marginLeft: 'auto' }}
-            buttonStyle={ButtonStyle.SECONDARY}
-            size={ButtonSize.SMALL}
-            onClick={() => refetch()}>
-            Päivitä
-          </Button>
-        )}
       </PageTitle>
       <PreInspectionContext.Provider value={inspection}>
         <PreInspectionReports />

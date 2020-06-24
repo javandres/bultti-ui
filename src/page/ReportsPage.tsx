@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { PageTitle } from '../common/components/Typography'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { reportsQuery, updateReportOrderMutation } from '../report/reportQueries'
@@ -16,6 +15,8 @@ import ReportEditor from '../report/ReportEditor'
 import ReportListItem from '../report/ReportListItem'
 import { useStateValue } from '../state/useAppState'
 import { requireHSLUser } from '../util/userRoles'
+import { PageTitle } from '../common/components/PageTitle'
+import { useRefetch } from '../util/useRefetch'
 
 const ReportsPageView = styled(Page)``
 
@@ -57,7 +58,10 @@ const ReportsPage = observer(({ children }: PropTypes) => {
   let [user] = useStateValue('user')
   let [newReport, setNewReport] = useState<Partial<Report> | null>(null)
 
-  let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery)
+  let { data: reportsData, loading: reportsLoading, refetch: refetchReports } = useQueryData(
+    reportsQuery
+  )
+  let refetch = useRefetch(refetchReports)
 
   let [updateReportOrder] = useMutationData(updateReportOrderMutation)
 
@@ -149,7 +153,9 @@ const ReportsPage = observer(({ children }: PropTypes) => {
 
   return (
     <ReportsPageView>
-      <PageTitle>Raportit</PageTitle>
+      <PageTitle loading={reportsLoading} onRefresh={refetch}>
+        Raportit
+      </PageTitle>
       {!reportsData && !reportsLoading && <MessageView>Ei raportteja.</MessageView>}
       <ReportContentView>
         <FlexRow>

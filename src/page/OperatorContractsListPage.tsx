@@ -2,7 +2,6 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { PageTitle } from '../common/components/Typography'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { contractsQuery } from '../contract/contractQueries'
@@ -14,6 +13,8 @@ import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
 import { orderBy } from 'lodash'
+import { PageTitle } from '../common/components/PageTitle'
+import { useRefetch } from '../util/useRefetch'
 
 const ContractPageView = styled(Page)``
 
@@ -76,11 +77,17 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [user] = useStateValue('user')
 
-  let { data: contractsData, loading: contractsLoading } = useQueryData(contractsQuery, {
+  let {
+    data: contractsData,
+    loading: contractsLoading,
+    refetch: refetchContracts,
+  } = useQueryData(contractsQuery, {
     variables: {
       operatorId: operator?.id,
     },
   })
+
+  let refetch = useRefetch(refetchContracts)
 
   let contracts = useMemo(() => orderBy(contractsData || [], 'startDate', 'desc'), [
     contractsData,
@@ -100,7 +107,9 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
 
   return (
     <ContractPageView>
-      <PageTitle>Sopimukset</PageTitle>
+      <PageTitle loading={contractsLoading} onRefresh={refetch}>
+        Sopimukset
+      </PageTitle>
       {contracts.length === 0 && !contractsLoading && (
         <MessageContainer>
           <MessageView>Ei sopimuksia.</MessageView>
