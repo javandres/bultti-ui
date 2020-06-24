@@ -22,7 +22,7 @@ export type PropTypes = {
   contractId?: string
 } & RouteComponentProps
 
-const EditContractPage = observer(({ contractId, location }: PropTypes) => {
+const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
   let [user] = useStateValue('user')
 
@@ -35,12 +35,7 @@ const EditContractPage = observer(({ contractId, location }: PropTypes) => {
   let { data: existingContract, loading, refetch: refetchContract } = useQueryData(
     contractQuery,
     {
-      onError: () => {
-        if (contractId !== 'new') {
-          console.log('Exiting')
-          navigateWithQueryString('../', location)
-        }
-      },
+      notifyOnNetworkStatusChange: true,
       skip: !contractId || contractId === 'new',
       variables: { contractId },
     }
@@ -58,6 +53,12 @@ const EditContractPage = observer(({ contractId, location }: PropTypes) => {
       })
     }
   }, [contractId, newContract, operator])
+
+  useEffect(() => {
+    if (!existingContract && !loading && contractId !== 'new') {
+      navigateWithQueryString('/contract', { replace: true })
+    }
+  }, [contractId, existingContract, loading])
 
   let contractData = useMemo(() => (contractId === 'new' ? newContract : existingContract), [
     existingContract,

@@ -26,8 +26,6 @@ import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
-import { navigateWithQueryString, pathWithQuery } from '../util/urlValue'
-import { useNavigate } from '@reach/router'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -165,7 +163,7 @@ const renderEditorLabel = (key, val, labels) => {
 }
 
 const ContractEditor = observer(
-  ({ contract, onReset, isNew = false, editable }: PropTypes) => {
+  ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
 
     let isDirty = useMemo(() => {
@@ -287,10 +285,10 @@ const ContractEditor = observer(
         })
 
         if (pickGraphqlData(result.data)) {
-          await navigateWithQueryString('/contract', { replace: true })
+          onRefresh()
         }
       }
-    }, [removeContract, contract, isNew])
+    }, [removeContract, contract, isNew, onRefresh])
 
     return (
       <ContractEditorView>
