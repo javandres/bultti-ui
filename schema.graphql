@@ -240,6 +240,7 @@ type MissingEquipment {
 }
 
 type Mutation {
+  batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue!
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
   createContract(contractInput: ContractInput!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment

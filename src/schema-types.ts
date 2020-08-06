@@ -695,6 +695,7 @@ export type Mutation = {
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
+  batchAddToEquipmentCatalogue: EquipmentCatalogue;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -774,6 +775,12 @@ export type MutationCreateEquipmentCatalogueArgs = {
 
 export type MutationUpdateEquipmentCatalogueArgs = {
   equipmentCatalogue: EquipmentCatalogueInput;
+  catalogueId: Scalars['String'];
+};
+
+
+export type MutationBatchAddToEquipmentCatalogueArgs = {
+  vehicleIds: Array<Scalars['String']>;
   catalogueId: Scalars['String'];
 };
 
