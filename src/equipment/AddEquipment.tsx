@@ -63,6 +63,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
 
     let [searchFormVisible, setSearchFormVisible] = useState(false)
+    let [batchFormVisible, setBatchFormVisible] = useState(false)
     let [searchResultActive, setSearchResultActive] = useState(false)
     let [searchVehicleId, setSearchVehicleId] = useState('')
     let [searchRegistryNr, setSearchRegistryNr] = useState('')
@@ -170,6 +171,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
           <FlexRow>
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
               Lisää ajoneuvo
+            </Button>
+            <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
+              Lisää ajoneuvolista
             </Button>
             <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
               Hae ajoneuvo
