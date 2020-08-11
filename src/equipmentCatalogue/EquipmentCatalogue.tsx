@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
   EquipmentCatalogueInput,
+  ProcurementUnit,
 } from '../schema-types'
 import ItemForm from '../common/input/ItemForm'
 import { Button } from '../common/components/Button'
@@ -20,14 +21,13 @@ import {
   EquipmentWithQuota,
   useEquipmentCrud,
 } from '../equipment/equipmentUtils'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import AddEquipment from '../equipment/AddEquipment'
 import { MessageView } from '../common/components/Messages'
 
 const EquipmentCatalogueView = styled.div``
 
 export type PropTypes = {
-  procurementUnitId: string
+  procurementUnit: ProcurementUnit
   startDate: Date
   catalogue?: EquipmentCatalogueType
   operatorId: number
@@ -46,17 +46,19 @@ enum CatalogueEditMode {
 }
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ editable, procurementUnitId, catalogue, startDate, operatorId, onCatalogueChanged }) => {
+  ({ editable, procurementUnit, catalogue, startDate, operatorId, onCatalogueChanged }) => {
     const catalogueEditMode = useRef<CatalogueEditMode>(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
 
-    const inspection = useContext(PreInspectionContext)
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
       null
     )
 
-    let { removeAllEquipment, addEquipment } = useEquipmentCrud(catalogue, onCatalogueChanged)
+    let { removeAllEquipment, addEquipment, addBatchEquipment } = useEquipmentCrud(
+      catalogue,
+      onCatalogueChanged
+    )
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
@@ -69,10 +71,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       catalogueEditMode.current = CatalogueEditMode.CREATE
 
       setPendingCatalogue({
-        startDate: inspection?.startDate,
-        endDate: inspection?.endDate,
+        startDate: procurementUnit.startDate,
+        endDate: procurementUnit.endDate,
       })
-    }, [inspection, editable])
+    }, [procurementUnit, editable])
 
     const editCurrentCatalogue = useCallback(() => {
       if (!editable || !catalogue) {
@@ -111,7 +113,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         await createCatalogue({
           variables: {
             operatorId: operatorId,
-            procurementUnitId: procurementUnitId,
+            procurementUnitId: procurementUnit.id,
             catalogueData: pendingCatalogue,
           },
         })
@@ -120,7 +122,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       onCatalogueChanged()
     }, [
       operatorId,
-      procurementUnitId,
+      procurementUnit,
       catalogue,
       pendingCatalogue,
       catalogueEditMode.current,
@@ -199,6 +201,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 fieldLabels={equipmentColumnLabels}
                 removeAllEquipment={removeAllEquipment}
                 addEquipment={addEquipment}
+                addBatchEquipment={addBatchEquipment}
               />
             )}
           </>

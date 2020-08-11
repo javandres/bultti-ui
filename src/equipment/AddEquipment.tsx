@@ -4,7 +4,7 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import ItemForm from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
-import Input, { TextInput } from '../common/input/Input'
+import Input, { TextArea, TextInput } from '../common/input/Input'
 import EquipmentFormInput from './EquipmentFormInput'
 import { omit } from 'lodash'
 import { useLazyQueryData } from '../util/useLazyQueryData'
@@ -32,6 +32,7 @@ export type PropTypes = {
   onEquipmentChanged: () => unknown
   hasEquipment: (checkEquipment?: PendingEquipment) => boolean
   addEquipment: (equipmentInput: EquipmentInput) => Promise<unknown>
+  addBatchEquipment?: (batchInput: string) => Promise<unknown>
   removeAllEquipment?: () => Promise<unknown>
   removeLabel?: string
   editableKeys: string[]
@@ -54,6 +55,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     operatorId,
     hasEquipment,
     addEquipment,
+    addBatchEquipment,
     removeAllEquipment,
     removeLabel = 'Poista kaikki ajoneuvot',
     editableKeys,
@@ -61,6 +63,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     fieldLabels,
   }) => {
     let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
+    let [batchInput, setBatchInput] = useState<string>('')
 
     let [searchFormVisible, setSearchFormVisible] = useState(false)
     let [batchFormVisible, setBatchFormVisible] = useState(false)
@@ -165,6 +168,14 @@ const AddEquipment: React.FC<PropTypes> = observer(
       setPendingEquipment(null)
     }, [])
 
+    let onAddBatchEquipment = useCallback(async () => {
+      if (batchInput && addBatchEquipment) {
+        setBatchInput('')
+        setBatchFormVisible(false)
+        await addBatchEquipment(batchInput)
+      }
+    }, [batchInput, addBatchEquipment])
+
     return (
       <>
         {!pendingEquipment && (
@@ -172,9 +183,13 @@ const AddEquipment: React.FC<PropTypes> = observer(
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
               Lisää ajoneuvo
             </Button>
-            <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
-              Lisää ajoneuvolista
-            </Button>
+            {addBatchEquipment && (
+              <Button
+                style={{ marginRight: '1rem' }}
+                onClick={() => setBatchFormVisible(true)}>
+                Lisää ajoneuvolista
+              </Button>
+            )}
             <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
               Hae ajoneuvo
             </Button>
@@ -224,6 +239,23 @@ const AddEquipment: React.FC<PropTypes> = observer(
               />
             </AddEquipmentFormWrapper>
           </Modal>
+        )}
+        {batchFormVisible && addBatchEquipment && (
+          <>
+            <SubHeading>Lisää ajoneuvolista</SubHeading>
+            <p>
+              Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän
+              kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.
+            </p>
+            <TextArea
+              theme="light"
+              value={batchInput}
+              onChange={(e) => setBatchInput(e.target.value)}
+              style={{ width: '100%' }}
+              name="equipmentbatch"
+            />
+            <Button onClick={onAddBatchEquipment}>Lisää ajoneuvoja listalta</Button>
+          </>
         )}
         {searchFormVisible && (
           <>

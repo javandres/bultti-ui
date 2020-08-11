@@ -67,6 +67,22 @@ export const createEquipmentMutation = gql`
   ${EquipmentFragment}
 `
 
+export const addBatchEquipmentMutation = gql`
+  mutation batchAddToEquipmentCatalogue($catalogueId: String!, $vehicleIds: [String!]!) {
+    batchAddToEquipmentCatalogue(catalogueId: $catalogueId, vehicleIds: $vehicleIds) {
+      id
+      equipmentQuotas {
+        id
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
+  }
+  ${EquipmentFragment}
+`
+
 export const updateEquipmentMutation = gql`
   mutation updateEquipmentFromCatalogue(
     $equipmentId: String!

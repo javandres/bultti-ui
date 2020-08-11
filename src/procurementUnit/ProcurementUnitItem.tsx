@@ -259,7 +259,7 @@ const ProcurementUnitItemContent = observer(
             <SubHeading>Kalustoluettelo</SubHeading>
             <EquipmentCatalogue
               startDate={inspectionStartDate}
-              procurementUnitId={procurementUnitId}
+              procurementUnit={procurementUnit}
               catalogue={activeCatalogue}
               operatorId={procurementUnit.operatorId}
               onCatalogueChanged={updateUnit}

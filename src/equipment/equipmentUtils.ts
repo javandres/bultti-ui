@@ -6,14 +6,14 @@ import {
   ExecutionRequirement,
   ExecutionRequirementQuota,
 } from '../schema-types'
-import { compact, groupBy, omit } from 'lodash'
+import { compact, groupBy, omit, trim } from 'lodash'
 import { strval } from '../util/strval'
 import { round } from '../util/round'
 import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { getTotal } from '../util/getTotal'
 import { useMutationData } from '../util/useMutationData'
 import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/equipmentCatalogueQuery'
-import { createEquipmentMutation } from './equipmentQuery'
+import { addBatchEquipmentMutation, createEquipmentMutation } from './equipmentQuery'
 import { useCallback } from 'react'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 
@@ -37,17 +37,19 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
     return []
   }
 
-  let equipmentQuotas = (catalogue?.equipmentQuotas || []).map((quota: EquipmentCatalogueQuota) => {
-    if (!quota.equipment) {
-      return null
-    }
+  let equipmentQuotas = (catalogue?.equipmentQuotas || []).map(
+    (quota: EquipmentCatalogueQuota) => {
+      if (!quota.equipment) {
+        return null
+      }
 
-    return {
-      ...quota?.equipment,
-      percentageQuota: quota.percentageQuota || 0,
-      quotaId: quota.id,
+      return {
+        ...quota?.equipment,
+        percentageQuota: quota.percentageQuota || 0,
+        quotaId: quota.id,
+      }
     }
-  })
+  )
 
   return compact(equipmentQuotas)
 }
@@ -140,8 +142,11 @@ export function useEquipmentCrud(
   let [execRemoveAllRequirementEquipment] = useMutationData(
     removeAllEquipmentFromExecutionRequirement
   )
-  let [execRemoveAllCatalogueEquipment] = useMutationData(removeAllEquipmentFromCatalogueMutation)
+  let [execRemoveAllCatalogueEquipment] = useMutationData(
+    removeAllEquipmentFromCatalogueMutation
+  )
   let [execCreateEquipment] = useMutationData(createEquipmentMutation)
+  let [execAddBatchEquipment] = useMutationData(addBatchEquipmentMutation)
 
   let removeAllEquipment = useCallback(async () => {
     if (!catalogueOrRequirement) {
@@ -199,5 +204,28 @@ export function useEquipmentCrud(
     [onChanged, catalogueOrRequirement, mode, execCreateEquipment]
   )
 
-  return { removeAllEquipment, addEquipment }
+  let addBatchEquipment = useCallback(
+    async (batchInput: string) => {
+      if (mode !== 'catalogue' || !batchInput) {
+        return
+      }
+
+      let vehicleIds = batchInput
+        .split('\n')
+        .map((vehId) => trim(vehId))
+        .filter((vehId) => !!vehId)
+
+      await execAddBatchEquipment({
+        variables: {
+          catalogueId: catalogueOrRequirement?.id,
+          vehicleIds,
+        },
+      })
+
+      await onChanged()
+    },
+    [onChanged, execAddBatchEquipment, catalogueOrRequirement, mode]
+  )
+
+  return { removeAllEquipment, addEquipment, addBatchEquipment }
 }
