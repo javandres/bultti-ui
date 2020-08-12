@@ -203,7 +203,8 @@ export type QueryContractArgs = {
 
 
 export type QueryContractProcurementUnitOptionsArgs = {
-  date: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
 };
 

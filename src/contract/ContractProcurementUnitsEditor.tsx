@@ -70,7 +70,8 @@ const ContractProcurementUnitsEditor = observer(
         skip: !contract || !contract?.operatorId || !contract?.startDate,
         variables: {
           operatorId: contract?.operatorId,
-          date: contract?.startDate,
+          startDate: contract?.startDate,
+          endDate: contract?.endDate,
         },
       }
     )

@@ -359,7 +359,7 @@ type Query {
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   contract(contractId: String!): Contract
-  contractProcurementUnitOptions(date: BulttiDate!, operatorId: Int!): [ProcurementUnitOption!]!
+  contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!

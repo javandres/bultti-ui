@@ -83,8 +83,16 @@ export const contractsQuery = gql`
 `
 
 export const procurementUnitOptionsQuery = gql`
-  query contractProcurementUnitOptions($operatorId: Int!, $date: BulttiDate!) {
-    contractProcurementUnitOptions(operatorId: $operatorId, date: $date) {
+  query contractProcurementUnitOptions(
+    $operatorId: Int!
+    $startDate: BulttiDate!
+    $endDate: BulttiDate!
+  ) {
+    contractProcurementUnitOptions(
+      operatorId: $operatorId
+      startDate: $startDate
+      endDate: $endDate
+    ) {
       id
       name
       startDate

@@ -219,7 +219,8 @@ const ContractEditor = observer(
               query: procurementUnitOptionsQuery,
               variables: {
                 operatorId: mutationResult?.operatorId,
-                date: mutationResult?.startDate,
+                startDate: mutationResult?.startDate,
+                endDate: mutationResult?.endDate,
               },
             },
           ]
