@@ -38,13 +38,10 @@ const InputForm: React.FC<PropTypes> = observer(
           }}>
           {buttons}
           <ActionsWrapper>
-            <Button disabled={doneDisabled} onClick={onDone}>
+            <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
               {doneLabel || 'Tallenna'}
             </Button>
-            <Button
-              style={{ marginRight: '1rem' }}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-              onClick={onCancel}>
+            <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
               Peruuta
             </Button>
           </ActionsWrapper>

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
-import ItemForm from '../common/input/ItemForm'
+import ItemForm, { ActionsWrapper } from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
 import Input, { TextArea, TextInput } from '../common/input/Input'
 import EquipmentFormInput from './EquipmentFormInput'
@@ -197,6 +197,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
               (DEV) Lisää satunnainen ajoneuvo
             </Button>
             {removeAllEquipment &&
+              !batchFormVisible &&
               !searchFormVisible &&
               !searchResultActive &&
               !pendingEquipment && (
@@ -254,7 +255,19 @@ const AddEquipment: React.FC<PropTypes> = observer(
               style={{ width: '100%' }}
               name="equipmentbatch"
             />
-            <Button onClick={onAddBatchEquipment}>Lisää ajoneuvoja listalta</Button>
+            <ActionsWrapper style={{ marginTop: '1rem' }}>
+              <Button
+                disabled={!batchInput}
+                style={{ marginRight: '1rem' }}
+                onClick={onAddBatchEquipment}>
+                Lisää ajoneuvoja listalta
+              </Button>
+              <Button
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                onClick={() => setBatchFormVisible(false)}>
+                Peruuta
+              </Button>
+            </ActionsWrapper>
           </>
         )}
         {searchFormVisible && (
