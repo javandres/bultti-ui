@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { ContractInput, ContractRule, ContractRuleInput, RuleType } from '../schema-types'
+import { ContractInput, ContractRule } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { defaultContractRulesQuery } from './contractQueries'
 import { createRuleId } from './contractUtils'

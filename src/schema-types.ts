@@ -516,20 +516,11 @@ export enum InspectionUserRelationType {
 export type ContractRule = {
   __typename?: 'ContractRule';
   name: Scalars['String'];
+  code?: Maybe<Scalars['String']>;
   category: Scalars['String'];
-  type: RuleType;
-  value?: Maybe<Scalars['String']>;
-  options?: Maybe<Scalars['String']>;
+  value: Scalars['String'];
   condition?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
 };
-
-export enum RuleType {
-  ScalarValue = 'SCALAR_VALUE',
-  ConditionalValue = 'CONDITIONAL_VALUE',
-  EnumValue = 'ENUM_VALUE',
-  MultiValue = 'MULTI_VALUE'
-}
 
 export type ExecutionRequirementValue = {
   __typename?: 'ExecutionRequirementValue';
@@ -913,6 +904,7 @@ export type MutationToggleContractUserSubscribedArgs = {
 
 
 export type MutationCreateContractArgs = {
+  rulesFile?: Maybe<Scalars['Upload']>;
   contractInput: ContractInput;
 };
 
@@ -997,15 +989,4 @@ export type ContractInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   procurementUnitIds?: Maybe<Array<Scalars['String']>>;
-  rules?: Maybe<Array<ContractRuleInput>>;
-};
-
-export type ContractRuleInput = {
-  name: Scalars['String'];
-  category: Scalars['String'];
-  type: RuleType;
-  value?: Maybe<Scalars['String']>;
-  options?: Maybe<Scalars['String']>;
-  condition?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
 };

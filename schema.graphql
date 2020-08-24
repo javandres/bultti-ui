@@ -23,12 +23,10 @@ type Contract {
 
 type ContractRule {
   category: String!
+  code: String
   condition: String
-  description: String
   name: String!
-  options: String
-  type: RuleType!
-  value: String
+  value: String!
 }
 
 type ContractUserRelation {
@@ -242,7 +240,7 @@ type MissingEquipment {
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue!
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
-  createContract(contractInput: ContractInput!): Contract!
+  createContract(contractInput: ContractInput!, rulesFile: Upload): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
@@ -499,13 +497,6 @@ enum ReportType {
   SUMMARY
 }
 
-enum RuleType {
-  CONDITIONAL_VALUE
-  ENUM_VALUE
-  MULTI_VALUE
-  SCALAR_VALUE
-}
-
 enum TrackReason {
   DEADRUN_DETECTED
   DEFAULT_TRACKED
@@ -534,18 +525,7 @@ input ContractInput {
   id: ID
   operatorId: Int
   procurementUnitIds: [String!]
-  rules: [ContractRuleInput!]
   startDate: BulttiDate
-}
-
-input ContractRuleInput {
-  category: String!
-  condition: String
-  description: String
-  name: String!
-  options: String
-  type: RuleType!
-  value: String
 }
 
 input EquipmentCatalogueInput {
