@@ -79,7 +79,7 @@ const FileLoading = styled(Loading)`
 
 export type PropTypes = {
   onChange: (files: File[]) => void
-  onReset: () => unknown
+  onReset?: () => unknown
   value: File[]
   label?: string
   className?: string
@@ -117,9 +117,12 @@ const FileUploadInput = observer(
         e.stopPropagation()
 
         onChange([])
-        onReset()
+
+        if (onReset) {
+          onReset()
+        }
       },
-      [onChange]
+      [onChange, onReset]
     )
 
     const { getRootProps, getInputProps } = useDropzone({

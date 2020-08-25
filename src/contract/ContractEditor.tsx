@@ -15,7 +15,6 @@ import {
 import { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
-import ContractRuleEditor from './ContractRuleEditor'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
@@ -27,6 +26,8 @@ import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
+import FileUploadInput from '../common/input/FileUploadInput'
+import { useUploader } from '../util/useUploader'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -75,13 +76,22 @@ const renderEditorField = (contract: ContractInput) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
-  readOnly: boolean
+  readOnly: boolean,
+  loading: boolean = false,
+  onCancel?: () => unknown
 ) => {
   if (key === 'rules') {
     return (
       <ExpandableFormSection
         headerContent={<ExpandableFormSectionHeading>Säännöt</ExpandableFormSectionHeading>}>
-        <ContractRuleEditor readOnly={readOnly} contract={contract} onChange={onChange} />
+        <FileUploadInput
+          label="Lataa sopimusehdot"
+          onChange={onChange}
+          value={val}
+          disabled={readOnly}
+          onReset={onCancel}
+          loading={loading}
+        />
       </ExpandableFormSection>
     )
   }
@@ -165,6 +175,7 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
+    let [rulesFileValue, setRulesFile] = useState<File[]>([])
 
     let isDirty = useMemo(() => {
       // New contracts are always dirty
@@ -172,10 +183,14 @@ const ContractEditor = observer(
         return true
       }
 
+      if (rulesFileValue.length !== 0) {
+        return true
+      }
+
       let pendingJson = JSON.stringify(pendingContract)
       let currentJson = JSON.stringify(createContractInput(contract))
       return currentJson !== pendingJson
-    }, [pendingContract, contract])
+    }, [rulesFileValue, pendingContract, contract])
 
     useEffect(() => {
       if (contract) {
@@ -184,11 +199,19 @@ const ContractEditor = observer(
     }, [contract])
 
     let pendingContractValid = useMemo(
-      () => !!pendingContract?.startDate && !!pendingContract?.endDate,
-      [pendingContract]
+      () =>
+        (!isNew || (isNew && rulesFileValue.length !== 0)) &&
+        !!pendingContract?.startDate &&
+        !!pendingContract?.endDate,
+      [isNew, pendingContract, rulesFileValue]
     )
 
     let onChange = useCallback((key, nextValue) => {
+      if (key === 'rules') {
+        setRulesFile(nextValue)
+        return
+      }
+
       setPendingContract((currentVal) => {
         let nextProcurementUnits =
           key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
@@ -206,47 +229,44 @@ const ContractEditor = observer(
       })
     }, [])
 
-    let [modifyContract, { loading: modifyLoading }] = useMutationData(
-      modifyContractMutation,
-      {
-        refetchQueries: ({ data }) => {
-          let mutationResult = pickGraphqlData(data)
-          return [
-            { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
-            { query: contractQuery, variables: { contractId: mutationResult?.id } },
-            {
-              query: procurementUnitOptionsQuery,
-              variables: {
-                operatorId: mutationResult?.operatorId,
-                startDate: mutationResult?.startDate,
-                endDate: mutationResult?.endDate,
-              },
+    let [
+      modifyContract,
+      { loading: modifyLoading, mutationFn: updateMutationFn },
+    ] = useUploader(modifyContractMutation, {
+      refetchQueries: ({ data }) => {
+        let mutationResult = pickGraphqlData(data)
+        return [
+          { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
+          { query: contractQuery, variables: { contractId: mutationResult?.id } },
+          {
+            query: procurementUnitOptionsQuery,
+            variables: {
+              operatorId: mutationResult?.operatorId,
+              startDate: mutationResult?.startDate,
+              endDate: mutationResult?.endDate,
             },
-          ]
-        },
-      }
-    )
+          },
+        ]
+      },
+    })
 
-    let [createContract, { loading: createLoading }] = useMutationData(
-      createContractMutation,
-      {
-        update: (cache, { data: { createContract } }) => {
-          let { contract } =
-            cache.readQuery({
-              query: contractsQuery,
-              variables: { operatorId: createContract?.operatorId },
-            }) || {}
+    let [createContract, { loading: createLoading }] = useUploader(createContractMutation, {
+      update: (cache, { data: { createContract } }) => {
+        let { contract } =
+          cache.readQuery({
+            query: contractsQuery,
+            variables: { operatorId: createContract?.operatorId },
+          }) || {}
 
-          if (contract) {
-            cache.writeQuery({
-              query: contractQuery,
-              variables: { contractId: createContract.id },
-              data: { contract: createContract },
-            })
-          }
-        },
-      }
-    )
+        if (contract) {
+          cache.writeQuery({
+            query: contractQuery,
+            variables: { contractId: createContract.id },
+            data: { contract: createContract },
+          })
+        }
+      },
+    })
 
     let isLoading = modifyLoading || createLoading
 
@@ -254,15 +274,27 @@ const ContractEditor = observer(
 
     let onDone = useCallback(async () => {
       if (pendingContractValid) {
-        let mutationFn = isNew ? createContract : modifyContract
+        let result
 
-        let result = await mutationFn({
-          variables: {
-            contractInput: pendingContract,
-          },
-        })
+        if (rulesFileValue.length !== 0) {
+          let mutationFn = isNew ? createContract : modifyContract
+          let rulesFile = rulesFileValue[0]
+
+          result = await mutationFn(rulesFile, {
+            variables: {
+              contractInput: pendingContract,
+            },
+          })
+        } else {
+          result = await updateMutationFn({
+            variables: {
+              contractInput: pendingContract,
+            },
+          })
+        }
 
         onReset()
+        setRulesFile([])
 
         let nextContract = pickGraphqlData(result.data)
 
@@ -274,10 +306,11 @@ const ContractEditor = observer(
           }
         }
       }
-    }, [pendingContract, pendingContractValid, onReset, isNew, goToContract])
+    }, [rulesFileValue, pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
     let onCancelEdit = useCallback(() => {
       setPendingContract(createContractInput(contract))
+      setRulesFile([])
       onReset()
     }, [contract, onReset])
 
@@ -311,7 +344,7 @@ const ContractEditor = observer(
         </FlexRow>
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
-          item={pendingContract}
+          item={{ ...pendingContract, rules: rulesFileValue }}
           hideKeys={['id']}
           labels={formLabels}
           onChange={onChange}

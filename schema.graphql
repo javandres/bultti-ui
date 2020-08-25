@@ -240,7 +240,7 @@ type MissingEquipment {
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue!
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
-  createContract(contractInput: ContractInput!, rulesFile: Upload): Contract!
+  createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
@@ -249,7 +249,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
-  modifyContract(contractInput: ContractInput!): Contract!
+  modifyContract(contractInput: ContractInput!, file: Upload): Contract!
   modifyReport(reportInput: ReportInput!): Report!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!

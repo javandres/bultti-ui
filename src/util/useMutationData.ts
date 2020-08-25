@@ -11,8 +11,12 @@ import { pickGraphqlData } from './pickGraphqlData'
 import { merge } from 'lodash'
 import { useStateValue } from '../state/useAppState'
 
+export type MutationFnType<TData, TVariables> = (
+  overrideOptions?: MutationFunctionOptions<TData, TVariables>
+) => Promise<ExecutionResult>
+
 type Mutator<TData, TVariables> = [
-  (overrideOptions?: MutationFunctionOptions<TData, TVariables>) => Promise<ExecutionResult>,
+  MutationFnType<TData, TVariables>,
   { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 

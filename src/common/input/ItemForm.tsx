@@ -103,7 +103,9 @@ export type PropTypes<ItemType = any> = {
     key: string,
     val: any,
     onChange: (val: any) => void,
-    readOnly: boolean
+    readOnly: boolean,
+    loading?: boolean,
+    onReset?: () => unknown
   ) => React.ReactChild
   style?: CSSProperties
   frameless?: boolean
@@ -177,7 +179,7 @@ const ItemForm: React.FC<PropTypes> = observer(
               frameless={frameless}
               fullWidth={fullWidthFields?.includes(key)}>
               {renderedLabel !== false && renderedLabel}
-              {renderInput(key, val, onValueChange(key), isReadOnly(key))}
+              {renderInput(key, val, onValueChange(key), isReadOnly(key), loading, onCancel)}
             </FieldWrapper>
           )
         })}

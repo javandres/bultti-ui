@@ -7668,16 +7668,6 @@
             "description": null,
             "args": [
               {
-                "name": "rulesFile",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Upload",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "contractInput",
                 "description": null,
                 "type": {
@@ -7686,6 +7676,20 @@
                   "ofType": {
                     "kind": "INPUT_OBJECT",
                     "name": "ContractInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "file",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Upload",
                     "ofType": null
                   }
                 },
@@ -7719,6 +7723,16 @@
                     "name": "ContractInput",
                     "ofType": null
                   }
+                },
+                "defaultValue": null
+              },
+              {
+                "name": "file",
+                "description": null,
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Upload",
+                  "ofType": null
                 },
                 "defaultValue": null
               }

@@ -904,13 +904,14 @@ export type MutationToggleContractUserSubscribedArgs = {
 
 
 export type MutationCreateContractArgs = {
-  rulesFile?: Maybe<Scalars['Upload']>;
   contractInput: ContractInput;
+  file: Scalars['Upload'];
 };
 
 
 export type MutationModifyContractArgs = {
   contractInput: ContractInput;
+  file?: Maybe<Scalars['Upload']>;
 };
 
 

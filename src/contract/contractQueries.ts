@@ -53,11 +53,8 @@ export const ContractFragment = gql`
     }
     rules {
       name
-      type
       value
-      description
       condition
-      options
       category
     }
   }
@@ -113,17 +110,14 @@ export const defaultContractRulesQuery = gql`
       name
       category
       condition
-      description
-      options
-      type
       value
     }
   }
 `
 
 export const modifyContractMutation = gql`
-  mutation modifyContract($contractInput: ContractInput!) {
-    modifyContract(contractInput: $contractInput) {
+  mutation modifyContract($file: Upload, $contractInput: ContractInput!) {
+    modifyContract(file: $file, contractInput: $contractInput) {
       ...ContractFragment
     }
   }
@@ -131,8 +125,8 @@ export const modifyContractMutation = gql`
 `
 
 export const createContractMutation = gql`
-  mutation createContract($contractInput: ContractInput!) {
-    createContract(contractInput: $contractInput) {
+  mutation createContract($file: Upload!, $contractInput: ContractInput!) {
+    createContract(file: $file, contractInput: $contractInput) {
       ...ContractFragment
     }
   }
