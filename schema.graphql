@@ -25,6 +25,7 @@ type ContractRule {
   category: String!
   code: String
   condition: String
+  description: String
   name: String!
   value: String!
 }

@@ -520,6 +520,7 @@ export type ContractRule = {
   category: Scalars['String'];
   value: Scalars['String'];
   condition?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
 };
 
 export type ExecutionRequirementValue = {

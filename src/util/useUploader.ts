@@ -44,11 +44,13 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
 
   const uploadFile = useCallback(
     (file: File, overrideOptions = {}) => {
+      let { variables: overrideVariables = {}, ...restOptions } = overrideOptions
+
       const queryOptions: MutationFunctionOptions<TData, TVariables> = {
-        ...overrideOptions,
+        ...restOptions,
         variables: {
           ...(options?.variables || {}),
-          ...(overrideOptions?.variables || {}),
+          ...overrideVariables,
           file,
         },
       }
