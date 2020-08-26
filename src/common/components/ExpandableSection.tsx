@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ArrowDown } from '../icon/ArrowDown'
@@ -110,6 +110,7 @@ export type PropTypes = {
   isExpanded?: boolean
   onToggleExpanded?: (expanded: boolean) => unknown
   className?: string
+  style?: CSSProperties
 }
 
 const ExpandableSection = observer(
@@ -119,6 +120,7 @@ const ExpandableSection = observer(
     isExpanded = false,
     onToggleExpanded = () => {},
     className,
+    style,
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
@@ -138,7 +140,7 @@ const ExpandableSection = observer(
     }, [isExpanded])
 
     return (
-      <ExpandableBoxView className={className}>
+      <ExpandableBoxView style={style} className={className}>
         <HeaderRow>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded}>

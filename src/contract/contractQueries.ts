@@ -27,6 +27,7 @@ export const ContractFragment = gql`
     createdAt
     updatedAt
     operatorId
+    rulesFile
     operator {
       id
       operatorId

@@ -28,6 +28,8 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
+import { SubHeading } from '../common/components/Typography'
+import Table from '../common/components/Table'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -65,6 +67,7 @@ function createContractInput(contract: Contract): ContractInput {
     startDate: contract.startDate,
     endDate: contract.endDate,
     operatorId: contract.operatorId,
+    rulesFile: contract.rulesFile,
     procurementUnitIds: orderBy(
       (contract?.procurementUnits || []).map((pu) => pu.id),
       'procurementUnitId'
@@ -72,7 +75,7 @@ function createContractInput(contract: Contract): ContractInput {
   }
 }
 
-const renderEditorField = (contract: ContractInput) => (
+const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRulesInput) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
@@ -82,14 +85,42 @@ const renderEditorField = (contract: ContractInput) => (
 ) => {
   if (key === 'rules') {
     return (
-      <FileUploadInput
-        label="Lataa sopimusehdot"
-        onChange={onChange}
-        value={val}
-        disabled={readOnly}
-        onReset={onCancel}
-        loading={loading}
-      />
+      <>
+        <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
+          <Button onClick={toggleRulesInput}>Lataa uudet ehdot</Button>
+        </div>
+        {rulesInputActive && (
+          <FileUploadInput
+            label="Lataa sopimusehdot"
+            onChange={onChange}
+            value={val.uploadFile}
+            disabled={readOnly}
+            onReset={onCancel}
+            loading={loading}
+          />
+        )}
+
+        <ExpandableFormSection
+          style={{ marginTop: '1rem' }}
+          headerContent={
+            <ExpandableFormSectionHeading>Nykyiset ehdot</ExpandableFormSectionHeading>
+          }>
+          <div style={{ padding: '1rem 1rem 0' }}>
+            <SubHeading>
+              Tiedosto: <strong>{contract.rulesFile}</strong>
+            </SubHeading>
+            <Table
+              columnLabels={{
+                name: 'Nimi',
+                value: 'Arvo',
+                condition: 'Ehto',
+                category: 'Kategoria',
+              }}
+              items={val.currentRules}
+            />
+          </div>
+        </ExpandableFormSection>
+      </>
     )
   }
 
@@ -158,7 +189,7 @@ let formLabels = {
   description: 'Kuvaus',
   operatorId: 'Liikennöitsijä',
   procurementUnitIds: 'Kilpailukohteet',
-  rules: 'Sopimuksen säännöt',
+  rules: 'Sopimuksen ehdot',
 }
 
 const renderEditorLabel = (key, val, labels) => {
@@ -173,6 +204,7 @@ const ContractEditor = observer(
   ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
     let [rulesFileValue, setRulesFile] = useState<File[]>([])
+    let [rulesInputActive, setRulesInputActive] = useState(!pendingContract?.rulesFile)
 
     let isDirty = useMemo(() => {
       // New contracts are always dirty
@@ -293,7 +325,7 @@ const ContractEditor = observer(
         onReset()
         setRulesFile([])
 
-        let nextContract = pickGraphqlData(result.data)
+        let nextContract = result.data
 
         if (nextContract) {
           if (!isNew) {
@@ -327,6 +359,10 @@ const ContractEditor = observer(
       }
     }, [removeContract, contract, isNew, onRefresh])
 
+    let onToggleRulesInput = useCallback(() => {
+      setRulesInputActive((currentlyActive) => !currentlyActive)
+    }, [])
+
     return (
       <ContractEditorView>
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
@@ -341,8 +377,11 @@ const ContractEditor = observer(
         </FlexRow>
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
-          item={{ ...pendingContract, rules: rulesFileValue }}
-          hideKeys={['id']}
+          item={{
+            ...pendingContract,
+            rules: { uploadFile: rulesFileValue, currentRules: contract?.rules || [] },
+          }}
+          hideKeys={['id', 'rulesFile']}
           labels={formLabels}
           onChange={onChange}
           onDone={onDone}
@@ -352,7 +391,11 @@ const ContractEditor = observer(
           doneDisabled={!pendingContractValid}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
           renderLabel={renderEditorLabel}
-          renderInput={renderEditorField(pendingContract)}
+          renderInput={renderEditorField(
+            pendingContract,
+            rulesInputActive,
+            onToggleRulesInput
+          )}
           showButtons={isDirty}
         />
       </ContractEditorView>

@@ -992,4 +992,5 @@ export type ContractInput = {
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   procurementUnitIds?: Maybe<Array<Scalars['String']>>;
+  rulesFile?: Maybe<Scalars['String']>;
 };

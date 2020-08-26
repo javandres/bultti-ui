@@ -527,6 +527,7 @@ input ContractInput {
   id: ID
   operatorId: Int
   procurementUnitIds: [String!]
+  rulesFile: String
   startDate: BulttiDate
 }
 
