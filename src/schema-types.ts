@@ -50,7 +50,6 @@ export type Query = {
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
-  defaultContractRules: Array<ContractRule>;
   contractUserRelations: Array<ContractUserRelation>;
 };
 

@@ -366,7 +366,6 @@ type Query {
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
-  defaultContractRules: [ContractRule!]!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
