@@ -105,17 +105,6 @@ export const procurementUnitOptionsQuery = gql`
   }
 `
 
-export const defaultContractRulesQuery = gql`
-  query defaultContractRules {
-    defaultContractRules {
-      name
-      category
-      condition
-      value
-    }
-  }
-`
-
 export const modifyContractMutation = gql`
   mutation modifyContract($file: Upload, $contractInput: ContractInput!) {
     modifyContract(file: $file, contractInput: $contractInput) {
