@@ -452,6 +452,7 @@ export type Contract = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   procurementUnits: Array<ProcurementUnit>;
+  rulesFile?: Maybe<Scalars['String']>;
   rules?: Maybe<Array<ContractRule>>;
 };
 

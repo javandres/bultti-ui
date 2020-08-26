@@ -16,6 +16,7 @@ type Contract {
   operatorId: Int
   procurementUnits: [ProcurementUnit!]!
   rules: [ContractRule!]
+  rulesFile: String
   startDate: BulttiDate!
   updatedAt: DateTime!
   userRelations: [ContractUserRelation!]!

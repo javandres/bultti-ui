@@ -82,17 +82,14 @@ const renderEditorField = (contract: ContractInput) => (
 ) => {
   if (key === 'rules') {
     return (
-      <ExpandableFormSection
-        headerContent={<ExpandableFormSectionHeading>Säännöt</ExpandableFormSectionHeading>}>
-        <FileUploadInput
-          label="Lataa sopimusehdot"
-          onChange={onChange}
-          value={val}
-          disabled={readOnly}
-          onReset={onCancel}
-          loading={loading}
-        />
-      </ExpandableFormSection>
+      <FileUploadInput
+        label="Lataa sopimusehdot"
+        onChange={onChange}
+        value={val}
+        disabled={readOnly}
+        onReset={onCancel}
+        loading={loading}
+      />
     )
   }
 
@@ -165,7 +162,7 @@ let formLabels = {
 }
 
 const renderEditorLabel = (key, val, labels) => {
-  if (['rules', 'procurementUnitIds'].includes(key)) {
+  if (['procurementUnitIds'].includes(key)) {
     return false
   }
 
