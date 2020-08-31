@@ -184,12 +184,12 @@ const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRule
 }
 
 let formLabels = {
-  startDate: 'Sopimus alkaa',
-  endDate: 'Sopimus loppuu',
+  startDate: 'Sopimusehdot alkaa',
+  endDate: 'Sopimusehdot loppuu',
   description: 'Kuvaus',
   operatorId: 'Liikennöitsijä',
   procurementUnitIds: 'Kilpailukohteet',
-  rules: 'Sopimuksen ehdot',
+  rules: 'Sopimusehdot',
 }
 
 const renderEditorLabel = (key, val, labels) => {

@@ -69,7 +69,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
   return (
     <EditContractPageView>
       <PageTitle loading={loading} onRefresh={refetch}>
-        Muokkaa sopimus
+        Muokkaa sopimusehdot
       </PageTitle>
       <LoadingDisplay loading={loading} />
       {!!contractData && (

@@ -108,11 +108,11 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   return (
     <ContractPageView>
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
-        Sopimukset
+        Sopimusehdot
       </PageTitle>
       {contracts.length === 0 && !contractsLoading && (
         <MessageContainer>
-          <MessageView>Ei sopimuksia.</MessageView>
+          <MessageView>Ei sopimusehtoja.</MessageView>
         </MessageContainer>
       )}
       {!!operator && requireAdminUser(user) && (
@@ -123,7 +123,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
             style={{ marginLeft: 'auto' }}>
-            Uusi sopimus
+            Uudet sopimusehdot
           </Button>
         </FlexRow>
       )}
