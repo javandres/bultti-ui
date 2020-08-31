@@ -15,6 +15,7 @@ export const READABLE_TIME_FORMAT = 'dd MMM yyyy, HH:mm'
 export const READABLE_DATE_FORMAT = 'dd MMM yyyy'
 export const ENV = envObj.NODE_ENV || 'production'
 export const APP_PATH = '/'
+export const DEBUG = envObj.REACT_APP_DEBUG === 'true' || false
 
 export const normalDayTypes = ['Ma', 'Ti', 'Ke', 'To', 'Pe', 'La', 'Su']
 
