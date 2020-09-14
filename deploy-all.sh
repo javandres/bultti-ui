@@ -5,6 +5,8 @@ set -e
 
 ORG=${ORG:-hsl}
 
+docker login bulttiregistry.azurecr.io
+
 for TAG in dev stage production; do
   DOCKER_IMAGE=bulttiregistry.azurecr.io/$ORG/bultti-ui:${TAG}
 
