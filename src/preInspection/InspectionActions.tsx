@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import {
   useEditInspection,
@@ -52,12 +52,25 @@ export type PropTypes = {
 
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
+    var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [user] = useStateValue('user')
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
-    var editInspection = useEditInspection(InspectionType.Pre)
+    var goToInspectionEdit = useEditInspection(InspectionType.Pre)
     var goToPreInspectionReports = usePreInspectionReports()
+
+    var onEditInspection = useCallback(
+      (inspection: Inspection) => {
+        // If the season of the inspection is not already selected, ensure it is selected.
+        if (inspection.seasonId !== season.id) {
+          setSeason(inspection.season)
+        }
+
+        goToInspectionEdit(inspection)
+      },
+      [goToInspectionEdit, setSeason, season]
+    )
 
     var [removePreInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
 
@@ -124,7 +137,7 @@ const InspectionActions = observer(
           <Button
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
-            onClick={() => editInspection(inspection)}>
+            onClick={() => onEditInspection(inspection)}>
             {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
           </Button>
         )}
