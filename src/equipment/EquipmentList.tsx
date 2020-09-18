@@ -5,7 +5,7 @@ import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
-import { groupBy, orderBy } from 'lodash'
+import { groupBy, orderBy, uniqBy } from 'lodash'
 import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
@@ -40,6 +40,8 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let [groupEquipment, setEquipmentGrouped] = useState(true)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
+    let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
+
     const onEditValue = useCallback(
       (key: string, value: CellValType, item: EquipmentWithQuota) => {
         if (groupEquipment || !editableValues.includes(key)) {
@@ -50,7 +52,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
         setPendingValues((currentValues) => {
           let existingEditValueIndex = currentValues.findIndex(
-            (val) => val.key === key && val.item.id === item.id
+            (val) => val.key === key && getQuotaId(val.item) === getQuotaId(item)
           )
 
           if (existingEditValueIndex !== -1) {
@@ -74,10 +76,13 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
       setPendingValues([])
 
-      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, 'item.id'))
+      let pendingEquipmentInput = Object.entries(
+        groupBy<EditValue<EquipmentWithQuota>>(pendingValues, getQuotaId)
+      )
+
       let updates: EquipmentUpdate[] = []
 
-      for (let [itemId, pendingEditValues] of pendingEquipmentInput) {
+      for (let [, pendingEditValues] of pendingEquipmentInput) {
         let updatedValues = {}
         let item = pendingEditValues[0].item
 
@@ -86,7 +91,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         }
 
         updates.push({
-          equipmentId: itemId,
+          equipmentId: item.id,
           equipmentInput: updatedValues,
           quotaId: item.quotaId,
         })
@@ -146,9 +151,10 @@ const EquipmentList: React.FC<PropTypes> = observer(
       [equipment, equipmentGroups]
     )
 
-    let orderedEquipment = useMemo(() => orderBy(equipment, 'emissionClass', 'desc'), [
-      equipment,
-    ])
+    let orderedEquipment = useMemo(
+      () => orderBy(uniqBy(equipment, getQuotaId), 'emissionClass', 'desc'),
+      [equipment]
+    )
 
     return equipment.length !== 0 ? (
       <>
@@ -164,6 +170,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         {!groupEquipment && orderedEquipment.length !== 0 && (
           <Table<EquipmentWithQuota>
             items={orderedEquipment}
+            keyFromItem={getQuotaId}
             columnLabels={columnLabels}
             onRemoveRow={removeEquipment ? onRemoveEquipment : undefined}
             renderValue={renderCellValue}

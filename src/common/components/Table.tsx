@@ -317,6 +317,7 @@ type ContextTypes<ItemType> = {
   onCancelEdit?: PropTypes<ItemType>['onCancelEdit']
   renderCell?: PropTypes<ItemType>['renderCell']
   renderValue?: PropTypes<ItemType>['renderValue']
+  keyFromItem?: PropTypes<ItemType>['keyFromItem']
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
@@ -334,6 +335,7 @@ const TableCellComponent = observer(
       onCancelEdit,
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
+      keyFromItem = defaultKeyFromItem,
     } = ctx || {}
 
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
@@ -343,7 +345,7 @@ const TableCellComponent = observer(
 
     let editValue =
       pendingValues.length !== 0
-        ? pendingValues.find((val) => val.item.id === itemId && val.key === key)
+        ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
         : undefined
 
     let columnWidth = columnWidths[cellIndex] || 0
@@ -683,6 +685,7 @@ const Table = observer(
       renderCell,
       renderInput,
       renderValue,
+      keyFromItem,
     }
 
     let tableViewWidth = width + (isScrolling && virtualized ? SCROLLBAR_WIDTH : 0)
