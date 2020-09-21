@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { usePreInspectionReports, usePreInspections } from '../inspection/inspectionUtils'
+import { useFetchInspections, usePreInspectionReports } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
-import { InspectionStatus, Season } from '../schema-types'
+import { InspectionStatus, InspectionType, Season } from '../schema-types'
 import SelectSeason from '../common/input/SelectSeason'
 import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
@@ -106,7 +106,7 @@ const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
 export type PropTypes = RouteComponentProps
 
 const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, inspections }, loading, refetch] = usePreInspections()
+  let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Pre)
 
   let [globalSeason] = useStateValue('globalSeason')
 

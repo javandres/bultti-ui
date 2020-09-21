@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { observer } from 'mobx-react-lite'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
-import { PreInspectionContext } from './PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import styled from 'styled-components'
 import { MetaDisplay, MetaItem, MetaLabel, MetaValue } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
@@ -21,7 +21,7 @@ type PropTypes = {
 }
 
 const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
-  const inspection = useContext(PreInspectionContext)
+  const inspection = useContext(InspectionContext)
 
   if (!inspection) {
     return null

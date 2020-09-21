@@ -7,7 +7,7 @@ import { FlexRow, TransparentPageSection } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
 
 const ProcurementUnitsView = styled(TransparentPageSection)``
@@ -20,7 +20,7 @@ export type PropTypes = {
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer((props) => {
-  const inspection = useContext(PreInspectionContext)
+  const inspection = useContext(InspectionContext)
   let { operatorId, startDate } = inspection || props || {}
   let { requirementsEditable = true, onUpdate } = props
 

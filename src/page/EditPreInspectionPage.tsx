@@ -6,7 +6,7 @@ import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import PreInspectionPreview from '../preInspection/PreInspectionPreview'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { Button } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import {
@@ -56,7 +56,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
 
   return (
     <EditPreInspectionView>
-      <PreInspectionContext.Provider value={inspection || null}>
+      <InspectionContext.Provider value={inspection || null}>
         <PageTitle loading={inspectionLoading} onRefresh={refetch}>
           Uusi ennakkotarkastus
         </PageTitle>
@@ -114,7 +114,7 @@ const EditPreInspectionPage: React.FC<PropTypes> = observer(({ inspectionId = ''
             )}
           </>
         )}
-      </PreInspectionContext.Provider>
+      </InspectionContext.Provider>
     </EditPreInspectionView>
   )
 })

@@ -2,7 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
-import { usePreInspections } from '../inspection/inspectionUtils'
+import { useFetchInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -16,7 +16,7 @@ type PropTypes = {
 } & RouteComponentProps
 
 const PostInspectionsPage: React.FC<PropTypes> = observer((props) => {
-  let [{ operator, inspections }, loading, refetch] = usePreInspections()
+  let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Post)
 
   return (
     <Page>
@@ -24,8 +24,8 @@ const PostInspectionsPage: React.FC<PropTypes> = observer((props) => {
         loading={loading}
         onRefresh={refetch}
         headerButtons={
-          <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
-            <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
+          <Button onClick={() => navigateWithQueryString('post-inspection/edit')}>
+            <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi jälkitarkastus</span>
           </Button>
         }>
         Jälkitarkastukset

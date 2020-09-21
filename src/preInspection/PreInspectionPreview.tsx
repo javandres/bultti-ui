@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { TabChildProps } from '../common/components/Tabs'
 import PreInspectionMeta from './PreInspectionMeta'
-import { PreInspectionContext } from './PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { InspectionStatus } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
 import PreInspectionReports from './PreInspectionReports'
@@ -17,7 +17,7 @@ const PreviewMeta = styled(PreInspectionMeta)`
 export type PropTypes = {} & TabChildProps
 
 const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
-  let inspection = useContext(PreInspectionContext)
+  let inspection = useContext(InspectionContext)
 
   // Validate that the form has each dependent piece of data.
   let formCondition = useMemo(() => {

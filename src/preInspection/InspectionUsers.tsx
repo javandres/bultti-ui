@@ -6,7 +6,7 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { PreInspectionContext } from './PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { useMutationData } from '../util/useMutationData'
 import {
   inspectionUserRelationsQuery,
@@ -21,7 +21,7 @@ export type PropTypes = {}
 
 const InspectionUsers: React.FC<PropTypes> = observer(() => {
   var [user] = useStateValue('user')
-  var inspection = useContext(PreInspectionContext)
+  var inspection = useContext(InspectionContext)
 
   let { data: inspectionRelations, loading: relationsLoading, refetch } = useQueryData(
     inspectionUserRelationsQuery,

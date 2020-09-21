@@ -14,7 +14,7 @@ export type PropTypes = {
   onUpdateValue: (name: string) => (value: any) => void
 }
 
-const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEditable }) => {
+const PostInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEditable }) => {
   let inspection: null | Inspection = useContext(InspectionContext)
 
   return (
@@ -24,7 +24,7 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
       }>
       {!inspection ? (
         <MessageContainer>
-          <MessageView>Ennakkotarkastus ei valittu.</MessageView>
+          <MessageView>Jälkitarkastus ei valittu.</MessageView>
         </MessageContainer>
       ) : (
         <FlexRow>
@@ -74,4 +74,4 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
   )
 })
 
-export default PreInspectionConfig
+export default PostInspectionConfig

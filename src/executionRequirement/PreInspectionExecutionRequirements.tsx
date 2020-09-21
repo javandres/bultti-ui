@@ -7,7 +7,7 @@ import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import ExpandableSection, {
@@ -31,7 +31,7 @@ const AreaHeading = styled.h4`
 export type PropTypes = {}
 
 const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
-  const inspection = useContext(PreInspectionContext)
+  const inspection = useContext(InspectionContext)
   let { id } = inspection || {}
 
   let [

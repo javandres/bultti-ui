@@ -10,7 +10,7 @@ import { Button, ButtonStyle } from '../common/components/Button'
 import { DayType } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './blockDeparturesQuery'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { ErrorView, SuccessView } from '../common/components/Messages'
 
 const DepartureBlockGroupContainer = styled.div`
@@ -72,7 +72,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
   }) => {
     let [showBlocksLoading, setShowBlocksLoading] = useState(loading)
 
-    let inspection = useContext(PreInspectionContext)
+    let inspection = useContext(InspectionContext)
     let inspectionId = inspection?.id || ''
 
     useEffect(() => {

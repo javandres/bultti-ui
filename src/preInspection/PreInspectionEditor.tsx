@@ -10,7 +10,7 @@ import { useStateValue } from '../state/useAppState'
 import PreInspectionMeta from './PreInspectionMeta'
 import PreInspectionConfig from './PreInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
-import { PreInspectionContext } from './PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { navigateWithQueryString } from '../util/urlValue'
 import { SectionHeading } from '../common/components/Typography'
 import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
@@ -31,7 +31,7 @@ type PreInspectionProps = {
 
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
   ({ refetchData, loading }) => {
-    var inspection = useContext(PreInspectionContext)
+    var inspection = useContext(InspectionContext)
     var isEditable = inspection?.status === InspectionStatus.Draft
 
     var [season] = useStateValue('globalSeason')

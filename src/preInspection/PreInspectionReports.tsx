@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { PreInspectionContext } from './PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import styled from 'styled-components'
 import { useQueryData } from '../util/useQueryData'
 import { reportsQuery } from '../report/reportQueries'
@@ -44,7 +44,7 @@ const PreInspectionReports = observer(
       setReportsExpanded((currentVal) => !currentVal)
     }, [])
 
-    let inspection = useContext(PreInspectionContext)
+    let inspection = useContext(InspectionContext)
     let inspectionId = inspection?.id || ''
 
     let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {

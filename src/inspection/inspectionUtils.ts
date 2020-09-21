@@ -142,7 +142,8 @@ export function usePostInspectionReports(inspectionId: string = '') {
   )
 }
 
-export function usePreInspections(
+export function useFetchInspections(
+  inspectionType: InspectionType,
   operator?: Operator
 ): [{ inspections: Inspection[]; operator: Operator | undefined }, boolean, () => unknown] {
   var [globalOperator] = useStateValue('globalOperator')
@@ -156,7 +157,7 @@ export function usePreInspections(
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: queryOperator?.operatorId,
-        inspectionType: InspectionType.Pre,
+        inspectionType,
       },
     }
   )

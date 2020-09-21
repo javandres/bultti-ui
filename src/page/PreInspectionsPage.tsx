@@ -7,7 +7,7 @@ import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { usePreInspections } from '../inspection/inspectionUtils'
+import { useFetchInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { InspectionType } from '../schema-types'
 
@@ -16,7 +16,7 @@ type PropTypes = {
 } & RouteComponentProps
 
 const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, inspections }, loading, refetch] = usePreInspections()
+  let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Pre)
 
   return (
     <Page>

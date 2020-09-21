@@ -15,7 +15,7 @@ import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
 import { Heading } from '../common/components/Typography'
 
-const PreInspectionsListView = styled.div`
+const InspectionsListView = styled.div`
   min-height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
@@ -26,7 +26,7 @@ const HeaderRow = styled(FlexRow)`
   align-items: center;
 `
 
-const PreInspectionsWrapper = styled.div`
+const InspectionsWrapper = styled.div`
   border-left: 3px solid var(--blue);
   margin-left: 0.75rem;
   margin-top: 1.5rem;
@@ -158,21 +158,21 @@ const InspectionsList: React.FC<PropTypes> = ({
     'season.id'
   )
 
-  let editPreInspection = useEditInspection(inspectionType)
-  let createPreInspection = useCreateInspection(operator, season, inspectionType)
+  let editInspection = useEditInspection(inspectionType)
+  let createInspection = useCreateInspection(operator, season, inspectionType)
 
-  let onCreatePreInspection = useCallback(
+  let onCreateInspection = useCallback(
     async (seasonId) => {
       setSeason(seasonId)
-      let createdPreInspection = await createPreInspection(seasonId)
+      let createdInspection = await createInspection(seasonId)
 
-      if (createdPreInspection) {
-        editPreInspection(createdPreInspection)
+      if (createdInspection) {
+        editInspection(createdInspection)
       } else {
         onUpdate()
       }
     },
-    [createPreInspection, editPreInspection, onUpdate, setSeason]
+    [createInspection, editInspection, onUpdate, setSeason]
   )
 
   let currentSeason = useMemo(
@@ -188,7 +188,7 @@ const InspectionsList: React.FC<PropTypes> = ({
   )
 
   return (
-    <PreInspectionsListView>
+    <InspectionsListView>
       <LoadingDisplay loading={loading} />
       <HeaderRow>
         <Heading style={{ marginRight: '1rem', marginBottom: 0, marginTop: 0 }}>
@@ -196,7 +196,7 @@ const InspectionsList: React.FC<PropTypes> = ({
         </Heading>
       </HeaderRow>
 
-      <PreInspectionsWrapper>
+      <InspectionsWrapper>
         {seasons.map((season) => {
           let { id: seasonId } = season
           let inspections: Inspection[] = get(seasonGroups, seasonId, [])
@@ -225,7 +225,7 @@ const InspectionsList: React.FC<PropTypes> = ({
                   </TimelineMessage>
                   {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                     <TimelineActions>
-                      <Button onClick={() => onCreatePreInspection(seasonId)}>
+                      <Button onClick={() => onCreateInspection(seasonId)}>
                         Luo uusi ennakkotarkastus
                       </Button>
                     </TimelineActions>
@@ -257,8 +257,8 @@ const InspectionsList: React.FC<PropTypes> = ({
             </React.Fragment>
           )
         })}
-      </PreInspectionsWrapper>
-    </PreInspectionsListView>
+      </InspectionsWrapper>
+    </InspectionsListView>
   )
 }
 

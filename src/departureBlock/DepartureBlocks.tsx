@@ -9,7 +9,7 @@ import { useQueryData } from '../util/useQueryData'
 import { availableDayTypesQuery } from './blockDeparturesQuery'
 import { DayType } from '../schema-types'
 import { normalDayTypes } from '../constants'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { useRefetch } from '../util/useRefetch'
 import ExpandableSection, {
   HeaderMainHeading,
@@ -26,7 +26,7 @@ type PropTypes = {
 }
 
 const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate }) => {
-  const inspection = useContext(PreInspectionContext)
+  const inspection = useContext(InspectionContext)
   const inspectionId = inspection?.id || ''
 
   // Create day type groups with the special hook. Day type groups are departure blocks grouped by dayType.

@@ -2,7 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import PreInspectionReports from '../preInspection/PreInspectionReports'
 import { useInspectionById } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
@@ -21,9 +21,9 @@ const PreInspectionReportsPage: React.FC<PropTypes> = observer(({ inspectionId }
       <PageTitle loading={inspectionLoading} onRefresh={refetch}>
         Ennakkotarkastuksen raportit
       </PageTitle>
-      <PreInspectionContext.Provider value={inspection}>
+      <InspectionContext.Provider value={inspection}>
         <PreInspectionReports />
-      </PreInspectionContext.Provider>
+      </InspectionContext.Provider>
     </Page>
   )
 })

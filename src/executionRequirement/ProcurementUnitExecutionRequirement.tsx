@@ -12,7 +12,7 @@ import {
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
-import { PreInspectionContext } from '../preInspection/PreInspectionContext'
+import { InspectionContext } from '../inspection/InspectionContext'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'
 import {
@@ -40,7 +40,7 @@ export type PropTypes = {
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
   ({ procurementUnit, isEditable, onUpdate }) => {
-    let inspection = useContext(PreInspectionContext)
+    let inspection = useContext(InspectionContext)
 
     let [
       fetchRequirements,
