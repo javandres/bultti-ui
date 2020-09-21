@@ -4,21 +4,20 @@ import { observer } from 'mobx-react-lite'
 import { RouteComponentProps, Router } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
-import PreInspectionsPage from './page/PreInspectionsPage'
-import PostInspectionsPage from './page/PostInspectionsPage'
-import PreInspectionReportsPage from './page/PreInspectionReportsPage'
-import PostInspectionReportsPage from './page/PostInspectionReportsPage'
+import InspectionsPage from './page/InspectionsPage'
+import InspectionReportsPage from './page/InspectionReportsPage'
 import AppFrame from './common/components/AppFrame'
-import SelectPreInspectionPage from './page/SelectPreInspectionPage'
+import SelectInspectionPage from './page/SelectInspectionPage'
 import ProcurementUnitsPage from './page/ProcurementUnitsPage'
-import EditPreInspectionPage from './page/EditPreInspectionPage'
-import PreInspectionReportIndexPage from './page/PreInspectionReportIndexPage'
+import EditInspectionPage from './page/EditInspectionPage'
+import InspectionReportIndexPage from './page/InspectionReportIndexPage'
 import UserPage from './page/UserPage'
 import ReportsPage from './page/ReportsPage'
 import { Page } from './common/components/common'
 import OperatorContractsListPage from './page/OperatorContractsListPage'
 import EditContractPage from './page/EditContractPage'
 import { PageTitle } from './common/components/PageTitle'
+import { InspectionType } from './schema-types'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -43,13 +42,40 @@ const App: React.FC = observer(() => {
       <Router>
         <Index path="/" />
         <ProcurementUnitsPage path="procurement-units" />
-        <PreInspectionsPage path="pre-inspection" />
-        <SelectPreInspectionPage path="pre-inspection/edit" />
-        <EditPreInspectionPage path="pre-inspection/edit/:inspectionId/*" />
-        <PreInspectionReportsPage path="pre-inspection/reports/:inspectionId" />
-        <PreInspectionReportIndexPage path="pre-inspection/reports" />
-        <PostInspectionsPage path="post-inspection" />
-        <PostInspectionReportsPage path="post-inspection/reports" />
+
+        <InspectionsPage path="pre-inspection" inspectionType={InspectionType.Pre} />
+        <SelectInspectionPage path="pre-inspection/edit" inspectionType={InspectionType.Pre} />
+        <EditInspectionPage
+          path="pre-inspection/edit/:inspectionId/*"
+          inspectionType={InspectionType.Pre}
+        />
+        <InspectionReportsPage
+          path="pre-inspection/reports/:inspectionId"
+          inspectionType={InspectionType.Pre}
+        />
+        <InspectionReportIndexPage
+          path="pre-inspection/reports"
+          inspectionType={InspectionType.Pre}
+        />
+
+        <InspectionsPage path="post-inspection" inspectionType={InspectionType.Post} />
+        <SelectInspectionPage
+          path="post-inspection/edit"
+          inspectionType={InspectionType.Post}
+        />
+        <EditInspectionPage
+          path="post-inspection/edit/:inspectionId/*"
+          inspectionType={InspectionType.Post}
+        />
+        <InspectionReportsPage
+          path="post-inspection/reports/:inspectionId"
+          inspectionType={InspectionType.Post}
+        />
+        <InspectionReportIndexPage
+          path="post-inspection/reports"
+          inspectionType={InspectionType.Post}
+        />
+
         <UserPage path="user" />
         <OperatorContractsListPage path="contract" />
         <EditContractPage path="contract/:contractId" />

@@ -2,34 +2,28 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'reac
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InspectionInput, InspectionStatus } from '../schema-types'
-import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import { useMutationData } from '../util/useMutationData'
-import { updateInspectionMutation } from '../inspection/inspectionQueries'
-import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { useStateValue } from '../state/useAppState'
 import InspectionMeta from '../inspection/InspectionMeta'
-import PreInspectionConfig from './PreInspectionConfig'
+import PostInspectionConfig from './PostInspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { navigateWithQueryString } from '../util/urlValue'
-import { SectionHeading } from '../common/components/Typography'
-import PreInspectionExecutionRequirements from '../executionRequirement/PreInspectionExecutionRequirements'
-import { PageSection } from '../common/components/common'
-import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from '../inspection/InspectionUsers'
+import { updateInspectionMutation } from '../inspection/inspectionQueries'
 
-const EditPreInspectionView = styled.div`
+const EditPostInspectionView = styled.div`
   width: 100%;
   padding: 0 0.75rem;
 `
 
-type PreInspectionProps = {
+type PostInspectionProps = {
   refetchData: () => unknown
   loading?: boolean
 } & TabChildProps
 
-const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
+const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
   ({ refetchData, loading }) => {
     var inspection = useContext(InspectionContext)
     var isEditable = inspection?.status === InspectionStatus.Draft
@@ -39,14 +33,14 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     let isUpdating = useRef(false)
 
-    let [updatePreInspection, { loading: updateLoading }] = useMutationData(
+    let [updatePostInspection, { loading: updateLoading }] = useMutationData(
       updateInspectionMutation
     )
 
     let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
-    // Update the pre-inspection on changes
-    var updatePreInspectionValue = useCallback(
+    // Update the post-inspection on changes
+    var updatePostInspectionValue = useCallback(
       async (name: keyof InspectionInput, value: string) => {
         if (isEditable && !isUpdating.current && inspection && !loading) {
           isUpdating.current = true
@@ -54,7 +48,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           var inspectionInput: InspectionInput = {}
           inspectionInput[name] = value
 
-          await updatePreInspection({
+          await updatePostInspection({
             variables: {
               inspectionId: inspection.id,
               inspectionInput,
@@ -65,12 +59,12 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           await refetchData()
         }
       },
-      [isUpdating.current, inspection, loading, updatePreInspection, refetchData]
+      [isUpdating.current, inspection, loading, updatePostInspection, refetchData]
     )
 
     let createUpdateCallback = useCallback(
-      (name) => (value) => (isEditable ? updatePreInspectionValue(name, value) : () => {}),
-      [updatePreInspectionValue]
+      (name) => (value) => (isEditable ? updatePostInspectionValue(name, value) : () => {}),
+      [updatePostInspectionValue]
     )
 
     useEffect(() => {
@@ -79,34 +73,26 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
       }
 
       if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
-        navigateWithQueryString(`/pre-inspection/edit`)
+        navigateWithQueryString(`/post-inspection/edit`)
       }
     }, [inspection, operator, season])
 
     return (
-      <EditPreInspectionView>
+      <EditPostInspectionView>
         <LoadingDisplay loading={isLoading} />
         {!!inspection && (
           <>
             <InspectionMeta inspection={inspection} />
             <InspectionUsers />
-            <PreInspectionConfig
+            <PostInspectionConfig
               isEditable={isEditable}
               onUpdateValue={createUpdateCallback}
             />
-            <DepartureBlocks onUpdate={refetchData} isEditable={isEditable} />
-            <PreInspectionExecutionRequirements />
-            <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-            <ProcurementUnits onUpdate={refetchData} requirementsEditable={isEditable} />
-
-            <PageSection>
-              <PreInspectionDevTools onUpdate={refetchData} inspection={inspection} />
-            </PageSection>
           </>
         )}
-      </EditPreInspectionView>
+      </EditPostInspectionView>
     )
   }
 )
 
-export default PreInspectionEditor
+export default PostInspectionEditor

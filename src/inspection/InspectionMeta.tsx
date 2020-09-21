@@ -1,12 +1,12 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { format, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../constants'
-import { InspectionContext } from '../inspection/InspectionContext'
 import styled from 'styled-components'
 import { MetaDisplay, MetaItem, MetaLabel, MetaValue } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getAllUpdatedBy, getCreatedBy } from '../inspection/inspectionUtils'
+import { getAllUpdatedBy, getCreatedBy } from './inspectionUtils'
+import { Inspection } from '../schema-types'
 
 const PreInspectionMetaView = styled.div`
   margin-bottom: 2.5rem;
@@ -18,21 +18,16 @@ const MetaHeading = styled(InputLabel).attrs(() => ({ theme: 'light' }))`
 
 type PropTypes = {
   className?: string
+  inspection: Inspection
 }
 
-const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
-  const inspection = useContext(InspectionContext)
-
-  if (!inspection) {
-    return null
-  }
-
+const InspectionMeta: React.FC<PropTypes> = observer(({ className, inspection }) => {
   let createdBy = getCreatedBy(inspection)
   let modifiedBy = getAllUpdatedBy(inspection)[0] || createdBy
 
   return (
     <PreInspectionMetaView className={className}>
-      <MetaHeading>Ennakkotarkastuksen tiedot</MetaHeading>
+      <MetaHeading>Tarkastuksen tiedot</MetaHeading>
       <MetaDisplay>
         <MetaItem>
           <MetaLabel>Perustettu</MetaLabel>
@@ -63,4 +58,4 @@ const PreInspectionMeta: React.FC<PropTypes> = observer(({ className }) => {
   )
 })
 
-export default PreInspectionMeta
+export default InspectionMeta

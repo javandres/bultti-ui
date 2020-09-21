@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { useFetchInspections, usePreInspectionReports } from '../inspection/inspectionUtils'
+import { useFetchInspections, useInspectionReports } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
@@ -103,9 +103,11 @@ const InspectionVersion = styled.div`
 
 const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = {
+  inspectionType: InspectionType
+} & RouteComponentProps
 
-const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
+const InspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
   let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Pre)
 
   let [globalSeason] = useStateValue('globalSeason')
@@ -119,7 +121,7 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
     setSelectedSeason(globalSeason)
   }, [globalSeason])
 
-  let openReports = usePreInspectionReports()
+  let openReports = useInspectionReports()
 
   let inspectionsList = useMemo(() => {
     let filteredList = inspections.filter((p) => {
@@ -197,7 +199,7 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
             {inspectionsList.map((inspection) => (
               <PreInspectionListItem
                 key={inspection.id}
-                onClick={() => openReports(inspection.id)}>
+                onClick={() => openReports(inspection.id, InspectionType.Pre)}>
                 <InspectionVersion>{inspection.version}</InspectionVersion>
                 <PreInspectionTitle>
                   {inspection.operator.operatorName} / {inspection.seasonId}
@@ -218,4 +220,4 @@ const PreInspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
   )
 })
 
-export default PreInspectionReportIndexPage
+export default InspectionReportIndexPage

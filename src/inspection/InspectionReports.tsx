@@ -1,6 +1,5 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { InspectionContext } from '../inspection/InspectionContext'
 import styled from 'styled-components'
 import { useQueryData } from '../util/useQueryData'
 import { reportsQuery } from '../report/reportQueries'
@@ -8,19 +7,20 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../report/ReportListItem'
 import Report from '../report/Report'
 import { TextButton } from '../common/components/Button'
-import InspectionItem from '../inspection/InspectionItem'
+import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
-import { InspectionType } from '../schema-types'
+import { Inspection, InspectionType } from '../schema-types'
+import { getInspectionTypeStrings } from './inspectionUtils'
 
-const PreInspectionReportsView = styled.div`
+const InspectionReportsView = styled.div`
   height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
   position: relative;
 `
 
-const ReportPreInspectionView = styled(InspectionItem)`
+const ReportInspectionView = styled(InspectionItem)`
   margin-bottom: 2rem;
   margin-right: 0;
   border: 0;
@@ -34,37 +34,44 @@ const ReportPreInspectionView = styled(InspectionItem)`
 export type PropTypes = {
   showInfo?: boolean
   showItemActions?: boolean
+  inspectionType: InspectionType
+  inspection: Inspection
 }
 
-const PreInspectionReports = observer(
-  ({ showInfo = true, showItemActions = true }: PropTypes) => {
+const InspectionReports = observer(
+  ({ showInfo = true, showItemActions = true, inspectionType, inspection }: PropTypes) => {
     const [reportsExpanded, setReportsExpanded] = useState(false)
 
     const toggleReportsExpanded = useCallback(() => {
       setReportsExpanded((currentVal) => !currentVal)
     }, [])
 
-    let inspection = useContext(InspectionContext)
     let inspectionId = inspection?.id || ''
 
     let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {
       variables: {
-        inspectionType: InspectionType.Pre,
+        inspectionType: inspectionType,
       },
     })
 
     let reports = useMemo(() => reportsData || [], [reportsData])
 
+    let typeStrings = getInspectionTypeStrings(inspectionType)
+
     return (
-      <PreInspectionReportsView>
-        {!inspection && <ErrorView>Ennakkotarkastus ei löydetty.</ErrorView>}
+      <InspectionReportsView>
+        {!inspection && <ErrorView>{typeStrings.prefix}tarkastus ei löydetty.</ErrorView>}
         {!!inspection && !reportsData && !reportsLoading && (
           <MessageView>Ei raportteja...</MessageView>
         )}
         {showInfo && inspection && (
           <>
-            <SubHeading>Ennakkotarkastuksen tiedot</SubHeading>
-            <ReportPreInspectionView inspection={inspection} showActions={false} />
+            <SubHeading>{typeStrings.prefix}tarkastuksen tiedot</SubHeading>
+            <ReportInspectionView
+              inspection={inspection}
+              inspectionType={inspectionType}
+              showActions={false}
+            />
           </>
         )}
         {reports.length !== 0 && (
@@ -77,20 +84,20 @@ const PreInspectionReports = observer(
           reports.map((reportItem) => (
             <ReportListItem
               key={reportItem.name}
-              inspectionType={showItemActions ? InspectionType.Pre : undefined}
+              inspectionType={showItemActions ? inspectionType : undefined}
               inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportItem}
               isExpanded={reportsExpanded}>
               <Report
                 reportName={reportItem.name}
                 inspectionId={inspectionId}
-                inspectionType={InspectionType.Pre}
+                inspectionType={inspectionType}
               />
             </ReportListItem>
           ))}
-      </PreInspectionReportsView>
+      </InspectionReportsView>
     )
   }
 )
 
-export default PreInspectionReports
+export default InspectionReports

@@ -7,16 +7,19 @@ import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { useFetchInspections } from '../inspection/inspectionUtils'
+import { getInspectionTypeStrings, useFetchInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { InspectionType } from '../schema-types'
 
 type PropTypes = {
   children?: React.ReactNode
+  inspectionType: InspectionType
 } & RouteComponentProps
 
-const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Pre)
+const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
+  let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)
+
+  let typeStrings = getInspectionTypeStrings(inspectionType)
 
   return (
     <Page>
@@ -24,11 +27,13 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
         loading={loading}
         onRefresh={refetch}
         headerButtons={
-          <Button onClick={() => navigateWithQueryString('pre-inspection/edit')}>
-            <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
+          <Button
+            onClick={() => navigateWithQueryString(`${typeStrings.path}-inspection/edit`)}>
+            <Plus fill="white" width="1rem" height="1rem" />{' '}
+            <span>Uusi {typeStrings.prefix}tarkastus</span>
           </Button>
         }>
-        Ennakkotarkastukset
+        {typeStrings.prefix}tarkastukset
       </PageTitle>
       {!operator ? (
         <MessageContainer>
@@ -38,7 +43,7 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
         inspections.length !== 0 && (
           <InspectionsList
             inspections={inspections}
-            inspectionType={InspectionType.Pre}
+            inspectionType={inspectionType}
             loading={loading}
             onUpdate={refetch}
           />
@@ -48,4 +53,4 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
   )
 })
 
-export default PreInspectionsPage
+export default InspectionsPage

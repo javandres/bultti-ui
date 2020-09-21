@@ -16,12 +16,12 @@ import {
   inspectionQuery,
   inspectionsByOperatorQuery,
   removeInspectionMutation,
-} from '../preInspection/preInspectionQueries'
+} from './inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
-import { orderBy } from 'lodash'
+import { lowerCase, orderBy } from 'lodash'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -109,36 +109,25 @@ export function useRemoveInspection(
 export function useEditInspection(inspectionType: InspectionType = InspectionType.Pre) {
   return useCallback(
     (inspection?: Inspection) => {
-      let pathSegment =
-        inspectionType === InspectionType.Pre ? 'pre-inspection' : 'post-inspection'
+      let pathSegment = inspectionType === InspectionType.Pre ? 'pre' : 'post'
 
       if (inspection) {
-        return navigateWithQueryString(`/${pathSegment}/edit/${inspection.id}`)
+        return navigateWithQueryString(`/${pathSegment}-inspection/edit/${inspection.id}`)
       }
 
-      return navigateWithQueryString(`/${pathSegment}/edit`, { replace: true })
+      return navigateWithQueryString(`/${pathSegment}-inspection/edit`, { replace: true })
     },
     [inspectionType]
   )
 }
 
-export function usePreInspectionReports(inspectionId: string = '') {
+export function useInspectionReports() {
   return useCallback(
-    (altInspectionId?: string) => {
-      let useId = inspectionId || altInspectionId || ''
-      return navigateWithQueryString(`/pre-inspection/reports/${useId}`)
+    (inspectionId: string = '', inspectionType: InspectionType = InspectionType.Pre) => {
+      let inspectionPath = inspectionType === InspectionType.Pre ? 'pre' : 'post'
+      return navigateWithQueryString(`/${inspectionPath}-inspection/reports/${inspectionId}`)
     },
-    [inspectionId]
-  )
-}
-
-export function usePostInspectionReports(inspectionId: string = '') {
-  return useCallback(
-    (altInspectionId?: string) => {
-      let useId = inspectionId || altInspectionId || ''
-      return navigateWithQueryString(`/post-inspection/reports/${useId}`)
-    },
-    [inspectionId]
+    []
   )
 }
 
@@ -221,4 +210,15 @@ export function getInspectionStatusColor(inspection: Inspection) {
   }
 
   return 'var(--light-grey)'
+}
+
+export function getInspectionTypeStrings(inspectionType: InspectionType) {
+  let inspectionTypePrefix = inspectionType === InspectionType.Pre ? 'Ennakko' : 'Jälki'
+  let inspectionTypePath = inspectionType === InspectionType.Pre ? 'pre' : 'post'
+
+  return {
+    prefix: inspectionTypePrefix,
+    prefixLC: lowerCase(inspectionTypePrefix),
+    path: inspectionTypePath,
+  }
 }

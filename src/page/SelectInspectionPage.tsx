@@ -4,14 +4,17 @@ import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionType } from '../schema-types'
-import SelectPreInspection from '../preInspection/SelectPreInspection'
-import { currentPreInspectionsByOperatorAndSeasonQuery } from '../preInspection/preInspectionQueries'
+import SelectInspection from '../inspection/SelectInspection'
+import { currentPreInspectionsByOperatorAndSeasonQuery } from '../inspection/inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { PageTitle } from '../common/components/PageTitle'
+import { getInspectionTypeStrings } from '../inspection/inspectionUtils'
 
-export type PropTypes = {} & RouteComponentProps
+export type PropTypes = {
+  inspectionType: InspectionType
+} & RouteComponentProps
 
-const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
+const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
@@ -28,18 +31,21 @@ const SelectPreInspectionPage: React.FC<PropTypes> = observer(() => {
     }
   )
 
+  let typeStrings = getInspectionTypeStrings(inspectionType)
+
   return (
     <Page>
       <PageTitle loading={loading} onRefresh={refetch}>
-        Valitse ennakkotarkastus muokattavaksi
+        Valitse {typeStrings.prefixLC}tarkastus muokattavaksi
       </PageTitle>
-      <SelectPreInspection
+      <SelectInspection
         inspections={inspections}
-        refetchPreInspections={refetch}
+        inspectionType={inspectionType}
+        refetchInspections={refetch}
         loading={loading}
       />
     </Page>
   )
 })
 
-export default SelectPreInspectionPage
+export default SelectInspectionPage

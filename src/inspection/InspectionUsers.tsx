@@ -6,12 +6,12 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { InspectionContext } from '../inspection/InspectionContext'
+import { InspectionContext } from './InspectionContext'
 import { useMutationData } from '../util/useMutationData'
 import {
   inspectionUserRelationsQuery,
   toggleUserInspectionSubscription,
-} from './preInspectionQueries'
+} from './inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'

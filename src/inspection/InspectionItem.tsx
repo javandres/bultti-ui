@@ -1,13 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { getCreatedBy } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
-import InspectionActions from '../preInspection/InspectionActions'
+import InspectionActions from './InspectionActions'
 
 const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -69,6 +69,7 @@ const itemObjectDisplayPaths = {
 
 export type InspectionItemProps = {
   inspection: Inspection
+  inspectionType: InspectionType
   isCurrentlyInEffect?: boolean
   showActions?: boolean
   className?: string
@@ -102,6 +103,7 @@ const renderValue = (key, val) => {
 
 const InspectionItem: React.FC<InspectionItemProps> = ({
   inspection,
+  inspectionType,
   className,
   isCurrentlyInEffect,
   onInspectionUpdated = () => {},
@@ -120,8 +122,12 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
         objectPaths={itemObjectDisplayPaths}
         renderValue={renderValue}
       />
-      {showActions && (
-        <InspectionActionsRow inspection={inspection} onRefresh={onInspectionUpdated} />
+      {showActions && inspection && (
+        <InspectionActionsRow
+          inspection={inspection}
+          inspectionType={inspectionType}
+          onRefresh={onInspectionUpdated}
+        />
       )}
     </InspectionItemView>
   )

@@ -5,15 +5,15 @@ import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import {
   useEditInspection,
-  usePreInspectionReports,
+  useInspectionReports,
   useRemoveInspection,
-} from '../inspection/inspectionUtils'
+} from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
   publishInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
-} from './preInspectionQueries'
+} from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
 import { requireAdminUser, requireOperatorUser } from '../util/userRoles'
@@ -44,6 +44,7 @@ type Actions = 'publish' | 'reject' | 'submit' | 'remove'
 
 export type PropTypes = {
   inspection: Inspection
+  inspectionType: InspectionType
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
@@ -51,14 +52,21 @@ export type PropTypes = {
 }
 
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
+  ({
+    inspection,
+    inspectionType,
+    onRefresh,
+    className,
+    style,
+    disabledActions = [],
+  }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [user] = useStateValue('user')
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
-    var goToInspectionEdit = useEditInspection(InspectionType.Pre)
-    var goToPreInspectionReports = usePreInspectionReports()
+    var goToInspectionEdit = useEditInspection(inspectionType)
+    var goToInspectionReports = useInspectionReports()
 
     var onEditInspection = useCallback(
       (inspection: Inspection) => {
@@ -74,15 +82,15 @@ const InspectionActions = observer(
 
     var [removePreInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
 
-    var [submitPreInspection, { loading: submitLoading }] = useMutationData(
+    var [submitInspection, { loading: submitLoading }] = useMutationData(
       submitInspectionMutation
     )
 
-    var [publishPreInspection, { loading: publishLoading }] = useMutationData(
+    var [publishInspection, { loading: publishLoading }] = useMutationData(
       publishInspectionMutation
     )
 
-    var [rejectPreInspection, { loading: rejectLoading }] = useMutationData(
+    var [rejectInspection, { loading: rejectLoading }] = useMutationData(
       rejectInspectionMutation
     )
 
@@ -91,7 +99,7 @@ const InspectionActions = observer(
         return
       }
 
-      await submitPreInspection({
+      await submitInspection({
         variables: {
           inspectionId: inspection.id,
         },
@@ -105,7 +113,7 @@ const InspectionActions = observer(
         return
       }
 
-      await publishPreInspection({
+      await publishInspection({
         variables: {
           inspectionId: inspection.id,
         },
@@ -119,7 +127,7 @@ const InspectionActions = observer(
         return
       }
 
-      await rejectPreInspection({
+      await rejectInspection({
         variables: {
           inspectionId: inspection.id,
         },
@@ -143,7 +151,7 @@ const InspectionActions = observer(
         )}
         {inspection.status !== InspectionStatus.Draft && (
           <Button
-            onClick={() => goToPreInspectionReports(inspection.id)}
+            onClick={() => goToInspectionReports(inspection.id, inspectionType)}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.MEDIUM}>
             Raportit

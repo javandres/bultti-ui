@@ -245,6 +245,7 @@ const InspectionsList: React.FC<PropTypes> = ({
                     )}
                     <TimelineInspectionItem
                       inspection={inspection}
+                      inspectionType={inspectionType}
                       onInspectionUpdated={onUpdate}
                       isCurrentlyInEffect={
                         inspection.version === maxProductionVersion &&

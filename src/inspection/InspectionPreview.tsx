@@ -1,24 +1,24 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { TabChildProps } from '../common/components/Tabs'
-import PreInspectionMeta from './PreInspectionMeta'
-import { InspectionContext } from '../inspection/InspectionContext'
-import { InspectionStatus } from '../schema-types'
+import InspectionMeta from './InspectionMeta'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
-import PreInspectionReports from './PreInspectionReports'
+import InspectionReports from './InspectionReports'
 
-const PreviewPreInspectionView = styled.div``
+const PreviewInspectionView = styled.div``
 
-const PreviewMeta = styled(PreInspectionMeta)`
+const PreviewMeta = styled(InspectionMeta)`
   margin-left: 1rem;
 `
 
-export type PropTypes = {} & TabChildProps
+export type PropTypes = {
+  inspectionType: InspectionType
+  inspection: Inspection
+} & TabChildProps
 
-const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
-  let inspection = useContext(InspectionContext)
-
+const InspectionPreview: React.FC<PropTypes> = observer(({ inspectionType, inspection }) => {
   // Validate that the form has each dependent piece of data.
   let formCondition = useMemo(() => {
     return {
@@ -36,7 +36,7 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
     .map(([key]) => key)
 
   return (
-    <PreviewPreInspectionView>
+    <PreviewInspectionView>
       {activeBlockers.length !== 0 && (
         <MessageContainer style={{ marginBottom: '1rem' }}>
           {activeBlockers.map((blockerName) => (
@@ -44,10 +44,15 @@ const PreInspectionPreview: React.FC<PropTypes> = observer(() => {
           ))}
         </MessageContainer>
       )}
-      <PreviewMeta />
-      <PreInspectionReports showInfo={false} showItemActions={false} />
-    </PreviewPreInspectionView>
+      {inspection && <PreviewMeta inspection={inspection} />}
+      <InspectionReports
+        showInfo={false}
+        showItemActions={false}
+        inspectionType={inspectionType}
+        inspection={inspection}
+      />
+    </PreviewInspectionView>
   )
 })
 
-export default PreInspectionPreview
+export default InspectionPreview

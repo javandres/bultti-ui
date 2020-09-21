@@ -6,16 +6,20 @@ import { orderBy } from 'lodash'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
-import { useCreateInspection, useEditInspection } from '../inspection/inspectionUtils'
+import {
+  getInspectionTypeStrings,
+  useCreateInspection,
+  useEditInspection,
+} from './inspectionUtils'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import InspectionActions from './InspectionActions'
 
-const SelectPreInspectionView = styled.div``
+const SelectInspectionView = styled.div``
 
-const PreInspectionItems = styled.div`
+const InspectionItems = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
@@ -35,7 +39,7 @@ const ListHeading = styled.h4`
 
 type StatusProps = { status?: InspectionStatus | 'new' }
 
-const PreInspectionItem = styled.div<StatusProps>`
+const InspectionItem = styled.div<StatusProps>`
   padding: 0.75rem 1rem 0;
   border-radius: 5px;
   margin-bottom: 1rem;
@@ -137,7 +141,8 @@ const DateTitle = styled.h6`
 
 export type PropTypes = {
   inspections?: Inspection[]
-  refetchPreInspections: () => unknown
+  inspectionType: InspectionType
+  refetchInspections: () => unknown
   loading?: boolean
 }
 
@@ -149,28 +154,30 @@ export type PropTypes = {
  * - Delete the current draft
  */
 
-const SelectPreInspection: React.FC<PropTypes> = observer(
-  ({ inspections = [], refetchPreInspections, loading = false }) => {
+const SelectInspection: React.FC<PropTypes> = observer(
+  ({ inspections = [], inspectionType, refetchInspections, loading = false }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
 
-    var editInspection = useEditInspection(InspectionType.Pre)
+    var editInspection = useEditInspection(inspectionType)
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
-    let createPreInspection = useCreateInspection(operator, season, InspectionType.Pre)
+    let createInspection = useCreateInspection(operator, season, inspectionType)
 
-    let onCreatePreInspection = useCallback(async () => {
-      let createdPreInspection = await createPreInspection()
+    let onCreateInspection = useCallback(async () => {
+      let createdInspection = await createInspection()
 
-      if (createdPreInspection) {
-        editInspection(createdPreInspection)
+      if (createdInspection) {
+        editInspection(createdInspection)
       }
 
-      await refetchPreInspections()
-    }, [createPreInspection, refetchPreInspections, editInspection])
+      await refetchInspections()
+    }, [createInspection, refetchInspections, editInspection])
+
+    let typeStrings = getInspectionTypeStrings(inspectionType)
 
     return (
-      <SelectPreInspectionView>
+      <SelectInspectionView>
         {!operator || !season ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
@@ -182,30 +189,31 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                 {operator.operatorName} / {typeof season === 'string' ? season : season?.id}
               </ListHeading>
             </HeaderRow>
-            <PreInspectionItems>
+            <InspectionItems>
               {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-                <PreInspectionItem key="new" status="new">
+                <InspectionItem key="new" status="new">
                   <ItemContent style={{ marginTop: 0 }}>
-                    Tällä hetkellä ei ole keskeneräisiä ennakkotarkastuksia, joten voit luoda
-                    uuden.
+                    Tällä hetkellä ei ole keskeneräisiä {typeStrings.prefixLC}tarkastuksia,
+                    joten voit luoda uuden.
                   </ItemContent>
                   {inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                     <ItemContent>
-                      Uusi ennakkotarkastus korvaa nykyisen tuotannossa-olevan tarkastuksen.
+                      Uusi {typeStrings.prefixLC}tarkastus korvaa nykyisen tuotannossa-olevan
+                      tarkastuksen.
                     </ItemContent>
                   )}
                   <ButtonRow>
                     <Button
                       buttonStyle={ButtonStyle.NORMAL}
                       size={ButtonSize.MEDIUM}
-                      onClick={onCreatePreInspection}>
-                      Uusi ennakkotarkastus
+                      onClick={onCreateInspection}>
+                      Uusi {typeStrings.prefixLC}tarkastus
                     </Button>
                   </ButtonRow>
-                </PreInspectionItem>
+                </InspectionItem>
               )}
               {orderBy(inspections, 'version', 'desc').map((inspection) => (
-                <PreInspectionItem key={inspection.id} status={inspection.status}>
+                <InspectionItem key={inspection.id} status={inspection.status}>
                   <ItemContent>
                     <InspectionTitle>
                       {inspection.operator.operatorName}, {inspection.season.id}
@@ -229,17 +237,18 @@ const SelectPreInspection: React.FC<PropTypes> = observer(
                     </InspectionPeriodDisplay>
                   </ItemContent>
                   <InspectionActions
-                    onRefresh={refetchPreInspections}
+                    inspectionType={inspectionType}
+                    onRefresh={refetchInspections}
                     inspection={inspection}
                   />
-                </PreInspectionItem>
+                </InspectionItem>
               ))}
-            </PreInspectionItems>
+            </InspectionItems>
           </>
         )}
-      </SelectPreInspectionView>
+      </SelectInspectionView>
     )
   }
 )
 
-export default SelectPreInspection
+export default SelectInspection
