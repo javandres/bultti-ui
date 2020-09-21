@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { get, groupBy, orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
-import PreInspectionItem from './PreInspectionItem'
+import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { useCreateInspection, useEditInspection } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
@@ -91,7 +91,9 @@ const TimelineCurrentTime = styled(TimelineHeading)`
   }
 `
 
-const TimelinePreInspectionItem = styled(PreInspectionItem)<{ isCurrentlyInEffect?: boolean }>`
+const TimelineInspectionItem = styled(InspectionItem)<{
+  isCurrentlyInEffect?: boolean
+}>`
   margin-right: 0;
   margin-left: 1.5rem;
   margin-bottom: 2rem;
@@ -132,14 +134,16 @@ const TimelinePreInspectionItem = styled(PreInspectionItem)<{ isCurrentlyInEffec
 
 export type PropTypes = {
   inspections: Inspection[]
+  inspectionType: InspectionType
   loading?: boolean
   onUpdate: () => unknown
 }
 
 let currentDate = format(new Date(), DATE_FORMAT)
 
-const PreInspectionsList: React.FC<PropTypes> = ({
+const InspectionsList: React.FC<PropTypes> = ({
   inspections,
+  inspectionType,
   onUpdate,
   loading = false,
 }) => {
@@ -154,8 +158,8 @@ const PreInspectionsList: React.FC<PropTypes> = ({
     'season.id'
   )
 
-  let editPreInspection = useEditInspection(InspectionType.Pre)
-  let createPreInspection = useCreateInspection(operator, season, InspectionType.Pre)
+  let editPreInspection = useEditInspection(inspectionType)
+  let createPreInspection = useCreateInspection(operator, season, inspectionType)
 
   let onCreatePreInspection = useCallback(
     async (seasonId) => {
@@ -239,9 +243,9 @@ const PreInspectionsList: React.FC<PropTypes> = ({
                     {renderCurrentTemporalLocation && (
                       <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
                     )}
-                    <TimelinePreInspectionItem
+                    <TimelineInspectionItem
                       inspection={inspection}
-                      onPreInspectionUpdated={onUpdate}
+                      onInspectionUpdated={onUpdate}
                       isCurrentlyInEffect={
                         inspection.version === maxProductionVersion &&
                         inspection.status === InspectionStatus.InProduction
@@ -258,4 +262,4 @@ const PreInspectionsList: React.FC<PropTypes> = ({
   )
 }
 
-export default PreInspectionsList
+export default InspectionsList

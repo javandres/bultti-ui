@@ -5,7 +5,7 @@ import { RouteComponentProps, Router } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import PreInspectionsPage from './page/PreInspectionsPage'
-import PostInspection from './page/PostInspection'
+import PostInspectionsPage from './page/PostInspectionsPage'
 import PreInspectionReportsPage from './page/PreInspectionReportsPage'
 import PostInspectionReportsPage from './page/PostInspectionReportsPage'
 import AppFrame from './common/components/AppFrame'
@@ -48,7 +48,7 @@ const App: React.FC = observer(() => {
         <EditPreInspectionPage path="pre-inspection/edit/:inspectionId/*" />
         <PreInspectionReportsPage path="pre-inspection/reports/:inspectionId" />
         <PreInspectionReportIndexPage path="pre-inspection/reports" />
-        <PostInspection path="post-inspection" />
+        <PostInspectionsPage path="post-inspection" />
         <PostInspectionReportsPage path="post-inspection/reports" />
         <UserPage path="user" />
         <OperatorContractsListPage path="contract" />

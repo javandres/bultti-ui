@@ -8,7 +8,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../report/ReportListItem'
 import Report from '../report/Report'
 import { TextButton } from '../common/components/Button'
-import PreInspectionItem from './PreInspectionItem'
+import InspectionItem from '../inspection/InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { InspectionType } from '../schema-types'
@@ -20,7 +20,7 @@ const PreInspectionReportsView = styled.div`
   position: relative;
 `
 
-const ReportPreInspectionView = styled(PreInspectionItem)`
+const ReportPreInspectionView = styled(InspectionItem)`
   margin-bottom: 2rem;
   margin-right: 0;
   border: 0;

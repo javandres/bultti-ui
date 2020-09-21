@@ -7,9 +7,9 @@ import ValueDisplay, {
 } from '../common/components/ValueDisplay'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
-import InspectionActions from './InspectionActions'
+import InspectionActions from '../preInspection/InspectionActions'
 
-const PreInspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
+const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
   border-radius: 0.5rem;
   margin-bottom: 1rem;
@@ -72,7 +72,7 @@ export type InspectionItemProps = {
   isCurrentlyInEffect?: boolean
   showActions?: boolean
   className?: string
-  onPreInspectionUpdated?: () => unknown
+  onInspectionUpdated?: () => unknown
 }
 
 const renderValue = (key, val) => {
@@ -100,17 +100,17 @@ const renderValue = (key, val) => {
   }
 }
 
-const PreInspectionItem: React.FC<InspectionItemProps> = ({
+const InspectionItem: React.FC<InspectionItemProps> = ({
   inspection,
   className,
   isCurrentlyInEffect,
-  onPreInspectionUpdated = () => {},
+  onInspectionUpdated = () => {},
   showActions = true,
 }) => {
   let createdBy = getCreatedBy(inspection)
 
   return (
-    <PreInspectionItemView
+    <InspectionItemView
       className={className}
       status={inspection.status}
       inEffect={isCurrentlyInEffect}>
@@ -121,10 +121,10 @@ const PreInspectionItem: React.FC<InspectionItemProps> = ({
         renderValue={renderValue}
       />
       {showActions && (
-        <InspectionActionsRow inspection={inspection} onRefresh={onPreInspectionUpdated} />
+        <InspectionActionsRow inspection={inspection} onRefresh={onInspectionUpdated} />
       )}
-    </PreInspectionItemView>
+    </InspectionItemView>
   )
 }
 
-export default PreInspectionItem
+export default InspectionItem

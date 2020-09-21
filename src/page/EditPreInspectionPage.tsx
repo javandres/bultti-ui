@@ -13,7 +13,7 @@ import {
   getInspectionStatusColor,
   useEditInspection,
   useInspectionById,
-} from '../preInspection/inspectionUtils'
+} from '../inspection/inspectionUtils'
 import { ErrorView, MessageContainer, MessageView } from '../common/components/Messages'
 import { useRefetch } from '../util/useRefetch'
 import { InspectionStatus, InspectionType } from '../schema-types'

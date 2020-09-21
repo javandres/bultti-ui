@@ -4,7 +4,7 @@ import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import { PreInspectionContext } from '../preInspection/PreInspectionContext'
 import PreInspectionReports from '../preInspection/PreInspectionReports'
-import { useInspectionById } from '../preInspection/inspectionUtils'
+import { useInspectionById } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 
 type PropTypes = {

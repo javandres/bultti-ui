@@ -2,20 +2,20 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
-import InspectionsList from '../inspection/InspectionsList'
-import { Plus } from '../common/icon/Plus'
-import { Button } from '../common/components/Button'
-import { navigateWithQueryString } from '../util/urlValue'
-import { MessageContainer, MessageView } from '../common/components/Messages'
 import { usePreInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
+import { Button } from '../common/components/Button'
+import { navigateWithQueryString } from '../util/urlValue'
+import { Plus } from '../common/icon/Plus'
+import { MessageContainer, MessageView } from '../common/components/Messages'
+import InspectionsList from '../inspection/InspectionsList'
 import { InspectionType } from '../schema-types'
 
 type PropTypes = {
   children?: React.ReactNode
 } & RouteComponentProps
 
-const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
+const PostInspectionsPage: React.FC<PropTypes> = observer((props) => {
   let [{ operator, inspections }, loading, refetch] = usePreInspections()
 
   return (
@@ -28,7 +28,7 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
             <Plus fill="white" width="1rem" height="1rem" /> <span>Uusi ennakkotarkastus</span>
           </Button>
         }>
-        Ennakkotarkastukset
+        Jälkitarkastukset
       </PageTitle>
       {!operator ? (
         <MessageContainer>
@@ -38,7 +38,7 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
         inspections.length !== 0 && (
           <InspectionsList
             inspections={inspections}
-            inspectionType={InspectionType.Pre}
+            inspectionType={InspectionType.Post}
             loading={loading}
             onUpdate={refetch}
           />
@@ -48,4 +48,4 @@ const PreInspectionsPage: React.FC<PropTypes> = observer(() => {
   )
 })
 
-export default PreInspectionsPage
+export default PostInspectionsPage

@@ -7,7 +7,7 @@ import {
   useEditInspection,
   usePreInspectionReports,
   useRemoveInspection,
-} from './inspectionUtils'
+} from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
   publishInspectionMutation,

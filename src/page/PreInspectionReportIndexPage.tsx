@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { usePreInspectionReports, usePreInspections } from '../preInspection/inspectionUtils'
+import { usePreInspectionReports, usePreInspections } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'

@@ -6,7 +6,7 @@ import { PreInspectionContext } from './PreInspectionContext'
 import styled from 'styled-components'
 import { MetaDisplay, MetaItem, MetaLabel, MetaValue } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getAllUpdatedBy, getCreatedBy } from './inspectionUtils'
+import { getAllUpdatedBy, getCreatedBy } from '../inspection/inspectionUtils'
 
 const PreInspectionMetaView = styled.div`
   margin-bottom: 2.5rem;

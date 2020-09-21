@@ -16,7 +16,7 @@ import {
   inspectionQuery,
   inspectionsByOperatorQuery,
   removeInspectionMutation,
-} from './preInspectionQueries'
+} from '../preInspection/preInspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
