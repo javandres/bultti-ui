@@ -35,9 +35,10 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     let isUpdating = useRef(false)
 
-    let [updatePostInspection, { loading: updateLoading }] = useMutationData(
-      updateInspectionMutation
-    )
+    let [
+      updatePostInspection,
+      { loading: updateLoading },
+    ] = useMutationData(updateInspectionMutation, { refetchQueries: ['inspectionById'] })
 
     let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
