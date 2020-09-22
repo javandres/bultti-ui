@@ -226,6 +226,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Search fill="white" width="1rem" height="1rem" />
             <Text>nav.list.postinspection</Text>
           </NavLink>
+          <NavLink to="post-inspection/edit">
+            <Plus fill="white" width="1rem" height="1rem" />
+            <Text>nav.new.postinspection</Text>
+          </NavLink>
+          <NavLink to="post-inspection/reports">
+            <Menu fill="white" width="1rem" height="1rem" />
+            <Text>nav.reports</Text>
+          </NavLink>
         </NavCategory>
       </AppNav>
     </AppSidebarView>

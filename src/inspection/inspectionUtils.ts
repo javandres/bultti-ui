@@ -21,7 +21,7 @@ import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
-import { lowerCase, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -218,7 +218,7 @@ export function getInspectionTypeStrings(inspectionType: InspectionType) {
 
   return {
     prefix: inspectionTypePrefix,
-    prefixLC: lowerCase(inspectionTypePrefix),
+    prefixLC: inspectionTypePrefix.toLocaleLowerCase(),
     path: inspectionTypePath,
   }
 }
