@@ -39,6 +39,7 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
                 onChange={onUpdateValue('startDate')}
                 label="Alku"
                 disabled={!isEditable}
+                alignDatepicker="left"
               />
               <Input
                 value={inspection.endDate}
@@ -65,6 +66,7 @@ const PreInspectionConfig: React.FC<PropTypes> = observer(({ onUpdateValue, isEd
                 onChange={onUpdateValue('inspectionEndDate')}
                 label="Loppu"
                 disabled={!isEditable}
+                alignDatepicker="right"
               />
             </ControlGroup>
           </FormColumn>
