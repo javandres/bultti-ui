@@ -11,6 +11,7 @@ import { Button } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionStatusColor,
+  getInspectionTypeStrings,
   useEditInspection,
   useInspectionById,
 } from '../inspection/inspectionUtils'
@@ -54,14 +55,15 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     } = useInspectionById(inspectionId)
 
     let refetch = useRefetch(refetchInspection)
-
     let hasErrors = inspection?.inspectionErrors?.length !== 0
+
+    let typeStrings = getInspectionTypeStrings(inspectionType)
 
     return (
       <EditPreInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            Uusi ennakkotarkastus
+            Uusi {typeStrings.prefixLC}tarkastus
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
@@ -69,7 +71,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             </MessageContainer>
           ) : !inspection && !inspectionLoading ? (
             <MessageContainer>
-              <MessageView>Haettu ennakkotarkastus ei löytynyt.</MessageView>
+              <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
               <Button onClick={() => editInspection()}>Takaisin</Button>
             </MessageContainer>
           ) : (
