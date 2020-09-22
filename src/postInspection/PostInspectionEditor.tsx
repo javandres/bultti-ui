@@ -15,6 +15,7 @@ import { updateInspectionMutation } from '../inspection/inspectionQueries'
 
 const EditPostInspectionView = styled.div`
   width: 100%;
+  min-height: 100%;
   padding: 0 0.75rem;
 `
 

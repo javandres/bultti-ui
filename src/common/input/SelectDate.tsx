@@ -17,21 +17,17 @@ const InputWrapper = styled.div`
 `
 
 const InputContainer = styled.div`
-  display: flex;
-  flex-wrap: nowrap;
   width: 100%;
-
-  > div {
-    flex: 1 1 auto;
-  }
 
   &:last-child {
     margin-right: 0;
   }
 `
 
-const DatePickerWrapper = styled.div<{ focused: boolean }>`
+const DatePickerWrapper = styled.div<{ focused: boolean; alignment: string }>`
   position: absolute;
+  right: ${(p) => (p.alignment === 'right' ? 0 : 'auto')};
+  left: ${(p) => (p.alignment === 'left' ? 0 : 'auto')};
   margin-top: 0.5rem;
   opacity: ${(p) => (p.focused ? 1 : 0)};
   pointer-events: ${(p) => (p.focused ? 'all' : 'none')};
@@ -46,10 +42,20 @@ export type PropTypes = {
   label?: string
   name?: string
   disabled?: boolean
+  alignDatepicker?: string
 }
 
 const SelectDate: React.FC<PropTypes> = observer(
-  ({ disabled = false, value = '', maxDate, minDate, onChange, label, name }) => {
+  ({
+    disabled = false,
+    value = '',
+    maxDate,
+    minDate,
+    onChange,
+    label,
+    name,
+    alignDatepicker = 'left',
+  }) => {
     let [inputValue, setInputValue] = useState(value)
 
     const minMoment = useMemo(() => (minDate ? moment(minDate, DATE_FORMAT_MOMENT) : false), [
@@ -184,7 +190,7 @@ const SelectDate: React.FC<PropTypes> = observer(
             />
           </InputContainer>
           {!disabled && (
-            <DatePickerWrapper focused={focused}>
+            <DatePickerWrapper alignment={alignDatepicker} focused={focused}>
               <DayPickerSingleDateController
                 initialVisibleMonth={() => valueMoment}
                 date={valueMoment}

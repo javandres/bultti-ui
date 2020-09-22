@@ -7,7 +7,6 @@ import { Link, Match, RouteComponentProps, Router, useLocation } from '@reach/ro
 import { pathWithQuery } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
-  height: 100%;
   display: grid;
   grid-template-rows: auto 1fr;
   position: relative;
@@ -60,8 +59,6 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
 
 const TabContentWrapper = styled.div<RouteComponentProps>`
   padding-top: 1.5rem;
-  height: 100%;
-  overflow-x: hidden;
 `
 
 const progress = keyframes`
