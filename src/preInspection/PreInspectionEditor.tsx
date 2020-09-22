@@ -21,7 +21,8 @@ import InspectionUsers from '../inspection/InspectionUsers'
 
 const EditPreInspectionView = styled.div`
   width: 100%;
-  padding: 0 0.75rem;
+  min-height: 100%;
+  background-color: var(--white-grey);
 `
 
 type PreInspectionProps = {

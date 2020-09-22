@@ -17,6 +17,7 @@ const EditPostInspectionView = styled.div`
   width: 100%;
   min-height: 100%;
   padding: 0 0.75rem;
+  background-color: var(--white-grey);
 `
 
 type PostInspectionProps = {

@@ -23,7 +23,13 @@ import { text, translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 
-const EditPreInspectionView = styled(Page)``
+const EditInspectionView = styled(Page)`
+  background-color: white;
+`
+
+const EditInspectionWrapper = styled(Page)`
+  background-color: var(--white-grey);
+`
 
 const InspectionActionsRow = styled(InspectionActions)`
   border-top: 0;
@@ -60,7 +66,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     let typeStrings = getInspectionTypeStrings(inspectionType)
 
     return (
-      <EditPreInspectionView>
+      <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
             Uusi {typeStrings.prefixLC}tarkastus
@@ -104,47 +110,49 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                   ))}
                 </MessageContainer>
               )}
-              {inspection?.status === InspectionStatus.InProduction ? (
-                <PreInspectionEditor refetchData={refetch} />
-              ) : inspectionType === InspectionType.Pre ? (
-                <Tabs>
-                  <PreInspectionEditor
-                    name="create"
-                    path="/"
-                    label="Muokkaa"
-                    loading={inspectionLoading}
-                    refetchData={refetch}
-                  />
-                  <InspectionPreview
-                    inspectionType={InspectionType.Pre}
-                    inspection={inspection}
-                    path="preview"
-                    name="preview"
-                    label="Esikatsele"
-                  />
-                </Tabs>
-              ) : (
-                <Tabs>
-                  <PostInspectionEditor
-                    name="create"
-                    path="/"
-                    label="Muokkaa"
-                    loading={inspectionLoading}
-                    refetchData={refetch}
-                  />
-                  <InspectionPreview
-                    inspectionType={InspectionType.Post}
-                    inspection={inspection}
-                    path="preview"
-                    name="preview"
-                    label="Esikatsele"
-                  />
-                </Tabs>
-              )}
+              <EditInspectionWrapper>
+                {inspection?.status === InspectionStatus.InProduction ? (
+                  <PreInspectionEditor refetchData={refetch} />
+                ) : inspectionType === InspectionType.Pre ? (
+                  <Tabs>
+                    <PreInspectionEditor
+                      name="create"
+                      path="/"
+                      label="Muokkaa"
+                      loading={inspectionLoading}
+                      refetchData={refetch}
+                    />
+                    <InspectionPreview
+                      inspectionType={InspectionType.Pre}
+                      inspection={inspection}
+                      path="preview"
+                      name="preview"
+                      label="Esikatsele"
+                    />
+                  </Tabs>
+                ) : (
+                  <Tabs>
+                    <PostInspectionEditor
+                      name="create"
+                      path="/"
+                      label="Muokkaa"
+                      loading={inspectionLoading}
+                      refetchData={refetch}
+                    />
+                    <InspectionPreview
+                      inspectionType={InspectionType.Post}
+                      inspection={inspection}
+                      path="preview"
+                      name="preview"
+                      label="Esikatsele"
+                    />
+                  </Tabs>
+                )}
+              </EditInspectionWrapper>
             </>
           )}
         </InspectionContext.Provider>
-      </EditPreInspectionView>
+      </EditInspectionView>
     )
   }
 )

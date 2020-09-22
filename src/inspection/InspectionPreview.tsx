@@ -10,7 +10,7 @@ import InspectionReports from './InspectionReports'
 const PreviewInspectionView = styled.div``
 
 const PreviewMeta = styled(InspectionMeta)`
-  margin-left: 1rem;
+  margin-left: 0.75rem;
 `
 
 export type PropTypes = {

@@ -22,7 +22,6 @@ const ButtonRow = styled.div`
   margin: auto -1rem 0;
   padding: 0.75rem 1rem 0.75rem;
   border-top: 1px solid var(--lighter-grey);
-  background: var(--white-grey);
   display: flex;
   align-items: center;
   border-bottom-left-radius: 5px;
