@@ -28,7 +28,7 @@ const defaultOptions = {
   notifyOnNetworkStatusChange: true,
 }
 
-export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
+export const useLazyQueryData = <TData extends {} = {}, TVariables = OperationVariables>(
   query: DocumentNode,
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''
@@ -40,10 +40,10 @@ export const useLazyQueryData = <TData = any, TVariables = OperationVariables>(
   }
   let queryHookArr = useLazyQuery<TData, TVariables>(query, allOptions)
 
-  let [queryFn, { loading, error, data, refetch, called, networkStatus }] = queryHookArr || [
-    () => {},
-    {},
-  ]
+  let [
+    queryFn,
+    { loading, error, data = {} as TData, refetch, called, networkStatus },
+  ] = queryHookArr || [() => {}, {}]
 
   let availableRefetch = useCallback(
     async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {

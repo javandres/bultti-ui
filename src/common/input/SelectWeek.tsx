@@ -144,6 +144,7 @@ const SelectWeek: React.FC<PropTypes> = observer(
         </InputsWrapper>
         <DatePickerWrapper focused={!!focused}>
           <DayPickerRangeController
+            initialVisibleMonth={() => startMoment}
             startDate={startMoment}
             endDate={endMoment}
             onDatesChange={onDateChanges}

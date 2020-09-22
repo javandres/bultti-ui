@@ -162,22 +162,29 @@ const Dropdown: React.FC<DropdownProps> = observer(
             {toString(currentlySelected, itemToLabel) || text('general.app.all')}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
-          {!disabled && isOpen && (
-            <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
-              {items.map((item, index) => (
-                <DropdownItem
-                  theme={theme}
-                  highlighted={highlightedIndex === index}
-                  {...getItemProps({
-                    key: toString(item, itemToString),
-                    index,
-                    item,
-                  })}>
-                  {toString(item, itemToLabel)}
-                </DropdownItem>
-              ))}
-            </SuggestionsList>
-          )}
+
+          <SuggestionsList
+            {...getMenuProps({ disabled: disabled })}
+            disabled={disabled}
+            theme={theme}
+            isOpen={isOpen}>
+            {!disabled && isOpen && (
+              <>
+                {items.map((item, index) => (
+                  <DropdownItem
+                    theme={theme}
+                    highlighted={highlightedIndex === index}
+                    {...getItemProps({
+                      key: toString(item, itemToString),
+                      index,
+                      item,
+                    })}>
+                    {toString(item, itemToLabel)}
+                  </DropdownItem>
+                ))}
+              </>
+            )}
+          </SuggestionsList>
         </SelectWrapper>
       </DropdownView>
     )

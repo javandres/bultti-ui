@@ -4,8 +4,8 @@ import {
   defaultDataIdFromObject,
   InMemoryCache,
 } from '@apollo/client'
-import { onError } from '@apollo/link-error'
-import { setContext } from '@apollo/link-context'
+import { onError } from '@apollo/client/link/error'
+import { setContext } from '@apollo/client/link/context'
 import { GRAPHQL_PATH, SERVER_URL } from './constants'
 import { createUploadLink } from 'apollo-upload-client'
 import introspection from './possibleTypes'

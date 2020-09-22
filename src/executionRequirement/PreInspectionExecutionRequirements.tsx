@@ -14,6 +14,7 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
+import { ExecutionRequirement } from '../schema-types'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -56,7 +57,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
 
   let queueRefetch = useRefetch(onPreviewRequirements, true)
 
-  let areaExecutionRequirements = useMemo(
+  let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
     [executionRequirementsData]
   )

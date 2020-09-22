@@ -202,22 +202,24 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
               <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
             </MenuButton>
           )}
-          {!disabled && (
-            <SuggestionsList {...getMenuProps()} theme={theme} isOpen={isOpen}>
-              {currentItems.map((item, index) => (
-                <SuggestionItem
-                  theme={theme}
-                  highlighted={highlightedIndex === index}
-                  {...getItemProps({
-                    key: toString(item, itemToString),
-                    index,
-                    item,
-                  })}>
-                  {toString(item, itemToLabel)}
-                </SuggestionItem>
-              ))}
-            </SuggestionsList>
-          )}
+          <SuggestionsList
+            {...getMenuProps({ disabled })}
+            disabled={disabled}
+            theme={theme}
+            isOpen={isOpen}>
+            {currentItems.map((item, index) => (
+              <SuggestionItem
+                theme={theme}
+                highlighted={highlightedIndex === index}
+                {...getItemProps({
+                  key: toString(item, itemToString),
+                  index,
+                  item,
+                })}>
+                {toString(item, itemToLabel)}
+              </SuggestionItem>
+            ))}
+          </SuggestionsList>
         </AutoCompleteWrapper>
       </AutoCompleteView>
     )

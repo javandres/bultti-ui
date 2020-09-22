@@ -12,7 +12,7 @@ const defaultOptions = {
   notifyOnNetworkStatusChange: true,
 }
 
-export const useQueryData = <TData = any, TVariables = OperationVariables>(
+export const useQueryData = <TData extends {} = {}, TVariables = OperationVariables>(
   query: DocumentNode,
   options: QueryHookOptions<TData, TVariables> = {},
   pickData = ''
@@ -24,7 +24,7 @@ export const useQueryData = <TData = any, TVariables = OperationVariables>(
   }
 
   let queryData = useQuery<TData, TVariables>(query, allOptions)
-  let { loading, error, data, refetch, networkStatus } = queryData || {}
+  let { loading, error, data = {} as TData, refetch, networkStatus } = queryData || {}
 
   let availableRefetch = useCallback(
     async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {

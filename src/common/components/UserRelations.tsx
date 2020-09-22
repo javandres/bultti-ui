@@ -69,7 +69,7 @@ const SubscribedCheckbox = styled(Checkbox)`
   }
 `
 
-type RelationType = InspectionUserRelation & ContractUserRelation
+type RelationType = InspectionUserRelation | ContractUserRelation
 
 export type PropTypes = {
   relations: RelationType[]
@@ -81,7 +81,7 @@ const UserRelations = observer(
   ({ relations, onToggleSubscribed, loading = false }: PropTypes) => {
     var [user] = useStateValue('user')
 
-    let allRelations: RelationType[] = orderBy(relations || [], 'updatedAt', 'desc')
+    let allRelations = orderBy<RelationType>(relations || [], 'updatedAt', 'desc')
     let ownRelations = allRelations.filter((rel) => rel.user.email === user.email)
 
     let subscriptionRelation = ownRelations.find(

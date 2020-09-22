@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { difference, get, omitBy, orderBy, toString } from 'lodash'
+import { Dictionary, difference, get, omitBy, orderBy, toString } from 'lodash'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { Checkmark2 } from '../icon/Checkmark2'
@@ -289,7 +289,7 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
   removeItem: ItemRemover
   onMakeEditable: (key: string, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
-  itemEntries: [string, CellValType][]
+  itemEntries: [string, ItemType][]
   item: ItemType
 }
 
@@ -298,6 +298,7 @@ type RowPropTypes<ItemType = any> = {
   row?: TableRowWithDataAndFunctions
   index: number
   style?: CSSProperties
+  isScrolling?: boolean
 }
 
 type CellPropTypes<ItemType = any> = {
@@ -372,19 +373,14 @@ const TableCellComponent = observer(
 )
 
 const TableRowComponent = observer(
-  <ItemType extends any>({
-    row,
-    style,
-    index,
-    data: allRows = [],
-  }: RowPropTypes<ItemType>) => {
+  <ItemType extends {}>({ row, style, index, data: allRows = [] }: RowPropTypes<ItemType>) => {
     let rowItem = row || allRows[index]
 
     if (!rowItem) {
       return null
     }
 
-    let { itemEntries, key: rowKey, isEditingRow, removeItem } = rowItem
+    let { itemEntries = [], key: rowKey, isEditingRow, removeItem } = rowItem
     let rowId = rowKey ?? `row-${index}`
 
     return (
@@ -395,7 +391,7 @@ const TableRowComponent = observer(
             row={rowItem}
             rowId={rowId}
             cellIndex={cellIndex}
-            cell={[key as string, val]}
+            cell={[key as keyof ItemType, val]}
           />
         ))}
         {!isEditingRow && removeItem && (
@@ -409,7 +405,7 @@ const TableRowComponent = observer(
 )
 
 const Table = observer(
-  <ItemType extends any>({
+  <ItemType extends {}>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -473,7 +469,7 @@ const Table = observer(
     // Adding a column a second time switches its
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
-        if (!Object.keys(items[0]).includes(columnName)) {
+        if (!Object.keys(items[0] as {}).includes(columnName)) {
           return currentSort
         }
 
@@ -509,7 +505,9 @@ const Table = observer(
     // Order the keys and get cleartext labels for the columns
     // Omit keys that start with an underscore.
     let columns = Object.keys(
-      omitBy(items[0] || columnLabels, (val, key) => key.startsWith('_'))
+      omitBy((items[0] || columnLabels) as Dictionary<ItemType>, (val, key) =>
+        key.startsWith('_')
+      )
     )
     const columnLabelKeys = Object.keys(columnLabels)
 
@@ -544,7 +542,7 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
-    let sortedItems = useMemo(() => {
+    let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
       if (!items || !Array.isArray(items)) {
         return []
       }
@@ -569,7 +567,9 @@ const Table = observer(
       () =>
         sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
-          let itemEntries: [string, CellValType][] = Object.entries(item).filter(
+          let itemEntries = Object.entries<ItemType>(item)
+
+          itemEntries = itemEntries.filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
           )
 
@@ -650,7 +650,7 @@ const Table = observer(
     let [currentScroll, setCurrentScroll] = useState(0)
     let subscribeToScroll = useContext(ScrollContext)
 
-    let [debouncedSetScroll] = useDebouncedCallback(
+    let { callback: debouncedSetScroll } = useDebouncedCallback(
       (scrollTop: number, frameHeight: number) => {
         setCurrentScroll(scrollTop - frameHeight)
       },
@@ -675,7 +675,7 @@ const Table = observer(
       return currentScroll < tableBottomEdge - 150
     }, [tableViewRef.current, currentScroll, pendingValues])
 
-    let contextValue = {
+    let contextValue: ContextTypes<ItemType> = {
       columnWidths,
       editableValues,
       pendingValues,
