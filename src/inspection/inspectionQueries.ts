@@ -4,6 +4,7 @@ import { UserFragment } from '../common/query/authQueries'
 export const inspectionFragment = gql`
   fragment InspectionFragment on Inspection {
     id
+    name
     createdAt
     startDate
     endDate

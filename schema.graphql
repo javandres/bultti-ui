@@ -204,19 +204,20 @@ type ExecutionRequirementValue {
 
 type Inspection {
   createdAt: DateTime!
-  endDate: BulttiDate!
+  endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
   inspectionEndDate: BulttiDate
   inspectionErrors: [InspectionValidationError!]
-  inspectionStartDate: BulttiDate
+  inspectionStartDate: BulttiDate!
   inspectionType: InspectionType
-  minStartDate: BulttiDate
+  minStartDate: BulttiDate!
+  name: String
   operator: Operator!
   operatorId: Int
   season: Season!
   seasonId: String
-  startDate: BulttiDate!
+  startDate: BulttiDate
   status: InspectionStatus!
   updatedAt: DateTime!
   userRelations: [InspectionUserRelation!]!
@@ -552,6 +553,7 @@ input InitialInspectionInput {
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
   inspectionType: InspectionType!
+  name: String
   operatorId: Int!
   seasonId: String!
   startDate: BulttiDate
@@ -561,6 +563,7 @@ input InspectionInput {
   endDate: BulttiDate
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
+  name: String
   startDate: BulttiDate
 }
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
@@ -6,7 +6,6 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { InspectionContext } from './InspectionContext'
 import { useMutationData } from '../util/useMutationData'
 import {
   inspectionUserRelationsQuery,
@@ -16,19 +15,20 @@ import { useQueryData } from '../util/useQueryData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
+import { Inspection } from '../schema-types'
 
-export type PropTypes = {}
+export type PropTypes = {
+  inspection: Inspection
+}
 
-const InspectionUsers: React.FC<PropTypes> = observer(() => {
+const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
   var [user] = useStateValue('user')
-  var inspection = useContext(InspectionContext)
 
   let { data: inspectionRelations, loading: relationsLoading, refetch } = useQueryData(
     inspectionUserRelationsQuery,
     {
-      skip: !inspection,
       variables: {
-        inspectionId: inspection?.id,
+        inspectionId: inspection.id,
       },
     }
   )
@@ -40,7 +40,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
   )
 
   let onToggleSubscribed = useCallback(async () => {
-    if (inspection && user) {
+    if (user) {
       await toggleSubscribed({
         variables: {
           inspectionId: inspection.id,
@@ -69,13 +69,11 @@ const InspectionUsers: React.FC<PropTypes> = observer(() => {
         </>
       }>
       <LoadingDisplay loading={relationsLoading} />
-      {inspection && (
-        <UserRelations
-          relations={inspectionRelations}
-          loading={userSubscribedLoading}
-          onToggleSubscribed={onToggleSubscribed}
-        />
-      )}
+      <UserRelations
+        relations={inspectionRelations}
+        loading={userSubscribedLoading}
+        onToggleSubscribed={onToggleSubscribed}
+      />
     </ExpandableSection>
   )
 })

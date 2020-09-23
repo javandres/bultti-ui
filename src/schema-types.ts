@@ -43,8 +43,8 @@ export type Query = {
   inspectionReportByName?: Maybe<Report>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
-  currentInspectionsByOperatorAndSeason: Array<Inspection>;
   currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
+  currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
   contracts: Array<Contract>;
@@ -162,14 +162,14 @@ export type QueryInspectionsByOperatorArgs = {
 };
 
 
-export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
+export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
   inspectionType: InspectionType;
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };
 
 
-export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
+export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
   inspectionType: InspectionType;
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -229,6 +229,7 @@ export type Operator = {
 export type Inspection = {
   __typename?: 'Inspection';
   id: Scalars['ID'];
+  name?: Maybe<Scalars['String']>;
   inspectionType?: Maybe<InspectionType>;
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;
@@ -240,11 +241,11 @@ export type Inspection = {
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
-  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  minStartDate?: Maybe<Scalars['BulttiDate']>;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+  minStartDate: Scalars['BulttiDate'];
   versionStackIdentifier?: Maybe<Scalars['String']>;
   inspectionErrors?: Maybe<Array<InspectionValidationError>>;
 };
@@ -969,6 +970,7 @@ export type ReportOrderInput = {
 };
 
 export type InitialInspectionInput = {
+  name?: Maybe<Scalars['String']>;
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
@@ -979,6 +981,7 @@ export type InitialInspectionInput = {
 };
 
 export type InspectionInput = {
+  name?: Maybe<Scalars['String']>;
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   inspectionStartDate?: Maybe<Scalars['BulttiDate']>;

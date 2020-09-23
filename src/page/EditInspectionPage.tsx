@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
-import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import { Page } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
@@ -21,7 +20,7 @@ import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
 import { text, translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
-import PostInspectionEditor from '../postInspection/PostInspectionEditor'
+import InspectionEditor from '../inspection/InspectionEditor'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -81,75 +80,75 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
               <Button onClick={() => editInspection()}>Takaisin</Button>
             </MessageContainer>
           ) : (
-            <>
-              {inspection && (
-                <>
-                  <StatusBox
-                    style={{
-                      backgroundColor: getInspectionStatusColor(inspection),
-                      borderColor: getInspectionStatusColor(inspection),
-                      color:
-                        inspection.status === InspectionStatus.InReview
-                          ? 'var(--dark-grey)'
-                          : 'white',
-                    }}>
-                    <strong>{translate(inspection.status)}</strong>
-                  </StatusBox>
-                  <InspectionActionsRow
-                    inspectionType={inspectionType}
-                    inspection={inspection}
-                    onRefresh={refetch}
-                    disabledActions={hasErrors ? ['submit', 'publish'] : []}
-                  />
-                </>
-              )}
-              {hasErrors && (
-                <MessageContainer>
-                  {(inspection?.inspectionErrors || []).map((err) => (
-                    <ErrorView key={err}>{text(err)}</ErrorView>
-                  ))}
-                </MessageContainer>
-              )}
-              <EditInspectionWrapper>
-                {inspection?.status === InspectionStatus.InProduction ? (
-                  <PreInspectionEditor refetchData={refetch} />
-                ) : inspectionType === InspectionType.Pre ? (
-                  <Tabs>
-                    <PreInspectionEditor
-                      name="create"
-                      path="/"
-                      label="Muokkaa"
-                      loading={inspectionLoading}
-                      refetchData={refetch}
-                    />
-                    <InspectionPreview
-                      inspectionType={InspectionType.Pre}
-                      inspection={inspection}
-                      path="preview"
-                      name="preview"
-                      label="Esikatsele"
-                    />
-                  </Tabs>
-                ) : (
-                  <Tabs>
-                    <PostInspectionEditor
-                      name="create"
-                      path="/"
-                      label="Muokkaa"
-                      loading={inspectionLoading}
-                      refetchData={refetch}
-                    />
-                    <InspectionPreview
-                      inspectionType={InspectionType.Post}
-                      inspection={inspection}
-                      path="preview"
-                      name="preview"
-                      label="Esikatsele"
-                    />
-                  </Tabs>
+            inspection && (
+              <>
+                <StatusBox
+                  style={{
+                    backgroundColor: getInspectionStatusColor(inspection),
+                    borderColor: getInspectionStatusColor(inspection),
+                    color:
+                      inspection.status === InspectionStatus.InReview
+                        ? 'var(--dark-grey)'
+                        : 'white',
+                  }}>
+                  <strong>{translate(inspection.status)}</strong>
+                </StatusBox>
+                <InspectionActionsRow
+                  inspectionType={inspectionType}
+                  inspection={inspection}
+                  onRefresh={refetch}
+                  disabledActions={hasErrors ? ['submit', 'publish'] : []}
+                />
+                {hasErrors && (
+                  <MessageContainer>
+                    {(inspection?.inspectionErrors || []).map((err) => (
+                      <ErrorView key={err}>{text(err)}</ErrorView>
+                    ))}
+                  </MessageContainer>
                 )}
-              </EditInspectionWrapper>
-            </>
+                <EditInspectionWrapper>
+                  {inspection?.status === InspectionStatus.InProduction ? (
+                    <InspectionEditor inspection={inspection} refetchData={refetch} />
+                  ) : inspectionType === InspectionType.Pre ? (
+                    <Tabs>
+                      <InspectionEditor
+                        name="create"
+                        path="/"
+                        label="Tarkastuksen tiedot"
+                        loading={inspectionLoading}
+                        refetchData={refetch}
+                        inspection={inspection}
+                      />
+                      <InspectionPreview
+                        inspectionType={InspectionType.Pre}
+                        inspection={inspection}
+                        path="preview"
+                        name="preview"
+                        label="Tulokset"
+                      />
+                    </Tabs>
+                  ) : (
+                    <Tabs>
+                      <InspectionEditor
+                        name="create"
+                        path="/"
+                        label="Tarkastuksen tiedot"
+                        loading={inspectionLoading}
+                        refetchData={refetch}
+                        inspection={inspection}
+                      />
+                      <InspectionPreview
+                        inspectionType={InspectionType.Post}
+                        inspection={inspection}
+                        path="results"
+                        name="results"
+                        label="Tulokset"
+                      />
+                    </Tabs>
+                  )}
+                </EditInspectionWrapper>
+              </>
+            )
           )}
         </InspectionContext.Provider>
       </EditInspectionView>

@@ -61,6 +61,7 @@ const SelectDate: React.FC<PropTypes> = observer(
     const minMoment = useMemo(() => (minDate ? moment(minDate, DATE_FORMAT_MOMENT) : false), [
       minDate,
     ])
+
     const maxMoment = useMemo(() => (maxDate ? moment(maxDate, DATE_FORMAT_MOMENT) : false), [
       maxDate,
     ])
@@ -160,11 +161,11 @@ const SelectDate: React.FC<PropTypes> = observer(
 
     let dateIsBlocked = useCallback(
       (value: Moment) => {
-        if (maxMoment && value.isAfter(maxMoment)) {
+        if (maxMoment && value.isAfter(maxMoment, 'date')) {
           return true
         }
 
-        if (minMoment && value.isBefore(minMoment)) {
+        if (minMoment && value.isBefore(minMoment, 'date')) {
           return true
         }
 
