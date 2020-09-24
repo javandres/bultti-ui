@@ -26,7 +26,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
       variables: {
         operatorId: operator?.id || 0,
         seasonId: (typeof season === 'string' ? season : season?.id) || '',
-        inspectionType: InspectionType.Pre,
+        inspectionType,
       },
     }
   )

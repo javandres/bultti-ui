@@ -962,6 +962,7 @@ export type ReportInput = {
   description: Scalars['String'];
   params: Scalars['String'];
   order?: Maybe<Scalars['Int']>;
+  inspectionTypes: Scalars['String'];
 };
 
 export type ReportOrderInput = {

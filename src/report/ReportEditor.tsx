@@ -34,6 +34,7 @@ function createReportInput(report: Report): ReportInput {
     title: report.title,
     params: report.params || '',
     order: report.order || 0,
+    inspectionTypes: Object.values(report.inspectionTypes || {}).join(', ') || '',
   }
 }
 
@@ -102,6 +103,7 @@ let formLabels = {
   title: 'Nimi',
   description: 'Kuvaus',
   params: 'Parametrit',
+  inspectionTypes: 'Tarkastustyyppi',
 }
 
 const ReportEditor = observer(
@@ -183,7 +185,7 @@ const ReportEditor = observer(
       <ReportEditorView>
         <ItemForm
           item={pendingReport}
-          hideKeys={['id', 'inspectionTypes', 'reportType', 'order']}
+          hideKeys={['id', 'reportType', 'order']}
           labels={formLabels}
           onChange={onChange}
           onDone={onDone}

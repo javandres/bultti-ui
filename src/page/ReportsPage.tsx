@@ -61,6 +61,7 @@ const ReportsPage = observer(({ children }: PropTypes) => {
   let { data: reportsData, loading: reportsLoading, refetch: refetchReports } = useQueryData(
     reportsQuery
   )
+
   let refetch = useRefetch(refetchReports)
 
   let [updateReportOrder] = useMutationData(updateReportOrderMutation)

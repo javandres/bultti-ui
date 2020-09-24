@@ -15,7 +15,7 @@ export const TabsWrapper = styled.div`
 `
 
 const TabButtonsWrapper = styled.div<{ path?: any }>`
-  background-color: white;
+  background-color: transparent;
   border-bottom: 1px solid var(--blue);
   display: flex;
   justify-content: flex-start;

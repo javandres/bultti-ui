@@ -575,6 +575,7 @@ input ProcurementUnitEditInput {
 input ReportInput {
   description: String!
   id: ID
+  inspectionTypes: String!
   name: String!
   order: Int
   params: String!
