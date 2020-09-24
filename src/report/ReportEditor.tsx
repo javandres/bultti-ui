@@ -15,8 +15,17 @@ import { useQueryData } from '../util/useQueryData'
 import AutoComplete from '../common/input/AutoCompleteInput'
 import KeyValueInput, { ValuesType } from '../common/input/KeyValueInput'
 import { difference } from 'lodash'
+import Checkbox from '../common/input/Checkbox'
 
 const ReportEditorView = styled.div``
+
+const TypeWrapper = styled.div`
+  display: flex;
+
+  > :first-child {
+    margin-right: 1rem;
+  }
+`
 
 export type PropTypes = {
   report: Report
@@ -34,7 +43,7 @@ function createReportInput(report: Report): ReportInput {
     title: report.title,
     params: report.params || '',
     order: report.order || 0,
-    inspectionTypes: Object.values(report.inspectionTypes || {}).join(', ') || '',
+    inspectionTypes: Object.values(report.inspectionTypes || {}).join(',') || '',
   }
 }
 
@@ -84,6 +93,44 @@ const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}
         name={key}
         style={{ width: '100%' }}
       />
+    )
+  }
+
+  if (key === 'inspectionTypes') {
+    let onTypeChange = (name) => (e) => {
+      let currentTypes = {
+        PRE: val.includes('PRE'),
+        POST: val.includes('POST'),
+      }
+
+      let checked = e.target.checked
+      currentTypes[name] = !!checked
+
+      let nextVal = Object.entries(currentTypes)
+        .filter(([type, isEnabled]) => isEnabled)
+        .map(([type]) => type)
+        .join(',')
+
+      onChange(nextVal)
+    }
+
+    return (
+      <TypeWrapper>
+        <Checkbox
+          checked={(val || '').includes('PRE')}
+          label="Ennakko"
+          name="PRE"
+          value="PRE"
+          onChange={onTypeChange('PRE')}
+        />
+        <Checkbox
+          checked={(val || '').includes('POST')}
+          label="Jälki"
+          name="POST"
+          value="POST"
+          onChange={onTypeChange('POST')}
+        />
+      </TypeWrapper>
     )
   }
 
