@@ -10,7 +10,6 @@ export const AUTH_SCOPE = envObj.REACT_APP_AUTH_SCOPE
 export const AUTH_URI = envObj.REACT_APP_AUTH_URI
 export const ALLOW_DEV_LOGIN = envObj.REACT_APP_ALLOW_DEV_LOGIN === 'true'
 export const DATE_FORMAT = 'yyyy-MM-dd'
-export const DATE_FORMAT_MOMENT = 'YYYY-MM-DD'
 export const READABLE_TIME_FORMAT = 'dd MMM yyyy, HH:mm'
 export const READABLE_DATE_FORMAT = 'dd MMM yyyy'
 export const ENV = envObj.NODE_ENV || 'production'

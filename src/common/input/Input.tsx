@@ -81,7 +81,7 @@ const Input: React.FC<PropTypes> = observer(
 
     const onKeyPress = useCallback(
       (e) => {
-        if (onEnterPress && e.which === 13) {
+        if (onEnterPress && e.key === 'Enter') {
           onEnterPress(value)
         }
       },
@@ -97,6 +97,7 @@ const Input: React.FC<PropTypes> = observer(
         )}
         <TextInput
           {...inputProps}
+          type={type}
           theme={theme}
           value={value}
           onChange={onValueChange}

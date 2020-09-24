@@ -1,16 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import 'react-dates/lib/css/_datepicker.css'
-import moment, { Moment } from 'moment'
 import { AnyFunction } from '../../type/common'
-import { DayPickerSingleDateController } from 'react-dates'
 import Input from './Input'
 import styled from 'styled-components'
 import '../style/reactDates.scss'
-import { DATE_FORMAT_MOMENT } from '../../constants'
-import { isValid, parseISO } from 'date-fns'
-
-moment.locale('fi')
+import { DATE_FORMAT } from '../../constants'
+import { format, isAfter, isBefore, isValid, parseISO } from 'date-fns'
 
 const InputWrapper = styled.div`
   position: relative;
@@ -22,16 +17,6 @@ const InputContainer = styled.div`
   &:last-child {
     margin-right: 0;
   }
-`
-
-const DatePickerWrapper = styled.div<{ focused: boolean; alignment: string }>`
-  position: absolute;
-  right: ${(p) => (p.alignment === 'right' ? 0 : 'auto')};
-  left: ${(p) => (p.alignment === 'left' ? 0 : 'auto')};
-  margin-top: 0.5rem;
-  opacity: ${(p) => (p.focused ? 1 : 0)};
-  pointer-events: ${(p) => (p.focused ? 'all' : 'none')};
-  z-index: ${(p) => (p.focused ? 100 : -1)};
 `
 
 export type PropTypes = {
@@ -56,52 +41,58 @@ const SelectDate: React.FC<PropTypes> = observer(
     name,
     alignDatepicker = 'left',
   }) => {
-    let [inputValue, setInputValue] = useState(value)
+    // The local input state.
+    let [inputValue, setInputValue] = useState<string>(value)
 
-    const minMoment = useMemo(() => (minDate ? moment(minDate, DATE_FORMAT_MOMENT) : false), [
-      minDate,
-    ])
-
-    const maxMoment = useMemo(() => (maxDate ? moment(maxDate, DATE_FORMAT_MOMENT) : false), [
-      maxDate,
-    ])
-
+    // Validate the value to be a valid date and between the max and min limits, if any.
     const getValidDate = useCallback(
-      (dateVal: Moment | Date | string): Moment | null => {
-        let momentVal = moment(dateVal)
+      (val: Date | string): Date | null => {
+        let dateVal = val instanceof Date ? val : parseISO(val)
 
-        if (!momentVal.isValid()) {
-          return !!value ? moment(value) : null
+        if (!isValid(dateVal)) {
+          return null
         }
 
-        let validVal = momentVal.clone()
+        if (maxDate) {
+          let maxDateVal = parseISO(maxDate)
 
-        if (maxMoment && validVal.isSameOrAfter(maxMoment, 'day')) {
-          validVal = maxMoment.clone()
+          if (isAfter(dateVal, maxDateVal)) {
+            dateVal = maxDateVal
+          }
         }
 
-        if (minMoment && validVal.isSameOrBefore(minMoment, 'day')) {
-          validVal = minMoment.clone()
+        if (minDate) {
+          let minDateVal = parseISO(minDate)
+
+          if (isBefore(dateVal, minDateVal)) {
+            dateVal = minDateVal
+          }
         }
 
-        return validVal
+        return dateVal
       },
-      [maxMoment, minMoment]
+      [maxDate, minDate]
     )
 
+    // Get the current value for the field. The local input state has precedence,
+    // but we can fall back on the props value if needed.
     let currentValue = useMemo((): string => {
       if (inputValue === value || !isValid(parseISO(inputValue))) {
         return value
       }
 
       let validInput = getValidDate(inputValue)
-      return validInput ? validInput.format(DATE_FORMAT_MOMENT) : value
+      return validInput ? format(validInput, DATE_FORMAT) : value
     }, [inputValue, value, getValidDate])
 
+    // Update the local input state when then value from props changes
     useEffect(() => {
       if (inputValue !== value) {
-        let validDate = getValidDate(value)?.format(DATE_FORMAT_MOMENT)
-        setInputValue(validDate || '')
+        let validDate = getValidDate(value)
+
+        if (validDate) {
+          setInputValue(format(validDate, DATE_FORMAT))
+        }
       }
     }, [value])
 
@@ -110,69 +101,17 @@ const SelectDate: React.FC<PropTypes> = observer(
       [label, name]
     )
 
-    const valueMoment = useMemo(
-      () => (!currentValue ? moment() : moment(currentValue, DATE_FORMAT_MOMENT)),
-      [currentValue]
-    )
-
-    const [focused, setFocused] = useState<any>(false)
-
     const applyInputValue = useCallback(() => {
       if (inputValue !== value) {
-        let validDate = getValidDate(inputValue)?.format(DATE_FORMAT_MOMENT)
+        let validDate = getValidDate(inputValue)
 
         if (validDate) {
-          onChange(validDate)
-          setInputValue(validDate)
-          setFocused(false)
+          let validDateVal = format(validDate, DATE_FORMAT)
+          onChange(validDateVal)
+          setInputValue(validDateVal)
         }
       }
     }, [value, inputValue, onChange, getValidDate])
-
-    const onDateChange = useCallback(
-      (date) => {
-        if (date) {
-          let validDate = getValidDate(date)
-
-          if (validDate) {
-            let validDateStr = validDate.format(DATE_FORMAT_MOMENT)
-
-            setInputValue(validDateStr)
-            onChange(validDateStr)
-          }
-        }
-      },
-      [onChange, getValidDate, maxMoment, minMoment]
-    )
-
-    const onOpenPicker = useCallback((value) => {
-      const focusVal = typeof value?.focused !== 'undefined' ? value?.focused : true
-      setFocused(focusVal)
-    }, [])
-
-    const onClosePicker = useCallback(
-      (e) => {
-        if (e.target.name !== inputName) {
-          setFocused(false)
-        }
-      },
-      [focused, inputName]
-    )
-
-    let dateIsBlocked = useCallback(
-      (value: Moment) => {
-        if (maxMoment && value.isAfter(maxMoment, 'date')) {
-          return true
-        }
-
-        if (minMoment && value.isBefore(minMoment, 'date')) {
-          return true
-        }
-
-        return false
-      },
-      [minMoment, maxMoment]
-    )
 
     return (
       <>
@@ -180,32 +119,18 @@ const SelectDate: React.FC<PropTypes> = observer(
           <InputContainer>
             <Input
               name={inputName}
+              type="date"
               subLabel={true}
               label={label}
               value={inputValue}
               onChange={setInputValue}
-              onFocus={onOpenPicker}
-              onBlur={applyInputValue}
               onEnterPress={applyInputValue}
               disabled={disabled}
+              min={minDate}
+              max={maxDate}
+              pattern="\d{4}-\d{2}-\d{2}"
             />
           </InputContainer>
-          {!disabled && (
-            <DatePickerWrapper alignment={alignDatepicker} focused={focused}>
-              <DayPickerSingleDateController
-                initialVisibleMonth={() => valueMoment}
-                date={valueMoment}
-                onDateChange={onDateChange}
-                onOutsideClick={onClosePicker}
-                focused={focused}
-                onFocusChange={onOpenPicker}
-                numberOfMonths={1}
-                firstDayOfWeek={1}
-                isDayBlocked={dateIsBlocked}
-                hideKeyboardShortcutsPanel={true}
-              />
-            </DatePickerWrapper>
-          )}
         </InputWrapper>
       </>
     )
