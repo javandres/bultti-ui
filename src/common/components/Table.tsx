@@ -289,20 +289,20 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
   removeItem: ItemRemover
   onMakeEditable: (key: string, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
-  itemEntries: [string, ItemType][]
+  itemEntries: [string, CellValType][]
   item: ItemType
 }
 
 type RowPropTypes<ItemType = any> = {
-  data?: TableRowWithDataAndFunctions[]
-  row?: TableRowWithDataAndFunctions
+  data?: TableRowWithDataAndFunctions<ItemType>[]
+  row?: TableRowWithDataAndFunctions<ItemType>
   index: number
   style?: CSSProperties
   isScrolling?: boolean
 }
 
 type CellPropTypes<ItemType = any> = {
-  row: TableRowWithDataAndFunctions
+  row: TableRowWithDataAndFunctions<ItemType>
   cell: [keyof ItemType, CellValType]
   cellIndex: number
   rowId: string
@@ -567,7 +567,7 @@ const Table = observer(
       () =>
         sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
-          let itemEntries = Object.entries<ItemType>(item)
+          let itemEntries = Object.entries<CellValType>(item)
 
           itemEntries = itemEntries.filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)

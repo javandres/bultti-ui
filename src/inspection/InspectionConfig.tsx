@@ -5,12 +5,20 @@ import Input from '../common/input/Input'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
-import moment from 'moment'
 import { DATE_FORMAT } from '../constants'
+import styled from 'styled-components'
+import { format, parseISO, startOfISOWeek } from 'date-fns'
+
+const InspectionConfigView = styled.div`
+  border: 1px solid var(--lighter-grey);
+  margin-top: 1rem;
+  border-radius: 0.5rem;
+  background: white;
+  padding: 1rem;
+`
 
 export type PropTypes = {
   inspection: Inspection
@@ -19,7 +27,7 @@ export type PropTypes = {
 }
 
 const InspectionConfig: React.FC<PropTypes> = observer(
-  ({ saveValues: saveValues, isEditable, inspection }) => {
+  ({ saveValues, isEditable, inspection }) => {
     let isDirty = useRef(false)
     let [inspectionValues, setInspectionValues] = useState<InspectionInput>({})
 
@@ -55,10 +63,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
     }, [])
 
     return (
-      <ExpandableSection
-        headerContent={
-          <HeaderMainHeading style={{ borderRight: 0 }}>Perustiedot</HeaderMainHeading>
-        }>
+      <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
             <MessageView>Ennakkotarkastus ei valittu.</MessageView>
@@ -101,9 +106,10 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                 <ControlGroup>
                   <SelectDate
                     name="inspection_start"
-                    minDate={moment(inspection.minStartDate)
-                      .startOf('isoWeek')
-                      .format(DATE_FORMAT)}
+                    minDate={format(
+                      startOfISOWeek(parseISO(inspection.minStartDate)),
+                      DATE_FORMAT
+                    )}
                     value={inspectionValues.inspectionStartDate}
                     onChange={(val) => onUpdateValue('inspectionStartDate', val)}
                     label="Alku"
@@ -135,7 +141,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             </FlexRow>
           </>
         )}
-      </ExpandableSection>
+      </InspectionConfigView>
     )
   }
 )
