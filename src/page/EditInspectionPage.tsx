@@ -70,8 +70,8 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            {inspection.status !== InspectionStatus.InProduction ? 'Uusi ' : ''}
-            {inspection.status !== InspectionStatus.InProduction
+            {inspection?.status !== InspectionStatus.InProduction ? 'Uusi ' : ''}
+            {inspection?.status !== InspectionStatus.InProduction
               ? typeStrings.prefixLC
               : typeStrings.prefix}
             tarkastus

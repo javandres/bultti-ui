@@ -25,6 +25,9 @@ export const TextInput = styled.input<{
       ? '1px solid #dadada'
       : '1px solid var(--dark-blue)'};
   font-size: 1rem;
+  line-height: 1.3;
+  height: 40px;
+  vertical-align: baseline;
   justify-content: flex-start;
   outline: 0;
   transition: all 0.2s ease-out;
