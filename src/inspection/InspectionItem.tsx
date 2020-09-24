@@ -14,21 +14,14 @@ const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: bo
   border-radius: 0.5rem;
   margin-bottom: 1rem;
   background: white;
-  border: 1px solid
-    ${(p) =>
-      p.status === InspectionStatus.InProduction && p.inEffect
-        ? 'var(--green)'
-        : p.status === InspectionStatus.InProduction
-        ? 'var(--blue)'
-        : p.status === InspectionStatus.InReview
-        ? 'var(--yellow)'
-        : 'var(--light-grey)'};
-  box-shadow: ${(p) =>
+  border: ${(p) =>
     p.status === InspectionStatus.InProduction && p.inEffect
-      ? '0 0 5px 0 var(--green)'
+      ? '3px solid var(--green)'
+      : p.status === InspectionStatus.InProduction
+      ? '1px solid var(--blue)'
       : p.status === InspectionStatus.InReview
-      ? '0 0 5px 0 var(--yellow)'
-      : 'none'};
+      ? '2px solid var(--yellow)'
+      : '1px solid var(--light-grey)'};
   font-family: inherit;
   margin-right: 1rem;
   text-align: left;

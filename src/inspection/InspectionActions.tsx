@@ -150,8 +150,17 @@ const InspectionActions = observer(
         )}
         {inspection.status !== InspectionStatus.Draft && (
           <Button
+            style={
+              inspection.status === InspectionStatus.InProduction
+                ? { marginLeft: 'auto', marginRight: 0 }
+                : undefined
+            }
             onClick={() => goToInspectionReports(inspection.id, inspectionType)}
-            buttonStyle={ButtonStyle.SECONDARY}
+            buttonStyle={
+              inspection.status === InspectionStatus.InProduction
+                ? ButtonStyle.NORMAL
+                : ButtonStyle.SECONDARY
+            }
             size={ButtonSize.MEDIUM}>
             Raportit
           </Button>

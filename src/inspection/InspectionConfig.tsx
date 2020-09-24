@@ -17,7 +17,7 @@ const InspectionConfigView = styled.div`
   margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
-  padding: 1rem;
+  padding: 0 1rem 1rem;
 `
 
 export type PropTypes = {

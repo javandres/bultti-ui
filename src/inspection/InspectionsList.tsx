@@ -4,7 +4,11 @@ import { get, groupBy, orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
-import { useCreateInspection, useEditInspection } from './inspectionUtils'
+import {
+  getInspectionTypeStrings,
+  useCreateInspection,
+  useEditInspection,
+} from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 import { Button } from '../common/components/Button'
 import { DATE_FORMAT } from '../constants'
@@ -187,15 +191,11 @@ const InspectionsList: React.FC<PropTypes> = ({
     [inspections]
   )
 
+  let typeStrings = getInspectionTypeStrings(inspectionType)
+
   return (
     <InspectionsListView>
       <LoadingDisplay loading={loading} />
-      <HeaderRow>
-        <Heading style={{ marginRight: '1rem', marginBottom: 0, marginTop: 0 }}>
-          Liikennöitsijän ennakkotarkastukset
-        </Heading>
-      </HeaderRow>
-
       <InspectionsWrapper>
         {seasons.map((season) => {
           let { id: seasonId } = season
@@ -221,12 +221,12 @@ const InspectionsList: React.FC<PropTypes> = ({
               {!inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
                   <TimelineMessage>
-                    Tällä kaudella ei ole tuotannossa-olevaa ennakkotarkastusta.
+                    Tällä kaudella ei ole tuotannossa-olevaa {typeStrings.prefixLC}tarkastusta.
                   </TimelineMessage>
                   {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
                     <TimelineActions>
                       <Button onClick={() => onCreateInspection(seasonId)}>
-                        Luo uusi ennakkotarkastus
+                        Luo uusi {typeStrings.prefixLC}tarkastus
                       </Button>
                     </TimelineActions>
                   )}

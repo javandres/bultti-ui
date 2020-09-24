@@ -28,6 +28,8 @@ const EditInspectionView = styled(Page)`
 
 const EditInspectionWrapper = styled(Page)`
   background-color: var(--white-grey);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--lighter-grey);
 `
 
 const InspectionActionsRow = styled(InspectionActions)`
@@ -68,7 +70,11 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            Uusi {typeStrings.prefixLC}tarkastus
+            {inspection.status !== InspectionStatus.InProduction ? 'Uusi ' : ''}
+            {inspection.status !== InspectionStatus.InProduction
+              ? typeStrings.prefixLC
+              : typeStrings.prefix}
+            tarkastus
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
