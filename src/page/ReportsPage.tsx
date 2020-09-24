@@ -156,8 +156,10 @@ const ReportsPage = observer(({ children }: PropTypes) => {
       <PageTitle loading={reportsLoading} onRefresh={refetch}>
         Raportit
       </PageTitle>
-      {!reportsData && !reportsLoading && <MessageView>Ei raportteja.</MessageView>}
       <ReportContentView>
+        {(!reportsData || reportsData.length === 0) && !reportsLoading && (
+          <MessageView>Ei raporttiasetuksia.</MessageView>
+        )}
         <FlexRow>
           {reports.length !== 0 && (
             <TextButton onClick={toggleReportsExpanded}>
