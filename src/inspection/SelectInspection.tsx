@@ -62,6 +62,17 @@ const InspectionItem = styled.div<StatusProps>`
   flex: 0 0 calc(33.333% - 1rem);
 `
 
+const NewInspection = styled.button`
+  background: white;
+  border: 3px dashed var(--lighter-grey);
+  border-radius: 1rem;
+  font-family: inherit;
+  padding: 0.75rem 1rem 0;
+  font-weight: bold;
+  color: var(--light-grey);
+  font-size: 1.5rem;
+`
+
 const ItemContent = styled.div`
   margin-bottom: 1rem;
   line-height: 1.4;
@@ -85,6 +96,11 @@ const ButtonRow = styled.div`
 
 const InspectionTitle = styled(SubHeading)`
   margin-bottom: 1rem;
+`
+
+const InspectionSubtitle = styled(SubHeading)`
+  margin-top: -0.5rem;
+  font-size: 0.875rem;
 `
 
 const InspectionVersion = styled.div`
@@ -190,34 +206,26 @@ const SelectInspection: React.FC<PropTypes> = observer(
               </ListHeading>
             </HeaderRow>
             <InspectionItems>
-              {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-                <InspectionItem key="new" status="new">
-                  <ItemContent style={{ marginTop: 0 }}>
-                    Tällä hetkellä ei ole keskeneräisiä {typeStrings.prefixLC}tarkastuksia,
-                    joten voit luoda uuden.
-                  </ItemContent>
-                  {inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
-                    <ItemContent>
-                      Uusi {typeStrings.prefixLC}tarkastus korvaa nykyisen tuotannossa-olevan
-                      tarkastuksen.
-                    </ItemContent>
-                  )}
-                  <ButtonRow>
-                    <Button
-                      buttonStyle={ButtonStyle.NORMAL}
-                      size={ButtonSize.MEDIUM}
-                      onClick={onCreateInspection}>
-                      Uusi {typeStrings.prefixLC}tarkastus
-                    </Button>
-                  </ButtonRow>
-                </InspectionItem>
-              )}
+              <NewInspection onClick={onCreateInspection}>
+                <ItemContent style={{ marginTop: 0 }}>
+                  Luo uusi {typeStrings.prefixLC}tarkastus
+                </ItemContent>
+              </NewInspection>
               {orderBy(inspections, 'version', 'desc').map((inspection) => (
                 <InspectionItem key={inspection.id} status={inspection.status}>
                   <ItemContent>
-                    <InspectionTitle>
-                      {inspection.operator.operatorName}, {inspection.season.id}
-                    </InspectionTitle>
+                    {inspection.name ? (
+                      <>
+                        <InspectionTitle>{inspection.name}</InspectionTitle>
+                        <InspectionSubtitle>
+                          {inspection.operator.operatorName}, {inspection.season.id}
+                        </InspectionSubtitle>
+                      </>
+                    ) : (
+                      <InspectionTitle>
+                        {inspection.operator.operatorName}, {inspection.season.id}
+                      </InspectionTitle>
+                    )}
                     <InspectionVersion>{inspection.version}</InspectionVersion>
                     <InspectionStatusDisplay status={inspection.status}>
                       {inspection.status === InspectionStatus.Draft
