@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { orderBy } from 'lodash'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
@@ -16,6 +15,7 @@ import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import InspectionActions from './InspectionActions'
+import { Plus } from '../common/icon/Plus'
 
 const SelectInspectionView = styled.div``
 
@@ -23,7 +23,7 @@ const InspectionItems = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  padding: 0 0 0 1rem;
+  padding: 0 1rem 0 0;
 `
 
 const HeaderRow = styled(FlexRow)`
@@ -54,7 +54,7 @@ const InspectionItem = styled.div<StatusProps>`
         ? 'var(--yellow)'
         : 'var(--light-green)'};
   font-family: inherit;
-  margin-right: 1rem;
+  margin-left: 1rem;
   text-align: left;
   line-height: 1.4;
   display: flex;
@@ -67,31 +67,35 @@ const NewInspection = styled.button`
   border: 3px dashed var(--lighter-grey);
   border-radius: 1rem;
   font-family: inherit;
-  padding: 0.75rem 1rem 0;
+  padding: 1rem;
   font-weight: bold;
   color: var(--light-grey);
   font-size: 1.5rem;
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+  flex: 0 0 calc(33.333% - 1rem);
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+  box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
+  outline: 0;
+
+  * {
+    margin: 0;
+  }
+
+  &:hover {
+    box-shadow: 0 0 15px 3px rgba(0, 0, 0, 0.1);
+    border-color: var(--light-grey);
+  }
 `
 
 const ItemContent = styled.div`
-  margin-bottom: 1rem;
   line-height: 1.4;
   position: relative;
-`
-
-const ButtonRow = styled.div`
-  margin: auto -1rem 0;
-  padding: 0.75rem 1rem 0.75rem;
-  border-top: 1px solid var(--lighter-grey);
-  background: var(--white-grey);
-  display: flex;
-  align-items: center;
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
-
-  > * {
-    margin-right: 1rem;
-  }
 `
 
 const InspectionTitle = styled(SubHeading)`
@@ -131,7 +135,9 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
   border-radius: 5px;
 `
 
-const InspectionPeriodDisplay = styled.div``
+const InspectionPeriodDisplay = styled.div`
+  margin-bottom: 0.5rem;
+`
 
 const StartDate = styled.span`
   margin-right: 0.75rem;
@@ -207,6 +213,9 @@ const SelectInspection: React.FC<PropTypes> = observer(
             </HeaderRow>
             <InspectionItems>
               <NewInspection onClick={onCreateInspection}>
+                <ItemContent>
+                  <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
+                </ItemContent>
                 <ItemContent style={{ marginTop: 0 }}>
                   Luo uusi {typeStrings.prefixLC}tarkastus
                 </ItemContent>
