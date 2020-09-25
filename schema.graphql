@@ -267,7 +267,7 @@ type Mutation {
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
   setReportsOrder(reportOrders: [ReportOrderInput!]!): [Report!]!
-  submitInspection(inspectionId: String!): Inspection!
+  submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment

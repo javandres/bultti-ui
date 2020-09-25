@@ -101,8 +101,12 @@ export const updateInspectionMutation = gql`
 `
 
 export const submitInspectionMutation = gql`
-  mutation submitInspection($inspectionId: String!) {
-    submitInspection(inspectionId: $inspectionId) {
+  mutation submitInspection(
+    $inspectionId: String!
+    $startDate: BulttiDate!
+    $endDate: BulttiDate!
+  ) {
+    submitInspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
       ...InspectionFragment
     }
   }

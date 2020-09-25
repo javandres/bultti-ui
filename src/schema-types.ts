@@ -870,6 +870,8 @@ export type MutationUpdateInspectionArgs = {
 
 
 export type MutationSubmitInspectionArgs = {
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   inspectionId: Scalars['String'];
 };
 

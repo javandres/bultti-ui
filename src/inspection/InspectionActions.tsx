@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback } from 'react'
+import React, { CSSProperties, useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
@@ -17,6 +17,7 @@ import {
 import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
 import { requireAdminUser, requireOperatorUser } from '../util/userRoles'
+import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -61,6 +62,7 @@ const InspectionActions = observer(
   }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [user] = useStateValue('user')
+    var [submitActive, setSubmitActive] = useState(false)
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
@@ -93,19 +95,32 @@ const InspectionActions = observer(
       rejectInspectionMutation
     )
 
-    var onSubmitInspection = useCallback(async () => {
-      if (disabledActions.includes('submit')) {
-        return
-      }
+    var onSubmitProcessStart = useCallback(() => {
+      setSubmitActive(true)
+    }, [])
 
-      await submitInspection({
-        variables: {
-          inspectionId: inspection.id,
-        },
-      })
+    var onCancelSubmit = useCallback(() => {
+      setSubmitActive(false)
+    }, [])
 
-      await onRefresh()
-    }, [onRefresh, inspection, disabledActions])
+    var onSubmitInspection = useCallback(
+      async (startDate: string, endDate: string) => {
+        if (disabledActions.includes('submit')) {
+          return
+        }
+
+        await submitInspection({
+          variables: {
+            inspectionId: inspection.id,
+            startDate,
+            endDate,
+          },
+        })
+
+        await onRefresh()
+      },
+      [onRefresh, inspection, disabledActions]
+    )
 
     var onPublishInspection = useCallback(async () => {
       if (disabledActions.includes('publish')) {
@@ -168,14 +183,23 @@ const InspectionActions = observer(
         {inspection.status === InspectionStatus.Draft &&
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
-            <Button
-              disabled={disabledActions.includes('submit')}
-              loading={submitLoading}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}
-              onClick={onSubmitInspection}>
-              Lähetä hyväksyttäväksi
-            </Button>
+            <>
+              <Button
+                disabled={false /*disabledActions.includes('submit')*/}
+                loading={submitLoading}
+                buttonStyle={ButtonStyle.NORMAL}
+                size={ButtonSize.MEDIUM}
+                onClick={onSubmitProcessStart}>
+                Lähetä hyväksyttäväksi
+              </Button>
+              {submitActive && (
+                <InspectionApprovalSubmit
+                  inspection={inspection}
+                  onSubmit={onSubmitInspection}
+                  onCancel={onCancelSubmit}
+                />
+              )}
+            </>
           )}
 
         {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
@@ -189,6 +213,7 @@ const InspectionActions = observer(
             Poista
           </Button>
         )}
+
         {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
           <>
             <Button
