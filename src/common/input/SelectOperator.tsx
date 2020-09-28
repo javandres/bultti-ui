@@ -122,12 +122,8 @@ const SelectOperator: React.FC<PropTypes> = observer(
     const currentOperator = useMemo(() => {
       let valueId = typeof value === 'number' ? value : value?.id
 
-      return !valueId
-        ? operators[0]
-        : operators.find((op) => valueId === op.id) || operators[0]
+      return !valueId ? null : operators.find((op) => valueId === op.id) || operators[0]
     }, [operators, value])
-
-    /* Disable if empty or only one item (in which case it will be auto-selected */
 
     return (
       <Dropdown
