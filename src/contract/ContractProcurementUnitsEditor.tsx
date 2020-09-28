@@ -17,6 +17,8 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
 import { parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { useContractPage } from './contractUtils'
+import { TextButton } from '../common/components/Button'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -97,6 +99,8 @@ const ContractProcurementUnitsEditor = observer(
       [includedUnitIds, onChange]
     )
 
+    let editContract = useContractPage()
+
     return (
       <ContractProcurementUnitsEditorView>
         <UnitContentWrapper>
@@ -163,10 +167,12 @@ const ContractProcurementUnitsEditor = observer(
                   {currentContractStart && currentContractEnd && !isCurrentContract && (
                     <CurrentContractDisplay>
                       Nykyinen sopimus:
-                      <DateRangeDisplay
-                        startDate={currentContractStart}
-                        endDate={currentContractEnd}
-                      />
+                      <TextButton onClick={() => editContract(currentContractId!)}>
+                        <DateRangeDisplay
+                          startDate={currentContractStart}
+                          endDate={currentContractEnd}
+                        />
+                      </TextButton>
                     </CurrentContractDisplay>
                   )}
                 </HeaderSection>
