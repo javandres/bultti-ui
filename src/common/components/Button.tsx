@@ -207,24 +207,13 @@ export type ButtonProps = {
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
   ({ helpText, children, loading, ...props }, ref: any) => {
-    let loadingColor = 'white'
-
-    if (props.buttonStyle && [ButtonStyle.SECONDARY].includes(props.buttonStyle)) {
-      loadingColor = 'var(--blue)'
-    }
-
-    if (
-      props.buttonStyle &&
-      [ButtonStyle.REMOVE, ButtonStyle.SECONDARY_REMOVE].includes(props.buttonStyle)
-    ) {
-      loadingColor = 'var(--red)'
-    }
+    let style = props2style(props)
 
     return (
       <StyledButton {...props} loading={loading} {...useTooltip(helpText)} ref={ref}>
         <ButtonLoading
           loading={!!loading}
-          color={loadingColor}
+          color={style.color}
           size={typeof props.size !== 'undefined' ? size2Style(props.size, 10, 15, 18) : 15}
           buttonSize={typeof props.size !== 'undefined' ? props.size : ButtonSize.MEDIUM}
         />{' '}

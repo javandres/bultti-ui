@@ -86,7 +86,9 @@ export function useCreateInspection(
 export function useRemoveInspection(
   afterRemove: () => unknown = () => {}
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
-  let [removeInspection, { loading }] = useMutationData(removeInspectionMutation)
+  let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
+    refetchQueries: ['currentInspectionsByOperatorAndSeason'],
+  })
 
   let execRemove = useCallback(
     async (inspection?: Inspection) => {

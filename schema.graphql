@@ -168,6 +168,7 @@ type ExecutionRequirement {
   equipmentQuotas: [ExecutionRequirementQuota!]!
   id: ID!
   inspection: Inspection!
+  inspectionId: String!
   operator: Operator!
   procurementUnit: ProcurementUnit
   procurementUnitId: String
@@ -208,7 +209,7 @@ type Inspection {
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
   inspectionEndDate: BulttiDate
-  inspectionErrors: [InspectionValidationError!]
+  inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
   inspectionType: InspectionType
   minStartDate: BulttiDate!
@@ -438,6 +439,13 @@ type User {
   role: UserRole!
 }
 
+type ValidationErrorData {
+  keys: [String!]
+  objects: [String!]
+  referenceKeys: [String!]
+  type: InspectionValidationError!
+}
+
 enum ContractUserRelationType {
   CREATED_BY
   SUBSCRIBED_TO
@@ -475,6 +483,7 @@ enum InspectionUserRelationType {
 }
 
 enum InspectionValidationError {
+  CONTRACT_OUTSIDE_INSPECTION_TIME
   INVALID_INSPECTION_TIME
   INVALID_PRODUCTION_TIME
   MISSING_BLOCK_DEPARTURES

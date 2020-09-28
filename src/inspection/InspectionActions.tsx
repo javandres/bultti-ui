@@ -83,17 +83,20 @@ const InspectionActions = observer(
 
     var [removePreInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
 
-    var [submitInspection, { loading: submitLoading }] = useMutationData(
-      submitInspectionMutation
-    )
+    var [
+      submitInspection,
+      { loading: submitLoading },
+    ] = useMutationData(submitInspectionMutation, { refetchQueries: ['inspectionById'] })
 
-    var [publishInspection, { loading: publishLoading }] = useMutationData(
-      publishInspectionMutation
-    )
+    var [
+      publishInspection,
+      { loading: publishLoading },
+    ] = useMutationData(publishInspectionMutation, { refetchQueries: ['inspectionById'] })
 
-    var [rejectInspection, { loading: rejectLoading }] = useMutationData(
-      rejectInspectionMutation
-    )
+    var [
+      rejectInspection,
+      { loading: rejectLoading },
+    ] = useMutationData(rejectInspectionMutation, { refetchQueries: ['inspectionById'] })
 
     var onSubmitProcessStart = useCallback(() => {
       setSubmitActive(true)
@@ -118,6 +121,7 @@ const InspectionActions = observer(
         })
 
         await onRefresh()
+        setSubmitActive(false)
       },
       [onRefresh, inspection, disabledActions]
     )
@@ -154,36 +158,37 @@ const InspectionActions = observer(
       inspection.status === InspectionStatus.InReview && requireAdminUser(user)
 
     return (
-      <ButtonRow className={className} style={style}>
-        {!isEditing && (
-          <Button
-            buttonStyle={ButtonStyle.NORMAL}
-            size={ButtonSize.MEDIUM}
-            onClick={() => onEditInspection(inspection)}>
-            {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
-          </Button>
-        )}
-        {inspection.status !== InspectionStatus.Draft && (
-          <Button
-            style={
-              inspection.status === InspectionStatus.InProduction
-                ? { marginLeft: 'auto', marginRight: 0 }
-                : undefined
-            }
-            onClick={() => goToInspectionReports(inspection.id, inspectionType)}
-            buttonStyle={
-              inspection.status === InspectionStatus.InProduction
-                ? ButtonStyle.NORMAL
-                : ButtonStyle.SECONDARY
-            }
-            size={ButtonSize.MEDIUM}>
-            Raportit
-          </Button>
-        )}
-        {inspection.status === InspectionStatus.Draft &&
-          requireOperatorUser(user, inspection?.operatorId || undefined) &&
-          isEditing && (
-            <>
+      <>
+        <ButtonRow className={className} style={style}>
+          {!isEditing && (
+            <Button
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.MEDIUM}
+              onClick={() => onEditInspection(inspection)}>
+              {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
+            </Button>
+          )}
+          {inspection.status !== InspectionStatus.Draft && (
+            <Button
+              style={
+                inspection.status === InspectionStatus.InProduction
+                  ? { marginLeft: 'auto', marginRight: 0 }
+                  : undefined
+              }
+              onClick={() => goToInspectionReports(inspection.id, inspectionType)}
+              buttonStyle={
+                inspection.status === InspectionStatus.InProduction
+                  ? ButtonStyle.NORMAL
+                  : ButtonStyle.SECONDARY
+              }
+              size={ButtonSize.MEDIUM}>
+              Raportit
+            </Button>
+          )}
+          {!submitActive &&
+            inspection.status === InspectionStatus.Draft &&
+            requireOperatorUser(user, inspection?.operatorId || undefined) &&
+            isEditing && (
               <Button
                 disabled={false /*disabledActions.includes('submit')*/}
                 loading={submitLoading}
@@ -192,51 +197,55 @@ const InspectionActions = observer(
                 onClick={onSubmitProcessStart}>
                 Lähetä hyväksyttäväksi
               </Button>
-              {submitActive && (
-                <InspectionApprovalSubmit
-                  inspection={inspection}
-                  onSubmit={onSubmitInspection}
-                  onCancel={onCancelSubmit}
-                />
-              )}
-            </>
-          )}
+            )}
 
-        {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
-          <Button
-            disabled={disabledActions.includes('remove')}
-            style={{ marginLeft: 'auto', marginRight: 0 }}
-            loading={removeLoading}
-            buttonStyle={ButtonStyle.REMOVE}
-            size={ButtonSize.MEDIUM}
-            onClick={() => removePreInspection(inspection)}>
-            Poista
-          </Button>
-        )}
-
-        {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
-          <>
+          {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
             <Button
-              disabled={disabledActions.includes('publish')}
-              style={{ marginLeft: 'auto' }}
-              loading={publishLoading}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.MEDIUM}
-              onClick={onPublishInspection}>
-              Julkaise
-            </Button>
-            <Button
-              disabled={disabledActions.includes('reject')}
+              disabled={disabledActions.includes('remove')}
               style={{ marginLeft: 'auto', marginRight: 0 }}
-              loading={rejectLoading}
+              loading={removeLoading}
               buttonStyle={ButtonStyle.REMOVE}
               size={ButtonSize.MEDIUM}
-              onClick={onRejectInspection}>
-              Hylkää
+              onClick={() => removePreInspection(inspection)}>
+              Poista
             </Button>
-          </>
-        )}
-      </ButtonRow>
+          )}
+
+          {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
+            <>
+              <Button
+                disabled={disabledActions.includes('publish')}
+                style={{ marginLeft: 'auto' }}
+                loading={publishLoading}
+                buttonStyle={ButtonStyle.NORMAL}
+                size={ButtonSize.MEDIUM}
+                onClick={onPublishInspection}>
+                Julkaise
+              </Button>
+              <Button
+                disabled={disabledActions.includes('reject')}
+                style={{ marginLeft: 'auto', marginRight: 0 }}
+                loading={rejectLoading}
+                buttonStyle={ButtonStyle.REMOVE}
+                size={ButtonSize.MEDIUM}
+                onClick={onRejectInspection}>
+                Hylkää
+              </Button>
+            </>
+          )}
+        </ButtonRow>
+        {submitActive &&
+          inspection.status === InspectionStatus.Draft &&
+          requireOperatorUser(user, inspection?.operatorId || undefined) &&
+          isEditing && (
+            <InspectionApprovalSubmit
+              inspection={inspection}
+              onSubmit={onSubmitInspection}
+              onCancel={onCancelSubmit}
+              loading={submitLoading}
+            />
+          )}
+      </>
     )
   }
 )

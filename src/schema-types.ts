@@ -247,7 +247,7 @@ export type Inspection = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   minStartDate: Scalars['BulttiDate'];
   versionStackIdentifier?: Maybe<Scalars['String']>;
-  inspectionErrors?: Maybe<Array<InspectionValidationError>>;
+  inspectionErrors?: Maybe<Array<ValidationErrorData>>;
 };
 
 export enum InspectionType {
@@ -270,6 +270,7 @@ export type ExecutionRequirement = {
   id: Scalars['ID'];
   area: OperatingArea;
   operator: Operator;
+  inspectionId: Scalars['String'];
   inspection: Inspection;
   equipmentQuotas: Array<ExecutionRequirementQuota>;
   procurementUnit?: Maybe<ProcurementUnit>;
@@ -547,6 +548,14 @@ export enum InspectionStatus {
   InProduction = 'InProduction'
 }
 
+export type ValidationErrorData = {
+  __typename?: 'ValidationErrorData';
+  type: InspectionValidationError;
+  keys?: Maybe<Array<Scalars['String']>>;
+  referenceKeys?: Maybe<Array<Scalars['String']>>;
+  objects?: Maybe<Array<Scalars['String']>>;
+};
+
 export enum InspectionValidationError {
   NotPre = 'NOT_PRE',
   NotPost = 'NOT_POST',
@@ -554,6 +563,7 @@ export enum InspectionValidationError {
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
   MissingContracts = 'MISSING_CONTRACTS',
+  ContractOutsideInspectionTime = 'CONTRACT_OUTSIDE_INSPECTION_TIME',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS'

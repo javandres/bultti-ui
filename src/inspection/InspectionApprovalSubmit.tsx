@@ -9,19 +9,22 @@ import { ActionsWrapper } from '../common/input/ItemForm'
 import styled from 'styled-components'
 import { addDays, format, parseISO } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const InspectionConfigView = styled.div`
   border: 1px solid var(--lighter-grey);
-  margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
   padding: 0 1rem 1rem;
+  margin: 0 1rem 1rem;
+  position: relative;
 `
 
 export type PropTypes = {
   inspection: Inspection
   onSubmit: (startDate: string, endDate: string) => Promise<unknown>
   onCancel: () => unknown
+  loading?: boolean
 }
 
 type InspectionDateValues = {
@@ -30,7 +33,7 @@ type InspectionDateValues = {
 }
 
 const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
-  ({ inspection, onSubmit, onCancel }) => {
+  ({ inspection, onSubmit, onCancel, loading = false }) => {
     let getValuesFromInspection = useCallback((setFromInspection: Inspection) => {
       return {
         startDate: setFromInspection.startDate || '',
@@ -61,6 +64,7 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
 
     return (
       <InspectionConfigView>
+        <LoadingDisplay loading={loading} />
         <FlexRow>
           <FormColumn>
             <InputLabel theme="light">Tuotantojakso</InputLabel>

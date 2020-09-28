@@ -81,27 +81,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             </FlexRow>
             <FlexRow>
               <FormColumn>
-                <InputLabel theme="light">Tuotantojakso</InputLabel>
-                <ControlGroup>
-                  <SelectDate
-                    name="production_start"
-                    value={inspectionValues.startDate}
-                    minDate={inspection.minStartDate}
-                    maxDate={inspection.season.endDate}
-                    onChange={(val) => onUpdateValue('startDate', val)}
-                    label="Alku"
-                    disabled={!isEditable}
-                    alignDatepicker="left"
-                  />
-                  <Input
-                    value={inspectionValues.endDate}
-                    label="Loppu"
-                    subLabel={true}
-                    disabled={true}
-                  />
-                </ControlGroup>
-              </FormColumn>
-              <FormColumn>
                 <InputLabel theme="light">Tarkastusjakso</InputLabel>
                 <ControlGroup>
                   <SelectDate

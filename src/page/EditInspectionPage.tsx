@@ -14,13 +14,14 @@ import {
   useEditInspection,
   useInspectionById,
 } from '../inspection/inspectionUtils'
-import { ErrorView, MessageContainer, MessageView } from '../common/components/Messages'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 import { useRefetch } from '../util/useRefetch'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
-import { text, translate } from '../util/translate'
+import { translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
+import InspectionValidationErrors from '../inspection/InspectionValidationErrors'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -105,13 +106,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                   onRefresh={refetch}
                   disabledActions={hasErrors ? ['submit', 'publish'] : []}
                 />
-                {hasErrors && (
-                  <MessageContainer>
-                    {(inspection?.inspectionErrors || []).map((err) => (
-                      <ErrorView key={err}>{text(err)}</ErrorView>
-                    ))}
-                  </MessageContainer>
-                )}
+                {hasErrors && <InspectionValidationErrors inspection={inspection} />}
                 <EditInspectionWrapper>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
