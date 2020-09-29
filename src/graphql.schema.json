@@ -4941,6 +4941,18 @@
             "deprecationReason": null
           },
           {
+            "name": "fulfilledAverageAgeWeighted",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "sanctionThreshold",
             "description": null,
             "args": [],
@@ -5073,21 +5085,13 @@
             "deprecationReason": null
           },
           {
-            "name": "objects",
+            "name": "objectId",
             "description": null,
             "args": [],
             "type": {
-              "kind": "LIST",
-              "name": null,
-              "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                }
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

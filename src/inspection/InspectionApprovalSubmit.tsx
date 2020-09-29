@@ -7,7 +7,7 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import styled from 'styled-components'
-import { addDays, format, parseISO } from 'date-fns'
+import { addDays, format, max, parseISO } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
 import { LoadingDisplay } from '../common/components/Loading'
 
@@ -35,9 +35,23 @@ type InspectionDateValues = {
 const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
   ({ inspection, onSubmit, onCancel, loading = false }) => {
     let getValuesFromInspection = useCallback((setFromInspection: Inspection) => {
+      let minStartDate = parseISO(setFromInspection.minStartDate)
+
+      let startDate = setFromInspection.startDate
+        ? parseISO(setFromInspection.startDate)
+        : minStartDate
+
+      startDate = max([startDate, minStartDate])
+
+      let endDate = setFromInspection.endDate
+        ? parseISO(setFromInspection.endDate)
+        : addDays(startDate, 1)
+
+      endDate = max([addDays(startDate, 1), endDate])
+
       return {
-        startDate: setFromInspection.startDate || '',
-        endDate: setFromInspection.endDate || '',
+        startDate: format(startDate, DATE_FORMAT),
+        endDate: format(endDate, DATE_FORMAT),
       }
     }, [])
 

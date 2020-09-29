@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
+  InspectionValidationError,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
+  ValidationErrorData,
 } from '../schema-types'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
@@ -34,13 +36,34 @@ import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
-const ProcurementUnitView = styled.div`
+const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
-  min-height: 5rem;
+  border-radius: 0.5rem;
+  border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid transparent')};
+  margin-bottom: 1rem;
+`
+
+const ProcurementUnitExpander = styled(ExpandableSection)`
+  margin-top: 0;
 `
 
 const ContentWrapper = styled.div`
   position: relative;
+`
+
+const CatalogueWrapper = styled.div<{ isInvalid: boolean }>`
+  border-radius: 0.5rem;
+  position: relative;
+
+  ${(p) =>
+    p.isInvalid
+      ? css`
+          border: 1px solid #ffacac;
+          padding: 1rem;
+          margin: 1rem -0.5rem -0.5rem;
+          background: rgba(255, 252s, 252, 1);
+        `
+      : ''}
 `
 
 export type PropTypes = {
@@ -52,6 +75,7 @@ export type PropTypes = {
   showExecutionRequirements: boolean
   className?: string
   onUpdate?: () => unknown
+  validationErrors: ValidationErrorData[]
 }
 
 const procurementUnitLabels = {
@@ -67,6 +91,8 @@ type ContentPropTypes = {
   requirementsEditable: boolean
   isVisible: boolean
   onUpdate?: () => unknown
+  catalogueInvalid: boolean
+  requirementsInvalid: boolean
 }
 
 const ProcurementUnitItemContent = observer(
@@ -78,6 +104,8 @@ const ProcurementUnitItemContent = observer(
     requirementsEditable,
     isVisible,
     onUpdate,
+    catalogueInvalid,
+    requirementsInvalid,
   }: ContentPropTypes) => {
     const [
       pendingProcurementUnit,
@@ -204,6 +232,7 @@ const ProcurementUnitItemContent = observer(
                 onUpdate={onUpdate}
                 isEditable={requirementsEditable}
                 procurementUnit={procurementUnit}
+                valid={!requirementsInvalid}
               />
             )}
             <FlexRow>
@@ -256,15 +285,17 @@ const ProcurementUnitItemContent = observer(
                 </ItemForm>
               </>
             ) : null}
-            <SubHeading>Kalustoluettelo</SubHeading>
-            <EquipmentCatalogue
-              startDate={inspectionStartDate}
-              procurementUnit={procurementUnit}
-              catalogue={activeCatalogue}
-              operatorId={procurementUnit.operatorId}
-              onCatalogueChanged={updateUnit}
-              editable={catalogueEditable}
-            />
+            <CatalogueWrapper isInvalid={catalogueInvalid}>
+              <SubHeading>Kalustoluettelo</SubHeading>
+              <EquipmentCatalogue
+                startDate={inspectionStartDate}
+                procurementUnit={procurementUnit}
+                catalogue={activeCatalogue}
+                operatorId={procurementUnit.operatorId}
+                onCatalogueChanged={updateUnit}
+                editable={catalogueEditable}
+              />
+            </CatalogueWrapper>
           </>
         )}
       </ContentWrapper>
@@ -282,13 +313,22 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     expanded = true,
     className,
     onUpdate,
+    validationErrors = [],
   }) => {
     const { currentContract, routes = [] } = procurementUnit || {}
 
+    let requirementsInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingExecutionRequirements
+    )
+
+    let catalogueInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingEquipmentCatalogues
+    )
+
     return (
-      <ProcurementUnitView className={className}>
+      <ProcurementUnitView className={className} error={validationErrors.length !== 0}>
         {procurementUnit && (
-          <ExpandableSection
+          <ProcurementUnitExpander
             isExpanded={expanded}
             headerContent={
               <>
@@ -337,9 +377,11 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 procurementUnitId={procurementUnit.id}
                 requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
+                catalogueInvalid={catalogueInvalid}
+                requirementsInvalid={requirementsInvalid}
               />
             )}
-          </ExpandableSection>
+          </ProcurementUnitExpander>
         )}
       </ProcurementUnitView>
     )

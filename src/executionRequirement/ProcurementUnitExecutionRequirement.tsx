@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../common/components/Loading'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
@@ -27,19 +27,32 @@ import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 
-const ProcurementUnitExecutionRequirementView = styled.div`
+const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
   position: relative;
+  transition: 0.3s ease-out;
+  border-radius: 0.5rem;
+
+  ${(p) =>
+    p.isInvalid
+      ? css`
+          border: 1px solid #ffacac;
+          padding: 1rem;
+          margin: -0.5rem -0.5rem 1rem;
+          background: rgba(255, 252s, 252, 1);
+        `
+      : ''}
 `
 
 export type PropTypes = {
   procurementUnit: ProcurementUnit
   isEditable: boolean
   onUpdate?: () => unknown
+  valid: boolean
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
-  ({ procurementUnit, isEditable, onUpdate }) => {
+  ({ procurementUnit, isEditable, onUpdate, valid = true }) => {
     let inspection = useContext(InspectionContext)
 
     let [
@@ -147,7 +160,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     let isLoading = requirementsLoading || createLoading || refreshLoading
 
     return (
-      <ProcurementUnitExecutionRequirementView>
+      <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
           <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>

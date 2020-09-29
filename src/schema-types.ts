@@ -537,6 +537,7 @@ export type ExecutionRequirementValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCount?: Maybe<Scalars['Int']>;
   equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  fulfilledAverageAgeWeighted?: Maybe<Scalars['Int']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;
@@ -553,7 +554,7 @@ export type ValidationErrorData = {
   type: InspectionValidationError;
   keys?: Maybe<Array<Scalars['String']>>;
   referenceKeys?: Maybe<Array<Scalars['String']>>;
-  objects?: Maybe<Array<Scalars['String']>>;
+  objectId?: Maybe<Scalars['String']>;
 };
 
 export enum InspectionValidationError {

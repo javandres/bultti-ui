@@ -195,6 +195,7 @@ type ExecutionRequirementValue {
   emissionClass: Int!
   equipmentCount: Int
   equipmentCountFulfilled: Int
+  fulfilledAverageAgeWeighted: Int
   kilometerRequirement: Float
   kilometersFulfilled: Float
   quotaFulfilled: Float
@@ -441,7 +442,7 @@ type User {
 
 type ValidationErrorData {
   keys: [String!]
-  objects: [String!]
+  objectId: String
   referenceKeys: [String!]
   type: InspectionValidationError!
 }
