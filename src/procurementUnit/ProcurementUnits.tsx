@@ -15,7 +15,8 @@ const ProcurementUnitsView = styled(TransparentPageSection)``
 
 export type PropTypes = {
   operatorId?: number
-  startDate?: string
+  inspectionStartDate?: string
+  inspectionEndDate?: string
   requirementsEditable: boolean
   onUpdate?: () => unknown
   getErrorsById?: (objectId: string) => ValidationErrorData[]
@@ -24,7 +25,8 @@ export type PropTypes = {
 const ProcurementUnits: React.FC<PropTypes> = observer(
   ({ getErrorsById, requirementsEditable = true, onUpdate, ...inspectionProps }) => {
     const inspection = useContext(InspectionContext)
-    let { operatorId, startDate } = inspection || inspectionProps || {}
+    let { operatorId, inspectionStartDate, inspectionEndDate } =
+      inspection || inspectionProps || {}
 
     let catalogueEditable = !inspection
     let showExecutionRequirements = !!inspection
@@ -43,10 +45,11 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
     const { data: procurementUnitsData, loading: procurementUnitsLoading } = useQueryData(
       procurementUnitsQuery,
       {
-        skip: !operatorId || !startDate,
+        skip: !operatorId,
         variables: {
           operatorId: operatorId,
-          startDate: startDate,
+          startDate: inspectionStartDate,
+          endDate: inspectionEndDate,
         },
       }
     )
@@ -82,7 +85,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   catalogueEditable={catalogueEditable}
                   showExecutionRequirements={showExecutionRequirements}
                   key={procurementUnit.id}
-                  startDate={startDate}
+                  startDate={inspectionStartDate}
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
                 />

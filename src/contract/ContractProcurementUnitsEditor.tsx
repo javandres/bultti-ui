@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
+  Contract,
   ContractInput,
   ProcurementUnitOption as ProcurementUnitOptionType,
 } from '../schema-types'
@@ -15,7 +16,7 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { parseISO } from 'date-fns'
+import { areIntervalsOverlapping, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
@@ -45,6 +46,7 @@ const ProcurementUnitOption = styled.div`
 `
 
 const CurrentContractDisplay = styled.div`
+  margin-top: 0.75rem;
   font-size: 0.75rem;
 
   > * {
@@ -101,6 +103,9 @@ const ContractProcurementUnitsEditor = observer(
 
     let editContract = useContractPage()
 
+    let startDate = parseISO(contract.startDate)
+    let endDate = parseISO(contract.endDate)
+
     return (
       <ContractProcurementUnitsEditorView>
         <UnitContentWrapper>
@@ -113,15 +118,6 @@ const ContractProcurementUnitsEditor = observer(
           {unitOptions.map((unitOption) => {
             let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
 
-            let {
-              currentContractId,
-              currentContractStart: currentStart,
-              currentContractEnd: currentEnd,
-            } = unitOption
-
-            let currentContractStart = !currentStart ? undefined : parseISO(currentStart)
-            let currentContractEnd = !currentEnd ? undefined : parseISO(currentEnd)
-
             let fullRoutesString = routes.join(', ')
             let shortRoutes = routes.slice(0, 3)
 
@@ -130,11 +126,31 @@ const ContractProcurementUnitsEditor = observer(
             }
 
             let shortRoutesString = shortRoutes.join(', ')
-
             let isSelected = includedUnitIds.includes(unitOption.id)
 
-            let isCurrentContract = currentContractId === contract.id
-            let canSelectUnit = !currentContractId || isCurrentContract
+            let { currentContracts = [] } = unitOption
+            currentContracts = currentContracts || []
+
+            let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
+
+            console.log(currentContracts)
+
+            let hasFullyOverlappingContract = currentContracts.some(
+              (c) =>
+                c.id !== contract.id &&
+                !areIntervalsOverlapping(
+                  {
+                    start: parseISO(c.startDate),
+                    end: parseISO(c.endDate),
+                  },
+                  { start: startDate, end: endDate }
+                )
+            )
+
+            let canSelectUnit =
+              currentContracts.length === 0 ||
+              !hasFullyOverlappingContract ||
+              isCurrentContract
 
             return (
               <ProcurementUnitOption key={unitOption.id}>
@@ -164,15 +180,21 @@ const ContractProcurementUnitsEditor = observer(
                       onChange={() => onToggleUnitInclusion(unitOption.id)}
                     />
                   )}
-                  {currentContractStart && currentContractEnd && !isCurrentContract && (
+                  {currentContracts.length !== 0 && !isCurrentContract && (
                     <CurrentContractDisplay>
-                      Nykyinen sopimus:
-                      <TextButton onClick={() => editContract(currentContractId!)}>
-                        <DateRangeDisplay
-                          startDate={currentContractStart}
-                          endDate={currentContractEnd}
-                        />
-                      </TextButton>
+                      Nykyiset sopimukset:
+                      <div>
+                        {currentContracts.map((currentContract: Contract) => (
+                          <TextButton
+                            style={{ display: 'block' }}
+                            onClick={() => editContract(currentContract.id!)}>
+                            <DateRangeDisplay
+                              startDate={currentContract.startDate}
+                              endDate={currentContract.endDate}
+                            />
+                          </TextButton>
+                        ))}
+                      </div>
                     </CurrentContractDisplay>
                   )}
                 </HeaderSection>

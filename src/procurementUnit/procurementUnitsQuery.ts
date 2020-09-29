@@ -19,7 +19,7 @@ export const ProcurementUnitFragment = gql`
       length
       routeId
     }
-    currentContract {
+    currentContracts {
       id
       operatorId
       createdAt
@@ -32,8 +32,16 @@ export const ProcurementUnitFragment = gql`
 `
 
 export const procurementUnitsQuery = gql`
-  query procurementUnitsByOperator($operatorId: Int!, $startDate: BulttiDate!) {
-    procurementUnitsByOperator(operatorId: $operatorId, date: $startDate) {
+  query procurementUnitsByOperator(
+    $operatorId: Int!
+    $startDate: BulttiDate!
+    $endDate: BulttiDate!
+  ) {
+    procurementUnitsByOperator(
+      operatorId: $operatorId
+      startDate: $startDate
+      endDate: $endDate
+    ) {
       ...ProcurementUnitFragment
     }
   }

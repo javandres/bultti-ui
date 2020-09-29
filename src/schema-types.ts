@@ -76,7 +76,8 @@ export type QueryProcurementUnitArgs = {
 
 
 export type QueryProcurementUnitsByOperatorArgs = {
-  date: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
 };
 
@@ -315,7 +316,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate'];
   executionRequirements: Array<ExecutionRequirement>;
   contracts: Array<Contract>;
-  currentContract?: Maybe<Contract>;
+  currentContracts?: Maybe<Array<Contract>>;
 };
 
 export type EquipmentCatalogue = {
@@ -686,9 +687,7 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   medianAgeRequirement?: Maybe<Scalars['Float']>;
   areaName?: Maybe<Scalars['String']>;
-  currentContractId?: Maybe<Scalars['String']>;
-  currentContractStart?: Maybe<Scalars['BulttiDate']>;
-  currentContractEnd?: Maybe<Scalars['BulttiDate']>;
+  currentContracts?: Maybe<Array<Contract>>;
 };
 
 export type Mutation = {

@@ -324,7 +324,7 @@ type ProcurementUnit {
   area: OperatingArea
   areaId: Int
   contracts: [Contract!]!
-  currentContract: Contract
+  currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
@@ -341,9 +341,7 @@ type ProcurementUnit {
 
 type ProcurementUnitOption {
   areaName: String
-  currentContractEnd: BulttiDate
-  currentContractId: String
-  currentContractStart: BulttiDate
+  currentContracts: [Contract!]
   endDate: BulttiDate!
   id: String!
   medianAgeRequirement: Float
@@ -383,7 +381,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
-  procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
+  procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
   reportCreatorOptions: [ReportCreatorOption!]!
   reports(inspectionType: InspectionType): [Report!]!

@@ -231,6 +231,7 @@ const ProcurementUnitItemContent = observer(
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
               <Button
+                loading={loading}
                 onClick={updateUnit}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
@@ -308,7 +309,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     onUpdate,
     validationErrors = [],
   }) => {
-    const { currentContract, routes = [] } = procurementUnit || {}
+    const { currentContracts = [], routes = [] } = procurementUnit || {}
 
     let requirementsInvalid = validationErrors.some(
       (err) => err.type === InspectionValidationError.MissingExecutionRequirements
@@ -358,10 +359,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>
-                  {currentContract ? (
+                  {(currentContracts || []).length !== 0 ? (
                     <DateRangeDisplay
-                      startDate={currentContract.startDate}
-                      endDate={currentContract.endDate}
+                      startDate={currentContracts![0].startDate}
+                      endDate={currentContracts![currentContracts!.length - 1].endDate}
                     />
                   ) : (
                     'Ei voimassaolevaa sopimusta.'
