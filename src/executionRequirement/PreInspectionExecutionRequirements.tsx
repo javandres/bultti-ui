@@ -29,80 +29,85 @@ const AreaHeading = styled.h4`
   margin-top: 0;
 `
 
-export type PropTypes = {}
+export type PropTypes = {
+  isValid: boolean
+}
 
-const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
-  const inspection = useContext(InspectionContext)
-  let { id } = inspection || {}
+const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
+  ({ isValid = false }) => {
+    const inspection = useContext(InspectionContext)
+    let { id } = inspection || {}
 
-  let [
-    previewRequirements,
-    { data: executionRequirementsData, loading: requirementsLoading },
-  ] = useLazyQueryData(executionRequirementsForAreaQuery, {
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      inspectionId: id,
-    },
-  })
+    let [
+      previewRequirements,
+      { data: executionRequirementsData, loading: requirementsLoading },
+    ] = useLazyQueryData(executionRequirementsForAreaQuery, {
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        inspectionId: id,
+      },
+    })
 
-  let onPreviewRequirements = useCallback(async () => {
-    if (inspection && previewRequirements) {
-      await previewRequirements({
-        variables: {
-          inspectionId: inspection?.id,
-        },
-      })
-    }
-  }, [previewRequirements, inspection])
+    let onPreviewRequirements = useCallback(async () => {
+      if (inspection && previewRequirements) {
+        await previewRequirements({
+          variables: {
+            inspectionId: inspection?.id,
+          },
+        })
+      }
+    }, [previewRequirements, inspection])
 
-  let queueRefetch = useRefetch(onPreviewRequirements, true)
+    let queueRefetch = useRefetch(onPreviewRequirements, true)
 
-  let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
-    () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
-    [executionRequirementsData]
-  )
+    let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
+      () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
+      [executionRequirementsData]
+    )
 
-  return (
-    <ExpandableSection
-      headerContent={
-        <>
-          <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
-          <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
-            {areaExecutionRequirements?.length !== 0 && (
-              <Button
-                loading={requirementsLoading}
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}
-                onClick={queueRefetch}>
-                Päivitä
+    return (
+      <ExpandableSection
+        error={!isValid}
+        headerContent={
+          <>
+            <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
+            <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
+              {areaExecutionRequirements?.length !== 0 && (
+                <Button
+                  loading={requirementsLoading}
+                  style={{ marginLeft: 'auto' }}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  size={ButtonSize.SMALL}
+                  onClick={queueRefetch}>
+                  Päivitä
+                </Button>
+              )}
+            </HeaderSection>
+          </>
+        }>
+        {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
+          <>
+            <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
+            <div>
+              <Button onClick={onPreviewRequirements}>
+                Laske suoritevaatimukset ja toteumat
               </Button>
-            )}
-          </HeaderSection>
-        </>
-      }>
-      {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
-        <>
-          <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
-          <div>
-            <Button onClick={onPreviewRequirements}>
-              Laske suoritevaatimukset ja toteumat
-            </Button>
-          </div>
-        </>
-      )}
-      <LoadingDisplay loading={requirementsLoading} style={{ top: '0' }} />
-      {areaExecutionRequirements.map((areaRequirements) => (
-        <AreaWrapper key={areaRequirements.area.id}>
-          <AreaHeading>{areaRequirements.area.name}</AreaHeading>
-          <RequirementsTable
-            tableLayout={RequirementsTableLayout.BY_VALUES}
-            executionRequirement={areaRequirements}
-          />
-        </AreaWrapper>
-      ))}
-    </ExpandableSection>
-  )
-})
+            </div>
+          </>
+        )}
+        <LoadingDisplay loading={requirementsLoading} style={{ top: '0' }} />
+        {areaExecutionRequirements.map((areaRequirements) => (
+          <AreaWrapper key={areaRequirements.area.id}>
+            <AreaHeading>{areaRequirements.area.name}</AreaHeading>
+            <RequirementsTable
+              tableLayout={RequirementsTableLayout.BY_VALUES}
+              executionRequirement={areaRequirements}
+            />
+          </AreaWrapper>
+        ))}
+      </ExpandableSection>
+    )
+  }
+)
 
 export default PreInspectionExecutionRequirements

@@ -38,13 +38,6 @@ import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
-  border-radius: 0.5rem;
-  border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid transparent')};
-  margin-bottom: 1rem;
-`
-
-const ProcurementUnitExpander = styled(ExpandableSection)`
-  margin-top: 0;
 `
 
 const ContentWrapper = styled.div`
@@ -61,7 +54,7 @@ const CatalogueWrapper = styled.div<{ isInvalid: boolean }>`
           border: 1px solid #ffacac;
           padding: 1rem;
           margin: 1rem -0.5rem -0.5rem;
-          background: rgba(255, 252s, 252, 1);
+          background: rgba(255, 252, 252, 1);
         `
       : ''}
 `
@@ -325,10 +318,18 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       (err) => err.type === InspectionValidationError.MissingEquipmentCatalogues
     )
 
+    let contractInvalid = validationErrors.some((err) =>
+      [
+        InspectionValidationError.ContractOutsideInspectionTime,
+        InspectionValidationError.MissingContracts,
+      ].includes(err.type)
+    )
+
     return (
-      <ProcurementUnitView className={className} error={validationErrors.length !== 0}>
+      <ProcurementUnitView className={className}>
         {procurementUnit && (
-          <ProcurementUnitExpander
+          <ExpandableSection
+            error={validationErrors.length !== 0}
             isExpanded={expanded}
             headerContent={
               <>
@@ -355,7 +356,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
                   {procurementUnit?.area?.name}
                 </HeaderSection>
-                <HeaderSection style={{ flexGrow: 2 }}>
+                <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>
                   {currentContract ? (
                     <DateRangeDisplay
@@ -381,7 +382,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 requirementsInvalid={requirementsInvalid}
               />
             )}
-          </ProcurementUnitExpander>
+          </ExpandableSection>
         )}
       </ProcurementUnitView>
     )

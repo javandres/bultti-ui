@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionValidationError } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { SectionHeading } from '../common/components/Typography'
@@ -17,13 +17,32 @@ type PreInspectionProps = {
 
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
   ({ inspection, refetchData, isEditable }) => {
-    console.log(inspection.inspectionErrors)
     let { getByObjectId } = useInspectionErrors(inspection.inspectionErrors || [])
+
+    let departureBlocksInvalid = useMemo(
+      () =>
+        (inspection?.inspectionErrors || []).some(
+          (err) => err.type === InspectionValidationError.MissingBlockDepartures
+        ),
+      [inspection]
+    )
+
+    let executionRequirementsInvalid = useMemo(
+      () =>
+        (inspection?.inspectionErrors || []).some(
+          (err) => err.type === InspectionValidationError.MissingExecutionRequirements
+        ),
+      [inspection]
+    )
 
     return (
       <>
-        <DepartureBlocks onUpdate={refetchData} isEditable={isEditable} />
-        <PreInspectionExecutionRequirements />
+        <DepartureBlocks
+          onUpdate={refetchData}
+          isEditable={isEditable}
+          isValid={!departureBlocksInvalid}
+        />
+        <PreInspectionExecutionRequirements isValid={executionRequirementsInvalid} />
         <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
         <ProcurementUnits
           onUpdate={refetchData}

@@ -56,6 +56,18 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
 
   const cache = new InMemoryCache({
     addTypename: true,
+    typePolicies: {
+      Inspection: {
+        fields: {
+          inspectionErrors: {
+            merge(existing, incoming) {
+              // Equivalent to what happens if there is no custom merge function.
+              return incoming
+            },
+          },
+        },
+      },
+    },
     dataIdFromObject: (obj, context) => {
       let typename = obj?.__typename
 

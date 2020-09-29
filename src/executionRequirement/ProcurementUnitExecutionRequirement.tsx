@@ -39,7 +39,7 @@ const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean 
           border: 1px solid #ffacac;
           padding: 1rem;
           margin: -0.5rem -0.5rem 1rem;
-          background: rgba(255, 252s, 252, 1);
+          background: rgba(255, 252, 252, 1);
         `
       : ''}
 `
