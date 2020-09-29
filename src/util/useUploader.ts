@@ -31,16 +31,17 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   onUploadFinished?: (data?: TData, errors?: ReadonlyArray<GraphQLError>) => void
 ): Uploader<TData, TVariables> => {
   let [uploadError, setUploadError] = useState()
+  let [uploadLoading, setUploadLoading] = useState(false)
 
   let errorHandler = useCallback((err) => {
     setUploadError(err)
     return { data: null, error: err }
   }, [])
 
-  const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
-    mutation,
-    { notifyOnNetworkStatusChange: true, ...options }
-  )
+  const [mutationFn, { data, error, called }] = useMutation<TData, TVariables>(mutation, {
+    notifyOnNetworkStatusChange: true,
+    ...options,
+  })
 
   const uploadFile = useCallback(
     (file: File, overrideOptions = {}) => {
@@ -56,6 +57,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
       }
 
       setUploadError(undefined)
+      setUploadLoading(true)
 
       return mutationFn(queryOptions)
         .then((result) => {
@@ -68,6 +70,9 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
           return { data: uploadedData, error: (result?.errors || [])[0] }
         })
         .catch(errorHandler)
+        .finally(() => {
+          setUploadLoading(false)
+        })
     },
     [options?.variables, errorHandler, mutationFn, onUploadFinished]
   )
@@ -76,6 +81,12 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
 
   return [
     uploadFile,
-    { data: pickedData, loading, error: error || uploadError, called, mutationFn },
+    {
+      data: pickedData,
+      loading: uploadLoading,
+      error: error || uploadError,
+      called,
+      mutationFn,
+    },
   ]
 }
