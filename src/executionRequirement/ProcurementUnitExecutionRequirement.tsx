@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../common/components/Loading'
-import RequirementsTable from './RequirementsTable'
+import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
@@ -193,7 +193,10 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 fieldLabels={equipmentColumnLabels}
               />
             )}
-            <RequirementsTable executionRequirement={procurementUnitRequirement} />
+            <RequirementsTable
+              executionRequirement={procurementUnitRequirement}
+              tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
+            />
           </>
         ) : (
           <>

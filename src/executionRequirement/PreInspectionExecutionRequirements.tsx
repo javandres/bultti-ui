@@ -70,6 +70,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(() => {
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
             {areaExecutionRequirements?.length !== 0 && (
               <Button
+                loading={requirementsLoading}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
