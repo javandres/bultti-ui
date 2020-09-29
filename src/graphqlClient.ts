@@ -57,11 +57,19 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
   const cache = new InMemoryCache({
     addTypename: true,
     typePolicies: {
+      Query: {
+        fields: {
+          availableDayTypes: {
+            merge(existing, incoming) {
+              return incoming
+            },
+          },
+        },
+      },
       Inspection: {
         fields: {
           inspectionErrors: {
             merge(existing, incoming) {
-              // Equivalent to what happens if there is no custom merge function.
               return incoming
             },
           },

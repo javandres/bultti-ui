@@ -39,7 +39,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
 
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
-    { errorPolicy: 'all', ...options }
+    { notifyOnNetworkStatusChange: true, ...options }
   )
 
   const uploadFile = useCallback(
@@ -73,6 +73,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
   )
 
   const pickedData = useMemo(() => pickGraphqlData(data), [data])
+
   return [
     uploadFile,
     { data: pickedData, loading, error: error || uploadError, called, mutationFn },
