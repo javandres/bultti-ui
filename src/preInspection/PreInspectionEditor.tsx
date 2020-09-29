@@ -42,7 +42,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           isEditable={isEditable}
           isValid={!departureBlocksInvalid}
         />
-        <PreInspectionExecutionRequirements isValid={executionRequirementsInvalid} />
+        <PreInspectionExecutionRequirements isValid={!executionRequirementsInvalid} />
         <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
         <ProcurementUnits
           onUpdate={refetchData}
