@@ -82,6 +82,7 @@ const NewInspection = styled.button`
   transition: all 0.1s ease-out;
   box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.1);
   outline: 0;
+  min-height: 13.3rem;
 
   * {
     margin: 0;
