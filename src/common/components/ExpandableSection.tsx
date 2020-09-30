@@ -93,6 +93,8 @@ export const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
 
 export const ContentWrapper = styled.div<{ expanded: boolean }>`
   padding: ${(p) => (p.expanded ? '1rem' : '0')};
+  height: ${(p) => (p.expanded ? 'auto' : 0)};
+  overflow: ${(p) => (p.expanded ? 'hidden' : 'auto')};
 `
 
 export const ExpandToggle = styled.button<{ expanded?: boolean }>`
@@ -162,11 +164,9 @@ const ExpandableSection = observer(
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
-        {(expanded || typeof children === 'function') && (
-          <ContentWrapper expanded={expanded}>
-            {typeof children === 'function' ? children(expanded) : children}
-          </ContentWrapper>
-        )}
+        <ContentWrapper expanded={expanded}>
+          {typeof children === 'function' ? children(expanded) : children}
+        </ContentWrapper>
       </ExpandableBoxView>
     )
   }
