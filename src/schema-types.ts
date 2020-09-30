@@ -146,7 +146,6 @@ export type QueryReportsArgs = {
 
 
 export type QueryInspectionReportByNameArgs = {
-  inspectionType: InspectionType;
   inspectionId: Scalars['String'];
   reportName: Scalars['String'];
 };

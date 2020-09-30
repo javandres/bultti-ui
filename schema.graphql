@@ -375,7 +375,7 @@ type Query {
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
-  inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
+  inspectionReportByName(inspectionId: String!, reportName: String!): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   operator(operatorId: Int!): Operator

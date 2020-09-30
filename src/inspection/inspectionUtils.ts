@@ -28,7 +28,6 @@ export function useInspectionById(inspectionId?: string) {
     inspectionQuery,
     {
       skip: !inspectionId,
-      fetchPolicy: 'cache-and-network',
       notifyOnNetworkStatusChange: true,
       variables: {
         inspectionId: inspectionId,

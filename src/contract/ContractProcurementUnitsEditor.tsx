@@ -20,6 +20,7 @@ import { areIntervalsOverlapping, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -106,6 +107,20 @@ const ContractProcurementUnitsEditor = observer(
     let startDate = parseISO(contract.startDate)
     let endDate = parseISO(contract.endDate)
 
+    let allSelected = useMemo(
+      () => !unitOptions.some((unit) => !includedUnitIds.includes(unit.id)),
+      [unitOptions, includedUnitIds]
+    )
+
+    let onSelectAll = useCallback(() => {
+      if (!allSelected) {
+        let allSelectedArr = unitOptions.map((unit) => unit.id)
+        onChange(allSelectedArr)
+      } else {
+        onChange([])
+      }
+    }, [allSelected, unitOptions])
+
     return (
       <ContractProcurementUnitsEditorView>
         <UnitContentWrapper>
@@ -115,6 +130,21 @@ const ContractProcurementUnitsEditor = observer(
               <MessageView>Ei kilpailukohteita</MessageView>
             </EmptyView>
           )}
+          <FlexRow
+            style={{
+              justifyContent: 'flex-end',
+              padding: '0.75rem',
+              borderBottom: '1px solid var(--lighter-grey)',
+            }}>
+            <Checkbox
+              disabled={readOnly}
+              value="select_all"
+              name="select_all"
+              label={allSelected ? 'Kaikki valittu' : 'Valitse kaikki'}
+              checked={allSelected}
+              onChange={onSelectAll}
+            />
+          </FlexRow>
           {unitOptions.map((unitOption) => {
             let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
 
@@ -132,8 +162,6 @@ const ContractProcurementUnitsEditor = observer(
             currentContracts = currentContracts || []
 
             let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
-
-            console.log(currentContracts)
 
             let hasFullyOverlappingContract = currentContracts.some(
               (c) =>

@@ -784,20 +784,6 @@
             "description": null,
             "args": [
               {
-                "name": "inspectionType",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "InspectionType",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "inspectionId",
                 "description": null,
                 "type": {
