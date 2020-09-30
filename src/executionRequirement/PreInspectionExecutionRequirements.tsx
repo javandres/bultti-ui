@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { executionRequirementsForAreaQuery } from './executionRequirementsQueries'
@@ -6,7 +6,6 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
 import { orderBy } from 'lodash'
 import { LoadingDisplay } from '../common/components/Loading'
-import { useLazyQueryData } from '../util/useLazyQueryData'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
 import ExpandableSection, {
@@ -14,6 +13,8 @@ import ExpandableSection, {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { ExecutionRequirement } from '../schema-types'
+import { useQueryData } from '../util/useQueryData'
+import { useRefetch } from '../util/useRefetch'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -37,25 +38,18 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
     const inspection = useContext(InspectionContext)
     let { id } = inspection || {}
 
-    let [
-      previewRequirements,
-      { data: executionRequirementsData, loading: requirementsLoading },
-    ] = useLazyQueryData(executionRequirementsForAreaQuery, {
+    let {
+      data: executionRequirementsData,
+      loading: requirementsLoading,
+      refetch: refetchRequirements,
+    } = useQueryData(executionRequirementsForAreaQuery, {
       notifyOnNetworkStatusChange: true,
       variables: {
         inspectionId: id,
       },
     })
 
-    let onPreviewRequirements = useCallback(async () => {
-      if (inspection && previewRequirements) {
-        await previewRequirements({
-          variables: {
-            inspectionId: inspection?.id,
-          },
-        })
-      }
-    }, [previewRequirements, inspection])
+    let refetch = useRefetch(refetchRequirements)
 
     let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
       () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
@@ -75,7 +69,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
                   style={{ marginLeft: 'auto' }}
                   buttonStyle={ButtonStyle.SECONDARY}
                   size={ButtonSize.SMALL}
-                  onClick={onPreviewRequirements}>
+                  onClick={refetch}>
                   Päivitä
                 </Button>
               )}
@@ -86,9 +80,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
           <>
             <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
             <div>
-              <Button onClick={onPreviewRequirements}>
-                Laske suoritevaatimukset ja toteumat
-              </Button>
+              <Button onClick={refetch}>Laske suoritevaatimukset ja toteumat</Button>
             </div>
           </>
         )}
