@@ -8,7 +8,6 @@ import { orderBy } from 'lodash'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { InspectionContext } from '../inspection/InspectionContext'
-import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import ExpandableSection, {
   HeaderMainHeading,
@@ -58,8 +57,6 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
       }
     }, [previewRequirements, inspection])
 
-    let queueRefetch = useRefetch(onPreviewRequirements, true)
-
     let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
       () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
       [executionRequirementsData]
@@ -78,7 +75,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
                   style={{ marginLeft: 'auto' }}
                   buttonStyle={ButtonStyle.SECONDARY}
                   size={ButtonSize.SMALL}
-                  onClick={queueRefetch}>
+                  onClick={onPreviewRequirements}>
                   Päivitä
                 </Button>
               )}
