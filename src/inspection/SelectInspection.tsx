@@ -16,8 +16,11 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
+import { LoadingDisplay } from '../common/components/Loading'
 
-const SelectInspectionView = styled.div``
+const SelectInspectionView = styled.div`
+  position: relative;
+`
 
 const InspectionItems = styled.div`
   display: flex;
@@ -201,6 +204,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
 
     return (
       <SelectInspectionView>
+        <LoadingDisplay loading={loading} />
         {!operator || !season ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
