@@ -25,6 +25,7 @@ export type PropTypes = {
   onSubmit: (startDate: string, endDate: string) => Promise<unknown>
   onCancel: () => unknown
   loading?: boolean
+  disabled: boolean
 }
 
 type InspectionDateValues = {
@@ -33,7 +34,7 @@ type InspectionDateValues = {
 }
 
 const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
-  ({ inspection, onSubmit, onCancel, loading = false }) => {
+  ({ inspection, onSubmit, onCancel, loading = false, disabled = false }) => {
     let getValuesFromInspection = useCallback((setFromInspection: Inspection) => {
       let minStartDate = parseISO(setFromInspection.minStartDate)
 
@@ -108,7 +109,10 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
         </FlexRow>
         <FlexRow>
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} onClick={onSubmitValues}>
+            <Button
+              disabled={disabled}
+              style={{ marginRight: '1rem' }}
+              onClick={onSubmitValues}>
               Lähetä hyväksyttäväksi
             </Button>
             <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>

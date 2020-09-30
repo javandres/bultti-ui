@@ -83,12 +83,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                   <InputLabel theme="light">Tuotantojakso</InputLabel>
                   <ControlGroup>
                     <Input
+                      type="date"
                       value={inspection.startDate}
                       label="Alku"
                       subLabel={true}
                       disabled={true}
                     />
                     <Input
+                      type="date"
                       value={inspection.endDate}
                       label="Loppu"
                       subLabel={true}

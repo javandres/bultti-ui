@@ -197,7 +197,6 @@ const InspectionActions = observer(
             requireOperatorUser(user, inspection?.operatorId || undefined) &&
             isEditing && (
               <Button
-                disabled={false /*disabledActions.includes('submit')*/}
                 loading={submitLoading}
                 buttonStyle={ButtonStyle.NORMAL}
                 size={ButtonSize.MEDIUM}
@@ -246,6 +245,7 @@ const InspectionActions = observer(
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <InspectionApprovalSubmit
+              disabled={disabledActions.includes('submit')}
               inspection={inspection}
               onSubmit={onSubmitInspection}
               onCancel={onCancelSubmit}
