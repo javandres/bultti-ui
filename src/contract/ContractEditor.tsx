@@ -141,12 +141,14 @@ const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRule
 
   if (key === 'operatorId') {
     let onChangeOperator = (operator) => onChange(operator?.id || operator)
+    let opVal = val || contract.operatorId
+
     return (
       <SelectOperator
         useUnselected={false}
         disabled={readOnly}
         style={{ color: 'var(--dark-grey)' }}
-        value={val}
+        value={opVal}
         onSelect={onChangeOperator}
       />
     )
@@ -264,6 +266,7 @@ const ContractEditor = observer(
     ] = useUploader(modifyContractMutation, {
       refetchQueries: ({ data }) => {
         let mutationResult = pickGraphqlData(data)
+
         return [
           { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
           { query: contractQuery, variables: { contractId: mutationResult?.id } },
@@ -280,25 +283,12 @@ const ContractEditor = observer(
     })
 
     let [createContract, { loading: createLoading }] = useUploader(createContractMutation, {
-      update: (cache, { data: { createContract } }) => {
-        let { contract } =
-          cache.readQuery({
-            query: contractsQuery,
-            variables: { operatorId: createContract?.operatorId },
-          }) || {}
-
-        if (contract) {
-          cache.writeQuery({
-            query: contractQuery,
-            variables: { contractId: createContract.id },
-            data: { contract: createContract },
-          })
-        }
-      },
+      refetchQueries: [
+        { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
+      ],
     })
 
     let isLoading = modifyLoading || createLoading
-
     let goToContract = useContractPage()
 
     let onDone = useCallback(async () => {
@@ -322,16 +312,18 @@ const ContractEditor = observer(
           })
         }
 
-        onReset()
+        if (isNew) {
+          onReset()
+        }
+
         setRulesFile([])
 
-        let nextContract = result.data
-
-        if (nextContract) {
+        if (result.data) {
           if (!isNew) {
+            let nextContract = pickGraphqlData(result.data)
             setPendingContract(createContractInput(nextContract))
           } else {
-            goToContract(nextContract.id)
+            goToContract(result.data.id)
           }
         }
       }

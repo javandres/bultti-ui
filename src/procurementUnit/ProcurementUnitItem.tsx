@@ -1,10 +1,12 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
+  InspectionValidationError,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
+  ValidationErrorData,
 } from '../schema-types'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
@@ -34,13 +36,27 @@ import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
-const ProcurementUnitView = styled.div`
+const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
-  min-height: 5rem;
 `
 
 const ContentWrapper = styled.div`
   position: relative;
+`
+
+const CatalogueWrapper = styled.div<{ isInvalid: boolean }>`
+  border-radius: 0.5rem;
+  position: relative;
+
+  ${(p) =>
+    p.isInvalid
+      ? css`
+          border: 1px solid #ffacac;
+          padding: 1rem;
+          margin: 1rem -0.5rem -0.5rem;
+          background: rgba(255, 252, 252, 1);
+        `
+      : ''}
 `
 
 export type PropTypes = {
@@ -52,6 +68,7 @@ export type PropTypes = {
   showExecutionRequirements: boolean
   className?: string
   onUpdate?: () => unknown
+  validationErrors: ValidationErrorData[]
 }
 
 const procurementUnitLabels = {
@@ -67,6 +84,8 @@ type ContentPropTypes = {
   requirementsEditable: boolean
   isVisible: boolean
   onUpdate?: () => unknown
+  catalogueInvalid: boolean
+  requirementsInvalid: boolean
 }
 
 const ProcurementUnitItemContent = observer(
@@ -78,6 +97,8 @@ const ProcurementUnitItemContent = observer(
     requirementsEditable,
     isVisible,
     onUpdate,
+    catalogueInvalid,
+    requirementsInvalid,
   }: ContentPropTypes) => {
     const [
       pendingProcurementUnit,
@@ -204,11 +225,13 @@ const ProcurementUnitItemContent = observer(
                 onUpdate={onUpdate}
                 isEditable={requirementsEditable}
                 procurementUnit={procurementUnit}
+                valid={!requirementsInvalid}
               />
             )}
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
               <Button
+                loading={loading}
                 onClick={updateUnit}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
@@ -256,15 +279,17 @@ const ProcurementUnitItemContent = observer(
                 </ItemForm>
               </>
             ) : null}
-            <SubHeading>Kalustoluettelo</SubHeading>
-            <EquipmentCatalogue
-              startDate={inspectionStartDate}
-              procurementUnit={procurementUnit}
-              catalogue={activeCatalogue}
-              operatorId={procurementUnit.operatorId}
-              onCatalogueChanged={updateUnit}
-              editable={catalogueEditable}
-            />
+            <CatalogueWrapper isInvalid={catalogueInvalid}>
+              <SubHeading>Kalustoluettelo</SubHeading>
+              <EquipmentCatalogue
+                startDate={inspectionStartDate}
+                procurementUnit={procurementUnit}
+                catalogue={activeCatalogue}
+                operatorId={procurementUnit.operatorId}
+                onCatalogueChanged={updateUnit}
+                editable={catalogueEditable}
+              />
+            </CatalogueWrapper>
           </>
         )}
       </ContentWrapper>
@@ -282,13 +307,30 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     expanded = true,
     className,
     onUpdate,
+    validationErrors = [],
   }) => {
-    const { currentContract, routes = [] } = procurementUnit || {}
+    const { currentContracts = [], routes = [] } = procurementUnit || {}
+
+    let requirementsInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingExecutionRequirements
+    )
+
+    let catalogueInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingEquipmentCatalogues
+    )
+
+    let contractInvalid = validationErrors.some((err) =>
+      [
+        InspectionValidationError.ContractOutsideInspectionTime,
+        InspectionValidationError.MissingContracts,
+      ].includes(err.type)
+    )
 
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
           <ExpandableSection
+            error={validationErrors.length !== 0}
             isExpanded={expanded}
             headerContent={
               <>
@@ -315,12 +357,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
                   {procurementUnit?.area?.name}
                 </HeaderSection>
-                <HeaderSection style={{ flexGrow: 2 }}>
+                <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>
-                  {currentContract ? (
+                  {(currentContracts || []).length !== 0 ? (
                     <DateRangeDisplay
-                      startDate={currentContract.startDate}
-                      endDate={currentContract.endDate}
+                      startDate={currentContracts![0].startDate}
+                      endDate={currentContracts![currentContracts!.length - 1].endDate}
                     />
                   ) : (
                     'Ei voimassaolevaa sopimusta.'
@@ -337,6 +379,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 procurementUnitId={procurementUnit.id}
                 requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
+                catalogueInvalid={catalogueInvalid}
+                requirementsInvalid={requirementsInvalid}
               />
             )}
           </ExpandableSection>

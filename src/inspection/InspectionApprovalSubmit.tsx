@@ -7,7 +7,7 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import styled from 'styled-components'
-import { addDays, format, parseISO } from 'date-fns'
+import { addDays, format, max, parseISO } from 'date-fns'
 import { DATE_FORMAT } from '../constants'
 import { LoadingDisplay } from '../common/components/Loading'
 
@@ -25,6 +25,7 @@ export type PropTypes = {
   onSubmit: (startDate: string, endDate: string) => Promise<unknown>
   onCancel: () => unknown
   loading?: boolean
+  disabled: boolean
 }
 
 type InspectionDateValues = {
@@ -33,11 +34,25 @@ type InspectionDateValues = {
 }
 
 const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
-  ({ inspection, onSubmit, onCancel, loading = false }) => {
+  ({ inspection, onSubmit, onCancel, loading = false, disabled = false }) => {
     let getValuesFromInspection = useCallback((setFromInspection: Inspection) => {
+      let minStartDate = parseISO(setFromInspection.minStartDate)
+
+      let startDate = setFromInspection.startDate
+        ? parseISO(setFromInspection.startDate)
+        : minStartDate
+
+      startDate = max([startDate, minStartDate])
+
+      let endDate = setFromInspection.endDate
+        ? parseISO(setFromInspection.endDate)
+        : addDays(startDate, 1)
+
+      endDate = max([addDays(startDate, 1), endDate])
+
       return {
-        startDate: setFromInspection.startDate || '',
-        endDate: setFromInspection.endDate || '',
+        startDate: format(startDate, DATE_FORMAT),
+        endDate: format(endDate, DATE_FORMAT),
       }
     }, [])
 
@@ -94,7 +109,10 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
         </FlexRow>
         <FlexRow>
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} onClick={onSubmitValues}>
+            <Button
+              disabled={disabled}
+              style={{ marginRight: '1rem' }}
+              onClick={onSubmitValues}>
               Lähetä hyväksyttäväksi
             </Button>
             <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>

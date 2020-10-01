@@ -23,9 +23,10 @@ const DepartureBlocksView = styled.div`
 type PropTypes = {
   isEditable: boolean
   onUpdate: () => unknown
+  isValid: boolean
 }
 
-const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate }) => {
+const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, isValid }) => {
   const inspection = useContext(InspectionContext)
   const inspectionId = inspection?.id || ''
 
@@ -83,6 +84,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate })
 
   return (
     <ExpandableSection
+      error={!isValid}
       headerContent={
         <>
           <HeaderMainHeading>Lähtöketjut</HeaderMainHeading>

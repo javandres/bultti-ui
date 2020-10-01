@@ -56,13 +56,10 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     var [operator] = useStateValue('globalOperator')
     var editInspection = useEditInspection(inspectionType)
 
-    let {
-      data: inspection,
-      loading: inspectionLoading,
-      refetch: refetchInspection,
-    } = useInspectionById(inspectionId)
+    let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
+      inspectionId
+    )
 
-    let refetch = useRefetch(refetchInspection)
     let hasErrors = inspection?.inspectionErrors?.length !== 0
 
     let typeStrings = getInspectionTypeStrings(inspectionType)

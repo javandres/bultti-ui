@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps, Router } from '@reach/router'
+import { Redirect, RouteComponentProps, Router } from '@reach/router'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import InspectionsPage from './page/InspectionsPage'
@@ -18,6 +18,13 @@ import OperatorContractsListPage from './page/OperatorContractsListPage'
 import EditContractPage from './page/EditContractPage'
 import { PageTitle } from './common/components/PageTitle'
 import { InspectionType } from './schema-types'
+import { removeAuthToken } from './util/authToken'
+import { useMutationData } from './util/useMutationData'
+import { logoutMutation } from './common/query/authQueries'
+import { pickGraphqlData } from './util/pickGraphqlData'
+import { useStateValue } from './state/useAppState'
+import { HeaderHeading } from './common/components/ExpandableSection'
+import Loading from './common/components/Loading'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -26,6 +33,38 @@ const Todo: React.FC<RouteComponentProps> = () => {
       Placeholder page for future planned content.
     </Page>
   )
+}
+
+const Logout: React.FC<RouteComponentProps> = () => {
+  const [user, setUser] = useStateValue('user')
+  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
+
+  useEffect(() => {
+    if (user) {
+      logout().then((result) => {
+        let isLoggedOut = pickGraphqlData(result.data)
+
+        if (isLoggedOut) {
+          setUser(null)
+        }
+
+        removeAuthToken()
+      })
+    } else {
+      removeAuthToken()
+    }
+  }, [])
+
+  if (user || logoutLoading) {
+    return (
+      <Page>
+        <HeaderHeading>Kirjaudutaan ulos...</HeaderHeading>
+        <Loading />
+      </Page>
+    )
+  }
+
+  return <Redirect to="/" noThrow={true} />
 }
 
 const App: React.FC = observer(() => {
@@ -81,6 +120,7 @@ const App: React.FC = observer(() => {
         <EditContractPage path="contract/:contractId" />
         <ReportsPage path="reports" />
         <Todo path="contracts" />
+        <Logout path="logout" />
       </Router>
     </AppFrame>
   )

@@ -41,7 +41,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
       notifyOnNetworkStatusChange: true,
       skip: !inspectionId || !reportName,
       variables: {
-        reportName: reportName,
+        reportName,
         inspectionId,
         inspectionType,
       },

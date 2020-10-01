@@ -122,7 +122,6 @@ type Equipment {
   registryDate: BulttiDate
   registryNr: String
   type: String!
-  uniqueVehicleId: String!
   vehicleId: String!
 }
 
@@ -195,6 +194,7 @@ type ExecutionRequirementValue {
   emissionClass: Int!
   equipmentCount: Int
   equipmentCountFulfilled: Int
+  fulfilledAverageAgeWeighted: Int
   kilometerRequirement: Float
   kilometersFulfilled: Float
   quotaFulfilled: Float
@@ -242,7 +242,7 @@ type MissingEquipment {
 }
 
 type Mutation {
-  batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue!
+  batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
@@ -323,7 +323,7 @@ type ProcurementUnit {
   area: OperatingArea
   areaId: Int
   contracts: [Contract!]!
-  currentContract: Contract
+  currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
@@ -340,9 +340,7 @@ type ProcurementUnit {
 
 type ProcurementUnitOption {
   areaName: String
-  currentContractEnd: BulttiDate
-  currentContractId: String
-  currentContractStart: BulttiDate
+  currentContracts: [Contract!]
   endDate: BulttiDate!
   id: String!
   medianAgeRequirement: Float
@@ -376,13 +374,13 @@ type Query {
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
-  inspectionReportByName(inspectionId: String!, inspectionType: InspectionType!, reportName: String!): Report
+  inspectionReportByName(inspectionId: String!, reportName: String!): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
-  procurementUnitsByOperator(date: BulttiDate!, operatorId: Int!): [ProcurementUnit!]!
+  procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
   reportCreatorOptions: [ReportCreatorOption!]!
   reports(inspectionType: InspectionType): [Report!]!
@@ -441,7 +439,7 @@ type User {
 
 type ValidationErrorData {
   keys: [String!]
-  objects: [String!]
+  objectId: String
   referenceKeys: [String!]
   type: InspectionValidationError!
 }

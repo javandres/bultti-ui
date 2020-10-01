@@ -1,11 +1,11 @@
 import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ArrowDown } from '../icon/ArrowDown'
 import { SectionHeading } from './Typography'
 
-const ExpandableBoxView = styled.div`
-  border: 1px solid var(--lighter-grey);
+const ExpandableBoxView = styled.div<{ error: boolean }>`
+  border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid var(--lighter-grey)')};
   margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
@@ -17,7 +17,7 @@ export const HeaderRow = styled.div`
   justify-content: flex-start;
 `
 
-export const HeaderSection = styled.div`
+export const HeaderSection = styled.div<{ error?: boolean }>`
   font-size: 0.875rem;
   padding: 0.75rem;
   border-right: 1px solid var(--lighter-grey);
@@ -34,6 +34,15 @@ export const HeaderSection = styled.div`
   &:last-child {
     border-right: 0;
   }
+
+  ${(p) =>
+    p.error
+      ? css`
+          border-left: 1px solid var(--red) !important;
+          border-right: 1px solid var(--red) !important;
+          background: rgba(255, 245, 245, 1) !important;
+        `
+      : ''}
 `
 
 export const HeaderMainHeading = styled(SectionHeading)`
@@ -84,6 +93,8 @@ export const HeaderContentWrapper = styled.div<{ expanded?: boolean }>`
 
 export const ContentWrapper = styled.div<{ expanded: boolean }>`
   padding: ${(p) => (p.expanded ? '1rem' : '0')};
+  height: ${(p) => (p.expanded ? 'auto' : 0)};
+  overflow: ${(p) => (p.expanded ? 'hidden' : 'auto')};
 `
 
 export const ExpandToggle = styled.button<{ expanded?: boolean }>`
@@ -111,6 +122,7 @@ export type PropTypes = {
   onToggleExpanded?: (expanded: boolean) => unknown
   className?: string
   style?: CSSProperties
+  error?: boolean
 }
 
 const ExpandableSection = observer(
@@ -121,6 +133,7 @@ const ExpandableSection = observer(
     onToggleExpanded = () => {},
     className,
     style,
+    error = false,
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
@@ -140,7 +153,7 @@ const ExpandableSection = observer(
     }, [isExpanded])
 
     return (
-      <ExpandableBoxView style={style} className={className}>
+      <ExpandableBoxView error={error} style={style} className={className}>
         <HeaderRow>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded}>
@@ -151,11 +164,9 @@ const ExpandableSection = observer(
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
-        {(expanded || typeof children === 'function') && (
-          <ContentWrapper expanded={expanded}>
-            {typeof children === 'function' ? children(expanded) : children}
-          </ContentWrapper>
-        )}
+        <ContentWrapper expanded={expanded}>
+          {typeof children === 'function' ? children(expanded) : children}
+        </ContentWrapper>
       </ExpandableBoxView>
     )
   }

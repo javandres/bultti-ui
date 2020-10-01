@@ -76,7 +76,8 @@ export type QueryProcurementUnitArgs = {
 
 
 export type QueryProcurementUnitsByOperatorArgs = {
-  date: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
 };
 
@@ -145,7 +146,6 @@ export type QueryReportsArgs = {
 
 
 export type QueryInspectionReportByNameArgs = {
-  inspectionType: InspectionType;
   inspectionId: Scalars['String'];
   reportName: Scalars['String'];
 };
@@ -315,7 +315,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate'];
   executionRequirements: Array<ExecutionRequirement>;
   contracts: Array<Contract>;
-  currentContract?: Maybe<Contract>;
+  currentContracts?: Maybe<Array<Contract>>;
 };
 
 export type EquipmentCatalogue = {
@@ -348,7 +348,6 @@ export type Equipment = {
   id: Scalars['ID'];
   vehicleId: Scalars['String'];
   operatorId: Scalars['Int'];
-  uniqueVehicleId: Scalars['String'];
   operator: Operator;
   model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
@@ -537,6 +536,7 @@ export type ExecutionRequirementValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCount?: Maybe<Scalars['Int']>;
   equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  fulfilledAverageAgeWeighted?: Maybe<Scalars['Int']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;
@@ -553,7 +553,7 @@ export type ValidationErrorData = {
   type: InspectionValidationError;
   keys?: Maybe<Array<Scalars['String']>>;
   referenceKeys?: Maybe<Array<Scalars['String']>>;
-  objects?: Maybe<Array<Scalars['String']>>;
+  objectId?: Maybe<Scalars['String']>;
 };
 
 export enum InspectionValidationError {
@@ -685,9 +685,7 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   medianAgeRequirement?: Maybe<Scalars['Float']>;
   areaName?: Maybe<Scalars['String']>;
-  currentContractId?: Maybe<Scalars['String']>;
-  currentContractStart?: Maybe<Scalars['BulttiDate']>;
-  currentContractEnd?: Maybe<Scalars['BulttiDate']>;
+  currentContracts?: Maybe<Array<Contract>>;
 };
 
 export type Mutation = {
@@ -700,7 +698,7 @@ export type Mutation = {
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
-  batchAddToEquipmentCatalogue: EquipmentCatalogue;
+  batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;

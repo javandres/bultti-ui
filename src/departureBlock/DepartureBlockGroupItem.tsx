@@ -105,8 +105,8 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     )
 
     let isLoading = useMemo(
-      () => removeBlocksLoading || ((hasDepartures || showBlocksLoading) && loading),
-      [loading, hasDepartures, showBlocksLoading, removeBlocksLoading]
+      () => removeBlocksLoading || ((hasDepartures || showBlocksLoading) && uploadLoading),
+      [uploadLoading, hasDepartures, showBlocksLoading, removeBlocksLoading]
     )
 
     // The group is disabled when there are no departures.

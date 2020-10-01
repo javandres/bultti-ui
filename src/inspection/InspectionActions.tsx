@@ -18,6 +18,7 @@ import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
 import { requireAdminUser, requireOperatorUser } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -81,7 +82,13 @@ const InspectionActions = observer(
       [goToInspectionEdit, setSeason, season]
     )
 
-    var [removePreInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
+    var [removeInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
+
+    let onRemoveInspection = useCallback(async () => {
+      await removeInspection(inspection)
+      let pathSegment = inspection.inspectionType === InspectionType.Pre ? 'pre' : 'post'
+      navigateWithQueryString(`/${pathSegment}-inspection/edit`)
+    }, [removeInspection, inspection])
 
     var [
       submitInspection,
@@ -190,7 +197,6 @@ const InspectionActions = observer(
             requireOperatorUser(user, inspection?.operatorId || undefined) &&
             isEditing && (
               <Button
-                disabled={false /*disabledActions.includes('submit')*/}
                 loading={submitLoading}
                 buttonStyle={ButtonStyle.NORMAL}
                 size={ButtonSize.MEDIUM}
@@ -206,7 +212,7 @@ const InspectionActions = observer(
               loading={removeLoading}
               buttonStyle={ButtonStyle.REMOVE}
               size={ButtonSize.MEDIUM}
-              onClick={() => removePreInspection(inspection)}>
+              onClick={onRemoveInspection}>
               Poista
             </Button>
           )}
@@ -239,6 +245,7 @@ const InspectionActions = observer(
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <InspectionApprovalSubmit
+              disabled={disabledActions.includes('submit')}
               inspection={inspection}
               onSubmit={onSubmitInspection}
               onCancel={onCancelSubmit}

@@ -77,7 +77,10 @@ const redirectToLogin = () => {
 const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = false }) => {
   const openAuthForm = useCallback(() => {
     let currentPath = '/' + history.location.href.replace(getAppRoot(), '')
-    sessionStorage.setItem('return_to_url', currentPath)
+
+    if (!currentPath.includes('logout')) {
+      sessionStorage.setItem('return_to_url', currentPath)
+    }
 
     redirectToLogin()
   }, [])

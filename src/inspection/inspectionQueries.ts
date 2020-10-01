@@ -18,7 +18,7 @@ export const inspectionFragment = gql`
     inspectionType
     inspectionErrors {
       keys
-      objects
+      objectId
       referenceKeys
       type
     }

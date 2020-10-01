@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
-import { Inspection, InspectionInput } from '../schema-types'
+import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
@@ -55,8 +55,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
     let setValuesFromInspection = useCallback((setFromInspection: Inspection) => {
       setInspectionValues({
         name: setFromInspection.name || '',
-        startDate: setFromInspection.startDate || '',
-        endDate: setFromInspection.endDate || '',
         inspectionStartDate: setFromInspection.inspectionStartDate || '',
         inspectionEndDate: setFromInspection.inspectionEndDate || '',
       })
@@ -80,6 +78,27 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               </FormColumn>
             </FlexRow>
             <FlexRow>
+              {inspection.status !== InspectionStatus.Draft && (
+                <FormColumn>
+                  <InputLabel theme="light">Tuotantojakso</InputLabel>
+                  <ControlGroup>
+                    <Input
+                      type="date"
+                      value={inspection.startDate}
+                      label="Alku"
+                      subLabel={true}
+                      disabled={true}
+                    />
+                    <Input
+                      type="date"
+                      value={inspection.endDate}
+                      label="Loppu"
+                      subLabel={true}
+                      disabled={true}
+                    />
+                  </ControlGroup>
+                </FormColumn>
+              )}
               <FormColumn>
                 <InputLabel theme="light">Tarkastusjakso</InputLabel>
                 <ControlGroup>

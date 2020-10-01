@@ -81,16 +81,8 @@ export const ShortDepartureFragment = gql`
 `
 
 export const reportByName = gql`
-  query getPreInspectionReport(
-    $reportName: String!
-    $inspectionId: String!
-    $inspectionType: InspectionType!
-  ) {
-    inspectionReportByName(
-      inspectionId: $inspectionId
-      inspectionType: $inspectionType
-      reportName: $reportName
-    ) {
+  query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
+    inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId) {
       ...ReportFragment
       operator {
         id

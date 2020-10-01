@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { get, groupBy, orderBy } from 'lodash'
-import { FlexRow } from '../common/components/common'
 import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import {
@@ -17,17 +16,11 @@ import { isBetween } from '../util/isBetween'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
-import { Heading } from '../common/components/Typography'
 
 const InspectionsListView = styled.div`
   min-height: 100%;
   padding: 0 1rem;
   margin-bottom: 2rem;
-`
-
-const HeaderRow = styled(FlexRow)`
-  margin: 1rem 0 2rem;
-  align-items: center;
 `
 
 const InspectionsWrapper = styled.div`

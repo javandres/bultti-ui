@@ -210,8 +210,7 @@ export function useEquipmentCrud(
         return
       }
 
-      let vehicleIds = batchInput
-        .split('\n')
+      let vehicleIds = (batchInput.split('\n') || [])
         .map((vehId) => trim(vehId))
         .filter((vehId) => !!vehId)
 

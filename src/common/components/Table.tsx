@@ -19,7 +19,6 @@ import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
-import { useResizeObserver } from '../../util/useResizeObserver'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -29,7 +28,7 @@ const TableWrapper = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   margin: 0 -1rem 1rem -1rem;
-  overflow-x: auto;
+  overflow-x: scroll;
 
   &:last-child {
     margin-bottom: 0;
@@ -439,7 +438,7 @@ const Table = observer(
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index]
 
-        // Only set with if no width has been set yet for this column, or if it is different,
+        // Only set width if no width has been set yet for this column, or if it is different,
         // or when onlyIncrease is true, if the new width is more than the current width.
         if (!curWidth || width !== curWidth) {
           let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
@@ -629,21 +628,17 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let wrapperRect = useResizeObserver(tableViewRef)
-
-    let wrapperWidth = wrapperRect?.width || 0
     let width = columnWidths.reduce((total, col) => total + col, 0)
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
     let isScrolling = listHeight > maxHeight
-    let isOverflowing = wrapperWidth < width
 
     let wrapperHeight = Math.max(
       tableIsEmpty ? 150 : rowHeight,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
         2 +
-        (isOverflowing ? SCROLLBAR_WIDTH : 0)
+        SCROLLBAR_WIDTH
     )
 
     // Scroll listeners for the floating toolbar.
