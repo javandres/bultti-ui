@@ -122,7 +122,6 @@ type Equipment {
   registryDate: BulttiDate
   registryNr: String
   type: String!
-  uniqueVehicleId: String!
   vehicleId: String!
 }
 

@@ -348,7 +348,6 @@ export type Equipment = {
   id: Scalars['ID'];
   vehicleId: Scalars['String'];
   operatorId: Scalars['Int'];
-  uniqueVehicleId: Scalars['String'];
   operator: Operator;
   model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
