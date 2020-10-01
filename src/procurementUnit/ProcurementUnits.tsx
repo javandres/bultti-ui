@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import ProcurementUnitItem from './ProcurementUnitItem'
-import { TextButton } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
 import { FlexRow, TransparentPageSection } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
@@ -42,17 +42,18 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
     ])
 
     // Get the operating units for the selected operator.
-    const { data: procurementUnitsData, loading: procurementUnitsLoading } = useQueryData(
-      procurementUnitsQuery,
-      {
-        skip: !operatorId,
-        variables: {
-          operatorId: operatorId,
-          startDate: inspectionStartDate,
-          endDate: inspectionEndDate,
-        },
-      }
-    )
+    const {
+      data: procurementUnitsData,
+      loading: procurementUnitsLoading,
+      refetch,
+    } = useQueryData(procurementUnitsQuery, {
+      skip: !operatorId,
+      variables: {
+        operatorId: operatorId,
+        startDate: inspectionStartDate,
+        endDate: inspectionEndDate,
+      },
+    })
 
     const procurementUnits = procurementUnitsData || []
 
@@ -73,6 +74,14 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                     : 'Näytä kaikki kilpailukohteet'}
                 </TextButton>
               )}
+              <Button
+                loading={procurementUnitsLoading}
+                style={{ marginLeft: 'auto' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}
+                onClick={() => refetch()}>
+                Päivitä
+              </Button>
             </FlexRow>
             {procurementUnits.map((procurementUnit) => {
               let unitErrors = getUnitErrors(procurementUnit.id)
