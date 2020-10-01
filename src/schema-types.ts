@@ -699,7 +699,7 @@ export type Mutation = {
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
-  batchAddToEquipmentCatalogue: EquipmentCatalogue;
+  batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;

@@ -6886,13 +6886,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "EquipmentCatalogue",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "EquipmentCatalogue",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

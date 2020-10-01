@@ -75,6 +75,15 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           },
         },
       },
+      EquipmentCatalogue: {
+        fields: {
+          equipmentCatalogues: {
+            merge(existing, incoming) {
+              return incoming
+            },
+          },
+        },
+      },
     },
     dataIdFromObject: (obj, context) => {
       let typename = obj?.__typename
