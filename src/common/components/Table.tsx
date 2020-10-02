@@ -437,12 +437,14 @@ const Table = observer(
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index]
+        let scrollbarAdjustedWidth =
+          width - SCROLLBAR_WIDTH / Math.max(currentWidths.length, 1)
 
         // Only set width if no width has been set yet for this column, or if it is different,
         // or when onlyIncrease is true, if the new width is more than the current width.
-        if (!curWidth || width !== curWidth) {
+        if (!curWidth || scrollbarAdjustedWidth !== curWidth) {
           let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, width)
+          nextWidths.splice(index, deleteCount, scrollbarAdjustedWidth)
           return nextWidths
         }
 

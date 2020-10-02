@@ -34,6 +34,7 @@ const ReportListItem: React.FC<PropTypes> = observer(
   }) => {
     return (
       <ExpandableSection
+        unmountOnClose={true}
         isExpanded={isExpanded}
         headerContent={
           <>

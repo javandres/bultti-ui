@@ -123,6 +123,8 @@ export type PropTypes = {
   className?: string
   style?: CSSProperties
   error?: boolean
+  // For large content it is advisable to unmount when the expander is closed.
+  unmountOnClose?: boolean
 }
 
 const ExpandableSection = observer(
@@ -134,6 +136,7 @@ const ExpandableSection = observer(
     className,
     style,
     error = false,
+    unmountOnClose = false,
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
@@ -164,9 +167,11 @@ const ExpandableSection = observer(
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
-        <ContentWrapper expanded={expanded}>
-          {typeof children === 'function' ? children(expanded) : children}
-        </ContentWrapper>
+        {(expanded || !unmountOnClose) && (
+          <ContentWrapper expanded={expanded}>
+            {typeof children === 'function' ? children(expanded) : children}
+          </ContentWrapper>
+        )}
       </ExpandableBoxView>
     )
   }
