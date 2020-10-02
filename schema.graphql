@@ -63,8 +63,7 @@ type Departure {
   journeyStartTime: String!
   observedEquipmentType: String
   plannedEquipmentType: String
-  procurementUnit: ProcurementUnit
-  procurementUnitId: String
+  procurementUnitId: String!
   recoveryTime: Int
   registryDate: BulttiDate
   registryNr: String
@@ -205,6 +204,7 @@ type ExecutionRequirementValue {
 
 type Inspection {
   createdAt: DateTime!
+  defectInspection: Inspection
   endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
@@ -216,6 +216,8 @@ type Inspection {
   name: String
   operator: Operator!
   operatorId: Int
+  postInspection: Inspection
+  preInspection: Inspection
   season: Season!
   seasonId: String
   startDate: BulttiDate
@@ -311,8 +313,7 @@ type OperatorBlockDeparture {
   journeyStartTime: String!
   journeyType: String!
   operatorId: String
-  procurementUnit: ProcurementUnit
-  procurementUnitId: String
+  procurementUnitId: String!
   registryNr: String
   routeId: String
   routeLength: Int
@@ -467,6 +468,7 @@ enum InspectionStatus {
 }
 
 enum InspectionType {
+  EQUIPMENT_DEFECT
   POST
   PRE
 }

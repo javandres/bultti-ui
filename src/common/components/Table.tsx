@@ -169,6 +169,10 @@ const TableCell = styled.div<{
   &:nth-child(odd) {
     background: rgba(0, 0, 0, 0.025);
   }
+
+  &:last-child {
+    border-right: 1px solid transparent;
+  }
 `
 
 const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
@@ -185,6 +189,10 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
   white-space: nowrap;
   position: relative;
   display: flex;
+
+  &:last-child {
+    border-right: 1px solid transparent;
+  }
 `
 
 const HeaderCellContent = styled.div`
@@ -431,20 +439,18 @@ const Table = observer(
 
     let [sort, setSort] = useState<SortConfig[]>([])
     let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
-    let [columnWidths] = useDebounce(liveColumnWidths, 500, { leading: true, trailing: false })
+    let [columnWidths] = useDebounce(liveColumnWidths, 200, { leading: true, trailing: false })
 
     let setColumnWidth = useCallback((index, width) => {
       setColumnWidths((currentWidths) => {
         let nextWidths = [...currentWidths]
         let curWidth = nextWidths[index]
-        let scrollbarAdjustedWidth =
-          width - SCROLLBAR_WIDTH / Math.max(currentWidths.length, 1)
 
         // Only set width if no width has been set yet for this column, or if it is different,
         // or when onlyIncrease is true, if the new width is more than the current width.
-        if (!curWidth || scrollbarAdjustedWidth !== curWidth) {
+        if (!curWidth || width !== curWidth) {
           let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, scrollbarAdjustedWidth)
+          nextWidths.splice(index, deleteCount, width)
           return nextWidths
         }
 
@@ -630,11 +636,10 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = columnWidths.reduce((total, col) => total + col, 0)
+    let width = Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
-    let isScrolling = listHeight > maxHeight
 
     let wrapperHeight = Math.max(
       tableIsEmpty ? 150 : rowHeight,
@@ -685,7 +690,7 @@ const Table = observer(
       keyFromItem,
     }
 
-    let tableViewWidth = width + (isScrolling && virtualized ? SCROLLBAR_WIDTH : 0)
+    let tableViewWidth = Math.ceil(width + SCROLLBAR_WIDTH)
 
     return (
       <TableContext.Provider value={contextValue}>
@@ -694,8 +699,7 @@ const Table = observer(
           style={{ minHeight: wrapperHeight + 'px' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
-            <TableHeader
-              style={{ paddingRight: virtualized && isScrolling ? SCROLLBAR_WIDTH : 0 }}>
+            <TableHeader style={{ paddingRight: SCROLLBAR_WIDTH }}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -740,13 +744,14 @@ const Table = observer(
                 emptyContent
               ) : virtualized ? (
                 <List
-                  style={{ minWidth: '100%', overflowX: 'hidden' }}
+                  style={{ minWidth: '100%', overflowX: 'hidden', overflowY: 'scroll' }}
                   height={height}
-                  width={width + (isScrolling ? SCROLLBAR_WIDTH : 0)}
+                  width={tableViewWidth}
                   itemCount={rows.length}
                   itemSize={rowHeight}
                   layout="vertical"
                   itemData={rows}
+                  overscan={100}
                   itemKey={getListItemKey}>
                   {TableRowComponent}
                 </List>
@@ -760,12 +765,17 @@ const Table = observer(
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                  let columnWidth = columnWidths[colIdx] || 0
+                  let columnWidth = columnWidths[colIdx]
 
                   return (
                     <TableCell
                       key={`footer_${col}`}
-                      style={{ minWidth: columnWidth ? columnWidth + 'px' : 'auto' }}>
+                      style={{
+                        minWidth:
+                          typeof columnWidth !== 'undefined' && columnWidth !== 0
+                            ? columnWidth + 'px'
+                            : 'auto',
+                      }}>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCell>
                   )

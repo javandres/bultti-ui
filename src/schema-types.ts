@@ -231,6 +231,9 @@ export type Inspection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   inspectionType?: Maybe<InspectionType>;
+  preInspection?: Maybe<Inspection>;
+  postInspection?: Maybe<Inspection>;
+  defectInspection?: Maybe<Inspection>;
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;
   seasonId?: Maybe<Scalars['String']>;
@@ -252,7 +255,8 @@ export type Inspection = {
 
 export enum InspectionType {
   Pre = 'PRE',
-  Post = 'POST'
+  Post = 'POST',
+  EquipmentDefect = 'EQUIPMENT_DEFECT'
 }
 
 export type Season = {
@@ -396,8 +400,7 @@ export type Departure = {
   allowedOverAge?: Maybe<Scalars['Float']>;
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  procurementUnit?: Maybe<ProcurementUnit>;
+  procurementUnitId: Scalars['String'];
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
   inspection?: Maybe<Inspection>;
@@ -597,8 +600,7 @@ export type OperatorBlockDeparture = {
   operatorId?: Maybe<Scalars['String']>;
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  procurementUnit?: Maybe<ProcurementUnit>;
+  procurementUnitId: Scalars['String'];
   inspectionId?: Maybe<Scalars['String']>;
 };
 
