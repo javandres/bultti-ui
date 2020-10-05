@@ -15,7 +15,6 @@ import { useQueryData } from '../util/useQueryData'
 import AutoComplete from '../common/input/AutoCompleteInput'
 import KeyValueInput, { ValuesType } from '../common/input/KeyValueInput'
 import { difference } from 'lodash'
-import Checkbox from '../common/input/Checkbox'
 
 const ReportEditorView = styled.div``
 
@@ -96,44 +95,6 @@ const renderEditorField = (reportCreatorNames: string[] = [], defaultParams = {}
     )
   }
 
-  if (key === 'inspectionTypes') {
-    let onTypeChange = (name) => (e) => {
-      let currentTypes = {
-        PRE: val.includes('PRE'),
-        POST: val.includes('POST'),
-      }
-
-      let checked = e.target.checked
-      currentTypes[name] = !!checked
-
-      let nextVal = Object.entries(currentTypes)
-        .filter(([type, isEnabled]) => isEnabled)
-        .map(([type]) => type)
-        .join(',')
-
-      onChange(nextVal)
-    }
-
-    return (
-      <TypeWrapper>
-        <Checkbox
-          checked={(val || '').includes('PRE')}
-          label="Ennakko"
-          name="PRE"
-          value="PRE"
-          onChange={onTypeChange('PRE')}
-        />
-        <Checkbox
-          checked={(val || '').includes('POST')}
-          label="Jälki"
-          name="POST"
-          value="POST"
-          onChange={onTypeChange('POST')}
-        />
-      </TypeWrapper>
-    )
-  }
-
   return (
     <TextInput
       type="text"
@@ -150,7 +111,6 @@ let formLabels = {
   title: 'Nimi',
   description: 'Kuvaus',
   params: 'Parametrit',
-  inspectionTypes: 'Tarkastustyyppi',
 }
 
 const ReportEditor = observer(
@@ -232,7 +192,7 @@ const ReportEditor = observer(
       <ReportEditorView>
         <ItemForm
           item={pendingReport}
-          hideKeys={['id', 'reportType', 'order']}
+          hideKeys={['id', 'reportType', 'order', 'inspectionTypes']}
           labels={formLabels}
           onChange={onChange}
           onDone={onDone}
