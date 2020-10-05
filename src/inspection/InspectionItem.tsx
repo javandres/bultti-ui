@@ -62,7 +62,6 @@ const itemObjectDisplayPaths = {
 
 export type InspectionItemProps = {
   inspection: Inspection
-  inspectionType: InspectionType
   isCurrentlyInEffect?: boolean
   showActions?: boolean
   className?: string
@@ -96,7 +95,6 @@ const renderValue = (key, val) => {
 
 const InspectionItem: React.FC<InspectionItemProps> = ({
   inspection,
-  inspectionType,
   className,
   isCurrentlyInEffect,
   onInspectionUpdated = () => {},
@@ -116,11 +114,7 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
         renderValue={renderValue}
       />
       {showActions && inspection && (
-        <InspectionActionsRow
-          inspection={inspection}
-          inspectionType={inspectionType}
-          onRefresh={onInspectionUpdated}
-        />
+        <InspectionActionsRow inspection={inspection} onRefresh={onInspectionUpdated} />
       )}
     </InspectionItemView>
   )

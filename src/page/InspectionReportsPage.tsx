@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import InspectionReports from '../inspection/InspectionReports'
-import { useInspectionById } from '../inspection/inspectionUtils'
+import { getInspectionTypeStrings, useInspectionById } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { InspectionType } from '../schema-types'
 
@@ -18,14 +18,14 @@ const InspectionReportsPage: React.FC<PropTypes> = observer(
       inspectionId
     )
 
+    let typeStrings = getInspectionTypeStrings(inspectionType)
+
     return (
       <Page>
         <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-          Ennakkotarkastuksen raportit
+          {typeStrings.prefix}tarkastuksen raportit
         </PageTitle>
-        {inspection && (
-          <InspectionReports inspectionType={inspectionType} inspection={inspection} />
-        )}
+        {inspection && <InspectionReports inspection={inspection} />}
       </Page>
     )
   }

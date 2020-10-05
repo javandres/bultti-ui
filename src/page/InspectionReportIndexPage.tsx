@@ -1,7 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { useFetchInspections, useInspectionReports } from '../inspection/inspectionUtils'
+import {
+  getInspectionTypeStrings,
+  useFetchInspections,
+  useInspectionReports,
+} from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
@@ -18,7 +22,7 @@ import { orderBy } from 'lodash'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { PageTitle } from '../common/components/PageTitle'
 
-const PreInspectionReportIndexPageView = styled(Page)``
+const InspectionReportIndexPageView = styled(Page)``
 
 const FilterBar = styled.div`
   margin-bottom: 1rem;
@@ -51,19 +55,19 @@ const GoToReportsButton = styled.div`
   margin-bottom: -0.5rem;
 `
 
-const PreInspectionListWrapper = styled.div`
+const InspectionListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 1rem;
 `
 
-const PreInspectionTitle = styled.h4`
+const InspectionTitle = styled.h4`
   margin: 0 1rem 0 0;
 `
 
-const PreInspectionDates = styled(DateRangeDisplay)``
+const InspectionDates = styled(DateRangeDisplay)``
 
-const PreInspectionListItem = styled.button`
+const InspectionListItem = styled.button`
   font-family: inherit;
   background: white;
   border-radius: 0.5rem;
@@ -107,8 +111,8 @@ export type PropTypes = {
   inspectionType: InspectionType
 } & RouteComponentProps
 
-const InspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
-  let [{ operator, inspections }, loading, refetch] = useFetchInspections(InspectionType.Pre)
+const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
+  let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)
 
   let [globalSeason] = useStateValue('globalSeason')
 
@@ -162,10 +166,12 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
     [inspectionsList]
   )
 
+  let typeStrings = getInspectionTypeStrings(inspectionType)
+
   return (
-    <PreInspectionReportIndexPageView>
+    <InspectionReportIndexPageView>
       <PageTitle loading={loading} onRefresh={refetch}>
-        Ennakkotarkastuksien raportit
+        {typeStrings.prefix}tarkastuksien raportit
       </PageTitle>
       {!operator && (
         <MessageContainer>
@@ -195,28 +201,28 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(() => {
               />
             </FilterControlGroup>
           </FilterBar>
-          <PreInspectionListWrapper>
+          <InspectionListWrapper>
             {inspectionsList.map((inspection) => (
-              <PreInspectionListItem
+              <InspectionListItem
                 key={inspection.id}
-                onClick={() => openReports(inspection.id, InspectionType.Pre)}>
+                onClick={() => openReports(inspection.id, inspectionType)}>
                 <InspectionVersion>{inspection.version}</InspectionVersion>
-                <PreInspectionTitle>
+                <InspectionTitle>
                   {inspection.operator.operatorName} / {inspection.seasonId}
-                </PreInspectionTitle>
-                <PreInspectionDates
+                </InspectionTitle>
+                <InspectionDates
                   startDate={inspection.startDate}
                   endDate={inspection.endDate}
                 />
                 <GoToReportsButton>
                   <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
                 </GoToReportsButton>
-              </PreInspectionListItem>
+              </InspectionListItem>
             ))}
-          </PreInspectionListWrapper>
+          </InspectionListWrapper>
         </>
       )}
-    </PreInspectionReportIndexPageView>
+    </InspectionReportIndexPageView>
   )
 })
 

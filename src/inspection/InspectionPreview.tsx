@@ -14,11 +14,10 @@ const PreviewMeta = styled(InspectionMeta)`
 `
 
 export type PropTypes = {
-  inspectionType: InspectionType
   inspection: Inspection
 } & TabChildProps
 
-const InspectionPreview: React.FC<PropTypes> = observer(({ inspectionType, inspection }) => {
+const InspectionPreview: React.FC<PropTypes> = observer(({ inspection }) => {
   // Validate that the form has each dependent piece of data.
   let formCondition = useMemo(() => {
     return {
@@ -45,12 +44,7 @@ const InspectionPreview: React.FC<PropTypes> = observer(({ inspectionType, inspe
         </MessageContainer>
       )}
       {inspection && <PreviewMeta inspection={inspection} />}
-      <InspectionReports
-        showInfo={false}
-        showItemActions={false}
-        inspectionType={inspectionType}
-        inspection={inspection}
-      />
+      <InspectionReports showInfo={false} showItemActions={false} inspection={inspection} />
     </PreviewInspectionView>
   )
 })

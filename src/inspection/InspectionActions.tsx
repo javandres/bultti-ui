@@ -45,7 +45,6 @@ type Actions = 'publish' | 'reject' | 'submit' | 'remove'
 
 export type PropTypes = {
   inspection: Inspection
-  inspectionType: InspectionType
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
@@ -53,21 +52,14 @@ export type PropTypes = {
 }
 
 const InspectionActions = observer(
-  ({
-    inspection,
-    inspectionType,
-    onRefresh,
-    className,
-    style,
-    disabledActions = [],
-  }: PropTypes) => {
+  ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [user] = useStateValue('user')
     var [submitActive, setSubmitActive] = useState(false)
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
-    var goToInspectionEdit = useEditInspection(inspectionType)
+    var goToInspectionEdit = useEditInspection(inspection.inspectionType)
     var goToInspectionReports = useInspectionReports()
 
     var onEditInspection = useCallback(
@@ -182,7 +174,7 @@ const InspectionActions = observer(
                   ? { marginLeft: 'auto', marginRight: 0 }
                   : undefined
               }
-              onClick={() => goToInspectionReports(inspection.id, inspectionType)}
+              onClick={() => goToInspectionReports(inspection.id, inspection.inspectionType)}
               buttonStyle={
                 inspection.status === InspectionStatus.InProduction
                   ? ButtonStyle.NORMAL

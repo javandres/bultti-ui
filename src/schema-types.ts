@@ -230,7 +230,7 @@ export type Inspection = {
   __typename?: 'Inspection';
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  inspectionType?: Maybe<InspectionType>;
+  inspectionType: InspectionType;
   preInspection?: Maybe<Inspection>;
   postInspection?: Maybe<Inspection>;
   defectInspection?: Maybe<Inspection>;

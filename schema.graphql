@@ -211,7 +211,7 @@ type Inspection {
   inspectionEndDate: BulttiDate
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
-  inspectionType: InspectionType
+  inspectionType: InspectionType!
   minStartDate: BulttiDate!
   name: String
   operator: Operator!

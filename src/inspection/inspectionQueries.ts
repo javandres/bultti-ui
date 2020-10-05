@@ -1,6 +1,37 @@
 import { gql } from '@apollo/client'
 import { UserFragment } from '../common/query/authQueries'
 
+export const linkedInspectionFragment = gql`
+  fragment LinkedInspectionFragment on Inspection {
+    id
+    name
+    createdAt
+    startDate
+    endDate
+    inspectionStartDate
+    inspectionEndDate
+    minStartDate
+    version
+    operatorId
+    seasonId
+    status
+    inspectionType
+    operator {
+      id
+      operatorId
+      operatorName
+    }
+    season {
+      id
+      season
+      startDate
+      endDate
+    }
+    updatedAt
+    createdAt
+  }
+`
+
 export const inspectionFragment = gql`
   fragment InspectionFragment on Inspection {
     id
@@ -56,9 +87,16 @@ export const inspectionQuery = gql`
   query inspectionById($inspectionId: String!) {
     inspection(inspectionId: $inspectionId) {
       ...InspectionFragment
+      preInspection {
+        ...LinkedInspectionFragment
+      }
+      postInspection {
+        ...LinkedInspectionFragment
+      }
     }
   }
   ${inspectionFragment}
+  ${linkedInspectionFragment}
 `
 
 export const currentPreInspectionsByOperatorAndSeasonQuery = gql`

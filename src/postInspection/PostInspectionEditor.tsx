@@ -10,7 +10,10 @@ type PostInspectionProps = {
 
 const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
   ({ refetchData, isEditable, inspection }) => {
-    return null
+    let connectedPreInspection = inspection.preInspection
+    console.log(connectedPreInspection)
+
+    return <div>Post-inspection editor</div>
   }
 )
 

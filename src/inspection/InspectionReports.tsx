@@ -10,7 +10,7 @@ import { TextButton } from '../common/components/Button'
 import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
-import { Inspection, InspectionType } from '../schema-types'
+import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 
 const InspectionReportsView = styled.div`
@@ -34,12 +34,11 @@ const ReportInspectionView = styled(InspectionItem)`
 export type PropTypes = {
   showInfo?: boolean
   showItemActions?: boolean
-  inspectionType: InspectionType
   inspection: Inspection
 }
 
 const InspectionReports = observer(
-  ({ showInfo = true, showItemActions = true, inspectionType, inspection }: PropTypes) => {
+  ({ showInfo = true, showItemActions = true, inspection }: PropTypes) => {
     const [reportsExpanded, setReportsExpanded] = useState(false)
 
     const toggleReportsExpanded = useCallback(() => {
@@ -50,13 +49,13 @@ const InspectionReports = observer(
 
     let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {
       variables: {
-        inspectionType: inspectionType,
+        inspectionType: inspection.inspectionType,
       },
     })
 
     let reports = useMemo(() => reportsData || [], [reportsData])
 
-    let typeStrings = getInspectionTypeStrings(inspectionType)
+    let typeStrings = getInspectionTypeStrings(inspection.inspectionType)
 
     return (
       <InspectionReportsView>
@@ -67,11 +66,7 @@ const InspectionReports = observer(
         {showInfo && inspection && (
           <>
             <SubHeading>{typeStrings.prefix}tarkastuksen tiedot</SubHeading>
-            <ReportInspectionView
-              inspection={inspection}
-              inspectionType={inspectionType}
-              showActions={false}
-            />
+            <ReportInspectionView inspection={inspection} showActions={false} />
           </>
         )}
         {reports.length !== 0 && (
@@ -84,14 +79,14 @@ const InspectionReports = observer(
           reports.map((reportItem) => (
             <ReportListItem
               key={reportItem.name}
-              inspectionType={showItemActions ? inspectionType : undefined}
+              inspectionType={showItemActions ? inspection.inspectionType! : undefined}
               inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportItem}
               isExpanded={reportsExpanded}>
               <Report
                 reportName={reportItem.name}
                 inspectionId={inspectionId}
-                inspectionType={inspectionType}
+                inspectionType={inspection.inspectionType}
               />
             </ReportListItem>
           ))}

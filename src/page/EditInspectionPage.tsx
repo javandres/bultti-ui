@@ -97,7 +97,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                   <strong>{translate(inspection.status)}</strong>
                 </StatusBox>
                 <InspectionActionsRow
-                  inspectionType={inspectionType}
                   inspection={inspection}
                   onRefresh={refetch}
                   disabledActions={hasErrors ? ['submit', 'publish'] : []}
@@ -106,24 +105,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                 <EditInspectionWrapper>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
-                  ) : inspectionType === InspectionType.Pre ? (
-                    <Tabs>
-                      <InspectionEditor
-                        name="create"
-                        path="/"
-                        label="Tarkastuksen tiedot"
-                        loading={inspectionLoading}
-                        refetchData={refetch}
-                        inspection={inspection}
-                      />
-                      <InspectionPreview
-                        inspectionType={InspectionType.Pre}
-                        inspection={inspection}
-                        path="preview"
-                        name="preview"
-                        label="Tulokset"
-                      />
-                    </Tabs>
                   ) : (
                     <Tabs>
                       <InspectionEditor
@@ -135,7 +116,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                         inspection={inspection}
                       />
                       <InspectionPreview
-                        inspectionType={InspectionType.Post}
                         inspection={inspection}
                         path="results"
                         name="results"

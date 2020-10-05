@@ -258,11 +258,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
                       </EndDate>
                     </InspectionPeriodDisplay>
                   </ItemContent>
-                  <InspectionActions
-                    inspectionType={inspectionType}
-                    onRefresh={refetchInspections}
-                    inspection={inspection}
-                  />
+                  <InspectionActions onRefresh={refetchInspections} inspection={inspection} />
                 </InspectionItem>
               ))}
             </InspectionItems>
