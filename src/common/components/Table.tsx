@@ -116,7 +116,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   outline: ${(p) =>
     !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
   z-index: ${(p) => (p.isEditing ? 101 : 'auto')};
-  user-select: none;
+  user-select: ${(p) => (p.isEditing ? 'none' : 'text')};
 
   &:last-child {
     border-bottom: 0;
@@ -216,6 +216,7 @@ const ColumnSortIndicator = styled.div`
 `
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
+  user-select: text;
   padding: 0.5rem 0.15rem;
   border: 0;
   background: transparent;
