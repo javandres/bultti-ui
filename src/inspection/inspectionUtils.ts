@@ -13,6 +13,7 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
   createInspectionMutation,
+  currentPreInspectionsByOperatorAndSeasonQuery,
   inspectionQuery,
   inspectionsByOperatorQuery,
   removeInspectionMutation,
@@ -84,26 +85,33 @@ export function useCreateInspection(
 }
 
 export function useRemoveInspection(
+  inspection: Inspection,
   afterRemove: () => unknown = () => {}
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
+  let { operatorId, seasonId, inspectionType } = inspection
+
   let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
-    refetchQueries: ['currentInspectionsByOperatorAndSeason'],
+    refetchQueries: [
+      {
+        query: currentPreInspectionsByOperatorAndSeasonQuery,
+        variables: {
+          operatorId,
+          seasonId,
+          inspectionType,
+        },
+      },
+    ],
   })
 
-  let execRemove = useCallback(
-    async (inspection?: Inspection) => {
-      if (inspection) {
-        await removeInspection({
-          variables: {
-            inspectionId: inspection.id,
-          },
-        })
+  let execRemove = useCallback(async () => {
+    await removeInspection({
+      variables: {
+        inspectionId: inspection.id,
+      },
+    })
 
-        await afterRemove()
-      }
-    },
-    [removeInspection, afterRemove]
-  )
+    await afterRemove()
+  }, [removeInspection, inspection, afterRemove])
 
   return [execRemove, { loading }]
 }

@@ -74,7 +74,10 @@ const InspectionActions = observer(
       [goToInspectionEdit, setSeason, season]
     )
 
-    var [removeInspection, { loading: removeLoading }] = useRemoveInspection(onRefresh)
+    var [removeInspection, { loading: removeLoading }] = useRemoveInspection(
+      inspection,
+      onRefresh
+    )
 
     let onRemoveInspection = useCallback(async () => {
       await removeInspection(inspection)
