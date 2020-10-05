@@ -18,14 +18,6 @@ import { difference } from 'lodash'
 
 const ReportEditorView = styled.div``
 
-const TypeWrapper = styled.div`
-  display: flex;
-
-  > :first-child {
-    margin-right: 1rem;
-  }
-`
-
 export type PropTypes = {
   report: Report
   onCancel?: () => unknown
