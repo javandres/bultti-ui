@@ -83,6 +83,7 @@ const InspectionListItem = styled.button`
   color: var(--dark-grey);
   transform: scale(1);
   transition: all 0.1s ease-out;
+  outline: 0;
 
   &:hover {
     background-color: #fafafa;
