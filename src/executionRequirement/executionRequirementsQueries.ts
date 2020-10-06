@@ -72,6 +72,15 @@ export const executionRequirementsForAreaQuery = gql`
       requirements {
         ...RequirementValueFragment
       }
+      inspection {
+        id
+        inspectionErrors {
+          type
+          keys
+          objectId
+          referenceKeys
+        }
+      }
     }
   }
   ${ExecutionRequirementFragment}

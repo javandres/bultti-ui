@@ -8,6 +8,10 @@ const AppFrameView = styled.div`
   display: grid;
   grid-template-columns: 1fr 3fr;
   min-height: 100vh;
+
+  @media screen and (min-height: 700px) {
+    height: 100vh;
+  }
 `
 
 const Sidebar = styled.div`
@@ -19,6 +23,10 @@ const Sidebar = styled.div`
 const Main = styled.div`
   min-height: 100%;
   background: #f5f5f5;
+
+  @media screen and (min-height: 700px) {
+    overflow-y: scroll;
+  }
 `
 
 export type AppFrameProps = {
