@@ -6,14 +6,12 @@ import { Inspection } from '../schema-types'
 import { SubHeading } from '../common/components/Typography'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
-const InspectionTitleWrapper = styled.div`
-  > * {
-    margin-bottom: 0.5rem !important;
-  }
+const ContentRow = styled.div`
+  display: flex;
+  align-items: center;
 
-  > *:last-child,
-  > *:only-child {
-    margin-bottom: 0 !important;
+  &:not(:last-child) {
+    margin-bottom: 0.25rem;
   }
 `
 
@@ -22,7 +20,7 @@ const InspectionTitle = styled.h4`
 `
 
 const InspectionSubtitle = styled(SubHeading)`
-  margin-top: -0.5rem;
+  margin: 0;
   font-size: 0.875rem;
 `
 
@@ -59,6 +57,11 @@ const InspectionListItem = styled.button<{ onClick?: unknown; disabled?: boolean
       : ''}
 `
 
+const InspectionContentWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 const InspectionVersion = styled.div`
   padding: 0.2rem 0.6rem;
   width: 1.5rem;
@@ -71,7 +74,6 @@ const InspectionVersion = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
-  margin-top: -2px;
   user-select: none;
   align-self: center;
 `
@@ -99,19 +101,25 @@ const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
   return (
     <InspectionListItem key={inspection.id} onClick={onClick} as={onClick ? 'button' : 'div'}>
       <InspectionVersion>{inspection.version}</InspectionVersion>
-      {inspection.name ? (
-        <InspectionTitleWrapper>
-          <InspectionTitle>{inspection.name}</InspectionTitle>
-          <InspectionSubtitle>
-            {inspection.operator.operatorName}, {inspection.season.id}
-          </InspectionSubtitle>
-        </InspectionTitleWrapper>
-      ) : (
-        <InspectionTitle>
-          {inspection.operator.operatorName} / {inspection.season.id}
-        </InspectionTitle>
-      )}
-      <InspectionDates startDate={inspection.startDate} endDate={inspection.endDate} />
+      <InspectionContentWrapper>
+        <ContentRow>
+          {inspection.name ? (
+            <InspectionTitle>{inspection.name}</InspectionTitle>
+          ) : (
+            <InspectionTitle>
+              {inspection.operator.operatorName} / {inspection.season.id}
+            </InspectionTitle>
+          )}
+          <InspectionDates startDate={inspection.startDate} endDate={inspection.endDate} />
+        </ContentRow>
+        {inspection.name && (
+          <ContentRow>
+            <InspectionSubtitle>
+              {inspection.operator.operatorName} / {inspection.season.id}
+            </InspectionSubtitle>
+          </ContentRow>
+        )}
+      </InspectionContentWrapper>
       {onClick && (
         <GoToReportsButton>
           <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
