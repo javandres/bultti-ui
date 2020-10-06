@@ -17,10 +17,9 @@ import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
-import { ArrowRight } from '../common/icon/ArrowRight'
 import { orderBy } from 'lodash'
-import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { PageTitle } from '../common/components/PageTitle'
+import InspectionIndexItem from '../inspection/InspectionIndexItem'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -42,68 +41,10 @@ const FilterControlGroup = styled(ControlGroup)`
   }
 `
 
-const GoToReportsButton = styled.div`
-  background: transparent;
-  border: 0;
-  flex: 0;
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  align-items: center;
-  border-top-right-radius: 0.5rem;
-  margin-left: auto;
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
-`
-
 const InspectionListWrapper = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 1rem;
-`
-
-const InspectionTitle = styled.h4`
-  margin: 0 1rem 0 0;
-`
-
-const InspectionDates = styled(DateRangeDisplay)``
-
-const InspectionListItem = styled.button`
-  font-family: inherit;
-  background: white;
-  border-radius: 0.5rem;
-  border: 1px solid var(--lighter-grey);
-  padding: 1rem 0.5rem 1rem 1rem;
-  margin-bottom: 1rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-size: 1.1rem;
-  cursor: pointer;
-  color: var(--dark-grey);
-  transform: scale(1);
-  transition: all 0.1s ease-out;
-  outline: 0;
-
-  &:hover {
-    background-color: #fafafa;
-    transform: ${({ disabled = false }) => (!disabled ? 'scale(1.01)' : 'scale(1)')};
-  }
-`
-
-const InspectionVersion = styled.div`
-  padding: 0.2rem 0.6rem;
-  width: 1.5rem;
-  font-size: 1rem;
-  border-radius: 5px;
-  background: var(--lighter-grey);
-  font-weight: bold;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 1rem;
-  user-select: none;
 `
 
 const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
@@ -204,21 +145,11 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
           </FilterBar>
           <InspectionListWrapper>
             {inspectionsList.map((inspection) => (
-              <InspectionListItem
+              <InspectionIndexItem
                 key={inspection.id}
-                onClick={() => openReports(inspection.id, inspectionType)}>
-                <InspectionVersion>{inspection.version}</InspectionVersion>
-                <InspectionTitle>
-                  {inspection.operator.operatorName} / {inspection.seasonId}
-                </InspectionTitle>
-                <InspectionDates
-                  startDate={inspection.startDate}
-                  endDate={inspection.endDate}
-                />
-                <GoToReportsButton>
-                  <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
-                </GoToReportsButton>
-              </InspectionListItem>
+                inspection={inspection}
+                onClick={() => openReports(inspection.id, inspectionType)}
+              />
             ))}
           </InspectionListWrapper>
         </>

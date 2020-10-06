@@ -44,6 +44,11 @@ const StatusBox = styled.div`
   border-radius: 0.5rem;
 `
 
+const InspectionNameTitle = styled.span`
+  font-weight: normal;
+  margin-left: 0.75rem;
+`
+
 export type PropTypes = {
   inspectionId?: string
   inspectionType: InspectionType
@@ -60,18 +65,20 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     )
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
-
     let typeStrings = getInspectionTypeStrings(inspectionType)
+    let inspectionName = inspection
+      ? inspection.name || `${inspection.operatorId}/${inspection.seasonId}`
+      : ''
 
     return (
       <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            {inspection?.status !== InspectionStatus.InProduction ? 'Uusi ' : ''}
+            {inspection?.status !== InspectionStatus.InProduction ? 'Muokkaa ' : ''}
             {inspection?.status !== InspectionStatus.InProduction
               ? typeStrings.prefixLC
               : typeStrings.prefix}
-            tarkastus
+            tarkastus: <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
