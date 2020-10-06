@@ -641,6 +641,7 @@ const Table = observer(
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
+    let hasVerticalScroll = listHeight > height
 
     let wrapperHeight = Math.max(
       tableIsEmpty ? 150 : rowHeight,
@@ -700,7 +701,8 @@ const Table = observer(
           style={{ minHeight: wrapperHeight + 'px' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
-            <TableHeader style={{ paddingRight: SCROLLBAR_WIDTH }}>
+            <TableHeader
+              style={{ paddingRight: hasVerticalScroll ? Math.round(SCROLLBAR_WIDTH) : 0 }}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}

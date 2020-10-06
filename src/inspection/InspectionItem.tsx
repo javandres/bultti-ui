@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { getCreatedBy } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,

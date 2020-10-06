@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { TabChildProps } from '../common/components/Tabs'
 import InspectionMeta from './InspectionMeta'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
 import InspectionReports from './InspectionReports'
 
