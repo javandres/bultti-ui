@@ -4,7 +4,11 @@ import { observer } from 'mobx-react-lite'
 import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../../constants'
 
-const DateRangeDisplayView = styled.div``
+const DateRangeDisplayView = styled.div`
+  display: flex;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+`
 
 const StartDate = styled.span`
   margin-right: 0.75rem;
@@ -19,8 +23,10 @@ const StartDate = styled.span`
 `
 
 const EndDate = styled(StartDate)`
+  margin-right: 0;
+
   &:after {
-    content: '';
+    content: none;
   }
 `
 

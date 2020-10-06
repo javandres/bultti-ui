@@ -11,6 +11,7 @@ import { ActionsWrapper } from '../common/input/ItemForm'
 import { DATE_FORMAT } from '../constants'
 import styled from 'styled-components'
 import { format, parseISO, startOfISOWeek } from 'date-fns'
+import InspectionTimeline from './InspectionTimeline'
 
 const InspectionConfigView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -64,7 +65,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
-            <MessageView>Ennakkotarkastus ei valittu.</MessageView>
+            <MessageView>Tarkastus ei valittu.</MessageView>
           </MessageContainer>
         ) : (
           <>
@@ -76,6 +77,9 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                   label="Tarkastuksen nimi"
                 />
               </FormColumn>
+            </FlexRow>
+            <FlexRow>
+              <InspectionTimeline currentInspection={inspection} />
             </FlexRow>
             <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (

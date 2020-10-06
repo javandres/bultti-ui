@@ -71,7 +71,9 @@ const InspectionVersion = styled.div`
   align-items: center;
   justify-content: center;
   margin-right: 1rem;
+  margin-top: -2px;
   user-select: none;
+  align-self: center;
 `
 
 const GoToReportsButton = styled.div`
