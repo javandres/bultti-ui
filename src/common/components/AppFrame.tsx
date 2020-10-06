@@ -5,22 +5,19 @@ import { observer } from 'mobx-react-lite'
 import ErrorMessages from './ErrorMessages'
 
 const AppFrameView = styled.div`
-  display: flex;
-  flex-direction: row;
-  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  min-height: 100vh;
 `
 
 const Sidebar = styled.div`
   height: 100%;
-  flex: 1 0 27rem;
   background: var(--blue);
   color: white;
 `
 
 const Main = styled.div`
-  flex: 3 0 calc(100% - 27rem);
   min-height: 100%;
-  overflow-y: scroll;
   background: #f5f5f5;
 `
 

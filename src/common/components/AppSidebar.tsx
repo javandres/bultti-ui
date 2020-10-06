@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Text } from '../../util/translate'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
@@ -6,19 +6,14 @@ import { Link } from '@reach/router'
 import { Search } from '../icon/Search'
 import { Plus } from '../icon/Plus'
 import { Menu } from '../icon/Menu'
-import { Button, ButtonSize, ButtonStyle } from './Button'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import { User } from '../icon/User'
 import GlobalOperatorFilter from './GlobalOperatorFilter'
 import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
-import { useMutationData } from '../../util/useMutationData'
-import { logoutMutation } from '../query/authQueries'
-import { pickGraphqlData } from '../../util/pickGraphqlData'
 import NavLink from './NavLink'
 import Dropdown from '../input/Dropdown'
-import { removeAuthToken } from '../../util/authToken'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -138,18 +133,7 @@ export type AppSidebarProps = {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user, setUser] = useStateValue('user')
-  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
-
-  const onLogout = useCallback(async () => {
-    const result = await logout()
-    let isLoggedOut = pickGraphqlData(result.data)
-
-    if (isLoggedOut) {
-      removeAuthToken()
-      setUser(null)
-    }
-  }, [])
+  const [user] = useStateValue('user')
 
   return (
     <AppSidebarView>
@@ -164,15 +148,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <User width="1rem" height="1rem" fill="white" />
           {user && <UserDisplay>{user?.email}</UserDisplay>}
         </UserLink>
-        <Button
-          style={{ marginLeft: 'auto' }}
-          loading={logoutLoading}
-          onClick={onLogout}
-          size={ButtonSize.SMALL}
-          inverted={true}
-          buttonStyle={ButtonStyle.SECONDARY}>
-          <Text>general.app.logout</Text>
-        </Button>
       </UserBar>
       <GlobalFilters>
         <GlobalOperatorFilter />

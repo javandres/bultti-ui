@@ -6,10 +6,15 @@ import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { modifyUserMutation } from '../common/query/authQueries'
+import { logoutMutation, modifyUserMutation } from '../common/query/authQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import { User, UserInput } from '../schema-types'
 import { PageTitle } from '../common/components/PageTitle'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Text } from '../util/translate'
+import { pickGraphqlData } from '../util/pickGraphqlData'
+import { removeAuthToken } from '../util/authToken'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const UserPageView = styled(Page)``
 
@@ -67,9 +72,34 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     setPendingUser(createUserInput(user))
   }, [])
 
+  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
+
+  const onLogout = useCallback(async () => {
+    navigateWithQueryString('/')
+
+    const result = await logout()
+    let isLoggedOut = pickGraphqlData(result.data)
+
+    if (isLoggedOut) {
+      removeAuthToken()
+      setUser(null)
+    }
+  }, [])
+
   return (
     <UserPageView>
-      <PageTitle>Käyttäjä</PageTitle>
+      <PageTitle
+        headerButtons={
+          <Button
+            loading={logoutLoading}
+            onClick={onLogout}
+            size={ButtonSize.MEDIUM}
+            buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+            <Text>general.app.logout</Text>
+          </Button>
+        }>
+        Käyttäjä
+      </PageTitle>
       <LoadingDisplay loading={userLoading} />
       <ItemForm
         showButtons={isDirty}
