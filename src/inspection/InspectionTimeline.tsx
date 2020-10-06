@@ -7,7 +7,7 @@ import { Inspection, InspectionStatus } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { InputLabel } from '../common/components/form'
 import { ArrowRight } from '../common/icon/ArrowRight'
-import { format, parseISO, isBefore } from 'date-fns'
+import { format, isAfter, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { orderBy } from 'lodash'
 
@@ -63,7 +63,10 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
   var [operator] = useStateValue('globalOperator')
   var [season] = useStateValue('globalSeason')
 
-  let [{ inspections }] = useFetchInspections(currentInspection.inspectionType, operator)
+  let [{ inspections }, inspectionsLoading] = useFetchInspections(
+    currentInspection.inspectionType,
+    operator
+  )
 
   let previousProdInspections = useMemo(
     () =>
@@ -71,42 +74,54 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
         inspections.filter(
           (inspection) =>
             inspection.status === InspectionStatus.InProduction &&
-            inspection.id !== currentInspection.id &&
-            isBefore(
-              parseISO(inspection.inspectionStartDate),
-              parseISO(currentInspection.startDate)
-            )
+            inspection.id !== currentInspection.id
         ),
         'inspectionStartDate',
         'asc'
       ),
-    [inspections]
+    [inspections, currentInspection]
   )
 
   let arrow = <ArrowRight fill="var(--light-grey)" width="1.5rem" height="1.5rem" />
 
-  let seasonStartElement = (
-    <>
-      <TimelineStart>
-        Kauden alku
-        <br />
-        <strong>{format(parseISO(season.startDate), READABLE_DATE_FORMAT)}</strong>
-      </TimelineStart>
-      {arrow}
-    </>
+  let seasonStartElement = useMemo(
+    () => (
+      <>
+        <TimelineStart>
+          Kauden alku
+          <br />
+          <strong>{format(parseISO(season.startDate), READABLE_DATE_FORMAT)}</strong>
+        </TimelineStart>
+        {arrow}
+      </>
+    ),
+    [season]
   )
 
-  // The season start date needs to be rendered only once. This function ensures that.
+  // The season start date needs to be rendered only once *per render pass*.
+  // This function takes care of that.
   let renderSeasonStartOnce = useMemo(() => {
     let didRenderSeasonStart = false
 
-    return () => {
-      if (!didRenderSeasonStart) {
+    // Pass true as the `last` argument for the last call in the element tree.
+    return (last = false) => {
+      // Save the state as it is now to determine what to return
+      let initialDidRender = didRenderSeasonStart
+
+      // If this is NOT the last call and we haven't rendered it yet,
+      // set the flag to true to prevent future renders.
+      if (!didRenderSeasonStart && !last) {
         didRenderSeasonStart = true
-        return seasonStartElement
       }
 
-      return null
+      // If this IS the last call, set the flag back to false to
+      // enable re-rendering during the next render pass.
+      if (last) {
+        didRenderSeasonStart = false
+      }
+
+      // So should we render it or not?
+      return initialDidRender ? null : seasonStartElement
     }
   }, [seasonStartElement])
 
@@ -118,10 +133,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
         {previousProdInspections.length !== 0 &&
           previousProdInspections.slice(-2).map((inspection) => (
             <>
-              {isBefore(
-                parseISO(season.startDate),
-                parseISO(inspection.inspectionStartDate)
-              ) && renderSeasonStartOnce()}
+              {inspection.seasonId === season.id && renderSeasonStartOnce()}
               <InspectionTimeLineItem key={inspection.id}>
                 {`${inspection.operator.operatorName}/${inspection.seasonId}`}
                 <InspectionDates
@@ -132,7 +144,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
               {arrow}
             </>
           ))}
-        {renderSeasonStartOnce()}
+        {renderSeasonStartOnce(true)}
         <TimelineEnd isProduction={currentInspection.status === InspectionStatus.InProduction}>
           Tämä tarkastus
           <InspectionDates

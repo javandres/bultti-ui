@@ -66,8 +66,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
     let typeStrings = getInspectionTypeStrings(inspectionType)
+    let inspectionGenericName = inspection
+      ? `${inspection.operator.operatorName}/${inspection.seasonId}`
+      : ''
+
     let inspectionName = inspection
-      ? inspection.name || `${inspection.operatorId}/${inspection.seasonId}`
+      ? inspection.name
+        ? `${inspection.name} (${inspectionGenericName})`
+        : inspectionGenericName
       : ''
 
     return (
