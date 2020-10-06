@@ -214,6 +214,7 @@ const ContractProcurementUnitsEditor = observer(
                       <div>
                         {currentContracts.map((currentContract: Contract) => (
                           <TextButton
+                            key={currentContract.id}
                             style={{ display: 'block' }}
                             onClick={() => editContract(currentContract.id!)}>
                             <DateRangeDisplay
