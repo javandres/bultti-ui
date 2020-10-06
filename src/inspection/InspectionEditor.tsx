@@ -13,6 +13,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from './InspectionUsers'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
+import { pick } from 'lodash'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -54,7 +55,18 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
           return
         }
 
-        if (isEditable && !isUpdating.current && inspection && !loading) {
+        let updateValues = updatedValues
+
+        if (!isEditable) {
+          updatedValues = pick(updateValues, 'name')
+        }
+
+        if (
+          Object.keys(updateValues).length !== 0 &&
+          !isUpdating.current &&
+          inspection &&
+          !loading
+        ) {
           isUpdating.current = true
 
           await updatePreInspection({
