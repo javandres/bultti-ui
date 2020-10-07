@@ -208,7 +208,7 @@ type Inspection {
   endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
-  inspectionEndDate: BulttiDate
+  inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
   inspectionType: InspectionType!
@@ -219,13 +219,21 @@ type Inspection {
   postInspection: Inspection
   preInspection: Inspection
   season: Season!
-  seasonId: String
+  seasonId: String!
   startDate: BulttiDate
   status: InspectionStatus!
   updatedAt: DateTime!
   userRelations: [InspectionUserRelation!]!
   version: Int!
   versionStackIdentifier: String
+}
+
+type InspectionTimelineItem {
+  id: ID!
+  inspectionEndDate: BulttiDate!
+  inspectionStartDate: BulttiDate!
+  operatorName: String!
+  seasonId: String!
 }
 
 type InspectionUserRelation {
@@ -378,6 +386,7 @@ type Query {
   inspectionReportByName(inspectionId: String!, reportName: String!): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
+  inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
@@ -465,6 +474,7 @@ enum InspectionStatus {
   Draft
   InProduction
   InReview
+  Processing
 }
 
 enum InspectionType {
