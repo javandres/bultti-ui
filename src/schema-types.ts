@@ -43,6 +43,7 @@ export type Query = {
   inspectionReportByName?: Maybe<Report>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
+  inspectionsTimeline: Array<InspectionTimelineItem>;
   currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
@@ -162,6 +163,12 @@ export type QueryInspectionsByOperatorArgs = {
 };
 
 
+export type QueryInspectionsTimelineArgs = {
+  inspectionType: InspectionType;
+  operatorId: Scalars['Int'];
+};
+
+
 export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
   inspectionType: InspectionType;
   seasonId: Scalars['String'];
@@ -236,7 +243,7 @@ export type Inspection = {
   defectInspection?: Maybe<Inspection>;
   operatorId?: Maybe<Scalars['Int']>;
   operator: Operator;
-  seasonId?: Maybe<Scalars['String']>;
+  seasonId: Scalars['String'];
   season: Season;
   executionRequirements: Array<ExecutionRequirement>;
   status: InspectionStatus;
@@ -245,7 +252,7 @@ export type Inspection = {
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
   inspectionStartDate: Scalars['BulttiDate'];
-  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionEndDate: Scalars['BulttiDate'];
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   minStartDate: Scalars['BulttiDate'];
@@ -548,7 +555,8 @@ export type ExecutionRequirementValue = {
 export enum InspectionStatus {
   Draft = 'Draft',
   InReview = 'InReview',
-  InProduction = 'InProduction'
+  InProduction = 'InProduction',
+  Processing = 'Processing'
 }
 
 export type ValidationErrorData = {
@@ -676,6 +684,15 @@ export type ReportCreatorOption = {
   reportType: ReportType;
   columnLabels: Scalars['String'];
   params: Scalars['String'];
+};
+
+export type InspectionTimelineItem = {
+  __typename?: 'InspectionTimelineItem';
+  id: Scalars['ID'];
+  operatorName: Scalars['String'];
+  seasonId: Scalars['String'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
 };
 
 export type ProcurementUnitOption = {

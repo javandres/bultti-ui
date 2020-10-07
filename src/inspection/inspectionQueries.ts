@@ -125,6 +125,18 @@ export const inspectionsByOperatorQuery = gql`
   ${inspectionFragment}
 `
 
+export const inspectionsTimelineByOperatorQuery = gql`
+  query inspectionsTimeline($operatorId: Int!, $inspectionType: InspectionType!) {
+    inspectionsTimeline(operatorId: $operatorId, inspectionType: $inspectionType) {
+      id
+      inspectionStartDate
+      inspectionEndDate
+      operatorName
+      seasonId
+    }
+  }
+`
+
 export const createInspectionMutation = gql`
   mutation createInspection($inspectionInput: InitialInspectionInput!) {
     createInspection(inspection: $inspectionInput) {

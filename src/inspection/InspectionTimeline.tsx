@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { useFetchInspections } from './inspectionUtils'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionTimelineItem } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { InputLabel } from '../common/components/form'
 import { ArrowRight } from '../common/icon/ArrowRight'
@@ -11,7 +11,10 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { orderBy } from 'lodash'
 import { useQueryData } from '../util/useQueryData'
-import { inspectionsByOperatorQuery } from './inspectionQueries'
+import {
+  inspectionsByOperatorQuery,
+  inspectionsTimelineByOperatorQuery,
+} from './inspectionQueries'
 
 const InspectionTimelineView = styled.div`
   margin: 1rem 0;
@@ -65,25 +68,24 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
   var [operator] = useStateValue('globalOperator')
   var [season] = useStateValue('globalSeason')
 
-  let { data: inspectionsData } = useQueryData<Inspection>(inspectionsByOperatorQuery, {
-    skip: !operator,
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      operatorId: operator?.operatorId,
-      inspectionType: currentInspection.inspectionType,
-    },
-  })
+  let { data: inspectionsData } = useQueryData<InspectionTimelineItem>(
+    inspectionsTimelineByOperatorQuery,
+    {
+      skip: !operator,
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: operator?.operatorId,
+        inspectionType: currentInspection.inspectionType,
+      },
+    }
+  )
 
   let inspections = !!inspectionsData && Array.isArray(inspectionsData) ? inspectionsData : []
 
   let previousProdInspections = useMemo(
     () =>
       orderBy(
-        inspections.filter(
-          (inspection) =>
-            inspection.status === InspectionStatus.InProduction &&
-            inspection.id !== currentInspection.id
-        ),
+        inspections.filter((inspection) => inspection.id !== currentInspection.id),
         'inspectionStartDate',
         'asc'
       ),
@@ -143,7 +145,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
             <React.Fragment key={inspection.id}>
               {inspection.seasonId === season.id && renderSeasonStartOnce()}
               <InspectionTimeLineItem>
-                {`${inspection.operator.operatorName}/${inspection.seasonId}`}
+                {`${inspection.operatorName}/${inspection.seasonId}`}
                 <InspectionDates
                   startDate={inspection.inspectionStartDate}
                   endDate={inspection.inspectionEndDate}
