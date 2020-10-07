@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
-import { useFetchInspections } from './inspectionUtils'
 import { Inspection, InspectionStatus, InspectionTimelineItem } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { InputLabel } from '../common/components/form'
@@ -11,10 +10,7 @@ import { format, parseISO } from 'date-fns'
 import { READABLE_DATE_FORMAT } from '../constants'
 import { orderBy } from 'lodash'
 import { useQueryData } from '../util/useQueryData'
-import {
-  inspectionsByOperatorQuery,
-  inspectionsTimelineByOperatorQuery,
-} from './inspectionQueries'
+import { inspectionsTimelineByOperatorQuery } from './inspectionQueries'
 
 const InspectionTimelineView = styled.div`
   margin: 1rem 0;

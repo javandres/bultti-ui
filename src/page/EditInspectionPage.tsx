@@ -21,6 +21,9 @@ import { translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import InspectionValidationErrors from '../inspection/InspectionValidationErrors'
+import { useSubscription } from '@apollo/client'
+import { inspectionStatusSubscription } from '../inspection/inspectionQueries'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -63,6 +66,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
       inspectionId
     )
+
+    const { data: statusUpdateData, loading } = useSubscription(inspectionStatusSubscription, {
+      shouldResubscribe: true,
+      variables: { inspectionId },
+    })
+
+    let statusUpdate = pickGraphqlData(statusUpdateData)
+    console.log(statusUpdate, loading)
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
     let typeStrings = getInspectionTypeStrings(inspectionType)

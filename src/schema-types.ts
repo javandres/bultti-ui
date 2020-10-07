@@ -1027,3 +1027,13 @@ export type ContractInput = {
   procurementUnitIds?: Maybe<Array<Scalars['String']>>;
   rulesFile?: Maybe<Scalars['String']>;
 };
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  inspectionStatus?: Maybe<Inspection>;
+};
+
+
+export type SubscriptionInspectionStatusArgs = {
+  inspectionId: Scalars['String'];
+};

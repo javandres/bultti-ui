@@ -3,6 +3,7 @@
 schema {
   query: Query
   mutation: Mutation
+  subscription: Subscription
 }
 
 union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture
@@ -433,6 +434,10 @@ type Season {
   inspections: [Inspection!]!
   season: String!
   startDate: BulttiDate!
+}
+
+type Subscription {
+  inspectionStatus(inspectionId: String!): Inspection
 }
 
 type User {

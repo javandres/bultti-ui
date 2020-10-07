@@ -228,3 +228,19 @@ export const removeInspectionMutation = gql`
     removeInspection(inspectionId: $inspectionId)
   }
 `
+
+// This returns an abbreviated InspectionStatusUpdate object masquerading
+// as an Inspection to facilitate easier Apollo cache updates.
+export const inspectionStatusSubscription = gql`
+  subscription inspectionStatus($inspectionId: String!) {
+    inspectionStatus(inspectionId: $inspectionId) {
+      id
+      status
+      startDate
+      endDate
+      inspectionStartDate
+      inspectionEndDate
+      version
+    }
+  }
+`

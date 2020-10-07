@@ -3,6 +3,7 @@ import {
   ApolloLink,
   defaultDataIdFromObject,
   InMemoryCache,
+  split,
 } from '@apollo/client'
 import { onError } from '@apollo/client/link/error'
 import { setContext } from '@apollo/client/link/context'
@@ -10,6 +11,8 @@ import { GRAPHQL_PATH, SERVER_URL } from './constants'
 import { createUploadLink } from 'apollo-upload-client'
 import introspection from './possibleTypes'
 import { getAuthToken } from './util/authToken'
+import { WebSocketLink } from '@apollo/client/link/ws'
+import { getMainDefinition } from '@apollo/client/utilities'
 
 export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -47,6 +50,16 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
         authorization: token ? `Bearer ${token}` : '',
       },
     }
+  })
+
+  const wsLink = new WebSocketLink({
+    uri: SERVER_URL.replace('http', 'ws') + GRAPHQL_PATH,
+    options: {
+      reconnect: true,
+      connectionParams: {
+        authToken: getAuthToken(),
+      },
+    },
   })
 
   const httpLink = createUploadLink({
@@ -110,8 +123,20 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     possibleTypes: introspection.possibleTypes,
   })
 
+  const splitLink = split(
+    ({ query }) => {
+      const definition = getMainDefinition(query)
+
+      return (
+        definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
+      )
+    },
+    wsLink,
+    httpLink
+  )
+
   return new ApolloClient({
-    link: ApolloLink.from([errorLink, authLink, httpLink]),
+    link: ApolloLink.from([errorLink, authLink, splitLink]),
     cache,
   })
 }
