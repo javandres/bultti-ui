@@ -53,6 +53,7 @@ export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   border: 0;
   border-radius: 0;
   background: transparent;
+  height: calc(100% + 1px);
 `
 
 const EditToolbar = styled.div<{ floating?: boolean }>`
@@ -68,7 +69,7 @@ const EditToolbar = styled.div<{ floating?: boolean }>`
     p.floating
       ? 'calc(100% - 4rem)'
       : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
-  z-index: 100;
+  z-index: 200;
   font-size: 1rem;
   box-shadow: ${(p) => (p.floating ? '0 0 10px rgba(0,0,0,0.2)' : 'none')};
   border: ${(p) => (p.floating ? '1px solid var(--lighter-grey)' : 0)};
@@ -651,12 +652,12 @@ const Table = observer(
     )
 
     // Scroll listeners for the floating toolbar.
-    let [currentScroll, setCurrentScroll] = useState(0)
+    let [currentScroll, setCurrentScroll] = useState({ scrollTop: 0, viewportHeight: 0 })
     let subscribeToScroll = useContext(ScrollContext)
 
     let { callback: debouncedSetScroll } = useDebouncedCallback(
-      (scrollTop: number, frameHeight: number) => {
-        setCurrentScroll(scrollTop - frameHeight)
+      (scrollTop: number, viewportHeight: number) => {
+        setCurrentScroll({ scrollTop, viewportHeight })
       },
       50
     )
@@ -673,10 +674,14 @@ const Table = observer(
         return false
       }
 
-      let tableBox = tableViewRef.current?.getBoundingClientRect()
-      let tableBottomEdge = tableBox.top + tableBox.height
+      let { scrollTop, viewportHeight } = currentScroll
 
-      return currentScroll < tableBottomEdge - 150
+      let tableBox: DOMRect = tableViewRef.current?.getBoundingClientRect()
+      let tableTop = scrollTop + tableBox.top
+      let tableBottom = tableTop + tableBox.height
+      let scrollBottom = scrollTop + viewportHeight
+
+      return scrollBottom < tableBottom + 58 && scrollBottom > tableTop + 58
     }, [tableViewRef.current, currentScroll, pendingValues])
 
     let contextValue: ContextTypes<ItemType> = {
