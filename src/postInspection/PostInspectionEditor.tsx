@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
@@ -48,14 +48,16 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
           <>
             <Heading>
               Pre-inspection{' '}
-              <Button
-                style={{ marginLeft: 'auto' }}
-                loading={updateLoading}
-                onClick={() => updateConnectedInspection()}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}>
-                Päivitä
-              </Button>
+              {inspection.status === InspectionStatus.Draft && (
+                <Button
+                  style={{ marginLeft: 'auto' }}
+                  loading={updateLoading}
+                  onClick={() => updateConnectedInspection()}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  size={ButtonSize.SMALL}>
+                  Päivitä
+                </Button>
+              )}
             </Heading>
             <InspectionIndexItem
               onClick={onClickConnectedInspection}

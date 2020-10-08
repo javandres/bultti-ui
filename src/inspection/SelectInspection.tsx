@@ -103,11 +103,12 @@ const ItemContent = styled.div`
 `
 
 const InspectionTitle = styled(SubHeading)`
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 `
 
 const InspectionSubtitle = styled(SubHeading)`
-  margin-top: -0.5rem;
+  margin-top: -0.75rem;
+  margin-bottom: 0.75rem;
   font-size: 0.875rem;
 `
 
@@ -140,7 +141,11 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
 `
 
 const InspectionPeriodDisplay = styled.div`
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0.5rem;
+  }
 `
 
 const StartDate = styled.span`
@@ -255,6 +260,18 @@ const SelectInspection: React.FC<PropTypes> = observer(
                       </StartDate>
                       <EndDate>
                         {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
+                      </EndDate>
+                    </InspectionPeriodDisplay>
+                    <InspectionPeriodDisplay>
+                      <DateTitle>Tarkastusjakso</DateTitle>
+                      <StartDate>
+                        {format(
+                          parseISO(inspection.inspectionStartDate),
+                          READABLE_DATE_FORMAT
+                        )}
+                      </StartDate>
+                      <EndDate>
+                        {format(parseISO(inspection.inspectionEndDate), READABLE_DATE_FORMAT)}
                       </EndDate>
                     </InspectionPeriodDisplay>
                   </ItemContent>
