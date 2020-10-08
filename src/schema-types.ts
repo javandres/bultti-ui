@@ -734,6 +734,7 @@ export type Mutation = {
   modifyReport: Report;
   setReportsOrder: Array<Report>;
   createInspection: Inspection;
+  updateBaseInspection: Inspection;
   updateInspection: Inspection;
   submitInspection: Inspection;
   publishInspection: Inspection;
@@ -887,6 +888,11 @@ export type MutationSetReportsOrderArgs = {
 
 export type MutationCreateInspectionArgs = {
   inspection: InitialInspectionInput;
+};
+
+
+export type MutationUpdateBaseInspectionArgs = {
+  inspectionId: Scalars['String'];
 };
 
 

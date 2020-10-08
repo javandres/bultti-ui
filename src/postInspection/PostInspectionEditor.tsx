@@ -4,6 +4,9 @@ import { Inspection } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
+import { useMutationData } from '../util/useMutationData'
+import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -27,11 +30,33 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
       )
     }, [connectedPreInspection, goToPreInspectionReports])
 
+    let [updateConnectedInspection, { loading: updateLoading }] = useMutationData(
+      updateBaseInspectionMutation,
+      {
+        variables: {
+          inspectionId: inspection.id,
+        },
+        refetchQueries: [
+          { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        ],
+      }
+    )
+
     return (
       <div>
         {connectedPreInspection && (
           <>
-            <Heading>Pre-inspection</Heading>
+            <Heading>
+              Pre-inspection{' '}
+              <Button
+                style={{ marginLeft: 'auto' }}
+                loading={updateLoading}
+                onClick={() => updateConnectedInspection()}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}>
+                Päivitä
+              </Button>
+            </Heading>
             <InspectionIndexItem
               onClick={onClickConnectedInspection}
               inspection={connectedPreInspection}
