@@ -67,42 +67,41 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     credentials: 'include',
   })
 
+  let cacheMerge = (existing, incoming) => {
+    return incoming
+  }
+
   const cache = new InMemoryCache({
     addTypename: true,
     typePolicies: {
       Query: {
         fields: {
+          currentInspectionsByOperatorAndSeason: {
+            merge: cacheMerge,
+          },
           availableDayTypes: {
-            merge(existing, incoming) {
-              return incoming
-            },
+            merge: cacheMerge,
           },
         },
       },
       Inspection: {
         fields: {
           inspectionErrors: {
-            merge(existing, incoming) {
-              return incoming
-            },
+            merge: cacheMerge,
           },
         },
       },
       EquipmentCatalogue: {
         fields: {
           equipmentCatalogues: {
-            merge(existing, incoming) {
-              return incoming
-            },
+            merge: cacheMerge,
           },
         },
       },
       User: {
         fields: {
           inspectionRelations: {
-            merge(existing, incoming) {
-              return incoming
-            },
+            merge: cacheMerge,
           },
         },
       },

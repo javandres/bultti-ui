@@ -197,17 +197,20 @@ const InspectionActions = observer(
               </Button>
             )}
 
-          {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
-            <Button
-              disabled={disabledActions.includes('remove')}
-              style={{ marginLeft: 'auto', marginRight: 0 }}
-              loading={removeLoading}
-              buttonStyle={ButtonStyle.REMOVE}
-              size={ButtonSize.MEDIUM}
-              onClick={onRemoveInspection}>
-              Poista
-            </Button>
-          )}
+          {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
+            inspection.status
+          ) &&
+            requireAdminUser(user) && (
+              <Button
+                disabled={disabledActions.includes('remove')}
+                style={{ marginLeft: 'auto', marginRight: 0 }}
+                loading={removeLoading}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                size={ButtonSize.MEDIUM}
+                onClick={onRemoveInspection}>
+                Poista
+              </Button>
+            )}
 
           {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
             <>
