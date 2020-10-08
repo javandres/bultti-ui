@@ -12,6 +12,7 @@ import {
   procurementUnitOptionsQuery,
   removeContractMutation,
 } from './contractQueries'
+import { ErrorView } from '../common/components/Messages'
 import { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
@@ -75,7 +76,12 @@ function createContractInput(contract: Contract): ContractInput {
   }
 }
 
-const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRulesInput) => (
+const renderEditorField = (
+  contract: ContractInput,
+  rulesInputActive,
+  toggleRulesInput,
+  contractFileReadError
+) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
@@ -99,7 +105,7 @@ const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRule
             loading={loading}
           />
         )}
-
+        {contractFileReadError.length > 0 && <ErrorView>{contractFileReadError}</ErrorView>}
         <ExpandableFormSection
           style={{ marginTop: '1rem' }}
           headerContent={
@@ -290,6 +296,7 @@ const ContractEditor = observer(
 
     let isLoading = modifyLoading || createLoading
     let goToContract = useContractPage()
+    let [contractFileReadError, setContractFileReadError] = useState('')
 
     let onDone = useCallback(async () => {
       if (pendingContractValid) {
@@ -304,6 +311,12 @@ const ContractEditor = observer(
               contractInput: pendingContract,
             },
           })
+          const fileReadErrorMessage = result.error?.message
+          setContractFileReadError(
+            fileReadErrorMessage
+              ? `Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe: ${fileReadErrorMessage}`
+              : ''
+          )
         } else {
           result = await updateMutationFn({
             variables: {
@@ -386,7 +399,8 @@ const ContractEditor = observer(
           renderInput={renderEditorField(
             pendingContract,
             rulesInputActive,
-            onToggleRulesInput
+            onToggleRulesInput,
+            contractFileReadError
           )}
           showButtons={isDirty}
         />
