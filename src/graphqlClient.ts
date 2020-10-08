@@ -56,9 +56,9 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     uri: SERVER_URL.replace('http', 'ws') + GRAPHQL_PATH,
     options: {
       reconnect: true,
-      connectionParams: {
+      connectionParams: () => ({
         authToken: getAuthToken(),
-      },
+      }),
     },
   })
 
@@ -132,11 +132,11 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
       )
     },
     wsLink,
-    httpLink
+    ApolloLink.from([errorLink, authLink, httpLink])
   )
 
   return new ApolloClient({
-    link: ApolloLink.from([errorLink, authLink, splitLink]),
+    link: splitLink,
     cache,
   })
 }

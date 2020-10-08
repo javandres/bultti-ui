@@ -85,20 +85,17 @@ const InspectionActions = observer(
       navigateWithQueryString(`/${pathSegment}-inspection/edit`)
     }, [removeInspection, inspection])
 
-    var [
-      submitInspection,
-      { loading: submitLoading },
-    ] = useMutationData(submitInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [submitInspection, { loading: submitLoading }] = useMutationData(
+      submitInspectionMutation
+    )
 
-    var [
-      publishInspection,
-      { loading: publishLoading },
-    ] = useMutationData(publishInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [publishInspection, { loading: publishLoading }] = useMutationData(
+      publishInspectionMutation
+    )
 
-    var [
-      rejectInspection,
-      { loading: rejectLoading },
-    ] = useMutationData(rejectInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [rejectInspection, { loading: rejectLoading }] = useMutationData(
+      rejectInspectionMutation
+    )
 
     var onSubmitProcessStart = useCallback(() => {
       setSubmitActive(true)
