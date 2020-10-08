@@ -43,8 +43,21 @@ export const UIStore = (state): UIActions => {
     setUrlValue('season', typeof value === 'string' ? value : value?.id || '')
   })
 
+  let prevDismissedMessage = ''
+
   const setErrorMessage = action((message: string) => {
-    state.errorMessage = message
+    // To prevent a loop of messages as the hooks rerender, keep track of the
+    // previously dismissed message so that it can't be immediately re-assigned.
+    if (!message && state.errorMessage) {
+      prevDismissedMessage = state.errorMessage
+    }
+
+    if (!(message && prevDismissedMessage && message === prevDismissedMessage)) {
+      state.errorMessage = message
+    } else {
+      // We just need to break the loop, so reset it after one attempt to re-assign.
+      prevDismissedMessage = ''
+    }
   })
 
   const onAppLoaded = action(() => {

@@ -131,11 +131,11 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
       )
     },
     wsLink,
-    ApolloLink.from([errorLink, authLink, httpLink])
+    httpLink
   )
 
   return new ApolloClient({
-    link: splitLink,
+    link: ApolloLink.from([errorLink, authLink, splitLink]),
     cache,
   })
 }
