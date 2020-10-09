@@ -693,6 +693,7 @@ export type InspectionTimelineItem = {
   seasonId: Scalars['String'];
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
+  version: Scalars['Int'];
 };
 
 export type ProcurementUnitOption = {
@@ -1037,9 +1038,23 @@ export type ContractInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   inspectionStatus?: Maybe<Inspection>;
+  inspectionError?: Maybe<InspectionErrorUpdate>;
 };
 
 
 export type SubscriptionInspectionStatusArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type SubscriptionInspectionErrorArgs = {
+  inspectionId: Scalars['String'];
+};
+
+export type InspectionErrorUpdate = {
+  __typename?: 'InspectionErrorUpdate';
+  id: Scalars['ID'];
+  status: InspectionStatus;
+  errorType: Scalars['String'];
+  message: Scalars['String'];
 };

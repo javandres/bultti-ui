@@ -229,12 +229,20 @@ type Inspection {
   versionStackIdentifier: String
 }
 
+type InspectionErrorUpdate {
+  errorType: String!
+  id: ID!
+  message: String!
+  status: InspectionStatus!
+}
+
 type InspectionTimelineItem {
   id: ID!
   inspectionEndDate: BulttiDate!
   inspectionStartDate: BulttiDate!
   operatorName: String!
   seasonId: String!
+  version: Int!
 }
 
 type InspectionUserRelation {
@@ -438,6 +446,7 @@ type Season {
 }
 
 type Subscription {
+  inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): Inspection
 }
 

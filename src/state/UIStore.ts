@@ -54,8 +54,7 @@ export const UIStore = (state): UIActions => {
 
     if (!(message && prevDismissedMessage && message === prevDismissedMessage)) {
       state.errorMessage = message
-    } else {
-      // We just need to break the loop, so reset it after one attempt to re-assign.
+      // We just need to break the loop, not prevent all future error messages
       prevDismissedMessage = ''
     }
   })

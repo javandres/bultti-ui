@@ -133,6 +133,7 @@ export const inspectionsTimelineByOperatorQuery = gql`
       inspectionEndDate
       operatorName
       seasonId
+      version
     }
   }
 `
@@ -250,6 +251,17 @@ export const inspectionStatusSubscription = gql`
       inspectionStartDate
       inspectionEndDate
       version
+    }
+  }
+`
+
+export const inspectionErrorSubscription = gql`
+  subscription inspectionError($inspectionId: String!) {
+    inspectionError(inspectionId: $inspectionId) {
+      id
+      status
+      errorType
+      message
     }
   }
 `
