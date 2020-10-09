@@ -12,6 +12,7 @@ import {
   procurementUnitOptionsQuery,
   removeContractMutation,
 } from './contractQueries'
+import { ErrorView } from '../common/components/Messages'
 import { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
 import SelectOperator from '../common/input/SelectOperator'
@@ -75,7 +76,12 @@ function createContractInput(contract: Contract): ContractInput {
   }
 }
 
-const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRulesInput) => (
+const renderEditorField = (
+  contract: ContractInput,
+  rulesInputActive,
+  toggleRulesInput,
+  contractFileReadError
+) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
@@ -99,7 +105,12 @@ const renderEditorField = (contract: ContractInput, rulesInputActive, toggleRule
             loading={loading}
           />
         )}
-
+        {contractFileReadError && (
+          <ErrorView>
+            Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe:{' '}
+            {contractFileReadError}`
+          </ErrorView>
+        )}
         <ExpandableFormSection
           style={{ marginTop: '1rem' }}
           headerContent={
@@ -262,7 +273,7 @@ const ContractEditor = observer(
 
     let [
       modifyContract,
-      { loading: modifyLoading, mutationFn: updateMutationFn },
+      { loading: modifyLoading, mutationFn: updateMutationFn, error: modifyError },
     ] = useUploader(modifyContractMutation, {
       refetchQueries: ({ data }) => {
         let mutationResult = pickGraphqlData(data)
@@ -282,11 +293,19 @@ const ContractEditor = observer(
       },
     })
 
-    let [createContract, { loading: createLoading }] = useUploader(createContractMutation, {
-      refetchQueries: [
-        { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
-      ],
-    })
+    let [createContract, { loading: createLoading, error: createError }] = useUploader(
+      createContractMutation,
+      {
+        refetchQueries: [
+          { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
+        ],
+      }
+    )
+
+    let currentError = useMemo(() => (createError || modifyError)?.message, [
+      modifyError,
+      createError,
+    ])
 
     let isLoading = modifyLoading || createLoading
     let goToContract = useContractPage()
@@ -320,8 +339,7 @@ const ContractEditor = observer(
 
         if (result.data) {
           if (!isNew) {
-            let nextContract = pickGraphqlData(result.data)
-            setPendingContract(createContractInput(nextContract))
+            setPendingContract(createContractInput(result.data))
           } else {
             goToContract(result.data.id)
           }
@@ -386,7 +404,8 @@ const ContractEditor = observer(
           renderInput={renderEditorField(
             pendingContract,
             rulesInputActive,
-            onToggleRulesInput
+            onToggleRulesInput,
+            currentError
           )}
           showButtons={isDirty}
         />
