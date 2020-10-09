@@ -15,6 +15,7 @@ import ExpandableSection, {
 import { ExecutionRequirement } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
+import { usePreInspectionAreaRequirements } from './executionRequirementUtils'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -39,22 +40,10 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
     let { id } = inspection || {}
 
     let {
-      data: executionRequirementsData,
+      data: areaExecutionRequirements,
       loading: requirementsLoading,
-      refetch: refetchRequirements,
-    } = useQueryData(executionRequirementsForAreaQuery, {
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        inspectionId: id,
-      },
-    })
-
-    let refetch = useRefetch(refetchRequirements)
-
-    let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
-      () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
-      [executionRequirementsData]
-    )
+      refetch,
+    } = usePreInspectionAreaRequirements(id)
 
     return (
       <ExpandableSection

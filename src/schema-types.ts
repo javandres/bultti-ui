@@ -33,6 +33,7 @@ export type Query = {
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
+  baseExecutionRequirementsForPostInspection: Array<ExecutionRequirement>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -122,6 +123,11 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 
 
 export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryBaseExecutionRequirementsForPostInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -287,6 +293,7 @@ export type ExecutionRequirement = {
   procurementUnit?: Maybe<ProcurementUnit>;
   procurementUnitId?: Maybe<Scalars['String']>;
   areaRequirement?: Maybe<ExecutionRequirement>;
+  areaRequirementId?: Maybe<Scalars['String']>;
   procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
   totalKilometers?: Maybe<Scalars['Float']>;
   totalKilometersFulfilled?: Maybe<Scalars['Float']>;

@@ -7,6 +7,7 @@ import { useInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -65,7 +66,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
             />
           </>
         )}
-        Post-inspection editor
+        <PostInspectionExecutionRequirements />
       </div>
     )
   }

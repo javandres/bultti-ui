@@ -162,6 +162,7 @@ type EquipmentSearchResult {
 type ExecutionRequirement {
   area: OperatingArea!
   areaRequirement: ExecutionRequirement
+  areaRequirementId: String
   averageAgeWeighted: Float
   averageAgeWeightedFulfilled: Float
   equipmentQuotas: [ExecutionRequirementQuota!]!
@@ -376,6 +377,7 @@ type ProcurementUnitRoute {
 type Query {
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
+  baseExecutionRequirementsForPostInspection(inspectionId: String!): [ExecutionRequirement!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!

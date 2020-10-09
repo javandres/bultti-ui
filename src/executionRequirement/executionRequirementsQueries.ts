@@ -87,6 +87,19 @@ export const executionRequirementsForAreaQuery = gql`
   ${RequirementValueFragment}
 `
 
+export const baseExecutionRequirementsForPostInspectionQuery = gql`
+  query baseExecutionRequirementsForPostInspection($inspectionId: String!) {
+    baseExecutionRequirementsForPostInspection(inspectionId: $inspectionId) {
+      ...ExecutionRequirementFragment
+      requirements {
+        ...RequirementValueFragment
+      }
+    }
+  }
+  ${ExecutionRequirementFragment}
+  ${RequirementValueFragment}
+`
+
 export const createExecutionRequirementForProcurementUnitMutation = gql`
   mutation createExecutionRequirementsForProcurementUnit(
     $procurementUnitId: String!
