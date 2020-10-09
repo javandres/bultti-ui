@@ -105,7 +105,12 @@ const renderEditorField = (
             loading={loading}
           />
         )}
-        {contractFileReadError.length > 0 && <ErrorView>{contractFileReadError}</ErrorView>}
+        {contractFileReadError && (
+          <ErrorView>
+            Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe:{' '}
+            {contractFileReadError}`
+          </ErrorView>
+        )}
         <ExpandableFormSection
           style={{ marginTop: '1rem' }}
           headerContent={
@@ -268,7 +273,7 @@ const ContractEditor = observer(
 
     let [
       modifyContract,
-      { loading: modifyLoading, mutationFn: updateMutationFn },
+      { loading: modifyLoading, mutationFn: updateMutationFn, error: modifyError },
     ] = useUploader(modifyContractMutation, {
       refetchQueries: ({ data }) => {
         let mutationResult = pickGraphqlData(data)
@@ -288,15 +293,22 @@ const ContractEditor = observer(
       },
     })
 
-    let [createContract, { loading: createLoading }] = useUploader(createContractMutation, {
-      refetchQueries: [
-        { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
-      ],
-    })
+    let [createContract, { loading: createLoading, error: createError }] = useUploader(
+      createContractMutation,
+      {
+        refetchQueries: [
+          { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
+        ],
+      }
+    )
+
+    let currentError = useMemo(() => (createError || modifyError)?.message, [
+      modifyError,
+      createError,
+    ])
 
     let isLoading = modifyLoading || createLoading
     let goToContract = useContractPage()
-    let [contractFileReadError, setContractFileReadError] = useState('')
 
     let onDone = useCallback(async () => {
       if (pendingContractValid) {
@@ -311,12 +323,6 @@ const ContractEditor = observer(
               contractInput: pendingContract,
             },
           })
-          const fileReadErrorMessage = result.error?.message
-          setContractFileReadError(
-            fileReadErrorMessage
-              ? `Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe: ${fileReadErrorMessage}`
-              : ''
-          )
         } else {
           result = await updateMutationFn({
             variables: {
@@ -400,7 +406,7 @@ const ContractEditor = observer(
             pendingContract,
             rulesInputActive,
             onToggleRulesInput,
-            contractFileReadError
+            currentError
           )}
           showButtons={isDirty}
         />
