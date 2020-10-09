@@ -339,8 +339,7 @@ const ContractEditor = observer(
 
         if (result.data) {
           if (!isNew) {
-            let nextContract = pickGraphqlData(result.data)
-            setPendingContract(createContractInput(nextContract))
+            setPendingContract(createContractInput(result.data))
           } else {
             goToContract(result.data.id)
           }
