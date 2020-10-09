@@ -12,9 +12,14 @@ import Dropdown from '../common/input/Dropdown'
 import { addWeeks, eachWeekOfInterval, format, parseISO } from 'date-fns'
 import { FlexRow } from '../common/components/common'
 import { READABLE_DATE_FORMAT } from '../constants'
+import Table from '../common/components/Table'
 
 const PostInspectionExecutionRequirementsView = styled.div`
   min-height: 300px;
+`
+
+const ExecutionRequirementWeek = styled.div`
+  margin-top: 1rem;
 `
 
 export type PropTypes = {}
@@ -79,6 +84,11 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
             onSelect={(selected) => setCurrentWeek(selected.id)}
           />
         </FlexRow>
+        <ExecutionRequirementWeek>
+          {baseRequirements.map((requirement) => (
+            <Table items={requirement.requirements} />
+          ))}
+        </ExecutionRequirementWeek>
       </PostInspectionExecutionRequirementsView>
     </ExpandableSection>
   )
