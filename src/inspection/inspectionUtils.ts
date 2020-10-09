@@ -106,13 +106,15 @@ export function useRemoveInspection(
   })
 
   let execRemove = useCallback(async () => {
-    await removeInspection({
+    let removeResult = await removeInspection({
       variables: {
         inspectionId: inspection.id,
       },
     })
 
     await afterRemove()
+
+    return pickGraphqlData(removeResult.data) || false
   }, [removeInspection, inspection, afterRemove])
 
   return [execRemove, { loading }]
