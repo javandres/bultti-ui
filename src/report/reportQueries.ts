@@ -29,17 +29,6 @@ export const reportsQuery = gql`
   ${ReportFragment}
 `
 
-export const reportCreatorNamesQuery = gql`
-  query reportCreatorNames {
-    reportCreatorOptions {
-      name
-      inspectionTypes
-      params
-      reportType
-    }
-  }
-`
-
 export const DepartureFragment = gql`
   fragment DepartureFragment on Departure {
     id
@@ -153,31 +142,4 @@ export const reportByName = gql`
   ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
-`
-
-export const modifyReportMutation = gql`
-  mutation modifyReport($reportInput: ReportInput!) {
-    modifyReport(reportInput: $reportInput) {
-      ...ReportFragment
-    }
-  }
-  ${ReportFragment}
-`
-
-export const createReportMutation = gql`
-  mutation createReport($reportInput: ReportInput!) {
-    createReport(reportInput: $reportInput) {
-      ...ReportFragment
-    }
-  }
-  ${ReportFragment}
-`
-
-export const updateReportOrderMutation = gql`
-  mutation setReportsOrder($reportOrders: [ReportOrderInput!]!) {
-    setReportsOrder(reportOrders: $reportOrders) {
-      id
-      order
-    }
-  }
 `
