@@ -48,7 +48,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
         {connectedPreInspection && (
           <>
             <Heading>
-              Pre-inspection{' '}
+              Ennakkotarkastus{' '}
               {inspection.status === InspectionStatus.Draft && (
                 <Button
                   style={{ marginLeft: 'auto' }}

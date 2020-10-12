@@ -68,7 +68,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       inspectionId
     )
 
-    const { data: errorUpdateData, loading } = useSubscription(inspectionErrorSubscription, {
+    const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
       shouldResubscribe: true,
       variables: { inspectionId },
     })

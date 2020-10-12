@@ -56,7 +56,7 @@ export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   height: calc(100% + 1px);
 `
 
-const EditToolbar = styled.div<{ floating?: boolean }>`
+export const EditToolbar = styled.div<{ floating?: boolean }>`
   position: ${(p) => (p.floating ? 'fixed' : 'static')};
   bottom: 1rem;
   border-radius: ${(p) => (p.floating ? '0.5rem' : 0)};
@@ -67,7 +67,7 @@ const EditToolbar = styled.div<{ floating?: boolean }>`
   left: ${(p) => (p.floating ? '2rem' : 'auto')};
   width: ${(p) =>
     p.floating
-      ? 'calc(100% - 4rem)'
+      ? 'calc(100% - 3.5rem)'
       : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
   z-index: 200;
   font-size: 1rem;
@@ -81,7 +81,7 @@ const EditToolbar = styled.div<{ floating?: boolean }>`
   transition: padding 0.2s ease-out, left 0.2s ease-out, bottom 0.2s ease-out;
 `
 
-const ToolbarDescription = styled.div`
+export const ToolbarDescription = styled.div`
   margin-right: auto;
   display: flex;
   align-items: center;
@@ -91,14 +91,14 @@ const ToolbarDescription = styled.div`
   }
 `
 
-const CancelButton = styled(Button)`
+export const CancelButton = styled(Button)`
   position: static;
   display: flex;
   color: var(--red);
   background: white;
 `
 
-const SaveButton = styled(Button)`
+export const SaveButton = styled(Button)`
   background: var(--green);
   margin-right: 1rem;
 `
@@ -262,6 +262,7 @@ export type PropTypes<ItemType> = {
   ) => React.ReactChild
   virtualized?: boolean
   maxHeight?: number
+  fluid?: boolean
   children?: React.ReactChild
 }
 
@@ -328,6 +329,7 @@ type ContextTypes<ItemType> = {
   renderCell?: PropTypes<ItemType>['renderCell']
   renderValue?: PropTypes<ItemType>['renderValue']
   keyFromItem?: PropTypes<ItemType>['keyFromItem']
+  fluid?: boolean
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
@@ -346,6 +348,7 @@ const TableCellComponent = observer(
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
+      fluid,
     } = ctx || {}
 
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
@@ -362,7 +365,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ minWidth: columnWidth ? `${columnWidth}px` : 0 }}
+        style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={editableValues?.includes(valueKey)}
@@ -435,6 +438,7 @@ const Table = observer(
     editableValues = [],
     virtualized = false,
     maxHeight = window.innerHeight,
+    fluid = false,
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
@@ -617,6 +621,7 @@ const Table = observer(
             onValueChange,
             itemEntries,
             item,
+            fluid,
           }
         }),
       [
@@ -638,7 +643,7 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
+    let width = fluid ? '100%' : Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
@@ -648,7 +653,7 @@ const Table = observer(
       tableIsEmpty ? 150 : rowHeight,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
         2 +
-        SCROLLBAR_WIDTH
+        (fluid ? 0 : SCROLLBAR_WIDTH)
     )
 
     // Scroll listeners for the floating toolbar.
@@ -695,15 +700,18 @@ const Table = observer(
       renderInput,
       renderValue,
       keyFromItem,
+      fluid,
     }
 
-    let tableViewWidth = Math.ceil(width + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
+    let tableViewWidth = fluid
+      ? '100%'
+      : Math.ceil((width as number) + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
 
     return (
       <TableContext.Provider value={contextValue}>
         <TableWrapper
           className={className}
-          style={{ minHeight: wrapperHeight + 'px' }}
+          style={{ minHeight: wrapperHeight + 'px', overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
             <TableHeader
@@ -721,11 +729,11 @@ const Table = observer(
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
 
-                let columnWidth = columnWidths[colIdx]
+                let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                 return (
                   <ColumnHeaderCell
-                    ref={setWidthFromCellRef(colIdx)}
+                    ref={!fluid ? setWidthFromCellRef(colIdx) : undefined}
                     as="button"
                     style={
                       typeof columnWidth !== 'undefined'
@@ -773,7 +781,7 @@ const Table = observer(
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                  let columnWidth = columnWidths[colIdx]
+                  let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
                     <TableCell
