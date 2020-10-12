@@ -32,6 +32,9 @@ import { Info } from '../common/icon/Info'
 import { Checkmark2 } from '../common/icon/Checkmark2'
 import { CrossThick } from '../common/icon/CrossThick'
 import { FlexRow } from '../common/components/common'
+import { round } from '../util/round'
+import { getTotal } from '../util/getTotal'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -39,7 +42,9 @@ const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   quotaRequired: '% Osuus',
 }
 
-const PostInspectionExecutionRequirementsView = styled.div``
+const PostInspectionExecutionRequirementsView = styled.div`
+  position: relative;
+`
 
 const RequirementAreasWrapper = styled.div`
   padding-bottom: 3rem;
@@ -200,6 +205,26 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     setPendingValues([])
   }, [])
 
+  let createGetColumnTotal = useCallback(
+    (requirement: ObservedExecutionRequirement) => (key: string) => {
+      if (key === 'emissionClass') {
+        return ''
+      }
+
+      let totalVal = round(getTotal<any, string>(requirement.observedRequirements, key))
+
+      switch (key) {
+        case 'quotaRequired':
+          return `${totalVal}%`
+        case 'kilometersRequired':
+          return `${totalVal} km`
+        default:
+          return totalVal
+      }
+    },
+    []
+  )
+
   return (
     <ExpandableSection
       isExpanded={true}
@@ -222,6 +247,9 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         </>
       }>
       <PostInspectionExecutionRequirementsView>
+        <LoadingDisplay
+          loading={updateLoading || createLoading || observedRequirementsLoading}
+        />
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
             {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
@@ -245,6 +273,7 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                           editableValues={['quotaRequired']}
                           items={requirement.observedRequirements}
                           columnLabels={columnLabels}
+                          getColumnTotal={createGetColumnTotal(requirement)}
                         />
                       ))}
                     </ExecutionRequirementWeek>
