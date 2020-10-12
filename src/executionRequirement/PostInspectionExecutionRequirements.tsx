@@ -16,6 +16,8 @@ import {
   observedExecutionRequirementsQuery,
 } from './executionRequirementsQueries'
 import { groupBy } from 'lodash'
+import { parseISO } from 'date-fns'
+import { readableDate, readableDateRange } from '../util/formatDate'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -103,9 +105,8 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
       ).map(([areaName, areaReqs]) => [
         areaName,
         Object.entries<ObservedExecutionRequirement[]>(
-          groupBy<ObservedExecutionRequirement>(
-            areaReqs,
-            (req) => `${req.startDate} - ${req.endDate}`
+          groupBy<ObservedExecutionRequirement>(areaReqs, (req) =>
+            readableDateRange(req.startDate, req.endDate)
           )
         ),
       ]),
