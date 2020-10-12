@@ -164,6 +164,24 @@ export const createObservedExecutionRequirementsFromPreInspectionRequirementsMut
   ${ObservedRequirementValueFragment}
 `
 
+export const updateObservedExecutionRequirementValuesMutation = gql`
+  mutation updateObservedExecutionRequirementValues(
+    $requirementId: String!
+    $updateValues: [ObservedRequirementValueInput!]!
+  ) {
+    updateObservedExecutionRequirementValues(
+      requirementId: $requirementId
+      updateValues: $updateValues
+    ) {
+      id
+      observedRequirements {
+        ...ObservedRequirementValueFragment
+      }
+    }
+  }
+  ${ObservedRequirementValueFragment}
+`
+
 export const createExecutionRequirementForProcurementUnitMutation = gql`
   mutation createExecutionRequirementsForProcurementUnit(
     $procurementUnitId: String!

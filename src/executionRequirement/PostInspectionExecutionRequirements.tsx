@@ -8,20 +8,25 @@ import ExpandableSection, {
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
 import Table, {
-  EditValue,
-  SaveButton,
   CancelButton,
   EditToolbar,
+  EditValue,
+  SaveButton,
   ToolbarDescription,
 } from '../common/components/Table'
-import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
+import {
+  ObservedExecutionRequirement,
+  ObservedExecutionValue,
+  ObservedRequirementValueInput,
+} from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { useObservedRequirements } from './executionRequirementUtils'
 import {
   createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
   observedExecutionRequirementsQuery,
+  updateObservedExecutionRequirementValuesMutation,
 } from './executionRequirementsQueries'
-import { groupBy } from 'lodash'
+import { groupBy, toString } from 'lodash'
 import { readableDateRange } from '../util/formatDate'
 import { Info } from '../common/icon/Info'
 import { Checkmark2 } from '../common/icon/Checkmark2'
@@ -99,6 +104,10 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     }
   )
 
+  let [updateRequirements, { loading: updateLoading }] = useMutationData(
+    updateObservedExecutionRequirementValuesMutation
+  )
+
   let onClickCreateRequirements = useCallback(async () => {
     if (inspection) {
       await createRequirements({
@@ -154,9 +163,38 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     []
   )
 
-  let onSaveEditedValues = useCallback(() => {
-    console.log(pendingValues)
-  }, [pendingValues])
+  let onSaveEditedValues = useCallback(async () => {
+    let updateQueries: Promise<unknown>[] = []
+    let requirementGroups = Object.entries<EditRequirementValue[]>(
+      groupBy<EditRequirementValue>(pendingValues, 'requirementId')
+    )
+
+    for (let [requirementId, reqPendingValues] of requirementGroups) {
+      let updateValues = new Map<string, ObservedRequirementValueInput>()
+
+      for (let value of reqPendingValues) {
+        let updateItem = updateValues.get(value.item.id) || {
+          id: value.item.id,
+          emissionClass: value.item.emissionClass,
+        }
+
+        updateItem[value.key] = parseFloat(toString(value.value || '0'))
+        updateValues.set(value.item.id, updateItem)
+      }
+
+      let updatePromise = updateRequirements({
+        variables: {
+          requirementId,
+          updateValues: Array.from(updateValues.values()),
+        },
+      })
+
+      updateQueries.push(updatePromise)
+    }
+
+    setPendingValues([])
+    await Promise.all(updateQueries)
+  }, [pendingValues, updateRequirements])
 
   let onCancelEdit = useCallback(() => {
     setPendingValues([])

@@ -300,6 +300,7 @@ type Mutation {
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
+  updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
 }
@@ -638,6 +639,14 @@ input InspectionInput {
   inspectionStartDate: BulttiDate
   name: String
   startDate: BulttiDate
+}
+
+input ObservedRequirementValueInput {
+  emissionClass: Int!
+  id: ID!
+  kilometersRequired: Float
+  quotaRequired: Float
+  sanctionAmount: Float
 }
 
 input ProcurementUnitEditInput {

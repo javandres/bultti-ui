@@ -793,6 +793,7 @@ export type Mutation = {
   modifyContract: Contract;
   removeContract: Scalars['Boolean'];
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
+  updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
 };
 
 
@@ -1009,6 +1010,12 @@ export type MutationCreateObservedExecutionRequirementsFromPreInspectionRequirem
   postInspectionId: Scalars['String'];
 };
 
+
+export type MutationUpdateObservedExecutionRequirementValuesArgs = {
+  updateValues: Array<ObservedRequirementValueInput>;
+  requirementId: Scalars['String'];
+};
+
 export type ProcurementUnitEditInput = {
   weeklyMeters: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
@@ -1084,6 +1091,14 @@ export type ContractInput = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   procurementUnitIds?: Maybe<Array<Scalars['String']>>;
   rulesFile?: Maybe<Scalars['String']>;
+};
+
+export type ObservedRequirementValueInput = {
+  id: Scalars['ID'];
+  emissionClass: Scalars['Int'];
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  quotaRequired?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type Subscription = {
