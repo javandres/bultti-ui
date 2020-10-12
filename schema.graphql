@@ -170,6 +170,7 @@ type ExecutionRequirement {
   inspection: Inspection!
   inspectionId: String!
   operator: Operator!
+  operatorId: Float!
   procurementUnit: ProcurementUnit
   procurementUnitId: String
   procurementUnitRequirements: [ExecutionRequirement!]
@@ -216,6 +217,7 @@ type Inspection {
   inspectionType: InspectionType!
   minStartDate: BulttiDate!
   name: String
+  observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
   operatorId: Int
   postInspection: Inspection
@@ -269,6 +271,7 @@ type Mutation {
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection!
+  createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   createReport(reportInput: ReportInput!): Report!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
@@ -299,6 +302,40 @@ type Mutation {
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
+}
+
+type ObservedExecutionRequirement {
+  area: OperatingArea!
+  averageAgeWeightedObserved: Float
+  averageAgeWeightedRequired: Float
+  endDate: BulttiDate!
+  id: ID!
+  inspection: Inspection!
+  inspectionId: String!
+  observedRequirements: [ObservedExecutionValue!]!
+  operator: Operator!
+  operatorId: Float!
+  startDate: BulttiDate!
+  totalKilometersObserved: Float
+  totalKilometersRequired: Float
+}
+
+type ObservedExecutionValue {
+  averageAgeWeightedObserved: Int
+  classSanctionAmount: Float
+  cumulativeDifferencePercentage: Float
+  differencePercentage: Float
+  emissionClass: Int!
+  equipmentCountObserved: Int
+  equipmentCountRequired: Int
+  id: ID!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  observedExecutionRequirement: ObservedExecutionRequirement!
+  quotaObserved: Float
+  quotaRequired: Float
+  sanctionAmount: Float
+  sanctionThreshold: Float
 }
 
 type OperatingArea {
@@ -377,7 +414,6 @@ type ProcurementUnitRoute {
 type Query {
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  baseExecutionRequirementsForPostInspection(inspectionId: String!): [ExecutionRequirement!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
@@ -399,6 +435,7 @@ type Query {
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
+  observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   procurementUnit(procurementUnitId: String!): ProcurementUnit

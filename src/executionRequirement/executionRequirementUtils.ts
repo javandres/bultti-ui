@@ -1,11 +1,11 @@
 import { useQueryData } from '../util/useQueryData'
 import {
-  baseExecutionRequirementsForPostInspectionQuery,
   executionRequirementsForAreaQuery,
+  observedExecutionRequirementsQuery,
 } from './executionRequirementsQueries'
 import { useRefetch } from '../util/useRefetch'
 import { useMemo } from 'react'
-import { ExecutionRequirement } from '../schema-types'
+import { ExecutionRequirement, ObservedExecutionRequirement } from '../schema-types'
 import { orderBy } from 'lodash'
 
 export function usePreInspectionAreaRequirements(inspectionId?: string) {
@@ -31,25 +31,25 @@ export function usePreInspectionAreaRequirements(inspectionId?: string) {
   return { data: areaExecutionRequirements, loading, refetch }
 }
 
-export function usePostInspectionBaseRequirements(inspectionId?: string) {
+export function useObservedRequirements(inspectionId?: string) {
   let {
     data: executionRequirementsData,
     loading,
     refetch: refetchRequirements,
-  } = useQueryData(baseExecutionRequirementsForPostInspectionQuery, {
+  } = useQueryData(observedExecutionRequirementsQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,
     variables: {
-      inspectionId,
+      postInspectionId: inspectionId,
     },
   })
 
   let refetch = useRefetch(refetchRequirements)
 
-  let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
+  let observedRequirements = useMemo<ObservedExecutionRequirement[]>(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
     [executionRequirementsData]
   )
 
-  return { data: areaExecutionRequirements, loading, refetch }
+  return { data: observedRequirements, loading, refetch }
 }

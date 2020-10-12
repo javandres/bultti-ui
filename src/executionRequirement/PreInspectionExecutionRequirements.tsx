@@ -1,10 +1,8 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { executionRequirementsForAreaQuery } from './executionRequirementsQueries'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
-import { orderBy } from 'lodash'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
@@ -12,9 +10,6 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { ExecutionRequirement } from '../schema-types'
-import { useQueryData } from '../util/useQueryData'
-import { useRefetch } from '../util/useRefetch'
 import { usePreInspectionAreaRequirements } from './executionRequirementUtils'
 
 const AreaWrapper = styled.div`

@@ -33,7 +33,6 @@ export type Query = {
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
-  baseExecutionRequirementsForPostInspection: Array<ExecutionRequirement>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -54,6 +53,7 @@ export type Query = {
   contract?: Maybe<Contract>;
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
   contractUserRelations: Array<ContractUserRelation>;
+  observedExecutionRequirements: Array<ObservedExecutionRequirement>;
 };
 
 
@@ -123,11 +123,6 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 
 
 export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type QueryBaseExecutionRequirementsForPostInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -226,6 +221,11 @@ export type QueryContractUserRelationsArgs = {
   contractId: Scalars['String'];
 };
 
+
+export type QueryObservedExecutionRequirementsArgs = {
+  postInspectionId: Scalars['String'];
+};
+
 export type Operator = {
   __typename?: 'Operator';
   id: Scalars['Int'];
@@ -252,6 +252,7 @@ export type Inspection = {
   seasonId: Scalars['String'];
   season: Season;
   executionRequirements: Array<ExecutionRequirement>;
+  observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -286,6 +287,7 @@ export type ExecutionRequirement = {
   __typename?: 'ExecutionRequirement';
   id: Scalars['ID'];
   area: OperatingArea;
+  operatorId: Scalars['Float'];
   operator: Operator;
   inspectionId: Scalars['String'];
   inspection: Inspection;
@@ -559,6 +561,42 @@ export type ExecutionRequirementValue = {
   classSanctionAmount?: Maybe<Scalars['Float']>;
 };
 
+export type ObservedExecutionRequirement = {
+  __typename?: 'ObservedExecutionRequirement';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  area: OperatingArea;
+  operatorId: Scalars['Float'];
+  operator: Operator;
+  inspectionId: Scalars['String'];
+  inspection: Inspection;
+  totalKilometersRequired?: Maybe<Scalars['Float']>;
+  totalKilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
+  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  observedRequirements: Array<ObservedExecutionValue>;
+};
+
+export type ObservedExecutionValue = {
+  __typename?: 'ObservedExecutionValue';
+  id: Scalars['ID'];
+  observedExecutionRequirement: ObservedExecutionRequirement;
+  emissionClass: Scalars['Int'];
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  quotaRequired?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
+  quotaObserved?: Maybe<Scalars['Float']>;
+  differencePercentage?: Maybe<Scalars['Float']>;
+  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
+  equipmentCountRequired?: Maybe<Scalars['Int']>;
+  equipmentCountObserved?: Maybe<Scalars['Int']>;
+  averageAgeWeightedObserved?: Maybe<Scalars['Int']>;
+  sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
+  classSanctionAmount?: Maybe<Scalars['Float']>;
+};
+
 export enum InspectionStatus {
   Draft = 'Draft',
   InReview = 'InReview',
@@ -754,6 +792,7 @@ export type Mutation = {
   createContract: Contract;
   modifyContract: Contract;
   removeContract: Scalars['Boolean'];
+  createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
 };
 
 
@@ -963,6 +1002,11 @@ export type MutationModifyContractArgs = {
 
 export type MutationRemoveContractArgs = {
   contractId: Scalars['String'];
+};
+
+
+export type MutationCreateObservedExecutionRequirementsFromPreInspectionRequirementsArgs = {
+  postInspectionId: Scalars['String'];
 };
 
 export type ProcurementUnitEditInput = {

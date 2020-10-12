@@ -1,25 +1,52 @@
-import React, { useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { usePostInspectionBaseRequirements } from './executionRequirementUtils'
 import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
-import Dropdown from '../common/input/Dropdown'
-import { addWeeks, eachWeekOfInterval, format, parseISO } from 'date-fns'
-import { FlexRow } from '../common/components/common'
-import { READABLE_DATE_FORMAT } from '../constants'
 import Table from '../common/components/Table'
+import { ExecutionRequirementValue, ObservedExecutionValue } from '../schema-types'
+import { useMutationData } from '../util/useMutationData'
+import { useObservedRequirements } from './executionRequirementUtils'
+import {
+  createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
+  observedExecutionRequirementsQuery,
+} from './executionRequirementsQueries'
+
+const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
+  emissionClass: 'Päästöluokka',
+  kilometersRequired: 'Km vaatimus',
+  quotaRequired: '% Osuus',
+  equipmentCountRequired: 'Vaatimus kpl',
+  kilometersObserved: 'Toteuma km',
+  quotaObserved: 'Toteuma % osuus',
+  differencePercentage: '% ero',
+  cumulativeDifferencePercentage: 'Kumul. % ero',
+  equipmentCountObserved: 'Toteuma kpl',
+  sanctionThreshold: 'Sanktioraja 5%',
+  sanctionAmount: 'Sanktiomäärä',
+  classSanctionAmount: 'PL/sanktiomäärä',
+}
 
 const PostInspectionExecutionRequirementsView = styled.div`
   min-height: 300px;
 `
 
+const RequirementWeeksWrapper = styled.div`
+  width: 100%;
+  position: relative;
+`
+
 const ExecutionRequirementWeek = styled.div`
   margin-top: 1rem;
+`
+
+const AreaHeading = styled.h4`
+  margin-bottom: 1rem;
+  margin-top: 0;
 `
 
 export type PropTypes = {}
@@ -28,34 +55,40 @@ type WeekOption = { id: number; label: string }
 
 const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
   const inspection = useContext(InspectionContext)
-  let [currentWeek, setCurrentWeek] = useState(0)
 
-  let { data: baseRequirements, loading, refetch } = usePostInspectionBaseRequirements(
-    inspection?.id
+  let {
+    data: observedRequirements,
+    loading: observedRequirementsLoading,
+    refetch,
+  } = useObservedRequirements(inspection?.id)
+
+  let [createRequirements, { loading: createLoading }] = useMutationData(
+    createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
+    {
+      refetchQueries: [
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: {
+            postInspectionId: inspection?.id,
+          },
+        },
+      ],
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        postInspectionId: inspection?.id,
+      },
+    }
   )
 
-  let weekOptions = useMemo((): WeekOption[] => {
-    if (!inspection) {
-      return []
+  let onClickCreateRequirements = useCallback(async () => {
+    if (inspection) {
+      await createRequirements({
+        variables: {
+          postInspectionId: inspection?.id,
+        },
+      })
     }
-
-    let inspectionPeriodInterval: Interval = {
-      start: parseISO(inspection.inspectionStartDate),
-      end: parseISO(inspection.inspectionEndDate),
-    }
-
-    let weeksInInspectionPeriod = eachWeekOfInterval(inspectionPeriodInterval, {
-      weekStartsOn: 1,
-    })
-
-    return weeksInInspectionPeriod.map((weekStart, index) => ({
-      id: index,
-      label: `${index + 1}. ${format(weekStart, READABLE_DATE_FORMAT)} - ${format(
-        addWeeks(weekStart, 1),
-        READABLE_DATE_FORMAT
-      )}`,
-    }))
-  }, [inspection])
+  }, [inspection, createRequirements])
 
   return (
     <ExpandableSection
@@ -63,9 +96,9 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         <>
           <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
-            {baseRequirements?.length !== 0 && (
+            {observedRequirements?.length !== 0 && (
               <Button
-                loading={loading}
+                loading={observedRequirementsLoading}
                 style={{ marginLeft: 'auto' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
@@ -77,18 +110,25 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         </>
       }>
       <PostInspectionExecutionRequirementsView>
-        <FlexRow>
-          <Dropdown
-            items={weekOptions}
-            selectedItem={weekOptions.find((week) => week.id === currentWeek)}
-            onSelect={(selected) => setCurrentWeek(selected.id)}
-          />
-        </FlexRow>
-        <ExecutionRequirementWeek>
-          {baseRequirements.map((requirement) => (
-            <Table items={requirement.requirements} />
-          ))}
-        </ExecutionRequirementWeek>
+        {observedRequirements.length !== 0 ? (
+          <RequirementWeeksWrapper>
+            <ExecutionRequirementWeek>
+              {observedRequirements.map((requirement) => (
+                <>
+                  <AreaHeading>{requirement.area.name}</AreaHeading>
+                  <Table
+                    items={requirement.observedRequirements}
+                    columnLabels={columnLabels}
+                  />
+                </>
+              ))}
+            </ExecutionRequirementWeek>
+          </RequirementWeeksWrapper>
+        ) : (
+          <Button onClick={onClickCreateRequirements} loading={createLoading}>
+            Create execution requirements from Pre-inspection
+          </Button>
+        )}
       </PostInspectionExecutionRequirementsView>
     </ExpandableSection>
   )

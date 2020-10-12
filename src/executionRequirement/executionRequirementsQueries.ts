@@ -18,6 +18,27 @@ export const RequirementValueFragment = gql`
   }
 `
 
+export const ObservedRequirementValueFragment = gql`
+  fragment ObservedRequirementValueFragment on ObservedExecutionValue {
+    id
+    observedExecutionRequirement {
+      id
+    }
+    emissionClass
+    kilometersRequired
+    kilometersObserved
+    quotaRequired
+    quotaObserved
+    equipmentCountRequired
+    equipmentCountObserved
+    sanctionAmount
+    sanctionThreshold
+    classSanctionAmount
+    cumulativeDifferencePercentage
+    differencePercentage
+  }
+`
+
 export const ExecutionRequirementFragment = gql`
   fragment ExecutionRequirementFragment on ExecutionRequirement {
     id
@@ -33,6 +54,32 @@ export const ExecutionRequirementFragment = gql`
     area {
       id
       name
+    }
+  }
+`
+
+export const ObservedExecutionRequirementFragment = gql`
+  fragment ObservedExecutionRequirementFragment on ObservedExecutionRequirement {
+    id
+    startDate
+    endDate
+    inspectionId
+    operatorId
+    averageAgeWeightedObserved
+    averageAgeWeightedRequired
+    totalKilometersObserved
+    totalKilometersRequired
+    area {
+      id
+      name
+    }
+    inspection {
+      id
+    }
+    operator {
+      id
+      operatorId
+      operatorName
     }
   }
 `
@@ -87,17 +134,34 @@ export const executionRequirementsForAreaQuery = gql`
   ${RequirementValueFragment}
 `
 
-export const baseExecutionRequirementsForPostInspectionQuery = gql`
-  query baseExecutionRequirementsForPostInspection($inspectionId: String!) {
-    baseExecutionRequirementsForPostInspection(inspectionId: $inspectionId) {
-      ...ExecutionRequirementFragment
-      requirements {
-        ...RequirementValueFragment
+export const observedExecutionRequirementsQuery = gql`
+  query observedExecutionRequirements($postInspectionId: String!) {
+    observedExecutionRequirements(postInspectionId: $postInspectionId) {
+      ...ObservedExecutionRequirementFragment
+      observedRequirements {
+        ...ObservedRequirementValueFragment
       }
     }
   }
-  ${ExecutionRequirementFragment}
-  ${RequirementValueFragment}
+  ${ObservedExecutionRequirementFragment}
+  ${ObservedRequirementValueFragment}
+`
+
+export const createObservedExecutionRequirementsFromPreInspectionRequirementsMutation = gql`
+  mutation createObservedExecutionRequirementsFromPreInspectionRequirements(
+    $postInspectionId: String!
+  ) {
+    createObservedExecutionRequirementsFromPreInspectionRequirements(
+      postInspectionId: $postInspectionId
+    ) {
+      ...ObservedExecutionRequirementFragment
+      observedRequirements {
+        ...ObservedRequirementValueFragment
+      }
+    }
+  }
+  ${ObservedExecutionRequirementFragment}
+  ${ObservedRequirementValueFragment}
 `
 
 export const createExecutionRequirementForProcurementUnitMutation = gql`
