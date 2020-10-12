@@ -36,7 +36,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
 
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};
-    margin-left: 1rem;
+    margin-left: auto;
     margin-right: 0;
   }
 

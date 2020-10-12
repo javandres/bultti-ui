@@ -697,7 +697,7 @@ const Table = observer(
       keyFromItem,
     }
 
-    let tableViewWidth = Math.ceil(width + SCROLLBAR_WIDTH)
+    let tableViewWidth = Math.ceil(width + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
 
     return (
       <TableContext.Provider value={contextValue}>
