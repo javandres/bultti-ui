@@ -10,15 +10,14 @@ import React, {
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString } from 'lodash'
-import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
+import { RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
-import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
-import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
-import { TextInput } from '../input/Input'
+import Input, { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
+import FormSaveToolbar from './FormSaveToolbar'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -46,7 +45,11 @@ const TableView = styled.div`
   overflow-x: hidden;
 `
 
-export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
+const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
+  width: 100%;
+`
+
+export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
   font-size: 0.75rem;
   padding: 0.25rem;
@@ -54,53 +57,6 @@ export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   border-radius: 0;
   background: transparent;
   height: calc(100% + 1px);
-`
-
-export const EditToolbar = styled.div<{ floating?: boolean }>`
-  position: ${(p) => (p.floating ? 'fixed' : 'static')};
-  bottom: 1rem;
-  border-radius: ${(p) => (p.floating ? '0.5rem' : 0)};
-  background: white;
-  padding: ${(p) => (p.floating ? '1rem' : '0.25rem 1rem 1.25rem')};
-  margin: ${(p) => (p.floating ? 0 : '0 -1rem 1.25rem -1rem')};
-  right: ${(p) => (p.floating ? '2rem' : 'auto')};
-  left: ${(p) => (p.floating ? '2rem' : 'auto')};
-  width: ${(p) =>
-    p.floating
-      ? 'calc(100% - 3.5rem)'
-      : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
-  z-index: 200;
-  font-size: 1rem;
-  box-shadow: ${(p) => (p.floating ? '0 0 10px rgba(0,0,0,0.2)' : 'none')};
-  border: ${(p) => (p.floating ? '1px solid var(--lighter-grey)' : 0)};
-  border-bottom: 1px solid var(--lighter-grey);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  transition: padding 0.2s ease-out, left 0.2s ease-out, bottom 0.2s ease-out;
-`
-
-export const ToolbarDescription = styled.div`
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: 0.75rem;
-  }
-`
-
-export const CancelButton = styled(Button)`
-  position: static;
-  display: flex;
-  color: var(--red);
-  background: white;
-`
-
-export const SaveButton = styled(Button)`
-  background: var(--green);
-  margin-right: 1rem;
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -258,11 +214,13 @@ export type PropTypes<ItemType> = {
     val: any,
     onChange: (val: any) => void,
     onAccept?: () => unknown,
-    onCancel?: () => unknown
+    onCancel?: () => unknown,
+    tabIndex?: number
   ) => React.ReactChild
   virtualized?: boolean
   maxHeight?: number
-  fluid?: boolean
+  fluid?: boolean // Fluid or calculated-then-static table and columns width
+  showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
 }
 
@@ -278,13 +236,17 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
 
 const defaultRenderValue = (key, val) => toString(val)
 
-const defaultRenderInput = (key, val, onChange) => (
+const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) => (
   <TableInput
     autoFocus
+    tabIndex={tabIndex}
     theme="light"
     value={val}
-    onChange={(e) => onChange(e.target.value)}
+    onChange={(value) => onChange(value)}
     name={key}
+    onEnterPress={onAccept}
+    onEscPress={onCancel}
+    inputComponent={TableTextInput}
   />
 )
 
@@ -315,6 +277,7 @@ type CellPropTypes<ItemType = any> = {
   row: TableRowWithDataAndFunctions<ItemType>
   cell: [keyof ItemType, CellValType]
   cellIndex: number
+  tabIndex?: number
   rowId: string
 }
 
@@ -335,14 +298,14 @@ type ContextTypes<ItemType> = {
 const TableContext = React.createContext<ContextTypes<any>>({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, cellIndex }: CellPropTypes<ItemType>) => {
+  <ItemType extends any>({ row, cell, cellIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
     let ctx = useContext(TableContext)
     let {
       pendingValues = [],
       onEditValue,
       columnWidths = [],
       renderValue = defaultRenderValue,
-      editableValues,
+      editableValues = [],
       onSaveEdit,
       onCancelEdit,
       renderCell = defaultRenderCellContent,
@@ -350,6 +313,8 @@ const TableCellComponent = observer(
       keyFromItem = defaultKeyFromItem,
       fluid,
     } = ctx || {}
+
+    let [isFocused, setIsFocused] = useState(false)
 
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
@@ -363,20 +328,37 @@ const TableCellComponent = observer(
 
     let columnWidth = columnWidths[cellIndex] || 0
 
+    let canEditCell = onEditValue && editableValues.includes(valueKey)
+    let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
+
+    let onKeyUp = useCallback(
+      (e) => {
+        if (isFocused && e.key === 'Enter' && canEditCell) {
+          makeCellEditable()
+        }
+      },
+      [makeCellEditable, isFocused]
+    )
+
     return (
       <TableCell
         style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
-        editable={editableValues?.includes(valueKey)}
-        onDoubleClick={onMakeEditable(valueKey, val)}>
+        editable={canEditCell}
+        tabIndex={!canEditCell || editValue ? -1 : tabIndex}
+        onKeyUp={!editValue && canEditCell ? onKeyUp : undefined}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onDoubleClick={makeCellEditable}>
         {onEditValue && editValue
           ? renderInput(
               key as keyof ItemType,
               editValue.value,
               onValueChange(valueKey),
               onSaveEdit,
-              onCancelEdit
+              onCancelEdit,
+              tabIndex
             )
           : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
       </TableCell>
@@ -403,6 +385,7 @@ const TableRowComponent = observer(
             row={rowItem}
             rowId={rowId}
             cellIndex={cellIndex}
+            tabIndex={index * allRows.length + cellIndex + 1}
             cell={[key as keyof ItemType, val]}
           />
         ))}
@@ -439,6 +422,7 @@ const Table = observer(
     virtualized = false,
     maxHeight = window.innerHeight,
     fluid = false,
+    showToolbar = true,
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
@@ -800,27 +784,12 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
-        {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
-          <EditToolbar floating={toolbarIsFloating}>
-            <ToolbarDescription>
-              <Info fill="var(--dark-grey)" width={20} height={20} />
-              Muista tallentaa taulukkoon tekemäsi muutokset.
-            </ToolbarDescription>
-            <SaveButton
-              onClick={onSaveEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.NORMAL}>
-              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-              Tallenna muutokset
-            </SaveButton>
-            <CancelButton
-              onClick={onCancelEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
-              Peruuta
-            </CancelButton>
-          </EditToolbar>
+        {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
+          <FormSaveToolbar
+            onSave={onSaveEdit!}
+            onCancel={onCancelEdit!}
+            floating={toolbarIsFloating}
+          />
         )}
       </TableContext.Provider>
     )

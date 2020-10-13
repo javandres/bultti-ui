@@ -62,7 +62,7 @@ const InspectionItem = styled.div<StatusProps>`
   line-height: 1.4;
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc(33.333% - 1rem);
+  flex: 0 0 25rem;
 `
 
 const NewInspection = styled.button`
@@ -76,7 +76,7 @@ const NewInspection = styled.button`
   font-size: 1.5rem;
   margin-left: 1rem;
   margin-bottom: 1rem;
-  flex: 0 0 calc(33.333% - 1rem);
+  flex: 0 0 25rem;
   display: flex;
   justify-content: space-evenly;
   align-items: center;

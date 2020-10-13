@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import Table, { CellValType, EditValue, TableInput } from '../common/components/Table'
+import Table, { CellValType, EditValue, TableTextInput } from '../common/components/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
@@ -182,7 +182,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             editableValues={editableValues}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
-                fieldComponent={TableInput}
+                fieldComponent={TableTextInput}
                 value={val}
                 valueName={key}
                 onChange={onChange}

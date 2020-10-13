@@ -7,13 +7,7 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
-import Table, {
-  CancelButton,
-  EditToolbar,
-  EditValue,
-  SaveButton,
-  ToolbarDescription,
-} from '../common/components/Table'
+import Table, { EditValue } from '../common/components/Table'
 import {
   ObservedExecutionRequirement,
   ObservedExecutionValue,
@@ -28,13 +22,11 @@ import {
 } from './executionRequirementsQueries'
 import { groupBy, toString } from 'lodash'
 import { readableDateRange } from '../util/formatDate'
-import { Info } from '../common/icon/Info'
-import { Checkmark2 } from '../common/icon/Checkmark2'
-import { CrossThick } from '../common/icon/CrossThick'
 import { FlexRow } from '../common/components/common'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import { LoadingDisplay } from '../common/components/Loading'
+import FormSaveToolbar from '../common/components/FormSaveToolbar'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -274,6 +266,9 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                           items={requirement.observedRequirements}
                           columnLabels={columnLabels}
                           getColumnTotal={createGetColumnTotal(requirement)}
+                          onSaveEdit={onSaveEditedValues}
+                          onCancelEdit={onCancelEdit}
+                          showToolbar={false}
                         />
                       ))}
                     </ExecutionRequirementWeek>
@@ -288,26 +283,11 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
           </Button>
         )}
         {pendingValues.length !== 0 && (
-          <EditToolbar floating={true}>
-            <ToolbarDescription>
-              <Info fill="var(--dark-grey)" width={20} height={20} />
-              Muista tallentaa taulukkoon tekemäsi muutokset.
-            </ToolbarDescription>
-            <SaveButton
-              onClick={onSaveEditedValues}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.NORMAL}>
-              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-              Tallenna muutokset
-            </SaveButton>
-            <CancelButton
-              onClick={onCancelEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
-              Peruuta
-            </CancelButton>
-          </EditToolbar>
+          <FormSaveToolbar
+            floating={true}
+            onSave={onSaveEditedValues}
+            onCancel={onCancelEdit}
+          />
         )}
       </PostInspectionExecutionRequirementsView>
     </ExpandableSection>
