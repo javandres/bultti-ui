@@ -167,10 +167,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <CategoryTitle>
             <Text>nav.category.reports_contracts</Text>
           </CategoryTitle>
-          <NavLink to="reports">
-            <Menu fill="white" width="1rem" height="1rem" />
-            <Text>nav.reports.edit</Text>
-          </NavLink>
           <NavLink to="contract">
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>nav.contracts.edit</Text>

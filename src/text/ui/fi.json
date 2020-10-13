@@ -13,15 +13,14 @@
   "domain.all.operators": "Kaikki liikennöitsijät",
 
   "nav.category.procurementunits": "Kilpailukohteet",
-  "nav.list.procurementunits": "Muokkaa kilpailukohteet",
+  "nav.list.procurementunits": "Muokkaa kilpailukohteita",
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
-  "nav.category.reports_contracts": "Raportit ja sopimukset",
+  "nav.category.reports_contracts": "Sopimusehdot",
   "nav.list.preinspection": "Ennakkotarkastukset",
   "nav.list.postinspection": "Jälkitarkastukset",
   "nav.reports": "Raportit",
-  "nav.reports.edit": "Muokkaa raportit",
-  "nav.contracts.edit": "Muokkaa sopimusehdot",
+  "nav.contracts.edit": "Muokkaa sopimusehtoja",
   "nav.new.preinspection": "Uusi ennakkotarkastus",
   "nav.new.postinspection": "Uusi jälkitarkastus",
 
