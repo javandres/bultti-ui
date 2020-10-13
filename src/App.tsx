@@ -12,7 +12,6 @@ import ProcurementUnitsPage from './page/ProcurementUnitsPage'
 import EditInspectionPage from './page/EditInspectionPage'
 import InspectionReportIndexPage from './page/InspectionReportIndexPage'
 import UserPage from './page/UserPage'
-import ReportsPage from './page/ReportsPage'
 import { Page } from './common/components/common'
 import OperatorContractsListPage from './page/OperatorContractsListPage'
 import EditContractPage from './page/EditContractPage'
@@ -118,7 +117,6 @@ const App: React.FC = observer(() => {
         <UserPage path="user" />
         <OperatorContractsListPage path="contract" />
         <EditContractPage path="contract/:contractId" />
-        <ReportsPage path="reports" />
         <Todo path="contracts" />
         <Logout path="logout" />
       </Router>
