@@ -728,7 +728,7 @@ const Table = observer(
                         : {}
                     }
                     isEditing={isEditingColumn}
-                    key={colName}
+                    key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
