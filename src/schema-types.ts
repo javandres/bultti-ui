@@ -606,12 +606,9 @@ export type OperatorBlockDeparture = {
 
 export type Report = {
   __typename?: 'Report';
-  id: Scalars['ID'];
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  order: Scalars['Int'];
-  params?: Maybe<Scalars['String']>;
   columnLabels?: Maybe<Scalars['String']>;
   season?: Maybe<Season>;
   operator?: Maybe<Operator>;
@@ -619,7 +616,6 @@ export type Report = {
   reportEntities: Array<ReportEntityUnion>;
   inspectionTypes?: Maybe<Array<InspectionType>>;
   reportType?: Maybe<ReportType>;
-  _defaultParams?: Maybe<Scalars['String']>;
 };
 
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem;

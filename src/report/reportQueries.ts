@@ -7,16 +7,12 @@ import {
 
 export const ReportFragment = gql`
   fragment ReportFragment on Report {
-    id
     description
     name
     title
     columnLabels
-    params
     reportType
     inspectionTypes
-    order
-    _defaultParams
   }
 `
 
