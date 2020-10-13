@@ -54,6 +54,7 @@ export type Query = {
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
+  observedDataForRequirement: ObservedExecutionRequirement;
 };
 
 
@@ -224,6 +225,11 @@ export type QueryContractUserRelationsArgs = {
 
 export type QueryObservedExecutionRequirementsArgs = {
   postInspectionId: Scalars['String'];
+};
+
+
+export type QueryObservedDataForRequirementArgs = {
+  requirementId: Scalars['String'];
 };
 
 export type Operator = {
