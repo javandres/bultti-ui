@@ -27,7 +27,9 @@ export const reportsQuery = gql`
 
 export const DepartureFragment = gql`
   fragment DepartureFragment on Departure {
-    id
+    _id: id
+    departureId
+    departureType
     dayType
     blockNumber
     routeId
@@ -99,7 +101,7 @@ export const reportByName = gql`
         ... on Departure {
           ...DepartureFragment
           equipmentAge
-          registryDate
+          equipmentRegistryDate
         }
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment

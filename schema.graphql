@@ -46,15 +46,18 @@ type Departure {
   allowedOverAge: Float
   blockNumber: String
   dayType: DayType!
+  departureId: String!
+  departureType: DepartureType!
   direction: String
   endStop: String
   equipment: Equipment
   equipmentAge: Float
   equipmentExteriorColor: String
   equipmentId: String
+  equipmentRegistryDate: BulttiDate
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
-  id: ID!
+  id: ID
   infoSystems: Boolean
   inspection: Inspection
   inspectionId: String
@@ -66,7 +69,6 @@ type Departure {
   plannedEquipmentType: String
   procurementUnitId: String!
   recoveryTime: Int
-  registryDate: BulttiDate
   registryNr: String
   routeId: String
   routeLength: Int
@@ -272,12 +274,10 @@ type Mutation {
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
-  createReport(reportInput: ReportInput!): Report!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
-  modifyReport(reportInput: ReportInput!): Report!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
@@ -290,7 +290,6 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
-  setReportsOrder(reportOrders: [ReportOrderInput!]!): [Report!]!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -443,7 +442,6 @@ type Query {
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
-  reportCreatorOptions: [ReportCreatorOption!]!
   reports(inspectionType: InspectionType): [Report!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
@@ -454,28 +452,16 @@ type Query {
 }
 
 type Report {
-  _defaultParams: String
   columnLabels: String
   description: String!
-  id: ID!
   inspection: Inspection
   inspectionTypes: [InspectionType!]
   name: String!
   operator: Operator
-  order: Int!
-  params: String
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType
   season: Season
   title: String!
-}
-
-type ReportCreatorOption {
-  columnLabels: String!
-  inspectionTypes: [InspectionType!]!
-  name: String!
-  params: String!
-  reportType: ReportType!
 }
 
 type Season {
@@ -524,6 +510,11 @@ enum DayType {
   Su
   Ti
   To
+}
+
+enum DepartureType {
+  BLOCK
+  SCHEMA
 }
 
 enum InspectionStatus {
@@ -653,21 +644,6 @@ input ObservedRequirementValueInput {
 input ProcurementUnitEditInput {
   medianAgeRequirement: Float!
   weeklyMeters: Float!
-}
-
-input ReportInput {
-  description: String!
-  id: ID
-  inspectionTypes: String!
-  name: String!
-  order: Int
-  params: String!
-  title: String!
-}
-
-input ReportOrderInput {
-  id: ID!
-  order: Int!
 }
 
 input UserInput {

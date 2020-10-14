@@ -39,7 +39,6 @@ export type Query = {
   blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
   availableDayTypes: Array<Scalars['String']>;
   reports: Array<Report>;
-  reportCreatorOptions: Array<ReportCreatorOption>;
   inspectionReportByName?: Maybe<Report>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
@@ -402,7 +401,9 @@ export type ExecutionRequirementQuota = {
 
 export type Departure = {
   __typename?: 'Departure';
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
+  departureId: Scalars['String'];
+  departureType: DepartureType;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
   terminalTime?: Maybe<Scalars['Int']>;
@@ -431,9 +432,14 @@ export type Departure = {
   trackReason: TrackReason;
   observedEquipmentType?: Maybe<Scalars['String']>;
   equipmentExteriorColor?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDate']>;
+  equipmentRegistryDate?: Maybe<Scalars['BulttiDate']>;
   equipmentAge?: Maybe<Scalars['Float']>;
 };
+
+export enum DepartureType {
+  Schema = 'SCHEMA',
+  Block = 'BLOCK'
+}
 
 export enum DayType {
   Ma = 'Ma',
@@ -723,15 +729,6 @@ export enum ReportType {
   Summary = 'SUMMARY',
   ExecutionRequirement = 'EXECUTION_REQUIREMENT'
 }
-
-export type ReportCreatorOption = {
-  __typename?: 'ReportCreatorOption';
-  name: Scalars['String'];
-  inspectionTypes: Array<InspectionType>;
-  reportType: ReportType;
-  columnLabels: Scalars['String'];
-  params: Scalars['String'];
-};
 
 export type InspectionTimelineItem = {
   __typename?: 'InspectionTimelineItem';
