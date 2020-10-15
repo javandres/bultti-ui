@@ -579,6 +579,10 @@ const Table = observer(
 
           const rowKey = keyFromItem(item)
 
+          if (rowKey === 'NOF-118') {
+            console.log(item)
+          }
+
           let isEditingRow: boolean =
             !!pendingValues &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
