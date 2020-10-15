@@ -579,10 +579,6 @@ const Table = observer(
 
           const rowKey = keyFromItem(item)
 
-          if (rowKey === 'NOF-118') {
-            console.log(item)
-          }
-
           let isEditingRow: boolean =
             !!pendingValues &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
@@ -729,7 +725,7 @@ const Table = observer(
                         : {}
                     }
                     isEditing={isEditingColumn}
-                    key={colName}
+                    key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
