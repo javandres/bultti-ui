@@ -55,15 +55,20 @@ export const DepartureFragment = gql`
 
 export const ShortDepartureFragment = gql`
   fragment ShortDepartureFragment on Departure {
+    departureId
+    departureType
     dayType
     routeId
     direction
+    terminalTime
+    recoveryTime
     journeyStartTime
     journeyEndTime
     registryNr
     equipmentRotation
     blockNumber
     schemaId
+    trackReason
   }
 `
 
@@ -119,7 +124,6 @@ export const reportByName = gql`
         }
         ... on DeparturePair {
           id
-          blockNumber
           deadrunStartStop
           deadrunEndStop
           deadrunMinutes

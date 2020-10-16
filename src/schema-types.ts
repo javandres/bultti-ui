@@ -694,7 +694,6 @@ export type MissingEquipment = {
 export type DeparturePair = {
   __typename?: 'DeparturePair';
   id: Scalars['ID'];
-  blockNumber?: Maybe<Scalars['String']>;
   groupId?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;

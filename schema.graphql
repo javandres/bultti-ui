@@ -79,7 +79,6 @@ type Departure {
 }
 
 type DeparturePair {
-  blockNumber: String
   deadrunEndStop: String
   deadrunMinutes: Int
   deadrunPlannedBy: String
