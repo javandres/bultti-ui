@@ -51,11 +51,16 @@ export const UIStore = (state): UIActions => {
     state.appLoaded = true
   })
 
+  const setNavigationBlockedMessage = action((navigationBlockedMessage: boolean) => {
+    state.navigationBlockedMessage = navigationBlockedMessage
+  })
+
   return {
     globalOperator: setOperatorFilter,
     globalSeason: setSeasonFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
     errorMessage: setErrorMessage,
+    navigationBlockedMessage: setNavigationBlockedMessage,
   }
 }

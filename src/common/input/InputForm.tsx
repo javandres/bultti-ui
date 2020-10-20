@@ -2,6 +2,7 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { ActionsWrapper, ControlledFormView, FieldLabel, FieldWrapper } from './ItemForm'
 import { Button, ButtonStyle } from '../components/Button'
+import PromptUnsavedChanges from '../components/NavigationPrompt'
 
 export interface FieldConfigType {
   label: string
@@ -21,6 +22,7 @@ const InputForm: React.FC<PropTypes> = observer(
   ({ onDone, onCancel, doneLabel, doneDisabled, fields, children: buttons }) => {
     return (
       <ControlledFormView>
+        <PromptUnsavedChanges shouldShowPrompt={!doneDisabled} />
         {fields.map(({ label, field }) => {
           return (
             <FieldWrapper key={label}>

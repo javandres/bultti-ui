@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Link, LinkProps, useLocation } from '@reach/router'
 import { pathWithQuery } from '../../util/urlValue'
+import { useStateValue } from '../../state/useAppState'
 
 export type PropTypes = LinkProps<any>
 
@@ -30,9 +31,20 @@ const NavLinkView = styled(Link)`
 const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
   let location = useLocation()
   let queryPath = pathWithQuery(to, location)
-
+  let [navigationBlockedMessage, setNavigationBlockedMessage] = useStateValue(
+    'navigationBlockedMessage'
+  )
+  const onNavigationClick = (event: React.MouseEvent) => {
+    if (navigationBlockedMessage?.length > 0) {
+      if (window.confirm(navigationBlockedMessage)) {
+        setNavigationBlockedMessage('')
+      } else {
+        event.preventDefault()
+      }
+    }
+  }
   return (
-    <NavLinkView to={queryPath} {...props} ref={undefined}>
+    <NavLinkView onClick={onNavigationClick} to={queryPath} {...props} ref={undefined}>
       {children}
     </NavLinkView>
   )

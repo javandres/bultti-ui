@@ -5,6 +5,7 @@ import { get } from 'lodash'
 import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
+import PromptUnsavedChanges from '../components/NavigationPrompt'
 
 export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   display: flex;
@@ -170,6 +171,7 @@ const ItemForm: React.FC<PropTypes> = observer(
 
     return (
       <ControlledFormView style={style} frameless={frameless}>
+        <PromptUnsavedChanges shouldShowPrompt={!doneDisabled} />
         {itemEntries.map(([key, val], index) => {
           let renderedLabel = renderLabel(key, val, labels)
 

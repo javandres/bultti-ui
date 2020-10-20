@@ -17,7 +17,8 @@ export const useStateValue = <T = any>(valueKey): [T, (...args: any[]) => any] =
     return [value, () => {}]
   }
 
-  const action = stateContext.actions[valueKey] || createDefaultAction(stateContext.state, valueKey)
+  const action =
+    stateContext.actions[valueKey] || createDefaultAction(stateContext.state, valueKey)
   return [value, action]
 }
 
