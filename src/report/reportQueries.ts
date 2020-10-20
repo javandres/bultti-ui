@@ -37,6 +37,7 @@ export const DepartureFragment = gql`
     routeLength
     journeyStartTime
     journeyEndTime
+    isNextDay
     registryNr
     equipmentRotation
     endStop
@@ -64,6 +65,7 @@ export const ShortDepartureFragment = gql`
     recoveryTime
     journeyStartTime
     journeyEndTime
+    isNextDay
     registryNr
     equipmentRotation
     blockNumber

@@ -59,14 +59,18 @@ type Departure {
   equipmentTypeRequired: Boolean
   id: ID
   infoSystems: Boolean
-  inspection: Inspection
-  inspectionId: String
+  isNextDay: Boolean!
   isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String!
   journeyStartTime: String!
+  observedDepartures: [ObservedStopDeparture!]!
   observedEquipmentType: String
   plannedEquipmentType: String
+  postInspection: Inspection
+  postInspectionId: String
+  preInspection: Inspection
+  preInspectionId: String
   procurementUnitId: String!
   recoveryTime: Int
   registryNr: String
@@ -85,6 +89,7 @@ type DeparturePair {
   deadrunStartStop: String
   departureA: Departure!
   departureB: Departure!
+  departurePairType: String
   groupId: String
   id: ID!
   overlapPlannedBy: String
@@ -335,6 +340,17 @@ type ObservedExecutionValue {
   quotaRequired: Float
   sanctionAmount: Float
   sanctionThreshold: Float
+}
+
+type ObservedStopDeparture {
+  arrivalTime: DateTime!
+  departure: Departure!
+  departureId: String!
+  departureTime: DateTime!
+  id: ID!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
+  stopId: String!
 }
 
 type OperatingArea {

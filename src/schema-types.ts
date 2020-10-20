@@ -406,6 +406,7 @@ export type Departure = {
   departureType: DepartureType;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
+  isNextDay: Scalars['Boolean'];
   terminalTime?: Maybe<Scalars['Int']>;
   recoveryTime?: Maybe<Scalars['Int']>;
   routeId?: Maybe<Scalars['String']>;
@@ -426,10 +427,13 @@ export type Departure = {
   procurementUnitId: Scalars['String'];
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
-  inspection?: Maybe<Inspection>;
-  inspectionId?: Maybe<Scalars['String']>;
+  preInspection?: Maybe<Inspection>;
+  preInspectionId?: Maybe<Scalars['String']>;
+  postInspection?: Maybe<Inspection>;
+  postInspectionId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
+  observedDepartures: Array<ObservedStopDeparture>;
   observedEquipmentType?: Maybe<Scalars['String']>;
   equipmentExteriorColor?: Maybe<Scalars['String']>;
   equipmentRegistryDate?: Maybe<Scalars['BulttiDate']>;
@@ -466,6 +470,19 @@ export enum TrackReason {
   ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION'
 }
 
+export type ObservedStopDeparture = {
+  __typename?: 'ObservedStopDeparture';
+  id: Scalars['ID'];
+  departureTime: Scalars['DateTime'];
+  observedDepartureTime?: Maybe<Scalars['DateTime']>;
+  arrivalTime: Scalars['DateTime'];
+  observedArrivalTime?: Maybe<Scalars['DateTime']>;
+  stopId: Scalars['String'];
+  departure: Departure;
+  departureId: Scalars['String'];
+};
+
+
 export type ProcurementUnitRoute = {
   __typename?: 'ProcurementUnitRoute';
   routeId: Scalars['String'];
@@ -487,7 +504,6 @@ export type Contract = {
   rulesFile?: Maybe<Scalars['String']>;
   rules?: Maybe<Array<ContractRule>>;
 };
-
 
 export type ContractUserRelation = {
   __typename?: 'ContractUserRelation';
@@ -695,6 +711,7 @@ export type DeparturePair = {
   __typename?: 'DeparturePair';
   id: Scalars['ID'];
   groupId?: Maybe<Scalars['String']>;
+  departurePairType?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
   deadrunStartStop?: Maybe<Scalars['String']>;
