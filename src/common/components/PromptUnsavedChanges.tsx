@@ -18,28 +18,22 @@ const PromptUnsavedChanges: React.FC<PropTypes> = ({
 
   const prevId: string = prevIdRef.current
   useEffect(() => {
-    let tempIds = unsavedFormIds ? _.cloneDeep(unsavedFormIds) : []
+    let newUnsavedFormIds = unsavedFormIds ? _.cloneDeep(unsavedFormIds) : []
+    // In case of id has changed, remove old id
     if (prevId !== currentId) {
-      tempIds = tempIds.filter((id) => id !== prevId)
+      newUnsavedFormIds = newUnsavedFormIds.filter((id) => id !== prevId)
       prevIdRef.current = currentId
-      setUnsavedFormIds(tempIds)
     }
-
-    let newUnsavedFormIds
     if (shouldShowPrompt) {
-      newUnsavedFormIds = tempIds ? _.uniq(tempIds.concat(currentId)) : [currentId]
-      setUnsavedFormIds(newUnsavedFormIds)
+      newUnsavedFormIds = newUnsavedFormIds ? newUnsavedFormIds.concat(currentId) : [currentId]
     } else {
-      newUnsavedFormIds = tempIds.filter((id) => id !== currentId)
+      newUnsavedFormIds = newUnsavedFormIds.filter((id) => id !== currentId)
     }
-    if (!_.isEqual(newUnsavedFormIds, unsavedFormIds)) {
-      setUnsavedFormIds(newUnsavedFormIds)
-    }
+    setUnsavedFormIds(newUnsavedFormIds)
     return () => {
       removeUnsavedFormId(currentId)
     }
   }, [shouldShowPrompt])
-  console.log('ids ', unsavedFormIds)
 
   return null
 }
