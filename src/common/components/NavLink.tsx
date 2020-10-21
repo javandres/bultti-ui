@@ -27,17 +27,17 @@ const NavLinkView = styled(Link)`
     margin-right: 0.75rem;
   }
 `
+const DEFAULT_MESSAGE =
+  'Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua näkymästä? Tallentamattomat muutokset kumotaan'
 
 const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
   let location = useLocation()
   let queryPath = pathWithQuery(to, location)
-  let [navigationBlockedMessage, setNavigationBlockedMessage] = useStateValue(
-    'navigationBlockedMessage'
-  )
+  let [unsavedFormIds, setUnsavedFormIds] = useStateValue('unsavedFormIds')
   const onNavigationClick = (event: React.MouseEvent) => {
-    if (navigationBlockedMessage?.length > 0) {
-      if (window.confirm(navigationBlockedMessage)) {
-        setNavigationBlockedMessage('')
+    if (unsavedFormIds?.length > 0) {
+      if (window.confirm(DEFAULT_MESSAGE)) {
+        setUnsavedFormIds([])
       } else {
         event.preventDefault()
       }

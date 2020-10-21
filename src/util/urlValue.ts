@@ -4,9 +4,7 @@ import toString from 'lodash/toString'
 import { createHistory } from '@reach/router'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
-import { UIStore } from '../state/UIStore'
 import { APP_PATH } from '../constants'
-import { useStateValue } from '../state/useAppState'
 
 /**
  * Make sure that all history operations happen through the specific history object
@@ -22,26 +20,6 @@ type HistoryListener = (urlState: UrlState) => unknown
 const excludeQueryStringParams = ['scope', 'code', 'is_test']
 
 const historyChangeListeners: HistoryListener[] = []
-
-// We want to init a beforeunload listener
-window.addEventListener('beforeunload', (event) => {
-  event.preventDefault()
-  event.returnValue = ''
-
-  console.log('at beforeunload ', event)
-  // UIStore.navigationBlockedMessage;
-  let [navigationBlockedMessage] = useStateValue('navigationBlockedMessage')
-  if (navigationBlockedMessage?.length > 0) {
-    console.log('msg was > 0')
-    if (window.confirm(navigationBlockedMessage)) {
-      // TODO: execute the event that was blocked (user answered yes)
-      console.log('should close tab')
-    } else {
-      // Do nothing
-      console.log('do nothing')
-    }
-  }
-})
 
 export const onHistoryChange = (cb) => {
   if (!historyChangeListeners.includes(cb)) {

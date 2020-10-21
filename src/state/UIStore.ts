@@ -51,8 +51,12 @@ export const UIStore = (state): UIActions => {
     state.appLoaded = true
   })
 
-  const setNavigationBlockedMessage = action((navigationBlockedMessage: boolean) => {
-    state.navigationBlockedMessage = navigationBlockedMessage
+  const setUnsavedFormIds = action((unsavedFormIds: string[]) => {
+    state.unsavedFormIds = unsavedFormIds
+  })
+
+  const removeUnsavedFormId = action((idToRemove: string) => {
+    state.unsavedFormIds = state.unsavedFormIds.filter((id) => id !== idToRemove)
   })
 
   return {
@@ -61,6 +65,7 @@ export const UIStore = (state): UIActions => {
     appLoaded: onAppLoaded,
     language: setLanguage,
     errorMessage: setErrorMessage,
-    navigationBlockedMessage: setNavigationBlockedMessage,
+    unsavedFormIds: setUnsavedFormIds,
+    removeUnsavedFormId: removeUnsavedFormId,
   }
 }
