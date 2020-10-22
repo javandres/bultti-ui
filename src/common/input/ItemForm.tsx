@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { uniqueId } from 'lodash'
 import React, { useCallback, useMemo } from 'react'
 import styled, { CSSProperties } from 'styled-components'
 import { observer } from 'mobx-react-lite'
@@ -170,18 +170,10 @@ const ItemForm: React.FC<PropTypes> = observer(
       [readOnly]
     )
 
-    let MemorizedPromptUnsavedChanges = useMemo(() => {
-      return (
-        <PromptUnsavedChanges
-          uniqueComponentId={_.uniqueId()}
-          shouldShowPrompt={!doneDisabled}
-        />
-      )
-    }, [doneDisabled])
-
+    const formId = useMemo(() => uniqueId(), [])
     return (
       <ControlledFormView style={style} frameless={frameless}>
-        {MemorizedPromptUnsavedChanges}
+        <PromptUnsavedChanges uniqueComponentId={formId} shouldShowPrompt={!doneDisabled} />
         {itemEntries.map(([key, val], index) => {
           let renderedLabel = renderLabel(key, val, labels)
 

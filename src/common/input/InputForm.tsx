@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { uniqueId } from 'lodash'
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { ActionsWrapper, ControlledFormView, FieldLabel, FieldWrapper } from './ItemForm'
@@ -21,17 +21,10 @@ export type PropTypes = {
 
 const InputForm: React.FC<PropTypes> = observer(
   ({ onDone, onCancel, doneLabel, doneDisabled, fields, children: buttons }) => {
-    let MemorizedPromptUnsavedChanges = useMemo(() => {
-      return (
-        <PromptUnsavedChanges
-          uniqueComponentId={_.uniqueId()}
-          shouldShowPrompt={!doneDisabled}
-        />
-      )
-    }, [doneDisabled])
+    const formId = useMemo(() => uniqueId(), [])
     return (
       <ControlledFormView>
-        {MemorizedPromptUnsavedChanges}
+        <PromptUnsavedChanges uniqueComponentId={formId} shouldShowPrompt={!doneDisabled} />
         {fields.map(({ label, field }) => {
           return (
             <FieldWrapper key={label}>

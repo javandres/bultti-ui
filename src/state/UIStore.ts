@@ -55,10 +55,6 @@ export const UIStore = (state): UIActions => {
     state.unsavedFormIds = unsavedFormIds
   })
 
-  const removeUnsavedFormId = action((idToRemove: string) => {
-    state.unsavedFormIds = state.unsavedFormIds.filter((id) => id !== idToRemove)
-  })
-
   return {
     globalOperator: setOperatorFilter,
     globalSeason: setSeasonFilter,
@@ -66,6 +62,5 @@ export const UIStore = (state): UIActions => {
     language: setLanguage,
     errorMessage: setErrorMessage,
     unsavedFormIds: setUnsavedFormIds,
-    removeUnsavedFormId: removeUnsavedFormId,
   }
 }
