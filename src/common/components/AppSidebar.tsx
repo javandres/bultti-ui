@@ -14,7 +14,7 @@ import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
 import NavLink from './NavLink'
 import Dropdown from '../input/Dropdown'
-import { promptUnsavedChangesOnClick } from '../../util/promptUnsavedChanges'
+import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 
 const AppSidebarView = styled.div`
   overflow: hidden;
@@ -135,25 +135,17 @@ export type AppSidebarProps = {
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user] = useStateValue('user')
-  let [unsavedFormIds, setUnsavedFormIds] = useStateValue('unsavedFormIds')
+  let unsavedFormIdsState = useStateValue('unsavedFormIds')
   return (
     <AppSidebarView>
-      <AppTitle
-        onClick={(e: React.MouseEvent) =>
-          promptUnsavedChangesOnClick(e)({ unsavedFormIds, setUnsavedFormIds })
-        }
-        to="/">
+      <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
           <Text>general.app.companyName</Text> <Text>general.app.title</Text>
         </h1>
       </AppTitle>
       <UserBar>
-        <UserLink
-          onClick={(e: React.MouseEvent) =>
-            promptUnsavedChangesOnClick(e)({ unsavedFormIds, setUnsavedFormIds })
-          }
-          to="user">
+        <UserLink onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="user">
           <User width="1rem" height="1rem" fill="white" />
           {user && <UserDisplay>{user?.email}</UserDisplay>}
         </UserLink>

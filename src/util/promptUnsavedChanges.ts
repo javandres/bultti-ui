@@ -23,13 +23,10 @@ export const usePromptUnsavedChanges = ({
   }, [shouldShowPrompt])
 }
 
-export const promptUnsavedChangesOnClick = (clickEvent: React.MouseEvent) => ({
-  unsavedFormIds,
-  setUnsavedFormIds,
-}: {
-  unsavedFormIds: string[]
-  setUnsavedFormIds: Function
-}) => {
+export const promptUnsavedChangesOnClickEvent = (unsavedFormIdsState) => (
+  clickEvent: React.MouseEvent
+) => {
+  let [unsavedFormIds, setUnsavedFormIds] = unsavedFormIdsState
   if (unsavedFormIds.length > 0) {
     if (window.confirm(DEFAULT_MESSAGE)) {
       setUnsavedFormIds([])

@@ -6,7 +6,7 @@ import { Button, ButtonSize, ButtonStyle, StyledButton } from './Button'
 import { Link } from '@reach/router'
 import { ArrowLeftLong } from '../icon/ArrowLeftLong'
 import { history, pathWithQuery } from '../../util/urlValue'
-import { promptUnsavedChangesOnClick } from '../../util/promptUnsavedChanges'
+import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { useStateValue } from '../../state/useAppState'
 
 const PageTitleView = styled.h2`
@@ -71,14 +71,12 @@ export const PageTitle = observer(
       showBackLink,
       history,
     ])
-    let [unsavedFormIds, setUnsavedFormIds] = useStateValue('unsavedFormIds')
+    let unsavedFormIdsState = useStateValue('unsavedFormIds')
     return (
       <PageTitleView>
         {canGoBack && (
           <BackLink
-            onClick={(e: React.MouseEvent) =>
-              promptUnsavedChangesOnClick(e)({ unsavedFormIds, setUnsavedFormIds })
-            }
+            onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)}
             to={pathWithQuery('../')}>
             <ArrowLeftLong fill="var(--dark-grey)" width="1rem" height="1rem" />
           </BackLink>
