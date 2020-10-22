@@ -6,7 +6,7 @@ schema {
   subscription: Subscription
 }
 
-union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | OperatorBlockDeparture
+union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | OperatorBlockDeparture
 
 type Contract {
   createdAt: DateTime!
@@ -64,11 +64,8 @@ type Departure {
   isTrunkRoute: Boolean
   journeyEndTime: String!
   journeyStartTime: String!
-  observedDepartures: [ObservedStopDeparture!]!
   observedEquipmentType: String
   plannedEquipmentType: String
-  postInspection: Inspection
-  postInspectionId: String
   preInspection: Inspection
   preInspectionId: String
   procurementUnitId: String!
@@ -122,6 +119,8 @@ type Equipment {
   hasInfoSystems: Boolean!
   id: ID!
   model: String
+  observedDeparturesObserved: [ObservedDeparture!]!
+  observedDeparturesPlanned: [ObservedDeparture!]!
   operator: Operator!
   operatorId: Int!
   option: Boolean!
@@ -308,6 +307,50 @@ type Mutation {
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
 }
 
+type ObservedDeparture {
+  allowedOverAge: Float
+  arrivalDateTime: DateTime
+  arrivalIsNextDay: Boolean!
+  arrivalTime: String
+  blockNumber: String
+  dayType: DayType!
+  departureDateTime: DateTime
+  departureId: String!
+  departureIsNextDay: Boolean!
+  departureTime: String
+  departureType: DepartureType!
+  direction: String
+  equipmentRotation: Int
+  equipmentTypeRequired: Boolean
+  id: ID!
+  isDestination: Boolean!
+  isOrigin: Boolean!
+  isTimingStop: Boolean!
+  isTrunkRoute: Boolean
+  journeyEndTime: String!
+  journeyStartTime: String!
+  observedArrivalDateTime: DateTime
+  observedDepartureDateTime: DateTime
+  observedEquipment: Equipment
+  observedEquipmentId: String
+  observedRegistryNr: String
+  originStopId: String
+  plannedEquipment: Equipment
+  plannedEquipmentId: String
+  plannedEquipmentType: String
+  plannedRegistryNr: String
+  postInspection: Inspection
+  postInspectionId: String
+  procurementUnitId: String!
+  recoveryTime: Int
+  routeId: String
+  routeLength: Int
+  schemaId: String
+  stopId: String
+  terminalTime: Int
+  trackReason: TrackReason!
+}
+
 type ObservedExecutionRequirement {
   area: OperatingArea!
   averageAgeWeightedObserved: Float
@@ -340,17 +383,6 @@ type ObservedExecutionValue {
   quotaRequired: Float
   sanctionAmount: Float
   sanctionThreshold: Float
-}
-
-type ObservedStopDeparture {
-  arrivalTime: DateTime!
-  departure: Departure!
-  departureId: String!
-  departureTime: DateTime!
-  id: ID!
-  observedArrivalTime: DateTime
-  observedDepartureTime: DateTime
-  stopId: String!
 }
 
 type OperatingArea {

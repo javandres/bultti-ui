@@ -4,6 +4,7 @@ import {
   ExecutionRequirementFragment,
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
+import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const ReportFragment = gql`
   fragment ReportFragment on Report {
@@ -74,6 +75,63 @@ export const ShortDepartureFragment = gql`
   }
 `
 
+export const ObservedDepartureFragment = gql`
+  fragment ObservedDepartureFragment on ObservedDeparture {
+    id
+    departureId
+    departureType
+    postInspection {
+      id
+      inspectionType
+      status
+      inspectionStartDate
+      inspectionEndDate
+    }
+    postInspectionId
+    journeyStartTime
+    journeyEndTime
+    departureIsNextDay
+    arrivalIsNextDay
+    isOrigin
+    isTimingStop
+    isDestination
+    departureTime
+    departureDateTime
+    observedDepartureDateTime
+    arrivalTime
+    arrivalDateTime
+    observedArrivalDateTime
+    stopId
+    originStopId
+    terminalTime
+    recoveryTime
+    routeId
+    direction
+    routeLength
+    dayType
+    plannedEquipmentType
+    equipmentTypeRequired
+    plannedRegistryNr
+    observedRegistryNr
+    equipmentRotation
+    isTrunkRoute
+    allowedOverAge
+    blockNumber
+    schemaId
+    schemaUnitId: procurementUnitId
+    plannedEquipment {
+      ...EquipmentFragment
+    }
+    observedEquipment {
+      ...EquipmentFragment
+    }
+    plannedEquipmentId
+    observedEquipmentId
+    trackReason
+  }
+  ${EquipmentFragment}
+`
+
 export const reportByName = gql`
   query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
     inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId) {
@@ -109,6 +167,9 @@ export const reportByName = gql`
           ...DepartureFragment
           equipmentAge
           equipmentRegistryDate
+        }
+        ... on ObservedDeparture {
+          ...ObservedDepartureFragment
         }
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment
@@ -146,4 +207,5 @@ export const reportByName = gql`
   ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
+  ${ObservedDepartureFragment}
 `
