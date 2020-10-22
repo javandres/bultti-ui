@@ -92,9 +92,9 @@ export const ObservedDepartureFragment = gql`
     journeyEndTime
     departureIsNextDay
     arrivalIsNextDay
-    isOrigin
+    isOriginStop
     isTimingStop
-    isDestination
+    isDestinationStop
     departureTime
     departureDateTime
     observedDepartureDateTime

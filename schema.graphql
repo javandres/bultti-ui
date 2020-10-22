@@ -323,8 +323,8 @@ type ObservedDeparture {
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
-  isDestination: Boolean!
-  isOrigin: Boolean!
+  isDestinationStop: Boolean!
+  isOriginStop: Boolean!
   isTimingStop: Boolean!
   isTrunkRoute: Boolean
   journeyEndTime: String!
@@ -334,6 +334,7 @@ type ObservedDeparture {
   observedEquipment: Equipment
   observedEquipmentId: String
   observedRegistryNr: String
+  operator: Operator
   originStopId: String
   plannedEquipment: Equipment
   plannedEquipmentId: String

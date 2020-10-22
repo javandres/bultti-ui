@@ -4315,6 +4315,18 @@
             "deprecationReason": null
           },
           {
+            "name": "operator",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "OBJECT",
+              "name": "Operator",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "journeyStartTime",
             "description": null,
             "args": [],
@@ -4379,7 +4391,7 @@
             "deprecationReason": null
           },
           {
-            "name": "isOrigin",
+            "name": "isOriginStop",
             "description": null,
             "args": [],
             "type": {
@@ -4411,7 +4423,7 @@
             "deprecationReason": null
           },
           {
-            "name": "isDestination",
+            "name": "isDestinationStop",
             "description": null,
             "args": [],
             "type": {

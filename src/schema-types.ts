@@ -476,13 +476,14 @@ export type ObservedDeparture = {
   departureType: DepartureType;
   postInspection?: Maybe<Inspection>;
   postInspectionId?: Maybe<Scalars['String']>;
+  operator?: Maybe<Operator>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
   departureIsNextDay: Scalars['Boolean'];
   arrivalIsNextDay: Scalars['Boolean'];
-  isOrigin: Scalars['Boolean'];
+  isOriginStop: Scalars['Boolean'];
   isTimingStop: Scalars['Boolean'];
-  isDestination: Scalars['Boolean'];
+  isDestinationStop: Scalars['Boolean'];
   departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
