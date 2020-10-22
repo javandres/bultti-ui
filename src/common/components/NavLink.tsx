@@ -35,7 +35,7 @@ const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
   let queryPath = pathWithQuery(to, location)
   let [unsavedFormIds, setUnsavedFormIds] = useStateValue('unsavedFormIds')
   const onNavigationClick = (event: React.MouseEvent) => {
-    if (unsavedFormIds?.length > 0) {
+    if (unsavedFormIds.length > 0) {
       if (window.confirm(DEFAULT_MESSAGE)) {
         setUnsavedFormIds([])
       } else {

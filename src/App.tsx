@@ -73,7 +73,7 @@ const App: React.FC = observer(() => {
   let [unsavedFormIds] = useStateValue('unsavedFormIds')
   useEffect(() => {
     let listener = (event: BeforeUnloadEvent) => {
-      if (unsavedFormIds?.length > 0) {
+      if (unsavedFormIds.length > 0) {
         event.preventDefault()
         // Chrome requires event.returnValue to be cleared.
         event.returnValue = ''
