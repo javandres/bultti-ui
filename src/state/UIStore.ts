@@ -25,6 +25,7 @@ export const UIStore = (state): UIActions => {
       return languageState.language
     },
     errorMessage: '',
+    unsavedFormIds: [],
   }
 
   extendObservable(state, defaultState)

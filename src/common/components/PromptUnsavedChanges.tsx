@@ -13,13 +13,12 @@ const PromptUnsavedChanges: React.FC<PropTypes> = ({
 }) => {
   let [unsavedFormIds, setUnsavedFormIds] = useStateValue('unsavedFormIds')
   useEffect(() => {
-    let newUnsavedFormIds = unsavedFormIds ? unsavedFormIds : []
     if (shouldShowPrompt) {
-      newUnsavedFormIds.push(currentId)
+      unsavedFormIds.push(currentId)
     } else {
-      newUnsavedFormIds = newUnsavedFormIds.filter((id) => id !== currentId)
+      unsavedFormIds = unsavedFormIds.filter((id) => id !== currentId)
     }
-    setUnsavedFormIds(newUnsavedFormIds)
+    setUnsavedFormIds(unsavedFormIds)
   }, [shouldShowPrompt])
   return null
 }
