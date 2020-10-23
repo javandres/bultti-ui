@@ -17,8 +17,8 @@ import { useMutationData } from '../util/useMutationData'
 import { useObservedRequirements } from './executionRequirementUtils'
 import {
   createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
-  ObservedExecutionRequirementFragment,
   observedExecutionRequirementsQuery,
+  previewObservedRequirementQuery,
   updateObservedExecutionRequirementValuesMutation,
 } from './executionRequirementsQueries'
 import { groupBy, toString } from 'lodash'
@@ -28,7 +28,6 @@ import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import { LoadingDisplay } from '../common/components/Loading'
 import FormSaveToolbar from '../common/components/FormSaveToolbar'
-import { gql } from '@apollo/client'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
@@ -87,30 +86,21 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     refetch,
   } = useObservedRequirements(inspection?.id)
 
-  let [fetchHfpData] = useLazyQueryData(
-    gql`
-      query observedDataForRequirement($requirementId: String!) {
-        observedDataForRequirement(requirementId: $requirementId) {
-          ...ObservedExecutionRequirementFragment
-        }
-      }
-      ${ObservedExecutionRequirementFragment}
-    `
+  let [
+    previewObservedRequirement,
+    { data: calculatedRequirement, loading: previewLoading },
+  ] = useLazyQueryData(previewObservedRequirementQuery)
+
+  let onPreviewRequirement = useCallback(
+    (requirementId) => {
+      previewObservedRequirement({
+        variables: {
+          requirementId,
+        },
+      })
+    },
+    [previewObservedRequirement]
   )
-
-  let onFetchHfp = useCallback(() => {
-    let fetchId = observedRequirements[0]?.id
-
-    if (!fetchId) {
-      return
-    }
-
-    fetchHfpData({
-      variables: {
-        requirementId: fetchId,
-      },
-    })
-  }, [observedRequirements, fetchHfpData])
 
   let [createRequirements, { loading: createLoading }] = useMutationData(
     createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
@@ -273,7 +263,6 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         />
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
-            <Button onClick={onFetchHfp}>Test HFP</Button>
             {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
               <RequirementAreaRow key={areaLabel}>
                 <AreaHeading>{areaLabel}</AreaHeading>
@@ -287,19 +276,26 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                         </WeekDateHeading>
                       </FlexRow>
                       {weekRequirementAreas.map((requirement) => (
-                        <RequirementValueTable
-                          fluid={true}
-                          key={requirement.id}
-                          onEditValue={createValueEdit(requirement)}
-                          pendingValues={pendingValues}
-                          editableValues={['quotaRequired']}
-                          items={requirement.observedRequirements}
-                          columnLabels={columnLabels}
-                          getColumnTotal={createGetColumnTotal(requirement)}
-                          onSaveEdit={onSaveEditedValues}
-                          onCancelEdit={onCancelEdit}
-                          showToolbar={false}
-                        />
+                        <>
+                          <RequirementValueTable
+                            fluid={true}
+                            key={requirement.id}
+                            onEditValue={createValueEdit(requirement)}
+                            pendingValues={pendingValues}
+                            editableValues={['quotaRequired']}
+                            items={requirement.observedRequirements}
+                            columnLabels={columnLabels}
+                            getColumnTotal={createGetColumnTotal(requirement)}
+                            onSaveEdit={onSaveEditedValues}
+                            onCancelEdit={onCancelEdit}
+                            showToolbar={false}
+                          />
+                          <FlexRow>
+                            <Button onClick={() => onPreviewRequirement(requirement.id)}>
+                              Esikatsele toteuma
+                            </Button>
+                          </FlexRow>
+                        </>
                       ))}
                     </ExecutionRequirementWeek>
                   ))}

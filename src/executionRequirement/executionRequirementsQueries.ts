@@ -21,9 +21,6 @@ export const RequirementValueFragment = gql`
 export const ObservedRequirementValueFragment = gql`
   fragment ObservedRequirementValueFragment on ObservedExecutionValue {
     id
-    observedExecutionRequirement {
-      id
-    }
     emissionClass
     kilometersRequired
     kilometersObserved
@@ -137,6 +134,19 @@ export const executionRequirementsForAreaQuery = gql`
 export const observedExecutionRequirementsQuery = gql`
   query observedExecutionRequirements($postInspectionId: String!) {
     observedExecutionRequirements(postInspectionId: $postInspectionId) {
+      ...ObservedExecutionRequirementFragment
+      observedRequirements {
+        ...ObservedRequirementValueFragment
+      }
+    }
+  }
+  ${ObservedExecutionRequirementFragment}
+  ${ObservedRequirementValueFragment}
+`
+
+export const previewObservedRequirementQuery = gql`
+  query previewObservedRequirement($requirementId: String!) {
+    previewObservedRequirement(requirementId: $requirementId) {
       ...ObservedExecutionRequirementFragment
       observedRequirements {
         ...ObservedRequirementValueFragment

@@ -333,6 +333,7 @@ type ObservedDeparture {
   observedDepartureDateTime: DateTime
   observedEquipment: Equipment
   observedEquipmentId: String
+  observedOperator: Operator
   observedRegistryNr: String
   operator: Operator
   originStopId: String
@@ -350,6 +351,7 @@ type ObservedDeparture {
   stopId: String
   terminalTime: Int
   trackReason: TrackReason!
+  uniqueVehicleId: String
 }
 
 type ObservedExecutionRequirement {
@@ -483,10 +485,10 @@ type Query {
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
-  observedDataForRequirement(requirementId: String!): ObservedExecutionRequirement!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
+  previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement!
   procurementUnit(procurementUnitId: String!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult

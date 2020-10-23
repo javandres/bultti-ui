@@ -53,7 +53,7 @@ export type Query = {
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
-  observedDataForRequirement: ObservedExecutionRequirement;
+  previewObservedRequirement: ObservedExecutionRequirement;
 };
 
 
@@ -227,7 +227,7 @@ export type QueryObservedExecutionRequirementsArgs = {
 };
 
 
-export type QueryObservedDataForRequirementArgs = {
+export type QueryPreviewObservedRequirementArgs = {
   requirementId: Scalars['String'];
 };
 
@@ -477,8 +477,10 @@ export type ObservedDeparture = {
   postInspection?: Maybe<Inspection>;
   postInspectionId?: Maybe<Scalars['String']>;
   operator?: Maybe<Operator>;
+  observedOperator?: Maybe<Operator>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
+  uniqueVehicleId?: Maybe<Scalars['String']>;
   departureIsNextDay: Scalars['Boolean'];
   arrivalIsNextDay: Scalars['Boolean'];
   isOriginStop: Scalars['Boolean'];
