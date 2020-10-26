@@ -335,6 +335,7 @@ type ObservedDeparture {
   observedEquipmentId: String
   observedOperator: Operator
   observedRegistryNr: String
+  odometer: Int!
   operator: Operator
   originStopId: String
   plannedEquipment: Equipment
@@ -371,7 +372,7 @@ type ObservedExecutionRequirement {
 }
 
 type ObservedExecutionValue {
-  averageAgeWeightedObserved: Int
+  averageAgeWeightedObserved: Float
   classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float

@@ -486,6 +486,7 @@ export type ObservedDeparture = {
   isOriginStop: Scalars['Boolean'];
   isTimingStop: Scalars['Boolean'];
   isDestinationStop: Scalars['Boolean'];
+  odometer: Scalars['Int'];
   departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
@@ -654,7 +655,7 @@ export type ObservedExecutionValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCountRequired?: Maybe<Scalars['Int']>;
   equipmentCountObserved?: Maybe<Scalars['Int']>;
-  averageAgeWeightedObserved?: Maybe<Scalars['Int']>;
+  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;

@@ -40,6 +40,8 @@ const observedColumnLabels: { [key in keyof ObservedExecutionValue]?: string } =
   emissionClass: 'Päästöluokka',
   kilometersObserved: 'Toteutetut km',
   quotaObserved: 'Toteutettu % osuus',
+  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
+  equipmentCountObserved: 'Ajoneuvomäärä',
 }
 
 const PostInspectionExecutionRequirementsView = styled.div`

@@ -4463,6 +4463,22 @@
             "deprecationReason": null
           },
           {
+            "name": "odometer",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "departureTime",
             "description": null,
             "args": [],
@@ -6256,7 +6272,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
