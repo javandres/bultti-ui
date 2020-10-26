@@ -276,10 +276,9 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                         </WeekDateHeading>
                       </FlexRow>
                       {weekRequirementAreas.map((requirement) => (
-                        <>
+                        <React.Fragment key={requirement.id}>
                           <RequirementValueTable
                             fluid={true}
-                            key={requirement.id}
                             onEditValue={createValueEdit(requirement)}
                             pendingValues={pendingValues}
                             editableValues={['quotaRequired']}
@@ -295,7 +294,7 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                               Esikatsele toteuma
                             </Button>
                           </FlexRow>
-                        </>
+                        </React.Fragment>
                       ))}
                     </ExecutionRequirementWeek>
                   ))}
