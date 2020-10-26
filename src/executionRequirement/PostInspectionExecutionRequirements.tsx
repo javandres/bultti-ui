@@ -36,6 +36,12 @@ const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   quotaRequired: '% Osuus',
 }
 
+const observedColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
+  emissionClass: 'Päästöluokka',
+  kilometersObserved: 'Toteutetut km',
+  quotaObserved: 'Toteutettu % osuus',
+}
+
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
   min-height: 120px;
@@ -63,6 +69,10 @@ const AreaHeading = styled.h4`
 const WeekHeading = styled.h3`
   margin-bottom: 0.5rem;
   font-weight: normal;
+`
+
+const ObservedHeading = styled(WeekHeading)`
+  font-size: 1rem;
 `
 
 const WeekDateHeading = styled.h5`
@@ -290,10 +300,25 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                             showToolbar={false}
                           />
                           <FlexRow>
-                            <Button onClick={() => onPreviewRequirement(requirement.id)}>
+                            <Button
+                              onClick={() => onPreviewRequirement(requirement.id)}
+                              loading={previewLoading}>
                               Esikatsele toteuma
                             </Button>
                           </FlexRow>
+                          {requirement.observedRequirements.some(
+                            (val) => !!val.quotaObserved
+                          ) && (
+                            <>
+                              <ObservedHeading>Toteutetut arvot</ObservedHeading>
+                              <RequirementValueTable
+                                fluid={true}
+                                items={requirement.observedRequirements}
+                                columnLabels={observedColumnLabels}
+                                getColumnTotal={createGetColumnTotal(requirement)}
+                              />
+                            </>
+                          )}
                         </React.Fragment>
                       ))}
                     </ExecutionRequirementWeek>
