@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Dictionary, difference, get, omitBy, orderBy, toString } from 'lodash'
+import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { Checkmark2 } from '../icon/Checkmark2'
@@ -19,6 +19,7 @@ import { FixedSizeList as List } from 'react-window'
 import { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
+import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -693,7 +694,11 @@ const Table = observer(
     }
 
     let tableViewWidth = Math.ceil(width + SCROLLBAR_WIDTH)
-
+    const formId = useMemo(() => uniqueId(), [])
+    usePromptUnsavedChanges({
+      uniqueComponentId: formId,
+      shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
+    })
     return (
       <TableContext.Provider value={contextValue}>
         <TableWrapper

@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
+import { uniqueId } from 'lodash'
 import { ActionsWrapper, ControlledFormView, FieldLabel, FieldWrapper } from './ItemForm'
 import { Button, ButtonStyle } from '../components/Button'
+import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 export interface FieldConfigType {
   label: string
@@ -19,6 +21,8 @@ export type PropTypes = {
 
 const InputForm: React.FC<PropTypes> = observer(
   ({ onDone, onCancel, doneLabel, doneDisabled, fields, children: buttons }) => {
+    const formId = useMemo(() => uniqueId(), [])
+    usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: !doneDisabled })
     return (
       <ControlledFormView>
         {fields.map(({ label, field }) => {
