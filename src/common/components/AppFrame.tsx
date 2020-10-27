@@ -6,7 +6,7 @@ import ErrorMessages from './ErrorMessages'
 
 const AppFrameView = styled.div`
   display: grid;
-  grid-template-columns: 1fr 3fr;
+  grid-template-columns: fit-content(25rem) auto;
   min-height: 100vh;
 
   @media screen and (min-height: 700px) {
@@ -18,6 +18,7 @@ const Sidebar = styled.div`
   height: 100%;
   background: var(--blue);
   color: white;
+  overflow: hidden;
 `
 
 const Main = styled.div`

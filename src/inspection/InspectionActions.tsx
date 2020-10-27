@@ -80,25 +80,25 @@ const InspectionActions = observer(
     )
 
     let onRemoveInspection = useCallback(async () => {
-      await removeInspection(inspection)
-      let pathSegment = inspection.inspectionType === InspectionType.Pre ? 'pre' : 'post'
-      navigateWithQueryString(`/${pathSegment}-inspection/edit`)
+      let removed = await removeInspection(inspection)
+
+      if (removed) {
+        let pathSegment = inspection.inspectionType === InspectionType.Pre ? 'pre' : 'post'
+        navigateWithQueryString(`/${pathSegment}-inspection/edit`)
+      }
     }, [removeInspection, inspection])
 
-    var [
-      submitInspection,
-      { loading: submitLoading },
-    ] = useMutationData(submitInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [submitInspection, { loading: submitLoading }] = useMutationData(
+      submitInspectionMutation
+    )
 
-    var [
-      publishInspection,
-      { loading: publishLoading },
-    ] = useMutationData(publishInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [publishInspection, { loading: publishLoading }] = useMutationData(
+      publishInspectionMutation
+    )
 
-    var [
-      rejectInspection,
-      { loading: rejectLoading },
-    ] = useMutationData(rejectInspectionMutation, { refetchQueries: ['inspectionById'] })
+    var [rejectInspection, { loading: rejectLoading }] = useMutationData(
+      rejectInspectionMutation
+    )
 
     var onSubmitProcessStart = useCallback(() => {
       setSubmitActive(true)
@@ -200,17 +200,20 @@ const InspectionActions = observer(
               </Button>
             )}
 
-          {inspection.status === InspectionStatus.Draft && requireAdminUser(user) && (
-            <Button
-              disabled={disabledActions.includes('remove')}
-              style={{ marginLeft: 'auto', marginRight: 0 }}
-              loading={removeLoading}
-              buttonStyle={ButtonStyle.REMOVE}
-              size={ButtonSize.MEDIUM}
-              onClick={onRemoveInspection}>
-              Poista
-            </Button>
-          )}
+          {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
+            inspection.status
+          ) &&
+            requireAdminUser(user) && (
+              <Button
+                disabled={disabledActions.includes('remove')}
+                style={{ marginLeft: 'auto', marginRight: 0 }}
+                loading={removeLoading}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                size={ButtonSize.MEDIUM}
+                onClick={onRemoveInspection}>
+                Poista
+              </Button>
+            )}
 
           {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
             <>

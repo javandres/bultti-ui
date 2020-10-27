@@ -4,6 +4,8 @@ export const Heading = styled.h3`
   margin-bottom: 1rem;
   font-size: 1.5rem;
   font-weight: normal;
+  display: flex;
+  align-items: center;
 `
 
 export const SectionHeading = styled(Heading)`

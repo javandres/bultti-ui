@@ -16,6 +16,7 @@ import {
   currentPreInspectionsByOperatorAndSeasonQuery,
   inspectionQuery,
   inspectionsByOperatorQuery,
+  inspectionStatusSubscription,
   removeInspectionMutation,
 } from './inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -33,7 +34,8 @@ export function useInspectionById(inspectionId?: string) {
       variables: {
         inspectionId: inspectionId,
       },
-    }
+    },
+    { document: inspectionStatusSubscription }
   )
 
   let refetch = useRefetch(refetcher, false)
@@ -104,13 +106,15 @@ export function useRemoveInspection(
   })
 
   let execRemove = useCallback(async () => {
-    await removeInspection({
+    let removeResult = await removeInspection({
       variables: {
         inspectionId: inspection.id,
       },
     })
 
     await afterRemove()
+
+    return pickGraphqlData(removeResult.data) || false
   }, [removeInspection, inspection, afterRemove])
 
   return [execRemove, { loading }]

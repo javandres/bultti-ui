@@ -53,6 +53,7 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
 
         return {
           ...omit(pair, ['departureA', 'departureB']),
+          blockNumber: pair.departureA.blockNumber,
           dayType: pair.departureA.dayType,
           registryNr: pair.departureA.registryNr,
           ...departureAFields,

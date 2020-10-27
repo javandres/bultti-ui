@@ -125,6 +125,19 @@ export const inspectionsByOperatorQuery = gql`
   ${inspectionFragment}
 `
 
+export const inspectionsTimelineByOperatorQuery = gql`
+  query inspectionsTimeline($operatorId: Int!, $inspectionType: InspectionType!) {
+    inspectionsTimeline(operatorId: $operatorId, inspectionType: $inspectionType) {
+      id
+      inspectionStartDate
+      inspectionEndDate
+      operatorName
+      seasonId
+      version
+    }
+  }
+`
+
 export const createInspectionMutation = gql`
   mutation createInspection($inspectionInput: InitialInspectionInput!) {
     createInspection(inspection: $inspectionInput) {
@@ -137,6 +150,15 @@ export const createInspectionMutation = gql`
 export const updateInspectionMutation = gql`
   mutation updateInspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
     updateInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
+      ...InspectionFragment
+    }
+  }
+  ${inspectionFragment}
+`
+
+export const updateBaseInspectionMutation = gql`
+  mutation updateBaseInspection($inspectionId: String!) {
+    updateBaseInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }
@@ -214,5 +236,32 @@ export const toggleUserInspectionSubscription = gql`
 export const removeInspectionMutation = gql`
   mutation removeInspection($inspectionId: String!) {
     removeInspection(inspectionId: $inspectionId)
+  }
+`
+
+// This returns an abbreviated InspectionStatusUpdate object masquerading
+// as an Inspection to facilitate easier Apollo cache updates.
+export const inspectionStatusSubscription = gql`
+  subscription inspectionStatus($inspectionId: String!) {
+    inspectionStatus(inspectionId: $inspectionId) {
+      id
+      status
+      startDate
+      endDate
+      inspectionStartDate
+      inspectionEndDate
+      version
+    }
+  }
+`
+
+export const inspectionErrorSubscription = gql`
+  subscription inspectionError($inspectionId: String!) {
+    inspectionError(inspectionId: $inspectionId) {
+      id
+      status
+      errorType
+      message
+    }
   }
 `

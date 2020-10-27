@@ -47,6 +47,7 @@ const ContentWrapper = styled.div`
 const CatalogueWrapper = styled.div<{ isInvalid: boolean }>`
   border-radius: 0.5rem;
   position: relative;
+  margin-top: 2rem;
 
   ${(p) =>
     p.isInvalid
@@ -330,6 +331,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       <ProcurementUnitView className={className}>
         {procurementUnit && (
           <ExpandableSection
+            unmountOnClose={true}
             error={validationErrors.length !== 0}
             isExpanded={expanded}
             headerContent={

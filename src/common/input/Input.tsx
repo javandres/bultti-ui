@@ -57,7 +57,10 @@ export type PropTypes = {
   value: string
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
+  onEscPress?: () => unknown
   theme?: ThemeTypes
+  inputComponent?: React.ComponentType
+  tabIndex?: number
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
@@ -69,7 +72,10 @@ const Input: React.FC<PropTypes> = observer(
     label,
     subLabel,
     onEnterPress,
+    onEscPress,
     type = 'text',
+    inputComponent = TextInput,
+    tabIndex,
     ...inputProps
   }) => {
     const onValueChange = useCallback(
@@ -85,12 +91,20 @@ const Input: React.FC<PropTypes> = observer(
 
     const onKeyPress = useCallback(
       (e) => {
+        console.log(e)
+
         if (onEnterPress && e.key === 'Enter') {
           onEnterPress(value)
         }
+
+        if (onEscPress && e.key === 'Escape') {
+          onEscPress()
+        }
       },
-      [onEnterPress, value]
+      [onEnterPress, onEscPress, value]
     )
+
+    let InputComponent = inputComponent
 
     return (
       <InputView className={className}>
@@ -99,13 +113,14 @@ const Input: React.FC<PropTypes> = observer(
             {label}
           </InputLabel>
         )}
-        <TextInput
+        <InputComponent
           {...inputProps}
           type={type}
           theme={theme}
           value={value}
+          tabIndex={tabIndex}
           onChange={onValueChange}
-          onKeyPress={onKeyPress}
+          onKeyUp={onKeyPress}
         />
       </InputView>
     )

@@ -62,7 +62,7 @@ const InspectionItem = styled.div<StatusProps>`
   line-height: 1.4;
   display: flex;
   flex-direction: column;
-  flex: 0 0 calc(33.333% - 1rem);
+  flex: 0 0 25rem;
 `
 
 const NewInspection = styled.button`
@@ -76,7 +76,7 @@ const NewInspection = styled.button`
   font-size: 1.5rem;
   margin-left: 1rem;
   margin-bottom: 1rem;
-  flex: 0 0 calc(33.333% - 1rem);
+  flex: 0 0 25rem;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
@@ -103,11 +103,12 @@ const ItemContent = styled.div`
 `
 
 const InspectionTitle = styled(SubHeading)`
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 `
 
 const InspectionSubtitle = styled(SubHeading)`
-  margin-top: -0.5rem;
+  margin-top: -0.75rem;
+  margin-bottom: 0.75rem;
   font-size: 0.875rem;
 `
 
@@ -140,7 +141,11 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
 `
 
 const InspectionPeriodDisplay = styled.div`
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0.5rem;
+  }
 `
 
 const StartDate = styled.span`
@@ -255,6 +260,18 @@ const SelectInspection: React.FC<PropTypes> = observer(
                       </StartDate>
                       <EndDate>
                         {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
+                      </EndDate>
+                    </InspectionPeriodDisplay>
+                    <InspectionPeriodDisplay>
+                      <DateTitle>Tarkastusjakso</DateTitle>
+                      <StartDate>
+                        {format(
+                          parseISO(inspection.inspectionStartDate),
+                          READABLE_DATE_FORMAT
+                        )}
+                      </StartDate>
+                      <EndDate>
+                        {format(parseISO(inspection.inspectionEndDate), READABLE_DATE_FORMAT)}
                       </EndDate>
                     </InspectionPeriodDisplay>
                   </ItemContent>

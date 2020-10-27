@@ -18,7 +18,7 @@ import { pick } from 'lodash'
 const EditInspectionView = styled.div`
   width: 100%;
   min-height: 100%;
-  padding: 0 0.75rem;
+  padding: 0 0.75rem 2rem;
   background-color: var(--white-grey);
 `
 

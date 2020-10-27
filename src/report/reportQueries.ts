@@ -4,6 +4,7 @@ import {
   ExecutionRequirementFragment,
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
+import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const ReportFragment = gql`
   fragment ReportFragment on Report {
@@ -27,7 +28,9 @@ export const reportsQuery = gql`
 
 export const DepartureFragment = gql`
   fragment DepartureFragment on Departure {
-    id
+    _id: id
+    departureId
+    departureType
     dayType
     blockNumber
     routeId
@@ -35,6 +38,7 @@ export const DepartureFragment = gql`
     routeLength
     journeyStartTime
     journeyEndTime
+    isNextDay
     registryNr
     equipmentRotation
     endStop
@@ -53,16 +57,79 @@ export const DepartureFragment = gql`
 
 export const ShortDepartureFragment = gql`
   fragment ShortDepartureFragment on Departure {
+    departureId
+    departureType
     dayType
     routeId
     direction
+    terminalTime
+    recoveryTime
     journeyStartTime
     journeyEndTime
+    isNextDay
     registryNr
     equipmentRotation
     blockNumber
     schemaId
+    trackReason
   }
+`
+
+export const ObservedDepartureFragment = gql`
+  fragment ObservedDepartureFragment on ObservedDeparture {
+    id
+    departureId
+    departureType
+    postInspection {
+      id
+      inspectionType
+      status
+      inspectionStartDate
+      inspectionEndDate
+    }
+    postInspectionId
+    journeyStartTime
+    journeyEndTime
+    departureIsNextDay
+    arrivalIsNextDay
+    isOriginStop
+    isTimingStop
+    isDestinationStop
+    departureTime
+    departureDateTime
+    observedDepartureDateTime
+    arrivalTime
+    arrivalDateTime
+    observedArrivalDateTime
+    stopId
+    originStopId
+    terminalTime
+    recoveryTime
+    routeId
+    direction
+    routeLength
+    dayType
+    plannedEquipmentType
+    equipmentTypeRequired
+    plannedRegistryNr
+    observedRegistryNr
+    equipmentRotation
+    isTrunkRoute
+    allowedOverAge
+    blockNumber
+    schemaId
+    schemaUnitId: procurementUnitId
+    plannedEquipment {
+      ...EquipmentFragment
+    }
+    observedEquipment {
+      ...EquipmentFragment
+    }
+    plannedEquipmentId
+    observedEquipmentId
+    trackReason
+  }
+  ${EquipmentFragment}
 `
 
 export const reportByName = gql`
@@ -99,7 +166,10 @@ export const reportByName = gql`
         ... on Departure {
           ...DepartureFragment
           equipmentAge
-          registryDate
+          equipmentRegistryDate
+        }
+        ... on ObservedDeparture {
+          ...ObservedDepartureFragment
         }
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment
@@ -117,7 +187,6 @@ export const reportByName = gql`
         }
         ... on DeparturePair {
           id
-          blockNumber
           deadrunStartStop
           deadrunEndStop
           deadrunMinutes
@@ -138,4 +207,5 @@ export const reportByName = gql`
   ${ShortDepartureFragment}
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
+  ${ObservedDepartureFragment}
 `

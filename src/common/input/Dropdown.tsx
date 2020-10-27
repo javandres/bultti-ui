@@ -22,7 +22,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   color: ${(p) =>
     p.disabled ? (p.theme === 'light' ? 'var(--dark-grey)' : 'white') : 'var(--dark-grey)'};
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1rem 0.75rem 1rem;
   border-radius: 8px;
   border: 1px solid
     ${(p) =>
@@ -37,6 +37,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};
     margin-left: auto;
+    margin-right: 0;
   }
 
   ${(p) =>

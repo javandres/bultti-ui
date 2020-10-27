@@ -10,15 +10,14 @@ import React, {
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { Button, ButtonSize, ButtonStyle, RemoveButton } from './Button'
+import { RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
-import { Checkmark2 } from '../icon/Checkmark2'
 import { ScrollContext } from './AppFrame'
-import { Info } from '../icon/Info'
 import { FixedSizeList as List } from 'react-window'
-import { TextInput } from '../input/Input'
+import Input, { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
+import FormSaveToolbar from './FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 const TableWrapper = styled.div`
@@ -47,60 +46,18 @@ const TableView = styled.div`
   overflow-x: hidden;
 `
 
-export const TableInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
+const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
+  width: 100%;
+`
+
+export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
   font-size: 0.75rem;
   padding: 0.25rem;
   border: 0;
   border-radius: 0;
   background: transparent;
-`
-
-const EditToolbar = styled.div<{ floating?: boolean }>`
-  position: ${(p) => (p.floating ? 'fixed' : 'static')};
-  bottom: 1rem;
-  border-radius: ${(p) => (p.floating ? '0.5rem' : 0)};
-  background: white;
-  padding: ${(p) => (p.floating ? '1rem' : '0.25rem 1rem 1.25rem')};
-  margin: ${(p) => (p.floating ? 0 : '0 -1rem 1.25rem -1rem')};
-  right: ${(p) => (p.floating ? '2rem' : 'auto')};
-  left: ${(p) => (p.floating ? '2rem' : 'auto')};
-  width: ${(p) =>
-    p.floating
-      ? 'calc(100% - 4rem)'
-      : 'calc(100% + 2rem)'}; // Remove sidebar width when floating.
-  z-index: 100;
-  font-size: 1rem;
-  box-shadow: ${(p) => (p.floating ? '0 0 10px rgba(0,0,0,0.2)' : 'none')};
-  border: ${(p) => (p.floating ? '1px solid var(--lighter-grey)' : 0)};
-  border-bottom: 1px solid var(--lighter-grey);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-end;
-  transition: padding 0.2s ease-out, left 0.2s ease-out, bottom 0.2s ease-out;
-`
-
-const ToolbarDescription = styled.div`
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-
-  svg {
-    margin-right: 0.75rem;
-  }
-`
-
-const CancelButton = styled(Button)`
-  position: static;
-  display: flex;
-  color: var(--red);
-  background: white;
-`
-
-const SaveButton = styled(Button)`
-  background: var(--green);
-  margin-right: 1rem;
+  height: calc(100% + 1px);
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -258,10 +215,13 @@ export type PropTypes<ItemType> = {
     val: any,
     onChange: (val: any) => void,
     onAccept?: () => unknown,
-    onCancel?: () => unknown
+    onCancel?: () => unknown,
+    tabIndex?: number
   ) => React.ReactChild
   virtualized?: boolean
   maxHeight?: number
+  fluid?: boolean // Fluid or calculated-then-static table and columns width
+  showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
 }
 
@@ -277,13 +237,17 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
 
 const defaultRenderValue = (key, val) => toString(val)
 
-const defaultRenderInput = (key, val, onChange) => (
+const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) => (
   <TableInput
     autoFocus
+    tabIndex={tabIndex}
     theme="light"
     value={val}
-    onChange={(e) => onChange(e.target.value)}
+    onChange={(value) => onChange(value)}
     name={key}
+    onEnterPress={onAccept}
+    onEscPress={onCancel}
+    inputComponent={TableTextInput}
   />
 )
 
@@ -314,6 +278,7 @@ type CellPropTypes<ItemType = any> = {
   row: TableRowWithDataAndFunctions<ItemType>
   cell: [keyof ItemType, CellValType]
   cellIndex: number
+  tabIndex?: number
   rowId: string
 }
 
@@ -328,25 +293,29 @@ type ContextTypes<ItemType> = {
   renderCell?: PropTypes<ItemType>['renderCell']
   renderValue?: PropTypes<ItemType>['renderValue']
   keyFromItem?: PropTypes<ItemType>['keyFromItem']
+  fluid?: boolean
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, cellIndex }: CellPropTypes<ItemType>) => {
+  <ItemType extends any>({ row, cell, cellIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
     let ctx = useContext(TableContext)
     let {
       pendingValues = [],
       onEditValue,
       columnWidths = [],
       renderValue = defaultRenderValue,
-      editableValues,
+      editableValues = [],
       onSaveEdit,
       onCancelEdit,
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
+      fluid,
     } = ctx || {}
+
+    let [isFocused, setIsFocused] = useState(false)
 
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
@@ -360,20 +329,37 @@ const TableCellComponent = observer(
 
     let columnWidth = columnWidths[cellIndex] || 0
 
+    let canEditCell = onEditValue && editableValues.includes(valueKey)
+    let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
+
+    let onKeyUp = useCallback(
+      (e) => {
+        if (isFocused && e.key === 'Enter' && canEditCell) {
+          makeCellEditable()
+        }
+      },
+      [makeCellEditable, isFocused]
+    )
+
     return (
       <TableCell
-        style={{ minWidth: columnWidth ? `${columnWidth}px` : 0 }}
+        style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
-        editable={editableValues?.includes(valueKey)}
-        onDoubleClick={onMakeEditable(valueKey, val)}>
+        editable={canEditCell}
+        tabIndex={!canEditCell || editValue ? -1 : tabIndex}
+        onKeyUp={!editValue && canEditCell ? onKeyUp : undefined}
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        onDoubleClick={makeCellEditable}>
         {onEditValue && editValue
           ? renderInput(
               key as keyof ItemType,
               editValue.value,
               onValueChange(valueKey),
               onSaveEdit,
-              onCancelEdit
+              onCancelEdit,
+              tabIndex
             )
           : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
       </TableCell>
@@ -400,6 +386,7 @@ const TableRowComponent = observer(
             row={rowItem}
             rowId={rowId}
             cellIndex={cellIndex}
+            tabIndex={index * allRows.length + cellIndex + 1}
             cell={[key as keyof ItemType, val]}
           />
         ))}
@@ -422,7 +409,7 @@ const Table = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
-    canRemoveRow = (item) => !!onRemoveRow,
+    canRemoveRow = () => !!onRemoveRow,
     renderCell = defaultRenderCellContent,
     renderValue = defaultRenderValue,
     getColumnTotal,
@@ -435,6 +422,8 @@ const Table = observer(
     editableValues = [],
     virtualized = false,
     maxHeight = window.innerHeight,
+    fluid = false,
+    showToolbar = true,
     children: emptyContent,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
@@ -617,6 +606,7 @@ const Table = observer(
             onValueChange,
             itemEntries,
             item,
+            fluid,
           }
         }),
       [
@@ -638,26 +628,26 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
+    let width = fluid ? '100%' : Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
-    let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
+    let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
     let hasVerticalScroll = listHeight > height
 
     let wrapperHeight = Math.max(
       tableIsEmpty ? 150 : rowHeight,
       (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
         2 +
-        SCROLLBAR_WIDTH
+        (fluid ? 0 : SCROLLBAR_WIDTH)
     )
 
     // Scroll listeners for the floating toolbar.
-    let [currentScroll, setCurrentScroll] = useState(0)
+    let [currentScroll, setCurrentScroll] = useState({ scrollTop: 0, viewportHeight: 0 })
     let subscribeToScroll = useContext(ScrollContext)
 
     let { callback: debouncedSetScroll } = useDebouncedCallback(
-      (scrollTop: number, frameHeight: number) => {
-        setCurrentScroll(scrollTop - frameHeight)
+      (scrollTop: number, viewportHeight: number) => {
+        setCurrentScroll({ scrollTop, viewportHeight })
       },
       50
     )
@@ -674,10 +664,14 @@ const Table = observer(
         return false
       }
 
-      let tableBox = tableViewRef.current?.getBoundingClientRect()
-      let tableBottomEdge = tableBox.top + tableBox.height
+      let { scrollTop, viewportHeight } = currentScroll
 
-      return currentScroll < tableBottomEdge - 150
+      let tableBox: DOMRect = tableViewRef.current?.getBoundingClientRect()
+      let tableTop = scrollTop + tableBox.top
+      let tableBottom = tableTop + tableBox.height
+      let scrollBottom = scrollTop + viewportHeight
+
+      return scrollBottom < tableBottom + 58 && scrollBottom > tableTop + 58
     }, [tableViewRef.current, currentScroll, pendingValues])
 
     let contextValue: ContextTypes<ItemType> = {
@@ -691,19 +685,25 @@ const Table = observer(
       renderInput,
       renderValue,
       keyFromItem,
+      fluid,
     }
 
-    let tableViewWidth = Math.ceil(width + SCROLLBAR_WIDTH)
+    let tableViewWidth = fluid
+      ? '100%'
+      : Math.ceil((width as number) + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
+
     const formId = useMemo(() => uniqueId(), [])
+
     usePromptUnsavedChanges({
       uniqueComponentId: formId,
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
     })
+
     return (
       <TableContext.Provider value={contextValue}>
         <TableWrapper
           className={className}
-          style={{ minHeight: wrapperHeight + 'px' }}
+          style={{ minHeight: wrapperHeight + 'px', overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
             <TableHeader
@@ -721,11 +721,11 @@ const Table = observer(
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
 
-                let columnWidth = columnWidths[colIdx]
+                let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                 return (
                   <ColumnHeaderCell
-                    ref={setWidthFromCellRef(colIdx)}
+                    ref={!fluid ? setWidthFromCellRef(colIdx) : undefined}
                     as="button"
                     style={
                       typeof columnWidth !== 'undefined'
@@ -773,7 +773,7 @@ const Table = observer(
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                  let columnWidth = columnWidths[colIdx]
+                  let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
                     <TableCell
@@ -792,27 +792,12 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
-        {(!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
-          <EditToolbar floating={toolbarIsFloating}>
-            <ToolbarDescription>
-              <Info fill="var(--dark-grey)" width={20} height={20} />
-              Muista tallentaa taulukkoon tekemäsi muutokset.
-            </ToolbarDescription>
-            <SaveButton
-              onClick={onSaveEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.NORMAL}>
-              <Checkmark2 fill="white" width="0.5rem" height="0.5rem" />
-              Tallenna muutokset
-            </SaveButton>
-            <CancelButton
-              onClick={onCancelEdit}
-              size={ButtonSize.MEDIUM}
-              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-              <CrossThick fill="var(--red)" width="0.5rem" height="0.5rem" />
-              Peruuta
-            </CancelButton>
-          </EditToolbar>
+        {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
+          <FormSaveToolbar
+            onSave={onSaveEdit!}
+            onCancel={onCancelEdit!}
+            floating={toolbarIsFloating}
+          />
         )}
       </TableContext.Provider>
     )

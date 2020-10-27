@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components'
 import { RouteComponentProps } from '@reach/router'
 import { Page } from '../common/components/common'
@@ -21,6 +21,9 @@ import { translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import InspectionValidationErrors from '../inspection/InspectionValidationErrors'
+import { useSubscription } from '@apollo/client'
+import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -58,11 +61,25 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
   ({ inspectionId = '', inspectionType }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
+    var [, setErrorMessage] = useStateValue('errorMessage')
     var editInspection = useEditInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
       inspectionId
     )
+
+    const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
+      shouldResubscribe: true,
+      variables: { inspectionId },
+    })
+
+    useEffect(() => {
+      let errorUpdate = pickGraphqlData(errorUpdateData)
+
+      if (errorUpdate) {
+        setErrorMessage(errorUpdate.message)
+      }
+    }, [errorUpdateData])
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
     let typeStrings = getInspectionTypeStrings(inspectionType)

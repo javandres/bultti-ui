@@ -43,7 +43,9 @@ const ListReport = observer(
           {(filteredItems) => (
             <Table<ItemType>
               virtualized={true}
-              keyFromItem={(item: any) => item?.id || item?.registryNr || ''}
+              keyFromItem={(item: any) =>
+                item?.id || item?._id || item?.departureId || item?.registryNr || ''
+              }
               maxHeight={window.innerHeight * 0.75}
               items={filteredItems}
               hideKeys={!columnLabels ? ['id'] : undefined}
