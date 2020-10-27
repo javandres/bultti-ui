@@ -3,6 +3,7 @@ import styled from 'styled-components'
 export const Page = styled.div`
   position: relative;
   height: 100%;
+  margin-bottom: 1rem;
 `
 
 export const PageSection = styled.div`

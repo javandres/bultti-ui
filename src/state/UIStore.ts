@@ -25,6 +25,7 @@ export const UIStore = (state): UIActions => {
       return languageState.language
     },
     errorMessage: '',
+    unsavedFormIds: [],
   }
 
   extendObservable(state, defaultState)
@@ -63,11 +64,16 @@ export const UIStore = (state): UIActions => {
     state.appLoaded = true
   })
 
+  const setUnsavedFormIds = action((unsavedFormIds: string[]) => {
+    state.unsavedFormIds = unsavedFormIds
+  })
+
   return {
     globalOperator: setOperatorFilter,
     globalSeason: setSeasonFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
     errorMessage: setErrorMessage,
+    unsavedFormIds: setUnsavedFormIds,
   }
 }

@@ -1,10 +1,11 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled, { CSSProperties } from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { get } from 'lodash'
+import { get, uniqueId } from 'lodash'
 import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
+import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   display: flex;
@@ -168,6 +169,8 @@ const ItemForm: React.FC<PropTypes> = observer(
       [readOnly]
     )
 
+    const formId = useMemo(() => uniqueId(), [])
+    usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: !doneDisabled })
     return (
       <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => {

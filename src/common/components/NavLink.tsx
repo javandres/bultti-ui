@@ -3,6 +3,8 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Link, LinkProps, useLocation } from '@reach/router'
 import { pathWithQuery } from '../../util/urlValue'
+import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
+import { useStateValue } from '../../state/useAppState'
 
 export type PropTypes = LinkProps<any>
 
@@ -30,9 +32,13 @@ const NavLinkView = styled(Link)`
 const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
   let location = useLocation()
   let queryPath = pathWithQuery(to, location)
-
+  let unsavedFormIdsState = useStateValue('unsavedFormIds')
   return (
-    <NavLinkView to={queryPath} {...props} ref={undefined}>
+    <NavLinkView
+      onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)}
+      to={queryPath}
+      {...props}
+      ref={undefined}>
       {children}
     </NavLinkView>
   )

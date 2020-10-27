@@ -9,7 +9,7 @@ import React, {
 } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Dictionary, difference, get, omitBy, orderBy, toString } from 'lodash'
+import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
 import { RemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { ScrollContext } from './AppFrame'
@@ -18,6 +18,7 @@ import Input, { TextInput } from '../input/Input'
 import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from './FormSaveToolbar'
+import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -408,7 +409,7 @@ const Table = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
-    canRemoveRow = (item) => !!onRemoveRow,
+    canRemoveRow = () => !!onRemoveRow,
     renderCell = defaultRenderCellContent,
     renderValue = defaultRenderValue,
     getColumnTotal,
@@ -630,7 +631,7 @@ const Table = observer(
     let width = fluid ? '100%' : Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
-    let height = Math.min(maxHeight, listHeight) // Limit height to maxheight if needed
+    let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
     let hasVerticalScroll = listHeight > height
 
     let wrapperHeight = Math.max(
@@ -690,6 +691,13 @@ const Table = observer(
     let tableViewWidth = fluid
       ? '100%'
       : Math.ceil((width as number) + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
+
+    const formId = useMemo(() => uniqueId(), [])
+
+    usePromptUnsavedChanges({
+      uniqueComponentId: formId,
+      shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
+    })
 
     return (
       <TableContext.Provider value={contextValue}>
