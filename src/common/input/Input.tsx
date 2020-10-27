@@ -91,8 +91,6 @@ const Input: React.FC<PropTypes> = observer(
 
     const onKeyPress = useCallback(
       (e) => {
-        console.log(e)
-
         if (onEnterPress && e.key === 'Enter') {
           onEnterPress(value)
         }
