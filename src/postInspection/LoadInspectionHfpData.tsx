@@ -271,7 +271,7 @@ const LoadInspectionHfpData = observer(() => {
       </LoadButton>
       <LoadedRangesDisplay>
         <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
-          Ladatut päivämäärät
+          HFP tietojen tilanne päivämäärittäin
         </InputLabel>
         {dateStatusByRanges.map((dateStatusRange) => {
           let status = dateStatusRange[0].status
