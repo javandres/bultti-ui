@@ -8,6 +8,7 @@ import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
+import LoadInspectionHfpData from './LoadInspectionHfpData'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -45,6 +46,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     return (
       <div>
+        <LoadInspectionHfpData />
         {connectedPreInspection && (
           <>
             <Heading>

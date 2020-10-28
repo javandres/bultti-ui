@@ -210,6 +210,11 @@ type ExecutionRequirementValue {
   sanctionThreshold: Float
 }
 
+type HfpDateStatus {
+  date: BulttiDate!
+  status: HfpStatus!
+}
+
 type Inspection {
   createdAt: DateTime!
   defectInspection: Inspection
@@ -278,6 +283,7 @@ type Mutation {
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
+  loadHfpDataForInspectionPeriod(inspectionId: String!): Boolean!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
@@ -474,6 +480,7 @@ type Query {
   currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
+  currentlyLoadingHfpRanges: [HfpDateStatus!]!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -486,6 +493,7 @@ type Query {
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
+  loadedHfpRanges: [HfpDateStatus!]!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
@@ -524,6 +532,7 @@ type Season {
 }
 
 type Subscription {
+  hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): Inspection
 }
@@ -566,6 +575,12 @@ enum DayType {
 enum DepartureType {
   BLOCK
   SCHEMA
+}
+
+enum HfpStatus {
+  LOADING
+  NOT_LOADED
+  READY
 }
 
 enum InspectionStatus {

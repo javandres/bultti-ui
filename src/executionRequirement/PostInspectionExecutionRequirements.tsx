@@ -89,7 +89,7 @@ export type PropTypes = {}
 
 type EditRequirementValue = EditValue<ObservedExecutionValue> & { requirementId: string }
 
-const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
+const PostInspectionExecutionRequirements = observer(() => {
   const inspection = useContext(InspectionContext)
 
   let {
@@ -98,10 +98,9 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     refetch,
   } = useObservedRequirements(inspection?.id)
 
-  let [
-    previewObservedRequirement,
-    { data: calculatedRequirement, loading: previewLoading },
-  ] = useLazyQueryData(previewObservedRequirementQuery)
+  let [previewObservedRequirement, { loading: previewLoading }] = useLazyQueryData(
+    previewObservedRequirementQuery
+  )
 
   let onPreviewRequirement = useCallback(
     (requirementId) => {

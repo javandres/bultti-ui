@@ -40,6 +40,8 @@ export type Query = {
   availableDayTypes: Array<Scalars['String']>;
   reports: Array<Report>;
   inspectionReportByName?: Maybe<Report>;
+  currentlyLoadingHfpRanges: Array<HfpDateStatus>;
+  loadedHfpRanges: Array<HfpDateStatus>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
@@ -782,6 +784,18 @@ export enum ReportType {
   ExecutionRequirement = 'EXECUTION_REQUIREMENT'
 }
 
+export type HfpDateStatus = {
+  __typename?: 'HfpDateStatus';
+  date: Scalars['BulttiDate'];
+  status: HfpStatus;
+};
+
+export enum HfpStatus {
+  NotLoaded = 'NOT_LOADED',
+  Loading = 'LOADING',
+  Ready = 'READY'
+}
+
 export type InspectionTimelineItem = {
   __typename?: 'InspectionTimelineItem';
   id: Scalars['ID'];
@@ -827,6 +841,7 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
+  loadHfpDataForInspectionPeriod: Scalars['Boolean'];
   createInspection: Inspection;
   updateBaseInspection: Inspection;
   updateInspection: Inspection;
@@ -964,6 +979,11 @@ export type MutationRemoveDepartureBlocksForDayTypesArgs = {
 export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
   equipmentId: Scalars['String'];
+};
+
+
+export type MutationLoadHfpDataForInspectionPeriodArgs = {
+  inspectionId: Scalars['String'];
 };
 
 
@@ -1121,8 +1141,15 @@ export type ObservedRequirementValueInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  hfpPreloadStatus?: Maybe<Array<HfpDateStatus>>;
   inspectionStatus?: Maybe<Inspection>;
   inspectionError?: Maybe<InspectionErrorUpdate>;
+};
+
+
+export type SubscriptionHfpPreloadStatusArgs = {
+  rangeEnd: Scalars['String'];
+  rangeStart: Scalars['String'];
 };
 
 

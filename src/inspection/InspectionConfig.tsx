@@ -5,7 +5,7 @@ import Input from '../common/input/Input'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { FlexRow } from '../common/components/common'
+import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import { DATE_FORMAT } from '../constants'
@@ -13,11 +13,8 @@ import styled from 'styled-components'
 import { format, parseISO, startOfISOWeek } from 'date-fns'
 import InspectionTimeline from './InspectionTimeline'
 
-const InspectionConfigView = styled.div`
-  border: 1px solid var(--lighter-grey);
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-  background: white;
+const InspectionConfigView = styled(PageSection)`
+  margin: 1rem 0 0;
   padding: 0 1rem 1rem;
 `
 
