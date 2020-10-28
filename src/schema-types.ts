@@ -841,7 +841,7 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
-  loadHfpDataForInspectionPeriod: Scalars['Boolean'];
+  loadHfpDataForInspectionPeriod: Array<HfpDateStatus>;
   createInspection: Inspection;
   updateBaseInspection: Inspection;
   updateInspection: Inspection;

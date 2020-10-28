@@ -20,6 +20,7 @@ import {
 import { HfpDateStatus, HfpStatus } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { DATE_FORMAT } from '../constants'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -93,7 +94,10 @@ const loadedRangesQuery = gql`
 
 const loadHfpDataMutation = gql`
   mutation loadHfpDataForInspectionPeriod($inspectionId: String!) {
-    loadHfpDataForInspectionPeriod(inspectionId: $inspectionId)
+    loadHfpDataForInspectionPeriod(inspectionId: $inspectionId) {
+      status
+      date
+    }
   }
 `
 
@@ -111,7 +115,10 @@ const LoadInspectionHfpData = observer(() => {
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
   let { data: loadedRanges } = useQueryData(loadedRangesQuery)
-  let [loadHfpData, { loading: hfpDataLoading }] = useMutationData(loadHfpDataMutation)
+  let [
+    loadHfpData,
+    { data: requestedHfpDateRanges, loading: hfpDataLoading },
+  ] = useMutationData(loadHfpDataMutation)
 
   let { data: hfpStatusData } = useSubscription(hfpStatusSubscription, {
     shouldResubscribe: true,
@@ -121,8 +128,6 @@ const LoadInspectionHfpData = observer(() => {
       rangeEnd: inspection?.inspectionEndDate,
     },
   })
-
-  console.log(hfpStatusData)
 
   let dateStatusByRanges = useMemo(() => {
     let inspectionStatusInterval = {
@@ -141,6 +146,8 @@ const LoadInspectionHfpData = observer(() => {
       [
         ...(currentlyLoadingRanges || []),
         ...(loadedRanges || []),
+        ...(requestedHfpDateRanges || []),
+        ...(pickGraphqlData(hfpStatusData) || []),
         ...inspectionStatusGroup,
       ].reduce((uniqStatuses: HfpDateStatus[], status, index, allStatuses) => {
         // We are only interested in dates within the inspection period.
@@ -213,7 +220,7 @@ const LoadInspectionHfpData = observer(() => {
       statusRanges.splice(rangeIndex, 1, currentRange)
       return statusRanges
     }, [])
-  }, [currentlyLoadingRanges, loadedRanges, inspection])
+  }, [currentlyLoadingRanges, loadedRanges, requestedHfpDateRanges, hfpStatusData, inspection])
 
   // Check if all dates in the inspection period are loaded.
   let inspectionPeriodIsLoaded = useMemo(() => {
@@ -259,7 +266,7 @@ const LoadInspectionHfpData = observer(() => {
         onClick={onClickLoad}
         disabled={inspectionPeriodIsLoaded}>
         {inspectionPeriodIsLoaded
-          ? 'Tarkastusjaksoon löytyy kaikki HFP'
+          ? 'Tarkastusjaksolle löytyy kaikki HFP tiedot'
           : 'Lataa tarkastukseen tarvittava HFP'}
       </LoadButton>
       <LoadedRangesDisplay>

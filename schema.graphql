@@ -283,7 +283,7 @@ type Mutation {
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
-  loadHfpDataForInspectionPeriod(inspectionId: String!): Boolean!
+  loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
