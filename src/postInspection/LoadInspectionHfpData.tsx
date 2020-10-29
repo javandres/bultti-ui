@@ -234,7 +234,10 @@ const LoadInspectionHfpData = observer(() => {
         let dateStr = format(date, DATE_FORMAT)
         return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
       })
-      .every((dateStatus) => !!dateStatus && dateStatus.status === HfpStatus.Ready)
+      .every(
+        (dateStatus) =>
+          !!dateStatus && [HfpStatus.Ready, HfpStatus.Loading].includes(dateStatus.status)
+      )
   }, [dateStatusByRanges, inspection])
 
   let onClickLoad = useCallback(() => {
