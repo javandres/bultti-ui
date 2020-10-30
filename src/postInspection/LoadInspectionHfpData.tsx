@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PageSection } from '../common/components/common'
@@ -110,7 +110,11 @@ const hfpStatusSubscription = gql`
   }
 `
 
-const LoadInspectionHfpData = observer(() => {
+type PropTypes = {
+  setHfpLoaded: (loaded: boolean) => unknown
+}
+
+const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   const inspection = useContext(InspectionContext)
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
@@ -248,6 +252,14 @@ const LoadInspectionHfpData = observer(() => {
       })
     }
   }, [inspection])
+
+  useEffect(() => {
+    if (inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)) {
+      setHfpLoaded(true)
+    } else {
+      setHfpLoaded(false)
+    }
+  }, [inspectionPeriodLoadingStatuses])
 
   return (
     <LoadInspectionHfpDataView>
