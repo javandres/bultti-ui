@@ -8,7 +8,7 @@ import { InputLabel } from '../common/components/form'
 import { gql, useSubscription } from '@apollo/client'
 import { useQueryData } from '../util/useQueryData'
 import { useMutationData } from '../util/useMutationData'
-import { flatten, orderBy } from 'lodash'
+import { flatten, orderBy, uniq } from 'lodash'
 import {
   eachDayOfInterval,
   format,
@@ -223,21 +223,20 @@ const LoadInspectionHfpData = observer(() => {
   }, [currentlyLoadingRanges, loadedRanges, requestedHfpDateRanges, hfpStatusData, inspection])
 
   // Check if all dates in the inspection period are loaded.
-  let inspectionPeriodIsLoaded = useMemo(() => {
+  let inspectionPeriodLoadingStatuses = useMemo(() => {
     let inspectionStatusInterval = {
       start: parseISO(inspection?.inspectionStartDate),
       end: parseISO(inspection?.inspectionEndDate),
     }
 
-    return eachDayOfInterval(inspectionStatusInterval)
-      .map((date) => {
-        let dateStr = format(date, DATE_FORMAT)
-        return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
-      })
-      .every(
-        (dateStatus) =>
-          !!dateStatus && [HfpStatus.Ready, HfpStatus.Loading].includes(dateStatus.status)
-      )
+    return uniq(
+      eachDayOfInterval(inspectionStatusInterval)
+        .map((date) => {
+          let dateStr = format(date, DATE_FORMAT)
+          return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
+        })
+        .map((dateStatus) => dateStatus?.status || HfpStatus.NotLoaded)
+    )
   }, [dateStatusByRanges, inspection])
 
   let onClickLoad = useCallback(() => {
@@ -267,8 +266,13 @@ const LoadInspectionHfpData = observer(() => {
         loading={hfpDataLoading}
         size={ButtonSize.LARGE}
         onClick={onClickLoad}
-        disabled={inspectionPeriodIsLoaded}>
-        {inspectionPeriodIsLoaded
+        disabled={
+          inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
+          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
+        }>
+        {inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
+          ? 'Tarkastusjakson päivämäärät ladataan'
+          : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
           ? 'Tarkastusjaksolle löytyy kaikki HFP tiedot'
           : 'Lataa tarkastukseen tarvittava HFP'}
       </LoadButton>
