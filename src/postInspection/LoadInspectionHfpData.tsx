@@ -119,6 +119,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
   let { data: loadedRanges } = useQueryData(loadedRangesQuery)
+
   let [
     loadHfpData,
     { data: requestedHfpDateRanges, loading: hfpDataLoading },
