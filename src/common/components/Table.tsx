@@ -467,7 +467,7 @@ const Table = observer(
     // Adding a column a second time switches its
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
-        if (!Object.keys(items[0] as {}).includes(columnName)) {
+        if (!items[0] || !Object.keys(items[0] as {}).includes(columnName)) {
           return currentSort
         }
 
