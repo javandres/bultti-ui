@@ -688,7 +688,8 @@ export enum InspectionValidationError {
   ContractOutsideInspectionTime = 'CONTRACT_OUTSIDE_INSPECTION_TIME',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
-  MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS'
+  MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
+  HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES'
 }
 
 export type EquipmentSearchResult = {
@@ -1142,12 +1143,19 @@ export type ObservedRequirementValueInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   hfpPreloadStatus?: Maybe<Array<HfpDateStatus>>;
+  hfpLoadingProgress?: Maybe<HfpDateProgress>;
   inspectionStatus?: Maybe<Inspection>;
   inspectionError?: Maybe<InspectionErrorUpdate>;
 };
 
 
 export type SubscriptionHfpPreloadStatusArgs = {
+  rangeEnd: Scalars['String'];
+  rangeStart: Scalars['String'];
+};
+
+
+export type SubscriptionHfpLoadingProgressArgs = {
   rangeEnd: Scalars['String'];
   rangeStart: Scalars['String'];
 };
@@ -1160,6 +1168,12 @@ export type SubscriptionInspectionStatusArgs = {
 
 export type SubscriptionInspectionErrorArgs = {
   inspectionId: Scalars['String'];
+};
+
+export type HfpDateProgress = {
+  __typename?: 'HfpDateProgress';
+  date: Scalars['BulttiDate'];
+  progress: Scalars['Int'];
 };
 
 export type InspectionErrorUpdate = {

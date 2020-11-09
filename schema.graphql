@@ -210,6 +210,11 @@ type ExecutionRequirementValue {
   sanctionThreshold: Float
 }
 
+type HfpDateProgress {
+  date: BulttiDate!
+  progress: Int!
+}
+
 type HfpDateStatus {
   date: BulttiDate!
   status: HfpStatus!
@@ -532,6 +537,7 @@ type Season {
 }
 
 type Subscription {
+  hfpLoadingProgress(rangeEnd: String!, rangeStart: String!): HfpDateProgress
   hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): Inspection

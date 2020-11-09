@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PageSection } from '../common/components/common'
@@ -19,8 +19,9 @@ import {
 } from 'date-fns'
 import { HfpDateStatus, HfpStatus } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { DATE_FORMAT } from '../constants'
+import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -56,6 +57,8 @@ const DateStatusDisplay = styled.div`
     background-color: var(--white-grey);
   }
 `
+
+const DateProgressValue = styled.span``
 
 const LoadedDateRange = styled(DateRangeDisplay)``
 
@@ -110,15 +113,27 @@ const hfpStatusSubscription = gql`
   }
 `
 
+const hfpProgressSubscription = gql`
+  subscription hfpLoadingProgress($rangeStart: String!, $rangeEnd: String!) {
+    hfpLoadingProgress(rangeStart: $rangeStart, rangeEnd: $rangeEnd) {
+      progress
+      date
+    }
+  }
+`
+
 type PropTypes = {
   setHfpLoaded: (loaded: boolean) => unknown
 }
 
 const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   const inspection = useContext(InspectionContext)
+  let [dateProgress, setDateProgress] = useState<Map<string, number>>(
+    new Map<string, number>()
+  )
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
-  let { data: loadedRanges } = useQueryData(loadedRangesQuery)
+  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery)
 
   let [
     loadHfpData,
@@ -134,20 +149,59 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
     },
   })
 
-  let dateStatusByRanges = useMemo(() => {
-    let inspectionStatusInterval = {
+  let { data: hfpTaskProgressData } = useSubscription(hfpProgressSubscription, {
+    shouldResubscribe: true,
+    skip: !inspection,
+    variables: {
+      rangeStart: inspection?.inspectionStartDate,
+      rangeEnd: inspection?.inspectionEndDate,
+    },
+  })
+
+  useEffect(() => {
+    let data = pickGraphqlData(hfpTaskProgressData)
+
+    if (data) {
+      let { date, progress } = data
+      console.log(date, progress)
+
+      setDateProgress((currentProgress) => {
+        currentProgress.set(date, progress)
+        return new Map(currentProgress)
+      })
+    }
+  }, [hfpTaskProgressData])
+
+  let inspectionStatusInterval = useMemo(() => {
+    if (!inspection) {
+      return
+    }
+
+    return {
       start: parseISO(inspection?.inspectionStartDate),
       end: parseISO(inspection?.inspectionEndDate),
     }
+  }, [inspection])
 
-    let inspectionStatusGroup: HfpDateStatus[] = eachDayOfInterval(
-      inspectionStatusInterval
-    ).map((date) => ({
+  let inspectionDates = useMemo(() => {
+    if (!inspectionStatusInterval) {
+      return []
+    }
+
+    return eachDayOfInterval(inspectionStatusInterval)
+  }, [inspectionStatusInterval])
+
+  let dateStatuses = useMemo(() => {
+    if (!inspectionStatusInterval) {
+      return []
+    }
+
+    let inspectionStatusGroup: HfpDateStatus[] = inspectionDates.map((date) => ({
       date: format(date, DATE_FORMAT),
       status: HfpStatus.NotLoaded,
     }))
 
-    let allDates = orderBy(
+    return orderBy(
       [
         ...(currentlyLoadingRanges || []),
         ...(loadedRanges || []),
@@ -156,27 +210,31 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
         ...inspectionStatusGroup,
       ].reduce((uniqStatuses: HfpDateStatus[], status, index, allStatuses) => {
         // We are only interested in dates within the inspection period.
-        if (!isWithinInterval(parseISO(status.date), inspectionStatusInterval)) {
+        if (!isWithinInterval(parseISO(status.date), inspectionStatusInterval!)) {
           return uniqStatuses
         }
 
-        // Reduce to a unique array of date statuses. Ready and loading statuses have a
-        // priority. A loading status should not be included instead of a ready status,
-        // and a not_loaded status should not be included instead of a loading status.
+        // Defines the priority of statuses.
+        let statusPriority = [HfpStatus.Loading, HfpStatus.Ready, HfpStatus.NotLoaded]
+
+        // Reduce to a unique array of date statuses. statusPriority[0] and statusPriority[1]
+        // statuses have a priority. A statusPriority[1] status should not be included
+        // instead of a statusPriority[0] status, and a statusPriority[2] status
+        // should not be included instead of a statusPriority[1] status.
         let isIncluded = uniqStatuses.find((s) => s.date === status.date)
 
-        if (status.status === HfpStatus.Ready && !isIncluded) {
-          // As a priority, include the status if the date is loaded and it is not included already
+        if (status.status === statusPriority[0] && !isIncluded) {
+          // As a priority, include the status if the date is loading and it is not included already
           uniqStatuses.push(status)
         } else if (
-          status.status === HfpStatus.Loading &&
+          status.status === statusPriority[1] &&
           !allStatuses.find(
-            (s) => s !== status && s.date === status.date && s.status === HfpStatus.Ready
+            (s) => s !== status && s.date === status.date && s.status === statusPriority[0]
           ) &&
           !isIncluded
         ) {
-          // If the status is loading, include only if the date cannot be found
-          // with a ready status among all the items and not included already.
+          // If the status is ready, include only if the date cannot be found
+          // with a loading status among all the items and not included already.
           uniqStatuses.push(status)
         } else if (
           !isIncluded &&
@@ -184,7 +242,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
             (s) =>
               s !== status &&
               s.date === status.date &&
-              [HfpStatus.Ready, HfpStatus.Loading].includes(s.status)
+              statusPriority.slice(0, 2).includes(s.status)
           )
         ) {
           // If all other conditions fail, include if the date is not loading
@@ -196,53 +254,61 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       }, []),
       'date'
     )
+  }, [
+    inspectionStatusInterval,
+    inspectionDates,
+    currentlyLoadingRanges,
+    loadedRanges,
+    requestedHfpDateRanges,
+    hfpStatusData,
+  ])
 
-    return allDates.reduce((statusRanges: HfpDateStatus[][], dateStatus: HfpDateStatus) => {
-      let rangeIndex = statusRanges.length === 0 ? 0 : statusRanges.length - 1
-      let currentRange = statusRanges[rangeIndex] || ([] as string[])
-      let prevStatus = currentRange[currentRange.length - 1]
+  let dateStatusByRanges = useMemo(
+    () =>
+      dateStatuses.reduce((statusRanges: HfpDateStatus[][], dateStatus: HfpDateStatus) => {
+        let rangeIndex = statusRanges.length === 0 ? 0 : statusRanges.length - 1
+        let currentRange = statusRanges[rangeIndex] || ([] as string[])
+        let prevStatus = currentRange[currentRange.length - 1]
 
-      // First status in the range
-      if (!prevStatus) {
-        currentRange.push(dateStatus)
-      } else {
-        let dateObj = parseISO(dateStatus.date)
-        let prevDateObj = parseISO(prevStatus.date)
-
-        if (
-          prevStatus.status === dateStatus.status &&
-          isSameDay(subDays(dateObj, 1), prevDateObj)
-        ) {
-          // Dates are consecutive and have the same status, push the date to the current range.
+        // First status in the range
+        if (!prevStatus) {
           currentRange.push(dateStatus)
         } else {
-          // Dates are not consecutive or have different status, so we create a new range.
-          currentRange = [dateStatus]
-          rangeIndex++
-        }
-      }
+          let dateObj = parseISO(dateStatus.date)
+          let prevDateObj = parseISO(prevStatus.date)
 
-      statusRanges.splice(rangeIndex, 1, currentRange)
-      return statusRanges
-    }, [])
-  }, [currentlyLoadingRanges, loadedRanges, requestedHfpDateRanges, hfpStatusData, inspection])
+          if (
+            prevStatus.status === dateStatus.status &&
+            isSameDay(subDays(dateObj, 1), prevDateObj)
+          ) {
+            // Dates are consecutive and have the same status, push the date to the current range.
+            currentRange.push(dateStatus)
+          } else {
+            // Dates are not consecutive or have different status, so we create a new range.
+            currentRange = [dateStatus]
+            rangeIndex++
+          }
+        }
+
+        statusRanges.splice(rangeIndex, 1, currentRange)
+        return statusRanges
+      }, []),
+    [dateStatuses]
+  )
 
   // Check if all dates in the inspection period are loaded.
-  let inspectionPeriodLoadingStatuses = useMemo(() => {
-    let inspectionStatusInterval = {
-      start: parseISO(inspection?.inspectionStartDate),
-      end: parseISO(inspection?.inspectionEndDate),
-    }
-
-    return uniq(
-      eachDayOfInterval(inspectionStatusInterval)
-        .map((date) => {
-          let dateStr = format(date, DATE_FORMAT)
-          return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
-        })
-        .map((dateStatus) => dateStatus?.status || HfpStatus.NotLoaded)
-    )
-  }, [dateStatusByRanges, inspection])
+  let inspectionPeriodLoadingStatuses = useMemo(
+    () =>
+      uniq(
+        inspectionDates
+          .map((date) => {
+            let dateStr = format(date, DATE_FORMAT)
+            return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
+          })
+          .map((dateStatus) => dateStatus?.status || HfpStatus.NotLoaded)
+      ),
+    [dateStatusByRanges, inspectionDates]
+  )
 
   let onClickLoad = useCallback(() => {
     if (inspection) {
@@ -280,42 +346,71 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
         size={ButtonSize.LARGE}
         onClick={onClickLoad}
         disabled={
-          inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
-          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
+          loadedRangesLoading || false
+          /*inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
+          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)*/
         }>
-        {inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
+        {loadedRangesLoading
+          ? 'Tarkistetaan tilannetta...'
+          : inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
           ? 'Tarkastusjakson päivämäärät ladataan'
           : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
           ? 'Tarkastusjaksolle löytyy kaikki HFP tiedot'
           : 'Lataa tarkastukseen tarvittava HFP'}
       </LoadButton>
-      <LoadedRangesDisplay>
-        <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
-          HFP tietojen tilanne päivämäärittäin
-        </InputLabel>
-        {dateStatusByRanges.map((dateStatusRange) => {
-          let status = dateStatusRange[0].status
+      <LoadingDisplay loading={loadedRangesLoading} />
+      {!loadedRangesLoading && (
+        <LoadedRangesDisplay>
+          <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
+            HFP tietojen tilanne päivämäärittäin
+          </InputLabel>
+          {dateStatusByRanges.map((dateStatusRange) => {
+            let status = dateStatusRange[0].status
 
-          return (
-            <DateStatusDisplay key={dateStatusRange[0].date}>
-              <LoadedDateRange
-                startDate={dateStatusRange[0].date}
-                endDate={dateStatusRange[dateStatusRange.length - 1].date}
-              />
-              <DateStatus
-                color={
-                  status === HfpStatus.Ready
-                    ? 'var(--green)'
-                    : status === HfpStatus.Loading
-                    ? 'var(--yellow)'
-                    : 'var(--red)'
-                }>
-                {status}
-              </DateStatus>
-            </DateStatusDisplay>
-          )
-        })}
-      </LoadedRangesDisplay>
+            return (
+              <DateStatusDisplay key={dateStatusRange[0].date}>
+                <LoadedDateRange
+                  startDate={dateStatusRange[0].date}
+                  endDate={dateStatusRange[dateStatusRange.length - 1].date}
+                />
+                <DateStatus
+                  color={
+                    status === HfpStatus.Ready
+                      ? 'var(--green)'
+                      : status === HfpStatus.Loading
+                      ? 'var(--yellow)'
+                      : 'var(--red)'
+                  }>
+                  {status}
+                </DateStatus>
+              </DateStatusDisplay>
+            )
+          })}
+          {dateProgress.size !== 0 &&
+            inspectionDates.map((date) => {
+              let dateStr = format(date, 'yyyy-MM-dd')
+              let currentProgress = dateProgress.get(dateStr) || 0
+              let loadedStatus = dateStatuses.find((status) => status.date === dateStr)?.status
+              let loadedProgress =
+                currentProgress !== 0 || loadedStatus === HfpStatus.Loading
+                  ? currentProgress
+                  : loadedStatus === HfpStatus.Ready
+                  ? 100
+                  : 0
+
+              if (loadedProgress === 0) {
+                return null
+              }
+
+              return (
+                <DateStatusDisplay key={`date progress ${dateStr}`}>
+                  <span>{format(date, READABLE_DATE_FORMAT)}</span>
+                  <DateProgressValue>{loadedProgress}%</DateProgressValue>
+                </DateStatusDisplay>
+              )
+            })}
+        </LoadedRangesDisplay>
+      )}
     </LoadInspectionHfpDataView>
   )
 })
