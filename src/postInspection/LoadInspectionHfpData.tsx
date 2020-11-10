@@ -199,12 +199,16 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       status: HfpStatus.NotLoaded,
     }))
 
+    // Defines the priority order of statuses.
+    let statusPriority = [HfpStatus.Ready, HfpStatus.Loading, HfpStatus.NotLoaded]
+    let updatedStatuses = pickGraphqlData(hfpStatusData) || []
+
     return orderBy(
       [
         ...(currentlyLoadingRanges || []),
         ...(loadedRanges || []),
         ...(requestedHfpDateRanges || []),
-        ...(pickGraphqlData(hfpStatusData) || []),
+        ...updatedStatuses,
         ...inspectionStatusGroup,
       ].reduce((uniqStatuses: HfpDateStatus[], status, index, allStatuses) => {
         // We are only interested in dates within the inspection period.
@@ -212,17 +216,25 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
           return uniqStatuses
         }
 
-        // Defines the priority of statuses.
-        let statusPriority = [HfpStatus.Loading, HfpStatus.Ready, HfpStatus.NotLoaded]
-
         // Reduce to a unique array of date statuses. statusPriority[0] and statusPriority[1]
         // statuses have a priority. A statusPriority[1] status should not be included
         // instead of a statusPriority[0] status, and a statusPriority[2] status
         // should not be included instead of a statusPriority[1] status.
-        let isIncluded = uniqStatuses.find((s) => s.date === status.date)
+        let isIncluded = uniqStatuses.some((s) => s.date === status.date)
 
-        if (status.status === statusPriority[0] && !isIncluded) {
-          // As a priority, include the status if the date is loading and it is not included already
+        // Updates for loading dates comes through subscriptions to the updatedStatues array.
+        let updatedDateStatus = updatedStatuses.find((s) => s.date === status.date)
+
+        if (
+          (status.status === statusPriority[0] ||
+            // If the date is updated through the subscription and is ready,
+            // show it as such and circumvent the priority list.
+            (dateProgress.has(status.date) &&
+              updatedDateStatus &&
+              updatedDateStatus.status === HfpStatus.Ready)) &&
+          !isIncluded
+        ) {
+          // As a priority, include the status if the date status is priority 1 and it is not included already
           uniqStatuses.push(status)
         } else if (
           status.status === statusPriority[1] &&
@@ -367,7 +379,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       {!loadedRangesLoading && (
         <LoadedRangesDisplay>
           <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
-            HFP tietojen tilanne päivämäärittäin
+            HFP tietojen tilanne
           </InputLabel>
           {dateStatusByRanges.map((dateStatusRange) => {
             let status = dateStatusRange[0].status
@@ -391,19 +403,24 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
               </DateStatusDisplay>
             )
           })}
+          <InputLabel theme="light" style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
+            Nyt lataamassa
+          </InputLabel>
           {dateProgress.size !== 0 &&
             inspectionDates.map((date) => {
               let dateStr = format(date, 'yyyy-MM-dd')
-              let currentProgress = dateProgress.get(dateStr) || 0
+              let currentProgress = dateProgress.get(dateStr)
               let loadedStatus = dateStatuses.find((status) => status.date === dateStr)?.status
               let loadedProgress =
-                currentProgress !== 0 || loadedStatus === HfpStatus.Loading
-                  ? currentProgress
-                  : loadedStatus === HfpStatus.Ready
-                  ? 100
+                // Show the current progress if we have one and it is loading
+                !!currentProgress || loadedStatus === HfpStatus.Loading
+                  ? currentProgress || 0
+                  : // Do not show in loading list if ready
+                  loadedStatus === HfpStatus.Ready
+                  ? undefined
                   : 0
 
-              if (loadedProgress === 0) {
+              if (!loadedProgress) {
                 return null
               }
 
