@@ -163,8 +163,6 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
 
     if (data) {
       let { date, progress } = data
-      console.log(date, progress)
-
       setDateProgress((currentProgress) => {
         currentProgress.set(date, progress)
         return new Map(currentProgress)
