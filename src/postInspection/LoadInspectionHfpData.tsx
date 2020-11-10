@@ -338,8 +338,8 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       </LoadDescription>
       <LoadDescription>
         Toteutuneita tietoja vaaditaan jälkitarkastuksen raporteja ja suoritevaatimuksia
-        varten. Niille tiedoille joille ei löydy julkaistua jälkitarkastusta siivotaan pois
-        jonkin ajan kuluttua.
+        varten. Niitä tietoja jotka ei käytetä jälkitarkastuksessa siivotaan pois jonkin ajan
+        kuluttua.
       </LoadDescription>
       <LoadButton
         loading={hfpDataLoading}
@@ -358,7 +358,14 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
           ? 'Tarkastusjaksolle löytyy kaikki HFP tiedot'
           : 'Lataa tarkastukseen tarvittava HFP'}
       </LoadButton>
-      <LoadingDisplay loading={loadedRangesLoading} />
+      <div
+        style={{
+          position: 'relative',
+          height: loadedRangesLoading ? '70px' : 0,
+          top: loadedRangesLoading ? '-12px' : 0,
+        }}>
+        <LoadingDisplay loading={loadedRangesLoading} />
+      </div>
       {!loadedRangesLoading && (
         <LoadedRangesDisplay>
           <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
