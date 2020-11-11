@@ -1,12 +1,12 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { ReportComponentProps } from './reportUtil'
-import ReportTableFilters from './ReportTableFilters'
 import { EmptyView } from '../common/components/Messages'
 import { toString } from 'lodash'
 import { round } from '../util/round'
+import { ReportContext } from './Report'
 
 const ListReportView = styled.div``
 
@@ -34,6 +34,8 @@ const ListReport = observer(
       return toString(val)
     }, [])
 
+    let { sort, setSort } = useContext(ReportContext)
+
     return (
       <ListReportView>
         <Table<ItemType>
@@ -45,6 +47,8 @@ const ListReport = observer(
           items={items}
           hideKeys={!columnLabels ? ['id'] : undefined}
           renderValue={renderCellValue}
+          sort={sort}
+          setSort={setSort}
           columnLabels={columnLabels}>
           <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
         </Table>

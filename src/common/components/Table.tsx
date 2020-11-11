@@ -19,6 +19,7 @@ import { useDebounce, useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from './FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
+import { SortConfig, SortOrder } from '../../schema-types'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -223,6 +224,8 @@ export type PropTypes<ItemType> = {
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
+  sort?: SortConfig[]
+  setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -250,11 +253,6 @@ const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) =>
     inputComponent={TableTextInput}
   />
 )
-
-type SortConfig = {
-  column: string
-  order: 'asc' | 'desc'
-}
 
 type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
@@ -425,10 +423,15 @@ const Table = observer(
     fluid = false,
     showToolbar = true,
     children: emptyContent,
+    sort: propSort,
+    setSort: propSetSort,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
+    let [_sort, _setSort] = useState<SortConfig[]>([])
 
-    let [sort, setSort] = useState<SortConfig[]>([])
+    let sort = propSort || _sort
+    let setSort = propSetSort || _setSort
+
     let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
     let [columnWidths] = useDebounce(liveColumnWidths, 200, { leading: true, trailing: false })
 
@@ -477,20 +480,20 @@ const Table = observer(
 
         let columnSortConfig: SortConfig = {
           column: columnName,
-          order: 'asc', // Start sorting by asc
+          order: SortOrder.Asc, // Start sorting by asc
         }
 
         if (currentColumnSortIndex !== -1) {
           columnSortConfig = nextSort.splice(currentColumnSortIndex, 1)[0]
 
           // Reset the column after desc by returning the array without the sort config.
-          if (columnSortConfig.order === 'desc') {
+          if (columnSortConfig.order === SortOrder.Desc) {
             return nextSort
           }
 
           // If a sort config for the column was found, that means it's currently asc sorted.
           // The next order is desc.
-          columnSortConfig.order = 'desc'
+          columnSortConfig.order = SortOrder.Desc
           nextSort.splice(currentColumnSortIndex, 0, columnSortConfig)
         } else {
           nextSort.push(columnSortConfig)
@@ -540,22 +543,6 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
-    let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
-      if (!items || !Array.isArray(items)) {
-        return []
-      }
-
-      if (sort.length === 0) {
-        return items
-      }
-
-      return orderBy(
-        items,
-        sort.map((s) => s.column),
-        sort.map((s) => s.order)
-      )
-    }, [items, sort])
-
     let getListItemKey = useCallback((index, data) => {
       let item = data[index]
       return item.key
@@ -563,7 +550,7 @@ const Table = observer(
 
     let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
       () =>
-        sortedItems.map((item) => {
+        items.map((item) => {
           // Again, omit keys that start with an underscore.
           let itemEntries = Object.entries<CellValType>(item)
 
@@ -610,7 +597,7 @@ const Table = observer(
           }
         }),
       [
-        sortedItems,
+        items,
         pendingValues,
         editableValues,
         canRemoveRow,
@@ -739,7 +726,7 @@ const Table = observer(
                       {renderValue('', colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
-                          {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
+                          {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
                         </ColumnSortIndicator>
                       )}
                     </HeaderCellContent>

@@ -15,7 +15,10 @@ import { FilterConfig, FilterMode } from '../schema-types'
 import { ReportContext } from './Report'
 
 const ReportTableFiltersView = styled.div`
-  margin-bottom: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: var(--white-grey);
+  border-radius: 1rem;
 `
 
 const FilterButtonBar = styled.div`
@@ -140,7 +143,7 @@ const ReportTableFilters = observer(
 
     return (
       <ReportTableFiltersView>
-        <FlexRow style={{ marginBottom: '1.5rem', alignItems: 'center' }}>
+        <FlexRow style={{ alignItems: 'center' }}>
           <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
           <Button
             style={{ marginLeft: '1rem' }}
@@ -150,63 +153,73 @@ const ReportTableFilters = observer(
             Lisää kenttä
           </Button>
         </FlexRow>
-        {filters.map((filterConfig, index) => {
-          let selectedFilterOption = filterFieldOptions.find(
-            (f) => f.field === filterConfig.field
-          )
-
-          return (
-            <ControlGroup
-              key={`${filterConfig.field}_${index}`}
-              style={{ width: '100%', marginBottom: '1.5rem' }}>
-              <Input
-                value={filterConfig.filterValue}
-                onChange={(nextVal) => onChangeFilter(index, nextVal)}
-                name="filter"
-                type="text"
-                theme="light"
-                label={`Filter on ${selectedFilterOption?.label || text('general.app.all')}`}
-              />
-              {filterFieldOptions.length !== 0 && (
-                <Dropdown
-                  label="Field"
-                  items={filterFieldOptions}
-                  selectedItem={selectedFilterOption}
-                  itemToString={(item) => item.field}
-                  itemToLabel={(item) => item.label}
-                  onSelect={(nextField) => onChangeFilterField(index, nextField)}
-                />
-              )}
-              <FilterButtonsWrapper>
-                <FilterModeButton
-                  name="filter-mode"
-                  isSwitch={true}
-                  value="mode"
-                  checked={filterConfig.filterMode === FilterMode.Inclusive}
-                  preLabel="Supistava"
-                  onChange={(nextVal) =>
-                    onChangeFilterMode(
-                      index,
-                      nextVal ? FilterMode.Inclusive : FilterMode.Exclusive
-                    )
-                  }>
-                  Laajentava
-                </FilterModeButton>
-              </FilterButtonsWrapper>
-              <FilterButtonsWrapper>
-                <RemoveButton onClick={() => onRemoveFilter(index)}>
-                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                </RemoveButton>
-              </FilterButtonsWrapper>
-            </ControlGroup>
-          )
-        })}
         {filters.length !== 0 && (
-          <FilterButtonBar>
-            <Button size={ButtonSize.LARGE} onClick={onApply}>
-              Käytä filtterit
-            </Button>
-          </FilterButtonBar>
+          <>
+            <FlexRow style={{ marginTop: '1.5rem', flexDirection: 'column' }}>
+              {filters.map((filterConfig, index) => {
+                let selectedFilterOption = filterFieldOptions.find(
+                  (f) => f.field === filterConfig.field
+                )
+
+                return (
+                  <ControlGroup
+                    key={`${filterConfig.field}_${index}`}
+                    style={{ width: '100%', marginBottom: '1.5rem' }}>
+                    <Input
+                      value={filterConfig.filterValue}
+                      onChange={(nextVal) => onChangeFilter(index, nextVal)}
+                      name="filter"
+                      type="text"
+                      theme="light"
+                      label={`Filter on ${
+                        selectedFilterOption?.label || text('general.app.all')
+                      }`}
+                    />
+                    {filterFieldOptions.length !== 0 && (
+                      <Dropdown
+                        label="Field"
+                        items={filterFieldOptions}
+                        selectedItem={selectedFilterOption}
+                        itemToString={(item) => item.field}
+                        itemToLabel={(item) => item.label}
+                        onSelect={(nextField) => onChangeFilterField(index, nextField)}
+                      />
+                    )}
+                    <FilterButtonsWrapper>
+                      <FilterModeButton
+                        name="filter-mode"
+                        isSwitch={true}
+                        value="mode"
+                        checked={filterConfig.filterMode === FilterMode.Inclusive}
+                        preLabel="Supistava"
+                        onChange={(nextVal) =>
+                          onChangeFilterMode(
+                            index,
+                            nextVal ? FilterMode.Inclusive : FilterMode.Exclusive
+                          )
+                        }>
+                        Laajentava
+                      </FilterModeButton>
+                    </FilterButtonsWrapper>
+                    <FilterButtonsWrapper>
+                      <RemoveButton onClick={() => onRemoveFilter(index)}>
+                        <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                      </RemoveButton>
+                    </FilterButtonsWrapper>
+                  </ControlGroup>
+                )
+              })}
+            </FlexRow>
+            <FlexRow>
+              {filters.length !== 0 && (
+                <FilterButtonBar>
+                  <Button size={ButtonSize.LARGE} onClick={onApply}>
+                    Käytä filtterit
+                  </Button>
+                </FilterButtonBar>
+              )}
+            </FlexRow>
+          </>
         )}
       </ReportTableFiltersView>
     )
