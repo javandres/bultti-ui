@@ -1,9 +1,8 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { compact, lowerCase, omit, trim } from 'lodash'
-import { strval } from '../util/strval'
+import { omit } from 'lodash'
 import { ControlGroup } from '../common/components/form'
 import Dropdown from '../common/input/Dropdown'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
@@ -12,7 +11,8 @@ import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
-import { useDebounce } from 'use-debounce'
+import { FilterConfig, FilterMode } from '../schema-types'
+import { ReportContext } from './Report'
 
 const ReportTableFiltersView = styled.div`
   margin-bottom: 1rem;
@@ -24,12 +24,6 @@ const FilterButtonBar = styled.div`
   justify-content: flex-start;
 `
 
-const ResultsCountView = styled.div`
-  margin-left: auto;
-  font-size: 0.875rem;
-  color: var(--grey);
-`
-
 const FilterModeButton = styled(ToggleButton)`
   flex: 0;
   display: inline-flex;
@@ -38,45 +32,36 @@ const FilterModeButton = styled(ToggleButton)`
   padding: 0;
 `
 
+const FilterButtonsWrapper = styled.div`
+  margin-left: auto;
+  align-self: flex-end;
+  margin-bottom: 0.875rem;
+  flex: 0;
+`
+
 export type PropTypes<ItemType = any> = {
+  onApply: () => unknown
   items: ItemType[]
   excludeFields?: string[]
-  children: (filteredItems: ItemType[]) => React.ReactChild
   fieldLabels?: { [key in keyof ItemType]?: string }
-}
-
-type FilterConfig = {
-  field: string
-  filterValue: string
-}
-
-enum FilterMode {
-  INCLUSIVE,
-  EXCLUSIVE,
 }
 
 const ReportTableFilters = observer(
   <ItemType extends {}>({
     items,
-    children,
     excludeFields = [],
     fieldLabels = {},
+    onApply = () => {},
   }: PropTypes<ItemType>) => {
-    let [liveFilters, setFilters] = useState<FilterConfig[]>([{ field: '', filterValue: '' }])
-    let [liveFilterMode, setFilterMode] = useState<FilterMode>(FilterMode.INCLUSIVE)
-
-    let [filters] = useDebounce(liveFilters, 1000)
-    let [filterMode] = useDebounce(liveFilterMode, 100)
-
-    let toggleFilterMode = useCallback(() => {
-      setFilterMode((currentMode) =>
-        currentMode === FilterMode.INCLUSIVE ? FilterMode.EXCLUSIVE : FilterMode.INCLUSIVE
-      )
-    }, [])
+    let { filters, setFilters } = useContext(ReportContext)
 
     let onAddFilter = useCallback((field = '') => {
       setFilters((currentFilters) => {
-        let newFilter: FilterConfig = { field, filterValue: '' }
+        let newFilter: FilterConfig = {
+          field,
+          filterValue: '',
+          filterMode: FilterMode.Inclusive,
+        }
         return [...currentFilters, newFilter]
       })
     }, [])
@@ -88,6 +73,20 @@ const ReportTableFilters = observer(
 
         if (filterConfig) {
           filterConfig.filterValue = value
+          return nextFilters
+        }
+
+        return currentFilters
+      })
+    }, [])
+
+    let onChangeFilterMode = useCallback((index: number, value: FilterMode) => {
+      setFilters((currentFilters) => {
+        let nextFilters = [...currentFilters]
+        let filterConfig = nextFilters[index]
+
+        if (filterConfig) {
+          filterConfig.filterMode = value
           return nextFilters
         }
 
@@ -129,92 +128,6 @@ const ReportTableFilters = observer(
       })
     }, [])
 
-    let currentFilteredItems = useMemo(() => {
-      // If we have nothing to filter or nothing to filter on, return the items as-is.
-      if (filters.length === 0 || !items || items.length === 0) {
-        return items
-      }
-
-      // Get a simple string tuple from the filter values.
-      // The first string is the field name, the second is the filter value.
-      let filterFieldGroups: [string, string][] = compact(
-        filters.map(({ field, filterValue }) => {
-          if (!filterValue) {
-            return null
-          }
-
-          return [field, filterValue]
-        })
-      )
-
-      // No filters, no fun.
-      if (filterFieldGroups.length === 0) {
-        return items
-      }
-
-      // Collect all items that match a filter. An item should ideally only appear once.
-      let filteredItems: typeof items = []
-
-      // If the filter value matches a field value, add the item to the result array
-      // if it's not yet present. Values are compared in lowercase.
-      function matchValue(item, field, filterValue) {
-        let inputValue = trim(lowerCase(filterValue))
-        let itemValue = lowerCase(strval(item[field]))
-
-        if (itemValue.includes(inputValue)) {
-          if (!filteredItems.includes(item)) {
-            filteredItems.push(item)
-          }
-
-          return true
-        }
-
-        return false
-      }
-
-      for (let [field, filterValue] of filterFieldGroups) {
-        // Each field is visited in the order that the filters are set.
-        // If the filter mode is inclusive, all items are evaluated for
-        // each filtered field. If the mode is exclusive, only the
-        // previously matched items are evaluated.
-        let itemArray =
-          filteredItems.length === 0 || filterMode === FilterMode.INCLUSIVE
-            ? items
-            : filteredItems
-
-        // When using exclusive filtering, the result array is emptied on each iteration.
-        // Otherwise results from previous fields would still be included even if they
-        // don't match the field of the current iteration.
-        if (filterMode === FilterMode.EXCLUSIVE) {
-          filteredItems = []
-        }
-
-        // Evaluate each item in the source array and see if they match a filter.
-        itemLoop: for (let item of itemArray) {
-          if (!field) {
-            // If the field is unset, that means that the filter value applies to all fields.
-            // It is now necessary to visit each field of the current item and see if it matches.
-            for (let itemField in item) {
-              if (
-                item.hasOwnProperty(itemField) &&
-                !excludeFields.includes(itemField) && // Ensure the field is filterable
-                matchValue(item, itemField, filterValue) // Match and add to result
-              ) {
-                // If the field matched, continue to the next item in the source array.
-                // It is unnecessary to check this item further since it already matched.
-                continue itemLoop
-              }
-            }
-          } else if (!excludeFields.includes(field)) {
-            // If the filter value is accompanied by a field name, we can check it directly.
-            matchValue(item, field, filterValue) // Match and add to result
-          }
-        }
-      }
-
-      return filteredItems
-    }, [items, filters, filterMode])
-
     let filterFieldOptions = useMemo(() => {
       let fields = omit(items[0], excludeFields)
       let options = Object.keys(fields).map((key) => ({
@@ -226,69 +139,76 @@ const ReportTableFilters = observer(
     }, [items, excludeFields])
 
     return (
-      <>
-        <ReportTableFiltersView>
-          <FlexRow style={{ marginBottom: '1.5rem' }}>
-            <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
-            {liveFilters.length > 1 && (
-              <FilterModeButton
-                name="filter-mode"
-                isSwitch={true}
-                value="mode"
-                checked={liveFilterMode === FilterMode.INCLUSIVE}
-                preLabel="Supistava"
-                onChange={toggleFilterMode}>
-                Laajentava
-              </FilterModeButton>
-            )}
-          </FlexRow>
-          {liveFilters.map((filterConfig, index) => {
-            let selectedFilterOption = filterFieldOptions.find(
-              (f) => f.field === filterConfig.field
-            )
+      <ReportTableFiltersView>
+        <FlexRow style={{ marginBottom: '1.5rem', alignItems: 'center' }}>
+          <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
+          <Button
+            style={{ marginLeft: '1rem' }}
+            onClick={() => onAddFilter()}
+            buttonStyle={ButtonStyle.SECONDARY}
+            size={ButtonSize.SMALL}>
+            Lisää kenttä
+          </Button>
+        </FlexRow>
+        {filters.map((filterConfig, index) => {
+          let selectedFilterOption = filterFieldOptions.find(
+            (f) => f.field === filterConfig.field
+          )
 
-            return (
-              <ControlGroup
-                key={`${filterConfig.field}_${index}`}
-                style={{ width: '100%', marginBottom: '1.5rem' }}>
-                <Input
-                  value={filterConfig.filterValue}
-                  onChange={(nextVal) => onChangeFilter(index, nextVal)}
-                  name="filter"
-                  type="text"
-                  theme="light"
-                  label={`Filter on ${selectedFilterOption?.label || text('general.app.all')}`}
+          return (
+            <ControlGroup
+              key={`${filterConfig.field}_${index}`}
+              style={{ width: '100%', marginBottom: '1.5rem' }}>
+              <Input
+                value={filterConfig.filterValue}
+                onChange={(nextVal) => onChangeFilter(index, nextVal)}
+                name="filter"
+                type="text"
+                theme="light"
+                label={`Filter on ${selectedFilterOption?.label || text('general.app.all')}`}
+              />
+              {filterFieldOptions.length !== 0 && (
+                <Dropdown
+                  label="Field"
+                  items={filterFieldOptions}
+                  selectedItem={selectedFilterOption}
+                  itemToString={(item) => item.field}
+                  itemToLabel={(item) => item.label}
+                  onSelect={(nextField) => onChangeFilterField(index, nextField)}
                 />
-                {filterFieldOptions.length !== 0 && (
-                  <Dropdown
-                    label="Field"
-                    items={filterFieldOptions}
-                    selectedItem={selectedFilterOption}
-                    itemToString={(item) => item.field}
-                    itemToLabel={(item) => item.label}
-                    onSelect={(nextField) => onChangeFilterField(index, nextField)}
-                  />
-                )}
-                <div style={{ marginLeft: 'auto', alignSelf: 'center', flex: 0 }}>
-                  <RemoveButton onClick={() => onRemoveFilter(index)}>
-                    <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                  </RemoveButton>
-                </div>
-              </ControlGroup>
-            )
-          })}
+              )}
+              <FilterButtonsWrapper>
+                <FilterModeButton
+                  name="filter-mode"
+                  isSwitch={true}
+                  value="mode"
+                  checked={filterConfig.filterMode === FilterMode.Inclusive}
+                  preLabel="Supistava"
+                  onChange={(nextVal) =>
+                    onChangeFilterMode(
+                      index,
+                      nextVal ? FilterMode.Inclusive : FilterMode.Exclusive
+                    )
+                  }>
+                  Laajentava
+                </FilterModeButton>
+              </FilterButtonsWrapper>
+              <FilterButtonsWrapper>
+                <RemoveButton onClick={() => onRemoveFilter(index)}>
+                  <CrossThick fill="white" width="0.5rem" height="0.5rem" />
+                </RemoveButton>
+              </FilterButtonsWrapper>
+            </ControlGroup>
+          )
+        })}
+        {filters.length !== 0 && (
           <FilterButtonBar>
-            <Button
-              onClick={() => onAddFilter()}
-              buttonStyle={ButtonStyle.NORMAL}
-              size={ButtonSize.SMALL}>
-              Lisää kenttä
+            <Button size={ButtonSize.LARGE} onClick={onApply}>
+              Käytä filtterit
             </Button>
-            <ResultsCountView>{currentFilteredItems.length} riviä</ResultsCountView>
           </FilterButtonBar>
-        </ReportTableFiltersView>
-        {children(currentFilteredItems)}
-      </>
+        )}
+      </ReportTableFiltersView>
     )
   }
 )

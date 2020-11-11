@@ -236,16 +236,17 @@ export const TextButton: React.FC<ButtonProps> = observer(
 export const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
   background: var(--red);
   border: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
   padding: 0;
   line-height: 1;
-  align-items: baseline;
+  align-items: center;
   justify-content: center;
   font-size: 0.75rem;
 
   svg {
-    margin: 0;
+    margin: -1px 0 0 0;
+    display: block;
   }
 `

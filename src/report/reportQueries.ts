@@ -131,8 +131,16 @@ export const reportByName = gql`
     $reportName: String!
     $inspectionId: String!
     $page: InputPageConfig
+    $filters: [InputFilterConfig!]
+    $sort: [InputSortConfig!]
   ) {
-    inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId, page: $page) {
+    inspectionReportByName(
+      reportName: $reportName
+      inspectionId: $inspectionId
+      page: $page
+      filters: $filters
+      sort: $sort
+    ) {
       ...ReportFragment
       operator {
         id

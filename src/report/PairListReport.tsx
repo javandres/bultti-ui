@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { ReportComponentProps } from './reportUtil'
-import ReportTableFilters from './ReportTableFilters'
 import { EmptyView } from '../common/components/Messages'
 import { mapKeys, omit, toString } from 'lodash'
 import { DeparturePair } from '../schema-types'
@@ -77,22 +76,15 @@ const PairListReport = observer(({ items, columnLabels }: PropTypes<DeparturePai
 
   return (
     <PairListReportView>
-      <ReportTableFilters<any>
+      <Table<any>
+        virtualized={true}
+        maxHeight={window.innerHeight * 0.75}
         items={rows}
-        fieldLabels={pairLabels}
-        excludeFields={['id', '__typename']}>
-        {(filteredItems) => (
-          <Table<any>
-            virtualized={true}
-            maxHeight={window.innerHeight * 0.75}
-            items={filteredItems}
-            hideKeys={!columnLabels ? ['id'] : undefined}
-            renderValue={renderCellValue}
-            columnLabels={pairLabels}>
-            <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
-          </Table>
-        )}
-      </ReportTableFilters>
+        hideKeys={!columnLabels ? ['id'] : undefined}
+        renderValue={renderCellValue}
+        columnLabels={pairLabels}>
+        <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
+      </Table>
     </PairListReportView>
   )
 })

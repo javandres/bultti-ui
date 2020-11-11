@@ -36,25 +36,18 @@ const ListReport = observer(
 
     return (
       <ListReportView>
-        <ReportTableFilters<ItemType>
+        <Table<ItemType>
+          virtualized={true}
+          keyFromItem={(item: any) =>
+            item?.id || item?._id || item?.departureId || item?.registryNr || ''
+          }
+          maxHeight={window.innerHeight * 0.75}
           items={items}
-          fieldLabels={columnLabels}
-          excludeFields={['id', '__typename']}>
-          {(filteredItems) => (
-            <Table<ItemType>
-              virtualized={true}
-              keyFromItem={(item: any) =>
-                item?.id || item?._id || item?.departureId || item?.registryNr || ''
-              }
-              maxHeight={window.innerHeight * 0.75}
-              items={filteredItems}
-              hideKeys={!columnLabels ? ['id'] : undefined}
-              renderValue={renderCellValue}
-              columnLabels={columnLabels}>
-              <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
-            </Table>
-          )}
-        </ReportTableFilters>
+          hideKeys={!columnLabels ? ['id'] : undefined}
+          renderValue={renderCellValue}
+          columnLabels={columnLabels}>
+          <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
+        </Table>
       </ListReportView>
     )
   }
