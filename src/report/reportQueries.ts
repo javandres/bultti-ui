@@ -127,8 +127,12 @@ export const ObservedDepartureFragment = gql`
 `
 
 export const reportByName = gql`
-  query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
-    inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId) {
+  query getPreInspectionReport(
+    $reportName: String!
+    $inspectionId: String!
+    $page: InputPageConfig
+  ) {
+    inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId, page: $page) {
       ...ReportFragment
       operator {
         id

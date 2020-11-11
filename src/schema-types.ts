@@ -150,6 +150,9 @@ export type QueryReportsArgs = {
 
 
 export type QueryInspectionReportByNameArgs = {
+  sort?: Maybe<Array<InputSortConfig>>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  page?: Maybe<InputPageConfig>;
   inspectionId: Scalars['String'];
   reportName: Scalars['String'];
 };
@@ -735,6 +738,9 @@ export type Report = {
   reportEntities: Array<ReportEntityUnion>;
   inspectionTypes?: Maybe<Array<InspectionType>>;
   reportType?: Maybe<ReportType>;
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
 };
 
 export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture;
@@ -783,6 +789,51 @@ export enum ReportType {
   Summary = 'SUMMARY',
   ExecutionRequirement = 'EXECUTION_REQUIREMENT'
 }
+
+export type PageConfig = {
+  __typename?: 'PageConfig';
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
+
+export type FilterConfig = {
+  __typename?: 'FilterConfig';
+  field: Scalars['String'];
+  filterValue: Scalars['String'];
+  filterMode: FilterMode;
+};
+
+export enum FilterMode {
+  Inclusive = 'INCLUSIVE',
+  Exclusive = 'EXCLUSIVE'
+}
+
+export type SortConfig = {
+  __typename?: 'SortConfig';
+  column: Scalars['String'];
+  order: SortOrder;
+};
+
+export enum SortOrder {
+  Asc = 'ASC',
+  Desc = 'DESC'
+}
+
+export type InputSortConfig = {
+  column: Scalars['String'];
+  order: SortOrder;
+};
+
+export type InputFilterConfig = {
+  field: Scalars['String'];
+  filterValue: Scalars['String'];
+  filterMode: FilterMode;
+};
+
+export type InputPageConfig = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
+};
 
 export type HfpDateStatus = {
   __typename?: 'HfpDateStatus';

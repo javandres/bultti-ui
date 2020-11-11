@@ -464,7 +464,7 @@ const Table = observer(
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
-    // Adding a column a second time switches its
+    // Adding a column a second time switches its order between asc, desc and no sorting.
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
         if (!items[0] || !Object.keys(items[0] as {}).includes(columnName)) {

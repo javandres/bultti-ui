@@ -210,6 +210,12 @@ type ExecutionRequirementValue {
   sanctionThreshold: Float
 }
 
+type FilterConfig {
+  field: String!
+  filterMode: FilterMode!
+  filterValue: String!
+}
+
 type HfpDateProgress {
   date: BulttiDate!
   progress: Int!
@@ -437,6 +443,11 @@ type OperatorBlockDeparture {
   vehicleId: String
 }
 
+type PageConfig {
+  page: Int!
+  pageSize: Int!
+}
+
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
@@ -493,7 +504,7 @@ type Query {
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
-  inspectionReportByName(inspectionId: String!, reportName: String!): Report
+  inspectionReportByName(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, reportName: String!, sort: [InputSortConfig!]): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
@@ -517,13 +528,16 @@ type Query {
 type Report {
   columnLabels: String
   description: String!
+  filters: [FilterConfig!]
   inspection: Inspection
   inspectionTypes: [InspectionType!]
   name: String!
   operator: Operator
+  page: PageConfig
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType
   season: Season
+  sort: [SortConfig!]
   title: String!
 }
 
@@ -533,6 +547,11 @@ type Season {
   inspections: [Inspection!]!
   season: String!
   startDate: BulttiDate!
+}
+
+type SortConfig {
+  column: String!
+  order: SortOrder!
 }
 
 type Subscription {
@@ -580,6 +599,11 @@ enum DayType {
 enum DepartureType {
   BLOCK
   SCHEMA
+}
+
+enum FilterMode {
+  EXCLUSIVE
+  INCLUSIVE
 }
 
 enum HfpStatus {
@@ -635,6 +659,11 @@ enum ReportType {
   LIST
   PAIR_LIST
   SUMMARY
+}
+
+enum SortOrder {
+  ASC
+  DESC
 }
 
 enum TrackReason {
@@ -695,6 +724,22 @@ input InitialInspectionInput {
   operatorId: Int!
   seasonId: String!
   startDate: BulttiDate
+}
+
+input InputFilterConfig {
+  field: String!
+  filterMode: FilterMode!
+  filterValue: String!
+}
+
+input InputPageConfig {
+  page: Int!
+  pageSize: Int!
+}
+
+input InputSortConfig {
+  column: String!
+  order: SortOrder!
 }
 
 input InspectionInput {

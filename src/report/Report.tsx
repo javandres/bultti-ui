@@ -44,6 +44,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         reportName,
         inspectionId,
         inspectionType,
+        page: { page: 1, pageSize: 500 },
       },
     }
   )
