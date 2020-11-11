@@ -10,7 +10,6 @@ import {
   PageConfig,
   Report as ReportDataType,
   ReportType,
-  ReportType as ReportTypeEnum,
   SortConfig,
 } from '../schema-types'
 import ListReport from './ListReport'
@@ -46,24 +45,6 @@ export type PropTypes = {
   inspectionId: string
 }
 
-export type ReportContextType = {
-  filters: FilterConfig[]
-  setFilters: (arg: ((filters: FilterConfig[]) => FilterConfig[]) | FilterConfig[]) => unknown
-  sort: SortConfig[]
-  setSort: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
-  page: PageConfig
-  setPage: (arg: ((page: PageConfig) => PageConfig) | PageConfig) => unknown
-}
-
-export const ReportContext = React.createContext<ReportContextType>({
-  filters: [],
-  sort: [],
-  page: { page: 1, pageSize: 500 },
-  setFilters: () => {},
-  setSort: () => {},
-  setPage: () => {},
-})
-
 const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
   let [filters, setFilters] = useState<FilterConfig[]>([])
   let [sort, setSort] = useState<SortConfig[]>([])
@@ -77,13 +58,15 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     inspectionId,
     inspectionType,
     filters,
+    sort,
+    page,
   })
 
   let { data: reportData, loading: reportLoading, refetch } = useQueryData<ReportDataType>(
     reportByName,
     {
       notifyOnNetworkStatusChange: true,
-      variables: { ...requestVars.current, sort, page },
+      variables: { ...requestVars.current },
     }
   )
 
@@ -105,9 +88,14 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
   }, [reportData])
 
   let onUpdateFetchProps = useCallback(() => {
-    requestVars.current.filters = filters
     refetch({ ...requestVars.current, sort, page })
   }, [refetch, requestVars.current, filters, sort, page])
+
+  // Trigger the refetch when sort or page state changes. Does NOT react to filter state, that
+  // is triggered separately with a button.
+  useEffect(() => {
+    onUpdateFetchProps()
+  }, [sort, page])
 
   let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
@@ -116,64 +104,53 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     [reportData]
   )
 
-  let ReportTypeComponent = useMemo(() => {
-    switch (reportData?.reportType) {
-      case ReportTypeEnum.PairList:
-        return (
-          <PairListReport
-            items={reportDataItems as DeparturePair[]}
-            columnLabels={columnLabels}
-          />
-        )
-      case ReportTypeEnum.ExecutionRequirement:
-        return (
-          <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
-        )
-      case ReportTypeEnum.List:
-      default:
-        return <ListReport items={reportDataItems} columnLabels={columnLabels} />
-    }
-  }, [reportDataItems, columnLabels, reportData])
-
   return (
-    <ReportContext.Provider
-      value={{
-        filters,
-        setFilters,
-        sort,
-        setSort,
-        page,
-        setPage,
-      }}>
-      <ReportView>
-        <ReportFunctionsRow>
-          {inspectionType && inspectionId && (
-            <DownloadReport
-              reportName={reportName}
-              inspectionId={inspectionId}
-              inspectionType={inspectionType}
-            />
-          )}
-          <Button
-            style={{ marginLeft: 'auto' }}
-            buttonStyle={ButtonStyle.SECONDARY}
-            size={ButtonSize.SMALL}
-            onClick={onUpdateFetchProps}>
-            Päivitä
-          </Button>
-        </ReportFunctionsRow>
-        <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
-        {reportData?.reportType !== ReportType.ExecutionRequirement && (
-          <ReportTableFilters
-            items={reportDataItems}
-            fieldLabels={columnLabels}
-            excludeFields={['id', '__typename']}
-            onApply={onUpdateFetchProps}
+    <ReportView>
+      <ReportFunctionsRow>
+        {inspectionType && inspectionId && (
+          <DownloadReport
+            reportName={reportName}
+            inspectionId={inspectionId}
+            inspectionType={inspectionType}
           />
         )}
-        {ReportTypeComponent}
-      </ReportView>
-    </ReportContext.Provider>
+        <Button
+          style={{ marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={onUpdateFetchProps}>
+          Päivitä
+        </Button>
+      </ReportFunctionsRow>
+      <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
+      {reportData?.reportType !== ReportType.ExecutionRequirement && (
+        <ReportTableFilters
+          filters={filters}
+          setFilters={setFilters}
+          items={reportDataItems}
+          fieldLabels={columnLabels}
+          excludeFields={['id', '__typename']}
+          onApply={onUpdateFetchProps}
+        />
+      )}
+      {reportData?.reportType === ReportType.List ? (
+        <ListReport
+          sort={sort}
+          setSort={setSort}
+          items={reportDataItems}
+          columnLabels={columnLabels}
+        />
+      ) : reportData?.reportType === ReportType.PairList ? (
+        <PairListReport
+          sort={sort}
+          setSort={setSort}
+          items={reportDataItems as DeparturePair[]}
+          columnLabels={columnLabels}
+        />
+      ) : reportData?.reportType === ReportType.ExecutionRequirement ? (
+        <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
+      ) : null}
+    </ReportView>
   )
 })
 

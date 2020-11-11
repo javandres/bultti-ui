@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
@@ -6,7 +6,7 @@ import { ReportComponentProps } from './reportUtil'
 import { EmptyView } from '../common/components/Messages'
 import { toString } from 'lodash'
 import { round } from '../util/round'
-import { ReportContext } from './Report'
+import { SortConfig } from '../schema-types'
 
 const ListReportView = styled.div``
 
@@ -14,10 +14,13 @@ const TableEmptyView = styled(EmptyView)`
   margin: 1rem !important;
 `
 
-export type PropTypes<T> = ReportComponentProps<T>
+export type PropTypes<T> = {
+  sort?: SortConfig[]
+  setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
+} & ReportComponentProps<T>
 
 const ListReport = observer(
-  <ItemType extends {}>({ items, columnLabels }: PropTypes<ItemType>) => {
+  <ItemType extends {}>({ items, columnLabels, sort, setSort }: PropTypes<ItemType>) => {
     const renderCellValue = useCallback((key, val) => {
       if (typeof val === 'boolean' || typeof val === 'undefined' || val === null) {
         return (
@@ -33,8 +36,6 @@ const ListReport = observer(
 
       return toString(val)
     }, [])
-
-    let { sort, setSort } = useContext(ReportContext)
 
     return (
       <ListReportView>

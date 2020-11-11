@@ -429,8 +429,8 @@ const Table = observer(
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
 
-    let sort = propSort || _sort
-    let setSort = propSetSort || _setSort
+    let sort = propSort ?? _sort
+    let setSort = propSetSort ?? _setSort
 
     let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
     let [columnWidths] = useDebounce(liveColumnWidths, 200, { leading: true, trailing: false })

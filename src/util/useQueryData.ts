@@ -6,7 +6,7 @@ import {
 } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { pickGraphqlData } from './pickGraphqlData'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
 import { merge } from 'lodash'
 
 const defaultOptions = {
@@ -27,6 +27,7 @@ export const useQueryData = <TData extends {} = {}, TVariables = OperationVariab
   let pickData = options?.pickData || ''
 
   let queryData = useQuery<TData, TVariables>(query, allOptions)
+
   let { loading, error, data = {} as TData, refetch, networkStatus, subscribeToMore } =
     queryData || {}
 
@@ -59,6 +60,18 @@ export const useQueryData = <TData extends {} = {}, TVariables = OperationVariab
     }
   }, [subscriber, subscribeToMore])
 
-  let pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
+  let prevData = useRef(undefined)
+
+  let pickedData = useMemo(() => {
+    let resultData = pickGraphqlData(data, pickData)
+
+    if (!resultData) {
+      return prevData.current
+    }
+
+    prevData.current = resultData
+    return resultData
+  }, [data, pickData])
+
   return { data: pickedData, loading, error, refetch: availableRefetch }
 }

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
@@ -12,7 +12,6 @@ import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
 import { FilterConfig, FilterMode } from '../schema-types'
-import { ReportContext } from './Report'
 
 const ReportTableFiltersView = styled.div`
   margin: 1rem 0;
@@ -47,6 +46,8 @@ export type PropTypes<ItemType = any> = {
   items: ItemType[]
   excludeFields?: string[]
   fieldLabels?: { [key in keyof ItemType]?: string }
+  filters: FilterConfig[]
+  setFilters: (arg: ((filters: FilterConfig[]) => FilterConfig[]) | FilterConfig[]) => unknown
 }
 
 const ReportTableFilters = observer(
@@ -55,9 +56,9 @@ const ReportTableFilters = observer(
     excludeFields = [],
     fieldLabels = {},
     onApply = () => {},
+    filters,
+    setFilters,
   }: PropTypes<ItemType>) => {
-    let { filters, setFilters } = useContext(ReportContext)
-
     let onAddFilter = useCallback((field = '') => {
       setFilters((currentFilters) => {
         let newFilter: FilterConfig = {
