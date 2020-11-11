@@ -738,9 +738,9 @@ export type Report = {
   reportEntities: Array<ReportEntityUnion>;
   inspectionTypes?: Maybe<Array<InspectionType>>;
   reportType?: Maybe<ReportType>;
-  filteredCount: Scalars['Int'];
-  totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
+  filteredCount?: Maybe<Scalars['Int']>;
+  totalCount?: Maybe<Scalars['Int']>;
+  pages?: Maybe<Scalars['Int']>;
   page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;

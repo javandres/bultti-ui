@@ -528,20 +528,20 @@ type Query {
 type Report {
   columnLabels: String
   description: String!
-  filteredCount: Int!
+  filteredCount: Int
   filters: [FilterConfig!]
   inspection: Inspection
   inspectionTypes: [InspectionType!]
   name: String!
   operator: Operator
   page: PageConfig
-  pages: Int!
+  pages: Int
   reportEntities: [ReportEntityUnion!]!
   reportType: ReportType
   season: Season
   sort: [SortConfig!]
   title: String!
-  totalCount: Int!
+  totalCount: Int
 }
 
 type Season {

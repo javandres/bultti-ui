@@ -33,6 +33,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
         : 'var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
+  display: flex;
 
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};

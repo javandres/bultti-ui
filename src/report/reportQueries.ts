@@ -14,6 +14,22 @@ export const ReportFragment = gql`
     columnLabels
     reportType
     inspectionTypes
+    filteredCount
+    filters {
+      field
+      filterMode
+      filterValue
+    }
+    page {
+      page
+      pageSize
+    }
+    pages
+    sort {
+      column
+      order
+    }
+    totalCount
   }
 `
 

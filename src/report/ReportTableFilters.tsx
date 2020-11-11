@@ -64,7 +64,7 @@ const ReportTableFilters = observer(
         let newFilter: FilterConfig = {
           field,
           filterValue: '',
-          filterMode: FilterMode.Inclusive,
+          filterMode: FilterMode.Exclusive,
         }
         return [...currentFilters, newFilter]
       })

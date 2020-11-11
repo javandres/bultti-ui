@@ -21,6 +21,8 @@ import DownloadReport from './DownloadReport'
 import PairListReport from './PairListReport'
 import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
+import ReportPaging from './ReportPaging'
+import { omit } from 'lodash'
 
 const ReportView = styled.div`
   position: relative;
@@ -72,27 +74,28 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   // Update local state with what was returned from the server.
   useEffect(() => {
-    let { page, filters, sort } = reportData || {}
+    let { page: resultPage, filters: resultFilters, sort: resultSort } = reportData || {}
 
-    if (page) {
-      setPage(page)
+    if (resultPage) {
+      setPage(omit(resultPage, ['__typename']) as PageConfig)
     }
 
-    if (filters) {
-      setFilters(filters)
+    if (resultFilters && resultFilters.length !== 0) {
+      setFilters(resultFilters.map((f) => omit(f, '__typename')) as FilterConfig[])
     }
 
-    if (sort) {
-      setSort(sort)
+    if (resultSort && resultSort.length !== 0) {
+      setSort(resultSort.map((s) => omit(s, '__typename')) as SortConfig[])
     }
   }, [reportData])
 
   let onUpdateFetchProps = useCallback(() => {
+    requestVars.current.filters = filters
     refetch({ ...requestVars.current, sort, page })
   }, [refetch, requestVars.current, filters, sort, page])
 
-  // Trigger the refetch when sort or page state changes. Does NOT react to filter state, that
-  // is triggered separately with a button.
+  // Trigger the refetch when sort or page state changes. Does NOT react to
+  // filter state, which is triggered separately with a button.
   useEffect(() => {
     onUpdateFetchProps()
   }, [sort, page])
@@ -102,6 +105,39 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
   let columnLabels = useMemo(
     () => (reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined),
     [reportData]
+  )
+
+  let onPageNav = useCallback(
+    (offset) => {
+      return () => {
+        setPage((currentPage) => {
+          let nextPageIdx = Math.min(
+            Math.max(currentPage.page + offset, 1),
+            reportData?.pages || 1
+          )
+
+          return {
+            ...currentPage,
+            page: nextPageIdx,
+          }
+        })
+      }
+    },
+    [reportData?.pages]
+  )
+
+  let onSetPage = useCallback(
+    (setPageTo) => {
+      setPage((currentPage) => {
+        let nextPageIdx = Math.min(Math.max(setPageTo, 1), reportData?.pages || 1)
+
+        return {
+          ...currentPage,
+          page: nextPageIdx,
+        }
+      })
+    },
+    [reportData?.pages]
   )
 
   return (
@@ -131,6 +167,14 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           fieldLabels={columnLabels}
           excludeFields={['id', '__typename']}
           onApply={onUpdateFetchProps}
+        />
+      )}
+      {reportData && (
+        <ReportPaging
+          onSetPage={onSetPage}
+          onNextPage={onPageNav(1)}
+          onPrevPage={onPageNav(-1)}
+          reportData={reportData}
         />
       )}
       {reportData?.reportType === ReportType.List ? (
