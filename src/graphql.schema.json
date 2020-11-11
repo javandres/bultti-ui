@@ -4339,18 +4339,6 @@
             "deprecationReason": null
           },
           {
-            "name": "postInspection",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Inspection",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "postInspectionId",
             "description": null,
             "args": [],
@@ -4363,24 +4351,24 @@
             "deprecationReason": null
           },
           {
-            "name": "operator",
+            "name": "plannedOperatorId",
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Operator",
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "observedOperator",
+            "name": "observedOperatorId",
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Operator",
+              "kind": "SCALAR",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,

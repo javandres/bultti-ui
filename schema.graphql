@@ -344,16 +344,15 @@ type ObservedDeparture {
   observedDepartureDateTime: DateTime
   observedEquipment: Equipment
   observedEquipmentId: String
-  observedOperator: Operator
+  observedOperatorId: Int
   observedRegistryNr: String
   odometer: Int!
-  operator: Operator
   originStopId: String
   plannedEquipment: Equipment
   plannedEquipmentId: String
   plannedEquipmentType: String
+  plannedOperatorId: Int
   plannedRegistryNr: String
-  postInspection: Inspection
   postInspectionId: String
   procurementUnitId: String!
   recoveryTime: Int

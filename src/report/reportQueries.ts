@@ -80,13 +80,7 @@ export const ObservedDepartureFragment = gql`
     id
     departureId
     departureType
-    postInspection {
-      id
-      inspectionType
-      status
-      inspectionStartDate
-      inspectionEndDate
-    }
+    postInspectionId
     postInspectionId
     journeyStartTime
     journeyEndTime

@@ -476,10 +476,9 @@ export type ObservedDeparture = {
   id: Scalars['ID'];
   departureId: Scalars['String'];
   departureType: DepartureType;
-  postInspection?: Maybe<Inspection>;
   postInspectionId?: Maybe<Scalars['String']>;
-  operator?: Maybe<Operator>;
-  observedOperator?: Maybe<Operator>;
+  plannedOperatorId?: Maybe<Scalars['Int']>;
+  observedOperatorId?: Maybe<Scalars['Int']>;
   journeyStartTime: Scalars['String'];
   journeyEndTime: Scalars['String'];
   uniqueVehicleId?: Maybe<Scalars['String']>;
