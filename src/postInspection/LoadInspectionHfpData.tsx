@@ -356,9 +356,9 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
         size={ButtonSize.LARGE}
         onClick={onClickLoad}
         disabled={
-          loadedRangesLoading || false
-          /*inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
-          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)*/
+          loadedRangesLoading ||
+          inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
+          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
         }>
         {loadedRangesLoading
           ? 'Tarkistetaan tilannetta...'
@@ -403,34 +403,38 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
               </DateStatusDisplay>
             )
           })}
-          <InputLabel theme="light" style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
-            Nyt lataamassa
-          </InputLabel>
-          {dateProgress.size !== 0 &&
-            inspectionDates.map((date) => {
-              let dateStr = format(date, 'yyyy-MM-dd')
-              let currentProgress = dateProgress.get(dateStr)
-              let loadedStatus = dateStatuses.find((status) => status.date === dateStr)?.status
-              let loadedProgress =
-                // Show the current progress if we have one and it is loading
-                !!currentProgress || loadedStatus === HfpStatus.Loading
-                  ? currentProgress || 0
-                  : // Do not show in loading list if ready
-                  loadedStatus === HfpStatus.Ready
-                  ? undefined
-                  : 0
+          {dateProgress.size !== 0 && (
+            <>
+              <InputLabel theme="light" style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
+                Nyt lataamassa
+              </InputLabel>
+              {inspectionDates.map((date) => {
+                let dateStr = format(date, 'yyyy-MM-dd')
+                let currentProgress = dateProgress.get(dateStr)
+                let loadedStatus = dateStatuses.find((status) => status.date === dateStr)
+                  ?.status
+                let loadedProgress =
+                  // Show the current progress if we have one and it is loading
+                  !!currentProgress || loadedStatus === HfpStatus.Loading
+                    ? currentProgress || 0
+                    : // Do not show in loading list if ready
+                    loadedStatus === HfpStatus.Ready
+                    ? undefined
+                    : 0
 
-              if (!loadedProgress) {
-                return null
-              }
+                if (!loadedProgress) {
+                  return null
+                }
 
-              return (
-                <DateStatusDisplay key={`date progress ${dateStr}`}>
-                  <span>{format(date, READABLE_DATE_FORMAT)}</span>
-                  <DateProgressValue>{loadedProgress}%</DateProgressValue>
-                </DateStatusDisplay>
-              )
-            })}
+                return (
+                  <DateStatusDisplay key={`date progress ${dateStr}`}>
+                    <span>{format(date, READABLE_DATE_FORMAT)}</span>
+                    <DateProgressValue>{loadedProgress}%</DateProgressValue>
+                  </DateStatusDisplay>
+                )
+              })}
+            </>
+          )}
         </LoadedRangesDisplay>
       )}
     </LoadInspectionHfpDataView>
