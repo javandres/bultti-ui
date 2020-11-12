@@ -55,7 +55,7 @@ export type Query = {
   contractProcurementUnitOptions: Array<ProcurementUnitOption>;
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
-  previewObservedRequirement: ObservedExecutionRequirement;
+  previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
 };
 
 
