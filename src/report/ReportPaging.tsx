@@ -42,10 +42,15 @@ const PagingWrapper = styled.div`
 const PageSelectDropdown = styled(Dropdown)`
   margin-right: 0.5rem;
   min-width: 4rem;
-  flex: 0;
 
   button {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0 0.5rem 0.75rem;
+  }
+
+  svg {
+    margin-left: 0.75rem;
+    margin-right: 0.5rem;
+    flex: 1 0 1rem;
   }
 `
 
