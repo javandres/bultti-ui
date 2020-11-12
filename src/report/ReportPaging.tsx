@@ -41,10 +41,11 @@ const PagingWrapper = styled.div`
 
 const PageSelectDropdown = styled(Dropdown)`
   margin-right: 0.5rem;
-  min-width: 5rem;
+  min-width: 4rem;
+  flex: 0;
 
   button {
-    padding-right: 0.75rem;
+    padding: 0.5rem 0.75rem;
   }
 `
 
@@ -83,14 +84,13 @@ const ReportPaging = observer(
           </PageValue>
         )}
         <PagingWrapper>
-          {reportData.page?.page !== 1 && (
-            <Button
-              size={ButtonSize.SMALL}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={onPrevPage}>
-              Edellinen
-            </Button>
-          )}
+          <Button
+            disabled={(reportData.page?.page || 1) <= 1}
+            size={ButtonSize.SMALL}
+            buttonStyle={ButtonStyle.SECONDARY}
+            onClick={onPrevPage}>
+            Edellinen
+          </Button>
           <PageValue
             style={{
               whiteSpace: 'nowrap',
@@ -108,14 +108,13 @@ const ReportPaging = observer(
             />
             <strong>/ {reportData.pages}</strong>
           </PageValue>
-          {(reportData.page?.page || 1) < (reportData.pages || 1) && (
-            <Button
-              size={ButtonSize.SMALL}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={onNextPage}>
-              Seuraava
-            </Button>
-          )}
+          <Button
+            disabled={!((reportData.page?.page || 1) < (reportData.pages || 1))}
+            size={ButtonSize.SMALL}
+            buttonStyle={ButtonStyle.SECONDARY}
+            onClick={onNextPage}>
+            Seuraava
+          </Button>
         </PagingWrapper>
       </ReportPagingView>
     )
