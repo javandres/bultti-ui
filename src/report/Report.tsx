@@ -7,6 +7,7 @@ import {
   ExecutionRequirement,
   FilterConfig,
   InspectionType,
+  ObservedExecutionRequirement,
   PageConfig,
   Report as ReportDataType,
   ReportType,
@@ -23,6 +24,7 @@ import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
 import { omit } from 'lodash'
+import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 
 const ReportView = styled.div`
   position: relative;
@@ -96,9 +98,9 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   // Trigger the refetch when sort or page state changes. Does NOT react to
   // filter state, which is triggered separately with a button.
-  useEffect(() => {
+  /*useEffect(() => {
     onUpdateFetchProps()
-  }, [sort, page])
+  }, [sort, page])*/
 
   let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
@@ -159,23 +161,23 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         </Button>
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
-      {reportData?.reportType !== ReportType.ExecutionRequirement && (
-        <ReportTableFilters
-          filters={filters}
-          setFilters={setFilters}
-          items={reportDataItems}
-          fieldLabels={columnLabels}
-          excludeFields={['id', '__typename']}
-          onApply={onUpdateFetchProps}
-        />
-      )}
-      {reportData && (
-        <ReportPaging
-          onSetPage={onSetPage}
-          onNextPage={onPageNav(1)}
-          onPrevPage={onPageNav(-1)}
-          reportData={reportData}
-        />
+      {reportData && reportData?.reportType !== ReportType.ExecutionRequirement && (
+        <>
+          <ReportTableFilters
+            filters={filters}
+            setFilters={setFilters}
+            items={reportDataItems}
+            fieldLabels={columnLabels}
+            excludeFields={['id', '__typename']}
+            onApply={onUpdateFetchProps}
+          />
+          <ReportPaging
+            onSetPage={onSetPage}
+            onNextPage={onPageNav(1)}
+            onPrevPage={onPageNav(-1)}
+            reportData={reportData}
+          />
+        </>
       )}
       {reportData?.reportType === ReportType.List ? (
         <ListReport
@@ -192,7 +194,13 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           columnLabels={columnLabels}
         />
       ) : reportData?.reportType === ReportType.ExecutionRequirement ? (
-        <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
+        inspectionType === InspectionType.Pre ? (
+          <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
+        ) : (
+          <ObservedExecutionRequirementsReport
+            items={reportDataItems as ObservedExecutionRequirement[]}
+          />
+        )
       ) : null}
     </ReportView>
   )

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
+import RequirementsTable from './RequirementsTable'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
@@ -10,7 +10,10 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { usePreInspectionAreaRequirements } from './executionRequirementUtils'
+import {
+  RequirementsTableLayout,
+  usePreInspectionAreaRequirements,
+} from './executionRequirementUtils'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;

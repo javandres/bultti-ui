@@ -2,6 +2,7 @@ import { gql } from '@apollo/client'
 import { OperatorBlockDepartureFragment } from '../departureBlock/blockDeparturesQuery'
 import {
   ExecutionRequirementFragment,
+  ObservedExecutionRequirementFragment,
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
@@ -196,6 +197,25 @@ export const reportByName = gql`
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment
         }
+        ... on ObservedExecutionRequirement {
+          ...ObservedExecutionRequirementFragment
+          observedRequirements {
+            id
+            kilometersObserved
+            kilometersRequired
+            averageAgeWeightedObserved
+            classSanctionAmount
+            cumulativeDifferencePercentage
+            differencePercentage
+            emissionClass
+            equipmentCountObserved
+            equipmentCountRequired
+            quotaObserved
+            quotaRequired
+            sanctionAmount
+            sanctionThreshold
+          }
+        }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
           procurementUnitId
@@ -230,4 +250,5 @@ export const reportByName = gql`
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
   ${ObservedDepartureFragment}
+  ${ObservedExecutionRequirementFragment}
 `

@@ -6,7 +6,7 @@ schema {
   subscription: Subscription
 }
 
-union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | OperatorBlockDeparture
+union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | ObservedExecutionRequirement | OperatorBlockDeparture
 
 type Contract {
   createdAt: DateTime!
@@ -373,18 +373,23 @@ type ObservedDeparture {
 
 type ObservedExecutionRequirement {
   area: OperatingArea!
+  areaId: Int!
+  areaRequirement: ObservedExecutionRequirement
+  areaRequirementId: String
   averageAgeWeightedObserved: Float
   averageAgeWeightedRequired: Float
   endDate: BulttiDate!
   id: ID!
   inspection: Inspection!
   inspectionId: String!
+  isCombinedAreaRequirement: Boolean!
   observedRequirements: [ObservedExecutionValue!]!
   operator: Operator!
-  operatorId: Float!
+  operatorId: Int!
   startDate: BulttiDate!
   totalKilometersObserved: Float
   totalKilometersRequired: Float
+  weeklyRequirements: [ObservedExecutionRequirement!]
 }
 
 type ObservedExecutionValue {

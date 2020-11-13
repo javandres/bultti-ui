@@ -311,7 +311,7 @@ const PostInspectionExecutionRequirements = observer(() => {
                             (val) => !!val.quotaObserved
                           ) && (
                             <>
-                              <ObservedHeading>Toteutetut arvot</ObservedHeading>
+                              <ObservedHeading>Toteutuneet arvot</ObservedHeading>
                               <RequirementValueTable
                                 fluid={true}
                                 items={requirement.observedRequirements}

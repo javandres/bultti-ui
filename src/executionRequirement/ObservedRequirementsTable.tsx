@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirement, ExecutionRequirementValue } from '../schema-types'
+import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
@@ -29,29 +29,30 @@ const ExecutionRequirementsAreaContainer = styled.div`
 `
 
 export type PropTypes = {
-  executionRequirement: ExecutionRequirement
+  executionRequirement: ObservedExecutionRequirement
   tableLayout?: RequirementsTableLayout
 }
 
-const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
+const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
-  kilometerRequirement: 'Km vaatimus',
-  quotaRequirement: '% Osuus',
-  equipmentCount: 'Vaatimus kpl',
-  kilometersFulfilled: 'Toteuma km',
-  quotaFulfilled: 'Toteuma % osuus',
+  kilometersRequired: 'Km vaatimus',
+  quotaRequired: '% Osuus',
+  equipmentCountRequired: 'Vaatimus kpl',
+  kilometersObserved: 'Toteuma km',
+  quotaObserved: 'Toteuma % osuus',
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
-  equipmentCountFulfilled: 'Toteuma kpl',
+  equipmentCountObserved: 'Toteuma kpl',
+  averageAgeWeightedObserved: 'Painotettu keski-ikä',
   sanctionThreshold: 'Sanktioraja 5%',
   sanctionAmount: 'Sanktiomäärä',
   classSanctionAmount: 'PL/sanktiomäärä',
 }
 
-const RequirementsTable: React.FC<PropTypes> = observer(
+const ObservedRequirementsTable: React.FC<PropTypes> = observer(
   ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
     let requirementRows = useMemo(() => {
-      let requirementValues = executionRequirement.requirements
+      let requirementValues = executionRequirement.observedRequirements
 
       if (tableLayout === RequirementsTableLayout.BY_VALUES) {
         return orderBy(requirementValues, 'emissionClass', 'desc')
@@ -63,12 +64,12 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       for (let i = 1; i <= 10; i++) {
         let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
 
-        kilometerRow[i] = currentRequirement?.kilometerRequirement || 0
-        percentageRow[i] = currentRequirement?.quotaRequirement || 0
+        kilometerRow[i] = currentRequirement?.kilometersRequired || 0
+        percentageRow[i] = currentRequirement?.quotaRequired || 0
       }
 
-      kilometerRow.total = getTotal(requirementValues, 'kilometerRequirement')
-      percentageRow.total = getTotal(requirementValues, 'quotaRequirement')
+      kilometerRow.total = getTotal(requirementValues, 'kilometersRequired')
+      percentageRow.total = getTotal(requirementValues, 'quotaRequired')
 
       return [kilometerRow, percentageRow]
     }, [executionRequirement, tableLayout])
@@ -89,8 +90,8 @@ const RequirementsTable: React.FC<PropTypes> = observer(
 
       switch (item.unit || key) {
         case 'percentage':
-        case 'quotaRequirement':
-        case 'quotaFulfilled':
+        case 'quotaRequired':
+        case 'quotaObserved':
         case 'differencePercentage':
         case 'cumulativeDifferencePercentage':
         case 'sanctionThreshold':
@@ -99,11 +100,11 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           unit = '%'
           break
         case 'kilometers':
-        case 'kilometerRequirement':
-        case 'kilometersFulfilled':
+        case 'kilometersRequired':
+        case 'kilometersObserved':
           unit = 'km'
           break
-        case 'equipmentCount':
+        case 'equipmentCountRequired':
           unit = 'kpl'
           break
         default:
@@ -124,19 +125,19 @@ const RequirementsTable: React.FC<PropTypes> = observer(
 
         switch (key) {
           case 'percentage':
-          case 'quotaRequirement':
-          case 'quotaFulfilled':
+          case 'quotaRequired':
+          case 'quotaObserved':
           case 'differencePercentage':
           case 'cumulativeDifferencePercentage':
           case 'sanctionAmount':
           case 'classSanctionAmount':
             return `${totalVal}%`
           case 'kilometers':
-          case 'kilometerRequirement':
-          case 'kilometersFulfilled':
+          case 'kilometersRequired':
+          case 'kilometersObserved':
             return `${totalVal} km`
-          case 'equipmentCount':
-          case 'equipmentCountFulfilled':
+          case 'equipmentCountRequired':
+          case 'equipmentCountObserved':
             return `${totalVal} kpl`
           default:
             return totalVal
@@ -153,13 +154,13 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           item={pick(executionRequirement, [
             'totalKilometers',
             ...(tableLayout === RequirementsTableLayout.BY_VALUES
-              ? ['averageAgeWeighted', 'averageAgeWeightedFulfilled']
+              ? ['averageAgeWeighted', 'averageAgeWeightedObserved']
               : ['averageAgeWeighted']),
           ])}
           labels={{
             totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
-            averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
+            averageAgeWeightedObserved: 'Toteutunut keski-ikä',
           }}
           renderValue={renderDisplayValue}
         />
@@ -186,4 +187,4 @@ const RequirementsTable: React.FC<PropTypes> = observer(
   }
 )
 
-export default RequirementsTable
+export default ObservedRequirementsTable

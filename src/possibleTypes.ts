@@ -13,7 +13,8 @@
       "OperatorBlockDeparture",
       "ExecutionRequirement",
       "EmissionClassExecutionItem",
-      "ObservedDeparture"
+      "ObservedDeparture",
+      "ObservedExecutionRequirement"
     ]
   }
 };

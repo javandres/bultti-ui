@@ -1,12 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import RequirementsTable, {
-  RequirementsTableLayout,
-} from '../executionRequirement/RequirementsTable'
+import RequirementsTable from '../executionRequirement/RequirementsTable'
 import { ReportComponentProps } from './reportUtil'
 import { ExecutionRequirement } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
+import { RequirementsTableLayout } from '../executionRequirement/executionRequirementUtils'
 
 const ExecutionRequirementsReportView = styled.div``
 

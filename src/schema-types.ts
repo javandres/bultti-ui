@@ -632,10 +632,12 @@ export type ExecutionRequirementValue = {
 export type ObservedExecutionRequirement = {
   __typename?: 'ObservedExecutionRequirement';
   id: Scalars['ID'];
+  isCombinedAreaRequirement: Scalars['Boolean'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+  areaId: Scalars['Int'];
   area: OperatingArea;
-  operatorId: Scalars['Float'];
+  operatorId: Scalars['Int'];
   operator: Operator;
   inspectionId: Scalars['String'];
   inspection: Inspection;
@@ -644,6 +646,9 @@ export type ObservedExecutionRequirement = {
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   observedRequirements: Array<ObservedExecutionValue>;
+  areaRequirement?: Maybe<ObservedExecutionRequirement>;
+  areaRequirementId?: Maybe<Scalars['String']>;
+  weeklyRequirements?: Maybe<Array<ObservedExecutionRequirement>>;
 };
 
 export type ObservedExecutionValue = {
@@ -746,7 +751,7 @@ export type Report = {
   sort?: Maybe<Array<SortConfig>>;
 };
 
-export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture;
+export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture | ObservedExecutionRequirement;
 
 export type MissingEquipment = {
   __typename?: 'MissingEquipment';
