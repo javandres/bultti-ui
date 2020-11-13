@@ -394,6 +394,7 @@ type ObservedExecutionRequirement {
 
 type ObservedExecutionValue {
   averageAgeWeightedObserved: Float
+  averageAgeWeightedRequired: Float
   classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float

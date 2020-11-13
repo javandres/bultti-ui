@@ -5,7 +5,7 @@ import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
-import { orderBy, pick } from 'lodash'
+import { orderBy, pick, lowerCase } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
 import {
@@ -76,7 +76,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
 
     let renderDisplayValue = useCallback((key, val) => {
       let displayVal = round(val)
-      let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
+      let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
 
       return `${displayVal} ${displayUnit}`
     }, [])
@@ -115,6 +115,8 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
       return `${useVal} ${unit}`
     }, [])
 
+    let { averageAgeWeightedObserved, averageAgeWeightedRequired } = executionRequirement
+
     let getColumnTotal = useCallback(
       (key: string) => {
         if (['emissionClass', 'sanctionThreshold'].includes(key)) {
@@ -139,6 +141,10 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           case 'equipmentCountRequired':
           case 'equipmentCountObserved':
             return `${totalVal} kpl`
+          case 'averageAgeWeightedObserved':
+            return `${averageAgeWeightedObserved} v`
+          case 'averageAgeWeightedRequired':
+            return `${averageAgeWeightedRequired} v`
           default:
             return totalVal
         }
@@ -152,15 +158,15 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           valuesPerRow={3}
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, [
-            'totalKilometers',
+            'totalKilometersRequired',
             ...(tableLayout === RequirementsTableLayout.BY_VALUES
-              ? ['averageAgeWeighted', 'averageAgeWeightedObserved']
-              : ['averageAgeWeighted']),
+              ? ['averageAgeWeightedRequired', 'averageAgeWeightedObserved']
+              : ['averageAgeWeightedRequired']),
           ])}
           labels={{
-            totalKilometers: 'Suoritekilometrit yhteensä',
-            averageAgeWeighted: 'Painotettu keski-ikä',
-            averageAgeWeightedObserved: 'Toteutunut keski-ikä',
+            totalKilometersRequired: 'Suoritekilometrit yhteensä',
+            averageAgeWeightedRequired: 'Suunniteltu painotettu keski-ikä',
+            averageAgeWeightedObserved: 'Toteutunut painotettu keski-ikä',
           }}
           renderValue={renderDisplayValue}
         />

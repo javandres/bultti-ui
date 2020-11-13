@@ -664,6 +664,7 @@ export type ObservedExecutionValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCountRequired?: Maybe<Scalars['Int']>;
   equipmentCountObserved?: Maybe<Scalars['Int']>;
+  averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;

@@ -204,6 +204,7 @@ export const reportByName = gql`
             kilometersObserved
             kilometersRequired
             averageAgeWeightedObserved
+            averageAgeWeightedRequired
             classSanctionAmount
             cumulativeDifferencePercentage
             differencePercentage

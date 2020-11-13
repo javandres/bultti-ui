@@ -23,7 +23,6 @@ import PairListReport from './PairListReport'
 import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
-import { omit } from 'lodash'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 
 const ReportView = styled.div`
@@ -74,23 +73,6 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     }
   )
 
-  // Update local state with what was returned from the server.
-  useEffect(() => {
-    let { page: resultPage, filters: resultFilters, sort: resultSort } = reportData || {}
-
-    if (resultPage) {
-      setPage(omit(resultPage, ['__typename']) as PageConfig)
-    }
-
-    if (resultFilters && resultFilters.length !== 0) {
-      setFilters(resultFilters.map((f) => omit(f, '__typename')) as FilterConfig[])
-    }
-
-    if (resultSort && resultSort.length !== 0) {
-      setSort(resultSort.map((s) => omit(s, '__typename')) as SortConfig[])
-    }
-  }, [reportData])
-
   let onUpdateFetchProps = useCallback(() => {
     requestVars.current.filters = filters
     refetch({ ...requestVars.current, sort, page })
@@ -98,9 +80,9 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   // Trigger the refetch when sort or page state changes. Does NOT react to
   // filter state, which is triggered separately with a button.
-  /*useEffect(() => {
+  useEffect(() => {
     onUpdateFetchProps()
-  }, [sort, page])*/
+  }, [sort, page])
 
   let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
