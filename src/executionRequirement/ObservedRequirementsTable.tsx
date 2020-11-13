@@ -45,9 +45,9 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   equipmentCountObserved: 'Toteuma kpl',
   averageAgeWeightedRequired: 'Suun. painotettu keski-ikä',
   averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
-  sanctionThreshold: 'Sanktioraja 5%',
-  sanctionAmount: 'Sanktiomäärä',
-  classSanctionAmount: 'PL/sanktiomäärä',
+  sanctionThreshold: 'Sanktioraja',
+  sanctionAmount: 'Sanktioitavat',
+  classSanctionAmount: 'Sanktiomäärä',
 }
 
 const ObservedRequirementsTable: React.FC<PropTypes> = observer(
