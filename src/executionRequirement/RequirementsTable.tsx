@@ -43,9 +43,9 @@ const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: str
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   equipmentCountFulfilled: 'Toteuma kpl',
-  sanctionThreshold: 'Sanktioraja 5%',
-  sanctionAmount: 'Sanktiomäärä',
-  classSanctionAmount: 'PL/sanktiomäärä',
+  sanctionThreshold: 'Sanktioraja',
+  sanctionAmount: 'Sanktioitavat',
+  classSanctionAmount: 'Sanktiomäärä',
 }
 
 const RequirementsTable: React.FC<PropTypes> = observer(
