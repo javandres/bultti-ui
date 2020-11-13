@@ -43,7 +43,8 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   equipmentCountObserved: 'Toteuma kpl',
-  averageAgeWeightedObserved: 'Painotettu keski-ikä',
+  averageAgeWeightedRequired: 'Suun. painotettu keski-ikä',
+  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
   sanctionThreshold: 'Sanktioraja 5%',
   sanctionAmount: 'Sanktiomäärä',
   classSanctionAmount: 'PL/sanktiomäärä',
@@ -142,9 +143,9 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           case 'equipmentCountObserved':
             return `${totalVal} kpl`
           case 'averageAgeWeightedObserved':
-            return `${averageAgeWeightedObserved} v`
+            return `${round(averageAgeWeightedObserved || 0)} v`
           case 'averageAgeWeightedRequired':
-            return `${averageAgeWeightedRequired} v`
+            return `${round(averageAgeWeightedRequired || 0)} v`
           default:
             return totalVal
         }
