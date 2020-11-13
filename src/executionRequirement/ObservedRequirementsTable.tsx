@@ -46,8 +46,8 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   averageAgeWeightedRequired: 'Suun. painotettu keski-ikä',
   averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
   sanctionThreshold: 'Sanktioraja',
-  sanctionAmount: 'Sanktioitavat',
-  classSanctionAmount: 'Sanktiomäärä',
+  sanctionablePercentage: 'Sanktioitavat',
+  sanctionAmount: 'Sanktiomäärä',
 }
 
 const ObservedRequirementsTable: React.FC<PropTypes> = observer(
@@ -96,8 +96,8 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
         case 'differencePercentage':
         case 'cumulativeDifferencePercentage':
         case 'sanctionThreshold':
+        case 'sanctionablePercentage':
         case 'sanctionAmount':
-        case 'classSanctionAmount':
           unit = '%'
           break
         case 'kilometers':
@@ -132,8 +132,8 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           case 'quotaObserved':
           case 'differencePercentage':
           case 'cumulativeDifferencePercentage':
+          case 'sanctionablePercentage':
           case 'sanctionAmount':
-          case 'classSanctionAmount':
             return `${totalVal}%`
           case 'kilometers':
           case 'kilometersRequired':

@@ -205,7 +205,6 @@ export const reportByName = gql`
             kilometersRequired
             averageAgeWeightedObserved
             averageAgeWeightedRequired
-            classSanctionAmount
             cumulativeDifferencePercentage
             differencePercentage
             emissionClass
@@ -213,6 +212,7 @@ export const reportByName = gql`
             equipmentCountRequired
             quotaObserved
             quotaRequired
+            sanctionablePercentage
             sanctionAmount
             sanctionThreshold
           }

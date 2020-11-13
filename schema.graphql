@@ -395,7 +395,6 @@ type ObservedExecutionRequirement {
 type ObservedExecutionValue {
   averageAgeWeightedObserved: Float
   averageAgeWeightedRequired: Float
-  classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float
   emissionClass: Int!
@@ -409,6 +408,7 @@ type ObservedExecutionValue {
   quotaRequired: Float
   sanctionAmount: Float
   sanctionThreshold: Float
+  sanctionablePercentage: Float
 }
 
 type OperatingArea {

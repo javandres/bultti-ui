@@ -6457,7 +6457,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionablePercentage",
             "description": null,
             "args": [],
             "type": {
@@ -6469,7 +6469,7 @@
             "deprecationReason": null
           },
           {
-            "name": "classSanctionAmount",
+            "name": "sanctionAmount",
             "description": null,
             "args": [],
             "type": {

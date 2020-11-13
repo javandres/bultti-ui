@@ -667,8 +667,8 @@ export type ObservedExecutionValue = {
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionablePercentage?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
-  classSanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export enum InspectionStatus {
