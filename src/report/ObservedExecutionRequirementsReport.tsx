@@ -25,10 +25,7 @@ const ObservedExecutionRequirementsReport = observer(
         {items.map((areaRequirements) => (
           <React.Fragment key={areaRequirements.area.id}>
             <AreaHeading>{areaRequirements.area.name}</AreaHeading>
-            <ObservedRequirementsTable
-              tableLayout={RequirementsTableLayout.BY_VALUES}
-              executionRequirement={areaRequirements}
-            />
+            <ObservedRequirementsTable executionRequirement={areaRequirements} />
           </React.Fragment>
         ))}
       </ExecutionRequirementsReportView>

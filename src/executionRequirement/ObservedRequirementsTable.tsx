@@ -30,7 +30,6 @@ const ExecutionRequirementsAreaContainer = styled.div`
 
 export type PropTypes = {
   executionRequirement: ObservedExecutionRequirement
-  tableLayout?: RequirementsTableLayout
 }
 
 const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
@@ -50,148 +49,112 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   sanctionAmount: 'Sanktiomäärä',
 }
 
-const ObservedRequirementsTable: React.FC<PropTypes> = observer(
-  ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
-    let requirementRows = useMemo(() => {
-      let requirementValues = executionRequirement.observedRequirements
+const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequirement }) => {
+  let requirementRows = useMemo(() => {
+    let requirementValues = executionRequirement.observedRequirements
+    return orderBy(requirementValues, 'emissionClass', 'desc')
+  }, [executionRequirement])
 
-      if (tableLayout === RequirementsTableLayout.BY_VALUES) {
-        return orderBy(requirementValues, 'emissionClass', 'desc')
+  let renderDisplayValue = useCallback((key, val) => {
+    let displayVal = round(val)
+    let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
+
+    return `${displayVal} ${displayUnit}`
+  }, [])
+
+  let renderTableValue = useCallback((key, val, isHeader = false, item) => {
+    if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
+      return val
+    }
+
+    let unit = ''
+
+    switch (item.unit || key) {
+      case 'quotaRequired':
+      case 'quotaObserved':
+      case 'differencePercentage':
+      case 'cumulativeDifferencePercentage':
+      case 'sanctionThreshold':
+      case 'sanctionablePercentage':
+      case 'sanctionAmount':
+        unit = '%'
+        break
+      case 'kilometersRequired':
+      case 'kilometersObserved':
+        unit = 'km'
+        break
+      case 'equipmentCountRequired':
+        unit = 'kpl'
+        break
+      default:
+        unit = ''
+    }
+
+    let useVal = round(val)
+    return `${useVal} ${unit}`
+  }, [])
+
+  let { averageAgeWeightedObserved, averageAgeWeightedRequired } = executionRequirement
+
+  let getColumnTotal = useCallback(
+    (key: string) => {
+      if (['emissionClass', 'sanctionThreshold'].includes(key)) {
+        return ''
       }
 
-      let kilometerRow = { unit: 'kilometers', total: 0 }
-      let percentageRow = { unit: 'percentage', total: 0 }
+      let totalVal = round(getTotal<any, string>(requirementRows, key))
 
-      for (let i = 1; i <= 10; i++) {
-        let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
-
-        kilometerRow[i] = currentRequirement?.kilometersRequired || 0
-        percentageRow[i] = currentRequirement?.quotaRequired || 0
-      }
-
-      kilometerRow.total = getTotal(requirementValues, 'kilometersRequired')
-      percentageRow.total = getTotal(requirementValues, 'quotaRequired')
-
-      return [kilometerRow, percentageRow]
-    }, [executionRequirement, tableLayout])
-
-    let renderDisplayValue = useCallback((key, val) => {
-      let displayVal = round(val)
-      let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
-
-      return `${displayVal} ${displayUnit}`
-    }, [])
-
-    let renderTableValue = useCallback((key, val, isHeader = false, item) => {
-      if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
-        return val
-      }
-
-      let unit = ''
-
-      switch (item.unit || key) {
-        case 'percentage':
+      switch (key) {
         case 'quotaRequired':
         case 'quotaObserved':
         case 'differencePercentage':
         case 'cumulativeDifferencePercentage':
-        case 'sanctionThreshold':
         case 'sanctionablePercentage':
         case 'sanctionAmount':
-          unit = '%'
-          break
-        case 'kilometers':
+          return `${totalVal}%`
         case 'kilometersRequired':
         case 'kilometersObserved':
-          unit = 'km'
-          break
+          return `${totalVal} km`
         case 'equipmentCountRequired':
-          unit = 'kpl'
-          break
+        case 'equipmentCountObserved':
+          return `${totalVal} kpl`
+        case 'averageAgeWeightedObserved':
+          return `${round(averageAgeWeightedObserved || 0)} v`
+        case 'averageAgeWeightedRequired':
+          return `${round(averageAgeWeightedRequired || 0)} v`
         default:
-          unit = ''
+          return totalVal
       }
+    },
+    [executionRequirement]
+  )
 
-      let useVal = round(val)
-      return `${useVal} ${unit}`
-    }, [])
-
-    let { averageAgeWeightedObserved, averageAgeWeightedRequired } = executionRequirement
-
-    let getColumnTotal = useCallback(
-      (key: string) => {
-        if (['emissionClass', 'sanctionThreshold'].includes(key)) {
-          return ''
-        }
-
-        let totalVal = round(getTotal<any, string>(requirementRows, key))
-
-        switch (key) {
-          case 'percentage':
-          case 'quotaRequired':
-          case 'quotaObserved':
-          case 'differencePercentage':
-          case 'cumulativeDifferencePercentage':
-          case 'sanctionablePercentage':
-          case 'sanctionAmount':
-            return `${totalVal}%`
-          case 'kilometers':
-          case 'kilometersRequired':
-          case 'kilometersObserved':
-            return `${totalVal} km`
-          case 'equipmentCountRequired':
-          case 'equipmentCountObserved':
-            return `${totalVal} kpl`
-          case 'averageAgeWeightedObserved':
-            return `${round(averageAgeWeightedObserved || 0)} v`
-          case 'averageAgeWeightedRequired':
-            return `${round(averageAgeWeightedRequired || 0)} v`
-          default:
-            return totalVal
-        }
-      },
-      [executionRequirement]
-    )
-
-    return (
-      <ExecutionRequirementsAreaContainer>
-        <ValueDisplay
-          valuesPerRow={3}
-          style={{ marginBottom: '1rem' }}
-          item={pick(executionRequirement, [
-            'totalKilometersRequired',
-            ...(tableLayout === RequirementsTableLayout.BY_VALUES
-              ? ['averageAgeWeightedRequired', 'averageAgeWeightedObserved']
-              : ['averageAgeWeightedRequired']),
-          ])}
-          labels={{
-            totalKilometersRequired: 'Suoritekilometrit yhteensä',
-            averageAgeWeightedRequired: 'Suunniteltu painotettu keski-ikä',
-            averageAgeWeightedObserved: 'Toteutunut painotettu keski-ikä',
-          }}
-          renderValue={renderDisplayValue}
-        />
-        <Table<any>
-          items={requirementRows}
-          columnLabels={
-            tableLayout === RequirementsTableLayout.BY_VALUES
-              ? valuesLayoutColumnLabels
-              : emissionClassLayoutColumnLabels
-          }
-          columnOrder={
-            tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']
-          }
-          renderValue={renderTableValue}
-          keyFromItem={(item) =>
-            tableLayout === RequirementsTableLayout.BY_VALUES ? item.emissionClass : item.unit
-          }
-          getColumnTotal={
-            tableLayout === RequirementsTableLayout.BY_VALUES ? getColumnTotal : undefined
-          }
-        />
-      </ExecutionRequirementsAreaContainer>
-    )
-  }
-)
+  return (
+    <ExecutionRequirementsAreaContainer>
+      <ValueDisplay
+        valuesPerRow={3}
+        style={{ marginBottom: '1rem' }}
+        item={pick(executionRequirement, [
+          'totalKilometersRequired',
+          'averageAgeWeightedRequired',
+          'averageAgeWeightedObserved',
+        ])}
+        labels={{
+          totalKilometersRequired: 'Suoritekilometrit yhteensä',
+          averageAgeWeightedRequired: 'Suunniteltu painotettu keski-ikä',
+          averageAgeWeightedObserved: 'Toteutunut painotettu keski-ikä',
+        }}
+        renderValue={renderDisplayValue}
+      />
+      <Table<any>
+        items={requirementRows}
+        columnLabels={valuesLayoutColumnLabels}
+        renderValue={renderTableValue}
+        keyFromItem={(item) => item.emissionClass}
+        getColumnTotal={getColumnTotal}
+      />
+    </ExecutionRequirementsAreaContainer>
+  )
+})
 
 export default ObservedRequirementsTable
