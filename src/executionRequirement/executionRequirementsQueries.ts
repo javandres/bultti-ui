@@ -30,7 +30,8 @@ export const ObservedRequirementValueFragment = gql`
     equipmentCountObserved
     sanctionAmount
     sanctionThreshold
-    classSanctionAmount
+    sanctionAmount
+    sanctionablePercentage
     cumulativeDifferencePercentage
     differencePercentage
     averageAgeWeightedObserved
