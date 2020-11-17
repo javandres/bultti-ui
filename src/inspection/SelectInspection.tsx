@@ -55,6 +55,8 @@ const InspectionItem = styled.div<StatusProps>`
         ? 'var(--lighter-grey)'
         : p.status === InspectionStatus.InReview
         ? 'var(--yellow)'
+        : p.status === InspectionStatus.Processing
+        ? 'var(--light-grey)'
         : 'var(--light-green)'};
   font-family: inherit;
   margin-left: 1rem;
@@ -134,6 +136,8 @@ const InspectionStatusDisplay = styled.div<StatusProps>`
       ? 'var(--blue)'
       : p.status === InspectionStatus.InReview
       ? 'var(--yellow)'
+      : p.status === InspectionStatus.Processing
+      ? 'var(--light-grey)'
       : 'var(--light-green)'};
   color: ${(p) => (p.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white')};
   margin: 0 0 1rem;
@@ -251,6 +255,8 @@ const SelectInspection: React.FC<PropTypes> = observer(
                         ? 'Muokattavissa'
                         : inspection.status === InspectionStatus.InReview
                         ? 'Hyväksyttävänä'
+                        : inspection.status === InspectionStatus.Processing
+                        ? 'Käsittelyssä'
                         : 'Tuotannossa'}
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>

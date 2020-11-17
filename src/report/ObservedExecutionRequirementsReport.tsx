@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { ReportComponentProps } from './reportUtil'
 import { ObservedExecutionRequirement } from '../schema-types'
-import { RequirementsTableLayout } from '../executionRequirement/executionRequirementUtils'
 import ObservedRequirementsTable from '../executionRequirement/ObservedRequirementsTable'
 
 const ExecutionRequirementsReportView = styled.div``

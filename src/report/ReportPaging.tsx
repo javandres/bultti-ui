@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import { Report } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import Dropdown from '../common/input/Dropdown'
-import { fill } from 'lodash'
 
 const ReportPagingView = styled.div`
   display: flex;

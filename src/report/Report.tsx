@@ -36,12 +36,6 @@ const ReportFunctionsRow = styled(FlexRow)`
   margin: -0.25rem -1rem 1rem;
 `
 
-const ResultsCountView = styled.div`
-  margin-left: auto;
-  font-size: 0.875rem;
-  color: var(--grey);
-`
-
 export type PropTypes = {
   reportName: string
   inspectionType: InspectionType

@@ -5,13 +5,9 @@ import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
-import { orderBy, pick, lowerCase } from 'lodash'
+import { lowerCase, orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
-import {
-  emissionClassLayoutColumnLabels,
-  RequirementsTableLayout,
-} from './executionRequirementUtils'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
