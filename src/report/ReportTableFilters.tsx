@@ -154,6 +154,13 @@ const ReportTableFilters = observer(
             Lisää kenttä
           </Button>
         </FlexRow>
+        <p style={{ lineHeight: '1.4' }}>
+          Filtteröi raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita
+          tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat filtteröidä.
+          Jos haluat filtteröidä kyllä/ei arvoja, voit käyttää filtteriarvona: true/false,
+          kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä
+          puuttuu jokin arvo.
+        </p>
         {filters.length !== 0 && (
           <>
             <FlexRow style={{ marginTop: '1.5rem', flexDirection: 'column' }}>

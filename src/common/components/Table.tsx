@@ -746,7 +746,6 @@ const Table = observer(
                   itemSize={rowHeight}
                   layout="vertical"
                   itemData={rows}
-                  overscan={100}
                   itemKey={getListItemKey}>
                   {TableRowComponent}
                 </List>
