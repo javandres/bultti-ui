@@ -34,16 +34,9 @@ const DownloadReport = observer(
     let [error, setError] = useState('')
 
     let onDownloadReport = useCallback(async () => {
-      let inspectionTypeStr =
-        inspectionType === InspectionType.Pre
-          ? 'preinspection'
-          : inspectionType === InspectionType.Post
-          ? 'postinspection'
-          : undefined
-
       setLoading(true)
 
-      let url = `${SERVER_URL}/reports/${inspectionTypeStr}/${inspectionId}/${reportName}/excel`
+      let url = `${SERVER_URL}/reports/${inspectionId}/${reportName}/excel`
       const token = getAuthToken()
 
       let response = await fetch(url, {
