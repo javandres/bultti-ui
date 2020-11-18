@@ -639,16 +639,14 @@ export type ObservedExecutionRequirement = {
   area: OperatingArea;
   operatorId: Scalars['Int'];
   operator: Operator;
-  inspectionId: Scalars['String'];
   inspection: Inspection;
+  inspectionId: Scalars['String'];
   totalKilometersRequired?: Maybe<Scalars['Float']>;
   totalKilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  observedRequirementDepartures: Array<ObservedExecutionValue>;
   observedRequirements: Array<ObservedExecutionValue>;
-  areaRequirement?: Maybe<ObservedExecutionRequirement>;
-  areaRequirementId?: Maybe<Scalars['String']>;
-  weeklyRequirements?: Maybe<Array<ObservedExecutionRequirement>>;
 };
 
 export type ObservedExecutionValue = {
@@ -752,7 +750,7 @@ export type Report = {
   sort?: Maybe<Array<SortConfig>>;
 };
 
-export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture | ObservedExecutionRequirement;
+export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture | ObservedExecutionRequirement | ObservedUnitExecutionItem;
 
 export type MissingEquipment = {
   __typename?: 'MissingEquipment';
@@ -790,6 +788,15 @@ export type EmissionClassExecutionItem = {
   class8?: Maybe<Scalars['Float']>;
   class9?: Maybe<Scalars['Float']>;
   class10?: Maybe<Scalars['Float']>;
+};
+
+export type ObservedUnitExecutionItem = {
+  __typename?: 'ObservedUnitExecutionItem';
+  id: Scalars['ID'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  totalKilometersRequired?: Maybe<Scalars['Float']>;
+  totalKilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
 };
 
 export enum ReportType {

@@ -6,7 +6,7 @@ schema {
   subscription: Subscription
 }
 
-union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | ObservedExecutionRequirement | OperatorBlockDeparture
+union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | ObservedExecutionRequirement | ObservedUnitExecutionItem | OperatorBlockDeparture
 
 type Contract {
   createdAt: DateTime!
@@ -374,8 +374,6 @@ type ObservedDeparture {
 type ObservedExecutionRequirement {
   area: OperatingArea!
   areaId: Int!
-  areaRequirement: ObservedExecutionRequirement
-  areaRequirementId: String
   averageAgeWeightedObserved: Float
   averageAgeWeightedRequired: Float
   endDate: BulttiDate!
@@ -383,13 +381,13 @@ type ObservedExecutionRequirement {
   inspection: Inspection!
   inspectionId: String!
   isCombinedAreaRequirement: Boolean!
+  observedRequirementDepartures: [ObservedExecutionValue!]!
   observedRequirements: [ObservedExecutionValue!]!
   operator: Operator!
   operatorId: Int!
   startDate: BulttiDate!
   totalKilometersObserved: Float
   totalKilometersRequired: Float
-  weeklyRequirements: [ObservedExecutionRequirement!]
 }
 
 type ObservedExecutionValue {
@@ -409,6 +407,14 @@ type ObservedExecutionValue {
   sanctionAmount: Float
   sanctionThreshold: Float
   sanctionablePercentage: Float
+}
+
+type ObservedUnitExecutionItem {
+  averageAgeWeightedObserved: Float
+  id: ID!
+  procurementUnitId: String
+  totalKilometersObserved: Float
+  totalKilometersRequired: Float
 }
 
 type OperatingArea {

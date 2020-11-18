@@ -14,7 +14,8 @@
       "ExecutionRequirement",
       "EmissionClassExecutionItem",
       "ObservedDeparture",
-      "ObservedExecutionRequirement"
+      "ObservedExecutionRequirement",
+      "ObservedUnitExecutionItem"
     ]
   }
 };

@@ -241,6 +241,13 @@ export const reportByName = gql`
             ...ShortDepartureFragment
           }
         }
+        ... on ObservedUnitExecutionItem {
+          id
+          procurementUnitId
+          totalKilometersRequired
+          totalKilometersObserved
+          averageAgeWeightedObserved
+        }
       }
     }
   }
