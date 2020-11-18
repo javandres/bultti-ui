@@ -1,13 +1,13 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
 import { lowerCase, orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
+import { round } from '../util/round'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
@@ -52,7 +52,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
   }, [executionRequirement])
 
   let renderDisplayValue = useCallback((key, val) => {
-    let displayVal = round(val)
+    let displayVal = round(val, 6)
     let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
 
     return `${displayVal} ${displayUnit}`
@@ -86,8 +86,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         unit = ''
     }
 
-    let useVal = round(val)
-    return `${useVal} ${unit}`
+    return `${round(val, 6)} ${unit}`
   }, [])
 
   let { averageAgeWeightedObserved, averageAgeWeightedRequired } = executionRequirement
@@ -107,17 +106,17 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         case 'cumulativeDifferencePercentage':
         case 'sanctionablePercentage':
         case 'sanctionAmount':
-          return `${totalVal}%`
+          return `${round(totalVal, 6)}%`
         case 'kilometersRequired':
         case 'kilometersObserved':
-          return `${totalVal} km`
+          return `${round(totalVal, 6)} km`
         case 'equipmentCountRequired':
         case 'equipmentCountObserved':
           return `${totalVal} kpl`
         case 'averageAgeWeightedObserved':
-          return `${round(averageAgeWeightedObserved || 0)} v`
+          return `${round(averageAgeWeightedObserved || 0, 6)} v`
         case 'averageAgeWeightedRequired':
-          return `${round(averageAgeWeightedRequired || 0)} v`
+          return `${round(averageAgeWeightedRequired || 0, 6)} v`
         default:
           return totalVal
       }
