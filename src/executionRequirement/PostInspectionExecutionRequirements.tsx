@@ -272,6 +272,12 @@ const PostInspectionExecutionRequirements = observer(() => {
         <LoadingDisplay
           loading={updateLoading || createLoading || observedRequirementsLoading}
         />
+        <Button
+          style={{ marginBottom: '1.5rem' }}
+          onClick={onClickCreateRequirements}
+          loading={createLoading}>
+          Create execution requirements from Pre-inspection
+        </Button>
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
             {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
@@ -328,10 +334,6 @@ const PostInspectionExecutionRequirements = observer(() => {
               </RequirementAreaRow>
             ))}
           </RequirementAreasWrapper>
-        ) : !observedRequirementsLoading ? (
-          <Button onClick={onClickCreateRequirements} loading={createLoading}>
-            Create execution requirements from Pre-inspection
-          </Button>
         ) : null}
         {pendingValues.length !== 0 && (
           <FormSaveToolbar

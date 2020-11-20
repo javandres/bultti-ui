@@ -15,7 +15,7 @@ import { CrossThick } from '../icon/CrossThick'
 import { ScrollContext } from './AppFrame'
 import { FixedSizeList as List } from 'react-window'
 import Input, { TextInput } from '../input/Input'
-import { useDebounce, useDebouncedCallback } from 'use-debounce'
+import { useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from './FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
@@ -282,7 +282,8 @@ type CellPropTypes<ItemType = any> = {
 
 type ContextTypes<ItemType> = {
   pendingValues?: EditValue[]
-  columnWidths?: number[]
+  columnWidths?: Map<number, number>
+  collectColumnWidth?: (index: number) => (ref: HTMLElement | null) => void
   editableValues?: PropTypes<ItemType>['editableValues']
   onEditValue?: PropTypes<ItemType>['onEditValue']
   renderInput?: PropTypes<ItemType>['renderInput']
@@ -302,7 +303,8 @@ const TableCellComponent = observer(
     let {
       pendingValues = [],
       onEditValue,
-      columnWidths = [],
+      columnWidths = new Map(),
+      collectColumnWidth = () => undefined,
       renderValue = defaultRenderValue,
       editableValues = [],
       onSaveEdit,
@@ -325,7 +327,7 @@ const TableCellComponent = observer(
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
         : undefined
 
-    let columnWidth = columnWidths[cellIndex] || 0
+    let columnWidth = columnWidths.get(cellIndex) || 0
 
     let canEditCell = onEditValue && editableValues.includes(valueKey)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
@@ -341,6 +343,7 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
+        ref={!fluid ? collectColumnWidth(cellIndex) : undefined}
         style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
@@ -432,37 +435,63 @@ const Table = observer(
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
 
-    let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
-    let [columnWidths] = useDebounce(liveColumnWidths, 200, { leading: true, trailing: false })
+    let columnWidthsCollection = useRef<Map<number, number>>(new Map())
 
-    let setColumnWidth = useCallback((index, width) => {
-      setColumnWidths((currentWidths) => {
-        let nextWidths = [...currentWidths]
-        let curWidth = nextWidths[index]
+    let [columnWidths, setColumnWidths] = useState<Map<number, number>>(
+      columnWidthsCollection.current
+    )
 
-        // Only set width if no width has been set yet for this column, or if it is different,
-        // or when onlyIncrease is true, if the new width is more than the current width.
-        if (!curWidth || width !== curWidth) {
-          let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, width)
-          return nextWidths
+    let widthTimeout = useRef(0)
+
+    let applyColumnWidths = useCallback(() => {
+      return setTimeout(() => {
+        if (columnWidthsCollection.current.size !== 0) {
+          setColumnWidths((currentWidths) => {
+            let nextWidths = columnWidthsCollection.current
+
+            if (
+              currentWidths.size === 0 ||
+              Array.from(currentWidths.entries()).some(
+                ([index, width]) => nextWidths.has(index) && nextWidths.get(index) !== width
+              )
+            ) {
+              return new Map(nextWidths)
+            }
+
+            return currentWidths
+          })
+        }
+      }, 500)
+    }, [columnWidthsCollection.current])
+
+    let collectColumnWidth = useCallback(
+      (index, width) => {
+        clearTimeout(widthTimeout.current)
+
+        if (index === 1) {
+          console.log(width)
         }
 
-        return currentWidths
-      })
-    }, [])
+        let curWidth = columnWidthsCollection.current.get(index) || 0
+        let nextWidth = Math.max(curWidth, width)
+        columnWidthsCollection.current.set(index, nextWidth)
+
+        widthTimeout.current = applyColumnWidths()
+      },
+      [columnWidthsCollection.current, applyColumnWidths, widthTimeout.current]
+    )
 
     let setWidthFromCellRef = useCallback(
-      (index) => (ref) => {
+      (index: number) => (ref: HTMLElement | null) => {
         if (ref) {
           let rect = ref.getBoundingClientRect()
 
           if (rect && rect.width) {
-            setColumnWidth(index, rect.width)
+            collectColumnWidth(index, rect.width)
           }
         }
       },
-      [setColumnWidth]
+      [collectColumnWidth]
     )
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
@@ -615,7 +644,9 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = fluid ? '100%' : Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
+    let width = fluid
+      ? '100%'
+      : Math.ceil(Array.from(columnWidths.values()).reduce((total, col) => total + col, 0))
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
@@ -663,6 +694,7 @@ const Table = observer(
 
     let contextValue: ContextTypes<ItemType> = {
       columnWidths,
+      collectColumnWidth: setWidthFromCellRef,
       editableValues,
       pendingValues,
       onEditValue,
@@ -708,7 +740,7 @@ const Table = observer(
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
 
-                let columnWidth = fluid ? undefined : columnWidths[colIdx]
+                let columnWidth = fluid ? undefined : columnWidths.get(colIdx)
 
                 return (
                   <ColumnHeaderCell
@@ -759,7 +791,7 @@ const Table = observer(
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                  let columnWidth = fluid ? undefined : columnWidths[colIdx]
+                  let columnWidth = fluid ? undefined : columnWidths.get(colIdx)
 
                   return (
                     <TableCell
