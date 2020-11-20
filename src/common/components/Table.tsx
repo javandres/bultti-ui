@@ -467,11 +467,6 @@ const Table = observer(
     let collectColumnWidth = useCallback(
       (index, width) => {
         clearTimeout(widthTimeout.current)
-
-        if (index === 1) {
-          console.log(width)
-        }
-
         let curWidth = columnWidthsCollection.current.get(index) || 0
         let nextWidth = Math.max(curWidth, width)
         columnWidthsCollection.current.set(index, nextWidth)
