@@ -310,6 +310,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
+  removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -372,6 +373,8 @@ type ObservedDeparture {
 }
 
 type ObservedExecutionRequirement {
+  _sanctionPercentageValue: Float!
+  _sanctionThresholdValue: Float!
   area: OperatingArea!
   areaId: Int!
   averageAgeWeightedObserved: Float
@@ -381,7 +384,6 @@ type ObservedExecutionRequirement {
   inspection: Inspection!
   inspectionId: String!
   isCombinedAreaRequirement: Boolean!
-  observedRequirementDepartures: [ObservedExecutionValue!]!
   observedRequirements: [ObservedExecutionValue!]!
   operator: Operator!
   operatorId: Int!
@@ -398,7 +400,7 @@ type ObservedExecutionValue {
   emissionClass: Int!
   equipmentCountObserved: Int
   equipmentCountRequired: Int
-  id: ID!
+  id: ID
   kilometersObserved: Float
   kilometersRequired: Float
   observedExecutionRequirement: ObservedExecutionRequirement!

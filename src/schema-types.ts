@@ -377,8 +377,8 @@ export type Equipment = {
   __typename?: 'Equipment';
   id: Scalars['ID'];
   vehicleId: Scalars['String'];
-  operatorId: Scalars['Int'];
   operator: Operator;
+  operatorId: Scalars['Int'];
   model?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
   registryDate?: Maybe<Scalars['BulttiDate']>;
@@ -645,13 +645,14 @@ export type ObservedExecutionRequirement = {
   totalKilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
-  observedRequirementDepartures: Array<ObservedExecutionValue>;
+  _sanctionPercentageValue: Scalars['Float'];
+  _sanctionThresholdValue: Scalars['Float'];
   observedRequirements: Array<ObservedExecutionValue>;
 };
 
 export type ObservedExecutionValue = {
   __typename?: 'ObservedExecutionValue';
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['ID']>;
   observedExecutionRequirement: ObservedExecutionRequirement;
   emissionClass: Scalars['Int'];
   kilometersRequired?: Maybe<Scalars['Float']>;
@@ -923,6 +924,7 @@ export type Mutation = {
   modifyContract: Contract;
   removeContract: Scalars['Boolean'];
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
+  removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean'];
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
 };
 
@@ -1127,6 +1129,11 @@ export type MutationRemoveContractArgs = {
 
 
 export type MutationCreateObservedExecutionRequirementsFromPreInspectionRequirementsArgs = {
+  postInspectionId: Scalars['String'];
+};
+
+
+export type MutationRemoveObservedExecutionRequirementsFromPreInspectionArgs = {
   postInspectionId: Scalars['String'];
 };
 

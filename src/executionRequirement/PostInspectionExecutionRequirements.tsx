@@ -19,6 +19,7 @@ import {
   createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
   observedExecutionRequirementsQuery,
   previewObservedRequirementQuery,
+  removeExecutionRequirementsFromPostInspectionMutation,
   updateObservedExecutionRequirementValuesMutation,
 } from './executionRequirementsQueries'
 import { groupBy, toString } from 'lodash'
@@ -135,6 +136,20 @@ const PostInspectionExecutionRequirements = observer(() => {
     updateObservedExecutionRequirementValuesMutation
   )
 
+  let [removeRequirements, { loading: removeLoading }] = useMutationData(
+    removeExecutionRequirementsFromPostInspectionMutation,
+    {
+      refetchQueries: [
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: {
+            postInspectionId: inspection?.id,
+          },
+        },
+      ],
+    }
+  )
+
   let onClickCreateRequirements = useCallback(async () => {
     if (inspection) {
       await createRequirements({
@@ -144,6 +159,16 @@ const PostInspectionExecutionRequirements = observer(() => {
       })
     }
   }, [inspection, createRequirements])
+
+  let onClickRemoveRequirements = useCallback(async () => {
+    if (inspection && observedRequirements.length) {
+      await removeRequirements({
+        variables: {
+          postInspectionId: inspection?.id,
+        },
+      })
+    }
+  }, [inspection, removeRequirements, observedRequirements])
 
   let requirementsByAreaAndWeek: Array<[
     string,
@@ -200,6 +225,10 @@ const PostInspectionExecutionRequirements = observer(() => {
       let updateValues = new Map<string, ObservedRequirementValueInput>()
 
       for (let value of reqPendingValues) {
+        if (!value.item?.id) {
+          continue
+        }
+
         let updateItem = updateValues.get(value.item.id) || {
           id: value.item.id,
           emissionClass: value.item.emissionClass,
@@ -272,12 +301,20 @@ const PostInspectionExecutionRequirements = observer(() => {
         <LoadingDisplay
           loading={updateLoading || createLoading || observedRequirementsLoading}
         />
-        <Button
-          style={{ marginBottom: '1.5rem' }}
-          onClick={onClickCreateRequirements}
-          loading={createLoading}>
-          Create execution requirements from Pre-inspection
-        </Button>
+        <FlexRow style={{ marginBottom: '1.5rem' }}>
+          <Button onClick={onClickCreateRequirements} loading={createLoading}>
+            Luo suoritevaatimukset ennakkotarkastuksesta
+          </Button>
+          {observedRequirements.length !== 0 && (
+            <Button
+              style={{ marginLeft: 'auto' }}
+              onClick={onClickRemoveRequirements}
+              loading={removeLoading}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+              Poista tarkastuksen suoritevaatimukset
+            </Button>
+          )}
+        </FlexRow>
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
             {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
