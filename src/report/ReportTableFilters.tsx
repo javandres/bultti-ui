@@ -119,18 +119,26 @@ const ReportTableFilters = observer(
       []
     )
 
-    let onRemoveFilter = useCallback((index) => {
-      setFilters((currentFilters) => {
-        let nextFilters = [...currentFilters]
-        let removed = nextFilters.splice(index, 1)
+    let onRemoveFilter = useCallback(
+      (index) => {
+        setFilters((currentFilters) => {
+          let nextFilters = [...currentFilters]
+          let removed = nextFilters.splice(index, 1)
 
-        if (removed.length !== 0) {
-          return nextFilters
+          if (removed.length !== 0) {
+            return nextFilters
+          }
+
+          return currentFilters
+        })
+
+        if (index === 0) {
+          console.log('last filter removed')
+          onApply()
         }
-
-        return currentFilters
-      })
-    }, [])
+      },
+      [onApply]
+    )
 
     let filterFieldOptions = useMemo(() => {
       let fields = omit(items[0], excludeFields)

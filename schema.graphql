@@ -62,13 +62,13 @@ type Departure {
   isNextDay: Boolean!
   isTracked: Boolean
   isTrunkRoute: Boolean
-  journeyEndTime: String!
+  journeyEndTime: String
   journeyStartTime: String!
   observedEquipmentType: String
   plannedEquipmentType: String
   preInspection: Inspection
   preInspectionId: String
-  procurementUnitId: String!
+  procurementUnitId: String
   recoveryTime: Int
   registryNr: String
   routeId: String
@@ -294,6 +294,7 @@ type Mutation {
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
+  inspectionReady(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
@@ -336,7 +337,6 @@ type ObservedDeparture {
   departureId: String!
   departureIsNextDay: Boolean!
   departureTime: String
-  departureType: DepartureType!
   direction: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
@@ -345,7 +345,7 @@ type ObservedDeparture {
   isOriginStop: Boolean!
   isTimingStop: Boolean!
   isTrunkRoute: Boolean
-  journeyEndTime: String!
+  journeyEndTime: String
   journeyStartTime: String!
   observedArrivalDateTime: DateTime
   observedDepartureDateTime: DateTime
@@ -353,7 +353,6 @@ type ObservedDeparture {
   observedEquipmentId: String
   observedOperatorId: Int
   observedRegistryNr: String
-  odometer: Int!
   originStopId: String
   plannedEquipment: Equipment
   plannedEquipmentId: String
@@ -361,7 +360,7 @@ type ObservedDeparture {
   plannedOperatorId: Int
   plannedRegistryNr: String
   postInspectionId: String
-  procurementUnitId: String!
+  procurementUnitId: String
   recoveryTime: Int
   routeId: String
   routeLength: Int
@@ -446,11 +445,11 @@ type OperatorBlockDeparture {
   equipmentId: String
   id: ID!
   inspectionId: String
-  journeyEndTime: String!
+  journeyEndTime: String
   journeyStartTime: String!
   journeyType: String!
   operatorId: String
-  procurementUnitId: String!
+  procurementUnitId: String
   registryNr: String
   routeId: String
   routeLength: Int
@@ -634,6 +633,7 @@ enum InspectionStatus {
   InProduction
   InReview
   Processing
+  Ready
 }
 
 enum InspectionType {
@@ -645,6 +645,7 @@ enum InspectionType {
 enum InspectionUserRelationType {
   CREATED_BY
   PUBLISHED_BY
+  READIED_BY
   REJECTED_BY
   SUBMITTED_BY
   SUBSCRIBED_TO

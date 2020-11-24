@@ -96,7 +96,6 @@ export const ObservedDepartureFragment = gql`
   fragment ObservedDepartureFragment on ObservedDeparture {
     id
     departureId
-    departureType
     postInspectionId
     postInspectionId
     journeyStartTime

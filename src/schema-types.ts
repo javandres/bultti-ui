@@ -412,7 +412,7 @@ export type Departure = {
   departureId: Scalars['String'];
   departureType: DepartureType;
   journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
+  journeyEndTime?: Maybe<Scalars['String']>;
   isNextDay: Scalars['Boolean'];
   terminalTime?: Maybe<Scalars['Int']>;
   recoveryTime?: Maybe<Scalars['Int']>;
@@ -431,7 +431,7 @@ export type Departure = {
   allowedOverAge?: Maybe<Scalars['Float']>;
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
-  procurementUnitId: Scalars['String'];
+  procurementUnitId?: Maybe<Scalars['String']>;
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
   preInspection?: Maybe<Inspection>;
@@ -478,19 +478,17 @@ export type ObservedDeparture = {
   __typename?: 'ObservedDeparture';
   id: Scalars['ID'];
   departureId: Scalars['String'];
-  departureType: DepartureType;
   postInspectionId?: Maybe<Scalars['String']>;
   plannedOperatorId?: Maybe<Scalars['Int']>;
   observedOperatorId?: Maybe<Scalars['Int']>;
   journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
+  journeyEndTime?: Maybe<Scalars['String']>;
   uniqueVehicleId?: Maybe<Scalars['String']>;
   departureIsNextDay: Scalars['Boolean'];
   arrivalIsNextDay: Scalars['Boolean'];
   isOriginStop: Scalars['Boolean'];
   isTimingStop: Scalars['Boolean'];
   isDestinationStop: Scalars['Boolean'];
-  odometer: Scalars['Int'];
   departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
@@ -514,7 +512,7 @@ export type ObservedDeparture = {
   allowedOverAge?: Maybe<Scalars['Float']>;
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
-  procurementUnitId: Scalars['String'];
+  procurementUnitId?: Maybe<Scalars['String']>;
   plannedEquipment?: Maybe<Equipment>;
   observedEquipment?: Maybe<Equipment>;
   plannedEquipmentId?: Maybe<Scalars['String']>;
@@ -599,7 +597,8 @@ export enum InspectionUserRelationType {
   SubscribedTo = 'SUBSCRIBED_TO',
   PublishedBy = 'PUBLISHED_BY',
   RejectedBy = 'REJECTED_BY',
-  SubmittedBy = 'SUBMITTED_BY'
+  SubmittedBy = 'SUBMITTED_BY',
+  ReadiedBy = 'READIED_BY'
 }
 
 export type ContractRule = {
@@ -674,7 +673,8 @@ export enum InspectionStatus {
   Draft = 'Draft',
   InReview = 'InReview',
   InProduction = 'InProduction',
-  Processing = 'Processing'
+  Processing = 'Processing',
+  Ready = 'Ready'
 }
 
 export type ValidationErrorData = {
@@ -720,14 +720,14 @@ export type OperatorBlockDeparture = {
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
+  journeyEndTime?: Maybe<Scalars['String']>;
   registryNr?: Maybe<Scalars['String']>;
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
   operatorId?: Maybe<Scalars['String']>;
   equipment?: Maybe<Equipment>;
   equipmentId?: Maybe<Scalars['String']>;
-  procurementUnitId: Scalars['String'];
+  procurementUnitId?: Maybe<Scalars['String']>;
   inspectionId?: Maybe<Scalars['String']>;
 };
 
@@ -913,6 +913,7 @@ export type Mutation = {
   createInspection: Inspection;
   updateBaseInspection: Inspection;
   updateInspection: Inspection;
+  inspectionReady: Inspection;
   submitInspection: Inspection;
   publishInspection: Inspection;
   rejectInspection: Inspection;
@@ -1068,6 +1069,11 @@ export type MutationUpdateBaseInspectionArgs = {
 
 export type MutationUpdateInspectionArgs = {
   inspection: InspectionInput;
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInspectionReadyArgs = {
   inspectionId: Scalars['String'];
 };
 
