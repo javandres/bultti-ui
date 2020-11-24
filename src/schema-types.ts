@@ -817,13 +817,7 @@ export type FilterConfig = {
   __typename?: 'FilterConfig';
   field: Scalars['String'];
   filterValue: Scalars['String'];
-  filterMode: FilterMode;
 };
-
-export enum FilterMode {
-  Inclusive = 'INCLUSIVE',
-  Exclusive = 'EXCLUSIVE'
-}
 
 export type SortConfig = {
   __typename?: 'SortConfig';
@@ -844,7 +838,6 @@ export type InputSortConfig = {
 export type InputFilterConfig = {
   field: Scalars['String'];
   filterValue: Scalars['String'];
-  filterMode: FilterMode;
 };
 
 export type InputPageConfig = {

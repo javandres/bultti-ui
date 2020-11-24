@@ -18,7 +18,6 @@ export const ReportFragment = gql`
     filteredCount
     filters {
       field
-      filterMode
       filterValue
     }
     page {

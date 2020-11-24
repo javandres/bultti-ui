@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Report } from '../schema-types'
@@ -63,12 +63,16 @@ export type PropTypes = {
 
 const ReportPaging = observer(
   ({ reportData, onNextPage, onPrevPage, onSetPage }: PropTypes) => {
-    let pageOptions: number[] = []
-    let pageIdx = 1
+    let pageOptions = useMemo(() => {
+      let opts: number[] = []
+      let pageIdx = 1
 
-    while (pageOptions.length < (reportData.pages || 1)) {
-      pageOptions.push(pageIdx++)
-    }
+      while (opts.length < (reportData.pages || 1)) {
+        opts.push(pageIdx++)
+      }
+
+      return opts
+    }, [reportData.pages])
 
     return (
       <ReportPagingView>

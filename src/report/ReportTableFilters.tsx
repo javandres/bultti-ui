@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
@@ -11,7 +11,7 @@ import { text } from '../util/translate'
 import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
-import { FilterConfig, FilterMode } from '../schema-types'
+import { FilterConfig } from '../schema-types'
 
 const ReportTableFiltersView = styled.div`
   margin: 1rem 0;
@@ -43,7 +43,6 @@ const FilterButtonsWrapper = styled.div`
 
 export type PropTypes<ItemType = any> = {
   onApply: () => unknown
-  items: ItemType[]
   excludeFields?: string[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
@@ -52,7 +51,6 @@ export type PropTypes<ItemType = any> = {
 
 const ReportTableFilters = observer(
   <ItemType extends {}>({
-    items,
     excludeFields = [],
     fieldLabels = {},
     onApply = () => {},
@@ -64,7 +62,6 @@ const ReportTableFilters = observer(
         let newFilter: FilterConfig = {
           field,
           filterValue: '',
-          filterMode: FilterMode.Exclusive,
         }
         return [...currentFilters, newFilter]
       })
@@ -77,20 +74,6 @@ const ReportTableFilters = observer(
 
         if (filterConfig) {
           filterConfig.filterValue = value
-          return nextFilters
-        }
-
-        return currentFilters
-      })
-    }, [])
-
-    let onChangeFilterMode = useCallback((index: number, value: FilterMode) => {
-      setFilters((currentFilters) => {
-        let nextFilters = [...currentFilters]
-        let filterConfig = nextFilters[index]
-
-        if (filterConfig) {
-          filterConfig.filterMode = value
           return nextFilters
         }
 
@@ -119,36 +102,42 @@ const ReportTableFilters = observer(
       []
     )
 
-    let onRemoveFilter = useCallback(
-      (index) => {
-        setFilters((currentFilters) => {
-          let nextFilters = [...currentFilters]
-          let removed = nextFilters.splice(index, 1)
+    let onRemoveFilter = useCallback((index) => {
+      setFilters((currentFilters) => {
+        let nextFilters = [...currentFilters]
+        let removed = nextFilters.splice(index, 1)
 
-          if (removed.length !== 0) {
-            return nextFilters
-          }
-
-          return currentFilters
-        })
-
-        if (index === 0) {
-          console.log('last filter removed')
-          onApply()
+        if (removed.length !== 0) {
+          return nextFilters
         }
-      },
-      [onApply]
-    )
+
+        return currentFilters
+      })
+    }, [])
+
+    let currentFilters = useRef<FilterConfig[]>([])
+
+    let onClickApply = useCallback(() => {
+      currentFilters.current = filters
+      onApply()
+    }, [filters, onApply])
+
+    useEffect(() => {
+      if (currentFilters.current.length !== 0 && filters.length === 0) {
+        onClickApply()
+      }
+    }, [currentFilters.current, filters, onClickApply])
 
     let filterFieldOptions = useMemo(() => {
-      let fields = omit(items[0], excludeFields)
+      let fields = omit(fieldLabels, excludeFields)
+
       let options = Object.keys(fields).map((key) => ({
         field: key,
         label: fieldLabels[key] || key,
       }))
 
       return [{ field: '', label: 'Kaikki' }, ...options]
-    }, [items, excludeFields])
+    }, [fieldLabels, excludeFields])
 
     return (
       <ReportTableFiltersView>
@@ -202,22 +191,6 @@ const ReportTableFilters = observer(
                       />
                     )}
                     <FilterButtonsWrapper>
-                      <FilterModeButton
-                        name="filter-mode"
-                        isSwitch={true}
-                        value="mode"
-                        checked={filterConfig.filterMode === FilterMode.Inclusive}
-                        preLabel="Supistava"
-                        onChange={(nextVal) =>
-                          onChangeFilterMode(
-                            index,
-                            nextVal ? FilterMode.Inclusive : FilterMode.Exclusive
-                          )
-                        }>
-                        Laajentava
-                      </FilterModeButton>
-                    </FilterButtonsWrapper>
-                    <FilterButtonsWrapper>
                       <RemoveButton onClick={() => onRemoveFilter(index)}>
                         <CrossThick fill="white" width="0.5rem" height="0.5rem" />
                       </RemoveButton>
@@ -229,7 +202,7 @@ const ReportTableFilters = observer(
             <FlexRow>
               {filters.length !== 0 && (
                 <FilterButtonBar>
-                  <Button size={ButtonSize.LARGE} onClick={onApply}>
+                  <Button size={ButtonSize.LARGE} onClick={onClickApply}>
                     Käytä filtterit
                   </Button>
                 </FilterButtonBar>

@@ -63,6 +63,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     reportByName,
     {
       notifyOnNetworkStatusChange: true,
+      fetchPolicy: 'network-only',
       variables: { ...requestVars.current },
     }
   )
@@ -142,7 +143,6 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           <ReportTableFilters
             filters={filters}
             setFilters={setFilters}
-            items={reportDataItems}
             fieldLabels={columnLabels}
             excludeFields={['id', '__typename']}
             onApply={onUpdateFetchProps}

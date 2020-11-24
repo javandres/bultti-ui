@@ -212,7 +212,6 @@ type ExecutionRequirementValue {
 
 type FilterConfig {
   field: String!
-  filterMode: FilterMode!
   filterValue: String!
 }
 
@@ -617,11 +616,6 @@ enum DepartureType {
   SCHEMA
 }
 
-enum FilterMode {
-  EXCLUSIVE
-  INCLUSIVE
-}
-
 enum HfpStatus {
   LOADING
   NOT_LOADED
@@ -746,7 +740,6 @@ input InitialInspectionInput {
 
 input InputFilterConfig {
   field: String!
-  filterMode: FilterMode!
   filterValue: String!
 }
 
