@@ -128,13 +128,9 @@ export const ObservedDepartureFragment = gql`
     blockNumber
     schemaId
     schemaUnitId: procurementUnitId
-    plannedEquipment {
-      ...EquipmentFragment
-    }
     observedEquipment {
       ...EquipmentFragment
     }
-    plannedEquipmentId
     observedEquipmentId
     trackReason
   }

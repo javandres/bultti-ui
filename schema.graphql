@@ -120,7 +120,6 @@ type Equipment {
   id: ID!
   model: String
   observedDeparturesObserved: [ObservedDeparture!]!
-  observedDeparturesPlanned: [ObservedDeparture!]!
   operator: Operator!
   operatorId: Int!
   option: Boolean!
@@ -343,6 +342,7 @@ type ObservedDeparture {
   isDestinationStop: Boolean!
   isOriginStop: Boolean!
   isTimingStop: Boolean!
+  isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String
   journeyStartTime: String!
@@ -353,8 +353,6 @@ type ObservedDeparture {
   observedOperatorId: Int
   observedRegistryNr: String
   originStopId: String
-  plannedEquipment: Equipment
-  plannedEquipmentId: String
   plannedEquipmentType: String
   plannedOperatorId: Int
   plannedRegistryNr: String

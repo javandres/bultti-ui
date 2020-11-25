@@ -3531,30 +3531,6 @@
             "deprecationReason": null
           },
           {
-            "name": "observedDeparturesPlanned",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "ObservedDeparture",
-                    "ofType": null
-                  }
-                }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "observedDeparturesObserved",
             "description": null,
             "args": [],
@@ -4805,18 +4781,6 @@
             "deprecationReason": null
           },
           {
-            "name": "plannedEquipment",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "Equipment",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "observedEquipment",
             "description": null,
             "args": [],
@@ -4829,7 +4793,7 @@
             "deprecationReason": null
           },
           {
-            "name": "plannedEquipmentId",
+            "name": "observedEquipmentId",
             "description": null,
             "args": [],
             "type": {
@@ -4841,12 +4805,12 @@
             "deprecationReason": null
           },
           {
-            "name": "observedEquipmentId",
+            "name": "isTracked",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "String",
+              "name": "Boolean",
               "ofType": null
             },
             "isDeprecated": false,

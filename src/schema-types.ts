@@ -391,7 +391,6 @@ export type Equipment = {
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
   executionRequirementQuotas: Array<ExecutionRequirementQuota>;
   departures: Array<Departure>;
-  observedDeparturesPlanned: Array<ObservedDeparture>;
   observedDeparturesObserved: Array<ObservedDeparture>;
 };
 
@@ -513,10 +512,9 @@ export type ObservedDeparture = {
   blockNumber?: Maybe<Scalars['String']>;
   schemaId?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
-  plannedEquipment?: Maybe<Equipment>;
   observedEquipment?: Maybe<Equipment>;
-  plannedEquipmentId?: Maybe<Scalars['String']>;
   observedEquipmentId?: Maybe<Scalars['String']>;
+  isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
 };
 

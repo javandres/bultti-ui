@@ -10,10 +10,12 @@ import { useQueryData } from '../util/useQueryData'
 import { useMutationData } from '../util/useMutationData'
 import { flatten, orderBy, uniq } from 'lodash'
 import {
+  addDays,
   eachDayOfInterval,
   format,
   isSameDay,
   isWithinInterval,
+  max,
   parseISO,
   subDays,
 } from 'date-fns'
@@ -175,9 +177,11 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       return
     }
 
+    let startDate = parseISO(inspection?.inspectionStartDate)
+
     return {
-      start: parseISO(inspection?.inspectionStartDate),
-      end: parseISO(inspection?.inspectionEndDate),
+      start: startDate,
+      end: max([parseISO(inspection?.inspectionEndDate), addDays(startDate, 1)]),
     }
   }, [inspection])
 
