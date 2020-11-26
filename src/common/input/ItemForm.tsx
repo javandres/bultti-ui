@@ -45,10 +45,6 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
     padding-bottom: ${(p) => (p.frameless ? '0' : '1rem')};
   }
 
-  > * {
-    width: 100%;
-  }
-
   textarea {
     resize: vertical;
   }
