@@ -237,14 +237,6 @@ const ProcurementUnitItemContent = observer(
             )}
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
-              <Button
-                loading={loading}
-                onClick={updateUnit}
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}>
-                Päivitä
-              </Button>
             </FlexRow>
             {!pendingProcurementUnit ? (
               <>
