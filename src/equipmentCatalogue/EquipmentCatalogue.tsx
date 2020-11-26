@@ -163,6 +163,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         {editable && pendingCatalogue && (
           <ItemForm
             item={pendingCatalogue}
+            labels={equipmentCatalogueLabels}
             onChange={onChangeCatalogue}
             onDone={onSaveEquipmentCatalogue}
             onCancel={onCancelPendingEquipmentCatalogue}
