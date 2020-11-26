@@ -40,6 +40,12 @@ const equipmentCatalogueLabels = {
   endDate: 'Loppupäivä',
 }
 
+const equipmentCatalogueHints = {
+  startDate:
+    'Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana.',
+  endDate: 'Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana.',
+}
+
 enum CatalogueEditMode {
   UPDATE = 'update',
   CREATE = 'create',
@@ -164,6 +170,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
           <ItemForm
             item={pendingCatalogue}
             labels={equipmentCatalogueLabels}
+            hints={equipmentCatalogueHints}
             onChange={onChangeCatalogue}
             onDone={onSaveEquipmentCatalogue}
             onCancel={onCancelPendingEquipmentCatalogue}
