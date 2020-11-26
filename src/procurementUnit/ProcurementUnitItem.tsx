@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
   InspectionValidationError,
+  OperatingAreaName,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
   ValidationErrorData,
@@ -74,6 +75,12 @@ export type PropTypes = {
 const procurementUnitLabels = {
   weeklyMeters: 'Suorite / viikko',
   medianAgeRequirement: 'Keski-ikä vaatimus',
+}
+
+const operatingAreaNameLocalizationObj = {
+  [OperatingAreaName.Center]: 'Keskusta',
+  [OperatingAreaName.Other]: 'Muu',
+  [OperatingAreaName.Unknown]: 'Ei tiedossa',
 }
 
 type ContentPropTypes = {
@@ -326,6 +333,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       ].includes(err.type)
     )
 
+    const procurementUnitAreaName = procurementUnit?.area?.name
+      ? procurementUnit?.area?.name
+      : OperatingAreaName.Unknown
+
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -359,7 +370,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
-                  {procurementUnit?.area?.name}
+                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>
