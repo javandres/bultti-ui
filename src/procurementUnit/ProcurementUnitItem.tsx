@@ -28,7 +28,6 @@ import { FlexRow } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
-  HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
@@ -336,7 +335,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             isExpanded={expanded}
             headerContent={
               <>
-                <HeaderBoldHeading>{procurementUnit.procurementUnitId}</HeaderBoldHeading>
+                <HeaderSection>
+                  <HeaderHeading>Kohdetunnus</HeaderHeading>
+                  {procurementUnit.procurementUnitId}
+                </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Reitit</HeaderHeading>
                   {(routes || [])
