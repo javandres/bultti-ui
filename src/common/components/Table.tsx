@@ -119,7 +119,7 @@ const TableCell = styled.div<{
   display: flex;
   align-items: stretch;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
@@ -155,7 +155,7 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
 `
 
 const HeaderCellContent = styled.div`
-  padding: 0.5rem 25px 0.4rem 11px;
+  padding: 0.25rem 25px 0.1rem 0.25rem;
   width: 100%;
 `
 
@@ -176,12 +176,12 @@ const ColumnSortIndicator = styled.div`
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
   user-select: text;
-  padding: 0.5rem 0.15rem;
+  padding: 0.1rem 0.15rem 0.1rem 0.25rem;
   border: 0;
   background: transparent;
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
@@ -275,7 +275,7 @@ type RowPropTypes<ItemType = any> = {
 type CellPropTypes<ItemType = any> = {
   row: TableRowWithDataAndFunctions<ItemType>
   cell: [keyof ItemType, CellValType]
-  cellIndex: number
+  colIndex: number
   tabIndex?: number
   rowId: string
 }
@@ -283,7 +283,6 @@ type CellPropTypes<ItemType = any> = {
 type ContextTypes<ItemType> = {
   pendingValues?: EditValue[]
   columnWidths?: Map<number, number>
-  collectColumnWidth?: (index: number) => (ref: HTMLElement | null) => void
   editableValues?: PropTypes<ItemType>['editableValues']
   onEditValue?: PropTypes<ItemType>['onEditValue']
   renderInput?: PropTypes<ItemType>['renderInput']
@@ -298,13 +297,12 @@ type ContextTypes<ItemType> = {
 const TableContext = React.createContext<ContextTypes<any>>({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, cellIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
+  <ItemType extends any>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
     let ctx = useContext(TableContext)
     let {
       pendingValues = [],
       onEditValue,
       columnWidths = new Map(),
-      collectColumnWidth = () => undefined,
       renderValue = defaultRenderValue,
       editableValues = [],
       onSaveEdit,
@@ -327,7 +325,7 @@ const TableCellComponent = observer(
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
         : undefined
 
-    let columnWidth = columnWidths.get(cellIndex) || 0
+    let columnWidth = columnWidths.get(colIndex)
 
     let canEditCell = onEditValue && editableValues.includes(valueKey)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
@@ -343,8 +341,13 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        ref={!fluid ? collectColumnWidth(cellIndex) : undefined}
-        style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
+        style={
+          !fluid && !!columnWidth
+            ? {
+                minWidth: Math.min(columnWidth, 300) + 'px',
+              }
+            : undefined
+        }
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={canEditCell}
@@ -381,13 +384,13 @@ const TableRowComponent = observer(
 
     return (
       <TableRow key={rowId} isEditing={isEditingRow} style={style}>
-        {itemEntries.map(([key, val], cellIndex) => (
+        {itemEntries.map(([key, val], colIndex) => (
           <TableCellComponent<ItemType>
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}
-            cellIndex={cellIndex}
-            tabIndex={index * allRows.length + cellIndex + 1}
+            colIndex={colIndex}
+            tabIndex={index * allRows.length + colIndex + 1}
             cell={[key as keyof ItemType, val]}
           />
         ))}
@@ -434,60 +437,6 @@ const Table = observer(
 
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
-
-    let columnWidthsCollection = useRef<Map<number, number>>(new Map())
-
-    let [columnWidths, setColumnWidths] = useState<Map<number, number>>(
-      columnWidthsCollection.current
-    )
-
-    let widthTimeout = useRef(0)
-
-    let applyColumnWidths = useCallback(() => {
-      return setTimeout(() => {
-        if (columnWidthsCollection.current.size !== 0) {
-          setColumnWidths((currentWidths) => {
-            let nextWidths = columnWidthsCollection.current
-
-            if (
-              currentWidths.size === 0 ||
-              Array.from(currentWidths.entries()).some(
-                ([index, width]) => nextWidths.has(index) && nextWidths.get(index) !== width
-              )
-            ) {
-              return new Map(nextWidths)
-            }
-
-            return currentWidths
-          })
-        }
-      }, 500)
-    }, [columnWidthsCollection.current])
-
-    let collectColumnWidth = useCallback(
-      (index, width) => {
-        clearTimeout(widthTimeout.current)
-        let curWidth = columnWidthsCollection.current.get(index) || 0
-        let nextWidth = Math.max(curWidth, width)
-        columnWidthsCollection.current.set(index, nextWidth)
-
-        widthTimeout.current = applyColumnWidths()
-      },
-      [columnWidthsCollection.current, applyColumnWidths, widthTimeout.current]
-    )
-
-    let setWidthFromCellRef = useCallback(
-      (index: number) => (ref: HTMLElement | null) => {
-        if (ref) {
-          let rect = ref.getBoundingClientRect()
-
-          if (rect && rect.width) {
-            collectColumnWidth(index, rect.width)
-          }
-        }
-      },
-      [collectColumnWidth]
-    )
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -632,6 +581,28 @@ const Table = observer(
       ]
     )
 
+    let columnWidths = useMemo(() => {
+      let widthsCollection = new Map()
+      let colIdx = 0
+
+      for (let colName of columnNames) {
+        let nameLength = Math.max(colName[1].length, 8)
+        let colWidth = nameLength * 10
+
+        for (let row of rows) {
+          let [colKey, colValue] = row.itemEntries[colIdx]
+          let strVal = toString(renderValue(colKey, colValue))
+          let valLength = Math.max(strVal.length, 5)
+          colWidth = Math.max(valLength * 10, colWidth)
+        }
+
+        widthsCollection.set(colIdx, colWidth)
+        colIdx++
+      }
+
+      return widthsCollection
+    }, [columnNames, rows])
+
     // The table is empty if we don't have any items,
     // OR
     // When there is one item with only falsy values (which still gives the column names)
@@ -689,7 +660,6 @@ const Table = observer(
 
     let contextValue: ContextTypes<ItemType> = {
       columnWidths,
-      collectColumnWidth: setWidthFromCellRef,
       editableValues,
       pendingValues,
       onEditValue,
@@ -739,12 +709,13 @@ const Table = observer(
 
                 return (
                   <ColumnHeaderCell
-                    ref={!fluid ? setWidthFromCellRef(colIdx) : undefined}
                     as="button"
                     style={
-                      typeof columnWidth !== 'undefined'
-                        ? { minWidth: columnWidth + 'px' }
-                        : {}
+                      !fluid && !!columnWidth
+                        ? {
+                            minWidth: Math.min(columnWidth, 300) + 'px',
+                          }
+                        : undefined
                     }
                     isEditing={isEditingColumn}
                     key={colKey}
@@ -791,12 +762,13 @@ const Table = observer(
                   return (
                     <TableCell
                       key={`footer_${col}`}
-                      style={{
-                        minWidth:
-                          typeof columnWidth !== 'undefined' && columnWidth !== 0
-                            ? columnWidth + 'px'
-                            : 'auto',
-                      }}>
+                      style={
+                        !fluid && !!columnWidth
+                          ? {
+                              minWidth: Math.min(columnWidth, 300) + 'px',
+                            }
+                          : undefined
+                      }>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCell>
                   )

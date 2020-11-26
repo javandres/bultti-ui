@@ -7,6 +7,8 @@ import { EmptyView } from '../common/components/Messages'
 import { toString } from 'lodash'
 import { round } from '../util/round'
 import { SortConfig } from '../schema-types'
+import { format, isValid, parseISO } from 'date-fns'
+import { READABLE_TIME_FORMAT } from '../constants'
 
 const ListReportView = styled.div``
 
@@ -32,6 +34,24 @@ const ListReport = observer(
 
       if (typeof val === 'number') {
         return toString(round(val))
+      }
+
+      if (val.length >= 20) {
+        let date: Date | undefined
+
+        try {
+          let parsedDate = parseISO(val)
+
+          if (isValid(parsedDate)) {
+            date = parsedDate
+          }
+        } catch (err) {
+          date = undefined
+        }
+
+        if (date) {
+          return format(date, READABLE_TIME_FORMAT + ':ss')
+        }
       }
 
       return toString(val)
