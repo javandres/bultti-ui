@@ -140,19 +140,23 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
       {reportData && reportData?.reportType !== ReportType.ExecutionRequirement && (
         <>
-          <ReportTableFilters
-            filters={filters}
-            setFilters={setFilters}
-            fieldLabels={columnLabels}
-            excludeFields={['id', '__typename']}
-            onApply={onUpdateFetchProps}
-          />
-          <ReportPaging
-            onSetPage={onSetPage}
-            onNextPage={onPageNav(1)}
-            onPrevPage={onPageNav(-1)}
-            reportData={reportData}
-          />
+          {reportDataItems.length >= 5 && (
+            <ReportTableFilters
+              filters={filters}
+              setFilters={setFilters}
+              fieldLabels={columnLabels}
+              excludeFields={['id', '__typename']}
+              onApply={onUpdateFetchProps}
+            />
+          )}
+          {reportDataItems.length >= 50 && (
+            <ReportPaging
+              onSetPage={onSetPage}
+              onNextPage={onPageNav(1)}
+              onPrevPage={onPageNav(-1)}
+              reportData={reportData}
+            />
+          )}
         </>
       )}
       {reportData?.reportType === ReportType.List ? (

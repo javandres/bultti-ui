@@ -737,7 +737,11 @@ const Table = observer(
                 emptyContent
               ) : virtualized ? (
                 <List
-                  style={{ minWidth: '100%', overflowX: 'hidden', overflowY: 'scroll' }}
+                  style={{
+                    minWidth: '100%',
+                    overflowX: 'hidden',
+                    overflowY: hasVerticalScroll ? 'scroll' : 'hidden',
+                  }}
                   height={height}
                   width={tableViewWidth}
                   itemCount={rows.length}
