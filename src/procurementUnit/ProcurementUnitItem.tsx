@@ -35,6 +35,7 @@ import ExpandableSection, {
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { text } from '../util/translate'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -78,9 +79,9 @@ const procurementUnitLabels = {
 }
 
 const operatingAreaNameLocalizationObj = {
-  [OperatingAreaName.Center]: 'Keskusta',
-  [OperatingAreaName.Other]: 'Muu',
-  [OperatingAreaName.Unknown]: 'Ei tiedossa',
+  [OperatingAreaName.Center]: text('procurement_unit.operating_area_name.center'),
+  [OperatingAreaName.Other]: text('procurement_unit.operating_area_name.other'),
+  [OperatingAreaName.Unknown]: text('unknown'),
 }
 
 type ContentPropTypes = {
