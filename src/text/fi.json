@@ -1,4 +1,8 @@
 {
+  "start_date": "Alkupäivä",
+  "end_date": "Loppupäivä",
+  "unknown": "Ei tiedossa",
+
   "general.app.companyName": "HSL",
   "general.app.title": "Bultti",
   "general.app.login": "Kirjaudu sisään",
@@ -32,6 +36,9 @@
   "title.routes": "Reitit",
   "title.contract": "Sopimusehdot",
 
+  "procurement_unit.operating_area_name.center": "Keskusta",
+  "procurement_unit.operating_area_name.other": "Muu",
+
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
   "inspection.units.view_all": "Näytä kaikki kilpailukohteet",
@@ -51,5 +58,8 @@
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
   "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaolevaa sopimusta.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
-  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
+  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
+
+  "hint.equipment_catalogue.start_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana.",
+  "hint.equipment_catalogue.end_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana."
 }

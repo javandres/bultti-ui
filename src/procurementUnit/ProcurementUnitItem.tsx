@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
   InspectionValidationError,
+  OperatingAreaName,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
   ValidationErrorData,
@@ -29,13 +30,13 @@ import { FlexRow } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
-  HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { text } from '../util/translate'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -76,6 +77,12 @@ export type PropTypes = {
 const procurementUnitLabels = {
   weeklyMeters: 'Suorite / viikko',
   medianAgeRequirement: 'Keski-ikä vaatimus',
+}
+
+const operatingAreaNameLocalizationObj = {
+  [OperatingAreaName.Center]: text('procurement_unit.operating_area_name.center'),
+  [OperatingAreaName.Other]: text('procurement_unit.operating_area_name.other'),
+  [OperatingAreaName.Unknown]: text('unknown'),
 }
 
 type ContentPropTypes = {
@@ -237,14 +244,6 @@ const ProcurementUnitItemContent = observer(
             )}
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
-              <Button
-                loading={loading}
-                onClick={updateUnit}
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}>
-                Päivitä
-              </Button>
             </FlexRow>
             {!pendingProcurementUnit ? (
               <>
@@ -336,6 +335,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       ].includes(err.type)
     )
 
+    const procurementUnitAreaName = procurementUnit?.area?.name
+      ? procurementUnit?.area?.name
+      : OperatingAreaName.Unknown
+
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -345,7 +348,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             isExpanded={expanded}
             headerContent={
               <>
-                <HeaderBoldHeading>{procurementUnit.procurementUnitId}</HeaderBoldHeading>
+                <HeaderSection>
+                  <HeaderHeading>Kohdetunnus</HeaderHeading>
+                  {procurementUnit.procurementUnitId}
+                </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Reitit</HeaderHeading>
                   {(routes || [])
@@ -366,7 +372,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
-                  {procurementUnit?.area?.name}
+                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>

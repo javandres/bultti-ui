@@ -6,6 +6,7 @@ import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
+import UserHint from '../components/UserHint'
 
 export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   display: flex;
@@ -45,20 +46,18 @@ export const FieldWrapper = styled.div<{ frameless?: boolean; fullWidth?: boolea
     padding-bottom: ${(p) => (p.frameless ? '0' : '1rem')};
   }
 
-  > * {
-    width: 100%;
-  }
-
   textarea {
     resize: vertical;
   }
 `
 
 export const FieldLabel = styled.label`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   font-weight: bold;
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
-  display: block;
   user-select: none;
 `
 
@@ -80,6 +79,7 @@ export const ActionsWrapper = styled.div`
 `
 
 type LabelsType<ItemType> = { [key in keyof ItemType]: string }
+type HintsType<ItemType> = { [key in keyof ItemType]: string }
 
 export type PropTypes<ItemType = any> = {
   item: ItemType
@@ -92,6 +92,7 @@ export type PropTypes<ItemType = any> = {
   doneDisabled?: boolean
   isDirty?: boolean
   labels?: LabelsType<ItemType>
+  hints?: HintsType<ItemType>
   order?: string[]
   hideKeys?: string[]
   editableValues?: string[]
@@ -99,7 +100,8 @@ export type PropTypes<ItemType = any> = {
   renderLabel?: (
     key: string,
     val: any,
-    labels: LabelsType<ItemType>
+    labels: LabelsType<ItemType>,
+    hints: HintsType<ItemType>
   ) => React.ReactChild | false
   renderInput?: (
     key: string,
@@ -131,8 +133,11 @@ const defaultRenderInput = (key, val, onChange, readOnly = false) =>
     />
   )
 
-const defaultRenderLabel = (key, val, labels) => (
-  <FieldLabel>{get(labels, key, key)}</FieldLabel>
+const defaultRenderLabel = (key, val, labels, hints) => (
+  <FieldLabel>
+    {get(labels, key, key)}
+    <UserHint hintText={get(hints, key, '')} />
+  </FieldLabel>
 )
 
 const ItemForm: React.FC<PropTypes> = observer(
@@ -140,6 +145,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     item,
     children,
     labels = {},
+    hints = {},
     order,
     hideKeys,
     onChange,
@@ -176,8 +182,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     return (
       <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => {
-          let renderedLabel = renderLabel(key, val, labels)
-
+          let renderedLabel = renderLabel(key, val, labels, hints)
           return (
             <FieldWrapper
               key={key}
