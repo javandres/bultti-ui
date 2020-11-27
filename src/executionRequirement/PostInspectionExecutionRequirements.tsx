@@ -70,10 +70,6 @@ const WeekHeading = styled.h3`
   font-weight: normal;
 `
 
-const ObservedHeading = styled(WeekHeading)`
-  font-size: 1rem;
-`
-
 const WeekDateHeading = styled.h5`
   margin-bottom: 1rem;
   margin-top: 0;

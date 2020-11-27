@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
