@@ -64,7 +64,7 @@ export type PropTypes = {
 function createContractInput(contract: Contract): ContractInput {
   return {
     id: contract.id,
-    description: contract.description,
+    description: contract.description ? contract.description : '',
     startDate: contract.startDate,
     endDate: contract.endDate,
     operatorId: contract.operatorId,
