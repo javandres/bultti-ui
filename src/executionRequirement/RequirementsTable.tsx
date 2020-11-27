@@ -81,13 +81,13 @@ const RequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
-      if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
+      if (isHeader || key === 'unit' || !isNumeric(val) || val === 0) {
         return val
       }
 
-      let unit = ''
+      let unit
 
-      switch (item.unit || key) {
+      switch (item?.unit || key) {
         case 'percentage':
         case 'quotaRequirement':
         case 'quotaFulfilled':
