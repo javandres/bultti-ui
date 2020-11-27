@@ -47,6 +47,12 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
       }
     )
 
+    let onUpdateConnectedInspection = useCallback(() => {
+      if (isEditable) {
+        updateConnectedInspection()
+      }
+    }, [updateConnectedInspection, isEditable])
+
     return (
       <div>
         <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
@@ -56,11 +62,11 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
               <>
                 <Heading>
                   Ennakkotarkastus{' '}
-                  {inspection.status === InspectionStatus.Draft && (
+                  {isEditable && (
                     <Button
                       style={{ marginLeft: 'auto' }}
                       loading={updateLoading}
-                      onClick={() => updateConnectedInspection()}
+                      onClick={onUpdateConnectedInspection}
                       buttonStyle={ButtonStyle.SECONDARY}
                       size={ButtonSize.SMALL}>
                       Päivitä
@@ -73,7 +79,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
                 />
               </>
             )}
-            <PostInspectionExecutionRequirements />
+            <PostInspectionExecutionRequirements isEditable={isEditable} />
           </>
         ) : (
           <MessageContainer style={{ margin: '1rem 0 0', padding: '0' }}>
