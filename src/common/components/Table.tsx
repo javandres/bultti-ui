@@ -521,9 +521,26 @@ const Table = observer(
       return item.key
     }, [])
 
+    let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
+      if (!items || !Array.isArray(items)) {
+        return []
+      }
+
+      // If the Table was provided external sort config, assume the items are already sorted.
+      if (typeof propSort !== 'undefined' || sort.length === 0) {
+        return items
+      }
+
+      return orderBy(
+        items,
+        sort.map((s) => s.column),
+        sort.map((s) => (s.order === SortOrder.Desc ? 'desc' : 'asc'))
+      )
+    }, [items, sort])
+
     let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
       () =>
-        items.map((item) => {
+        sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
           let itemEntries = Object.entries<CellValType>(item)
 
@@ -570,7 +587,7 @@ const Table = observer(
           }
         }),
       [
-        items,
+        sortedItems,
         pendingValues,
         editableValues,
         canRemoveRow,
