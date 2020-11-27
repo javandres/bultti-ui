@@ -347,7 +347,7 @@ const ContractEditor = observer(
       }
     }, [rulesFileValue, pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
-    let onCancelEdit = useCallback(() => {
+    let onCancel = useCallback(() => {
       setPendingContract(createContractInput(contract))
       setRulesFile([])
       onReset()
@@ -395,10 +395,11 @@ const ContractEditor = observer(
           labels={formLabels}
           onChange={onChange}
           onDone={onDone}
-          onCancel={onCancelEdit}
+          onCancel={onCancel}
           loading={isLoading}
           readOnly={!editable}
           doneDisabled={!pendingContractValid}
+          isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
           renderLabel={renderEditorLabel}
           renderInput={renderEditorField(
@@ -407,7 +408,6 @@ const ContractEditor = observer(
             onToggleRulesInput,
             currentError
           )}
-          showButtons={isDirty}
         />
       </ContractEditorView>
     )
