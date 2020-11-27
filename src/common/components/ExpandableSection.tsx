@@ -1,6 +1,7 @@
 import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
+import { forOwn } from 'lodash'
 import { ArrowDown } from '../icon/ArrowDown'
 import { SectionHeading } from './Typography'
 
@@ -141,7 +142,22 @@ const ExpandableSection = observer(
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
-    let onChangeExpanded = useCallback(
+    let onClickHeaderRow = useCallback(
+      (e: React.MouseEvent) => {
+        let wasExpandableSectionClicked = false
+        forOwn((e.target as Element).classList, (value) => {
+          if ((value as string).includes('ExpandableSection'))
+            wasExpandableSectionClicked = true
+        })
+
+        if (wasExpandableSectionClicked) {
+          setExpanded((currentVal) => !currentVal)
+        }
+      },
+      [onToggleExpanded]
+    )
+
+    const onClickExpandToggle = useCallback(
       (e: React.MouseEvent) => {
         setExpanded((currentVal) => !currentVal)
         e.stopPropagation()
@@ -160,28 +176,20 @@ const ExpandableSection = observer(
       }
     }, [isExpanded])
 
-    const stopEventPropagation = useCallback((e: React.MouseEvent) => {
-      e.stopPropagation()
-    }, [])
-
     return (
-      <ExpandableBoxView
-        error={error}
-        style={style}
-        className={className}
-        onClick={onChangeExpanded}>
-        <HeaderRow>
+      <ExpandableBoxView error={error} style={style} className={className}>
+        <HeaderRow onClick={onClickHeaderRow}>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded}>
               {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
             </HeaderContentWrapper>
           )}
-          <ExpandToggle expanded={expanded} onClick={onChangeExpanded}>
+          <ExpandToggle expanded={expanded} onClick={onClickExpandToggle}>
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
         {(expanded || !unmountOnClose) && (
-          <ContentWrapper expanded={expanded} onClick={stopEventPropagation}>
+          <ContentWrapper expanded={expanded}>
             {typeof children === 'function' ? children(expanded) : children}
           </ContentWrapper>
         )}

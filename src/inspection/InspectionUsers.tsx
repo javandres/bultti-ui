@@ -52,10 +52,6 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
     }
   }, [inspection, user, toggleSubscribed, refetchRelations])
 
-  const stopEventPropagation = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation()
-  }, [])
-
   return (
     <ExpandableSection
       headerContent={
@@ -66,10 +62,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
               style={{ marginLeft: 'auto' }}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}
-              onClick={(e: React.MouseEvent) => {
-                refetchRelations()
-                stopEventPropagation(e)
-              }}>
+              onClick={refetchRelations}>
               Päivitä
             </Button>
           </HeaderSection>
