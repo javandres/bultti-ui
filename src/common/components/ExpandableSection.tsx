@@ -9,6 +9,7 @@ const ExpandableBoxView = styled.div<{ error: boolean }>`
   margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
+  cursor: pointer;
 `
 
 export const HeaderRow = styled.div`
@@ -140,9 +141,13 @@ const ExpandableSection = observer(
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
-    let onChangeExpanded = useCallback(() => {
-      setExpanded((currentVal) => !currentVal)
-    }, [onToggleExpanded])
+    let onChangeExpanded = useCallback(
+      (e: React.MouseEvent) => {
+        setExpanded((currentVal) => !currentVal)
+        e.stopPropagation()
+      },
+      [onToggleExpanded]
+    )
 
     useEffect(() => {
       onToggleExpanded(expanded)
@@ -155,8 +160,16 @@ const ExpandableSection = observer(
       }
     }, [isExpanded])
 
+    const stopEventPropagation = useCallback((e: React.MouseEvent) => {
+      e.stopPropagation()
+    }, [])
+
     return (
-      <ExpandableBoxView error={error} style={style} className={className}>
+      <ExpandableBoxView
+        error={error}
+        style={style}
+        className={className}
+        onClick={onChangeExpanded}>
         <HeaderRow>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded}>
@@ -168,7 +181,7 @@ const ExpandableSection = observer(
           </ExpandToggle>
         </HeaderRow>
         {(expanded || !unmountOnClose) && (
-          <ContentWrapper expanded={expanded}>
+          <ContentWrapper expanded={expanded} onClick={stopEventPropagation}>
             {typeof children === 'function' ? children(expanded) : children}
           </ContentWrapper>
         )}
