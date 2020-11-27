@@ -23,6 +23,7 @@ import {
 } from '../equipment/equipmentUtils'
 import AddEquipment from '../equipment/AddEquipment'
 import { MessageView } from '../common/components/Messages'
+import { text } from '../util/translate'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -36,8 +37,13 @@ export type PropTypes = {
 }
 
 const equipmentCatalogueLabels = {
-  startDate: 'Alkupäivä',
-  endDate: 'Loppupäivä',
+  startDate: text('start_date'),
+  endDate: text('end_date'),
+}
+
+const equipmentCatalogueHints = {
+  startDate: text('hint.equipment_catalogue.start_date'),
+  endDate: text('hint.equipment_catalogue.end_date'),
 }
 
 enum CatalogueEditMode {
@@ -163,6 +169,8 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         {editable && pendingCatalogue && (
           <ItemForm
             item={pendingCatalogue}
+            labels={equipmentCatalogueLabels}
+            hints={equipmentCatalogueHints}
             onChange={onChangeCatalogue}
             onDone={onSaveEquipmentCatalogue}
             onCancel={onCancelPendingEquipmentCatalogue}
