@@ -11,6 +11,7 @@ import {
 import { useMutationData } from '../util/useMutationData'
 import {
   publishInspectionMutation,
+  readyInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
 } from './inspectionQueries'
@@ -41,7 +42,7 @@ const ButtonRow = styled.div`
   }
 `
 
-type Actions = 'publish' | 'reject' | 'submit' | 'remove'
+type Actions = 'publish' | 'reject' | 'submit' | 'remove' | 'ready'
 
 export type PropTypes = {
   inspection: Inspection
@@ -92,6 +93,8 @@ const InspectionActions = observer(
       submitInspectionMutation
     )
 
+    var [inspectionReady, { loading: readyLoading }] = useMutationData(readyInspectionMutation)
+
     var [publishInspection, { loading: publishLoading }] = useMutationData(
       publishInspectionMutation
     )
@@ -127,6 +130,20 @@ const InspectionActions = observer(
       },
       [onRefresh, inspection, disabledActions]
     )
+
+    var onReadyInspection = useCallback(async () => {
+      if (disabledActions.includes('ready')) {
+        return
+      }
+
+      await inspectionReady({
+        variables: {
+          inspectionId: inspection.id,
+        },
+      })
+
+      await onRefresh()
+    }, [onRefresh, inspection, disabledActions])
 
     var onPublishInspection = useCallback(async () => {
       if (disabledActions.includes('publish')) {
@@ -188,15 +205,29 @@ const InspectionActions = observer(
             </Button>
           )}
           {!submitActive &&
-            inspection.status === InspectionStatus.Draft &&
-            requireOperatorUser(user, inspection?.operatorId || undefined) &&
-            isEditing && (
+            ((inspection.inspectionType === InspectionType.Pre &&
+              inspection.status === InspectionStatus.Draft) ||
+              (inspection.inspectionType === InspectionType.Post &&
+                inspection.status === InspectionStatus.Ready)) && (
               <Button
                 loading={submitLoading}
                 buttonStyle={ButtonStyle.NORMAL}
                 size={ButtonSize.MEDIUM}
                 onClick={onSubmitProcessStart}>
                 Lähetä hyväksyttäväksi
+              </Button>
+            )}
+
+          {inspection.inspectionType === InspectionType.Post &&
+            inspection.status === InspectionStatus.Draft &&
+            requireOperatorUser(user, inspection?.operatorId || undefined) &&
+            isEditing && (
+              <Button
+                loading={readyLoading}
+                buttonStyle={ButtonStyle.ACCEPT}
+                size={ButtonSize.MEDIUM}
+                onClick={onReadyInspection}>
+                Valmista
               </Button>
             )}
 

@@ -16,6 +16,7 @@ export enum ButtonStyle {
   REMOVE,
   SECONDARY,
   SECONDARY_REMOVE,
+  ACCEPT,
   DISABLED,
 }
 
@@ -50,6 +51,11 @@ const styleValues = {
     color: ['white', 'var(--red)'],
     borderColor: ['var(--red)', 'white'],
     backgroundColor: ['var(--red)', 'white'],
+  },
+  [ButtonStyle.ACCEPT]: {
+    color: ['white', 'var(--light-green)'],
+    borderColor: ['var(--light-green)', 'white'],
+    backgroundColor: ['var(--light-green)', 'white'],
   },
   [ButtonStyle.SECONDARY_REMOVE]: {
     color: ['var(--red)', 'white'],
