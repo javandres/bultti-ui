@@ -105,8 +105,12 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     previewObservedRequirementQuery
   )
 
+  let [requirementPreviewLoadingId, setRequirementPreviewLoadingId] = useState('')
+
   let onPreviewRequirement = useCallback(
     (requirementId) => {
+      setRequirementPreviewLoadingId(requirementId)
+
       previewObservedRequirement({
         variables: {
           requirementId,
@@ -358,8 +362,11 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                           <FlexRow>
                             <Button
                               onClick={() => onPreviewRequirement(requirement.id)}
-                              loading={previewLoading}>
-                              {isEditable ? 'Esikatsele' : 'Hae'} toteuma
+                              loading={
+                                requirementPreviewLoadingId === requirement.id &&
+                                previewLoading
+                              }>
+                              {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
                             </Button>
                           </FlexRow>
                           {requirement.observedRequirements.some(
