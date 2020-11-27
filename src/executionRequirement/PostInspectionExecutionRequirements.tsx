@@ -34,12 +34,8 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
   kilometersRequired: 'Km vaatimus',
-  quotaRequired: '% Osuus',
-}
-
-const observedColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
-  emissionClass: 'Päästöluokka',
   kilometersObserved: 'Toteutetut km',
+  quotaRequired: '% Osuus',
   quotaObserved: 'Toteutettu % osuus',
   averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
   equipmentCountObserved: 'Ajoneuvomäärä',
@@ -109,15 +105,17 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
   let onPreviewRequirement = useCallback(
     (requirementId) => {
-      setRequirementPreviewLoadingId(requirementId)
+      if (isEditable) {
+        setRequirementPreviewLoadingId(requirementId)
 
-      previewObservedRequirement({
-        variables: {
-          requirementId,
-        },
-      })
+        previewObservedRequirement({
+          variables: {
+            requirementId,
+          },
+        })
+      }
     },
-    [previewObservedRequirement]
+    [previewObservedRequirement, isEditable]
   )
 
   let [createRequirements, { loading: createLoading }] = useMutationData(
@@ -280,9 +278,15 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
       switch (key) {
         case 'quotaRequired':
+        case 'quotaObserved':
           return `${totalVal}%`
         case 'kilometersRequired':
+        case 'kilometersObserved':
           return `${totalVal} km`
+        case 'averageAgeWeightedObserved':
+          return `${totalVal} v`
+        case 'equipmentCountObserved':
+          return `${totalVal} kpl`
         default:
           return totalVal
       }
@@ -359,28 +363,17 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                             onCancelEdit={isEditable ? onCancelEdit : undefined}
                             showToolbar={false}
                           />
-                          <FlexRow>
-                            <Button
-                              onClick={() => onPreviewRequirement(requirement.id)}
-                              loading={
-                                requirementPreviewLoadingId === requirement.id &&
-                                previewLoading
-                              }>
-                              {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
-                            </Button>
-                          </FlexRow>
-                          {requirement.observedRequirements.some(
-                            (val) => !!val.quotaObserved
-                          ) && (
-                            <>
-                              <ObservedHeading>Toteutuneet arvot</ObservedHeading>
-                              <RequirementValueTable
-                                fluid={true}
-                                items={requirement.observedRequirements}
-                                columnLabels={observedColumnLabels}
-                                getColumnTotal={createGetColumnTotal(requirement)}
-                              />
-                            </>
+                          {isEditable && (
+                            <FlexRow>
+                              <Button
+                                onClick={() => onPreviewRequirement(requirement.id)}
+                                loading={
+                                  requirementPreviewLoadingId === requirement.id &&
+                                  previewLoading
+                                }>
+                                {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
+                              </Button>
+                            </FlexRow>
                           )}
                         </React.Fragment>
                       ))}
