@@ -90,6 +90,7 @@ export type PropTypes<ItemType = any> = {
   readOnly?: boolean | string[]
   doneLabel?: string
   doneDisabled?: boolean
+  isDirty?: boolean
   labels?: LabelsType<ItemType>
   order?: string[]
   hideKeys?: string[]
@@ -146,6 +147,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     onDone,
     onCancel,
     doneDisabled = false,
+    isDirty = true,
     doneLabel = 'Tallenna',
     renderInput = defaultRenderInput,
     renderLabel = defaultRenderLabel,
@@ -170,7 +172,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     )
 
     const formId = useMemo(() => uniqueId(), [])
-    usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: !doneDisabled })
+    usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: isDirty })
     return (
       <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => {
@@ -201,7 +203,7 @@ const ItemForm: React.FC<PropTypes> = observer(
               <Button
                 loading={loading}
                 style={{ marginRight: '1rem' }}
-                disabled={doneDisabled}
+                disabled={doneDisabled || !isDirty}
                 onClick={onDone}>
                 {doneLabel}
               </Button>
