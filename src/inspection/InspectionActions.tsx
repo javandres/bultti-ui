@@ -176,6 +176,18 @@ const InspectionActions = observer(
     let userCanPublish =
       inspection.status === InspectionStatus.InReview && requireAdminUser(user)
 
+    // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
+    let inspectionCanBeSubmitted =
+      (inspection.inspectionType === InspectionType.Pre &&
+        inspection.status === InspectionStatus.Draft) ||
+      (inspection.inspectionType === InspectionType.Post &&
+        inspection.status === InspectionStatus.Ready)
+
+    // Only post-inspections which are in draft state can be readied.
+    let inspectionCanBeReady =
+      inspection.inspectionType === InspectionType.Post &&
+      inspection.status === InspectionStatus.Draft
+
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -204,22 +216,17 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!submitActive &&
-            ((inspection.inspectionType === InspectionType.Pre &&
-              inspection.status === InspectionStatus.Draft) ||
-              (inspection.inspectionType === InspectionType.Post &&
-                inspection.status === InspectionStatus.Ready)) && (
-              <Button
-                loading={submitLoading}
-                buttonStyle={ButtonStyle.NORMAL}
-                size={ButtonSize.MEDIUM}
-                onClick={onSubmitProcessStart}>
-                Lähetä hyväksyttäväksi
-              </Button>
-            )}
+          {!submitActive && inspectionCanBeSubmitted && (
+            <Button
+              loading={submitLoading}
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.MEDIUM}
+              onClick={onSubmitProcessStart}>
+              Lähetä hyväksyttäväksi
+            </Button>
+          )}
 
-          {inspection.inspectionType === InspectionType.Post &&
-            inspection.status === InspectionStatus.Draft &&
+          {inspectionCanBeReady &&
             requireOperatorUser(user, inspection?.operatorId || undefined) &&
             isEditing && (
               <Button
@@ -270,7 +277,7 @@ const InspectionActions = observer(
           )}
         </ButtonRow>
         {submitActive &&
-          inspection.status === InspectionStatus.Draft &&
+          inspectionCanBeSubmitted &&
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <InspectionApprovalSubmit
