@@ -5,7 +5,7 @@ import { translate } from './translate'
 export const useTooltip = (helpText) => {
   return useObserver(() => {
     const selectedLanguage = languageState.language
-    const translatedText = translate(helpText, 'help', selectedLanguage)
+    const translatedText = translate(helpText, selectedLanguage)
 
     return {
       title: (translatedText || '').replace('&shy;', ''), // Some texts may have shy linebreaks
