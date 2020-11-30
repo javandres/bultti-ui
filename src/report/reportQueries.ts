@@ -225,6 +225,7 @@ export const reportByName = gql`
           deadrunEndStop
           deadrunMinutes
           deadrunPlannedBy
+          overlapPlannedBy
           departureA {
             ...ShortDepartureFragment
           }

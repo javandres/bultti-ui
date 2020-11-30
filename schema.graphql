@@ -62,7 +62,7 @@ type Departure {
   isNextDay: Boolean!
   isTracked: Boolean
   isTrunkRoute: Boolean
-  journeyEndTime: String
+  journeyEndTime: String!
   journeyStartTime: String!
   observedEquipmentType: String
   plannedEquipmentType: String
@@ -445,7 +445,7 @@ type OperatorBlockDeparture {
   equipmentId: String
   id: ID!
   inspectionId: String
-  journeyEndTime: String
+  journeyEndTime: String!
   journeyStartTime: String!
   journeyType: String!
   operatorId: String

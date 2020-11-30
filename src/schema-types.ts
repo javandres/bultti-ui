@@ -411,7 +411,7 @@ export type Departure = {
   departureId: Scalars['String'];
   departureType: DepartureType;
   journeyStartTime: Scalars['String'];
-  journeyEndTime?: Maybe<Scalars['String']>;
+  journeyEndTime: Scalars['String'];
   isNextDay: Scalars['Boolean'];
   terminalTime?: Maybe<Scalars['Int']>;
   recoveryTime?: Maybe<Scalars['Int']>;
@@ -721,7 +721,7 @@ export type OperatorBlockDeparture = {
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   journeyStartTime: Scalars['String'];
-  journeyEndTime?: Maybe<Scalars['String']>;
+  journeyEndTime: Scalars['String'];
   registryNr?: Maybe<Scalars['String']>;
   vehicleId?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
