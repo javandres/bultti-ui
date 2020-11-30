@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { forOwn } from 'lodash'
@@ -142,24 +142,27 @@ const ExpandableSection = observer(
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
-    let onClickHeaderRow = useCallback(
+    const onClickHeaderRow = useCallback(
       (e: React.MouseEvent) => {
-        let wasExpandableSectionClicked = false
+        let expandableSectionClassCount = 0
         forOwn((e.target as Element).classList, (value) => {
-          if ((value as string).includes('ExpandableSection'))
-            wasExpandableSectionClicked = true
+          if ((value as string).includes('ExpandableSection')) expandableSectionClassCount += 1
         })
+        if (expandableSectionClassCount > 1) {
+          throw 'Multiple ExpandableSection classes found from propagating click event. This might cause errors.'
+        }
 
-        if (wasExpandableSectionClicked) {
+        if (expandableSectionClassCount === 1) {
           setExpanded((currentVal) => !currentVal)
         }
       },
       [onToggleExpanded]
     )
 
-    const onClickExpandToggle = useCallback(
+    const onClickExpandIcon = useCallback(
       (e: React.MouseEvent) => {
         setExpanded((currentVal) => !currentVal)
+        // Prevent parent component from catching the click event
         e.stopPropagation()
       },
       [onToggleExpanded]
@@ -184,7 +187,7 @@ const ExpandableSection = observer(
               {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
             </HeaderContentWrapper>
           )}
-          <ExpandToggle expanded={expanded} onClick={onClickExpandToggle}>
+          <ExpandToggle expanded={expanded} onClick={onClickExpandIcon}>
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
