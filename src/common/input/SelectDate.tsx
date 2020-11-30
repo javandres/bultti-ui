@@ -6,6 +6,7 @@ import styled from 'styled-components'
 import '../style/reactDates.scss'
 import { DATE_FORMAT } from '../../constants'
 import { format, isAfter, isBefore, isValid, parseISO } from 'date-fns'
+import { isEmpty } from 'lodash'
 
 const InputWrapper = styled.div`
   position: relative;
@@ -101,17 +102,15 @@ const SelectDate: React.FC<PropTypes> = observer(
       [label, name]
     )
 
-    const applyInputValue = useCallback(() => {
-      if (inputValue !== value) {
-        let validDate = getValidDate(inputValue)
-
-        if (validDate) {
-          let validDateVal = format(validDate, DATE_FORMAT)
-          onChange(validDateVal)
-          setInputValue(validDateVal)
-        }
+    useEffect(() => {
+      let validDate = getValidDate(inputValue)
+      if (!validDate && !isEmpty(inputValue)) {
+        // Should not happen
+        throw `Could not convert inputValue as a valid Date object. Given inputValue: ${inputValue}`
       }
-    }, [value, inputValue, onChange, getValidDate])
+      const onChangeValue = isEmpty(inputValue) ? '' : format(validDate!, DATE_FORMAT)
+      onChange(onChangeValue)
+    }, [inputValue])
 
     return (
       <>
@@ -124,8 +123,6 @@ const SelectDate: React.FC<PropTypes> = observer(
               label={label}
               value={currentValue}
               onChange={setInputValue}
-              onEnterPress={applyInputValue}
-              onBlur={applyInputValue}
               disabled={disabled}
               min={minDate}
               max={maxDate}
