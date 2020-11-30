@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
-import { isEmpty, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -27,13 +27,20 @@ export type PropTypes = {
 
 const InspectionConfig: React.FC<PropTypes> = observer(
   ({ saveValues, isEditable, inspection }) => {
+    const getInspectionInputValues = (setFromInspection: Inspection) => {
+      return {
+        name: setFromInspection.name || '',
+        inspectionStartDate: setFromInspection.inspectionStartDate || '',
+        inspectionEndDate: setFromInspection.inspectionEndDate || '',
+      }
+    }
+    const initialInspectionInputValues = getInspectionInputValues(inspection)
     let [pendingInspectionInputValues, setPendingInspectionInputValues] = useState<
       InspectionInput
-    >({})
-    let [
-      oldInspectionInputValues,
-      setOldInspectionInputValues,
-    ] = useState<InspectionInput | null>(null)
+    >(initialInspectionInputValues)
+    let [oldInspectionInputValues, setOldInspectionInputValues] = useState<InspectionInput>(
+      initialInspectionInputValues
+    )
     let onUpdateValue = useCallback((name, value) => {
       setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
@@ -47,21 +54,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       setOldInspectionInputValues(pendingInspectionInputValues)
     }, [pendingInspectionInputValues])
 
-    useEffect(() => {
-      if (isEmpty(pendingInspectionInputValues)) {
-        const inspectionInputValues = getInspectionInputValues(inspection)
-        setPendingInspectionInputValues(inspectionInputValues)
-        setOldInspectionInputValues(inspectionInputValues)
-      }
-    }, [inspection])
-
-    let getInspectionInputValues = (setFromInspection: Inspection) => {
-      return {
-        name: setFromInspection.name || '',
-        inspectionStartDate: setFromInspection.inspectionStartDate || '',
-        inspectionEndDate: setFromInspection.inspectionEndDate || '',
-      }
-    }
     let isDirty = useMemo(
       () => !isEqual(oldInspectionInputValues, pendingInspectionInputValues),
       [pendingInspectionInputValues]
@@ -71,7 +63,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
-            <MessageView>Tarkastus ei valittu.</MessageView>
+            <MessageView>Tarkastusta ei ole valittu.</MessageView>
           </MessageContainer>
         ) : (
           <>
