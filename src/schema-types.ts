@@ -481,7 +481,7 @@ export type ObservedDeparture = {
   plannedOperatorId?: Maybe<Scalars['Int']>;
   observedOperatorId?: Maybe<Scalars['Int']>;
   journeyStartTime: Scalars['String'];
-  journeyEndTime?: Maybe<Scalars['String']>;
+  journeyEndTime: Scalars['String'];
   uniqueVehicleId?: Maybe<Scalars['String']>;
   departureIsNextDay: Scalars['Boolean'];
   arrivalIsNextDay: Scalars['Boolean'];
@@ -496,6 +496,7 @@ export type ObservedDeparture = {
   observedArrivalDateTime?: Maybe<Scalars['DateTime']>;
   stopId?: Maybe<Scalars['String']>;
   originStopId?: Maybe<Scalars['String']>;
+  destinationStopId?: Maybe<Scalars['String']>;
   terminalTime?: Maybe<Scalars['Int']>;
   recoveryTime?: Maybe<Scalars['Int']>;
   routeId?: Maybe<Scalars['String']>;
@@ -504,18 +505,20 @@ export type ObservedDeparture = {
   dayType: DayType;
   plannedEquipmentType?: Maybe<Scalars['String']>;
   equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
-  plannedRegistryNr?: Maybe<Scalars['String']>;
-  observedRegistryNr?: Maybe<Scalars['String']>;
-  equipmentRotation?: Maybe<Scalars['Int']>;
-  isTrunkRoute?: Maybe<Scalars['Boolean']>;
-  allowedOverAge?: Maybe<Scalars['Float']>;
-  blockNumber?: Maybe<Scalars['String']>;
-  schemaId?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
   observedEquipment?: Maybe<Equipment>;
   observedEquipmentId?: Maybe<Scalars['String']>;
+  observedEquipmentType?: Maybe<Scalars['String']>;
+  observedRegistryNr?: Maybe<Scalars['String']>;
+  observedRegistryDate?: Maybe<Scalars['String']>;
+  observedExteriorColor?: Maybe<Scalars['String']>;
+  observedEquipmentAge?: Maybe<Scalars['Float']>;
+  equipmentRotation?: Maybe<Scalars['Int']>;
+  isTrunkRoute?: Maybe<Scalars['Boolean']>;
+  schemaId?: Maybe<Scalars['String']>;
+  procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
+  isObserved?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -761,9 +764,6 @@ export type DeparturePair = {
   __typename?: 'DeparturePair';
   id: Scalars['ID'];
   groupId?: Maybe<Scalars['String']>;
-  departurePairType?: Maybe<Scalars['String']>;
-  departureA: Departure;
-  departureB: Departure;
   deadrunStartStop?: Maybe<Scalars['String']>;
   deadrunEndStop?: Maybe<Scalars['String']>;
   deadrunMinutes?: Maybe<Scalars['Int']>;
@@ -771,6 +771,9 @@ export type DeparturePair = {
   overlapSecondsA?: Maybe<Scalars['Int']>;
   overlapSecondsB?: Maybe<Scalars['Int']>;
   overlapPlannedBy?: Maybe<Scalars['String']>;
+  departureA: Departure;
+  departureB: Departure;
+  departurePairType?: Maybe<Scalars['String']>;
 };
 
 export type EmissionClassExecutionItem = {

@@ -65,7 +65,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
 
     let unit = ''
 
-    switch (item.unit || key) {
+    switch (item?.unit || key) {
       case 'quotaRequired':
       case 'quotaObserved':
       case 'differencePercentage':

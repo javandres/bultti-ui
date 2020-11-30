@@ -120,12 +120,9 @@ export const ObservedDepartureFragment = gql`
     dayType
     plannedEquipmentType
     equipmentTypeRequired
-    plannedRegistryNr
     observedRegistryNr
     equipmentRotation
     isTrunkRoute
-    allowedOverAge
-    blockNumber
     schemaId
     schemaUnitId: procurementUnitId
     observedEquipment {
