@@ -282,7 +282,7 @@ type CellPropTypes<ItemType = any> = {
 
 type ContextTypes<ItemType> = {
   pendingValues?: EditValue[]
-  columnWidths?: Map<number, number>
+  columnWidths?: Array<number | string>
   editableValues?: PropTypes<ItemType>['editableValues']
   onEditValue?: PropTypes<ItemType>['onEditValue']
   renderInput?: PropTypes<ItemType>['renderInput']
@@ -302,7 +302,7 @@ const TableCellComponent = observer(
     let {
       pendingValues = [],
       onEditValue,
-      columnWidths = new Map(),
+      columnWidths = [],
       renderValue = defaultRenderValue,
       editableValues = [],
       onSaveEdit,
@@ -325,7 +325,7 @@ const TableCellComponent = observer(
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
         : undefined
 
-    let columnWidth = columnWidths.get(colIndex)
+    let columnWidth = columnWidths[colIndex]
 
     let canEditCell = onEditValue && editableValues.includes(valueKey)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
@@ -344,7 +344,10 @@ const TableCellComponent = observer(
         style={
           !fluid && !!columnWidth
             ? {
-                minWidth: Math.min(columnWidth, 300) + 'px',
+                minWidth:
+                  typeof columnWidth === 'string'
+                    ? columnWidth
+                    : Math.min(columnWidth, 300) + 'px',
               }
             : undefined
         }
@@ -598,8 +601,13 @@ const Table = observer(
       ]
     )
 
-    let columnWidths = useMemo(() => {
-      let widthsCollection = new Map()
+    let columnWidths: Array<string | number> = useMemo(() => {
+      if (fluid) {
+        let percentageWidth = columnNames.length / 100 + '%'
+        return columnNames.map(() => percentageWidth)
+      }
+
+      let widths: number[] = []
       let colIdx = 0
 
       for (let colName of columnNames) {
@@ -613,12 +621,12 @@ const Table = observer(
           colWidth = Math.max(valLength * 10, colWidth)
         }
 
-        widthsCollection.set(colIdx, colWidth)
+        widths.push(Math.ceil(colWidth))
         colIdx++
       }
 
-      return widthsCollection
-    }, [columnNames, rows])
+      return widths
+    }, [columnNames, rows, fluid])
 
     // The table is empty if we don't have any items,
     // OR
@@ -627,9 +635,18 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = fluid
-      ? '100%'
-      : Math.ceil(Array.from(columnWidths.values()).reduce((total, col) => total + col, 0))
+    let width =
+      fluid || columnWidths.some((w) => typeof w === 'string')
+        ? '100%'
+        : Math.ceil(
+            columnWidths.reduce((total: number, col) => {
+              if (typeof col !== 'number') {
+                return total
+              }
+
+              return total + col
+            }, 0)
+          )
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
@@ -721,8 +738,7 @@ const Table = observer(
 
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
-
-                let columnWidth = fluid ? undefined : columnWidths.get(colIdx)
+                let columnWidth = columnWidths[colIdx]
 
                 return (
                   <ColumnHeaderCell
@@ -730,7 +746,10 @@ const Table = observer(
                     style={
                       !fluid && !!columnWidth
                         ? {
-                            minWidth: Math.min(columnWidth, 300) + 'px',
+                            minWidth:
+                              typeof columnWidth === 'string'
+                                ? columnWidth
+                                : Math.min(columnWidth, 300) + 'px',
                           }
                         : undefined
                     }
@@ -778,7 +797,7 @@ const Table = observer(
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-                  let columnWidth = fluid ? undefined : columnWidths.get(colIdx)
+                  let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
                     <TableCell
@@ -786,7 +805,10 @@ const Table = observer(
                       style={
                         !fluid && !!columnWidth
                           ? {
-                              minWidth: Math.min(columnWidth, 300) + 'px',
+                              minWidth:
+                                typeof columnWidth === 'string'
+                                  ? columnWidth
+                                  : Math.min(columnWidth, 300) + 'px',
                             }
                           : undefined
                       }>
