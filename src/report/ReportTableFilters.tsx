@@ -8,7 +8,6 @@ import Dropdown from '../common/input/Dropdown'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
 import { CrossThick } from '../common/icon/CrossThick'
 import { text } from '../util/translate'
-import ToggleButton from '../common/input/ToggleButton'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
 import { FilterConfig } from '../schema-types'
@@ -24,14 +23,6 @@ const FilterButtonBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-start;
-`
-
-const FilterModeButton = styled(ToggleButton)`
-  flex: 0;
-  display: inline-flex;
-  align-self: flex-start;
-  margin-left: auto;
-  padding: 0;
 `
 
 const FilterButtonsWrapper = styled.div`
