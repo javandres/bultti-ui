@@ -216,7 +216,7 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!submitActive && inspectionCanBeSubmitted && (
+          {!submitActive && inspectionCanBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
