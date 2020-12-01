@@ -15,6 +15,7 @@ export const HeaderRow = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
+  cursor: pointer;
 `
 
 export const HeaderSection = styled.div<{ error?: boolean }>`
