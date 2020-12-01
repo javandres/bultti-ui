@@ -1,7 +1,6 @@
-import React, { CSSProperties, useCallback, useEffect, useRef, useState } from 'react'
+import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { forOwn } from 'lodash'
 import { ArrowDown } from '../icon/ArrowDown'
 import { SectionHeading } from './Typography'
 
@@ -10,7 +9,6 @@ const ExpandableBoxView = styled.div<{ error: boolean }>`
   margin-top: 1rem;
   border-radius: 0.5rem;
   background: white;
-  cursor: pointer;
 `
 
 export const HeaderRow = styled.div`
@@ -142,31 +140,9 @@ const ExpandableSection = observer(
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
-    const onClickHeaderRow = useCallback(
-      (e: React.MouseEvent) => {
-        let expandableSectionClassCount = 0
-        forOwn((e.target as Element).classList, (value) => {
-          if ((value as string).includes('ExpandableSection')) expandableSectionClassCount += 1
-        })
-        if (expandableSectionClassCount > 1) {
-          throw 'Multiple ExpandableSection classes found from propagating click event. This might cause errors.'
-        }
-
-        if (expandableSectionClassCount === 1) {
-          setExpanded((currentVal) => !currentVal)
-        }
-      },
-      [onToggleExpanded]
-    )
-
-    const onClickExpandIcon = useCallback(
-      (e: React.MouseEvent) => {
-        setExpanded((currentVal) => !currentVal)
-        // Prevent parent component from catching the click event
-        e.stopPropagation()
-      },
-      [onToggleExpanded]
-    )
+    let onChangeExpanded = useCallback(() => {
+      setExpanded((currentVal) => !currentVal)
+    }, [onToggleExpanded])
 
     useEffect(() => {
       onToggleExpanded(expanded)
@@ -179,15 +155,22 @@ const ExpandableSection = observer(
       }
     }, [isExpanded])
 
+    // Stop the click event from propagating to the HeaderRow when a button within the header is clicked.
+    let stopPropagation = useCallback((e) => {
+      if (['BUTTON', 'INPUT', 'A'].includes(e.target.tagName)) {
+        e.stopPropagation()
+      }
+    }, [])
+
     return (
       <ExpandableBoxView error={error} style={style} className={className}>
-        <HeaderRow onClick={onClickHeaderRow}>
+        <HeaderRow onClick={onChangeExpanded}>
           {headerContent && (
-            <HeaderContentWrapper expanded={expanded}>
+            <HeaderContentWrapper expanded={expanded} onClick={stopPropagation}>
               {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
             </HeaderContentWrapper>
           )}
-          <ExpandToggle expanded={expanded} onClick={onClickExpandIcon}>
+          <ExpandToggle expanded={expanded}>
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
