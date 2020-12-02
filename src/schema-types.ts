@@ -56,6 +56,7 @@ export type Query = {
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
+  allInspectionDates: Array<InspectionDate>;
 };
 
 
@@ -515,6 +516,7 @@ export type ObservedDeparture = {
   equipmentRotation?: Maybe<Scalars['Int']>;
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   schemaId?: Maybe<Scalars['String']>;
+  blockNumber?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
@@ -880,6 +882,13 @@ export type ProcurementUnitOption = {
   currentContracts?: Maybe<Array<Contract>>;
 };
 
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateWeeklyMetersFromSource: ProcurementUnit;
@@ -921,6 +930,7 @@ export type Mutation = {
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
   removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean'];
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
+  createInspectionDate: InspectionDate;
 };
 
 
@@ -1143,6 +1153,11 @@ export type MutationUpdateObservedExecutionRequirementValuesArgs = {
   requirementId: Scalars['String'];
 };
 
+
+export type MutationCreateInspectionDateArgs = {
+  inspectionDate: InspectionDateInput;
+};
+
 export type ProcurementUnitEditInput = {
   weeklyMeters: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
@@ -1211,6 +1226,11 @@ export type ObservedRequirementValueInput = {
   kilometersRequired?: Maybe<Scalars['Float']>;
   quotaRequired?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
+};
+
+export type InspectionDateInput = {
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
 };
 
 export type Subscription = {
