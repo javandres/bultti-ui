@@ -35,7 +35,11 @@ const InspectionDateList: React.FC<PropTypes> = observer(({ inspectionDates, isL
         <>
           {inspectionDates.length === 0 && <Text>inspection_date.list.noResults</Text>}
           {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
-            return <ListItem key={index}>{inspectionDate.startDate}</ListItem>
+            return (
+              <ListItem key={index}>
+                {inspectionDate.startDate} - {inspectionDate.endDate}
+              </ListItem>
+            )
           })}
         </>
       )}
