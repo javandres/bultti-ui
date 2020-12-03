@@ -25,7 +25,7 @@ const inspectionDateLabels = {
 
 interface PropTypes {
   closeInspectionDateList: () => void
-  refetchInspectionDateList: () => void
+  refetchInspectionDateList: () => unknown
 }
 
 const InspectionDateForm: React.FC<PropTypes> = observer(
