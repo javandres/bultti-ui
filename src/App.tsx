@@ -133,7 +133,7 @@ const App: React.FC = observer(() => {
         {requireAdminUser(user) && <InspectionDatePage path="inspection-date" />}
         <UserPage path="user" />
         <OperatorContractsListPage path="contract" />
-        <EditContractPage path="contract/:contractId" />
+        {requireAdminUser(user) && <EditContractPage path="contract/:contractId" />}
         <Todo path="contracts" />
         <Logout path="logout" />
       </Router>
