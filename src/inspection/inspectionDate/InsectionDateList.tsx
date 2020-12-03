@@ -12,7 +12,7 @@ const Header = styled.div`
 
 const ListItem = styled.div`
   padding: 0.75rem;
-  border-bottom: 1px solid #e7e7e7;
+  border-bottom: 1px solid var(--lighter-grey);
   &:last-of-type {
     border-bottom: none;
   }

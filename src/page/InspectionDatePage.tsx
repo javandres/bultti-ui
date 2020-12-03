@@ -36,9 +36,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
     data: inspectionDatesQueryResult,
     loading: areInspectionDatesLoading,
     refetch: refetchInspectionDates,
-  } = useQueryData(allInspectionDatesQuery, {
-    variables: {},
-  })
+  } = useQueryData(allInspectionDatesQuery)
 
   let refetch = useRefetch(refetchInspectionDates)
 
