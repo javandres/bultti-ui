@@ -57,6 +57,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
           <InspectionDateList
             inspectionDates={sortedInspectionDates}
             isLoading={areInspectionDatesLoading}
+            refetchInspectionDateList={refetch}
           />
           <NewInspectionButtonWrapper>
             <Button onClick={() => setInspectionDateFormVisibility(true)}>

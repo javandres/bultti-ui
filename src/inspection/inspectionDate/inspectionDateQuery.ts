@@ -25,3 +25,9 @@ export const createInspectionDateMutation = gql`
   }
   ${InspectionDateFragment}
 `
+
+export const removeInspectionDateMutation = gql`
+  mutation removeInspectionDate($id: String!) {
+    removeInspectionDate(id: $id)
+  }
+`

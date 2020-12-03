@@ -4,6 +4,7 @@ import { useTooltip } from '../../util/useTooltip'
 import { LoadingDisplay } from './Loading'
 import { observer } from 'mobx-react-lite'
 import { last } from 'lodash'
+import { Trash } from '../icon/Trash'
 
 export enum ButtonSize {
   SMALL,
@@ -239,20 +240,30 @@ export const TextButton: React.FC<ButtonProps> = observer(
   }
 )
 
-export const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
-  background: var(--red);
-  border: 0;
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  padding: 0;
+export const StyledRemoveButton = styled.button`
+  outline: none;
+  padding: 0.4rem;
   line-height: 1;
+  border: 1px solid var(--red);
+  border-radius: 0.25rem;
+  background-color: white;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-
-  svg {
-    margin: -1px 0 0 0;
-    display: block;
+  cursor: pointer;
+  &:hover {
+    background-color: var(--white-grey);
   }
 `
+
+export type RemoveButtonProps = {
+  children?: HTMLCollection | string
+  onClick: (e?: React.MouseEvent) => void
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+
+export const RemoveButton = ({ onClick, children, ...props }: RemoveButtonProps) => {
+  return (
+    <StyledRemoveButton onClick={onClick} {...props}>
+      <Trash fill="var(--red)" width="1.5rem" height="1.5rem" />
+    </StyledRemoveButton>
+  )
+}

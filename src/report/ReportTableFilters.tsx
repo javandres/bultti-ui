@@ -182,9 +182,7 @@ const ReportTableFilters = observer(
                       />
                     )}
                     <FilterButtonsWrapper>
-                      <RemoveButton onClick={() => onRemoveFilter(index)}>
-                        <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-                      </RemoveButton>
+                      <RemoveButton onClick={() => onRemoveFilter(index)} />
                     </FilterButtonsWrapper>
                   </ControlGroup>
                 )
