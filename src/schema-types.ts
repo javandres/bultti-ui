@@ -477,6 +477,7 @@ export enum TrackReason {
 export type ObservedDeparture = {
   __typename?: 'ObservedDeparture';
   id: Scalars['ID'];
+  departureType: DepartureType;
   departureId: Scalars['String'];
   postInspectionId?: Maybe<Scalars['String']>;
   plannedOperatorId?: Maybe<Scalars['Int']>;
@@ -489,6 +490,7 @@ export type ObservedDeparture = {
   isOriginStop: Scalars['Boolean'];
   isTimingStop: Scalars['Boolean'];
   isDestinationStop: Scalars['Boolean'];
+  date: Scalars['String'];
   departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
@@ -773,9 +775,9 @@ export type DeparturePair = {
   overlapSecondsA?: Maybe<Scalars['Int']>;
   overlapSecondsB?: Maybe<Scalars['Int']>;
   overlapPlannedBy?: Maybe<Scalars['String']>;
+  departurePairType?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
-  departurePairType?: Maybe<Scalars['String']>;
 };
 
 export type EmissionClassExecutionItem = {
