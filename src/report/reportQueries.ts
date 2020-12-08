@@ -120,12 +120,9 @@ export const ObservedDepartureFragment = gql`
     dayType
     plannedEquipmentType
     equipmentTypeRequired
-    plannedRegistryNr
     observedRegistryNr
     equipmentRotation
     isTrunkRoute
-    allowedOverAge
-    blockNumber
     schemaId
     schemaUnitId: procurementUnitId
     observedEquipment {
@@ -228,6 +225,7 @@ export const reportByName = gql`
           deadrunEndStop
           deadrunMinutes
           deadrunPlannedBy
+          overlapPlannedBy
           departureA {
             ...ShortDepartureFragment
           }

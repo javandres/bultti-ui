@@ -126,6 +126,7 @@ const renderEditorField = (
                 value: 'Arvo',
                 condition: 'Ehto',
                 category: 'Kategoria',
+                code: 'Koodi',
               }}
               items={val.currentRules}
             />
@@ -135,7 +136,7 @@ const renderEditorField = (
     )
   }
 
-  if (key === 'procurementUnitIds') {
+  if (key === 'procurementUnitIds' && contract.id && contract.startDate && contract.endDate) {
     return (
       <ExpandableFormSection
         headerContent={
