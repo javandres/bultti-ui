@@ -21,6 +21,7 @@
   "nav.category.preinspection": "Ennakkotarkastus",
   "nav.category.postinspection": "Jälkitarkastus",
   "nav.category.reports_contracts": "Sopimusehdot",
+  "nav.category.inspection_date": "Muokkaa tarkistusjaksoja",
   "nav.list.preinspection": "Ennakkotarkastukset",
   "nav.list.postinspection": "Jälkitarkastukset",
   "nav.reports": "Raportit",
@@ -45,6 +46,12 @@
   "inspection.units.hide_all": "Piilota kaikki kilpailukohteet",
   "inspection.pre.new": "Uusi ennakkotarkastus",
   "inspection.post.new": "Uusi jälkitarkastus",
+
+  "inspection_date.page.header": "Muokkaa tarkastusjaksoja",
+  "inspection_date.page.new_inspection_button": "Lisää tarkastusjakso",
+  "inspection_date.list.header": "Nykyiset tarkastusjaksot",
+  "inspection_date.list.noResults": "Tarkastusjaksoja ei löytynyt",
+  "inspection_date.form.header": "Lisää uusi tarkastusjakso",
 
   "Draft": "Muokattavissa",
   "InReview": "Hyväksyttävänä",

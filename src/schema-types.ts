@@ -56,6 +56,7 @@ export type Query = {
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
+  allInspectionDates: Array<InspectionDate>;
 };
 
 
@@ -476,6 +477,7 @@ export enum TrackReason {
 export type ObservedDeparture = {
   __typename?: 'ObservedDeparture';
   id: Scalars['ID'];
+  departureType: DepartureType;
   departureId: Scalars['String'];
   postInspectionId?: Maybe<Scalars['String']>;
   plannedOperatorId?: Maybe<Scalars['Int']>;
@@ -488,6 +490,7 @@ export type ObservedDeparture = {
   isOriginStop: Scalars['Boolean'];
   isTimingStop: Scalars['Boolean'];
   isDestinationStop: Scalars['Boolean'];
+  date: Scalars['String'];
   departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
@@ -515,6 +518,7 @@ export type ObservedDeparture = {
   equipmentRotation?: Maybe<Scalars['Int']>;
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   schemaId?: Maybe<Scalars['String']>;
+  blockNumber?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
@@ -771,9 +775,9 @@ export type DeparturePair = {
   overlapSecondsA?: Maybe<Scalars['Int']>;
   overlapSecondsB?: Maybe<Scalars['Int']>;
   overlapPlannedBy?: Maybe<Scalars['String']>;
+  departurePairType?: Maybe<Scalars['String']>;
   departureA: Departure;
   departureB: Departure;
-  departurePairType?: Maybe<Scalars['String']>;
 };
 
 export type EmissionClassExecutionItem = {
@@ -880,6 +884,13 @@ export type ProcurementUnitOption = {
   currentContracts?: Maybe<Array<Contract>>;
 };
 
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   updateWeeklyMetersFromSource: ProcurementUnit;
@@ -921,6 +932,7 @@ export type Mutation = {
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
   removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean'];
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
+  createInspectionDate: InspectionDate;
 };
 
 
@@ -1143,6 +1155,11 @@ export type MutationUpdateObservedExecutionRequirementValuesArgs = {
   requirementId: Scalars['String'];
 };
 
+
+export type MutationCreateInspectionDateArgs = {
+  inspectionDate: InspectionDateInput;
+};
+
 export type ProcurementUnitEditInput = {
   weeklyMeters: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
@@ -1211,6 +1228,11 @@ export type ObservedRequirementValueInput = {
   kilometersRequired?: Maybe<Scalars['Float']>;
   quotaRequired?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
+};
+
+export type InspectionDateInput = {
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
 };
 
 export type Subscription = {
