@@ -4,17 +4,23 @@ import { observer } from 'mobx-react-lite'
 import { InspectionDate } from '../../schema-types'
 import { Text } from '../../util/translate'
 import { LoadingDisplay } from '../../common/components/Loading'
+import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 
 const Header = styled.div`
   font-size: 1.2rem;
   margin-bottom: 1rem;
 `
 
+const ListWrapper = styled.div`
+  margin: 0 0 0.5rem;
+`
+
 const ListItem = styled.div`
-  padding: 0.75rem;
-  border-bottom: 1px solid var(--lighter-grey);
-  &:last-of-type {
-    border-bottom: none;
+  margin: 0 -1rem;
+  padding: 0.5rem 1rem;
+
+  &:nth-child(even) {
+    background: var(--white-grey);
   }
 `
 
@@ -25,7 +31,7 @@ interface PropTypes {
 
 const InspectionDateList: React.FC<PropTypes> = observer(({ inspectionDates, isLoading }) => {
   return (
-    <>
+    <ListWrapper>
       <Header>
         <Text>inspection_date.list.header</Text>
       </Header>
@@ -37,13 +43,16 @@ const InspectionDateList: React.FC<PropTypes> = observer(({ inspectionDates, isL
           {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
             return (
               <ListItem key={index}>
-                {inspectionDate.startDate} - {inspectionDate.endDate}
+                <DateRangeDisplay
+                  startDate={inspectionDate.startDate}
+                  endDate={inspectionDate.endDate}
+                />
               </ListItem>
             )
           })}
         </>
       )}
-    </>
+    </ListWrapper>
   )
 })
 

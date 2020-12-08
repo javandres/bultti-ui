@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
-import { Page } from '../common/components/common'
+import { Page, PageSection } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import InspectionDateForm from '../inspection/inspectionDate/InspectionDateForm'
 import { Button } from '../common/components/Button'
@@ -17,10 +17,7 @@ const InspectionDatesPage = styled.div`
   padding: 0 1rem 1rem 1rem;
 `
 
-const InspectionDateListWrapper = styled.div`
-  padding: 1rem;
-  background-color: white;
-`
+const InspectionDateListWrapper = styled(PageSection)``
 
 const NewInspectionButtonWrapper = styled.div`
   margin-top: 1rem;
