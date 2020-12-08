@@ -126,6 +126,7 @@ const renderEditorField = (
                 value: 'Arvo',
                 condition: 'Ehto',
                 category: 'Kategoria',
+                code: 'Koodi',
               }}
               items={val.currentRules}
             />
