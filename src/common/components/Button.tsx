@@ -242,7 +242,7 @@ export const TextButton: React.FC<ButtonProps> = observer(
 
 export const StyledRemoveButton = styled.button`
   outline: none;
-  padding: 0.4rem;
+  padding: 0.4rem 0.6rem;
   line-height: 1;
   border: 1px solid var(--red);
   border-radius: 0.25rem;
@@ -250,8 +250,21 @@ export const StyledRemoveButton = styled.button`
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transform: scale(1);
+  transition: all 0.1s ease-out;
+
   &:hover {
-    background-color: var(--white-grey);
+    background-color: var(--red);
+    color: white;
+    transform: scale(1.075);
+
+    svg * {
+      fill: white;
+    }
+
+    svg *.fill-inverse {
+      fill: var(--red);
+    }
   }
 `
 
@@ -263,7 +276,7 @@ export type RemoveButtonProps = {
 export const RemoveButton = ({ onClick, children, ...props }: RemoveButtonProps) => {
   return (
     <StyledRemoveButton onClick={onClick} {...props}>
-      <Trash fill="var(--red)" width="1.5rem" height="1.5rem" />
+      <Trash fill="var(--red)" width="1rem" height="1rem" />
     </StyledRemoveButton>
   )
 }

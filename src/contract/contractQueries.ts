@@ -57,6 +57,7 @@ export const ContractFragment = gql`
       value
       condition
       category
+      code
     }
   }
   ${ContractUserRelationFragment}
