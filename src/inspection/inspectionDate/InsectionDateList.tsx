@@ -8,6 +8,7 @@ import { LoadingDisplay } from '../../common/components/Loading'
 import { useMutationData } from '../../util/useMutationData'
 import { removeInspectionDateMutation } from './inspectionDateQuery'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
+import { MessageView } from '../../common/components/Messages'
 
 const Header = styled.div`
   font-size: 1.2rem;
@@ -15,7 +16,7 @@ const Header = styled.div`
 `
 
 const ListWrapper = styled.div`
-  margin: 0 0 0.5rem;
+  margin: 0 0 1rem;
 `
 
 const ListItem = styled.div`
@@ -67,7 +68,11 @@ const InspectionDateList: React.FC<PropTypes> = observer(
           <LoadingDisplay />
         ) : (
           <>
-            {inspectionDates.length === 0 && <Text>inspection_date.list.noResults</Text>}
+            {inspectionDates.length === 0 && (
+              <MessageView>
+                <Text>inspection_date.list.noResults</Text>
+              </MessageView>
+            )}
             {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
               return (
                 <ListItem key={index}>

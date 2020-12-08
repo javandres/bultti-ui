@@ -19,9 +19,7 @@ const InspectionDatesPage = styled.div`
 
 const InspectionDateListWrapper = styled(PageSection)``
 
-const NewInspectionButtonWrapper = styled.div`
-  margin-top: 1rem;
-`
+const NewInspectionButtonWrapper = styled.div``
 
 export type PropTypes = RouteComponentProps
 
