@@ -27,20 +27,24 @@ export type PropTypes = {
 
 const InspectionConfig: React.FC<PropTypes> = observer(
   ({ saveValues, isEditable, inspection }) => {
-    const getInspectionInputValues = (setFromInspection: Inspection) => {
+    let getInspectionInputValues = (setFromInspection: Inspection) => {
       return {
         name: setFromInspection.name || '',
         inspectionStartDate: setFromInspection.inspectionStartDate || '',
         inspectionEndDate: setFromInspection.inspectionEndDate || '',
       }
     }
-    const initialInspectionInputValues = getInspectionInputValues(inspection)
+
+    let initialInspectionInputValues = getInspectionInputValues(inspection)
+
     let [pendingInspectionInputValues, setPendingInspectionInputValues] = useState<
       InspectionInput
     >(initialInspectionInputValues)
+
     let [oldInspectionInputValues, setOldInspectionInputValues] = useState<InspectionInput>(
       initialInspectionInputValues
     )
+
     let onUpdateValue = useCallback((name, value) => {
       setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
