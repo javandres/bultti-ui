@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InspectionDateInput } from '../../schema-types'
@@ -7,11 +7,9 @@ import { useMutationData } from '../../util/useMutationData'
 import { createInspectionDateMutation } from './inspectionDateQuery'
 import { Text, text } from '../../util/translate'
 import SelectDate from '../../common/input/SelectDate'
+import { PageSection } from '../../common/components/common'
 
-const InspectionDateFormContainer = styled.div`
-  background-color: white;
-  padding: 1rem;
-`
+const InspectionDateFormContainer = styled(PageSection)``
 
 const Header = styled.div`
   font-size: 1.2rem;
@@ -36,21 +34,24 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       startDate: '',
       endDate: '',
     })
-    const [createInspectionDate] = useMutationData(createInspectionDateMutation)
 
-    const onDone = async () => {
-      const inspectionDateInput: InspectionDateInput = {
+    let [createInspectionDate] = useMutationData(createInspectionDateMutation)
+
+    let onDone = useCallback(() => {
+      let inspectionDateInput: InspectionDateInput = {
         startDate: pendingInspectionDate.startDate,
         endDate: pendingInspectionDate.endDate,
       }
-      await createInspectionDate({
+
+      createInspectionDate({
         variables: {
           inspectionDateInput,
         },
+      }).then(() => {
+        closeInspectionDateList()
+        refetchInspectionDateList()
       })
-      refetchInspectionDateList()
-      closeInspectionDateList()
-    }
+    }, [refetchInspectionDateList, closeInspectionDateList, pendingInspectionDate])
 
     let onChange = (key, nextValue) => {
       setPendingInspectionDate((currentVal) => {
@@ -61,7 +62,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       })
     }
 
-    const renderInput = (key: string, val: any, onChange) => {
+    let renderInput = (key: string, val: any, onChange) => {
       return <SelectDate onChange={onChange} value={val as string} label="" name={key} />
     }
 

@@ -3,8 +3,12 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { InspectionDate } from '../../schema-types'
 import { Text } from '../../util/translate'
+import { RemoveButton } from '../../common/components/Button'
 import { LoadingDisplay } from '../../common/components/Loading'
+import { useMutationData } from '../../util/useMutationData'
+import { removeInspectionDateMutation } from './inspectionDateQuery'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
+import { MessageView } from '../../common/components/Messages'
 
 const Header = styled.div`
   font-size: 1.2rem;
@@ -12,10 +16,14 @@ const Header = styled.div`
 `
 
 const ListWrapper = styled.div`
-  margin: 0 0 0.5rem;
+  margin: 0 0 1rem;
 `
 
 const ListItem = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
   margin: 0 -1rem;
   padding: 0.5rem 1rem;
 
@@ -27,33 +35,60 @@ const ListItem = styled.div`
 interface PropTypes {
   inspectionDates: InspectionDate[]
   isLoading: boolean
+  refetchInspectionDateList: () => unknown
 }
 
-const InspectionDateList: React.FC<PropTypes> = observer(({ inspectionDates, isLoading }) => {
-  return (
-    <ListWrapper>
-      <Header>
-        <Text>inspection_date.list.header</Text>
-      </Header>
-      {isLoading ? (
-        <LoadingDisplay />
-      ) : (
-        <>
-          {inspectionDates.length === 0 && <Text>inspection_date.list.noResults</Text>}
-          {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
-            return (
-              <ListItem key={index}>
-                <DateRangeDisplay
-                  startDate={inspectionDate.startDate}
-                  endDate={inspectionDate.endDate}
-                />
-              </ListItem>
-            )
-          })}
-        </>
-      )}
-    </ListWrapper>
-  )
-})
+const InspectionDateList: React.FC<PropTypes> = observer(
+  ({ inspectionDates, isLoading, refetchInspectionDateList }) => {
+    let [removeInspectionDate] = useMutationData(removeInspectionDateMutation)
+
+    let removeItem = async (inspectionDate: InspectionDate) => {
+      // TODO: validate that inspection date is not being used at Inspections
+      // or even better: don't display remove button if you cannot remove due to that reason ^
+      if (
+        confirm(
+          `Haluatko varmasti poistaa tarkistuspäivämäärän ${inspectionDate.startDate} - ${inspectionDate.endDate}`
+        )
+      ) {
+        await removeInspectionDate({
+          variables: {
+            id: inspectionDate.id,
+          },
+        })
+
+        refetchInspectionDateList()
+      }
+    }
+    return (
+      <ListWrapper>
+        <Header>
+          <Text>inspection_date.list.header</Text>
+        </Header>
+        {isLoading ? (
+          <LoadingDisplay />
+        ) : (
+          <>
+            {inspectionDates.length === 0 && (
+              <MessageView>
+                <Text>inspection_date.list.noResults</Text>
+              </MessageView>
+            )}
+            {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
+              return (
+                <ListItem key={index}>
+                  <DateRangeDisplay
+                    startDate={inspectionDate.startDate}
+                    endDate={inspectionDate.endDate}
+                  />
+                  <RemoveButton onClick={() => removeItem(inspectionDate)} />
+                </ListItem>
+              )
+            })}
+          </>
+        )}
+      </ListWrapper>
+    )
+  }
+)
 
 export default InspectionDateList

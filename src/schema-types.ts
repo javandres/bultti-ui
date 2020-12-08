@@ -933,6 +933,7 @@ export type Mutation = {
   removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean'];
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
   createInspectionDate: InspectionDate;
+  removeInspectionDate: Scalars['Boolean'];
 };
 
 
@@ -1158,6 +1159,11 @@ export type MutationUpdateObservedExecutionRequirementValuesArgs = {
 
 export type MutationCreateInspectionDateArgs = {
   inspectionDate: InspectionDateInput;
+};
+
+
+export type MutationRemoveInspectionDateArgs = {
+  id: Scalars['String'];
 };
 
 export type ProcurementUnitEditInput = {

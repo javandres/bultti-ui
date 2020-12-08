@@ -10,7 +10,7 @@ import React, {
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { RemoveButton } from './Button'
+import { StyledRemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { ScrollContext } from './AppFrame'
 import { FixedSizeList as List } from 'react-window'
@@ -91,13 +91,13 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
     border-bottom-color: transparent;
     z-index: 100;
 
-    ${RemoveButton} {
+    ${StyledRemoveButton} {
       display: flex;
     }
   }
 `
 
-const RowRemoveButton = styled(RemoveButton)`
+const RowRemoveButton = styled(StyledRemoveButton)`
   position: absolute;
   left: 0.4rem;
   top: 0.4rem;

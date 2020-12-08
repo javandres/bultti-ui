@@ -19,9 +19,7 @@ const InspectionDatesPage = styled.div`
 
 const InspectionDateListWrapper = styled(PageSection)``
 
-const NewInspectionButtonWrapper = styled.div`
-  margin-top: 1rem;
-`
+const NewInspectionButtonWrapper = styled.div``
 
 export type PropTypes = RouteComponentProps
 
@@ -52,6 +50,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
           <InspectionDateList
             inspectionDates={sortedInspectionDates}
             isLoading={areInspectionDatesLoading}
+            refetchInspectionDateList={refetch}
           />
           <NewInspectionButtonWrapper>
             <Button onClick={() => setInspectionDateFormVisibility(true)}>
