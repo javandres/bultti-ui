@@ -39,9 +39,9 @@ interface PropTypes {
 
 const InspectionDateList: React.FC<PropTypes> = observer(
   ({ inspectionDates, isLoading, refetchInspectionDateList }) => {
-    const [removeInspectionDate] = useMutationData(removeInspectionDateMutation)
+    let [removeInspectionDate] = useMutationData(removeInspectionDateMutation)
 
-    const removeItem = async (inspectionDate: InspectionDate) => {
+    let removeItem = async (inspectionDate: InspectionDate) => {
       // TODO: validate that inspection date is not being used at Inspections
       // or even better: don't display remove button if you cannot remove due to that reason ^
       if (
@@ -54,6 +54,7 @@ const InspectionDateList: React.FC<PropTypes> = observer(
             id: inspectionDate.id,
           },
         })
+
         refetchInspectionDateList()
       }
     }

@@ -36,18 +36,21 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       startDate: '',
       endDate: '',
     })
-    const [createInspectionDate] = useMutationData(createInspectionDateMutation)
 
-    const onDone = async () => {
-      const inspectionDateInput: InspectionDateInput = {
+    let [createInspectionDate] = useMutationData(createInspectionDateMutation)
+
+    let onDone = async () => {
+      let inspectionDateInput: InspectionDateInput = {
         startDate: pendingInspectionDate.startDate,
         endDate: pendingInspectionDate.endDate,
       }
+
       await createInspectionDate({
         variables: {
           inspectionDateInput,
         },
       })
+
       refetchInspectionDateList()
       closeInspectionDateList()
     }
@@ -61,7 +64,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       })
     }
 
-    const renderInput = (key: string, val: any, onChange) => {
+    let renderInput = (key: string, val: any, onChange) => {
       return <SelectDate onChange={onChange} value={val as string} label="" name={key} />
     }
 
