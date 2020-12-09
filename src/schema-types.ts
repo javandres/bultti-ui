@@ -38,8 +38,6 @@ export type Query = {
   currentUser?: Maybe<User>;
   blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
   availableDayTypes: Array<Scalars['String']>;
-  reports: Array<Report>;
-  inspectionReportByName?: Maybe<Report>;
   currentlyLoadingHfpRanges: Array<HfpDateStatus>;
   loadedHfpRanges: Array<HfpDateStatus>;
   inspection?: Maybe<Inspection>;
@@ -49,6 +47,8 @@ export type Query = {
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
+  reports: Array<Report>;
+  inspectionReportByName?: Maybe<Report>;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -145,20 +145,6 @@ export type QueryAvailableDayTypesArgs = {
 };
 
 
-export type QueryReportsArgs = {
-  inspectionType?: Maybe<InspectionType>;
-};
-
-
-export type QueryInspectionReportByNameArgs = {
-  sort?: Maybe<Array<InputSortConfig>>;
-  filters?: Maybe<Array<InputFilterConfig>>;
-  page?: Maybe<InputPageConfig>;
-  inspectionId: Scalars['String'];
-  reportName: Scalars['String'];
-};
-
-
 export type QueryInspectionArgs = {
   inspectionId: Scalars['String'];
 };
@@ -197,6 +183,20 @@ export type QueryAllInspectionsArgs = {
 
 export type QueryInspectionUserRelationsArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type QueryReportsArgs = {
+  inspectionType?: Maybe<InspectionType>;
+};
+
+
+export type QueryInspectionReportByNameArgs = {
+  sort?: Maybe<Array<InputSortConfig>>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  page?: Maybe<InputPageConfig>;
+  inspectionId: Scalars['String'];
+  reportName: Scalars['String'];
 };
 
 
@@ -487,17 +487,11 @@ export type ObservedDeparture = {
   uniqueVehicleId?: Maybe<Scalars['String']>;
   departureIsNextDay: Scalars['Boolean'];
   arrivalIsNextDay: Scalars['Boolean'];
-  isOriginStop: Scalars['Boolean'];
-  isTimingStop: Scalars['Boolean'];
-  isDestinationStop: Scalars['Boolean'];
   date: Scalars['String'];
-  departureTime?: Maybe<Scalars['String']>;
   departureDateTime?: Maybe<Scalars['DateTime']>;
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
-  arrivalTime?: Maybe<Scalars['String']>;
   arrivalDateTime?: Maybe<Scalars['DateTime']>;
   observedArrivalDateTime?: Maybe<Scalars['DateTime']>;
-  stopId?: Maybe<Scalars['String']>;
   originStopId?: Maybe<Scalars['String']>;
   destinationStopId?: Maybe<Scalars['String']>;
   terminalTime?: Maybe<Scalars['Int']>;
@@ -523,6 +517,8 @@ export type ObservedDeparture = {
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
   isObserved?: Maybe<Scalars['Boolean']>;
+  observedLateDepartureSeconds?: Maybe<Scalars['Boolean']>;
+  observedLateArrivalSeconds?: Maybe<Scalars['Boolean']>;
 };
 
 
@@ -736,6 +732,28 @@ export type OperatorBlockDeparture = {
   inspectionId?: Maybe<Scalars['String']>;
 };
 
+export type HfpDateStatus = {
+  __typename?: 'HfpDateStatus';
+  date: Scalars['BulttiDate'];
+  status: HfpStatus;
+};
+
+export enum HfpStatus {
+  NotLoaded = 'NOT_LOADED',
+  Loading = 'LOADING',
+  Ready = 'READY'
+}
+
+export type InspectionTimelineItem = {
+  __typename?: 'InspectionTimelineItem';
+  id: Scalars['ID'];
+  operatorName: Scalars['String'];
+  seasonId: Scalars['String'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  version: Scalars['Int'];
+};
+
 export type Report = {
   __typename?: 'Report';
   name: Scalars['String'];
@@ -848,28 +866,6 @@ export type InputFilterConfig = {
 export type InputPageConfig = {
   page: Scalars['Int'];
   pageSize: Scalars['Int'];
-};
-
-export type HfpDateStatus = {
-  __typename?: 'HfpDateStatus';
-  date: Scalars['BulttiDate'];
-  status: HfpStatus;
-};
-
-export enum HfpStatus {
-  NotLoaded = 'NOT_LOADED',
-  Loading = 'LOADING',
-  Ready = 'READY'
-}
-
-export type InspectionTimelineItem = {
-  __typename?: 'InspectionTimelineItem';
-  id: Scalars['ID'];
-  operatorName: Scalars['String'];
-  seasonId: Scalars['String'];
-  inspectionStartDate: Scalars['BulttiDate'];
-  inspectionEndDate: Scalars['BulttiDate'];
-  version: Scalars['Int'];
 };
 
 export type ProcurementUnitOption = {

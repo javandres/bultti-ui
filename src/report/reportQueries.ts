@@ -101,16 +101,10 @@ export const ObservedDepartureFragment = gql`
     journeyEndTime
     departureIsNextDay
     arrivalIsNextDay
-    isOriginStop
-    isTimingStop
-    isDestinationStop
-    departureTime
     departureDateTime
     observedDepartureDateTime
-    arrivalTime
     arrivalDateTime
     observedArrivalDateTime
-    stopId
     originStopId
     terminalTime
     recoveryTime
@@ -118,12 +112,14 @@ export const ObservedDepartureFragment = gql`
     direction
     routeLength
     dayType
+    date
     plannedEquipmentType
     equipmentTypeRequired
     observedRegistryNr
     equipmentRotation
     isTrunkRoute
     schemaId
+    departureType
     schemaUnitId: procurementUnitId
     observedEquipment {
       ...EquipmentFragment

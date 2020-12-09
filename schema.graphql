@@ -251,6 +251,12 @@ type Inspection {
   versionStackIdentifier: String
 }
 
+type InspectionDate {
+  endDate: BulttiDate!
+  id: ID!
+  startDate: BulttiDate!
+}
+
 type InspectionErrorUpdate {
   errorType: String!
   id: ID!
@@ -290,6 +296,7 @@ type Mutation {
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection!
+  createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionReady(inspectionId: String!): Inspection!
@@ -309,6 +316,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
   removeInspection(inspectionId: String!): Boolean!
+  removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
@@ -327,21 +335,19 @@ type Mutation {
 type ObservedDeparture {
   arrivalDateTime: DateTime
   arrivalIsNextDay: Boolean!
-  arrivalTime: String
+  blockNumber: String
+  date: String!
   dayType: DayType!
   departureDateTime: DateTime
   departureId: String!
   departureIsNextDay: Boolean!
-  departureTime: String
+  departureType: DepartureType!
   destinationStopId: String
   direction: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
-  isDestinationStop: Boolean!
   isObserved: Boolean
-  isOriginStop: Boolean!
-  isTimingStop: Boolean!
   isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String!
@@ -353,6 +359,8 @@ type ObservedDeparture {
   observedEquipmentId: String
   observedEquipmentType: String
   observedExteriorColor: String
+  observedLateArrivalSeconds: Boolean
+  observedLateDepartureSeconds: Boolean
   observedOperatorId: Int
   observedRegistryDate: String
   observedRegistryNr: String
@@ -365,7 +373,6 @@ type ObservedDeparture {
   routeId: String
   routeLength: Int
   schemaId: String
-  stopId: String
   terminalTime: Int
   trackReason: TrackReason!
   uniqueVehicleId: String
@@ -497,6 +504,7 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
@@ -752,6 +760,11 @@ input InputPageConfig {
 input InputSortConfig {
   column: String!
   order: SortOrder!
+}
+
+input InspectionDateInput {
+  endDate: BulttiDate!
+  startDate: BulttiDate!
 }
 
 input InspectionInput {
