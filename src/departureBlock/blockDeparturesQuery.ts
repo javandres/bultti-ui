@@ -46,7 +46,7 @@ export const blockDeparturesQuery = gql`
 export const uploadDepartureBlocksMutation = gql`
   mutation uploadDepartureBlocks(
     $file: Upload
-    $dayTypes: [DayType!]!
+    $dayTypes: [String!]!
     $inspectionId: String!
   ) {
     createBlockDeparturesFromFile(
@@ -61,7 +61,7 @@ export const uploadDepartureBlocksMutation = gql`
 `
 
 export const removeDepartureBlocks = gql`
-  mutation removeDepartureBlocksForDayTypes($dayTypes: [DayType!]!, $inspectionId: String!) {
+  mutation removeDepartureBlocksForDayTypes($dayTypes: [String!]!, $inspectionId: String!) {
     removeDepartureBlocksForDayTypes(dayTypes: $dayTypes, inspectionId: $inspectionId)
   }
 `

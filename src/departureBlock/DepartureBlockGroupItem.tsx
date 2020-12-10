@@ -7,7 +7,6 @@ import { LoadingDisplay } from '../common/components/Loading'
 import styled from 'styled-components'
 import { DayTypeGroup, getEnabledDayTypes } from './departureBlocksCommon'
 import { Button, ButtonStyle } from '../common/components/Button'
-import { DayType } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import { removeDepartureBlocks, uploadDepartureBlocksMutation } from './blockDeparturesQuery'
 import { InspectionContext } from '../inspection/InspectionContext'
@@ -53,8 +52,8 @@ type PropTypes = {
   hasDepartures: boolean
   dayTypeGroup: DayTypeGroup
   groupIndex: number
-  onAddDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
-  onRemoveDayType: (dayType: DayType, groupIndex: number) => DayTypeGroup[]
+  onAddDayType: (dayType: string, groupIndex: number) => DayTypeGroup[]
+  onRemoveDayType: (dayType: string, groupIndex: number) => DayTypeGroup[]
   onBlocksChange: () => void
 }
 
@@ -114,7 +113,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
 
     // Handle day type selection.
     const onDayTypeChange = useCallback(
-      (dayType: DayType, isSelected) => {
+      (dayType: string, isSelected) => {
         if (isLoading || isDisabled) {
           return
         }
@@ -162,7 +161,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
                   (selectableDayTypes?.length !== 0 && !selectableDayTypes.includes(dt))
                 }
                 label={dt}
-                onChange={(e) => onDayTypeChange(dt as DayType, e.target.checked)}
+                onChange={(e) => onDayTypeChange(dt, e.target.checked)}
                 checked={enabled}
                 name="daytype"
                 value={dt}

@@ -1,28 +1,27 @@
-import { DayType } from '../schema-types'
 import { useCallback, useMemo, useState } from 'react'
 import { flatten, orderBy } from 'lodash'
 import { normalDayTypes } from '../constants'
 
 export type DayTypeGroup = {
-  [DayType.Ma]: boolean
-  [DayType.Ti]: boolean
-  [DayType.Ke]: boolean
-  [DayType.To]: boolean
-  [DayType.Pe]: boolean
-  [DayType.La]: boolean
-  [DayType.Su]: boolean
+  Ma: boolean
+  Ti: boolean
+  Ke: boolean
+  To: boolean
+  Pe: boolean
+  La: boolean
+  Su: boolean
 }
 
 export type DayTypeState = Array<DayTypeGroup>
 
 export const defaultDayTypeGroup: DayTypeGroup = {
-  [DayType.Ma]: false,
-  [DayType.Ti]: false,
-  [DayType.Ke]: false,
-  [DayType.To]: false,
-  [DayType.Pe]: false,
-  [DayType.La]: false,
-  [DayType.Su]: false,
+  Ma: false,
+  Ti: false,
+  Ke: false,
+  To: false,
+  Pe: false,
+  La: false,
+  Su: false,
 }
 
 export const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup): string[] =>
@@ -30,17 +29,17 @@ export const getEnabledDayTypes = (dayTypeGroup: DayTypeGroup): string[] =>
     .filter(([, enabled]) => !!enabled)
     .map(([dt]) => dt)
 
-export const isDayTypeEnabled = (dayType: DayType, dayTypeGroup: DayTypeGroup) =>
+export const isDayTypeEnabled = (dayType: string, dayTypeGroup: DayTypeGroup) =>
   getEnabledDayTypes(dayTypeGroup).includes(dayType)
 
 type DayTypeGroupsReturn = [
   DayTypeState,
   string[],
   {
-    addDayTypeGroup: (dayType?: DayType) => void
-    setDayTypeInGroup: (dayType: DayType, groupIndex: number, setTo: boolean) => DayTypeState
-    removeDayTypeFromGroup: (dayType: DayType, groupIndex: number) => DayTypeState
-    addDayTypeToGroup: (dayType: DayType, groupIndex: number) => DayTypeState
+    addDayTypeGroup: (dayType?: string) => void
+    setDayTypeInGroup: (dayType: string, groupIndex: number, setTo: boolean) => DayTypeState
+    removeDayTypeFromGroup: (dayType: string, groupIndex: number) => DayTypeState
+    addDayTypeToGroup: (dayType: string, groupIndex: number) => DayTypeState
   }
 ]
 
@@ -63,10 +62,10 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   const [dayTypeGroups, setDayTypeGroups] = useState<DayTypeState>([
     {
       ...defaultDayTypeGroup,
-      [DayType.Ma]: true,
-      [DayType.Ti]: true,
-      [DayType.Ke]: true,
-      [DayType.To]: true,
+      Ma: true,
+      Ti: true,
+      Ke: true,
+      To: true,
     },
   ])
 
@@ -75,7 +74,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
     [dayTypeGroups]
   )
 
-  const createDayTypeGroup = useCallback((dayType: DayType) => {
+  const createDayTypeGroup = useCallback((dayType: string) => {
     const dayTypeGroup: DayTypeGroup = { ...defaultDayTypeGroup, [dayType]: true }
     return dayTypeGroup
   }, [])
@@ -84,7 +83,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   // If passed a dayType, the function will only return the dayTypeGroup it is in without adding a
   // new one if it is found in a group already. If all dayTypes are used, nothing will happen.
   const addDayTypeGroup = useCallback(
-    (addDayType?: DayType) => {
+    (addDayType?: string) => {
       // If no specific dayType was given, search for the next available and unused day type.
       let nextDayType =
         addDayType ??
@@ -95,7 +94,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
         return
       }
 
-      const addGroup: DayTypeGroup = createDayTypeGroup(nextDayType as DayType)
+      const addGroup: DayTypeGroup = createDayTypeGroup(nextDayType)
       const nextDayTypes: DayTypeGroup[] = orderDayTypeGroups([...dayTypeGroups, addGroup])
       setDayTypeGroups(nextDayTypes)
     },
@@ -103,7 +102,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   )
 
   const setDayTypeInGroup = useCallback(
-    (dayType: DayType, groupIndex: number, setTo = true): DayTypeState => {
+    (dayType: string, groupIndex: number, setTo = true): DayTypeState => {
       let currentDayTypeGroups = [...dayTypeGroups]
 
       if (!currentDayTypeGroups[groupIndex]) {
@@ -133,7 +132,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   )
 
   const removeDayTypeFromGroup = useCallback(
-    (dayType: DayType, groupIndex: number) => {
+    (dayType: string, groupIndex: number) => {
       if (!isEditable) {
         return dayTypeGroups
       }
@@ -144,7 +143,7 @@ export const useDayTypeGroups = (isEditable = true): DayTypeGroupsReturn => {
   )
 
   const addDayTypeToGroup = useCallback(
-    (dayType: DayType, groupIndex: number) => {
+    (dayType: string, groupIndex: number) => {
       if (!isEditable) {
         return dayTypeGroups
       }
