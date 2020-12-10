@@ -14,19 +14,24 @@ import { ValidationErrorData } from '../schema-types'
 const ProcurementUnitsView = styled(TransparentPageSection)``
 
 export type PropTypes = {
-  operatorId?: number
-  inspectionStartDate?: string
-  inspectionEndDate?: string
+  operatorId: number
+  startDate: string
+  endDate: string
   requirementsEditable: boolean
   onUpdate?: () => unknown
   getErrorsById?: (objectId: string) => ValidationErrorData[]
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(
-  ({ getErrorsById, requirementsEditable = true, onUpdate, ...inspectionProps }) => {
+  ({
+    getErrorsById,
+    requirementsEditable = true,
+    onUpdate,
+    operatorId,
+    startDate,
+    endDate,
+  }) => {
     const inspection = useContext(InspectionContext)
-    let { operatorId, inspectionStartDate, inspectionEndDate } =
-      inspection || inspectionProps || {}
 
     let catalogueEditable = !inspection
     let showExecutionRequirements = !!inspection
@@ -50,8 +55,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
       skip: !operatorId,
       variables: {
         operatorId: operatorId,
-        startDate: inspectionStartDate,
-        endDate: inspectionEndDate,
+        startDate,
+        endDate,
       },
     })
 
@@ -94,7 +99,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   catalogueEditable={catalogueEditable}
                   showExecutionRequirements={showExecutionRequirements}
                   key={procurementUnit.id}
-                  startDate={inspectionStartDate}
+                  startDate={startDate}
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
                 />
