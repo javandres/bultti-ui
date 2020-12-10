@@ -419,7 +419,7 @@ export type Departure = {
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
-  dayType: DayType;
+  dayType: Scalars['String'];
   startStop?: Maybe<Scalars['String']>;
   endStop?: Maybe<Scalars['String']>;
   plannedEquipmentType?: Maybe<Scalars['String']>;
@@ -447,16 +447,6 @@ export type Departure = {
 export enum DepartureType {
   Schema = 'SCHEMA',
   Block = 'BLOCK'
-}
-
-export enum DayType {
-  Ma = 'Ma',
-  Ti = 'Ti',
-  Ke = 'Ke',
-  To = 'To',
-  Pe = 'Pe',
-  La = 'La',
-  Su = 'Su'
 }
 
 export enum TrackReason {
@@ -499,7 +489,7 @@ export type ObservedDeparture = {
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
-  dayType: DayType;
+  dayType: Scalars['String'];
   plannedEquipmentType?: Maybe<Scalars['String']>;
   equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
   observedEquipment?: Maybe<Equipment>;
@@ -716,7 +706,7 @@ export type OperatorBlockDeparture = {
   __typename?: 'OperatorBlockDeparture';
   id: Scalars['ID'];
   blockNumber?: Maybe<Scalars['String']>;
-  dayType: DayType;
+  dayType: Scalars['String'];
   journeyType: Scalars['String'];
   routeId?: Maybe<Scalars['String']>;
   direction?: Maybe<Scalars['String']>;
@@ -1038,14 +1028,14 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
 
 export type MutationCreateBlockDeparturesFromFileArgs = {
   inspectionId: Scalars['String'];
-  dayTypes: Array<DayType>;
+  dayTypes: Array<Scalars['String']>;
   file?: Maybe<Scalars['Upload']>;
 };
 
 
 export type MutationRemoveDepartureBlocksForDayTypesArgs = {
   inspectionId: Scalars['String'];
-  dayTypes: Array<DayType>;
+  dayTypes: Array<Scalars['String']>;
 };
 
 

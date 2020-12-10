@@ -3882,8 +3882,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "DayType",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -4180,59 +4180,6 @@
           },
           {
             "name": "BLOCK",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "DayType",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "Ma",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Ti",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Ke",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "To",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Pe",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "La",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "Su",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -4644,8 +4591,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "DayType",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -6813,8 +6760,8 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "ENUM",
-                "name": "DayType",
+                "kind": "SCALAR",
+                "name": "String",
                 "ofType": null
               }
             },
@@ -9198,8 +9145,8 @@
                       "kind": "NON_NULL",
                       "name": null,
                       "ofType": {
-                        "kind": "ENUM",
-                        "name": "DayType",
+                        "kind": "SCALAR",
+                        "name": "String",
                         "ofType": null
                       }
                     }
@@ -9265,8 +9212,8 @@
                       "kind": "NON_NULL",
                       "name": null,
                       "ofType": {
-                        "kind": "ENUM",
-                        "name": "DayType",
+                        "kind": "SCALAR",
+                        "name": "String",
                         "ofType": null
                       }
                     }

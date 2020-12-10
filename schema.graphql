@@ -45,7 +45,7 @@ type ContractUserRelation {
 type Departure {
   allowedOverAge: Float
   blockNumber: String
-  dayType: DayType!
+  dayType: String!
   departureId: String!
   departureType: DepartureType!
   direction: String
@@ -290,7 +290,7 @@ type MissingEquipment {
 
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
-  createBlockDeparturesFromFile(dayTypes: [DayType!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
+  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
@@ -311,7 +311,7 @@ type Mutation {
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
   removeContract(contractId: String!): Boolean!
-  removeDepartureBlocksForDayTypes(dayTypes: [DayType!]!, inspectionId: String!): Boolean!
+  removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): Boolean!
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
   removeExecutionRequirement(executionRequirementId: String!): Boolean!
@@ -337,7 +337,7 @@ type ObservedDeparture {
   arrivalIsNextDay: Boolean!
   blockNumber: String
   date: String!
-  dayType: DayType!
+  dayType: String!
   departureDateTime: DateTime
   departureId: String!
   departureIsNextDay: Boolean!
@@ -446,7 +446,7 @@ type Operator {
 
 type OperatorBlockDeparture {
   blockNumber: String
-  dayType: DayType!
+  dayType: String!
   direction: String
   equipment: Equipment
   equipmentId: String
@@ -608,16 +608,6 @@ enum ContractUserRelationType {
   CREATED_BY
   SUBSCRIBED_TO
   UPDATED_BY
-}
-
-enum DayType {
-  Ke
-  La
-  Ma
-  Pe
-  Su
-  Ti
-  To
 }
 
 enum DepartureType {
