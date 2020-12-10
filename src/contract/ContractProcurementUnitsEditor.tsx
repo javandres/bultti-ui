@@ -16,7 +16,7 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { addDays, areIntervalsOverlapping, isValid, max, min, parseISO } from 'date-fns'
+import { addDays, areIntervalsOverlapping, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'

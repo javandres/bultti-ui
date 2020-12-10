@@ -9,7 +9,7 @@ import {
   ProcurementUnitEditInput,
   ValidationErrorData,
 } from '../schema-types'
-import { isEqual } from 'lodash'
+import { isEqual, orderBy } from 'lodash'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
@@ -37,6 +37,8 @@ import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { text } from '../util/translate'
+import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
+import { MessageView } from '../common/components/Messages'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -138,10 +140,13 @@ const ProcurementUnitItemContent = observer(
     }, [refetch, onUpdate])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
-    const catalogues: EquipmentCatalogueType[] = useMemo(
-      () => procurementUnit?.equipmentCatalogues || [],
-      [procurementUnit]
-    )
+    const catalogues: EquipmentCatalogueType[] = useMemo(() => {
+      let unitCatalogues = procurementUnit?.equipmentCatalogues || []
+
+      return catalogueEditable
+        ? unitCatalogues
+        : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+    }, [procurementUnit, catalogueEditable, startDate])
 
     let hasEquipment = catalogues
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
@@ -290,38 +295,47 @@ const ProcurementUnitItemContent = observer(
 
             <CatalogueWrapper isInvalid={catalogueInvalid}>
               <SubHeading>Kalustoluettelot</SubHeading>
-              {catalogues.length === 0 && (
+              {catalogues.length === 1 ? (
                 <EquipmentCatalogue
                   startDate={inspectionStartDate}
                   procurementUnit={procurementUnit}
+                  catalogue={catalogues[0]}
                   operatorId={procurementUnit.operatorId}
                   onCatalogueChanged={updateUnit}
                   editable={catalogueEditable}
                 />
+              ) : (
+                orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
+                  return (
+                    <ExpandableSection
+                      key={catalogue.id}
+                      headerContent={
+                        <HeaderSection>
+                          <DateRangeDisplay
+                            startDate={catalogue.startDate}
+                            endDate={catalogue.endDate}
+                          />
+                        </HeaderSection>
+                      }>
+                      <EquipmentCatalogue
+                        startDate={inspectionStartDate}
+                        procurementUnit={procurementUnit}
+                        catalogue={catalogue}
+                        operatorId={procurementUnit.operatorId}
+                        onCatalogueChanged={updateUnit}
+                        editable={catalogueEditable}
+                      />
+                    </ExpandableSection>
+                  )
+                })
               )}
-              {catalogues.map((catalogue) => {
-                return (
-                  <ExpandableSection
-                    key={catalogue.id}
-                    headerContent={
-                      <HeaderSection>
-                        <DateRangeDisplay
-                          startDate={catalogue.startDate}
-                          endDate={catalogue.endDate}
-                        />
-                      </HeaderSection>
-                    }>
-                    <EquipmentCatalogue
-                      startDate={inspectionStartDate}
-                      procurementUnit={procurementUnit}
-                      catalogue={catalogue}
-                      operatorId={procurementUnit.operatorId}
-                      onCatalogueChanged={updateUnit}
-                      editable={catalogueEditable}
-                    />
-                  </ExpandableSection>
-                )
-              })}
+              {catalogues.length === 0 && (
+                <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
+              )}
+              <EditEquipmentCatalogue
+                onChange={updateUnit}
+                procurementUnit={procurementUnit}
+              />
             </CatalogueWrapper>
           </>
         )}
