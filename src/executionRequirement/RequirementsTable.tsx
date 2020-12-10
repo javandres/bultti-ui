@@ -8,6 +8,10 @@ import { ExecutionRequirement, ExecutionRequirementValue } from '../schema-types
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
+import {
+  emissionClassLayoutColumnLabels,
+  RequirementsTableLayout,
+} from './executionRequirementUtils'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
@@ -24,29 +28,9 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export enum RequirementsTableLayout {
-  BY_VALUES,
-  BY_EMISSION_CLASS,
-}
-
 export type PropTypes = {
   executionRequirement: ExecutionRequirement
   tableLayout?: RequirementsTableLayout
-}
-
-const emissionClassLayoutColumnLabels = {
-  'unit': 'Yksikkö',
-  '1': 'Euro 3',
-  '2': 'Euro 4',
-  '3': 'Euro 3 CNG',
-  '4': 'Euro 5',
-  '5': 'EEV Di',
-  '6': 'EEV eteho.',
-  '7': 'EEV CNG',
-  '8': 'Euro 6',
-  '9': 'Euro 6 eteho.',
-  '10': 'Sähkö',
-  'total': 'Yhteensä',
 }
 
 const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
@@ -59,9 +43,9 @@ const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: str
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   equipmentCountFulfilled: 'Toteuma kpl',
-  sanctionThreshold: 'Sanktioraja 5%',
-  sanctionAmount: 'Sanktiomäärä',
-  classSanctionAmount: 'PL/sanktiomäärä',
+  sanctionThreshold: 'Sanktioraja',
+  sanctionAmount: 'Sanktioitavat',
+  classSanctionAmount: 'Sanktiomäärä',
 }
 
 const RequirementsTable: React.FC<PropTypes> = observer(
@@ -97,13 +81,13 @@ const RequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
-      if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {
+      if (isHeader || key === 'unit' || !isNumeric(val) || val === 0) {
         return val
       }
 
-      let unit = ''
+      let unit
 
-      switch (item.unit || key) {
+      switch (item?.unit || key) {
         case 'percentage':
         case 'quotaRequirement':
         case 'quotaFulfilled':

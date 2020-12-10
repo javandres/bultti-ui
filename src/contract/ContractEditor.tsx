@@ -64,7 +64,7 @@ export type PropTypes = {
 function createContractInput(contract: Contract): ContractInput {
   return {
     id: contract.id,
-    description: contract.description,
+    description: contract.description ? contract.description : '',
     startDate: contract.startDate,
     endDate: contract.endDate,
     operatorId: contract.operatorId,
@@ -126,6 +126,7 @@ const renderEditorField = (
                 value: 'Arvo',
                 condition: 'Ehto',
                 category: 'Kategoria',
+                code: 'Koodi',
               }}
               items={val.currentRules}
             />
@@ -135,7 +136,7 @@ const renderEditorField = (
     )
   }
 
-  if (key === 'procurementUnitIds') {
+  if (key === 'procurementUnitIds' && contract.id && contract.startDate && contract.endDate) {
     return (
       <ExpandableFormSection
         headerContent={
@@ -347,7 +348,7 @@ const ContractEditor = observer(
       }
     }, [rulesFileValue, pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
-    let onCancelEdit = useCallback(() => {
+    let onCancel = useCallback(() => {
       setPendingContract(createContractInput(contract))
       setRulesFile([])
       onReset()
@@ -395,10 +396,11 @@ const ContractEditor = observer(
           labels={formLabels}
           onChange={onChange}
           onDone={onDone}
-          onCancel={onCancelEdit}
+          onCancel={onCancel}
           loading={isLoading}
           readOnly={!editable}
           doneDisabled={!pendingContractValid}
+          isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
           renderLabel={renderEditorLabel}
           renderInput={renderEditorField(
@@ -407,7 +409,6 @@ const ContractEditor = observer(
             onToggleRulesInput,
             currentError
           )}
-          showButtons={isDirty}
         />
       </ContractEditorView>
     )

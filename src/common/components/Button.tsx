@@ -4,6 +4,7 @@ import { useTooltip } from '../../util/useTooltip'
 import { LoadingDisplay } from './Loading'
 import { observer } from 'mobx-react-lite'
 import { last } from 'lodash'
+import { Trash } from '../icon/Trash'
 
 export enum ButtonSize {
   SMALL,
@@ -16,6 +17,7 @@ export enum ButtonStyle {
   REMOVE,
   SECONDARY,
   SECONDARY_REMOVE,
+  ACCEPT,
   DISABLED,
 }
 
@@ -50,6 +52,11 @@ const styleValues = {
     color: ['white', 'var(--red)'],
     borderColor: ['var(--red)', 'white'],
     backgroundColor: ['var(--red)', 'white'],
+  },
+  [ButtonStyle.ACCEPT]: {
+    color: ['white', 'var(--light-green)'],
+    borderColor: ['var(--light-green)', 'white'],
+    backgroundColor: ['var(--light-green)', 'white'],
   },
   [ButtonStyle.SECONDARY_REMOVE]: {
     color: ['var(--red)', 'white'],
@@ -233,19 +240,43 @@ export const TextButton: React.FC<ButtonProps> = observer(
   }
 )
 
-export const RemoveButton = styled(Button).attrs({ size: ButtonSize.SMALL })`
-  background: var(--red);
-  border: 0;
-  width: 18px;
-  height: 18px;
-  border-radius: 9px;
-  padding: 0;
+export const StyledRemoveButton = styled.button`
+  outline: none;
+  padding: 0.4rem 0.6rem;
   line-height: 1;
-  align-items: baseline;
+  border: 1px solid var(--red);
+  border-radius: 0.25rem;
+  background-color: white;
+  align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  cursor: pointer;
+  transform: scale(1);
+  transition: all 0.1s ease-out;
 
-  svg {
-    margin: 0;
+  &:hover {
+    background-color: var(--red);
+    color: white;
+    transform: scale(1.075);
+
+    svg * {
+      fill: white;
+    }
+
+    svg *.fill-inverse {
+      fill: var(--red);
+    }
   }
 `
+
+export type RemoveButtonProps = {
+  children?: HTMLCollection | string
+  onClick: (e?: React.MouseEvent) => void
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
+
+export const RemoveButton = ({ onClick, children, ...props }: RemoveButtonProps) => {
+  return (
+    <StyledRemoveButton onClick={onClick} {...props}>
+      <Trash fill="var(--red)" width="1rem" height="1rem" />
+    </StyledRemoveButton>
+  )
+}

@@ -6,6 +6,8 @@ import styled from 'styled-components'
 import '../style/reactDates.scss'
 import { DATE_FORMAT } from '../../constants'
 import { format, isAfter, isBefore, isValid, parseISO } from 'date-fns'
+import { isEmpty } from 'lodash'
+import { useAppState, useStateValue } from '../../state/useAppState'
 
 const InputWrapper = styled.div`
   position: relative;
@@ -41,11 +43,13 @@ const SelectDate: React.FC<PropTypes> = observer(
     name,
     alignDatepicker = 'left',
   }) => {
+    let [, setErrorMessage] = useStateValue('errorMessage')
+
     // The local input state.
     let [inputValue, setInputValue] = useState<string>(value)
 
     // Validate the value to be a valid date and between the max and min limits, if any.
-    const getValidDate = useCallback(
+    let getValidDate = useCallback(
       (val: Date | string): Date | null => {
         let dateVal = val instanceof Date ? val : parseISO(val)
 
@@ -101,39 +105,37 @@ const SelectDate: React.FC<PropTypes> = observer(
       [label, name]
     )
 
-    const applyInputValue = useCallback(() => {
-      if (inputValue !== value) {
-        let validDate = getValidDate(inputValue)
+    useEffect(() => {
+      let validDate = getValidDate(inputValue)
 
-        if (validDate) {
-          let validDateVal = format(validDate, DATE_FORMAT)
-          onChange(validDateVal)
-          setInputValue(validDateVal)
-        }
+      if (!validDate && !isEmpty(inputValue)) {
+        // Should not happen
+        setErrorMessage(
+          `Could not convert inputValue as a valid Date object. Given inputValue: ${inputValue}`
+        )
+      } else {
+        let onChangeValue = isEmpty(inputValue) ? '' : format(validDate!, DATE_FORMAT)
+        onChange(onChangeValue)
       }
-    }, [value, inputValue, onChange, getValidDate])
+    }, [inputValue])
 
     return (
-      <>
-        <InputWrapper>
-          <InputContainer>
-            <Input
-              name={inputName}
-              type="date"
-              subLabel={true}
-              label={label}
-              value={currentValue}
-              onChange={setInputValue}
-              onEnterPress={applyInputValue}
-              onBlur={applyInputValue}
-              disabled={disabled}
-              min={minDate}
-              max={maxDate}
-              pattern="\d{4}-\d{2}-\d{2}"
-            />
-          </InputContainer>
-        </InputWrapper>
-      </>
+      <InputWrapper>
+        <InputContainer>
+          <Input
+            name={inputName}
+            type="date"
+            subLabel={true}
+            label={label}
+            value={currentValue}
+            onChange={setInputValue}
+            disabled={disabled}
+            min={minDate}
+            max={maxDate}
+            pattern="\d{4}-\d{2}-\d{2}"
+          />
+        </InputContainer>
+      </InputWrapper>
     )
   }
 )

@@ -10,15 +10,16 @@ import React, {
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { RemoveButton } from './Button'
+import { StyledRemoveButton } from './Button'
 import { CrossThick } from '../icon/CrossThick'
 import { ScrollContext } from './AppFrame'
 import { FixedSizeList as List } from 'react-window'
 import Input, { TextInput } from '../input/Input'
-import { useDebounce, useDebouncedCallback } from 'use-debounce'
+import { useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from './FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
+import { SortConfig, SortOrder } from '../../schema-types'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -90,13 +91,13 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
     border-bottom-color: transparent;
     z-index: 100;
 
-    ${RemoveButton} {
+    ${StyledRemoveButton} {
       display: flex;
     }
   }
 `
 
-const RowRemoveButton = styled(RemoveButton)`
+const RowRemoveButton = styled(StyledRemoveButton)`
   position: absolute;
   left: 0.4rem;
   top: 0.4rem;
@@ -118,7 +119,7 @@ const TableCell = styled.div<{
   display: flex;
   align-items: stretch;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
@@ -154,7 +155,7 @@ const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
 `
 
 const HeaderCellContent = styled.div`
-  padding: 0.5rem 25px 0.4rem 11px;
+  padding: 0.25rem 25px 0.1rem 0.25rem;
   width: 100%;
 `
 
@@ -175,12 +176,12 @@ const ColumnSortIndicator = styled.div`
 
 export const CellContent = styled.div<{ footerCell?: boolean }>`
   user-select: text;
-  padding: 0.5rem 0.15rem;
+  padding: 0.1rem 0.15rem 0.1rem 0.25rem;
   border: 0;
   background: transparent;
-  display: block;
+  display: flex;
+  align-items: center;
   width: 100%;
-  text-align: center;
   overflow: hidden;
   white-space: nowrap;
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
@@ -223,6 +224,8 @@ export type PropTypes<ItemType> = {
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
+  sort?: SortConfig[]
+  setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
 }
 
 const defaultKeyFromItem = (item) => item.id
@@ -251,11 +254,6 @@ const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) =>
   />
 )
 
-type SortConfig = {
-  column: string
-  order: 'asc' | 'desc'
-}
-
 type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
   isEditingRow: boolean
@@ -277,14 +275,14 @@ type RowPropTypes<ItemType = any> = {
 type CellPropTypes<ItemType = any> = {
   row: TableRowWithDataAndFunctions<ItemType>
   cell: [keyof ItemType, CellValType]
-  cellIndex: number
+  colIndex: number
   tabIndex?: number
   rowId: string
 }
 
 type ContextTypes<ItemType> = {
   pendingValues?: EditValue[]
-  columnWidths?: number[]
+  columnWidths?: Array<number | string>
   editableValues?: PropTypes<ItemType>['editableValues']
   onEditValue?: PropTypes<ItemType>['onEditValue']
   renderInput?: PropTypes<ItemType>['renderInput']
@@ -299,7 +297,7 @@ type ContextTypes<ItemType> = {
 const TableContext = React.createContext<ContextTypes<any>>({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, cellIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
+  <ItemType extends any>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
     let ctx = useContext(TableContext)
     let {
       pendingValues = [],
@@ -327,7 +325,7 @@ const TableCellComponent = observer(
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
         : undefined
 
-    let columnWidth = columnWidths[cellIndex] || 0
+    let columnWidth = columnWidths[colIndex]
 
     let canEditCell = onEditValue && editableValues.includes(valueKey)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
@@ -343,7 +341,16 @@ const TableCellComponent = observer(
 
     return (
       <TableCell
-        style={{ minWidth: !fluid && columnWidth ? `${columnWidth}px` : 0 }}
+        style={
+          !fluid && !!columnWidth
+            ? {
+                minWidth:
+                  typeof columnWidth === 'string'
+                    ? columnWidth
+                    : Math.min(columnWidth, 300) + 'px',
+              }
+            : undefined
+        }
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={canEditCell}
@@ -380,13 +387,13 @@ const TableRowComponent = observer(
 
     return (
       <TableRow key={rowId} isEditing={isEditingRow} style={style}>
-        {itemEntries.map(([key, val], cellIndex) => (
+        {itemEntries.map(([key, val], colIndex) => (
           <TableCellComponent<ItemType>
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}
-            cellIndex={cellIndex}
-            tabIndex={index * allRows.length + cellIndex + 1}
+            colIndex={colIndex}
+            tabIndex={index * allRows.length + colIndex + 1}
             cell={[key as keyof ItemType, val]}
           />
         ))}
@@ -425,49 +432,21 @@ const Table = observer(
     fluid = false,
     showToolbar = true,
     children: emptyContent,
+    sort: propSort,
+    setSort: propSetSort,
   }: PropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
+    let [_sort, _setSort] = useState<SortConfig[]>([])
 
-    let [sort, setSort] = useState<SortConfig[]>([])
-    let [liveColumnWidths, setColumnWidths] = useState<number[]>([])
-    let [columnWidths] = useDebounce(liveColumnWidths, 200, { leading: true, trailing: false })
-
-    let setColumnWidth = useCallback((index, width) => {
-      setColumnWidths((currentWidths) => {
-        let nextWidths = [...currentWidths]
-        let curWidth = nextWidths[index]
-
-        // Only set width if no width has been set yet for this column, or if it is different,
-        // or when onlyIncrease is true, if the new width is more than the current width.
-        if (!curWidth || width !== curWidth) {
-          let deleteCount = typeof curWidth === 'undefined' ? 0 : 1
-          nextWidths.splice(index, deleteCount, width)
-          return nextWidths
-        }
-
-        return currentWidths
-      })
-    }, [])
-
-    let setWidthFromCellRef = useCallback(
-      (index) => (ref) => {
-        if (ref) {
-          let rect = ref.getBoundingClientRect()
-
-          if (rect && rect.width) {
-            setColumnWidth(index, rect.width)
-          }
-        }
-      },
-      [setColumnWidth]
-    )
+    let sort = propSort ?? _sort
+    let setSort = propSetSort ?? _setSort
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
-    // Adding a column a second time switches its
+    // Adding a column a second time switches its order between asc, desc and no sorting.
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
-        if (!Object.keys(items[0] as {}).includes(columnName)) {
+        if (!items[0] || !Object.keys(items[0] as {}).includes(columnName)) {
           return currentSort
         }
 
@@ -477,20 +456,20 @@ const Table = observer(
 
         let columnSortConfig: SortConfig = {
           column: columnName,
-          order: 'asc', // Start sorting by asc
+          order: SortOrder.Asc, // Start sorting by asc
         }
 
         if (currentColumnSortIndex !== -1) {
           columnSortConfig = nextSort.splice(currentColumnSortIndex, 1)[0]
 
           // Reset the column after desc by returning the array without the sort config.
-          if (columnSortConfig.order === 'desc') {
+          if (columnSortConfig.order === SortOrder.Desc) {
             return nextSort
           }
 
           // If a sort config for the column was found, that means it's currently asc sorted.
           // The next order is desc.
-          columnSortConfig.order = 'desc'
+          columnSortConfig.order = SortOrder.Desc
           nextSort.splice(currentColumnSortIndex, 0, columnSortConfig)
         } else {
           nextSort.push(columnSortConfig)
@@ -540,26 +519,27 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
+    let getListItemKey = useCallback((index, data) => {
+      let item = data[index]
+      return item.key
+    }, [])
+
     let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
       if (!items || !Array.isArray(items)) {
         return []
       }
 
-      if (sort.length === 0) {
+      // If the Table was provided external sort config, assume the items are already sorted.
+      if (typeof propSort !== 'undefined' || sort.length === 0) {
         return items
       }
 
       return orderBy(
         items,
         sort.map((s) => s.column),
-        sort.map((s) => s.order)
+        sort.map((s) => (s.order === SortOrder.Desc ? 'desc' : 'asc'))
       )
     }, [items, sort])
-
-    let getListItemKey = useCallback((index, data) => {
-      let item = data[index]
-      return item.key
-    }, [])
 
     let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
       () =>
@@ -621,6 +601,33 @@ const Table = observer(
       ]
     )
 
+    let columnWidths: Array<string | number> = useMemo(() => {
+      if (fluid) {
+        let percentageWidth = columnNames.length / 100 + '%'
+        return columnNames.map(() => percentageWidth)
+      }
+
+      let widths: number[] = []
+      let colIdx = 0
+
+      for (let colName of columnNames) {
+        let nameLength = Math.max(colName[1].length, 8)
+        let colWidth = nameLength * 10
+
+        for (let row of rows) {
+          let [colKey, colValue] = row.itemEntries[colIdx]
+          let strVal = toString(renderValue(colKey, colValue))
+          let valLength = Math.max(strVal.length, 5)
+          colWidth = Math.max(valLength * 10, colWidth)
+        }
+
+        widths.push(Math.ceil(colWidth))
+        colIdx++
+      }
+
+      return widths
+    }, [columnNames, rows, fluid])
+
     // The table is empty if we don't have any items,
     // OR
     // When there is one item with only falsy values (which still gives the column names)
@@ -628,7 +635,18 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width = fluid ? '100%' : Math.ceil(columnWidths.reduce((total, col) => total + col, 0))
+    let width =
+      fluid || columnWidths.some((w) => typeof w === 'string')
+        ? '100%'
+        : Math.ceil(
+            columnWidths.reduce((total: number, col) => {
+              if (typeof col !== 'number') {
+                return total
+              }
+
+              return total + col
+            }, 0)
+          )
     let rowHeight = 27
     let listHeight = rows.length * rowHeight // height of all rows combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
@@ -720,17 +738,20 @@ const Table = observer(
 
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
-
-                let columnWidth = fluid ? undefined : columnWidths[colIdx]
+                let columnWidth = columnWidths[colIdx]
 
                 return (
                   <ColumnHeaderCell
-                    ref={!fluid ? setWidthFromCellRef(colIdx) : undefined}
                     as="button"
                     style={
-                      typeof columnWidth !== 'undefined'
-                        ? { minWidth: columnWidth + 'px' }
-                        : {}
+                      !fluid && !!columnWidth
+                        ? {
+                            minWidth:
+                              typeof columnWidth === 'string'
+                                ? columnWidth
+                                : Math.min(columnWidth, 300) + 'px',
+                          }
+                        : undefined
                     }
                     isEditing={isEditingColumn}
                     key={colKey}
@@ -739,7 +760,7 @@ const Table = observer(
                       {renderValue('', colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
-                          {sortIndex + 1} {sortConfig.order === 'asc' ? '▲' : '▼'}
+                          {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
                         </ColumnSortIndicator>
                       )}
                     </HeaderCellContent>
@@ -752,14 +773,17 @@ const Table = observer(
                 emptyContent
               ) : virtualized ? (
                 <List
-                  style={{ minWidth: '100%', overflowX: 'hidden', overflowY: 'scroll' }}
+                  style={{
+                    minWidth: '100%',
+                    overflowX: 'hidden',
+                    overflowY: hasVerticalScroll ? 'scroll' : 'hidden',
+                  }}
                   height={height}
                   width={tableViewWidth}
                   itemCount={rows.length}
                   itemSize={rowHeight}
                   layout="vertical"
                   itemData={rows}
-                  overscan={100}
                   itemKey={getListItemKey}>
                   {TableRowComponent}
                 </List>
@@ -778,12 +802,16 @@ const Table = observer(
                   return (
                     <TableCell
                       key={`footer_${col}`}
-                      style={{
-                        minWidth:
-                          typeof columnWidth !== 'undefined' && columnWidth !== 0
-                            ? columnWidth + 'px'
-                            : 'auto',
-                      }}>
+                      style={
+                        !fluid && !!columnWidth
+                          ? {
+                              minWidth:
+                                typeof columnWidth === 'string'
+                                  ? columnWidth
+                                  : Math.min(columnWidth, 300) + 'px',
+                            }
+                          : undefined
+                      }>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCell>
                   )

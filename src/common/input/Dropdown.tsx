@@ -33,6 +33,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
         : 'var(--dark-blue)'};
   font-size: 1rem;
   justify-content: flex-start;
+  display: flex;
 
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};
@@ -160,7 +161,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
               disabled,
             })}
             theme={theme}>
-            {toString(currentlySelected, itemToLabel) || text('general.app.all')}
+            <span>{toString(currentlySelected, itemToLabel) || text('general.app.all')}</span>
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 

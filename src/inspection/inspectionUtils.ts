@@ -215,6 +215,10 @@ export function getInspectionStatusColor(inspection: Inspection) {
     return 'var(--blue)'
   }
 
+  if (inspection.status === InspectionStatus.Ready) {
+    return 'var(--light-green)'
+  }
+
   if (inspection.status === InspectionStatus.InReview) {
     return 'var(--yellow)'
   }

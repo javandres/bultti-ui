@@ -19,6 +19,7 @@ import {
   createObservedExecutionRequirementsFromPreInspectionRequirementsMutation,
   observedExecutionRequirementsQuery,
   previewObservedRequirementQuery,
+  removeExecutionRequirementsFromPostInspectionMutation,
   updateObservedExecutionRequirementValuesMutation,
 } from './executionRequirementsQueries'
 import { groupBy, toString } from 'lodash'
@@ -33,12 +34,8 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
   kilometersRequired: 'Km vaatimus',
-  quotaRequired: '% Osuus',
-}
-
-const observedColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
-  emissionClass: 'Päästöluokka',
   kilometersObserved: 'Toteutetut km',
+  quotaRequired: '% Osuus',
   quotaObserved: 'Toteutettu % osuus',
   averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
   equipmentCountObserved: 'Ajoneuvomäärä',
@@ -73,10 +70,6 @@ const WeekHeading = styled.h3`
   font-weight: normal;
 `
 
-const ObservedHeading = styled(WeekHeading)`
-  font-size: 1rem;
-`
-
 const WeekDateHeading = styled.h5`
   margin-bottom: 1rem;
   margin-top: 0;
@@ -85,11 +78,13 @@ const WeekDateHeading = styled.h5`
 
 const RequirementValueTable = styled(Table)``
 
-export type PropTypes = {}
+export type PropTypes = {
+  isEditable: Boolean
+}
 
 type EditRequirementValue = EditValue<ObservedExecutionValue> & { requirementId: string }
 
-const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
+const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes) => {
   const inspection = useContext(InspectionContext)
 
   let {
@@ -98,20 +93,25 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     refetch,
   } = useObservedRequirements(inspection?.id)
 
-  let [
-    previewObservedRequirement,
-    { data: calculatedRequirement, loading: previewLoading },
-  ] = useLazyQueryData(previewObservedRequirementQuery)
+  let [previewObservedRequirement, { loading: previewLoading }] = useLazyQueryData(
+    previewObservedRequirementQuery
+  )
+
+  let [requirementPreviewLoadingId, setRequirementPreviewLoadingId] = useState('')
 
   let onPreviewRequirement = useCallback(
     (requirementId) => {
-      previewObservedRequirement({
-        variables: {
-          requirementId,
-        },
-      })
+      if (isEditable) {
+        setRequirementPreviewLoadingId(requirementId)
+
+        previewObservedRequirement({
+          variables: {
+            requirementId,
+          },
+        })
+      }
     },
-    [previewObservedRequirement]
+    [previewObservedRequirement, isEditable]
   )
 
   let [createRequirements, { loading: createLoading }] = useMutationData(
@@ -136,15 +136,39 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
     updateObservedExecutionRequirementValuesMutation
   )
 
+  let [removeRequirements, { loading: removeLoading }] = useMutationData(
+    removeExecutionRequirementsFromPostInspectionMutation,
+    {
+      refetchQueries: [
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: {
+            postInspectionId: inspection?.id,
+          },
+        },
+      ],
+    }
+  )
+
   let onClickCreateRequirements = useCallback(async () => {
-    if (inspection) {
+    if (inspection && isEditable) {
       await createRequirements({
         variables: {
           postInspectionId: inspection?.id,
         },
       })
     }
-  }, [inspection, createRequirements])
+  }, [inspection, createRequirements, isEditable])
+
+  let onClickRemoveRequirements = useCallback(async () => {
+    if (inspection && observedRequirements.length && isEditable) {
+      await removeRequirements({
+        variables: {
+          postInspectionId: inspection?.id,
+        },
+      })
+    }
+  }, [inspection, removeRequirements, observedRequirements, isEditable])
 
   let requirementsByAreaAndWeek: Array<[
     string,
@@ -168,6 +192,10 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
 
   let createValueEdit = useCallback(
     (requirement) => (key, value, item) => {
+      if (!isEditable) {
+        return
+      }
+
       let editValue: EditRequirementValue = {
         key,
         value,
@@ -188,10 +216,14 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         return [...currentValues, editValue]
       })
     },
-    []
+    [isEditable]
   )
 
   let onSaveEditedValues = useCallback(async () => {
+    if (!isEditable) {
+      return
+    }
+
     let updateQueries: Promise<unknown>[] = []
     let requirementGroups = Object.entries<EditRequirementValue[]>(
       groupBy<EditRequirementValue>(pendingValues, 'requirementId')
@@ -201,6 +233,10 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
       let updateValues = new Map<string, ObservedRequirementValueInput>()
 
       for (let value of reqPendingValues) {
+        if (!value.item?.id) {
+          continue
+        }
+
         let updateItem = updateValues.get(value.item.id) || {
           id: value.item.id,
           emissionClass: value.item.emissionClass,
@@ -222,7 +258,7 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
 
     setPendingValues([])
     await Promise.all(updateQueries)
-  }, [pendingValues, updateRequirements])
+  }, [pendingValues, updateRequirements, isEditable])
 
   let onCancelEdit = useCallback(() => {
     setPendingValues([])
@@ -238,9 +274,15 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
 
       switch (key) {
         case 'quotaRequired':
+        case 'quotaObserved':
           return `${totalVal}%`
         case 'kilometersRequired':
+        case 'kilometersObserved':
           return `${totalVal} km`
+        case 'averageAgeWeightedObserved':
+          return `${totalVal} v`
+        case 'equipmentCountObserved':
+          return `${totalVal} kpl`
         default:
           return totalVal
       }
@@ -273,6 +315,22 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
         <LoadingDisplay
           loading={updateLoading || createLoading || observedRequirementsLoading}
         />
+        {isEditable && (
+          <FlexRow style={{ marginBottom: '1.5rem' }}>
+            <Button onClick={onClickCreateRequirements} loading={createLoading}>
+              Luo suoritevaatimukset ennakkotarkastuksesta
+            </Button>
+            {observedRequirements.length !== 0 && (
+              <Button
+                style={{ marginLeft: 'auto' }}
+                onClick={onClickRemoveRequirements}
+                loading={removeLoading}
+                buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
+                Poista tarkastuksen suoritevaatimukset
+              </Button>
+            )}
+          </FlexRow>
+        )}
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
             {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
@@ -291,35 +349,27 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
                         <React.Fragment key={requirement.id}>
                           <RequirementValueTable
                             fluid={true}
-                            onEditValue={createValueEdit(requirement)}
-                            pendingValues={pendingValues}
-                            editableValues={['quotaRequired']}
+                            onEditValue={isEditable ? createValueEdit(requirement) : undefined}
+                            pendingValues={isEditable ? pendingValues : []}
+                            editableValues={isEditable ? ['quotaRequired'] : undefined}
                             items={requirement.observedRequirements}
                             columnLabels={columnLabels}
                             getColumnTotal={createGetColumnTotal(requirement)}
-                            onSaveEdit={onSaveEditedValues}
-                            onCancelEdit={onCancelEdit}
+                            onSaveEdit={isEditable ? onSaveEditedValues : undefined}
+                            onCancelEdit={isEditable ? onCancelEdit : undefined}
                             showToolbar={false}
                           />
-                          <FlexRow>
-                            <Button
-                              onClick={() => onPreviewRequirement(requirement.id)}
-                              loading={previewLoading}>
-                              Esikatsele toteuma
-                            </Button>
-                          </FlexRow>
-                          {requirement.observedRequirements.some(
-                            (val) => !!val.quotaObserved
-                          ) && (
-                            <>
-                              <ObservedHeading>Toteutetut arvot</ObservedHeading>
-                              <RequirementValueTable
-                                fluid={true}
-                                items={requirement.observedRequirements}
-                                columnLabels={observedColumnLabels}
-                                getColumnTotal={createGetColumnTotal(requirement)}
-                              />
-                            </>
+                          {isEditable && (
+                            <FlexRow>
+                              <Button
+                                onClick={() => onPreviewRequirement(requirement.id)}
+                                loading={
+                                  requirementPreviewLoadingId === requirement.id &&
+                                  previewLoading
+                                }>
+                                {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
+                              </Button>
+                            </FlexRow>
                           )}
                         </React.Fragment>
                       ))}
@@ -329,10 +379,6 @@ const PostInspectionExecutionRequirements = observer(({}: PropTypes) => {
               </RequirementAreaRow>
             ))}
           </RequirementAreasWrapper>
-        ) : !observedRequirementsLoading ? (
-          <Button onClick={onClickCreateRequirements} loading={createLoading}>
-            Create execution requirements from Pre-inspection
-          </Button>
         ) : null}
         {pendingValues.length !== 0 && (
           <FormSaveToolbar

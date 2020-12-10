@@ -11,6 +11,7 @@ import {
 import { useMutationData } from '../util/useMutationData'
 import {
   publishInspectionMutation,
+  readyInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
 } from './inspectionQueries'
@@ -41,7 +42,7 @@ const ButtonRow = styled.div`
   }
 `
 
-type Actions = 'publish' | 'reject' | 'submit' | 'remove'
+type Actions = 'publish' | 'reject' | 'submit' | 'remove' | 'ready'
 
 export type PropTypes = {
   inspection: Inspection
@@ -92,6 +93,8 @@ const InspectionActions = observer(
       submitInspectionMutation
     )
 
+    var [inspectionReady, { loading: readyLoading }] = useMutationData(readyInspectionMutation)
+
     var [publishInspection, { loading: publishLoading }] = useMutationData(
       publishInspectionMutation
     )
@@ -128,6 +131,20 @@ const InspectionActions = observer(
       [onRefresh, inspection, disabledActions]
     )
 
+    var onReadyInspection = useCallback(async () => {
+      if (disabledActions.includes('ready')) {
+        return
+      }
+
+      await inspectionReady({
+        variables: {
+          inspectionId: inspection.id,
+        },
+      })
+
+      await onRefresh()
+    }, [onRefresh, inspection, disabledActions])
+
     var onPublishInspection = useCallback(async () => {
       if (disabledActions.includes('publish')) {
         return
@@ -159,6 +176,18 @@ const InspectionActions = observer(
     let userCanPublish =
       inspection.status === InspectionStatus.InReview && requireAdminUser(user)
 
+    // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
+    let inspectionCanBeSubmitted =
+      (inspection.inspectionType === InspectionType.Pre &&
+        inspection.status === InspectionStatus.Draft) ||
+      (inspection.inspectionType === InspectionType.Post &&
+        inspection.status === InspectionStatus.Ready)
+
+    // Only post-inspections which are in draft state can be readied.
+    let inspectionCanBeReady =
+      inspection.inspectionType === InspectionType.Post &&
+      inspection.status === InspectionStatus.Draft
+
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -187,16 +216,25 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!submitActive &&
-            inspection.status === InspectionStatus.Draft &&
+          {!submitActive && inspectionCanBeSubmitted && isEditing && (
+            <Button
+              loading={submitLoading}
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.MEDIUM}
+              onClick={onSubmitProcessStart}>
+              Lähetä hyväksyttäväksi
+            </Button>
+          )}
+
+          {inspectionCanBeReady &&
             requireOperatorUser(user, inspection?.operatorId || undefined) &&
             isEditing && (
               <Button
-                loading={submitLoading}
-                buttonStyle={ButtonStyle.NORMAL}
+                loading={readyLoading}
+                buttonStyle={ButtonStyle.ACCEPT}
                 size={ButtonSize.MEDIUM}
-                onClick={onSubmitProcessStart}>
-                Lähetä hyväksyttäväksi
+                onClick={onReadyInspection}>
+                Valmista
               </Button>
             )}
 
@@ -239,7 +277,7 @@ const InspectionActions = observer(
           )}
         </ButtonRow>
         {submitActive &&
-          inspection.status === InspectionStatus.Draft &&
+          inspectionCanBeSubmitted &&
           requireOperatorUser(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <InspectionApprovalSubmit

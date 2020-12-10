@@ -178,6 +178,15 @@ export const submitInspectionMutation = gql`
   ${inspectionFragment}
 `
 
+export const readyInspectionMutation = gql`
+  mutation inspectionReady($inspectionId: String!) {
+    inspectionReady(inspectionId: $inspectionId) {
+      ...InspectionFragment
+    }
+  }
+  ${inspectionFragment}
+`
+
 export const publishInspectionMutation = gql`
   mutation publishInspection($inspectionId: String!) {
     publishInspection(inspectionId: $inspectionId) {

@@ -16,7 +16,7 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { areIntervalsOverlapping, parseISO } from 'date-fns'
+import { addDays, areIntervalsOverlapping, isValid, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
@@ -107,6 +107,11 @@ const ContractProcurementUnitsEditor = observer(
     let startDate = parseISO(contract.startDate)
     let endDate = parseISO(contract.endDate)
 
+    let contractInterval = {
+      start: min([startDate, endDate]),
+      end: max([endDate, addDays(startDate, 1)]),
+    }
+
     let allSelected = useMemo(
       () => !unitOptions.some((unit) => !includedUnitIds.includes(unit.id)),
       [unitOptions, includedUnitIds]
@@ -163,17 +168,21 @@ const ContractProcurementUnitsEditor = observer(
 
             let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
 
-            let hasFullyOverlappingContract = currentContracts.some(
-              (c) =>
+            let hasFullyOverlappingContract = currentContracts.some((c) => {
+              let checkStart = parseISO(c.startDate)
+              let checkEnd = parseISO(c.endDate)
+
+              return (
                 c.id !== contract.id &&
                 !areIntervalsOverlapping(
                   {
-                    start: parseISO(c.startDate),
-                    end: parseISO(c.endDate),
+                    start: min([checkStart, checkEnd]),
+                    end: max([checkEnd, addDays(checkStart, 1)]),
                   },
-                  { start: startDate, end: endDate }
+                  contractInterval
                 )
-            )
+              )
+            })
 
             let canSelectUnit =
               currentContracts.length === 0 ||

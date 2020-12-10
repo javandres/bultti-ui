@@ -30,7 +30,8 @@ export const ObservedRequirementValueFragment = gql`
     equipmentCountObserved
     sanctionAmount
     sanctionThreshold
-    classSanctionAmount
+    sanctionAmount
+    sanctionablePercentage
     cumulativeDifferencePercentage
     differencePercentage
     averageAgeWeightedObserved
@@ -226,6 +227,12 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
     }
   }
   ${EquipmentFragment}
+`
+
+export const removeExecutionRequirementsFromPostInspectionMutation = gql`
+  mutation($postInspectionId: String!) {
+    removeObservedExecutionRequirementsFromPreInspection(postInspectionId: $postInspectionId)
+  }
 `
 
 export const refreshExecutionRequirementForProcurementUnitMutation = gql`

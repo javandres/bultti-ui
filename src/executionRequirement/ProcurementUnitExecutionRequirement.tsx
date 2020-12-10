@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../common/components/Loading'
-import RequirementsTable, { RequirementsTableLayout } from './RequirementsTable'
+import RequirementsTable from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
@@ -26,6 +26,7 @@ import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
+import { RequirementsTableLayout } from './executionRequirementUtils'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;

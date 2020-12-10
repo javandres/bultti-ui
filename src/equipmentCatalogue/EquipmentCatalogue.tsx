@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
@@ -23,6 +23,8 @@ import {
 } from '../equipment/equipmentUtils'
 import AddEquipment from '../equipment/AddEquipment'
 import { MessageView } from '../common/components/Messages'
+import { text } from '../util/translate'
+import { isEqual } from 'lodash'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -36,8 +38,13 @@ export type PropTypes = {
 }
 
 const equipmentCatalogueLabels = {
-  startDate: 'Alkupäivä',
-  endDate: 'Loppupäivä',
+  startDate: text('start_date'),
+  endDate: text('end_date'),
+}
+
+const equipmentCatalogueHints = {
+  startDate: text('hint.equipment_catalogue.start_date'),
+  endDate: text('hint.equipment_catalogue.end_date'),
 }
 
 enum CatalogueEditMode {
@@ -54,6 +61,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
       null
     )
+    const [oldCatalogue, setOldCatalogue] = useState<EquipmentCatalogueInput | null>(null)
 
     let { removeAllEquipment, addEquipment, addBatchEquipment } = useEquipmentCrud(
       catalogue,
@@ -62,6 +70,12 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
+
+    useEffect(() => {
+      if (!oldCatalogue) {
+        setOldCatalogue(pendingCatalogue)
+      }
+    }, [pendingCatalogue])
 
     const addDraftCatalogue = useCallback(() => {
       if (!editable) {
@@ -101,6 +115,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       }
 
       setPendingCatalogue(null)
+      setOldCatalogue(pendingCatalogue)
 
       if (catalogue && catalogueEditMode.current === CatalogueEditMode.UPDATE) {
         await updateCatalogue({
@@ -149,6 +164,8 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       [equipment]
     )
 
+    let isDirty = !isEqual(oldCatalogue, pendingCatalogue)
+
     return (
       <EquipmentCatalogueView>
         {catalogue && !pendingCatalogue && (
@@ -163,9 +180,12 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
         {editable && pendingCatalogue && (
           <ItemForm
             item={pendingCatalogue}
+            labels={equipmentCatalogueLabels}
+            hints={equipmentCatalogueHints}
             onChange={onChangeCatalogue}
             onDone={onSaveEquipmentCatalogue}
             onCancel={onCancelPendingEquipmentCatalogue}
+            isDirty={isDirty}
             keyFromItem={(item) => item.id}
             renderInput={renderCatalogueInput}
             doneLabel={

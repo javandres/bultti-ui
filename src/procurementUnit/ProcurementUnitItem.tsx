@@ -4,10 +4,12 @@ import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
   InspectionValidationError,
+  OperatingAreaName,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
   ValidationErrorData,
 } from '../schema-types'
+import { isEqual } from 'lodash'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
@@ -28,13 +30,13 @@ import { FlexRow } from '../common/components/common'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import ExpandableSection, {
-  HeaderBoldHeading,
   HeaderHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { text } from '../util/translate'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -77,6 +79,12 @@ const procurementUnitLabels = {
   medianAgeRequirement: 'Keski-ikä vaatimus',
 }
 
+const operatingAreaNameLocalizationObj = {
+  [OperatingAreaName.Center]: text('procurement_unit.operating_area_name.center'),
+  [OperatingAreaName.Other]: text('procurement_unit.operating_area_name.other'),
+  [OperatingAreaName.Unknown]: text('unknown'),
+}
+
 type ContentPropTypes = {
   showExecutionRequirements: boolean
   startDate: string
@@ -104,6 +112,10 @@ const ProcurementUnitItemContent = observer(
     const [
       pendingProcurementUnit,
       setPendingProcurementUnit,
+    ] = useState<ProcurementUnitEditInput | null>(null)
+    const [
+      oldProcurementUnit,
+      setOldProcurementUnit,
     ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
@@ -140,7 +152,7 @@ const ProcurementUnitItemContent = observer(
       variables: { procurementUnitId, startDate },
     })
 
-    const addDraftProcurementUnit = useCallback(() => {
+    const startEditingProcurementUnit = useCallback(() => {
       if (catalogueEditable) {
         const inputRow: ProcurementUnitEditInput = {
           weeklyMeters: procurementUnit.weeklyMeters ?? 0,
@@ -148,6 +160,7 @@ const ProcurementUnitItemContent = observer(
         }
 
         setPendingProcurementUnit(inputRow)
+        setOldProcurementUnit(inputRow)
       }
     }, [procurementUnit, catalogueEditable])
 
@@ -231,14 +244,6 @@ const ProcurementUnitItemContent = observer(
             )}
             <FlexRow>
               <SubHeading>Kohteen tiedot</SubHeading>
-              <Button
-                loading={loading}
-                onClick={updateUnit}
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}>
-                Päivitä
-              </Button>
             </FlexRow>
             {!pendingProcurementUnit ? (
               <>
@@ -251,7 +256,9 @@ const ProcurementUnitItemContent = observer(
                   item={procurementUnit}
                   labels={procurementUnitLabels}>
                   {catalogueEditable && (
-                    <Button style={{ marginLeft: 'auto' }} onClick={addDraftProcurementUnit}>
+                    <Button
+                      style={{ marginLeft: 'auto' }}
+                      onClick={startEditingProcurementUnit}>
                       Muokkaa
                     </Button>
                   )}
@@ -265,6 +272,7 @@ const ProcurementUnitItemContent = observer(
                   onChange={onChangeProcurementUnit}
                   onDone={onSaveProcurementUnit}
                   onCancel={onCancelPendingUnit}
+                  isDirty={!isEqual(oldProcurementUnit, pendingProcurementUnit)}
                   doneLabel="Tallenna"
                   doneDisabled={Object.values(pendingProcurementUnit).some(
                     (val: number | string | undefined | null) =>
@@ -327,6 +335,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       ].includes(err.type)
     )
 
+    const procurementUnitAreaName = procurementUnit?.area?.name
+      ? procurementUnit?.area?.name
+      : OperatingAreaName.Unknown
+
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -336,7 +348,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             isExpanded={expanded}
             headerContent={
               <>
-                <HeaderBoldHeading>{procurementUnit.procurementUnitId}</HeaderBoldHeading>
+                <HeaderSection>
+                  <HeaderHeading>Kohdetunnus</HeaderHeading>
+                  {procurementUnit.procurementUnitId}
+                </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Reitit</HeaderHeading>
                   {(routes || [])
@@ -357,7 +372,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>Seuranta-alue</HeaderHeading>
-                  {procurementUnit?.area?.name}
+                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>Sopimus</HeaderHeading>

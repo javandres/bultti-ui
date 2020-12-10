@@ -1,11 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
+import { isEqual } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { FlexRow } from '../common/components/common'
+import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import { DATE_FORMAT } from '../constants'
@@ -13,11 +14,8 @@ import styled from 'styled-components'
 import { format, parseISO, startOfISOWeek } from 'date-fns'
 import InspectionTimeline from './InspectionTimeline'
 
-const InspectionConfigView = styled.div`
-  border: 1px solid var(--lighter-grey);
-  margin-top: 1rem;
-  border-radius: 0.5rem;
-  background: white;
+const InspectionConfigView = styled(PageSection)`
+  margin: 1rem 0 0;
   padding: 0 1rem 1rem;
 `
 
@@ -29,50 +27,54 @@ export type PropTypes = {
 
 const InspectionConfig: React.FC<PropTypes> = observer(
   ({ saveValues, isEditable, inspection }) => {
-    let isDirty = useRef(false)
-    let [inspectionValues, setInspectionValues] = useState<InspectionInput>({})
+    let getInspectionInputValues = (setFromInspection: Inspection) => {
+      return {
+        name: setFromInspection.name || '',
+        inspectionStartDate: setFromInspection.inspectionStartDate || '',
+        inspectionEndDate: setFromInspection.inspectionEndDate || '',
+      }
+    }
+
+    let initialInspectionInputValues = getInspectionInputValues(inspection)
+
+    let [pendingInspectionInputValues, setPendingInspectionInputValues] = useState<
+      InspectionInput
+    >(initialInspectionInputValues)
+
+    let [oldInspectionInputValues, setOldInspectionInputValues] = useState<InspectionInput>(
+      initialInspectionInputValues
+    )
 
     let onUpdateValue = useCallback((name, value) => {
-      isDirty.current = true
-
-      setInspectionValues((currentValues) => {
+      setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
         nextValues[name] = value
         return nextValues
       })
     }, [])
 
-    let onSaveValues = useCallback(async () => {
-      isDirty.current = false
-      await saveValues(inspectionValues)
-    }, [inspectionValues])
+    let onSave = useCallback(async () => {
+      await saveValues(pendingInspectionInputValues!)
+      setOldInspectionInputValues(pendingInspectionInputValues)
+    }, [pendingInspectionInputValues])
 
-    useEffect(() => {
-      if (!isDirty.current) {
-        setValuesFromInspection(inspection)
-      }
-    }, [inspection])
-
-    let setValuesFromInspection = useCallback((setFromInspection: Inspection) => {
-      setInspectionValues({
-        name: setFromInspection.name || '',
-        inspectionStartDate: setFromInspection.inspectionStartDate || '',
-        inspectionEndDate: setFromInspection.inspectionEndDate || '',
-      })
-    }, [])
+    let isDirty = useMemo(
+      () => !isEqual(oldInspectionInputValues, pendingInspectionInputValues),
+      [pendingInspectionInputValues]
+    )
 
     return (
       <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
-            <MessageView>Tarkastus ei valittu.</MessageView>
+            <MessageView>Tarkastusta ei ole valittu.</MessageView>
           </MessageContainer>
         ) : (
           <>
             <FlexRow>
               <FormColumn>
                 <Input
-                  value={inspectionValues.name || ''}
+                  value={pendingInspectionInputValues.name || ''}
                   onChange={(val) => onUpdateValue('name', val)}
                   label="Tarkastuksen nimi"
                 />
@@ -112,14 +114,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                       startOfISOWeek(parseISO(inspection.minStartDate)),
                       DATE_FORMAT
                     )}
-                    value={inspectionValues.inspectionStartDate}
+                    value={pendingInspectionInputValues.inspectionStartDate}
                     onChange={(val) => onUpdateValue('inspectionStartDate', val)}
                     label="Alku"
                     disabled={!isEditable}
                   />
                   <SelectDate
                     name="inspection_end"
-                    value={inspectionValues.inspectionEndDate}
+                    value={pendingInspectionInputValues.inspectionEndDate}
                     minDate={inspection.inspectionStartDate}
                     onChange={(val) => onUpdateValue('inspectionEndDate', val)}
                     label="Loppu"
@@ -131,12 +133,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             </FlexRow>
             <FlexRow>
               <ActionsWrapper>
-                <Button style={{ marginRight: '1rem' }} onClick={onSaveValues}>
+                <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
                   Tallenna
                 </Button>
                 <Button
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                  onClick={() => setValuesFromInspection(inspection)}>
+                  onClick={() =>
+                    setPendingInspectionInputValues(getInspectionInputValues(inspection))
+                  }>
                   Peruuta
                 </Button>
               </ActionsWrapper>

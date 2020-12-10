@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
@@ -8,6 +8,8 @@ import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
+import LoadInspectionHfpData from './LoadInspectionHfpData'
+import { MessageContainer, MessageView } from '../common/components/Messages'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -17,6 +19,8 @@ type PostInspectionProps = {
 
 const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
   ({ refetchData, isEditable, inspection }) => {
+    let [hfpLoaded, setHfpLoaded] = useState(false)
+
     var connectedPreInspection = inspection.preInspection
     let goToPreInspectionReports = useInspectionReports()
 
@@ -43,30 +47,45 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
       }
     )
 
+    let onUpdateConnectedInspection = useCallback(() => {
+      if (isEditable) {
+        updateConnectedInspection()
+      }
+    }, [updateConnectedInspection, isEditable])
+
     return (
       <div>
-        {connectedPreInspection && (
+        <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
+        {hfpLoaded ? (
           <>
-            <Heading>
-              Ennakkotarkastus{' '}
-              {inspection.status === InspectionStatus.Draft && (
-                <Button
-                  style={{ marginLeft: 'auto' }}
-                  loading={updateLoading}
-                  onClick={() => updateConnectedInspection()}
-                  buttonStyle={ButtonStyle.SECONDARY}
-                  size={ButtonSize.SMALL}>
-                  Päivitä
-                </Button>
-              )}
-            </Heading>
-            <InspectionIndexItem
-              onClick={onClickConnectedInspection}
-              inspection={connectedPreInspection}
-            />
+            {connectedPreInspection && (
+              <>
+                <Heading>
+                  Ennakkotarkastus{' '}
+                  {isEditable && (
+                    <Button
+                      style={{ marginLeft: 'auto' }}
+                      loading={updateLoading}
+                      onClick={onUpdateConnectedInspection}
+                      buttonStyle={ButtonStyle.SECONDARY}
+                      size={ButtonSize.SMALL}>
+                      Päivitä
+                    </Button>
+                  )}
+                </Heading>
+                <InspectionIndexItem
+                  onClick={onClickConnectedInspection}
+                  inspection={connectedPreInspection}
+                />
+              </>
+            )}
+            <PostInspectionExecutionRequirements isEditable={isEditable} />
           </>
+        ) : (
+          <MessageContainer style={{ margin: '1rem 0 0', padding: '0' }}>
+            <MessageView>Lataa tarkastusjakson HFP-tiedot ennen jatkamista.</MessageView>
+          </MessageContainer>
         )}
-        <PostInspectionExecutionRequirements />
       </div>
     )
   }

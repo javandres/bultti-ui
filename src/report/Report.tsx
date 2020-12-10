@@ -1,21 +1,29 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { useQueryData } from '../util/useQueryData'
 import { reportByName } from './reportQueries'
 import {
+  DeparturePair,
+  ExecutionRequirement,
+  FilterConfig,
   InspectionType,
+  ObservedExecutionRequirement,
+  PageConfig,
   Report as ReportDataType,
-  ReportType as ReportTypeEnum,
+  ReportType,
+  SortConfig,
 } from '../schema-types'
 import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
-import { useRefetch } from '../util/useRefetch'
 import DownloadReport from './DownloadReport'
 import PairListReport from './PairListReport'
+import { useQueryData } from '../util/useQueryData'
+import ReportTableFilters from './ReportTableFilters'
+import ReportPaging from './ReportPaging'
+import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 
 const ReportView = styled.div`
   position: relative;
@@ -35,37 +43,81 @@ export type PropTypes = {
 }
 
 const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
+  let [filters, setFilters] = useState<FilterConfig[]>([])
+  let [sort, setSort] = useState<SortConfig[]>([])
+  let [page, setPage] = useState<PageConfig>({
+    page: 1,
+    pageSize: 500,
+  })
+
+  let requestVars = useRef({
+    reportName,
+    inspectionId,
+    inspectionType,
+    filters,
+    sort,
+    page,
+  })
+
   let { data: reportData, loading: reportLoading, refetch } = useQueryData<ReportDataType>(
     reportByName,
     {
       notifyOnNetworkStatusChange: true,
-      skip: !inspectionId || !reportName,
-      variables: {
-        reportName,
-        inspectionId,
-        inspectionType,
-      },
+      fetchPolicy: 'network-only',
+      variables: { ...requestVars.current },
     }
   )
 
-  let queueRefetch = useRefetch(refetch, false)
+  let onUpdateFetchProps = useCallback(() => {
+    requestVars.current.filters = filters
+    refetch({ ...requestVars.current, sort, page })
+  }, [refetch, requestVars.current, filters, sort, page])
 
-  let ReportTypeComponent = useMemo(() => {
-    let reportDataItems = reportData?.reportEntities || []
+  // Trigger the refetch when sort or page state changes. Does NOT react to
+  // filter state, which is triggered separately with a button.
+  useEffect(() => {
+    onUpdateFetchProps()
+  }, [sort, page])
 
-    let labels = reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined
+  let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
-    switch (reportData?.reportType) {
-      case ReportTypeEnum.List:
-        return <ListReport items={reportDataItems} columnLabels={labels} />
-      case ReportTypeEnum.PairList:
-        return <PairListReport items={reportDataItems} columnLabels={labels} />
-      case ReportTypeEnum.ExecutionRequirement:
-        return <ExecutionRequirementsReport items={reportDataItems} />
-      default:
-        return <></>
-    }
-  }, [reportData])
+  let columnLabels = useMemo(
+    () => (reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined),
+    [reportData]
+  )
+
+  let onPageNav = useCallback(
+    (offset) => {
+      return () => {
+        setPage((currentPage) => {
+          let nextPageIdx = Math.min(
+            Math.max(currentPage.page + offset, 1),
+            reportData?.pages || 1
+          )
+
+          return {
+            ...currentPage,
+            page: nextPageIdx,
+          }
+        })
+      }
+    },
+    [reportData?.pages]
+  )
+
+  let onSetPage = useCallback(
+    (setPageTo) => {
+      setPage((currentPage) => {
+        let nextPageIdx = Math.min(Math.max(setPageTo, 1), reportData?.pages || 1)
+
+        return {
+          ...currentPage,
+          page: nextPageIdx,
+        }
+      })
+    },
+    [reportData?.pages]
+  )
 
   return (
     <ReportView>
@@ -81,12 +133,51 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}
-          onClick={queueRefetch}>
+          onClick={onUpdateFetchProps}>
           Päivitä
         </Button>
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
-      {reportData && ReportTypeComponent}
+      {reportData && reportData?.reportType !== ReportType.ExecutionRequirement && (
+        <>
+          <ReportTableFilters
+            filters={filters}
+            setFilters={setFilters}
+            fieldLabels={columnLabels}
+            excludeFields={['id', '__typename']}
+            onApply={onUpdateFetchProps}
+          />
+          <ReportPaging
+            onSetPage={onSetPage}
+            onNextPage={onPageNav(1)}
+            onPrevPage={onPageNav(-1)}
+            reportData={reportData}
+          />
+        </>
+      )}
+      {reportData?.reportType === ReportType.List ? (
+        <ListReport
+          sort={sort}
+          setSort={setSort}
+          items={reportDataItems}
+          columnLabels={columnLabels}
+        />
+      ) : reportData?.reportType === ReportType.PairList ? (
+        <PairListReport
+          sort={sort}
+          setSort={setSort}
+          items={reportDataItems as DeparturePair[]}
+          columnLabels={columnLabels}
+        />
+      ) : reportData?.reportType === ReportType.ExecutionRequirement ? (
+        inspectionType === InspectionType.Pre ? (
+          <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
+        ) : (
+          <ObservedExecutionRequirementsReport
+            items={reportDataItems as ObservedExecutionRequirement[]}
+          />
+        )
+      ) : null}
     </ReportView>
   )
 })

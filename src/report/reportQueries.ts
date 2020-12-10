@@ -2,6 +2,7 @@ import { gql } from '@apollo/client'
 import { OperatorBlockDepartureFragment } from '../departureBlock/blockDeparturesQuery'
 import {
   ExecutionRequirementFragment,
+  ObservedExecutionRequirementFragment,
   RequirementValueFragment,
 } from '../executionRequirement/executionRequirementsQueries'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
@@ -14,6 +15,21 @@ export const ReportFragment = gql`
     columnLabels
     reportType
     inspectionTypes
+    filteredCount
+    filters {
+      field
+      filterValue
+    }
+    page {
+      page
+      pageSize
+    }
+    pages
+    sort {
+      column
+      order
+    }
+    totalCount
   }
 `
 
@@ -79,29 +95,16 @@ export const ObservedDepartureFragment = gql`
   fragment ObservedDepartureFragment on ObservedDeparture {
     id
     departureId
-    departureType
-    postInspection {
-      id
-      inspectionType
-      status
-      inspectionStartDate
-      inspectionEndDate
-    }
+    postInspectionId
     postInspectionId
     journeyStartTime
     journeyEndTime
     departureIsNextDay
     arrivalIsNextDay
-    isOriginStop
-    isTimingStop
-    isDestinationStop
-    departureTime
     departureDateTime
     observedDepartureDateTime
-    arrivalTime
     arrivalDateTime
     observedArrivalDateTime
-    stopId
     originStopId
     terminalTime
     recoveryTime
@@ -109,23 +112,18 @@ export const ObservedDepartureFragment = gql`
     direction
     routeLength
     dayType
+    date
     plannedEquipmentType
     equipmentTypeRequired
-    plannedRegistryNr
     observedRegistryNr
     equipmentRotation
     isTrunkRoute
-    allowedOverAge
-    blockNumber
     schemaId
+    departureType
     schemaUnitId: procurementUnitId
-    plannedEquipment {
-      ...EquipmentFragment
-    }
     observedEquipment {
       ...EquipmentFragment
     }
-    plannedEquipmentId
     observedEquipmentId
     trackReason
   }
@@ -133,8 +131,20 @@ export const ObservedDepartureFragment = gql`
 `
 
 export const reportByName = gql`
-  query getPreInspectionReport($reportName: String!, $inspectionId: String!) {
-    inspectionReportByName(reportName: $reportName, inspectionId: $inspectionId) {
+  query getPreInspectionReport(
+    $reportName: String!
+    $inspectionId: String!
+    $page: InputPageConfig
+    $filters: [InputFilterConfig!]
+    $sort: [InputSortConfig!]
+  ) {
+    inspectionReportByName(
+      reportName: $reportName
+      inspectionId: $inspectionId
+      page: $page
+      filters: $filters
+      sort: $sort
+    ) {
       ...ReportFragment
       operator {
         id
@@ -174,6 +184,26 @@ export const reportByName = gql`
         ... on OperatorBlockDeparture {
           ...OperatorBlockDepartureFragment
         }
+        ... on ObservedExecutionRequirement {
+          ...ObservedExecutionRequirementFragment
+          observedRequirements {
+            id
+            kilometersObserved
+            kilometersRequired
+            averageAgeWeightedObserved
+            averageAgeWeightedRequired
+            cumulativeDifferencePercentage
+            differencePercentage
+            emissionClass
+            equipmentCountObserved
+            equipmentCountRequired
+            quotaObserved
+            quotaRequired
+            sanctionablePercentage
+            sanctionAmount
+            sanctionThreshold
+          }
+        }
         ... on ExecutionRequirement {
           ...ExecutionRequirementFragment
           procurementUnitId
@@ -191,12 +221,20 @@ export const reportByName = gql`
           deadrunEndStop
           deadrunMinutes
           deadrunPlannedBy
+          overlapPlannedBy
           departureA {
             ...ShortDepartureFragment
           }
           departureB {
             ...ShortDepartureFragment
           }
+        }
+        ... on ObservedUnitExecutionItem {
+          id
+          procurementUnitId
+          totalKilometersRequired
+          totalKilometersObserved
+          averageAgeWeightedObserved
         }
       }
     }
@@ -208,4 +246,5 @@ export const reportByName = gql`
   ${ExecutionRequirementFragment}
   ${RequirementValueFragment}
   ${ObservedDepartureFragment}
+  ${ObservedExecutionRequirementFragment}
 `

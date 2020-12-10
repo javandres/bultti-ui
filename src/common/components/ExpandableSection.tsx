@@ -15,6 +15,7 @@ export const HeaderRow = styled.div`
   display: flex;
   align-items: stretch;
   justify-content: flex-start;
+  cursor: pointer;
 `
 
 export const HeaderSection = styled.div<{ error?: boolean }>`
@@ -155,15 +156,22 @@ const ExpandableSection = observer(
       }
     }, [isExpanded])
 
+    // Stop the click event from propagating to the HeaderRow when a button within the header is clicked.
+    let stopPropagation = useCallback((e) => {
+      if (['BUTTON', 'INPUT', 'A'].includes(e.target.tagName)) {
+        e.stopPropagation()
+      }
+    }, [])
+
     return (
       <ExpandableBoxView error={error} style={style} className={className}>
-        <HeaderRow>
+        <HeaderRow onClick={onChangeExpanded}>
           {headerContent && (
-            <HeaderContentWrapper expanded={expanded}>
+            <HeaderContentWrapper expanded={expanded} onClick={stopPropagation}>
               {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}
             </HeaderContentWrapper>
           )}
-          <ExpandToggle expanded={expanded} onClick={onChangeExpanded}>
+          <ExpandToggle expanded={expanded}>
             <ArrowDown width="1rem" height="1rem" fill="var(dark-grey)" />
           </ExpandToggle>
         </HeaderRow>
