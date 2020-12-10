@@ -7,7 +7,6 @@ import { defaultDayTypeGroup, useDayTypeGroups } from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
 import { availableDayTypesQuery } from './blockDeparturesQuery'
-import { DayType } from '../schema-types'
 import { normalDayTypes } from '../constants'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { useRefetch } from '../util/useRefetch'
@@ -77,7 +76,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
   useEffect(() => {
     for (let dayType of dayTypesWithDepartures) {
       if (!enabledDayTypes.includes(dayType)) {
-        addDayTypeGroup(dayType as DayType)
+        addDayTypeGroup(dayType)
       }
     }
   }, [dayTypesWithDepartures, enabledDayTypes])
