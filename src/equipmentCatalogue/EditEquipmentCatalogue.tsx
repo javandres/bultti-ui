@@ -83,8 +83,6 @@ const EditEquipmentCatalogue = observer(
 
       setPendingCatalogue(null)
 
-      console.log(pendingCatalogue)
-
       if (catalogue && catalogueEditMode.current === CatalogueEditMode.UPDATE) {
         await updateCatalogue({
           variables: {
