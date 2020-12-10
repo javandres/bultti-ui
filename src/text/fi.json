@@ -67,6 +67,6 @@
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
 
-  "hint.equipment_catalogue.start_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana.",
-  "hint.equipment_catalogue.end_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana."
+  "hint.equipment_catalogue.start_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
+  "hint.equipment_catalogue.end_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo."
 }

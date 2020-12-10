@@ -24,6 +24,11 @@ export const equipmentCatalogueLabels = {
   endDate: text('end_date'),
 }
 
+const equipmentCatalogueHints = {
+  startDate: text('hint.equipment_catalogue.start_date'),
+  endDate: text('hint.equipment_catalogue.end_date'),
+}
+
 enum CatalogueEditMode {
   UPDATE = 'update',
   CREATE = 'create',
@@ -132,6 +137,7 @@ const EditEquipmentCatalogue = observer(
             <ItemForm
               item={pendingCatalogue}
               labels={equipmentCatalogueLabels}
+              hints={equipmentCatalogueHints}
               onChange={onChangeCatalogue}
               onDone={onSaveEquipmentCatalogue}
               onCancel={onCancelPendingEquipmentCatalogue}
