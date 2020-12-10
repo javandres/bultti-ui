@@ -61,7 +61,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
       null
     )
-    const [oldCatalogue, setOldCatalogue] = useState<EquipmentCatalogueInput | null>(null)
 
     let { removeAllEquipment, addEquipment, addBatchEquipment } = useEquipmentCrud(
       catalogue,
@@ -70,12 +69,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
-
-    useEffect(() => {
-      if (!oldCatalogue) {
-        setOldCatalogue(pendingCatalogue)
-      }
-    }, [pendingCatalogue])
 
     const addDraftCatalogue = useCallback(() => {
       if (!editable) {
@@ -115,7 +108,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       }
 
       setPendingCatalogue(null)
-      setOldCatalogue(pendingCatalogue)
 
       if (catalogue && catalogueEditMode.current === CatalogueEditMode.UPDATE) {
         await updateCatalogue({
@@ -164,7 +156,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       [equipment]
     )
 
-    let isDirty = !isEqual(oldCatalogue, pendingCatalogue)
+    let isDirty = !isEqual(
+      { startDate: catalogue?.startDate, endDate: catalogue?.endDate },
+      pendingCatalogue
+    )
 
     return (
       <EquipmentCatalogueView>

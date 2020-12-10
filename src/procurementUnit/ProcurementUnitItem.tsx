@@ -138,15 +138,14 @@ const ProcurementUnitItemContent = observer(
     }, [refetch, onUpdate])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
-    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
-      () =>
-        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
-          isBetween(startDate, cat.startDate, cat.endDate)
-        ),
+    const catalogues: EquipmentCatalogueType[] = useMemo(
+      () => procurementUnit?.equipmentCatalogues || [],
       [procurementUnit]
     )
 
-    let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
+    let hasEquipment = catalogues
+      .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+      .some((cat) => cat.equipmentQuotas?.length !== 0)
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJoreMutation, {
       variables: { procurementUnitId, startDate },
@@ -288,16 +287,41 @@ const ProcurementUnitItemContent = observer(
                 </ItemForm>
               </>
             ) : null}
+
             <CatalogueWrapper isInvalid={catalogueInvalid}>
-              <SubHeading>Kalustoluettelo</SubHeading>
-              <EquipmentCatalogue
-                startDate={inspectionStartDate}
-                procurementUnit={procurementUnit}
-                catalogue={activeCatalogue}
-                operatorId={procurementUnit.operatorId}
-                onCatalogueChanged={updateUnit}
-                editable={catalogueEditable}
-              />
+              <SubHeading>Kalustoluettelot</SubHeading>
+              {catalogues.length === 0 && (
+                <EquipmentCatalogue
+                  startDate={inspectionStartDate}
+                  procurementUnit={procurementUnit}
+                  operatorId={procurementUnit.operatorId}
+                  onCatalogueChanged={updateUnit}
+                  editable={catalogueEditable}
+                />
+              )}
+              {catalogues.map((catalogue) => {
+                return (
+                  <ExpandableSection
+                    key={catalogue.id}
+                    headerContent={
+                      <HeaderSection>
+                        <DateRangeDisplay
+                          startDate={catalogue.startDate}
+                          endDate={catalogue.endDate}
+                        />
+                      </HeaderSection>
+                    }>
+                    <EquipmentCatalogue
+                      startDate={inspectionStartDate}
+                      procurementUnit={procurementUnit}
+                      catalogue={catalogue}
+                      operatorId={procurementUnit.operatorId}
+                      onCatalogueChanged={updateUnit}
+                      editable={catalogueEditable}
+                    />
+                  </ExpandableSection>
+                )
+              })}
             </CatalogueWrapper>
           </>
         )}
