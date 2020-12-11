@@ -8,7 +8,7 @@ import ContractEditor from '../contract/ContractEditor'
 import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
 import { DATE_FORMAT } from '../constants'
-import { requireAdminUser } from '../util/userRoles'
+import { hasAdminAccessRights } from '../util/userRoles'
 import { addYears, format } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page } from '../common/components/common'
@@ -76,7 +76,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
         <ContractEditor
           onRefresh={refetch}
           onReset={onCancel}
-          editable={requireAdminUser(user)}
+          editable={hasAdminAccessRights(user)}
           contract={contractData}
           isNew={contractId === 'new'}
         />

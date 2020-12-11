@@ -8,7 +8,7 @@ import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { requireAdminUser } from '../util/userRoles'
+import { hasAdminAccessRights } from '../util/userRoles'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -115,7 +115,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
           <MessageView>Ei sopimusehtoja.</MessageView>
         </MessageContainer>
       )}
-      {!!operator && requireAdminUser(user) && (
+      {!!operator && hasAdminAccessRights(user) && (
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
           <Button
             disabled={!operator}

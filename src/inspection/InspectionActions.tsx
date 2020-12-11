@@ -17,7 +17,7 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
-import { requireAdminUser, requireOperatorUser } from '../util/userRoles'
+import { hasAdminAccessRights, hasOperatorUserAccessRights } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
 
@@ -174,7 +174,7 @@ const InspectionActions = observer(
     }, [onRefresh, inspection, disabledActions])
 
     let userCanPublish =
-      inspection.status === InspectionStatus.InReview && requireAdminUser(user)
+      inspection.status === InspectionStatus.InReview && hasAdminAccessRights(user)
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let inspectionCanBeSubmitted =
@@ -227,7 +227,7 @@ const InspectionActions = observer(
           )}
 
           {inspectionCanBeReady &&
-            requireOperatorUser(user, inspection?.operatorId || undefined) &&
+            hasOperatorUserAccessRights(user, inspection?.operatorId || undefined) &&
             isEditing && (
               <Button
                 loading={readyLoading}
@@ -241,7 +241,7 @@ const InspectionActions = observer(
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status
           ) &&
-            requireAdminUser(user) && (
+            hasAdminAccessRights(user) && (
               <Button
                 disabled={disabledActions.includes('remove')}
                 style={{ marginLeft: 'auto', marginRight: 0 }}
@@ -278,7 +278,7 @@ const InspectionActions = observer(
         </ButtonRow>
         {submitActive &&
           inspectionCanBeSubmitted &&
-          requireOperatorUser(user, inspection?.operatorId || undefined) &&
+          hasOperatorUserAccessRights(user, inspection?.operatorId || undefined) &&
           isEditing && (
             <InspectionApprovalSubmit
               disabled={disabledActions.includes('submit')}
