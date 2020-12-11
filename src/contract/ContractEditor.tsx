@@ -217,7 +217,7 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
-    let [rulesFileValue, setRulesFile] = useState<File[]>([])
+    let [rulesFiles, setRulesFiles] = useState<File[]>([])
     let [rulesInputActive, setRulesInputActive] = useState(!pendingContract?.rulesFile)
 
     let isDirty = useMemo(() => {
@@ -226,14 +226,14 @@ const ContractEditor = observer(
         return true
       }
 
-      if (rulesFileValue.length !== 0) {
+      if (rulesFiles.length !== 0) {
         return true
       }
 
       let pendingJson = JSON.stringify(pendingContract)
       let currentJson = JSON.stringify(createContractInput(contract))
       return currentJson !== pendingJson
-    }, [rulesFileValue, pendingContract, contract])
+    }, [rulesFiles, pendingContract, contract])
 
     useEffect(() => {
       if (contract) {
@@ -243,15 +243,15 @@ const ContractEditor = observer(
 
     let pendingContractValid = useMemo(
       () =>
-        (!isNew || (isNew && rulesFileValue.length !== 0)) &&
+        (!isNew || (isNew && rulesFiles.length !== 0)) &&
         !!pendingContract?.startDate &&
         !!pendingContract?.endDate,
-      [isNew, pendingContract, rulesFileValue]
+      [isNew, pendingContract, rulesFiles]
     )
 
     let onChange = useCallback((key, nextValue) => {
       if (key === 'rules') {
-        setRulesFile(nextValue)
+        setRulesFiles(nextValue)
         return
       }
 
@@ -315,9 +315,9 @@ const ContractEditor = observer(
       if (pendingContractValid) {
         let result
 
-        if (rulesFileValue.length !== 0) {
+        if (rulesFiles.length !== 0) {
           let mutationFn = isNew ? createContract : modifyContract
-          let rulesFile = rulesFileValue[0]
+          let rulesFile = rulesFiles[0]
 
           result = await mutationFn(rulesFile, {
             variables: {
@@ -336,7 +336,7 @@ const ContractEditor = observer(
           onReset()
         }
 
-        setRulesFile([])
+        setRulesFiles([])
 
         if (result.data) {
           if (!isNew) {
@@ -346,11 +346,11 @@ const ContractEditor = observer(
           }
         }
       }
-    }, [rulesFileValue, pendingContract, pendingContractValid, onReset, isNew, goToContract])
+    }, [rulesFiles, pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
     let onCancel = useCallback(() => {
       setPendingContract(createContractInput(contract))
-      setRulesFile([])
+      setRulesFiles([])
       onReset()
     }, [contract, onReset])
 
@@ -390,7 +390,7 @@ const ContractEditor = observer(
         <ItemForm
           item={{
             ...pendingContract,
-            rules: { uploadFile: rulesFileValue, currentRules: contract?.rules || [] },
+            rules: { uploadFile: rulesFiles, currentRules: contract?.rules || [] },
           }}
           hideKeys={['id', 'rulesFile']}
           labels={formLabels}
