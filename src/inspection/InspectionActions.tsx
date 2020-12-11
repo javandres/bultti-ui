@@ -56,6 +56,10 @@ const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [submitActive, setSubmitActive] = useState(false)
+    let hasAdminAccessRights = useHasAdminAccessRights()
+    let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
+      inspection?.operatorId || undefined
+    )
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
@@ -173,7 +177,7 @@ const InspectionActions = observer(
     }, [onRefresh, inspection, disabledActions])
 
     let userCanPublish =
-      inspection.status === InspectionStatus.InReview && useHasAdminAccessRights()
+      inspection.status === InspectionStatus.InReview && hasAdminAccessRights
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let inspectionCanBeSubmitted =
@@ -225,22 +229,20 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {inspectionCanBeReady &&
-            useHasOperatorUserAccessRights(inspection?.operatorId || undefined) &&
-            isEditing && (
-              <Button
-                loading={readyLoading}
-                buttonStyle={ButtonStyle.ACCEPT}
-                size={ButtonSize.MEDIUM}
-                onClick={onReadyInspection}>
-                Valmista
-              </Button>
-            )}
+          {inspectionCanBeReady && hasOperatorUserAccessRights && isEditing && (
+            <Button
+              loading={readyLoading}
+              buttonStyle={ButtonStyle.ACCEPT}
+              size={ButtonSize.MEDIUM}
+              onClick={onReadyInspection}>
+              Valmista
+            </Button>
+          )}
 
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status
           ) &&
-            useHasAdminAccessRights() && (
+            hasAdminAccessRights && (
               <Button
                 disabled={disabledActions.includes('remove')}
                 style={{ marginLeft: 'auto', marginRight: 0 }}
@@ -277,7 +279,7 @@ const InspectionActions = observer(
         </ButtonRow>
         {submitActive &&
           inspectionCanBeSubmitted &&
-          useHasOperatorUserAccessRights(inspection?.operatorId || undefined) &&
+          hasOperatorUserAccessRights &&
           isEditing && (
             <InspectionApprovalSubmit
               disabled={disabledActions.includes('submit')}

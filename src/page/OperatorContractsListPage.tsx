@@ -75,6 +75,7 @@ export type PropTypes = {
 
 const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
   let {
     data: contractsData,
@@ -114,7 +115,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
           <MessageView>Ei sopimusehtoja.</MessageView>
         </MessageContainer>
       )}
-      {!!operator && useHasAdminAccessRights() && (
+      {!!operator && hasAdminAccessRights && (
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
           <Button
             disabled={!operator}

@@ -24,6 +24,7 @@ export type PropTypes = {
 
 const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
@@ -75,7 +76,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
         <ContractEditor
           onRefresh={refetch}
           onReset={onCancel}
-          editable={useHasAdminAccessRights()}
+          editable={hasAdminAccessRights}
           contract={contractData}
           isNew={contractId === 'new'}
         />

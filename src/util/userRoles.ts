@@ -9,8 +9,9 @@ export function useHasAdminAccessRights(): boolean {
 
 export function useHasHSLUserAccessRights(): boolean {
   const [user] = useStateValue('user')
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
-  if (useHasAdminAccessRights()) {
+  if (hasAdminAccessRights) {
     return true
   }
 
@@ -19,8 +20,9 @@ export function useHasHSLUserAccessRights(): boolean {
 
 export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
   const [user] = useStateValue('user')
+  let hasHSLUserAccessRights = useHasHSLUserAccessRights()
 
-  if (useHasHSLUserAccessRights()) {
+  if (hasHSLUserAccessRights) {
     return true
   }
 
