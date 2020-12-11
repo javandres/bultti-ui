@@ -90,6 +90,7 @@ const renderEditorField = (
   onCancel?: () => unknown
 ) => {
   if (key === 'rules') {
+    let isRulesFileSet = Boolean(contract.rulesFile)
     return (
       <>
         <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
@@ -112,24 +113,31 @@ const renderEditorField = (
           </ErrorView>
         )}
         <ExpandableFormSection
+          isExpanded={true}
           style={{ marginTop: '1rem' }}
           headerContent={
             <ExpandableFormSectionHeading>Nykyiset ehdot</ExpandableFormSectionHeading>
           }>
           <div style={{ padding: '1rem 1rem 0' }}>
             <SubHeading>
-              Tiedosto: <strong>{contract.rulesFile}</strong>
+              {isRulesFileSet ? (
+                <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
+              ) : (
+                'Ei ladattua tiedostoa.'
+              )}
             </SubHeading>
-            <Table
-              columnLabels={{
-                name: 'Nimi',
-                value: 'Arvo',
-                condition: 'Ehto',
-                category: 'Kategoria',
-                code: 'Koodi',
-              }}
-              items={val.currentRules}
-            />
+            {isRulesFileSet && (
+              <Table
+                columnLabels={{
+                  name: 'Nimi',
+                  value: 'Arvo',
+                  condition: 'Ehto',
+                  category: 'Kategoria',
+                  code: 'Koodi',
+                }}
+                items={val.currentRules}
+              />
+            )}
           </div>
         </ExpandableFormSection>
       </>
