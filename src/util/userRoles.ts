@@ -1,18 +1,26 @@
-import { User, UserRole } from '../schema-types'
+import { UserRole } from '../schema-types'
+import { useStateValue } from '../state/useAppState'
 
-export function hasAdminAccessRights(user?: User | null): boolean {
-  return user?.role === UserRole.Admin
+export function useHasAdminAccessRights(): boolean {
+  const [user] = useStateValue('user')
+
+  return user.role === UserRole.Admin
 }
 
-export function hasHSLUserAccessRights(user?: User | null): boolean {
-  if (hasAdminAccessRights(user)) {
+export function useHasHSLUserAccessRights(): boolean {
+  const [user] = useStateValue('user')
+
+  if (useHasAdminAccessRights()) {
     return true
   }
-  return user?.role === UserRole.Hsl
+
+  return user.role === UserRole.Hsl
 }
 
-export function hasOperatorUserAccessRights(user?: User | null, operatorId?: number): boolean {
-  if (hasHSLUserAccessRights(user)) {
+export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
+  const [user] = useStateValue('user')
+
+  if (useHasHSLUserAccessRights()) {
     return true
   }
 
@@ -20,5 +28,5 @@ export function hasOperatorUserAccessRights(user?: User | null, operatorId?: num
     return false
   }
 
-  return user?.role === UserRole.Operator && (user?.operatorIds || []).includes(operatorId)
+  return user.role === UserRole.Operator && (user.operatorIds || []).includes(operatorId)
 }
