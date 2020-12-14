@@ -109,12 +109,12 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   return (
     <ContractPageView>
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
-        <Text>operator_contract_list.contracts</Text>
+        <Text>contract_page.contracts</Text>
       </PageTitle>
       {contracts.length === 0 && !contractsLoading && (
         <MessageContainer>
           <MessageView>
-            <Text>operator_contract_list.no_contracts</Text>
+            <Text>contract_page.no_contracts</Text>
           </MessageView>
         </MessageContainer>
       )}
@@ -126,7 +126,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
             style={{ marginLeft: 'auto' }}>
-            <Text>operator_contract_list.new_contract_button</Text>
+            <Text>contract_page.new_contract_button</Text>
           </Button>
         </FlexRow>
       )}

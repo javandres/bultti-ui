@@ -37,9 +37,9 @@
   "title.routes": "Reitit",
   "title.contract": "Sopimusehdot",
 
-  "operator_contract_list.new_contract_button": "Uudet sopimusehdot",
-  "operator_contract_list.contracts": "Sopimusehdot",
-  "operator_contract_list.no_contracts": "Ei sopimusehtoja.",
+  "contract_page.new_contract_button": "Uudet sopimusehdot",
+  "contract_page.contracts": "Sopimusehdot",
+  "contract_page.no_contracts": "Ei sopimusehtoja.",
 
   "contract_form.load_new_contracts_button": "Lataa uudet ehdot",
   "contract_form.toml_read_error_failed": "Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe: ",

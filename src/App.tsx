@@ -13,7 +13,7 @@ import EditInspectionPage from './page/EditInspectionPage'
 import InspectionReportIndexPage from './page/InspectionReportIndexPage'
 import UserPage from './page/UserPage'
 import { Page } from './common/components/common'
-import OperatorContractsListPage from './page/OperatorContractsListPage'
+import ContractPage from './page/ContractPage'
 import EditContractPage from './page/EditContractPage'
 import { PageTitle } from './common/components/PageTitle'
 import { InspectionType } from './schema-types'
@@ -132,7 +132,7 @@ const App: React.FC = observer(() => {
         />
         {requireAdminUser(user) && <InspectionDatePage path="inspection-date" />}
         <UserPage path="user" />
-        <OperatorContractsListPage path="contract" />
+        <ContractPage path="contract" />
         {requireAdminUser(user) && <EditContractPage path="contract/:contractId" />}
         <Todo path="contracts" />
         <Logout path="logout" />
