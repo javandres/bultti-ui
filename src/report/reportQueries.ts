@@ -119,7 +119,8 @@ export const ObservedDepartureFragment = gql`
     equipmentRotation
     isTrunkRoute
     schemaId
-    departureType
+    blockNumber
+    blockJourneyStartTime
     schemaUnitId: procurementUnitId
     observedEquipment {
       ...EquipmentFragment

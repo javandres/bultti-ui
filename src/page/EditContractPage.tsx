@@ -8,7 +8,7 @@ import ContractEditor from '../contract/ContractEditor'
 import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
 import { DATE_FORMAT } from '../constants'
-import { requireAdminUser } from '../util/userRoles'
+import { useHasAdminAccessRights } from '../util/userRoles'
 import { addYears, format } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page } from '../common/components/common'
@@ -24,7 +24,7 @@ export type PropTypes = {
 
 const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
-  let [user] = useStateValue('user')
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
 
@@ -76,7 +76,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
         <ContractEditor
           onRefresh={refetch}
           onReset={onCancel}
-          editable={requireAdminUser(user)}
+          editable={hasAdminAccessRights}
           contract={contractData}
           isNew={contractId === 'new'}
         />
