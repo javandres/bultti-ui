@@ -335,13 +335,14 @@ type Mutation {
 type ObservedDeparture {
   arrivalDateTime: DateTime
   arrivalIsNextDay: Boolean!
+  blockJourneyEndTime: String
+  blockJourneyStartTime: String
   blockNumber: String
   date: String!
   dayType: String!
   departureDateTime: DateTime
   departureId: String!
   departureIsNextDay: Boolean!
-  departureType: DepartureType!
   destinationStopId: String
   direction: String
   equipmentRotation: Int
