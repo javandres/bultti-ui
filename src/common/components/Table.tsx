@@ -65,7 +65,6 @@ const RowRemoveButton = styled(StyledRemoveButton)`
   width: 1rem;
   border: 0;
   transition: opacity 0.05s ease-out, right 0.1s ease-out;
-  box-sizing: content-box;
   background-color: var(--red);
   color: white;
   transform: none;
