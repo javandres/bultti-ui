@@ -25,7 +25,7 @@ import { useStateValue } from './state/useAppState'
 import { HeaderHeading } from './common/components/ExpandableSection'
 import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
-import { requireAdminUser } from './util/userRoles'
+import { useHasAdminAccessRights } from './util/userRoles'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -70,7 +70,7 @@ const Logout: React.FC<RouteComponentProps> = () => {
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
-  const [user] = useStateValue('user')
+  const hasAdminAccessRights = useHasAdminAccessRights()
 
   // Listen for the browser close event. Conditionally prompt user when needed.
   let [unsavedFormIds] = useStateValue('unsavedFormIds')
@@ -130,10 +130,10 @@ const App: React.FC = observer(() => {
           path="post-inspection/reports"
           inspectionType={InspectionType.Post}
         />
-        {requireAdminUser(user) && <InspectionDatePage path="inspection-date" />}
+        {hasAdminAccessRights && <InspectionDatePage path="inspection-date" />}
         <UserPage path="user" />
         <OperatorContractsListPage path="contract" />
-        {requireAdminUser(user) && <EditContractPage path="contract/:contractId" />}
+        {hasAdminAccessRights && <EditContractPage path="contract/:contractId" />}
         <Todo path="contracts" />
         <Logout path="logout" />
       </Router>

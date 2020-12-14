@@ -17,7 +17,7 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
-import { requireAdminUser, requireOperatorUser } from '../util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
 
@@ -55,8 +55,11 @@ export type PropTypes = {
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
-    var [user] = useStateValue('user')
     var [submitActive, setSubmitActive] = useState(false)
+    let hasAdminAccessRights = useHasAdminAccessRights()
+    let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
+      inspection?.operatorId || undefined
+    )
 
     var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
 
@@ -174,7 +177,7 @@ const InspectionActions = observer(
     }, [onRefresh, inspection, disabledActions])
 
     let userCanPublish =
-      inspection.status === InspectionStatus.InReview && requireAdminUser(user)
+      inspection.status === InspectionStatus.InReview && hasAdminAccessRights
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let inspectionCanBeSubmitted =
@@ -226,22 +229,20 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {inspectionCanBeReady &&
-            requireOperatorUser(user, inspection?.operatorId || undefined) &&
-            isEditing && (
-              <Button
-                loading={readyLoading}
-                buttonStyle={ButtonStyle.ACCEPT}
-                size={ButtonSize.MEDIUM}
-                onClick={onReadyInspection}>
-                Valmista
-              </Button>
-            )}
+          {inspectionCanBeReady && hasOperatorUserAccessRights && isEditing && (
+            <Button
+              loading={readyLoading}
+              buttonStyle={ButtonStyle.ACCEPT}
+              size={ButtonSize.MEDIUM}
+              onClick={onReadyInspection}>
+              Valmista
+            </Button>
+          )}
 
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status
           ) &&
-            requireAdminUser(user) && (
+            hasAdminAccessRights && (
               <Button
                 disabled={disabledActions.includes('remove')}
                 style={{ marginLeft: 'auto', marginRight: 0 }}
@@ -278,7 +279,7 @@ const InspectionActions = observer(
         </ButtonRow>
         {submitActive &&
           inspectionCanBeSubmitted &&
-          requireOperatorUser(user, inspection?.operatorId || undefined) &&
+          hasOperatorUserAccessRights &&
           isEditing && (
             <InspectionApprovalSubmit
               disabled={disabledActions.includes('submit')}

@@ -1,27 +1,28 @@
-import { User, UserRole } from '../schema-types'
+import { UserRole } from '../schema-types'
+import { useStateValue } from '../state/useAppState'
 
-export function requireUser(user?: User | null): boolean {
-  // Make sure we actually have a user and they are active
-  return !!user && user.role !== UserRole.Blocked
+export function useHasAdminAccessRights(): boolean {
+  const [user] = useStateValue('user')
+
+  return user && user.role === UserRole.Admin
 }
 
-export function requireAdminUser(user?: User | null): boolean {
-  return requireUser(user) && user?.role === UserRole.Admin
-}
+export function useHasHSLUserAccessRights(): boolean {
+  const [user] = useStateValue('user')
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
-export function requireHSLUser(user?: User | null): boolean {
-  return (
-    requireUser(user) &&
-    [UserRole.Hsl, UserRole.Admin].includes(user?.role || UserRole.Blocked)
-  )
-}
-
-export function requireOperatorUser(user?: User | null, operatorId?: number): boolean {
-  if (!requireUser(user)) {
-    return false
+  if (hasAdminAccessRights) {
+    return true
   }
 
-  if (requireHSLUser(user)) {
+  return user && user.role === UserRole.Hsl
+}
+
+export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
+  const [user] = useStateValue('user')
+  let hasHSLUserAccessRights = useHasHSLUserAccessRights()
+
+  if (hasHSLUserAccessRights) {
     return true
   }
 
@@ -29,5 +30,7 @@ export function requireOperatorUser(user?: User | null, operatorId?: number): bo
     return false
   }
 
-  return user?.role === UserRole.Operator && (user?.operatorIds || []).includes(operatorId)
+  return (
+    user && user.role === UserRole.Operator && (user.operatorIds || []).includes(operatorId)
+  )
 }
