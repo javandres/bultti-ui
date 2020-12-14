@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
+import { Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -108,11 +109,13 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   return (
     <ContractPageView>
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
-        Sopimusehdot
+        <Text>operator_contract_list.contracts</Text>
       </PageTitle>
       {contracts.length === 0 && !contractsLoading && (
         <MessageContainer>
-          <MessageView>Ei sopimusehtoja.</MessageView>
+          <MessageView>
+            <Text>operator_contract_list.no_contracts</Text>
+          </MessageView>
         </MessageContainer>
       )}
       {!!operator && requireAdminUser(user) && (
@@ -123,7 +126,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
             style={{ marginLeft: 'auto' }}>
-            Uudet sopimusehdot
+            <Text>operator_contract_list.new_contract_button</Text>
           </Button>
         </FlexRow>
       )}

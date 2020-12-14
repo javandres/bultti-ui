@@ -31,6 +31,7 @@ import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import Table from '../common/components/Table'
+import { text, Text } from '../util/translate'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -94,7 +95,9 @@ const renderEditorField = (
     return (
       <>
         <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
-          <Button onClick={toggleRulesInput}>Lataa uudet ehdot</Button>
+          <Button onClick={toggleRulesInput}>
+            <Text>contract_form.load_new_contracts_button</Text>
+          </Button>
         </div>
         {rulesInputActive && (
           <FileUploadInput
@@ -108,7 +111,7 @@ const renderEditorField = (
         )}
         {contractFileReadError && (
           <ErrorView>
-            Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe:{' '}
+            <Text>contract_form.toml_read_error_failed</Text>
             {contractFileReadError}`
           </ErrorView>
         )}
@@ -116,24 +119,26 @@ const renderEditorField = (
           isExpanded={true}
           style={{ marginTop: '1rem' }}
           headerContent={
-            <ExpandableFormSectionHeading>Nykyiset ehdot</ExpandableFormSectionHeading>
+            <ExpandableFormSectionHeading>
+              <Text>contract_form.current_contract</Text>
+            </ExpandableFormSectionHeading>
           }>
           <div style={{ padding: '1rem 1rem 0' }}>
             <SubHeading>
               {isRulesFileSet ? (
                 <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
               ) : (
-                'Ei ladattua tiedostoa.'
+                <Text>contract_form.no_loaded_contract_file</Text>
               )}
             </SubHeading>
             {isRulesFileSet && (
               <Table
                 columnLabels={{
-                  name: 'Nimi',
-                  value: 'Arvo',
-                  condition: 'Ehto',
-                  category: 'Kategoria',
-                  code: 'Koodi',
+                  name: text('contract_form.contact_table_label.name'),
+                  value: text('contract_form.contact_table_label.value'),
+                  condition: text('contract_form.contact_table_label.condition'),
+                  category: text('contract_form.contact_table_label.category'),
+                  code: text('contract_form.contact_table_label.code'),
                 }}
                 items={val.currentRules}
               />
@@ -148,7 +153,9 @@ const renderEditorField = (
     return (
       <ExpandableFormSection
         headerContent={
-          <ExpandableFormSectionHeading>Kilpailukohteet</ExpandableFormSectionHeading>
+          <ExpandableFormSectionHeading>
+            <Text>contract_form.procurement_units</Text>
+          </ExpandableFormSectionHeading>
         }>
         <ContractProcurementUnitsEditor
           readOnly={readOnly}
@@ -206,12 +213,12 @@ const renderEditorField = (
 }
 
 let formLabels = {
-  startDate: 'Sopimusehdot alkaa',
-  endDate: 'Sopimusehdot loppuu',
-  description: 'Kuvaus',
-  operatorId: 'Liikennöitsijä',
-  procurementUnitIds: 'Kilpailukohteet',
-  rules: 'Sopimusehdot',
+  startDate: text('contract_form.label.startDate'),
+  endDate: text('contract_form.label.endDate'),
+  description: text('contract_form.label.description'),
+  operatorId: text('contract_form.label.operator_id'),
+  procurementUnitIds: text('contract_form.label.procurement_units'),
+  rules: text('contract_form.label.rules'),
 }
 
 const renderEditorLabel = (key, val, labels) => {
@@ -365,7 +372,7 @@ const ContractEditor = observer(
     let [removeContract, { loading: removeLoading }] = useMutationData(removeContractMutation)
 
     let execRemove = useCallback(async () => {
-      if (!isNew && confirm('Haluatko varmasti poistaa sopimuksen?')) {
+      if (!isNew && confirm(text('contract_form.remove_confirm'))) {
         let result = await removeContract({
           variables: {
             contractId: contract.id,
@@ -391,7 +398,7 @@ const ContractEditor = observer(
             buttonStyle={ButtonStyle.REMOVE}
             size={ButtonSize.MEDIUM}
             onClick={execRemove}>
-            Poista
+            <Text>contract_form.remove</Text>
           </Button>
         </FlexRow>
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
