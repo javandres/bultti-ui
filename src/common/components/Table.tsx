@@ -62,7 +62,7 @@ export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' })
 `
 
 const RowRemoveButton = styled(StyledRemoveButton)`
-  width: 1rem;
+  width: 2rem;
   border: 0;
   transition: opacity 0.05s ease-out, right 0.1s ease-out;
   background-color: var(--red);
@@ -71,6 +71,8 @@ const RowRemoveButton = styled(StyledRemoveButton)`
   opacity: 0;
   position: absolute;
   right: -2rem;
+  top: 0;
+  bottom: 0;
 
   svg * {
     fill: white;
@@ -116,7 +118,7 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
     z-index: 100;
 
     ${RowRemoveButton} {
-      right: 0;
+      right: 1px;
       opacity: 1;
     }
   }
