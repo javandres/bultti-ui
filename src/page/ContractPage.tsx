@@ -118,7 +118,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
           </MessageView>
         </MessageContainer>
       )}
-      {!!operator && requireAdminUser(user) && (
+      {requireAdminUser(user) && (
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
           <Button
             disabled={!operator}
