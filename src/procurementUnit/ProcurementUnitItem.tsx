@@ -295,40 +295,29 @@ const ProcurementUnitItemContent = observer(
 
             <CatalogueWrapper isInvalid={catalogueInvalid}>
               <SubHeading>Kalustoluettelot</SubHeading>
-              {catalogues.length === 1 ? (
-                <EquipmentCatalogue
-                  startDate={inspectionStartDate}
-                  procurementUnit={procurementUnit}
-                  catalogue={catalogues[0]}
-                  operatorId={procurementUnit.operatorId}
-                  onCatalogueChanged={updateUnit}
-                  editable={catalogueEditable}
-                />
-              ) : (
-                orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
-                  return (
-                    <ExpandableSection
-                      key={catalogue.id}
-                      headerContent={
-                        <HeaderSection>
-                          <DateRangeDisplay
-                            startDate={catalogue.startDate}
-                            endDate={catalogue.endDate}
-                          />
-                        </HeaderSection>
-                      }>
-                      <EquipmentCatalogue
-                        startDate={inspectionStartDate}
-                        procurementUnit={procurementUnit}
-                        catalogue={catalogue}
-                        operatorId={procurementUnit.operatorId}
-                        onCatalogueChanged={updateUnit}
-                        editable={catalogueEditable}
-                      />
-                    </ExpandableSection>
-                  )
-                })
-              )}
+              {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
+                return (
+                  <ExpandableSection
+                    key={catalogue.id}
+                    headerContent={
+                      <HeaderSection>
+                        <DateRangeDisplay
+                          startDate={catalogue.startDate}
+                          endDate={catalogue.endDate}
+                        />
+                      </HeaderSection>
+                    }>
+                    <EquipmentCatalogue
+                      startDate={inspectionStartDate}
+                      procurementUnit={procurementUnit}
+                      catalogue={catalogue}
+                      operatorId={procurementUnit.operatorId}
+                      onCatalogueChanged={updateUnit}
+                      editable={catalogueEditable}
+                    />
+                  </ExpandableSection>
+                )
+              })}
               {catalogues.length === 0 && (
                 <MessageView>Kilpailukohteella ei ole kalustoluetteloa.</MessageView>
               )}
