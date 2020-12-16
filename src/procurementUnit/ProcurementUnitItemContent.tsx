@@ -6,7 +6,7 @@ import {
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
 } from '../schema-types'
-import { isEqual } from 'lodash'
+import { isEqual, orderBy, pick } from 'lodash'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
 import { useQueryData } from '../util/useQueryData'
@@ -27,6 +27,11 @@ import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
+import { MessageView } from '../common/components/Messages'
+import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
+import { text, Text } from '../util/translate'
+import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
+import DateRangeDisplay from '../common/components/DateRangeDisplay'
 
 const ContentWrapper = styled.div`
   position: relative;
@@ -81,10 +86,6 @@ const ProcurementUnitItemContent = observer(
       pendingProcurementUnit,
       setPendingProcurementUnit,
     ] = useState<ProcurementUnitEditInput | null>(null)
-    const [
-      oldProcurementUnit,
-      setOldProcurementUnit,
-    ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch: refetchUnitData } =
@@ -107,15 +108,17 @@ const ProcurementUnitItemContent = observer(
     }, [refetch, onUpdate])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
-    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
-      () =>
-        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
-          isBetween(startDate, cat.startDate, cat.endDate)
-        ),
-      [procurementUnit]
-    )
+    const catalogues: EquipmentCatalogueType[] = useMemo(() => {
+      let unitCatalogues = procurementUnit?.equipmentCatalogues || []
 
-    let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
+      return catalogueEditable
+        ? unitCatalogues
+        : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+    }, [procurementUnit, catalogueEditable, startDate])
+
+    let hasEquipment = catalogues
+      .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+      .some((cat) => cat.equipmentQuotas?.length !== 0)
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJoreMutation, {
       variables: { procurementUnitId, startDate },
@@ -129,7 +132,6 @@ const ProcurementUnitItemContent = observer(
         }
 
         setPendingProcurementUnit(inputRow)
-        setOldProcurementUnit(inputRow)
       }
     }, [procurementUnit, catalogueEditable])
 
@@ -176,7 +178,6 @@ const ProcurementUnitItemContent = observer(
       if (!catalogueEditable || !procurementUnitId || !pendingProcurementUnit) {
         return
       }
-      console.log('at save...')
 
       setPendingProcurementUnit(null)
 
@@ -199,6 +200,15 @@ const ProcurementUnitItemContent = observer(
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
+    let isDirty = useMemo(
+      () =>
+        !isEqual(
+          pick(procurementUnit, Object.keys(pendingProcurementUnit || {})),
+          pendingProcurementUnit
+        ),
+      [procurementUnit, pendingProcurementUnit]
+    )
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
@@ -213,7 +223,9 @@ const ProcurementUnitItemContent = observer(
               />
             )}
             <FlexRow>
-              <SubHeading>Kohteen tiedot</SubHeading>
+              <SubHeading>
+                <Text>procurement_unit.unit_info</Text>
+              </SubHeading>
             </FlexRow>
             {!pendingProcurementUnit ? (
               <>
@@ -229,7 +241,7 @@ const ProcurementUnitItemContent = observer(
                     <Button
                       style={{ marginLeft: 'auto' }}
                       onClick={startEditingProcurementUnit}>
-                      Muokkaa
+                      <Text>general.app.edit</Text>
                     </Button>
                   )}
                 </ValueDisplay>
@@ -242,8 +254,8 @@ const ProcurementUnitItemContent = observer(
                   onChange={onChangeProcurementUnit}
                   onDone={onSaveProcurementUnit}
                   onCancel={onCancelPendingUnit}
-                  isDirty={!isEqual(oldProcurementUnit, pendingProcurementUnit)}
-                  doneLabel="Tallenna"
+                  isDirty={isDirty}
+                  doneLabel={text('general.app.save')}
                   doneDisabled={Object.values(pendingProcurementUnit).some(
                     (val: number | string | undefined | null) =>
                       val === null || typeof val === 'undefined' || val === ''
@@ -259,14 +271,40 @@ const ProcurementUnitItemContent = observer(
               </>
             ) : null}
             <CatalogueWrapper isInvalid={catalogueInvalid}>
-              <SubHeading>Kalustoluettelo</SubHeading>
-              <EquipmentCatalogue
-                startDate={inspectionStartDate}
+              <SubHeading>
+                <Text>catalogue.catalogues_list_heading</Text>
+              </SubHeading>
+              {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
+                return (
+                  <ExpandableSection
+                    key={catalogue.id}
+                    headerContent={
+                      <HeaderSection>
+                        <DateRangeDisplay
+                          startDate={catalogue.startDate}
+                          endDate={catalogue.endDate}
+                        />
+                      </HeaderSection>
+                    }>
+                    <EquipmentCatalogue
+                      startDate={inspectionStartDate}
+                      procurementUnit={procurementUnit}
+                      catalogue={catalogue}
+                      operatorId={procurementUnit.operatorId}
+                      onCatalogueChanged={updateUnit}
+                      editable={catalogueEditable}
+                    />
+                  </ExpandableSection>
+                )
+              })}
+              {catalogues.length === 0 && (
+                <MessageView>
+                  <Text>procurement_unit.no_catalogue</Text>
+                </MessageView>
+              )}
+              <EditEquipmentCatalogue
+                onChange={updateUnit}
                 procurementUnit={procurementUnit}
-                catalogue={activeCatalogue}
-                operatorId={procurementUnit.operatorId}
-                onCatalogueChanged={updateUnit}
-                editable={catalogueEditable}
               />
             </CatalogueWrapper>
           </>

@@ -13,8 +13,8 @@ import ExpandableSection, {
   HeaderSection,
 } from '../common/components/ExpandableSection'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { text } from '../util/translate'
 import ProcurementUnitItemContent from './ProcurementUnitItemContent'
+import { text, Text } from '../util/translate'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -81,40 +81,52 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             headerContent={
               <>
                 <HeaderSection>
-                  <HeaderHeading>Kohdetunnus</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.unit_id</Text>
+                  </HeaderHeading>
                   {procurementUnit.procurementUnitId}
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Reitit</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.routes</Text>
+                  </HeaderHeading>
                   {(routes || [])
                     .map((route) => route?.routeId)
                     .filter((routeId) => !!routeId)
                     .join(', ')}
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.kilometers</Text>
+                  </HeaderHeading>
                   {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }}>
-                  <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.valid_time</Text>
+                  </HeaderHeading>
                   <DateRangeDisplay
                     startDate={procurementUnit.startDate}
                     endDate={procurementUnit.endDate}
                   />
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Seuranta-alue</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.operation_area</Text>
+                  </HeaderHeading>
                   {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
-                  <HeaderHeading>Sopimus</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.contract</Text>
+                  </HeaderHeading>
                   {(currentContracts || []).length !== 0 ? (
                     <DateRangeDisplay
                       startDate={currentContracts![0].startDate}
                       endDate={currentContracts![currentContracts!.length - 1].endDate}
                     />
                   ) : (
-                    'Ei voimassaolevaa sopimusta.'
+                    text('contract.no_valid_contracts')
                   )}
                 </HeaderSection>
               </>

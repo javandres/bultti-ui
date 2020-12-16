@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
-import { isEqual } from 'lodash'
+import { isEqual, pick } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -59,7 +59,12 @@ const InspectionConfig: React.FC<PropTypes> = observer(
     }, [pendingInspectionInputValues])
 
     let isDirty = useMemo(
-      () => !isEqual(oldInspectionInputValues, pendingInspectionInputValues),
+      () =>
+        !isEqual(
+          // Pick only props existing on the pending inspection input for comparison
+          pick(inspection, Object.keys(pendingInspectionInputValues)),
+          pendingInspectionInputValues
+        ),
       [pendingInspectionInputValues]
     )
 

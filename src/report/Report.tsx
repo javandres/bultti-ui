@@ -24,6 +24,7 @@ import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
+import { pick } from 'lodash'
 
 const ReportView = styled.div`
   position: relative;
@@ -81,10 +82,21 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
-  let columnLabels = useMemo(
-    () => (reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined),
-    [reportData]
-  )
+  let columnLabels = useMemo(() => {
+    let labels = reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined
+
+    if (labels) {
+      let existingProps = Object.keys((reportData?.reportEntities || [])[0] || {})
+
+      if (existingProps.length !== 0) {
+        return pick(labels, existingProps)
+      }
+
+      return labels
+    }
+
+    return undefined
+  }, [reportData])
 
   let onPageNav = useCallback(
     (offset) => {

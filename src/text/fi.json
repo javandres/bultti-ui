@@ -12,6 +12,7 @@
   "general.app.edit": "Muokkaa",
   "general.app.preview": "Esikatsele",
   "general.app.remove": "Poista",
+  "general.app.save": "Tallenna",
   "general.validity_period": "Voimassaoloaika",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
@@ -63,6 +64,24 @@
 
   "procurement_unit.operating_area_name.center": "Keskusta",
   "procurement_unit.operating_area_name.other": "Muu",
+  "procurement_unit.no_catalogue": "Kilpailukohteella ei ole kalustoluetteloa.",
+  "procurement_unit.hide_all": "Piilota kaikki kilpailukohteet",
+  "procurement_unit.show_all": "Näytä kaikki kilpailukohteet",
+  "procurement_unit.no_valid_for_operator": "Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.",
+  "procurement_unit.unit_info": "Kohteen tiedot",
+  "procurement_unit.unit_id": "Kohdetunnus",
+  "procurement_unit.routes": "Reitit",
+  "procurement_unit.kilometers": "Kilometrejä viikossa",
+  "procurement_unit.valid_time": "Voimassaoloaika",
+  "procurement_unit.operation_area": "Seuranta-alue",
+  "procurement_unit.contract": "Sopimus",
+
+  "contract.no_valid_contracts": "Ei voimassaolevaa sopimusta.",
+
+  "catalogue.new": "Luo uusi kalustoluettelo",
+  "catalogue.empty": "Kalustoluettelossa ei ole ajoneuvoja.",
+  "catalogue.add": "Lisää kalustoluettelo",
+  "catalogue.catalogues_list_heading": "Kalustoluettelot",
 
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
@@ -91,6 +110,6 @@
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
 
-  "hint.equipment_catalogue.start_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana.",
-  "hint.equipment_catalogue.end_date": "Kalustoluettelon täytyy olla voimassa ennakkotarkastuksen tarkastusjakson aikana."
+  "hint.equipment_catalogue.start_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
+  "hint.equipment_catalogue.end_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo."
 }

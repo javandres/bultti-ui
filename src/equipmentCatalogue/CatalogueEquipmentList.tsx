@@ -8,6 +8,7 @@ import {
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 import { MessageView } from '../common/components/Messages'
+import { Text } from '../util/translate'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -89,7 +90,9 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
         editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
       />
     ) : (
-      <MessageView>Kalustoluettelossa ei ole ajoneuvoja.</MessageView>
+      <MessageView>
+        <Text>catalogue.empty</Text>
+      </MessageView>
     )
   }
 )

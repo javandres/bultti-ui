@@ -35,8 +35,8 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
           <ProcurementUnits
             requirementsEditable={false}
             operatorId={globalOperator?.id || 0}
-            inspectionStartDate={globalSeason?.startDate || ''}
-            inspectionEndDate={
+            startDate={globalSeason?.startDate || ''}
+            endDate={
               globalSeason?.startDate
                 ? format(addDays(parseISO(globalSeason.startDate), 7), DATE_FORMAT)
                 : ''
