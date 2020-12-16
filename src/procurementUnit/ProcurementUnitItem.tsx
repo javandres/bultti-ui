@@ -9,7 +9,7 @@ import {
   ProcurementUnitEditInput,
   ValidationErrorData,
 } from '../schema-types'
-import { isEqual, pick } from 'lodash'
+import { isEqual, orderBy, pick } from 'lodash'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
@@ -36,7 +36,9 @@ import ExpandableSection, {
 import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { text } from '../util/translate'
+import { text, Text } from '../util/translate'
+import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
+import { MessageView } from '../common/components/Messages'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -134,15 +136,17 @@ const ProcurementUnitItemContent = observer(
     }, [refetch, onUpdate])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
-    const activeCatalogue: EquipmentCatalogueType | undefined = useMemo(
-      () =>
-        (procurementUnit?.equipmentCatalogues || []).find((cat) =>
-          isBetween(startDate, cat.startDate, cat.endDate)
-        ),
-      [procurementUnit]
-    )
+    const catalogues: EquipmentCatalogueType[] = useMemo(() => {
+      let unitCatalogues = procurementUnit?.equipmentCatalogues || []
 
-    let hasEquipment = activeCatalogue?.equipmentQuotas?.length !== 0
+      return catalogueEditable
+        ? unitCatalogues
+        : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+    }, [procurementUnit, catalogueEditable, startDate])
+
+    let hasEquipment = catalogues
+      .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+      .some((cat) => cat.equipmentQuotas?.length !== 0)
 
     const [updateWeeklyMeters] = useMutationData(weeklyMetersFromJoreMutation, {
       variables: { procurementUnitId, startDate },
@@ -247,7 +251,9 @@ const ProcurementUnitItemContent = observer(
               />
             )}
             <FlexRow>
-              <SubHeading>Kohteen tiedot</SubHeading>
+              <SubHeading>
+                <Text>procurement_unit.unit_info</Text>
+              </SubHeading>
             </FlexRow>
             {!pendingProcurementUnit ? (
               <>
@@ -263,7 +269,7 @@ const ProcurementUnitItemContent = observer(
                     <Button
                       style={{ marginLeft: 'auto' }}
                       onClick={startEditingProcurementUnit}>
-                      Muokkaa
+                      <Text>general.app.edit</Text>
                     </Button>
                   )}
                 </ValueDisplay>
@@ -276,7 +282,7 @@ const ProcurementUnitItemContent = observer(
                 onDone={onSaveProcurementUnit}
                 onCancel={onCancelPendingUnit}
                 isDirty={isDirty}
-                doneLabel="Tallenna"
+                doneLabel={text('general.app.save')}
                 doneDisabled={Object.values(pendingProcurementUnit).some(
                   (val: number | string | undefined | null) =>
                     val === null || typeof val === 'undefined' || val === ''
@@ -290,15 +296,42 @@ const ProcurementUnitItemContent = observer(
                 </Button>
               </ItemForm>
             ) : null}
+
             <CatalogueWrapper isInvalid={catalogueInvalid}>
-              <SubHeading>Kalustoluettelo</SubHeading>
-              <EquipmentCatalogue
-                startDate={inspectionStartDate}
+              <SubHeading>
+                <Text>catalogue.catalogues_list_heading</Text>
+              </SubHeading>
+              {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
+                return (
+                  <ExpandableSection
+                    key={catalogue.id}
+                    headerContent={
+                      <HeaderSection>
+                        <DateRangeDisplay
+                          startDate={catalogue.startDate}
+                          endDate={catalogue.endDate}
+                        />
+                      </HeaderSection>
+                    }>
+                    <EquipmentCatalogue
+                      startDate={inspectionStartDate}
+                      procurementUnit={procurementUnit}
+                      catalogue={catalogue}
+                      operatorId={procurementUnit.operatorId}
+                      onCatalogueChanged={updateUnit}
+                      editable={catalogueEditable}
+                    />
+                  </ExpandableSection>
+                )
+              })}
+              {catalogues.length === 0 && (
+                <MessageView>
+                  <Text>procurement_unit.no_catalogue</Text>
+                </MessageView>
+              )}
+              <EditEquipmentCatalogue
+                onChange={updateUnit}
                 procurementUnit={procurementUnit}
-                catalogue={activeCatalogue}
-                operatorId={procurementUnit.operatorId}
-                onCatalogueChanged={updateUnit}
-                editable={catalogueEditable}
               />
             </CatalogueWrapper>
           </>
@@ -351,40 +384,52 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             headerContent={
               <>
                 <HeaderSection>
-                  <HeaderHeading>Kohdetunnus</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.unit_id</Text>
+                  </HeaderHeading>
                   {procurementUnit.procurementUnitId}
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Reitit</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.routes</Text>
+                  </HeaderHeading>
                   {(routes || [])
                     .map((route) => route?.routeId)
                     .filter((routeId) => !!routeId)
                     .join(', ')}
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Kilometrejä viikossa</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.kilometers</Text>
+                  </HeaderHeading>
                   {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }}>
-                  <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.valid_time</Text>
+                  </HeaderHeading>
                   <DateRangeDisplay
                     startDate={procurementUnit.startDate}
                     endDate={procurementUnit.endDate}
                   />
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Seuranta-alue</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.operation_area</Text>
+                  </HeaderHeading>
                   {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
-                  <HeaderHeading>Sopimus</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>procurement_unit.contract</Text>
+                  </HeaderHeading>
                   {(currentContracts || []).length !== 0 ? (
                     <DateRangeDisplay
                       startDate={currentContracts![0].startDate}
                       endDate={currentContracts![currentContracts!.length - 1].endDate}
                     />
                   ) : (
-                    'Ei voimassaolevaa sopimusta.'
+                    text('contract.no_valid_contracts')
                   )}
                 </HeaderSection>
               </>

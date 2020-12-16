@@ -106,6 +106,20 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           },
         },
       },
+      ProcurementUnit: {
+        fields: {
+          routes: {
+            merge: cacheMerge,
+          },
+        },
+      },
+      Contract: {
+        fields: {
+          procurementUnits: {
+            merge: cacheMerge,
+          },
+        },
+      },
     },
     dataIdFromObject: (obj, context) => {
       let typename = obj?.__typename

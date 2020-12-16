@@ -10,23 +10,29 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
 import { ValidationErrorData } from '../schema-types'
+import { text, Text } from '../util/translate'
 
 const ProcurementUnitsView = styled(TransparentPageSection)``
 
 export type PropTypes = {
-  operatorId?: number
-  inspectionStartDate?: string
-  inspectionEndDate?: string
+  operatorId: number
+  startDate: string
+  endDate: string
   requirementsEditable: boolean
   onUpdate?: () => unknown
   getErrorsById?: (objectId: string) => ValidationErrorData[]
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(
-  ({ getErrorsById, requirementsEditable = true, onUpdate, ...inspectionProps }) => {
+  ({
+    getErrorsById,
+    requirementsEditable = true,
+    onUpdate,
+    operatorId,
+    startDate,
+    endDate,
+  }) => {
     const inspection = useContext(InspectionContext)
-    let { operatorId, inspectionStartDate, inspectionEndDate } =
-      inspection || inspectionProps || {}
 
     let catalogueEditable = !inspection
     let showExecutionRequirements = !!inspection
@@ -50,8 +56,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
       skip: !operatorId,
       variables: {
         operatorId: operatorId,
-        startDate: inspectionStartDate,
-        endDate: inspectionEndDate,
+        startDate,
+        endDate,
       },
     })
 
@@ -62,7 +68,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={procurementUnitsLoading} />
         {!procurementUnitsLoading && (!procurementUnits || procurementUnits?.length === 0) ? (
           <MessageView>
-            Valitulla liikennöitsijällä ei ole voimassa-olevia kilpailukohteita.
+            <Text>procurement_unit.no_valid_for_operator</Text>
           </MessageView>
         ) : (
           <>
@@ -70,8 +76,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
               {procurementUnits.length !== 0 && (
                 <TextButton onClick={toggleProcurementUnitsExpanded}>
                   {procurementUnitsExpanded
-                    ? 'Piilota kaikki kilpailukohteet'
-                    : 'Näytä kaikki kilpailukohteet'}
+                    ? text('procurement_unit.hide_all')
+                    : text('procurement_unit.show_all')}
                 </TextButton>
               )}
               <Button
@@ -80,7 +86,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
                 onClick={() => refetch()}>
-                Päivitä
+                <Text>general.app.update</Text>
               </Button>
             </FlexRow>
             {procurementUnits.map((procurementUnit) => {
@@ -94,7 +100,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   catalogueEditable={catalogueEditable}
                   showExecutionRequirements={showExecutionRequirements}
                   key={procurementUnit.id}
-                  startDate={inspectionStartDate}
+                  startDate={startDate}
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
                 />

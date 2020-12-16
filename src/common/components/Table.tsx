@@ -61,6 +61,32 @@ export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' })
   height: calc(100% + 1px);
 `
 
+const RowRemoveButton = styled(StyledRemoveButton)`
+  width: 2rem;
+  border: 0;
+  transition: opacity 0.05s ease-out, right 0.1s ease-out;
+  background-color: var(--red);
+  color: white;
+  transform: none;
+  opacity: 0;
+  position: absolute;
+  right: -2rem;
+  top: 0;
+  bottom: 0;
+
+  svg * {
+    fill: white;
+  }
+
+  svg *.fill-inverse {
+    fill: var(--red);
+  }
+
+  &:hover {
+    transform: none;
+  }
+`
+
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   width: 100%;
   display: flex;
@@ -91,17 +117,11 @@ const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
     border-bottom-color: transparent;
     z-index: 100;
 
-    ${StyledRemoveButton} {
-      display: flex;
+    ${RowRemoveButton} {
+      right: 1px;
+      opacity: 1;
     }
   }
-`
-
-const RowRemoveButton = styled(StyledRemoveButton)`
-  position: absolute;
-  left: 0.4rem;
-  top: 0.4rem;
-  display: none;
 `
 
 const TableHeader = styled(TableRow)`
