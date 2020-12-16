@@ -116,6 +116,8 @@ export const ObservedDepartureFragment = gql`
     plannedEquipmentType
     equipmentTypeRequired
     observedRegistryNr
+    observedRegistryDate
+    observedEquipmentAge
     equipmentRotation
     isTrunkRoute
     schemaId
