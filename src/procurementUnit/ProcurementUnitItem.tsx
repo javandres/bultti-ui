@@ -9,7 +9,7 @@ import {
   ProcurementUnitEditInput,
   ValidationErrorData,
 } from '../schema-types'
-import { isEqual } from 'lodash'
+import { isEqual, pick } from 'lodash'
 import { round } from '../util/round'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
@@ -113,10 +113,6 @@ const ProcurementUnitItemContent = observer(
       pendingProcurementUnit,
       setPendingProcurementUnit,
     ] = useState<ProcurementUnitEditInput | null>(null)
-    const [
-      oldProcurementUnit,
-      setOldProcurementUnit,
-    ] = useState<ProcurementUnitEditInput | null>(null)
 
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch: refetchUnitData } =
@@ -160,7 +156,6 @@ const ProcurementUnitItemContent = observer(
         }
 
         setPendingProcurementUnit(inputRow)
-        setOldProcurementUnit(inputRow)
       }
     }, [procurementUnit, catalogueEditable])
 
@@ -229,6 +224,15 @@ const ProcurementUnitItemContent = observer(
       return <ProcurementUnitFormInput value={val} valueName={key} onChange={onChange} />
     }, [])
 
+    let isDirty = useMemo(
+      () =>
+        !isEqual(
+          pick(procurementUnit, Object.keys(pendingProcurementUnit || {})),
+          pendingProcurementUnit
+        ),
+      [procurementUnit, pendingProcurementUnit]
+    )
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
@@ -265,28 +269,26 @@ const ProcurementUnitItemContent = observer(
                 </ValueDisplay>
               </>
             ) : catalogueEditable ? (
-              <>
-                <ItemForm
-                  item={pendingProcurementUnit}
-                  labels={procurementUnitLabels}
-                  onChange={onChangeProcurementUnit}
-                  onDone={onSaveProcurementUnit}
-                  onCancel={onCancelPendingUnit}
-                  isDirty={!isEqual(oldProcurementUnit, pendingProcurementUnit)}
-                  doneLabel="Tallenna"
-                  doneDisabled={Object.values(pendingProcurementUnit).some(
-                    (val: number | string | undefined | null) =>
-                      val === null || typeof val === 'undefined' || val === ''
-                  )}
-                  renderInput={renderProcurementItemInput}>
-                  <Button
-                    size={ButtonSize.SMALL}
-                    buttonStyle={ButtonStyle.SECONDARY}
-                    onClick={onUpdateWeeklyMeters}>
-                    Päivitä suoritteet JOREsta
-                  </Button>
-                </ItemForm>
-              </>
+              <ItemForm
+                item={pendingProcurementUnit}
+                labels={procurementUnitLabels}
+                onChange={onChangeProcurementUnit}
+                onDone={onSaveProcurementUnit}
+                onCancel={onCancelPendingUnit}
+                isDirty={isDirty}
+                doneLabel="Tallenna"
+                doneDisabled={Object.values(pendingProcurementUnit).some(
+                  (val: number | string | undefined | null) =>
+                    val === null || typeof val === 'undefined' || val === ''
+                )}
+                renderInput={renderProcurementItemInput}>
+                <Button
+                  size={ButtonSize.SMALL}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  onClick={onUpdateWeeklyMeters}>
+                  Päivitä suoritteet JOREsta
+                </Button>
+              </ItemForm>
             ) : null}
             <CatalogueWrapper isInvalid={catalogueInvalid}>
               <SubHeading>Kalustoluettelo</SubHeading>
