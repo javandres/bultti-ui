@@ -44,11 +44,16 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
         />
         <PreInspectionExecutionRequirements isValid={!executionRequirementsInvalid} />
         <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
-        <ProcurementUnits
-          onUpdate={refetchData}
-          requirementsEditable={isEditable}
-          getErrorsById={getByObjectId}
-        />
+        {inspection && (
+          <ProcurementUnits
+            onUpdate={refetchData}
+            requirementsEditable={isEditable}
+            getErrorsById={getByObjectId}
+            operatorId={inspection.operatorId!}
+            startDate={inspection.inspectionStartDate}
+            endDate={inspection.inspectionEndDate}
+          />
+        )}
         <PageSection>
           <PreInspectionDevTools onUpdate={refetchData} inspection={inspection} />
         </PageSection>

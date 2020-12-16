@@ -121,11 +121,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
-          return round(val) + '%'
+          return round(val, 8) + '%'
         case 'meterRequirement':
-          return round(val) + ' m'
+          return round(val, 8) + ' m'
         case 'kilometerRequirement':
-          return round(val) + ' km'
+          return round(val, 8) + ' km'
         case 'emissionClass':
           return emissionClassNames[val + '']
         default:
@@ -137,13 +137,13 @@ const EquipmentList: React.FC<PropTypes> = observer(
       (col) => {
         switch (col) {
           case 'percentageQuota':
-            return round(getTotal(equipment, 'percentageQuota')) + '%'
+            return round(getTotal(equipment, 'percentageQuota'), 8) + '%'
           case 'meterRequirement':
-            return round(getTotal(equipment, 'meterRequirement')) + ' m'
+            return round(getTotal(equipment, 'meterRequirement'), 8) + ' m'
           case 'kilometerRequirement':
-            return round(getTotal(equipment, 'kilometerRequirement')) + ' km'
+            return round(getTotal(equipment, 'kilometerRequirement'), 8) + ' km'
           case 'amount':
-            return round(getTotal(equipmentGroups, 'amount')) + ' kpl'
+            return round(getTotal(equipmentGroups, 'amount'), 8) + ' kpl'
           default:
             return ''
         }

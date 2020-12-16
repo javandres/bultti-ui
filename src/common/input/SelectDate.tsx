@@ -7,7 +7,7 @@ import '../style/reactDates.scss'
 import { DATE_FORMAT } from '../../constants'
 import { format, isAfter, isBefore, isValid, parseISO } from 'date-fns'
 import { isEmpty } from 'lodash'
-import { useAppState, useStateValue } from '../../state/useAppState'
+import { useStateValue } from '../../state/useAppState'
 
 const InputWrapper = styled.div`
   position: relative;
