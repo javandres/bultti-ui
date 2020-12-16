@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
 import { FlexRow, Page } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
+import { Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -108,14 +109,16 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   return (
     <ContractPageView>
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
-        Sopimusehdot
+        <Text>contract_page.contracts</Text>
       </PageTitle>
       {contracts.length === 0 && !contractsLoading && (
         <MessageContainer>
-          <MessageView>Ei sopimusehtoja.</MessageView>
+          <MessageView>
+            <Text>contract_page.no_contracts</Text>
+          </MessageView>
         </MessageContainer>
       )}
-      {!!operator && hasAdminAccessRights && (
+      {hasAdminAccessRights && (
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
           <Button
             disabled={!operator}
@@ -123,7 +126,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             buttonStyle={ButtonStyle.NORMAL}
             size={ButtonSize.MEDIUM}
             style={{ marginLeft: 'auto' }}>
-            Uudet sopimusehdot
+            <Text>contract_page.new_contract_button</Text>
           </Button>
         </FlexRow>
       )}
