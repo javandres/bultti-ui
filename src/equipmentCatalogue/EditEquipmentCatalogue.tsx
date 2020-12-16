@@ -12,7 +12,7 @@ import {
   updateEquipmentCatalogueMutation,
 } from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
-import { text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 
 const EditEquipmentCatalogueView = styled.div`
@@ -129,7 +129,7 @@ const EditEquipmentCatalogue = observer(
           {!pendingCatalogue && catalogue && (
             <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
               <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
-                Muokkaa
+                <Text>general.app.edit</Text>
               </Button>
             </ValueDisplay>
           )}
@@ -146,8 +146,8 @@ const EditEquipmentCatalogue = observer(
               renderInput={renderCatalogueInput}
               doneLabel={
                 catalogueEditMode.current === CatalogueEditMode.UPDATE
-                  ? 'Tallenna'
-                  : 'Lisää kalustoluettelo'
+                  ? text('general.app.save')
+                  : text('catalogue.add')
               }
             />
           )}
@@ -162,7 +162,9 @@ const EditEquipmentCatalogue = observer(
               borderBottomRightRadius: '0.5rem',
               borderTop: '1px solid var(--lighter-grey)',
             }}>
-            <Button onClick={addDraftCatalogue}>Luo uusi kalustoluettelo</Button>
+            <Button onClick={addDraftCatalogue}>
+              <Text>catalogue.new</Text>
+            </Button>
           </FlexRow>
         )}
       </EditEquipmentCatalogueView>
