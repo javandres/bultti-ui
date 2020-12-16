@@ -122,7 +122,6 @@ export const ObservedDepartureFragment = gql`
     isTrunkRoute
     schemaId
     blockNumber
-    blockJourneyStartTime
     schemaUnitId: procurementUnitId
     observedEquipment {
       ...EquipmentFragment

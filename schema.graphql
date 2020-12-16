@@ -336,7 +336,6 @@ type ObservedDeparture {
   arrivalDateTime: DateTime
   arrivalIsNextDay: Boolean!
   blockJourneyEndTime: String
-  blockJourneyStartTime: String
   blockNumber: String
   date: String!
   dayType: String!

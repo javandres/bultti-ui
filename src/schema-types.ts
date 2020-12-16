@@ -502,7 +502,6 @@ export type ObservedDeparture = {
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   schemaId?: Maybe<Scalars['String']>;
   blockNumber?: Maybe<Scalars['String']>;
-  blockJourneyStartTime?: Maybe<Scalars['String']>;
   blockJourneyEndTime?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
