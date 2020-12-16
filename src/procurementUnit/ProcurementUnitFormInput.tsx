@@ -5,7 +5,6 @@ import { TextInput } from '../common/input/Input'
 
 export const FormInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
   font-family: var(--font-family);
-  font-size: 0.75rem;
 `
 
 type ValueType = string | number
@@ -18,32 +17,34 @@ export type PropTypes = {
 
 const numericTypes = ['weeklyMeters', 'medianAgeRequirement']
 
-const ProcurementUnitFormInput: React.FC<PropTypes> = observer(({ value, valueName, onChange }) => {
-  const valueIsNumeric = numericTypes.includes(valueName)
+const ProcurementUnitFormInput: React.FC<PropTypes> = observer(
+  ({ value, valueName, onChange }) => {
+    const valueIsNumeric = numericTypes.includes(valueName)
 
-  const onChangeValue = useCallback(
-    (e) => {
-      let nextValue = e.target.value
+    const onChangeValue = useCallback(
+      (e) => {
+        let nextValue = e.target.value
 
-      if (valueIsNumeric) {
-        const floatVal = parseFloat(nextValue)
-        nextValue = !nextValue || isNaN(floatVal) ? '' : floatVal
-      }
+        if (valueIsNumeric) {
+          const floatVal = parseFloat(nextValue)
+          nextValue = !nextValue || isNaN(floatVal) ? '' : floatVal
+        }
 
-      onChange(nextValue, valueName)
-    },
-    [onChange, valueIsNumeric]
-  )
+        onChange(nextValue, valueName)
+      },
+      [onChange, valueIsNumeric]
+    )
 
-  return (
-    <FormInput
-      type={valueIsNumeric ? 'number' : 'text'}
-      step={valueIsNumeric ? 0.1 : 1}
-      value={value}
-      onChange={onChangeValue}
-      name={valueName}
-    />
-  )
-})
+    return (
+      <FormInput
+        type={valueIsNumeric ? 'number' : 'text'}
+        step={valueIsNumeric ? 0.1 : 1}
+        value={value}
+        onChange={onChangeValue}
+        name={valueName}
+      />
+    )
+  }
+)
 
 export default ProcurementUnitFormInput
