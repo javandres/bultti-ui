@@ -14,7 +14,7 @@ export const ReportFragment = gql`
     title
     columnLabels
     reportType
-    inspectionTypes
+    inspectionType
     filteredCount
     filters {
       field

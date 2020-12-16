@@ -7255,20 +7255,16 @@
             "deprecationReason": null
           },
           {
-            "name": "inspectionTypes",
+            "name": "inspectionType",
             "description": null,
             "args": [],
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "NON_NULL",
-                "name": null,
-                "ofType": {
-                  "kind": "ENUM",
-                  "name": "InspectionType",
-                  "ofType": null
-                }
+                "kind": "ENUM",
+                "name": "InspectionType",
+                "ofType": null
               }
             },
             "isDeprecated": false,

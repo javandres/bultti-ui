@@ -553,7 +553,7 @@ type Report {
   filteredCount: Int
   filters: [FilterConfig!]
   inspection: Inspection
-  inspectionTypes: [InspectionType!]
+  inspectionType: InspectionType!
   name: String!
   operator: Operator
   page: PageConfig

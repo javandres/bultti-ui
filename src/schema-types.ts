@@ -755,7 +755,7 @@ export type Report = {
   operator?: Maybe<Operator>;
   inspection?: Maybe<Inspection>;
   reportEntities: Array<ReportEntityUnion>;
-  inspectionTypes?: Maybe<Array<InspectionType>>;
+  inspectionType: InspectionType;
   reportType?: Maybe<ReportType>;
   filteredCount?: Maybe<Scalars['Int']>;
   totalCount?: Maybe<Scalars['Int']>;
