@@ -98,8 +98,6 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     return undefined
   }, [reportData])
 
-  console.log(reportDataItems[0], columnLabels)
-
   let onPageNav = useCallback(
     (offset) => {
       return () => {
