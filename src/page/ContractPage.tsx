@@ -86,6 +86,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
     variables: {
       operatorId: operator?.id,
     },
+    fetchPolicy: 'no-cache', // TODO: find a better way than this (this way contracts get refetched after removing one)
   })
 
   let refetch = useRefetch(refetchContracts)
