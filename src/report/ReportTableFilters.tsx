@@ -6,10 +6,11 @@ import { omit } from 'lodash'
 import { ControlGroup } from '../common/components/form'
 import Dropdown from '../common/input/Dropdown'
 import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
-import { text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { SubHeading } from '../common/components/Typography'
 import { FilterConfig } from '../schema-types'
+import UserHint from '../common/components/UserHint'
 
 const ReportTableFiltersView = styled.div`
   margin: 1rem 0;
@@ -132,22 +133,21 @@ const ReportTableFilters = observer(
     return (
       <ReportTableFiltersView>
         <FlexRow style={{ alignItems: 'center' }}>
-          <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>Filtteröinti</SubHeading>
+          <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>
+            <Text>report.filtering.title</Text>
+            <UserHint
+              hintText={text('hint.report.filtering')}
+              style={{ marginLeft: '0.75rem' }}
+            />
+          </SubHeading>
           <Button
-            style={{ marginLeft: '1rem' }}
+            style={{ marginLeft: 'auto' }}
             onClick={() => onAddFilter()}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}>
-            Lisää kenttä
+            <Text>report.filtering.add_field</Text>
           </Button>
         </FlexRow>
-        <p style={{ lineHeight: '1.4' }}>
-          Filtteröi raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita
-          tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat filtteröidä.
-          Jos haluat filtteröidä kyllä/ei arvoja, voit käyttää filtteriarvona: true/false,
-          kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä
-          puuttuu jokin arvo.
-        </p>
         {filters.length !== 0 && (
           <>
             <FlexRow style={{ marginTop: '1.5rem', flexDirection: 'column' }}>
@@ -166,13 +166,13 @@ const ReportTableFilters = observer(
                       name="filter"
                       type="text"
                       theme="light"
-                      label={`Filter on ${
+                      label={`${text('report.filtering.filter_on')} ${
                         selectedFilterOption?.label || text('general.app.all')
                       }`}
                     />
                     {filterFieldOptions.length !== 0 && (
                       <Dropdown
-                        label="Field"
+                        label={text('general.app.field')}
                         items={filterFieldOptions}
                         selectedItem={selectedFilterOption}
                         itemToString={(item) => item.field}
@@ -191,7 +191,7 @@ const ReportTableFilters = observer(
               {filters.length !== 0 && (
                 <FilterButtonBar>
                   <Button size={ButtonSize.LARGE} onClick={onClickApply}>
-                    Käytä filtterit
+                    <Text>report.filtering.apply</Text>
                   </Button>
                 </FilterButtonBar>
               )}

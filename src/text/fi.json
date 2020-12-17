@@ -13,6 +13,7 @@
   "general.app.preview": "Esikatsele",
   "general.app.remove": "Poista",
   "general.app.save": "Tallenna",
+  "general.app.field": "Kenttä",
   "general.validity_period": "Voimassaoloaika",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
@@ -72,6 +73,11 @@
   "inspection_date.list.noResults": "Tarkastusjaksoja ei löytynyt",
   "inspection_date.form.header": "Lisää uusi tarkastusjakso",
 
+  "report.filtering.add_field": "Lisää kenttä",
+  "report.filtering.title": "Suodatus",
+  "report.filtering.filter_on": "Suodata saraketta",
+  "report.filtering.apply": "Käytä suodatus",
+
   "Draft": "Muokattavissa",
   "InReview": "Hyväksyttävänä",
   "InProduction": "Tuotannossa",
@@ -87,5 +93,6 @@
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
 
   "hint.equipment_catalogue.start_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
-  "hint.equipment_catalogue.end_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo."
+  "hint.equipment_catalogue.end_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
+  "hint.report.filtering": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo."
 }
