@@ -61,6 +61,7 @@ const procurementUnitLabels = {
 type ContentPropTypes = {
   showExecutionRequirements: boolean
   startDate: string
+  endDate: string
   procurementUnitId: string
   catalogueEditable: boolean
   requirementsEditable: boolean
@@ -73,6 +74,7 @@ const ProcurementUnitItemContent = observer(
   ({
     showExecutionRequirements,
     startDate,
+    endDate,
     procurementUnitId,
     catalogueEditable,
     requirementsEditable,
@@ -90,6 +92,8 @@ const ProcurementUnitItemContent = observer(
         skip: !procurementUnitId || !isVisible,
         variables: {
           procurementUnitId,
+          startDate,
+          endDate,
         },
       }) || {}
 

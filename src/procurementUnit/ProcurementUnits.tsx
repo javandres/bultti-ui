@@ -9,7 +9,7 @@ import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
-import { ValidationErrorData } from '../schema-types'
+import { ProcurementUnit as ProcurementUnitType, ValidationErrorData } from '../schema-types'
 import { text, Text } from '../util/translate'
 
 const ProcurementUnitsView = styled(TransparentPageSection)``
@@ -41,10 +41,10 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
 
     // Get the operating units for the selected operator.
     const {
-      data: procurementUnitsData,
+      data: procurementUnits = [],
       loading: procurementUnitsLoading,
       refetch,
-    } = useQueryData(procurementUnitsQuery, {
+    } = useQueryData<ProcurementUnitType[]>(procurementUnitsQuery, {
       skip: !operatorId,
       variables: {
         operatorId: operatorId,
@@ -52,8 +52,6 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
         endDate,
       },
     })
-
-    const procurementUnits = procurementUnitsData || []
 
     return (
       <ProcurementUnitsView>
@@ -92,6 +90,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   showExecutionRequirements={showExecutionRequirements}
                   key={procurementUnit.id}
                   startDate={startDate}
+                  endDate={endDate}
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
                 />

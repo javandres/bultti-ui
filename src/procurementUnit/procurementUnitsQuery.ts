@@ -49,8 +49,16 @@ export const procurementUnitsQuery = gql`
 `
 
 export const procurementUnitQuery = gql`
-  query procurementUnit($procurementUnitId: String!) {
-    procurementUnit(procurementUnitId: $procurementUnitId) {
+  query procurementUnit(
+    $procurementUnitId: String!
+    $startDate: BulttiDate!
+    $endDate: BulttiDate!
+  ) {
+    procurementUnit(
+      procurementUnitId: $procurementUnitId
+      startDate: $startDate
+      endDate: $endDate
+    ) {
       ...ProcurementUnitFragment
       equipmentCatalogues {
         id

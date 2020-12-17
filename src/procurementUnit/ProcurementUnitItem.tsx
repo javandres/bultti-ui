@@ -24,6 +24,7 @@ export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
   startDate: string
+  endDate: string
   catalogueEditable: boolean
   requirementsEditable: boolean
   showExecutionRequirements: boolean
@@ -43,6 +44,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     requirementsEditable,
     showExecutionRequirements,
     startDate,
+    endDate,
     procurementUnit,
     expanded = true,
     className,
@@ -134,6 +136,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}
+                endDate={endDate}
                 procurementUnitId={procurementUnit.id}
                 requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
