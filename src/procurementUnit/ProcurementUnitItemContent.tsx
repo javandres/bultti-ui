@@ -65,7 +65,6 @@ type ContentPropTypes = {
   catalogueEditable: boolean
   requirementsEditable: boolean
   isVisible: boolean
-  onUpdate?: () => unknown
   catalogueInvalid: boolean
   requirementsInvalid: boolean
 }
@@ -78,7 +77,6 @@ const ProcurementUnitItemContent = observer(
     catalogueEditable,
     requirementsEditable,
     isVisible,
-    onUpdate,
     catalogueInvalid,
     requirementsInvalid,
   }: ContentPropTypes) => {
@@ -86,7 +84,6 @@ const ProcurementUnitItemContent = observer(
       pendingProcurementUnit,
       setPendingProcurementUnit,
     ] = useState<ProcurementUnitEditInput | null>(null)
-
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch: refetchUnitData } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
@@ -99,13 +96,8 @@ const ProcurementUnitItemContent = observer(
     let refetch = useRefetch(refetchUnitData)
 
     let updateUnit = useCallback(() => {
-      console.log('at updateUnit')
       refetch()
-
-      if (onUpdate) {
-        onUpdate()
-      }
-    }, [refetch, onUpdate])
+    }, [refetch])
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const catalogues: EquipmentCatalogueType[] = useMemo(() => {
@@ -216,7 +208,6 @@ const ProcurementUnitItemContent = observer(
           <>
             {showExecutionRequirements && hasEquipment && (
               <ProcurementUnitExecutionRequirement
-                onUpdate={onUpdate}
                 isEditable={requirementsEditable}
                 procurementUnit={procurementUnit}
                 valid={!requirementsInvalid}

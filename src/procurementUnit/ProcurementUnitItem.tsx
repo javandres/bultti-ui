@@ -28,7 +28,6 @@ export type PropTypes = {
   requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
-  onUpdate?: () => unknown
   validationErrors: ValidationErrorData[]
 }
 
@@ -47,7 +46,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     procurementUnit,
     expanded = true,
     className,
-    onUpdate,
     validationErrors = [],
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
@@ -133,7 +131,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             }>
             {(itemIsExpanded: boolean) => (
               <ProcurementUnitItemContent
-                onUpdate={onUpdate}
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}

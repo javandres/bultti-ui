@@ -46,7 +46,6 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
         <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
         {inspection && (
           <ProcurementUnits
-            onUpdate={refetchData}
             requirementsEditable={isEditable}
             getErrorsById={getByObjectId}
             operatorId={inspection.operatorId!}

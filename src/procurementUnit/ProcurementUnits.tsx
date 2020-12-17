@@ -19,19 +19,11 @@ export type PropTypes = {
   startDate: string
   endDate: string
   requirementsEditable: boolean
-  onUpdate?: () => unknown
   getErrorsById?: (objectId: string) => ValidationErrorData[]
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(
-  ({
-    getErrorsById,
-    requirementsEditable = true,
-    onUpdate,
-    operatorId,
-    startDate,
-    endDate,
-  }) => {
+  ({ getErrorsById, requirementsEditable = true, operatorId, startDate, endDate }) => {
     const inspection = useContext(InspectionContext)
 
     let catalogueEditable = !inspection
@@ -95,7 +87,6 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
               return (
                 <ProcurementUnitItem
                   validationErrors={unitErrors}
-                  onUpdate={onUpdate}
                   requirementsEditable={requirementsEditable}
                   catalogueEditable={catalogueEditable}
                   showExecutionRequirements={showExecutionRequirements}
