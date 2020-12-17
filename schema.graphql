@@ -359,8 +359,8 @@ type ObservedDeparture {
   observedEquipmentId: String
   observedEquipmentType: String
   observedExteriorColor: String
-  observedLateArrivalSeconds: Boolean
-  observedLateDepartureSeconds: Boolean
+  observedLateArrivalSeconds: Int
+  observedLateDepartureSeconds: Int
   observedOperatorId: Int
   observedRegistryDate: String
   observedRegistryNr: String

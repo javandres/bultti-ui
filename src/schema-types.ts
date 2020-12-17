@@ -507,8 +507,8 @@ export type ObservedDeparture = {
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
   isObserved?: Maybe<Scalars['Boolean']>;
-  observedLateDepartureSeconds?: Maybe<Scalars['Boolean']>;
-  observedLateArrivalSeconds?: Maybe<Scalars['Boolean']>;
+  observedLateDepartureSeconds?: Maybe<Scalars['Int']>;
+  observedLateArrivalSeconds?: Maybe<Scalars['Int']>;
 };
 
 

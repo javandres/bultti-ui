@@ -82,6 +82,8 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
 
+  console.log(reportDataItems[0])
+
   let columnLabels = useMemo(() => {
     let labels = reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined
 

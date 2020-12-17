@@ -128,6 +128,8 @@ export const ObservedDepartureFragment = gql`
     }
     observedEquipmentId
     trackReason
+    observedLateDepartureSeconds
+    observedLateArrivalSeconds
   }
   ${EquipmentFragment}
 `

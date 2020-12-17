@@ -4809,7 +4809,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
@@ -4821,7 +4821,7 @@
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Boolean",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
