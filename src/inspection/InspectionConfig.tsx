@@ -41,10 +41,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       InspectionInput
     >(initialInspectionInputValues)
 
-    let [oldInspectionInputValues, setOldInspectionInputValues] = useState<InspectionInput>(
-      initialInspectionInputValues
-    )
-
     let onUpdateValue = useCallback((name, value) => {
       setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
@@ -55,7 +51,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
 
     let onSave = useCallback(async () => {
       await saveValues(pendingInspectionInputValues!)
-      setOldInspectionInputValues(pendingInspectionInputValues)
     }, [pendingInspectionInputValues])
 
     let isDirty = useMemo(
