@@ -18,7 +18,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
-  let { data: inspections, loading, refetch } = useQueryData<Inspection>(
+  let { data: inspections, loading, refetch } = useQueryData<Inspection[]>(
     currentPreInspectionsByOperatorAndSeasonQuery,
     {
       skip: !operator?.id || !season?.id,

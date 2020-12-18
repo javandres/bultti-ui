@@ -76,6 +76,8 @@ export type QuerySeasonsArgs = {
 
 
 export type QueryProcurementUnitArgs = {
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   procurementUnitId: Scalars['String'];
 };
 
@@ -467,6 +469,7 @@ export enum TrackReason {
 export type ObservedDeparture = {
   __typename?: 'ObservedDeparture';
   id: Scalars['ID'];
+  departureType: DepartureType;
   departureId: Scalars['String'];
   postInspectionId?: Maybe<Scalars['String']>;
   plannedOperatorId?: Maybe<Scalars['Int']>;
@@ -502,8 +505,6 @@ export type ObservedDeparture = {
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   schemaId?: Maybe<Scalars['String']>;
   blockNumber?: Maybe<Scalars['String']>;
-  blockJourneyStartTime?: Maybe<Scalars['String']>;
-  blockJourneyEndTime?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;

@@ -9,3 +9,5 @@
 ## Typescript
 
 - When typing components or other functions which receive function arguments, use `unknown` for the return type of the function argument when the consumer doesn't care about what it returns. Use `void` if you want to indicate that the function doesn't return anything
+
+- When importing type from schema-types, use a `Type` suffix in the type name: `<typeName>Type`

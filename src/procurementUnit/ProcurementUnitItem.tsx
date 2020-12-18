@@ -24,11 +24,11 @@ export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
   startDate: string
+  endDate: string
   catalogueEditable: boolean
   requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
-  onUpdate?: () => unknown
   validationErrors: ValidationErrorData[]
 }
 
@@ -44,10 +44,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     requirementsEditable,
     showExecutionRequirements,
     startDate,
+    endDate,
     procurementUnit,
     expanded = true,
     className,
-    onUpdate,
     validationErrors = [],
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
@@ -133,10 +133,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             }>
             {(itemIsExpanded: boolean) => (
               <ProcurementUnitItemContent
-                onUpdate={onUpdate}
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}
+                endDate={endDate}
                 procurementUnitId={procurementUnit.id}
                 requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
