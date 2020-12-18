@@ -31,6 +31,7 @@ import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import Table from '../common/components/Table'
+import { text, Text } from '../util/translate'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -90,10 +91,13 @@ const renderEditorField = (
   onCancel?: () => unknown
 ) => {
   if (key === 'rules') {
+    let isRulesFileSet = Boolean(contract.rulesFile)
     return (
       <>
         <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
-          <Button onClick={toggleRulesInput}>Lataa uudet ehdot</Button>
+          <Button onClick={toggleRulesInput}>
+            <Text>contract_form.load_new_contracts_button</Text>
+          </Button>
         </div>
         {rulesInputActive && (
           <FileUploadInput
@@ -107,29 +111,38 @@ const renderEditorField = (
         )}
         {contractFileReadError && (
           <ErrorView>
-            Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe:{' '}
+            <Text>contract_form.toml_read_error_failed</Text>
             {contractFileReadError}`
           </ErrorView>
         )}
         <ExpandableFormSection
+          isExpanded={true}
           style={{ marginTop: '1rem' }}
           headerContent={
-            <ExpandableFormSectionHeading>Nykyiset ehdot</ExpandableFormSectionHeading>
+            <ExpandableFormSectionHeading>
+              <Text>contract_form.current_contract</Text>
+            </ExpandableFormSectionHeading>
           }>
           <div style={{ padding: '1rem 1rem 0' }}>
             <SubHeading>
-              Tiedosto: <strong>{contract.rulesFile}</strong>
+              {isRulesFileSet ? (
+                <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
+              ) : (
+                <Text>contract_form.no_loaded_contract_file</Text>
+              )}
             </SubHeading>
-            <Table
-              columnLabels={{
-                name: 'Nimi',
-                value: 'Arvo',
-                condition: 'Ehto',
-                category: 'Kategoria',
-                code: 'Koodi',
-              }}
-              items={val.currentRules}
-            />
+            {isRulesFileSet && (
+              <Table
+                columnLabels={{
+                  name: text('contract_form.contact_table_label.name'),
+                  value: text('contract_form.contact_table_label.value'),
+                  condition: text('contract_form.contact_table_label.condition'),
+                  category: text('contract_form.contact_table_label.category'),
+                  code: text('contract_form.contact_table_label.code'),
+                }}
+                items={val.currentRules}
+              />
+            )}
           </div>
         </ExpandableFormSection>
       </>
@@ -140,7 +153,9 @@ const renderEditorField = (
     return (
       <ExpandableFormSection
         headerContent={
-          <ExpandableFormSectionHeading>Kilpailukohteet</ExpandableFormSectionHeading>
+          <ExpandableFormSectionHeading>
+            <Text>contract_form.procurement_units</Text>
+          </ExpandableFormSectionHeading>
         }>
         <ContractProcurementUnitsEditor
           readOnly={readOnly}
@@ -198,12 +213,12 @@ const renderEditorField = (
 }
 
 let formLabels = {
-  startDate: 'Sopimusehdot alkaa',
-  endDate: 'Sopimusehdot loppuu',
-  description: 'Kuvaus',
-  operatorId: 'Liikennöitsijä',
-  procurementUnitIds: 'Kilpailukohteet',
-  rules: 'Sopimusehdot',
+  startDate: text('contract_form.label.startDate'),
+  endDate: text('contract_form.label.endDate'),
+  description: text('contract_form.label.description'),
+  operatorId: text('contract_form.label.operator_id'),
+  procurementUnitIds: text('contract_form.label.procurement_units'),
+  rules: text('contract_form.label.rules'),
 }
 
 const renderEditorLabel = (key, val, labels) => {
@@ -217,7 +232,7 @@ const renderEditorLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
-    let [rulesFileValue, setRulesFile] = useState<File[]>([])
+    let [rulesFiles, setRulesFiles] = useState<File[]>([])
     let [rulesInputActive, setRulesInputActive] = useState(!pendingContract?.rulesFile)
 
     let isDirty = useMemo(() => {
@@ -226,14 +241,14 @@ const ContractEditor = observer(
         return true
       }
 
-      if (rulesFileValue.length !== 0) {
+      if (rulesFiles.length !== 0) {
         return true
       }
 
       let pendingJson = JSON.stringify(pendingContract)
       let currentJson = JSON.stringify(createContractInput(contract))
       return currentJson !== pendingJson
-    }, [rulesFileValue, pendingContract, contract])
+    }, [rulesFiles, pendingContract, contract])
 
     useEffect(() => {
       if (contract) {
@@ -243,15 +258,15 @@ const ContractEditor = observer(
 
     let pendingContractValid = useMemo(
       () =>
-        (!isNew || (isNew && rulesFileValue.length !== 0)) &&
+        (!isNew || (isNew && rulesFiles.length !== 0)) &&
         !!pendingContract?.startDate &&
         !!pendingContract?.endDate,
-      [isNew, pendingContract, rulesFileValue]
+      [isNew, pendingContract, rulesFiles]
     )
 
     let onChange = useCallback((key, nextValue) => {
       if (key === 'rules') {
-        setRulesFile(nextValue)
+        setRulesFiles(nextValue)
         return
       }
 
@@ -315,9 +330,9 @@ const ContractEditor = observer(
       if (pendingContractValid) {
         let result
 
-        if (rulesFileValue.length !== 0) {
+        if (rulesFiles.length !== 0) {
           let mutationFn = isNew ? createContract : modifyContract
-          let rulesFile = rulesFileValue[0]
+          let rulesFile = rulesFiles[0]
 
           result = await mutationFn(rulesFile, {
             variables: {
@@ -336,7 +351,7 @@ const ContractEditor = observer(
           onReset()
         }
 
-        setRulesFile([])
+        setRulesFiles([])
 
         if (result.data) {
           if (!isNew) {
@@ -346,18 +361,18 @@ const ContractEditor = observer(
           }
         }
       }
-    }, [rulesFileValue, pendingContract, pendingContractValid, onReset, isNew, goToContract])
+    }, [rulesFiles, pendingContract, pendingContractValid, onReset, isNew, goToContract])
 
     let onCancel = useCallback(() => {
       setPendingContract(createContractInput(contract))
-      setRulesFile([])
+      setRulesFiles([])
       onReset()
     }, [contract, onReset])
 
     let [removeContract, { loading: removeLoading }] = useMutationData(removeContractMutation)
 
     let execRemove = useCallback(async () => {
-      if (!isNew && confirm('Haluatko varmasti poistaa sopimuksen?')) {
+      if (!isNew && confirm(text('contract_form.remove_confirm'))) {
         let result = await removeContract({
           variables: {
             contractId: contract.id,
@@ -383,14 +398,14 @@ const ContractEditor = observer(
             buttonStyle={ButtonStyle.REMOVE}
             size={ButtonSize.MEDIUM}
             onClick={execRemove}>
-            Poista
+            <Text>contract_form.remove</Text>
           </Button>
         </FlexRow>
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
           item={{
             ...pendingContract,
-            rules: { uploadFile: rulesFileValue, currentRules: contract?.rules || [] },
+            rules: { uploadFile: rulesFiles, currentRules: contract?.rules || [] },
           }}
           hideKeys={['id', 'rulesFile']}
           labels={formLabels}

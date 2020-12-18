@@ -36,7 +36,9 @@ const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection, onUpdate
 
   return (
     <InspectionDevToolsView>
-      <Button onClick={() => generateEquipment()}>Generate equipment and catalogues</Button>
+      <Button onClick={() => generateEquipment()}>
+        Generate equipment and catalogues (do not click more than once)
+      </Button>
     </InspectionDevToolsView>
   )
 })
