@@ -371,7 +371,17 @@ const ContractEditor = observer(
     }, [contract, onReset])
 
     let [removeContract, { loading: removeLoading }] = useMutationData<ContractType>(
-      removeContractMutation
+      removeContractMutation,
+      {
+        refetchQueries: [
+          {
+            query: contractsQuery,
+            variables: {
+              operatorId: contract.operatorId,
+            },
+          },
+        ],
+      }
     )
 
     let execRemoveContract = useCallback(async () => {
@@ -387,7 +397,9 @@ const ContractEditor = observer(
           },
         })
 
-        if (result.errors && result.errors.length > 0) return
+        if (result.errors && result.errors.length !== 0) {
+          return
+        }
 
         // Go back to the previous page
         navigateWithQueryString('/contract', { replace: true })
