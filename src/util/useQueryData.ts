@@ -13,7 +13,7 @@ const defaultOptions = {
   notifyOnNetworkStatusChange: true,
 }
 
-export const useQueryData = <TData extends {} = {}, TVariables = OperationVariables>(
+export const useQueryData = <TData extends {} = any, TVariables = OperationVariables>(
   query: DocumentNode,
   options: QueryHookOptions<TData, TVariables> & { pickData?: string } = {},
   subscriber?: { document: DocumentNode; variables?: TVariables }
@@ -71,7 +71,7 @@ export const useQueryData = <TData extends {} = {}, TVariables = OperationVariab
 
   // Pick the result data from the returned data structure.
   // Return prevData if the result is not yet loaded.
-  let pickedData = useMemo(() => {
+  let pickedData = useMemo<TData>(() => {
     let resultData = pickGraphqlData(data, pickData)
 
     if (!resultData) {

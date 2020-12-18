@@ -76,6 +76,8 @@ export type QuerySeasonsArgs = {
 
 
 export type QueryProcurementUnitArgs = {
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
   procurementUnitId: Scalars['String'];
 };
 

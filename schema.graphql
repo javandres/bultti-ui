@@ -534,7 +534,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
-  procurementUnit(procurementUnitId: String!): ProcurementUnit
+  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
   reports(inspectionType: InspectionType): [Report!]!

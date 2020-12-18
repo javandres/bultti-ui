@@ -130,7 +130,13 @@ export const pathWithQuery = (path = '', location?: Location | string) => {
   return `${path}?${currentQuery.toString()}`
 }
 
-export const navigateWithQueryString = (navigateTo, opts?: any) => {
+/**
+ * @param {string} navigateTo - Path to navigate into (query string gets included)
+ * @param {Object} opts - Optional options
+ * @param {boolean} opts.replace - if true, the current entry in the history stack will be replaced with the new one. If empty/false, a call to navigate will push a new entry into the history stack so the user can click the back button to get back to the previous page.
+ * @returns {void}
+ */
+export const navigateWithQueryString = (navigateTo: string, opts?: any) => {
   let path = pathWithQuery(navigateTo, history.location)
   return navigate(path, opts)
 }

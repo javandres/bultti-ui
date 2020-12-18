@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Contract, ContractInput } from '../schema-types'
+import { Contract as ContractType, ContractInput } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -32,6 +32,7 @@ import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import Table from '../common/components/Table'
 import { text, Text } from '../util/translate'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const ContractEditorView = styled.div`
   padding: 0 1rem;
@@ -55,14 +56,14 @@ const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
 `
 
 export type PropTypes = {
-  contract: Contract
+  contract: ContractType
   onReset: () => unknown
   onRefresh: () => unknown
   isNew?: boolean
   editable: boolean
 }
 
-function createContractInput(contract: Contract): ContractInput {
+function createContractInput(contract: ContractType): ContractInput {
   return {
     id: contract.id,
     description: contract.description ? contract.description : '',
@@ -369,19 +370,39 @@ const ContractEditor = observer(
       onReset()
     }, [contract, onReset])
 
-    let [removeContract, { loading: removeLoading }] = useMutationData(removeContractMutation)
+    let [removeContract, { loading: removeLoading }] = useMutationData<ContractType>(
+      removeContractMutation,
+      {
+        refetchQueries: [
+          {
+            query: contractsQuery,
+            variables: {
+              operatorId: contract.operatorId,
+            },
+          },
+        ],
+      }
+    )
 
-    let execRemove = useCallback(async () => {
-      if (!isNew && confirm(text('contract_form.remove_confirm'))) {
+    let execRemoveContract = useCallback(async () => {
+      if (isNew) {
+        // Go back to the previous page
+        navigateWithQueryString('/contract', { replace: true })
+        return
+      }
+      if (confirm(text('contract_form.remove_confirm'))) {
         let result = await removeContract({
           variables: {
             contractId: contract.id,
           },
         })
 
-        if (pickGraphqlData(result.data)) {
-          onRefresh()
+        if (result.errors && result.errors.length !== 0) {
+          return
         }
+
+        // Go back to the previous page
+        navigateWithQueryString('/contract', { replace: true })
       }
     }, [removeContract, contract, isNew, onRefresh])
 
@@ -397,7 +418,7 @@ const ContractEditor = observer(
             style={{ marginLeft: 'auto', marginRight: 0 }}
             buttonStyle={ButtonStyle.REMOVE}
             size={ButtonSize.MEDIUM}
-            onClick={execRemove}>
+            onClick={execRemoveContract}>
             <Text>contract_form.remove</Text>
           </Button>
         </FlexRow>
