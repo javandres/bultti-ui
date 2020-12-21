@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { ReportComponentProps } from './reportUtil'
 import { EmptyView } from '../common/components/Messages'
-import { toString } from 'lodash'
+import { pick, toString } from 'lodash'
 import { round } from '../util/round'
 import { SortConfig } from '../schema-types'
 import { format, isValid, parseISO } from 'date-fns'
@@ -57,6 +57,16 @@ const ListReport = observer(
       return toString(val)
     }, [])
 
+    let existingPropLabels = useMemo(() => {
+      let existingProps = Object.keys((items || [])[0] || {})
+
+      if (existingProps.length !== 0) {
+        return pick(columnLabels, existingProps)
+      }
+
+      return columnLabels
+    }, [columnLabels, items])
+
     return (
       <ListReportView>
         <Table<ItemType>
@@ -70,7 +80,7 @@ const ListReport = observer(
           renderValue={renderCellValue}
           sort={sort}
           setSort={setSort}
-          columnLabels={columnLabels}>
+          columnLabels={existingPropLabels}>
           <TableEmptyView>Taulukko on tyhjä.</TableEmptyView>
         </Table>
       </ListReportView>
