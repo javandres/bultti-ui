@@ -78,8 +78,6 @@ const PairListReport = observer(
       [items]
     )
 
-    console.log(pairLabels)
-
     const renderCellValue = useCallback((key, val) => {
       if (typeof val === 'boolean' || typeof val === 'undefined' || val === null) {
         return (
