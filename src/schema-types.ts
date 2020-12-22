@@ -47,8 +47,8 @@ export type Query = {
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
-  reports: Array<Report>;
-  inspectionReportByName?: Maybe<Report>;
+  reports: Array<Scalars['String']>;
+  trackedDeparturesReport: TrackedDeparturesReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -193,12 +193,11 @@ export type QueryReportsArgs = {
 };
 
 
-export type QueryInspectionReportByNameArgs = {
-  sort?: Maybe<Array<InputSortConfig>>;
-  filters?: Maybe<Array<InputFilterConfig>>;
-  page?: Maybe<InputPageConfig>;
+export type QueryTrackedDeparturesReportArgs = {
   inspectionId: Scalars['String'];
-  reportName: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
 };
 
 
@@ -748,73 +747,26 @@ export type InspectionTimelineItem = {
   version: Scalars['Int'];
 };
 
-export type Report = {
-  __typename?: 'Report';
+export type TrackedDeparturesReport = {
+  __typename?: 'TrackedDeparturesReport';
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  columnLabels?: Maybe<Scalars['String']>;
-  season?: Maybe<Season>;
-  operator?: Maybe<Operator>;
-  inspection?: Maybe<Inspection>;
-  reportEntities: Array<ReportEntityUnion>;
+  reportType: ReportType;
   inspectionType: InspectionType;
-  reportType?: Maybe<ReportType>;
-  filteredCount?: Maybe<Scalars['Int']>;
-  totalCount?: Maybe<Scalars['Int']>;
-  pages?: Maybe<Scalars['Int']>;
+  columnLabels: Scalars['String'];
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
   page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
-};
-
-export type ReportEntityUnion = Departure | MissingEquipment | DeparturePair | OperatorBlockDeparture | ExecutionRequirement | EmissionClassExecutionItem | ObservedDeparture | ObservedExecutionRequirement | ObservedUnitExecutionItem;
-
-export type MissingEquipment = {
-  __typename?: 'MissingEquipment';
-  registryNr?: Maybe<Scalars['String']>;
-  blockNumber?: Maybe<Scalars['String']>;
-};
-
-export type DeparturePair = {
-  __typename?: 'DeparturePair';
-  id: Scalars['ID'];
-  groupId?: Maybe<Scalars['String']>;
-  deadrunStartStop?: Maybe<Scalars['String']>;
-  deadrunEndStop?: Maybe<Scalars['String']>;
-  deadrunMinutes?: Maybe<Scalars['Int']>;
-  deadrunPlannedBy?: Maybe<Scalars['String']>;
-  overlapSecondsA?: Maybe<Scalars['Int']>;
-  overlapSecondsB?: Maybe<Scalars['Int']>;
-  overlapPlannedBy?: Maybe<Scalars['String']>;
-  departurePairType?: Maybe<Scalars['String']>;
-  departureA: Departure;
-  departureB: Departure;
-};
-
-export type EmissionClassExecutionItem = {
-  __typename?: 'EmissionClassExecutionItem';
-  id: Scalars['ID'];
-  procurementUnitId?: Maybe<Scalars['String']>;
-  class1?: Maybe<Scalars['Float']>;
-  class2?: Maybe<Scalars['Float']>;
-  class3?: Maybe<Scalars['Float']>;
-  class4?: Maybe<Scalars['Float']>;
-  class5?: Maybe<Scalars['Float']>;
-  class6?: Maybe<Scalars['Float']>;
-  class7?: Maybe<Scalars['Float']>;
-  class8?: Maybe<Scalars['Float']>;
-  class9?: Maybe<Scalars['Float']>;
-  class10?: Maybe<Scalars['Float']>;
-};
-
-export type ObservedUnitExecutionItem = {
-  __typename?: 'ObservedUnitExecutionItem';
-  id: Scalars['ID'];
-  procurementUnitId?: Maybe<Scalars['String']>;
-  totalKilometersRequired?: Maybe<Scalars['Float']>;
-  totalKilometersObserved?: Maybe<Scalars['Float']>;
-  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  reportData: Array<TrackedDeparturesData>;
 };
 
 export enum ReportType {
@@ -847,9 +799,20 @@ export enum SortOrder {
   Desc = 'DESC'
 }
 
-export type InputSortConfig = {
-  column: Scalars['String'];
-  order: SortOrder;
+export type TrackedDeparturesData = {
+  __typename?: 'TrackedDeparturesData';
+  id: Scalars['ID'];
+  routeId: Scalars['String'];
+  dayType: Scalars['String'];
+  journeyStartTime: Scalars['String'];
+  journeyEndTime: Scalars['String'];
+  direction: Scalars['String'];
+  trackReason: TrackReason;
+};
+
+export type InputPageConfig = {
+  page: Scalars['Int'];
+  pageSize: Scalars['Int'];
 };
 
 export type InputFilterConfig = {
@@ -857,9 +820,9 @@ export type InputFilterConfig = {
   filterValue: Scalars['String'];
 };
 
-export type InputPageConfig = {
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
+export type InputSortConfig = {
+  column: Scalars['String'];
+  order: SortOrder;
 };
 
 export type ProcurementUnitOption = {

@@ -6,8 +6,6 @@ schema {
   subscription: Subscription
 }
 
-union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | ObservedExecutionRequirement | ObservedUnitExecutionItem | OperatorBlockDeparture
-
 type Contract {
   createdAt: DateTime!
   description: String
@@ -77,36 +75,6 @@ type Departure {
   startStop: String
   terminalTime: Int
   trackReason: TrackReason!
-}
-
-type DeparturePair {
-  deadrunEndStop: String
-  deadrunMinutes: Int
-  deadrunPlannedBy: String
-  deadrunStartStop: String
-  departureA: Departure!
-  departureB: Departure!
-  departurePairType: String
-  groupId: String
-  id: ID!
-  overlapPlannedBy: String
-  overlapSecondsA: Int
-  overlapSecondsB: Int
-}
-
-type EmissionClassExecutionItem {
-  class1: Float
-  class10: Float
-  class2: Float
-  class3: Float
-  class4: Float
-  class5: Float
-  class6: Float
-  class7: Float
-  class8: Float
-  class9: Float
-  id: ID!
-  procurementUnitId: String
 }
 
 type Equipment {
@@ -283,11 +251,6 @@ type InspectionUserRelation {
   user: User!
 }
 
-type MissingEquipment {
-  blockNumber: String
-  registryNr: String
-}
-
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
@@ -418,14 +381,6 @@ type ObservedExecutionValue {
   sanctionablePercentage: Float
 }
 
-type ObservedUnitExecutionItem {
-  averageAgeWeightedObserved: Float
-  id: ID!
-  procurementUnitId: String
-  totalKilometersObserved: Float
-  totalKilometersRequired: Float
-}
-
 type OperatingArea {
   executionRequirements: [ExecutionRequirement!]
   id: Int!
@@ -526,7 +481,6 @@ type Query {
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   inspection(inspectionId: String!): Inspection
-  inspectionReportByName(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, reportName: String!, sort: [InputSortConfig!]): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
@@ -538,32 +492,14 @@ type Query {
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
-  reports(inspectionType: InspectionType): [Report!]!
+  reports(inspectionType: InspectionType): [String!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
+  trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
   user(userId: Int!): User
   users: [User!]!
-}
-
-type Report {
-  columnLabels: String
-  description: String!
-  filteredCount: Int
-  filters: [FilterConfig!]
-  inspection: Inspection
-  inspectionType: InspectionType!
-  name: String!
-  operator: Operator
-  page: PageConfig
-  pages: Int
-  reportEntities: [ReportEntityUnion!]!
-  reportType: ReportType
-  season: Season
-  sort: [SortConfig!]
-  title: String!
-  totalCount: Int
 }
 
 type Season {
@@ -584,6 +520,37 @@ type Subscription {
   hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): Inspection
+}
+
+type TrackedDeparturesData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type TrackedDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [TrackedDeparturesData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
 }
 
 type User {
