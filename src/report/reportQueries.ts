@@ -14,7 +14,7 @@ export const ReportFragment = gql`
     title
     columnLabels
     reportType
-    inspectionTypes
+    inspectionType
     filteredCount
     filters {
       field
@@ -122,13 +122,14 @@ export const ObservedDepartureFragment = gql`
     isTrunkRoute
     schemaId
     blockNumber
-    blockJourneyStartTime
     schemaUnitId: procurementUnitId
     observedEquipment {
       ...EquipmentFragment
     }
     observedEquipmentId
     trackReason
+    observedLateDepartureSeconds
+    observedLateArrivalSeconds
   }
   ${EquipmentFragment}
 `

@@ -23,6 +23,7 @@ export const SubHeading = styled.h4`
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   user-select: none;
+  display: flex;
 
   &:first-child {
     margin-top: 0;

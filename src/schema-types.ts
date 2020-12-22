@@ -463,13 +463,13 @@ export enum TrackReason {
   EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
   EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
   InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
-  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION'
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION'
 }
 
 export type ObservedDeparture = {
   __typename?: 'ObservedDeparture';
   id: Scalars['ID'];
-  departureType: DepartureType;
   departureId: Scalars['String'];
   postInspectionId?: Maybe<Scalars['String']>;
   plannedOperatorId?: Maybe<Scalars['Int']>;
@@ -505,12 +505,14 @@ export type ObservedDeparture = {
   isTrunkRoute?: Maybe<Scalars['Boolean']>;
   schemaId?: Maybe<Scalars['String']>;
   blockNumber?: Maybe<Scalars['String']>;
+  blockJourneyEndTime?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
+  isComplete?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
-  isObserved?: Maybe<Scalars['Boolean']>;
-  observedLateDepartureSeconds?: Maybe<Scalars['Boolean']>;
-  observedLateArrivalSeconds?: Maybe<Scalars['Boolean']>;
+  journeyId?: Maybe<Scalars['String']>;
+  observedLateDepartureSeconds?: Maybe<Scalars['Int']>;
+  observedLateArrivalSeconds?: Maybe<Scalars['Int']>;
 };
 
 
@@ -756,7 +758,7 @@ export type Report = {
   operator?: Maybe<Operator>;
   inspection?: Maybe<Inspection>;
   reportEntities: Array<ReportEntityUnion>;
-  inspectionTypes?: Maybe<Array<InspectionType>>;
+  inspectionType: InspectionType;
   reportType?: Maybe<ReportType>;
   filteredCount?: Maybe<Scalars['Int']>;
   totalCount?: Maybe<Scalars['Int']>;

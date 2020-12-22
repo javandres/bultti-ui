@@ -336,7 +336,6 @@ type ObservedDeparture {
   arrivalDateTime: DateTime
   arrivalIsNextDay: Boolean!
   blockJourneyEndTime: String
-  blockJourneyStartTime: String
   blockNumber: String
   date: String!
   dayType: String!
@@ -348,10 +347,11 @@ type ObservedDeparture {
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
-  isObserved: Boolean
+  isComplete: Boolean
   isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String!
+  journeyId: String
   journeyStartTime: String!
   observedArrivalDateTime: DateTime
   observedDepartureDateTime: DateTime
@@ -360,8 +360,8 @@ type ObservedDeparture {
   observedEquipmentId: String
   observedEquipmentType: String
   observedExteriorColor: String
-  observedLateArrivalSeconds: Boolean
-  observedLateDepartureSeconds: Boolean
+  observedLateArrivalSeconds: Int
+  observedLateDepartureSeconds: Int
   observedOperatorId: Int
   observedRegistryDate: String
   observedRegistryNr: String
@@ -535,7 +535,7 @@ type Query {
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
-  procurementUnit(procurementUnitId: String!): ProcurementUnit
+  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
   reports(inspectionType: InspectionType): [Report!]!
@@ -553,7 +553,7 @@ type Report {
   filteredCount: Int
   filters: [FilterConfig!]
   inspection: Inspection
-  inspectionTypes: [InspectionType!]
+  inspectionType: InspectionType!
   name: String!
   operator: Operator
   page: PageConfig
@@ -691,6 +691,7 @@ enum TrackReason {
   MISSING_DEPARTURE
   NOT_TRACKED
   RECOVERY_VIOLATION
+  TIMING_STOP_VIOLATION
 }
 
 enum UserRole {
