@@ -347,10 +347,11 @@ type ObservedDeparture {
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
   id: ID!
-  isObserved: Boolean
+  isComplete: Boolean
   isTracked: Boolean
   isTrunkRoute: Boolean
   journeyEndTime: String!
+  journeyId: String
   journeyStartTime: String!
   observedArrivalDateTime: DateTime
   observedDepartureDateTime: DateTime
@@ -690,6 +691,7 @@ enum TrackReason {
   MISSING_DEPARTURE
   NOT_TRACKED
   RECOVERY_VIOLATION
+  TIMING_STOP_VIOLATION
 }
 
 enum UserRole {

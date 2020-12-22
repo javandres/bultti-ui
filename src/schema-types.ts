@@ -463,7 +463,8 @@ export enum TrackReason {
   EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
   EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
   InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
-  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION'
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION'
 }
 
 export type ObservedDeparture = {
@@ -507,8 +508,9 @@ export type ObservedDeparture = {
   blockJourneyEndTime?: Maybe<Scalars['String']>;
   procurementUnitId?: Maybe<Scalars['String']>;
   isTracked?: Maybe<Scalars['Boolean']>;
+  isComplete?: Maybe<Scalars['Boolean']>;
   trackReason: TrackReason;
-  isObserved?: Maybe<Scalars['Boolean']>;
+  journeyId?: Maybe<Scalars['String']>;
   observedLateDepartureSeconds?: Maybe<Scalars['Int']>;
   observedLateArrivalSeconds?: Maybe<Scalars['Int']>;
 };
