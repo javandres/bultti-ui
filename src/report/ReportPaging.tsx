@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Report } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import Dropdown from '../common/input/Dropdown'
 
@@ -55,7 +54,7 @@ const PageSelectDropdown = styled(Dropdown)`
 `
 
 export type PropTypes = {
-  reportData: Report
+  reportData: any
   onNextPage: () => unknown
   onPrevPage: () => unknown
   onSetPage: (setToPage: number) => unknown

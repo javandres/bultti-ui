@@ -492,7 +492,7 @@ type Query {
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
-  reports(inspectionType: InspectionType): [String!]!
+  reports(inspectionType: InspectionType!): [ReportListItem!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
@@ -500,6 +500,13 @@ type Query {
   trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
   user(userId: Int!): User
   users: [User!]!
+}
+
+type ReportListItem {
+  description: String!
+  inspectionType: InspectionType!
+  name: String!
+  title: String!
 }
 
 type Season {

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { InspectionType, Report } from '../schema-types'
+import { InspectionType, ReportListItem as ReportListItemType } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
 
 const ReportTitle = styled.h3`
@@ -17,11 +17,13 @@ const ReportDescription = styled.p`
 export type PropTypes = {
   children: React.ReactChild
   headerContent?: React.ReactChild
-  reportData: Report
+  reportData: ReportListItemType
   inspectionType?: InspectionType
   inspectionId?: string
   isExpanded?: boolean
 }
+
+// TODO: Add report title and description
 
 const ReportListItem: React.FC<PropTypes> = observer(
   ({
@@ -40,7 +42,7 @@ const ReportListItem: React.FC<PropTypes> = observer(
           <>
             <HeaderSection>
               <ReportTitle>{reportData.title}</ReportTitle>
-              <ReportDescription>{reportData.description}</ReportDescription>
+              <ReportDescription>{reportData.description || ''}</ReportDescription>
             </HeaderSection>
             {headerContent}
           </>

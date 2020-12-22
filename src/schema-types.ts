@@ -47,7 +47,7 @@ export type Query = {
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
-  reports: Array<Scalars['String']>;
+  reports: Array<ReportListItem>;
   trackedDeparturesReport: TrackedDeparturesReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
@@ -189,7 +189,7 @@ export type QueryInspectionUserRelationsArgs = {
 
 
 export type QueryReportsArgs = {
-  inspectionType?: Maybe<InspectionType>;
+  inspectionType: InspectionType;
 };
 
 
@@ -745,6 +745,14 @@ export type InspectionTimelineItem = {
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   version: Scalars['Int'];
+};
+
+export type ReportListItem = {
+  __typename?: 'ReportListItem';
+  name: Scalars['String'];
+  inspectionType: InspectionType;
+  title: Scalars['String'];
+  description: Scalars['String'];
 };
 
 export type TrackedDeparturesReport = {
