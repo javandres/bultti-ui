@@ -77,6 +77,42 @@ type Departure {
   trackReason: TrackReason!
 }
 
+type EmissionClassExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [EmissionClassExecutionReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type EmissionClassExecutionReportData {
+  class1: Float
+  class10: Float
+  class2: Float
+  class3: Float
+  class4: Float
+  class5: Float
+  class6: Float
+  class7: Float
+  class8: Float
+  class9: Float
+  id: ID!
+  procurementUnitId: String
+}
+
 type Equipment {
   approvedOverage: Boolean!
   departures: [Departure!]!
@@ -342,6 +378,42 @@ type ObservedDeparture {
   uniqueVehicleId: String
 }
 
+type ObservedEmissionClassExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedEmissionClassExecutionReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedEmissionClassExecutionReportData {
+  class1: Float
+  class10: Float
+  class2: Float
+  class3: Float
+  class4: Float
+  class5: Float
+  class6: Float
+  class7: Float
+  class8: Float
+  class9: Float
+  id: ID!
+  procurementUnitId: String
+}
+
 type ObservedExecutionRequirement {
   _sanctionPercentageValue: Float!
   _sanctionThresholdValue: Float!
@@ -379,6 +451,35 @@ type ObservedExecutionValue {
   sanctionAmount: Float
   sanctionThreshold: Float
   sanctionablePercentage: Float
+}
+
+type ObservedUnitExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedUnitExecutionReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedUnitExecutionReportData {
+  averageAgeWeightedObserved: Float
+  id: ID!
+  procurementUnitId: String
+  totalKilometersObserved: Float
+  totalKilometersRequired: Float
 }
 
 type OperatingArea {
@@ -473,6 +574,7 @@ type Query {
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
+  emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EmissionClassExecutionReport!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
@@ -485,7 +587,9 @@ type Query {
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   loadedHfpRanges: [HfpDateStatus!]!
+  observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
@@ -529,16 +633,6 @@ type Subscription {
   inspectionStatus(inspectionId: String!): Inspection
 }
 
-type TrackedDeparturesData {
-  dayType: String!
-  direction: String!
-  id: ID!
-  journeyEndTime: String!
-  journeyStartTime: String!
-  routeId: String!
-  trackReason: TrackReason!
-}
-
 type TrackedDeparturesReport {
   columnLabels: String!
   description: String!
@@ -550,7 +644,7 @@ type TrackedDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [TrackedDeparturesData!]!
+  reportData: [TrackedDeparturesReportData!]!
   reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
@@ -558,6 +652,16 @@ type TrackedDeparturesReport {
   sort: [SortConfig!]
   title: String!
   totalCount: Int!
+}
+
+type TrackedDeparturesReportData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type User {

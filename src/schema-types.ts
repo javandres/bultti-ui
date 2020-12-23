@@ -49,6 +49,9 @@ export type Query = {
   inspectionUserRelations: Array<InspectionUserRelation>;
   reports: Array<ReportListItem>;
   trackedDeparturesReport: TrackedDeparturesReport;
+  emissionClassExecutionReport: EmissionClassExecutionReport;
+  observedUnitExecutionReport: ObservedUnitExecutionReport;
+  observedEmissionClassExecutionReport: ObservedEmissionClassExecutionReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -194,6 +197,30 @@ export type QueryReportsArgs = {
 
 
 export type QueryTrackedDeparturesReportArgs = {
+  inspectionId: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+};
+
+
+export type QueryEmissionClassExecutionReportArgs = {
+  inspectionId: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+};
+
+
+export type QueryObservedUnitExecutionReportArgs = {
+  inspectionId: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+};
+
+
+export type QueryObservedEmissionClassExecutionReportArgs = {
   inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
@@ -774,7 +801,7 @@ export type TrackedDeparturesReport = {
   sort?: Maybe<Array<SortConfig>>;
   showSanctioned?: Maybe<Scalars['Boolean']>;
   showUnsanctioned?: Maybe<Scalars['Boolean']>;
-  reportData: Array<TrackedDeparturesData>;
+  reportData: Array<TrackedDeparturesReportData>;
 };
 
 export enum ReportType {
@@ -807,8 +834,8 @@ export enum SortOrder {
   Desc = 'DESC'
 }
 
-export type TrackedDeparturesData = {
-  __typename?: 'TrackedDeparturesData';
+export type TrackedDeparturesReportData = {
+  __typename?: 'TrackedDeparturesReportData';
   id: Scalars['ID'];
   routeId: Scalars['String'];
   dayType: Scalars['String'];
@@ -831,6 +858,113 @@ export type InputFilterConfig = {
 export type InputSortConfig = {
   column: Scalars['String'];
   order: SortOrder;
+};
+
+export type EmissionClassExecutionReport = {
+  __typename?: 'EmissionClassExecutionReport';
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  reportData: Array<EmissionClassExecutionReportData>;
+};
+
+export type EmissionClassExecutionReportData = {
+  __typename?: 'EmissionClassExecutionReportData';
+  id: Scalars['ID'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  class1?: Maybe<Scalars['Float']>;
+  class2?: Maybe<Scalars['Float']>;
+  class3?: Maybe<Scalars['Float']>;
+  class4?: Maybe<Scalars['Float']>;
+  class5?: Maybe<Scalars['Float']>;
+  class6?: Maybe<Scalars['Float']>;
+  class7?: Maybe<Scalars['Float']>;
+  class8?: Maybe<Scalars['Float']>;
+  class9?: Maybe<Scalars['Float']>;
+  class10?: Maybe<Scalars['Float']>;
+};
+
+export type ObservedUnitExecutionReport = {
+  __typename?: 'ObservedUnitExecutionReport';
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  reportData: Array<ObservedUnitExecutionReportData>;
+};
+
+export type ObservedUnitExecutionReportData = {
+  __typename?: 'ObservedUnitExecutionReportData';
+  id: Scalars['ID'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  totalKilometersRequired?: Maybe<Scalars['Float']>;
+  totalKilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+};
+
+export type ObservedEmissionClassExecutionReport = {
+  __typename?: 'ObservedEmissionClassExecutionReport';
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  reportData: Array<ObservedEmissionClassExecutionReportData>;
+};
+
+export type ObservedEmissionClassExecutionReportData = {
+  __typename?: 'ObservedEmissionClassExecutionReportData';
+  id: Scalars['ID'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  class1?: Maybe<Scalars['Float']>;
+  class2?: Maybe<Scalars['Float']>;
+  class3?: Maybe<Scalars['Float']>;
+  class4?: Maybe<Scalars['Float']>;
+  class5?: Maybe<Scalars['Float']>;
+  class6?: Maybe<Scalars['Float']>;
+  class7?: Maybe<Scalars['Float']>;
+  class8?: Maybe<Scalars['Float']>;
+  class9?: Maybe<Scalars['Float']>;
+  class10?: Maybe<Scalars['Float']>;
 };
 
 export type ProcurementUnitOption = {

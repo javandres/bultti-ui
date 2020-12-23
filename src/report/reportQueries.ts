@@ -1,20 +1,5 @@
 import { gql } from '@apollo/client'
-
-export const TrackedDeparturesFragment = gql`
-  fragment TrackedDeparturesFragment on TrackedDeparturesData {
-    id
-    dayType
-    direction
-    journeyEndTime
-    journeyStartTime
-    routeId
-    trackReason
-  }
-`
-
-let fragments = {
-  TrackedDeparturesFragment: TrackedDeparturesFragment,
-}
+import { reportQueryFragments } from './reportQueryFragments'
 
 export const reportsQuery = gql`
   query inspectionReports($inspectionType: InspectionType!) {
@@ -27,11 +12,9 @@ export const reportsQuery = gql`
   }
 `
 
-export const createReportQueryByName = (
-  reportName: string,
-  dataFragmentName: keyof typeof fragments
-) => {
-  let dataFragment = fragments[dataFragmentName]
+export const createReportQueryByName = (reportName: string) => {
+  let dataFragmentName = `${reportName[0].toUpperCase() + reportName.substring(1)}Fragment`
+  let dataFragment = reportQueryFragments[dataFragmentName]
 
   return gql`
     query ${reportName}Report(

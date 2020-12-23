@@ -58,7 +58,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
   })
 
   let { data: report, loading: reportLoading, refetch } = useQueryData(
-    createReportQueryByName(reportName, 'TrackedDeparturesFragment'),
+    createReportQueryByName(reportName),
     {
       notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
