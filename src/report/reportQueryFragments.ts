@@ -10,6 +10,13 @@ routeId
 trackReason
 `
 
+let observedDepartureReportBaseFragment = `
+${departureReportBaseFragment}
+date
+observedArrivalTime
+observedDepartureTime
+`
+
 let emissionClassExecutionBaseFragment = `
 id
 procurementUnitId
@@ -50,6 +57,25 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometersObserved
       totalKilometersRequired
+    }
+  `,
+  ObservedLateDeparturesFragment: gql`
+    fragment ObservedLateDeparturesFragment on LateDeparturesReportData {
+      ${observedDepartureReportBaseFragment}
+      journeyKilometers
+      observedLateArrivalSeconds
+      observedLateDepartureSeconds
+      procurementUnitId
+      registryNr
+    }
+  `,
+  ObservedDeviationsFragment: gql`
+    fragment ObservedDeviationsFragment on ObservedDeviationsReportData {
+      ${observedDepartureReportBaseFragment}
+      registryNr
+      terminalTime
+      recoveryTime
+      observedOverlapSeconds
     }
   `,
 }

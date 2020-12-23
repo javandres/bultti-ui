@@ -287,6 +287,45 @@ type InspectionUserRelation {
   user: User!
 }
 
+type LateDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [LateDeparturesReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type LateDeparturesReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedLateArrivalSeconds: Float!
+  observedLateDepartureSeconds: Float!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
@@ -376,6 +415,44 @@ type ObservedDeparture {
   terminalTime: Int
   trackReason: TrackReason!
   uniqueVehicleId: String
+}
+
+type ObservedDeviationsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedDeviationsReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedDeviationsReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedOverlapSeconds: Float!
+  recoveryTime: Float!
+  registryNr: String!
+  routeId: String!
+  terminalTime: Float!
+  trackReason: TrackReason!
 }
 
 type ObservedEmissionClassExecutionReport {
@@ -587,8 +664,10 @@ type Query {
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   loadedHfpRanges: [HfpDateStatus!]!
+  observedDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedDeviationsReport!
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): LateDeparturesReport!
   observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
   operator(operatorId: Int!): Operator
   operators: [Operator!]!
