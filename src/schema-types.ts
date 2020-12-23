@@ -54,6 +54,7 @@ export type Query = {
   observedEmissionClassExecutionReport: ObservedEmissionClassExecutionReport;
   observedLateDeparturesReport: LateDeparturesReport;
   observedDeviationsReport: ObservedDeviationsReport;
+  observedEquipmentColorReport: ObservedEquipmentColorReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -239,6 +240,14 @@ export type QueryObservedLateDeparturesReportArgs = {
 
 
 export type QueryObservedDeviationsReportArgs = {
+  inspectionId: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+};
+
+
+export type QueryObservedEquipmentColorReportArgs = {
   inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
@@ -1064,6 +1073,46 @@ export type ObservedDeviationsReportData = {
   terminalTime: Scalars['Float'];
   recoveryTime: Scalars['Float'];
   observedOverlapSeconds: Scalars['Float'];
+};
+
+export type ObservedEquipmentColorReport = {
+  __typename?: 'ObservedEquipmentColorReport';
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  reportType: ReportType;
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  reportData: Array<ObservedEquipmentColorReportData>;
+};
+
+export type ObservedEquipmentColorReportData = {
+  __typename?: 'ObservedEquipmentColorReportData';
+  id: Scalars['ID'];
+  routeId: Scalars['String'];
+  dayType: Scalars['String'];
+  journeyStartTime: Scalars['String'];
+  journeyEndTime: Scalars['String'];
+  direction: Scalars['String'];
+  trackReason: TrackReason;
+  date: Scalars['String'];
+  observedDepartureTime: Scalars['DateTime'];
+  observedArrivalTime: Scalars['DateTime'];
+  procurementUnitId: Scalars['String'];
+  registryNr: Scalars['String'];
+  observedExteriorColor: Scalars['String'];
+  journeyKilometers: Scalars['Float'];
 };
 
 export type ProcurementUnitOption = {

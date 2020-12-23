@@ -491,6 +491,44 @@ type ObservedEmissionClassExecutionReportData {
   procurementUnitId: String
 }
 
+type ObservedEquipmentColorReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedEquipmentColorReportData!]!
+  reportType: ReportType!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedEquipmentColorReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedExteriorColor: String!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
 type ObservedExecutionRequirement {
   _sanctionPercentageValue: Float!
   _sanctionThresholdValue: Float!
@@ -666,6 +704,7 @@ type Query {
   loadedHfpRanges: [HfpDateStatus!]!
   observedDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedDeviationsReport!
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
+  observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentColorReport!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): LateDeparturesReport!
   observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!

@@ -78,4 +78,13 @@ export const reportQueryFragments = {
       observedOverlapSeconds
     }
   `,
+  ObservedEquipmentColorFragment: gql`
+    fragment ObservedEquipmentColorFragment on ObservedEquipmentColorReportData {
+      ${observedDepartureReportBaseFragment}
+      registryNr
+      observedExteriorColor
+      journeyKilometers
+      procurementUnitId
+    }
+  `,
 }
