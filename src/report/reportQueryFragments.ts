@@ -87,4 +87,20 @@ export const reportQueryFragments = {
       procurementUnitId
     }
   `,
+  BlockDeviationsFragment: gql`
+    fragment BlockDeviationsFragment on DeviationsReportData {
+      ${departureReportBaseFragment}
+      overlapSeconds
+      overlapPlannedBy
+      registryNr
+    }
+  `,
+  AllDeviationsFragment: gql`
+    fragment AllDeviationsFragment on DeviationsReportData {
+      ${departureReportBaseFragment}
+      overlapSeconds
+      overlapPlannedBy
+      registryNr
+    }
+  `,
 }

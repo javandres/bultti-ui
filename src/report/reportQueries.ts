@@ -33,7 +33,6 @@ export const createReportQueryByName = (reportName: string) => {
         name
         title
         columnLabels
-        reportType
         inspectionType
         totalCount
         filteredCount
