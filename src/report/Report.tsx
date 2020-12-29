@@ -8,7 +8,6 @@ import {
   InspectionType,
   ObservedExecutionRequirement,
   PageConfig,
-  ReportType,
   SortConfig,
 } from '../schema-types'
 import ListReport from './ListReport'
@@ -79,6 +78,12 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   let reportDataItems = useMemo(() => report?.reportData || [], [report])
 
+  let isExecutionRequirementReport = reportDataItems.some((d) =>
+    ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
+      d.__typename
+    )
+  )
+
   let columnLabels = useMemo(() => {
     return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
   }, [report])
@@ -135,7 +140,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         </Button>
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
-      {report && report?.reportType !== ReportType.ExecutionRequirement && (
+      {report && !isExecutionRequirementReport && (
         <>
           <ReportTableFilters
             filters={filters}
@@ -152,21 +157,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           />
         </>
       )}
-      {report?.reportType === ReportType.List ? (
-        <ListReport
-          sort={sort}
-          setSort={setSort}
-          items={reportDataItems}
-          columnLabels={columnLabels}
-        />
-      ) : report?.reportType === ReportType.PairList ? (
-        <PairListReport
-          sort={sort}
-          setSort={setSort}
-          items={reportDataItems}
-          columnLabels={columnLabels}
-        />
-      ) : report?.reportType === ReportType.ExecutionRequirement ? (
+      {isExecutionRequirementReport ? (
         inspectionType === InspectionType.Pre ? (
           <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
         ) : (
@@ -174,7 +165,14 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
             items={reportDataItems as ObservedExecutionRequirement[]}
           />
         )
-      ) : null}
+      ) : (
+        <ListReport
+          sort={sort}
+          setSort={setSort}
+          items={reportDataItems}
+          columnLabels={columnLabels}
+        />
+      )}
     </ReportView>
   )
 })

@@ -4375,7 +4375,7 @@
             "deprecationReason": null
           },
           {
-            "name": "startStop",
+            "name": "originStop",
             "description": null,
             "args": [],
             "type": {
@@ -4387,7 +4387,7 @@
             "deprecationReason": null
           },
           {
-            "name": "endStop",
+            "name": "destinationStop",
             "description": null,
             "args": [],
             "type": {
@@ -4974,7 +4974,7 @@
             "deprecationReason": null
           },
           {
-            "name": "originStopId",
+            "name": "originStop",
             "description": null,
             "args": [],
             "type": {
@@ -4986,7 +4986,7 @@
             "deprecationReason": null
           },
           {
-            "name": "destinationStopId",
+            "name": "destinationStop",
             "description": null,
             "args": [],
             "type": {
@@ -7748,22 +7748,6 @@
             "deprecationReason": null
           },
           {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "inspectionType",
             "description": null,
             "args": [],
@@ -7995,41 +7979,6 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "ReportType",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "LIST",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "PAIR_LIST",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "SUMMARY",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "EXECUTION_REQUIREMENT",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {
@@ -8471,22 +8420,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
                 "ofType": null
               }
             },
@@ -8940,22 +8873,6 @@
             "deprecationReason": null
           },
           {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "inspectionType",
             "description": null,
             "args": [],
@@ -9311,22 +9228,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
                 "ofType": null
               }
             },
@@ -9773,22 +9674,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
                 "ofType": null
               }
             },
@@ -10334,22 +10219,6 @@
             "deprecationReason": null
           },
           {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "inspectionType",
             "description": null,
             "args": [],
@@ -10865,22 +10734,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "reportType",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "ReportType",
                 "ofType": null
               }
             },

@@ -46,8 +46,8 @@ type Departure {
   dayType: String!
   departureId: String!
   departureType: DepartureType!
+  destinationStop: String
   direction: String
-  endStop: String
   equipment: Equipment
   equipmentAge: Float
   equipmentExteriorColor: String
@@ -63,6 +63,7 @@ type Departure {
   journeyEndTime: String!
   journeyStartTime: String!
   observedEquipmentType: String
+  originStop: String
   plannedEquipmentType: String
   preInspection: Inspection
   preInspectionId: String
@@ -72,7 +73,6 @@ type Departure {
   routeId: String
   routeLength: Int
   schemaId: String
-  startStop: String
   terminalTime: Int
   trackReason: TrackReason!
 }
@@ -89,7 +89,6 @@ type EmissionClassExecutionReport {
   page: PageConfig
   pages: Int!
   reportData: [EmissionClassExecutionReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -299,7 +298,6 @@ type LateDeparturesReport {
   page: PageConfig
   pages: Int!
   reportData: [LateDeparturesReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -380,7 +378,7 @@ type ObservedDeparture {
   departureDateTime: DateTime
   departureId: String!
   departureIsNextDay: Boolean!
-  destinationStopId: String
+  destinationStop: String
   direction: String
   equipmentRotation: Int
   equipmentTypeRequired: Boolean
@@ -403,7 +401,7 @@ type ObservedDeparture {
   observedOperatorId: Int
   observedRegistryDate: String
   observedRegistryNr: String
-  originStopId: String
+  originStop: String
   plannedEquipmentType: String
   plannedOperatorId: Int
   postInspectionId: String
@@ -429,7 +427,6 @@ type ObservedDeviationsReport {
   page: PageConfig
   pages: Int!
   reportData: [ObservedDeviationsReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -467,7 +464,6 @@ type ObservedEmissionClassExecutionReport {
   page: PageConfig
   pages: Int!
   reportData: [ObservedEmissionClassExecutionReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -503,7 +499,6 @@ type ObservedEquipmentColorReport {
   page: PageConfig
   pages: Int!
   reportData: [ObservedEquipmentColorReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -580,7 +575,6 @@ type ObservedUnitExecutionReport {
   page: PageConfig
   pages: Int!
   reportData: [ObservedUnitExecutionReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -763,7 +757,6 @@ type TrackedDeparturesReport {
   page: PageConfig
   pages: Int!
   reportData: [TrackedDeparturesReportData!]!
-  reportType: ReportType!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -860,13 +853,6 @@ enum OperatingAreaName {
   CENTER
   OTHER
   UNKNOWN
-}
-
-enum ReportType {
-  EXECUTION_REQUIREMENT
-  LIST
-  PAIR_LIST
-  SUMMARY
 }
 
 enum SortOrder {

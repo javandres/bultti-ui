@@ -475,8 +475,8 @@ export type Departure = {
   direction?: Maybe<Scalars['String']>;
   routeLength?: Maybe<Scalars['Int']>;
   dayType: Scalars['String'];
-  startStop?: Maybe<Scalars['String']>;
-  endStop?: Maybe<Scalars['String']>;
+  originStop?: Maybe<Scalars['String']>;
+  destinationStop?: Maybe<Scalars['String']>;
   plannedEquipmentType?: Maybe<Scalars['String']>;
   equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
   registryNr?: Maybe<Scalars['String']>;
@@ -537,8 +537,8 @@ export type ObservedDeparture = {
   observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
   arrivalDateTime?: Maybe<Scalars['DateTime']>;
   observedArrivalDateTime?: Maybe<Scalars['DateTime']>;
-  originStopId?: Maybe<Scalars['String']>;
-  destinationStopId?: Maybe<Scalars['String']>;
+  originStop?: Maybe<Scalars['String']>;
+  destinationStop?: Maybe<Scalars['String']>;
   terminalTime?: Maybe<Scalars['Int']>;
   recoveryTime?: Maybe<Scalars['Int']>;
   routeId?: Maybe<Scalars['String']>;
@@ -814,7 +814,6 @@ export type TrackedDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -830,13 +829,6 @@ export type TrackedDeparturesReport = {
   showUnsanctioned?: Maybe<Scalars['Boolean']>;
   reportData: Array<TrackedDeparturesReportData>;
 };
-
-export enum ReportType {
-  List = 'LIST',
-  PairList = 'PAIR_LIST',
-  Summary = 'SUMMARY',
-  ExecutionRequirement = 'EXECUTION_REQUIREMENT'
-}
 
 export type PageConfig = {
   __typename?: 'PageConfig';
@@ -892,7 +884,6 @@ export type EmissionClassExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -930,7 +921,6 @@ export type ObservedUnitExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -961,7 +951,6 @@ export type ObservedEmissionClassExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -999,7 +988,6 @@ export type LateDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -1040,7 +1028,6 @@ export type ObservedDeviationsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
@@ -1080,7 +1067,6 @@ export type ObservedEquipmentColorReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  reportType: ReportType;
   inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   filteredCount: Scalars['Int'];
