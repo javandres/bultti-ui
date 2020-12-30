@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirement, ExecutionRequirementValue } from '../schema-types'
+import { ExecutionRequirementValue } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
@@ -14,7 +14,7 @@ import {
 } from './executionRequirementUtils'
 
 const ExecutionRequirementsAreaContainer = styled.div`
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   margin-bottom: 1rem;
 
   &:first-child {
@@ -28,8 +28,15 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
+export interface IExecutionRequirement {
+  requirements: ExecutionRequirementValue[]
+  totalKilometers?: number | null
+  averageAgeWeighted?: number | null
+  averageAgeWeightedFulfilled?: number | null
+}
+
 export type PropTypes = {
-  executionRequirement: ExecutionRequirement
+  executionRequirement: IExecutionRequirement
   tableLayout?: RequirementsTableLayout
 }
 

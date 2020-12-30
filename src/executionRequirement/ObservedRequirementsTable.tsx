@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/components/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ObservedExecutionRequirement, ObservedExecutionValue } from '../schema-types'
+import { ObservedExecutionValue } from '../schema-types'
 import { lowerCase, orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
@@ -24,8 +24,15 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
+export interface IObservedExecutionRequirement {
+  observedRequirements: ObservedExecutionValue[]
+  totalKilometersRequired?: number | null
+  averageAgeWeightedObserved?: number | null
+  averageAgeWeightedRequired?: number | null
+}
+
 export type PropTypes = {
-  executionRequirement: ObservedExecutionRequirement
+  executionRequirement: IObservedExecutionRequirement
 }
 
 const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {

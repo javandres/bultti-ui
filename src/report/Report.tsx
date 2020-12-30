@@ -2,14 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { createReportQueryByName } from './reportQueries'
-import {
-  ExecutionRequirement,
-  FilterConfig,
-  InspectionType,
-  ObservedExecutionRequirement,
-  PageConfig,
-  SortConfig,
-} from '../schema-types'
+import { FilterConfig, InspectionType, PageConfig, SortConfig } from '../schema-types'
 import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
@@ -158,11 +151,9 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
       )}
       {isExecutionRequirementReport ? (
         inspectionType === InspectionType.Pre ? (
-          <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
+          <ExecutionRequirementsReport items={reportDataItems} />
         ) : (
-          <ObservedExecutionRequirementsReport
-            items={reportDataItems as ObservedExecutionRequirement[]}
-          />
+          <ObservedExecutionRequirementsReport items={reportDataItems} />
         )
       ) : (
         <ListReport

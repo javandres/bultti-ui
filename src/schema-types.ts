@@ -1015,7 +1015,7 @@ export type DeviationsReportData = {
   journeyEndTime: Scalars['String'];
   direction: Scalars['String'];
   trackReason: TrackReason;
-  registryNr: Scalars['String'];
+  registryNr?: Maybe<Scalars['String']>;
   terminalTime: Scalars['Float'];
   recoveryTime: Scalars['Float'];
   overlapSeconds: Scalars['Float'];
@@ -1274,10 +1274,10 @@ export type ExecutionRequirementsReportData = {
   id: Scalars['ID'];
   operatorId: Scalars['Int'];
   areaName: Scalars['String'];
-  totalKilometers?: Maybe<Scalars['Float']>;
-  totalKilometersFulfilled?: Maybe<Scalars['Float']>;
-  averageAgeWeighted?: Maybe<Scalars['Float']>;
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  totalKilometers: Scalars['Float'];
+  totalKilometersFulfilled: Scalars['Float'];
+  averageAgeWeighted: Scalars['Float'];
+  averageAgeWeightedFulfilled: Scalars['Float'];
   requirements: Array<ExecutionRequirementValue>;
 };
 
@@ -1755,10 +1755,10 @@ export type ObservedExecutionRequirementsReportData = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   areaName: Scalars['String'];
-  totalKilometersRequired?: Maybe<Scalars['Float']>;
-  totalKilometersObserved?: Maybe<Scalars['Float']>;
-  averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
-  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  totalKilometersRequired: Scalars['Float'];
+  totalKilometersObserved: Scalars['Float'];
+  averageAgeWeightedRequired: Scalars['Float'];
+  averageAgeWeightedObserved: Scalars['Float'];
   observedRequirements: Array<ObservedExecutionValue>;
 };
 

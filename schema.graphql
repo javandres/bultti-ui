@@ -205,7 +205,7 @@ type DeviationsReportData {
   overlapPlannedBy: String
   overlapSeconds: Float!
   recoveryTime: Float!
-  registryNr: String!
+  registryNr: String
   routeId: String!
   terminalTime: Float!
   trackReason: TrackReason!
@@ -471,13 +471,13 @@ type ExecutionRequirementsReport {
 
 type ExecutionRequirementsReportData {
   areaName: String!
-  averageAgeWeighted: Float
-  averageAgeWeightedFulfilled: Float
+  averageAgeWeighted: Float!
+  averageAgeWeightedFulfilled: Float!
   id: ID!
   operatorId: Int!
   requirements: [ExecutionRequirementValue!]!
-  totalKilometers: Float
-  totalKilometersFulfilled: Float
+  totalKilometers: Float!
+  totalKilometersFulfilled: Float!
 }
 
 type ExtraBlockDeparturesReport {
@@ -960,15 +960,15 @@ type ObservedExecutionRequirementsReport {
 
 type ObservedExecutionRequirementsReportData {
   areaName: String!
-  averageAgeWeightedObserved: Float
-  averageAgeWeightedRequired: Float
+  averageAgeWeightedObserved: Float!
+  averageAgeWeightedRequired: Float!
   endDate: BulttiDate!
   id: ID!
   observedRequirements: [ObservedExecutionValue!]!
   operatorId: Int!
   startDate: BulttiDate!
-  totalKilometersObserved: Float
-  totalKilometersRequired: Float
+  totalKilometersObserved: Float!
+  totalKilometersRequired: Float!
 }
 
 type ObservedExecutionValue {

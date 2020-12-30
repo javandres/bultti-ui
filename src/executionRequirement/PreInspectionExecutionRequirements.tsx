@@ -72,12 +72,12 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
           </>
         )}
         <LoadingDisplay loading={requirementsLoading} style={{ top: '0' }} />
-        {areaExecutionRequirements.map((areaRequirements) => (
-          <AreaWrapper key={areaRequirements.area.id}>
-            <AreaHeading>{areaRequirements.area.name}</AreaHeading>
+        {areaExecutionRequirements.map((areaRequirement) => (
+          <AreaWrapper key={areaRequirement.area.id}>
+            <AreaHeading>{areaRequirement.area.name}</AreaHeading>
             <RequirementsTable
               tableLayout={RequirementsTableLayout.BY_VALUES}
-              executionRequirement={areaRequirements}
+              executionRequirement={areaRequirement}
             />
           </AreaWrapper>
         ))}
