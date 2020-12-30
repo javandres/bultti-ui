@@ -13,7 +13,7 @@ import { FilterConfig } from '../schema-types'
 import UserHint from '../common/components/UserHint'
 
 const ReportTableFiltersView = styled.div`
-  margin: 1rem 0;
+  margin: 1rem 0 0;
   padding: 1rem;
   background: var(--white-grey);
   border-radius: 1rem;

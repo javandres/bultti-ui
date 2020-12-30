@@ -9,7 +9,6 @@ const ReportPagingView = styled.div`
   justify-content: space-between;
   padding: 0.5rem 1rem;
   margin: 0 -1rem;
-  border-top: 1px solid var(--lightest-grey);
 `
 
 const PageValue = styled.div`

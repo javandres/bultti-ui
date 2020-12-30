@@ -16,7 +16,6 @@ import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import DownloadReport from './DownloadReport'
-import PairListReport from './PairListReport'
 import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
@@ -30,7 +29,7 @@ const ReportView = styled.div`
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
-  margin: -0.25rem -1rem 1rem;
+  margin: -0.25rem -1rem 0;
 `
 
 export type PropTypes = {
