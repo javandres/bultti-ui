@@ -85,9 +85,9 @@ const ReportPaging = observer(
         <PageValue>
           Rivejä per sivu: <strong>{reportData.page?.pageSize}</strong>
         </PageValue>
-        {reportData.page?.pageSize !== reportData.reportEntities?.length && (
+        {reportData.page?.pageSize !== reportData.reportData?.length && (
           <PageValue>
-            Rivejä näkymässä: <strong>{reportData.reportEntities?.length}</strong>
+            Rivejä näkymässä: <strong>{reportData.reportData?.length}</strong>
           </PageValue>
         )}
         <PagingWrapper>
