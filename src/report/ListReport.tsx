@@ -33,7 +33,7 @@ const ListReport = observer(
       }
 
       if (typeof val === 'number') {
-        return toString(round(val))
+        return round(val)
       }
 
       if (val.length >= 20) {

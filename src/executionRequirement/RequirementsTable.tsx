@@ -64,14 +64,14 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         return orderBy(requirementValues, 'emissionClass', 'desc')
       }
 
-      let kilometerRow = { unit: 'kilometers', total: 0 }
-      let percentageRow = { unit: 'percentage', total: 0 }
+      let kilometerRow = { unit: 'kilometers', total: '0' }
+      let percentageRow = { unit: 'percentage', total: '0' }
 
       for (let i = 1; i <= 10; i++) {
         let currentRequirement = requirementValues.find((req) => req.emissionClass === i)
 
-        kilometerRow[i] = currentRequirement?.kilometerRequirement || 0
-        percentageRow[i] = currentRequirement?.quotaRequirement || 0
+        kilometerRow[i] = Big(currentRequirement?.kilometerRequirement || '0').toString()
+        percentageRow[i] = Big(currentRequirement?.quotaRequirement || '0').toString()
       }
 
       kilometerRow.total = getTotal(requirementValues, 'kilometerRequirement')

@@ -16,13 +16,14 @@ import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/e
 import { addBatchEquipmentMutation, createEquipmentMutation } from './equipmentQuery'
 import { useCallback } from 'react'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
+import Big from 'big.js'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
-  percentageQuota: number
-  meterRequirement: number
-  kilometerRequirement?: number
+  percentageQuota: number | string
+  meterRequirement: number | string
+  kilometerRequirement?: number | string
   amount: number
-  age: number
+  age: number | string
 }
 
 export type EquipmentWithQuota = Equipment & {
@@ -94,7 +95,7 @@ export function groupedEquipment(
     let percentageQuota = getTotal(equipmentGroup, 'percentageQuota')
     let meterRequirement = getTotal(equipmentGroup, 'meterRequirement')
 
-    let kilometerRequirement = meterRequirement / 1000
+    let kilometerRequirement = Big(meterRequirement).div(1000).toString()
 
     let age = round(
       differenceInCalendarDays(startDate, parseISO(equipmentGroup[0].registryDate)) / 365

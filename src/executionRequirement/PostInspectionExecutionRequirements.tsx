@@ -270,7 +270,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         return ''
       }
 
-      let totalVal = round(getTotal<any, string>(requirement.observedRequirements, key))
+      let totalVal = round(getTotal<any, string>(requirement.observedRequirements, key), 3)
 
       switch (key) {
         case 'quotaRequired':

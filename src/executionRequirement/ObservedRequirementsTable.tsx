@@ -59,10 +59,8 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
   }, [executionRequirement])
 
   let renderDisplayValue = useCallback((key, val) => {
-    let displayVal = round(val, 3)
     let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
-
-    return `${displayVal} ${displayUnit}`
+    return `${round(val, 3)} ${displayUnit}`
   }, [])
 
   let renderTableValue = useCallback((key, val, isHeader = false, item) => {
@@ -104,7 +102,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         return ''
       }
 
-      let totalVal = round(getTotal<any, string>(requirementRows, key))
+      let totalVal = round(getTotal<any, string>(requirementRows, key), 3)
 
       switch (key) {
         case 'quotaRequired':
@@ -113,10 +111,10 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         case 'cumulativeDifferencePercentage':
         case 'sanctionablePercentage':
         case 'sanctionAmount':
-          return `${round(totalVal, 3)}%`
+          return `${totalVal}%`
         case 'kilometersRequired':
         case 'kilometersObserved':
-          return `${round(totalVal, 3)} km`
+          return `${totalVal} km`
         case 'equipmentCountRequired':
         case 'equipmentCountObserved':
           return `${totalVal} kpl`
