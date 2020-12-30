@@ -14,8 +14,7 @@ import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 
 const InspectionReportsView = styled.div`
-  height: 100%;
-  padding: 0 1rem;
+  padding: 0 1rem 2rem;
   margin-bottom: 2rem;
   position: relative;
 `
@@ -76,15 +75,15 @@ const InspectionReports = observer(
         )}
         <LoadingDisplay loading={reportsLoading} />
         {inspection &&
-          reports.map((reportItem) => (
+          reports.map((reportListItem) => (
             <ReportListItem
-              key={reportItem.name}
+              key={reportListItem.name}
               inspectionType={showItemActions ? inspection.inspectionType! : undefined}
               inspectionId={showItemActions ? inspectionId : undefined}
-              reportData={reportItem}
+              reportData={reportListItem}
               isExpanded={reportsExpanded}>
               <Report
-                reportName={reportItem.name}
+                reportName={reportListItem.name}
                 inspectionId={inspectionId}
                 inspectionType={inspection.inspectionType}
               />

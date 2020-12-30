@@ -6,7 +6,25 @@ schema {
   subscription: Subscription
 }
 
-union ReportEntityUnion = Departure | DeparturePair | EmissionClassExecutionItem | ExecutionRequirement | MissingEquipment | ObservedDeparture | ObservedExecutionRequirement | ObservedUnitExecutionItem | OperatorBlockDeparture
+type BlockDeviationsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [DeviationsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
 
 type Contract {
   createdAt: DateTime!
@@ -42,59 +60,178 @@ type ContractUserRelation {
   user: User!
 }
 
-type Departure {
-  allowedOverAge: Float
+type DeadrunsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [DeadrunsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DeadrunsReportData {
+  aDestinationStop: String!
+  aDirection: String!
+  aJourneyEndTime: String!
+  aJourneyStartTime: String!
+  aOriginStop: String!
+  aRecoveryTime: Float!
+  aRouteId: String!
+  aTerminalTime: Float!
+  bDestinationStop: String!
+  bDirection: String!
+  bJourneyEndTime: String!
+  bJourneyStartTime: String!
+  bOriginStop: String!
+  bRecoveryTime: Float!
+  bRouteId: String!
+  bTerminalTime: Float!
   blockNumber: String
   dayType: String!
-  departureId: String!
-  departureType: DepartureType!
-  direction: String
-  endStop: String
-  equipment: Equipment
-  equipmentAge: Float
-  equipmentExteriorColor: String
-  equipmentId: String
-  equipmentRegistryDate: BulttiDate
+  deadrunMinutes: Int!
+  deadrunPlannedBy: String!
   equipmentRotation: Int
-  equipmentTypeRequired: Boolean
-  id: ID
-  infoSystems: Boolean
-  isNextDay: Boolean!
-  isTracked: Boolean
-  isTrunkRoute: Boolean
+  id: ID!
+  schemaId: String
+}
+
+type DepartureBlocksReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [DepartureBlocksReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DepartureBlocksReportData {
+  blockNumber: String!
+  dayType: String!
+  direction: String!
+  id: ID!
   journeyEndTime: String!
   journeyStartTime: String!
-  observedEquipmentType: String
-  plannedEquipmentType: String
-  preInspection: Inspection
-  preInspectionId: String
-  procurementUnitId: String
-  recoveryTime: Int
+  journeyType: String!
   registryNr: String
-  routeId: String
-  routeLength: Int
-  schemaId: String
-  startStop: String
-  terminalTime: Int
+  routeId: String!
+  vehicleId: String
+}
+
+type DeviationsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [DeviationsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DeviationsReportData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  overlapPlannedBy: String
+  overlapSeconds: Float!
+  recoveryTime: Float!
+  registryNr: String
+  routeId: String!
+  terminalTime: Float!
   trackReason: TrackReason!
 }
 
-type DeparturePair {
-  deadrunEndStop: String
-  deadrunMinutes: Int
-  deadrunPlannedBy: String
-  deadrunStartStop: String
-  departureA: Departure!
-  departureB: Departure!
-  departurePairType: String
-  groupId: String
-  id: ID!
-  overlapPlannedBy: String
-  overlapSecondsA: Int
-  overlapSecondsB: Int
+type EarlyTimingStopDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [EarlyTimingStopDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
 }
 
-type EmissionClassExecutionItem {
+type EarlyTimingStopDeparturesReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedDepartureDifferenceSeconds: Int!
+  observedDepartureTime: String!
+  plannedDepartureTime: String!
+  procurementUnitId: String!
+  routeId: String!
+  stopId: String!
+  trackReason: TrackReason!
+}
+
+type EmissionClassExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [EmissionClassExecutionReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type EmissionClassExecutionReportData {
   class1: Float
   class10: Float
   class2: Float
@@ -111,7 +248,6 @@ type EmissionClassExecutionItem {
 
 type Equipment {
   approvedOverage: Boolean!
-  departures: [Departure!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   executionRequirementQuotas: [ExecutionRequirementQuota!]!
@@ -119,7 +255,6 @@ type Equipment {
   hasInfoSystems: Boolean!
   id: ID!
   model: String
-  observedDeparturesObserved: [ObservedDeparture!]!
   operator: Operator!
   operatorId: Int!
   option: Boolean!
@@ -152,6 +287,38 @@ type EquipmentCatalogueQuota {
   percentageQuota: Float!
 }
 
+type EquipmentColorReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [EquipmentColorReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type EquipmentColorReportData {
+  dayType: String!
+  direction: String!
+  equipmentExteriorColor: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
 type EquipmentSearchResult {
   _exists: Boolean!
   emissionClass: Int!
@@ -161,6 +328,40 @@ type EquipmentSearchResult {
   registryNr: String
   type: String!
   vehicleId: String!
+}
+
+type EquipmentTypeReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [EquipmentTypeReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type EquipmentTypeReportData {
+  dayType: String!
+  direction: String!
+  equipmentTypeRequired: Boolean!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  observedEquipmentType: String!
+  plannedEquipmentType: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type ExecutionRequirement {
@@ -194,19 +395,80 @@ type ExecutionRequirementQuota {
 }
 
 type ExecutionRequirementValue {
+  averageAgeWeightedFulfilled: Int
   classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float
   emissionClass: Int!
   equipmentCount: Int
   equipmentCountFulfilled: Int
-  fulfilledAverageAgeWeighted: Int
   kilometerRequirement: Float
   kilometersFulfilled: Float
   quotaFulfilled: Float
   quotaRequirement: Float
   sanctionAmount: Float
   sanctionThreshold: Float
+}
+
+type ExecutionRequirementsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ExecutionRequirementsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ExecutionRequirementsReportData {
+  areaName: String!
+  averageAgeWeighted: Float!
+  averageAgeWeightedFulfilled: Float!
+  id: ID!
+  operatorId: Int!
+  requirements: [ExecutionRequirementValue!]!
+  totalKilometers: Float!
+  totalKilometersFulfilled: Float!
+}
+
+type ExtraBlockDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ExtraBlockDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ExtraBlockDeparturesReportData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type FilterConfig {
@@ -283,14 +545,104 @@ type InspectionUserRelation {
   user: User!
 }
 
-type MissingEquipment {
+type LateDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [LateDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type LateDeparturesReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedLateArrivalSeconds: Float!
+  observedLateDepartureSeconds: Float!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type MissingBlockDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [MissingBlockDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type MissingBlockDeparturesReportData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type MissingEquipmentReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [MissingEquipmentReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type MissingEquipmentReportData {
   blockNumber: String
+  id: ID!
   registryNr: String
+  vehicleId: String
 }
 
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
-  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
+  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
@@ -332,51 +684,152 @@ type Mutation {
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
 }
 
-type ObservedDeparture {
-  arrivalDateTime: DateTime
-  arrivalIsNextDay: Boolean!
-  blockJourneyEndTime: String
-  blockNumber: String
+type ObservedDeviationsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedDeviationsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedDeviationsReportData {
   date: String!
   dayType: String!
-  departureDateTime: DateTime
-  departureId: String!
-  departureIsNextDay: Boolean!
-  destinationStopId: String
-  direction: String
-  equipmentRotation: Int
-  equipmentTypeRequired: Boolean
+  direction: String!
   id: ID!
-  isComplete: Boolean
-  isTracked: Boolean
-  isTrunkRoute: Boolean
   journeyEndTime: String!
-  journeyId: String
   journeyStartTime: String!
-  observedArrivalDateTime: DateTime
-  observedDepartureDateTime: DateTime
-  observedEquipment: Equipment
-  observedEquipmentAge: Float
-  observedEquipmentId: String
-  observedEquipmentType: String
-  observedExteriorColor: String
-  observedLateArrivalSeconds: Int
-  observedLateDepartureSeconds: Int
-  observedOperatorId: Int
-  observedRegistryDate: String
-  observedRegistryNr: String
-  originStopId: String
-  plannedEquipmentType: String
-  plannedOperatorId: Int
-  postInspectionId: String
-  procurementUnitId: String
-  recoveryTime: Int
-  routeId: String
-  routeLength: Int
-  schemaId: String
-  terminalTime: Int
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedOverlapSeconds: Float!
+  recoveryTime: Float!
+  registryNr: String!
+  routeId: String!
+  terminalTime: Float!
   trackReason: TrackReason!
-  uniqueVehicleId: String
+}
+
+type ObservedEmissionClassExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedEmissionClassExecutionReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedEmissionClassExecutionReportData {
+  class1: Float
+  class10: Float
+  class2: Float
+  class3: Float
+  class4: Float
+  class5: Float
+  class6: Float
+  class7: Float
+  class8: Float
+  class9: Float
+  id: ID!
+  procurementUnitId: String
+}
+
+type ObservedEquipmentColorReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedEquipmentColorReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedEquipmentColorReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedExteriorColor: String!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type ObservedEquipmentTypeReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedEquipmentTypeReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedEquipmentTypeReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  equipmentTypeRequired: Boolean!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedEquipmentType: String!
+  plannedEquipmentType: String!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type ObservedExecutionRequirement {
@@ -399,6 +852,39 @@ type ObservedExecutionRequirement {
   totalKilometersRequired: Float
 }
 
+type ObservedExecutionRequirementsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedExecutionRequirementsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedExecutionRequirementsReportData {
+  areaName: String!
+  averageAgeWeightedObserved: Float!
+  averageAgeWeightedRequired: Float!
+  endDate: BulttiDate!
+  id: ID!
+  observedRequirements: [ObservedExecutionValue!]!
+  operatorId: Int!
+  startDate: BulttiDate!
+  totalKilometersObserved: Float!
+  totalKilometersRequired: Float!
+}
+
 type ObservedExecutionValue {
   averageAgeWeightedObserved: Float
   averageAgeWeightedRequired: Float
@@ -418,7 +904,65 @@ type ObservedExecutionValue {
   sanctionablePercentage: Float
 }
 
-type ObservedUnitExecutionItem {
+type ObservedOverAgeDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedOverAgeDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedOverAgeDeparturesReportData {
+  date: String!
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  observedArrivalTime: DateTime!
+  observedDepartureTime: DateTime!
+  observedEquipmentAge: Float!
+  overAgeType: String!
+  procurementUnitId: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type ObservedUnitExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [ObservedUnitExecutionReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type ObservedUnitExecutionReportData {
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String
@@ -445,23 +989,57 @@ type Operator {
   procurementUnits: [ProcurementUnit!]!
 }
 
-type OperatorBlockDeparture {
-  blockNumber: String
+type OperatorDeadrunsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [DeadrunsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type OverAgeDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [OverAgeDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type OverAgeDeparturesReportData {
   dayType: String!
-  direction: String
-  equipment: Equipment
-  equipmentId: String
+  direction: String!
   id: ID!
-  inspectionId: String
   journeyEndTime: String!
   journeyStartTime: String!
-  journeyType: String!
-  operatorId: String
-  procurementUnitId: String
-  registryNr: String
-  routeId: String
-  routeLength: Int
-  vehicleId: String
+  observedEquipmentAge: Float!
+  overAgeType: String!
+  registryNr: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type PageConfig {
@@ -505,10 +1083,11 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DeviationsReport!
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
+  blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): BlockDeviationsReport!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
@@ -518,52 +1097,61 @@ type Query {
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
+  deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DeadrunsReport!
+  departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DepartureBlocksReport!
+  earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport!
+  emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EmissionClassExecutionReport!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue: [EquipmentCatalogue!]!
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
+  equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentColorReport!
+  equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentTypeReport!
   executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
+  executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExecutionRequirementsReport!
+  extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
   inspection(inspectionId: String!): Inspection
-  inspectionReportByName(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, reportName: String!, sort: [InputSortConfig!]): Report
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   loadedHfpRanges: [HfpDateStatus!]!
+  missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingBlockDeparturesReport!
+  missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingEquipmentReport!
+  observedDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedDeviationsReport!
+  observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
+  observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentColorReport!
+  observedEquipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentTypeReport!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  observedExecutionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedExecutionRequirementsReport!
+  observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): LateDeparturesReport!
+  observedOverageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedOverAgeDeparturesReport!
+  observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
   operator(operatorId: Int!): Operator
+  operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): OperatorDeadrunsReport!
   operators: [Operator!]!
+  overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): OverAgeDeparturesReport!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
-  reports(inspectionType: InspectionType): [Report!]!
+  reports(inspectionType: InspectionType!): [ReportListItem!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
+  trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
+  unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnitExecutionReport!
   user(userId: Int!): User
   users: [User!]!
 }
 
-type Report {
-  columnLabels: String
+type ReportListItem {
   description: String!
-  filteredCount: Int
-  filters: [FilterConfig!]
-  inspection: Inspection
   inspectionType: InspectionType!
   name: String!
-  operator: Operator
-  page: PageConfig
-  pages: Int
-  reportEntities: [ReportEntityUnion!]!
-  reportType: ReportType
-  season: Season
-  sort: [SortConfig!]
   title: String!
-  totalCount: Int
 }
 
 type Season {
@@ -584,6 +1172,64 @@ type Subscription {
   hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): Inspection
+}
+
+type TrackedDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [TrackedDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type TrackedDeparturesReportData {
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  routeId: String!
+  trackReason: TrackReason!
+}
+
+type UnitExecutionReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [UnitExecutionReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type UnitExecutionReportData {
+  averageAgeWeightedFulfilled: Float!
+  id: ID!
+  procurementUnitId: String!
+  totalKilometers: Float!
+  totalKilometersFulfilled: Float!
 }
 
 type User {
@@ -609,11 +1255,6 @@ enum ContractUserRelationType {
   CREATED_BY
   SUBSCRIBED_TO
   UPDATED_BY
-}
-
-enum DepartureType {
-  BLOCK
-  SCHEMA
 }
 
 enum HfpStatus {
@@ -664,13 +1305,6 @@ enum OperatingAreaName {
   CENTER
   OTHER
   UNKNOWN
-}
-
-enum ReportType {
-  EXECUTION_REQUIREMENT
-  LIST
-  PAIR_LIST
-  SUMMARY
 }
 
 enum SortOrder {

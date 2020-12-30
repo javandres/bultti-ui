@@ -5,19 +5,7 @@
         }
       }
       const result: PossibleTypesResultData = {
-  "possibleTypes": {
-    "ReportEntityUnion": [
-      "Departure",
-      "MissingEquipment",
-      "DeparturePair",
-      "OperatorBlockDeparture",
-      "ExecutionRequirement",
-      "EmissionClassExecutionItem",
-      "ObservedDeparture",
-      "ObservedExecutionRequirement",
-      "ObservedUnitExecutionItem"
-    ]
-  }
+  "possibleTypes": {}
 };
       export default result;
     

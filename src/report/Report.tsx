@@ -1,25 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { reportByName } from './reportQueries'
-import {
-  DeparturePair,
-  ExecutionRequirement,
-  FilterConfig,
-  InspectionType,
-  ObservedExecutionRequirement,
-  PageConfig,
-  Report as ReportDataType,
-  ReportType,
-  SortConfig,
-} from '../schema-types'
+import { createReportQueryByName } from './reportQueries'
+import { FilterConfig, InspectionType, PageConfig, SortConfig } from '../schema-types'
 import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 import DownloadReport from './DownloadReport'
-import PairListReport from './PairListReport'
 import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
@@ -33,7 +22,7 @@ const ReportView = styled.div`
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
-  margin: -0.25rem -1rem 1rem;
+  margin: -0.25rem -1rem 0;
 `
 
 export type PropTypes = {
@@ -59,8 +48,8 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     page,
   })
 
-  let { data: reportData, loading: reportLoading, refetch } = useQueryData<ReportDataType>(
-    reportByName,
+  let { data: report, loading: reportLoading, refetch } = useQueryData(
+    createReportQueryByName(reportName),
     {
       notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
@@ -79,11 +68,17 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     onUpdateFetchProps()
   }, [sort, page])
 
-  let reportDataItems = useMemo(() => reportData?.reportEntities || [], [reportData])
+  let reportDataItems = useMemo(() => report?.reportData || [], [report])
+
+  let isExecutionRequirementReport = reportDataItems.some((d) =>
+    ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
+      d.__typename
+    )
+  )
 
   let columnLabels = useMemo(() => {
-    return reportData?.columnLabels ? JSON.parse(reportData?.columnLabels) : undefined
-  }, [reportData])
+    return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
+  }, [report])
 
   let onPageNav = useCallback(
     (offset) => {
@@ -91,7 +86,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         setPage((currentPage) => {
           let nextPageIdx = Math.min(
             Math.max(currentPage.page + offset, 1),
-            reportData?.pages || 1
+            report?.pages || 1
           )
 
           return {
@@ -101,13 +96,13 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         })
       }
     },
-    [reportData?.pages]
+    [report?.pages]
   )
 
   let onSetPage = useCallback(
     (setPageTo) => {
       setPage((currentPage) => {
-        let nextPageIdx = Math.min(Math.max(setPageTo, 1), reportData?.pages || 1)
+        let nextPageIdx = Math.min(Math.max(setPageTo, 1), report?.pages || 1)
 
         return {
           ...currentPage,
@@ -115,7 +110,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         }
       })
     },
-    [reportData?.pages]
+    [report?.pages]
   )
 
   return (
@@ -137,7 +132,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
         </Button>
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
-      {reportData && reportData?.reportType !== ReportType.ExecutionRequirement && (
+      {report && !isExecutionRequirementReport && (
         <>
           <ReportTableFilters
             filters={filters}
@@ -150,33 +145,24 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
             onSetPage={onSetPage}
             onNextPage={onPageNav(1)}
             onPrevPage={onPageNav(-1)}
-            reportData={reportData}
+            reportData={report}
           />
         </>
       )}
-      {reportData?.reportType === ReportType.List ? (
+      {isExecutionRequirementReport ? (
+        inspectionType === InspectionType.Pre ? (
+          <ExecutionRequirementsReport items={reportDataItems} />
+        ) : (
+          <ObservedExecutionRequirementsReport items={reportDataItems} />
+        )
+      ) : (
         <ListReport
           sort={sort}
           setSort={setSort}
           items={reportDataItems}
           columnLabels={columnLabels}
         />
-      ) : reportData?.reportType === ReportType.PairList ? (
-        <PairListReport
-          sort={sort}
-          setSort={setSort}
-          items={reportDataItems as DeparturePair[]}
-          columnLabels={columnLabels}
-        />
-      ) : reportData?.reportType === ReportType.ExecutionRequirement ? (
-        inspectionType === InspectionType.Pre ? (
-          <ExecutionRequirementsReport items={reportDataItems as ExecutionRequirement[]} />
-        ) : (
-          <ObservedExecutionRequirementsReport
-            items={reportDataItems as ObservedExecutionRequirement[]}
-          />
-        )
-      ) : null}
+      )}
     </ReportView>
   )
 })

@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { Report } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import Dropdown from '../common/input/Dropdown'
 
@@ -10,7 +9,6 @@ const ReportPagingView = styled.div`
   justify-content: space-between;
   padding: 0.5rem 1rem;
   margin: 0 -1rem;
-  border-top: 1px solid var(--lightest-grey);
 `
 
 const PageValue = styled.div`
@@ -55,7 +53,7 @@ const PageSelectDropdown = styled(Dropdown)`
 `
 
 export type PropTypes = {
-  reportData: Report
+  reportData: any
   onNextPage: () => unknown
   onPrevPage: () => unknown
   onSetPage: (setToPage: number) => unknown
@@ -87,9 +85,9 @@ const ReportPaging = observer(
         <PageValue>
           Rivejä per sivu: <strong>{reportData.page?.pageSize}</strong>
         </PageValue>
-        {reportData.page?.pageSize !== reportData.reportEntities?.length && (
+        {reportData.page?.pageSize !== reportData.reportData?.length && (
           <PageValue>
-            Rivejä näkymässä: <strong>{reportData.reportEntities?.length}</strong>
+            Rivejä näkymässä: <strong>{reportData.reportData?.length}</strong>
           </PageValue>
         )}
         <PagingWrapper>
