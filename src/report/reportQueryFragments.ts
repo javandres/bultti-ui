@@ -32,6 +32,32 @@ class9
 class10
 `
 
+let departurePairBaseFragment = `
+id
+dayType
+aRouteId
+aDirection
+aJourneyStartTime
+aJourneyEndTime
+aOriginStop
+aDestinationStop
+aTerminalTime
+aRecoveryTime
+bRouteId
+bDirection
+bJourneyStartTime
+bJourneyEndTime
+bOriginStop
+bDestinationStop
+bTerminalTime
+bRecoveryTime
+blockNumber
+equipmentRotation
+schemaId
+deadrunMinutes
+deadrunPlannedBy
+`
+
 // The keys should match the capitalized reportName + 'Fragment'.
 // Example: report name 'trackedDepartures' becomes fragment name 'TrackedDeparturesFragment'
 export const reportQueryFragments = {
@@ -69,6 +95,16 @@ export const reportQueryFragments = {
       registryNr
     }
   `,
+  ObservedOverageDeparturesFragment: gql`
+    fragment ObservedOverageDeparturesFragment on ObservedOverAgeDeparturesReportData {
+      ${observedDepartureReportBaseFragment}
+      registryNr
+      procurementUnitId
+      observedEquipmentAge
+      overAgeType
+      journeyKilometers
+    }
+  `,
   ObservedDeviationsFragment: gql`
     fragment ObservedDeviationsFragment on ObservedDeviationsReportData {
       ${observedDepartureReportBaseFragment}
@@ -87,6 +123,59 @@ export const reportQueryFragments = {
       procurementUnitId
     }
   `,
+  ObservedEquipmentTypeFragment: gql`
+    fragment ObservedEquipmentTypeFragment on ObservedEquipmentTypeReportData {
+      ${observedDepartureReportBaseFragment}
+      registryNr
+      journeyKilometers
+      procurementUnitId
+      equipmentTypeRequired
+      observedEquipmentType
+      plannedEquipmentType
+    }
+  `,
+  ObservedExecutionRequirementsFragment: gql`
+    fragment ObservedExecutionRequirementsFragment on ObservedExecutionRequirementsReportData {
+      id
+      operatorId
+      areaName
+      startDate
+      endDate
+      totalKilometersRequired
+      totalKilometersObserved
+      averageAgeWeightedRequired
+      averageAgeWeightedObserved
+      observedRequirements {
+        id
+        emissionClass
+        kilometersRequired
+        quotaRequired
+        kilometersObserved
+        quotaObserved
+        differencePercentage
+        cumulativeDifferencePercentage
+        equipmentCountRequired
+        equipmentCountObserved
+        averageAgeWeightedRequired
+        averageAgeWeightedObserved
+        sanctionThreshold
+        sanctionablePercentage
+        sanctionAmount
+      }
+    }
+  `,
+  EarlyTimingStopDeparturesFragment: gql`
+    fragment EarlyTimingStopDeparturesFragment on EarlyTimingStopDeparturesReportData {
+      ${departureReportBaseFragment}
+      date
+      stopId
+      procurementUnitId
+      plannedDepartureTime
+      observedDepartureTime
+      observedDepartureDifferenceSeconds
+      journeyKilometers
+    }
+  `,
   BlockDeviationsFragment: gql`
     fragment BlockDeviationsFragment on DeviationsReportData {
       ${departureReportBaseFragment}
@@ -101,6 +190,107 @@ export const reportQueryFragments = {
       overlapSeconds
       overlapPlannedBy
       registryNr
+    }
+  `,
+  DeadrunsFragment: gql`
+    fragment DeadrunsFragment on DeadrunsReportData {
+      ${departurePairBaseFragment}
+    }
+  `,
+  OperatorDeadrunsFragment: gql`
+    fragment OperatorDeadrunsFragment on DeadrunsReportData {
+      ${departurePairBaseFragment}
+    }
+  `,
+  DepartureBlocksFragment: gql`
+    fragment DepartureBlocksFragment on DepartureBlocksReportData {
+      id
+      dayType
+      routeId
+      direction
+      journeyStartTime
+      journeyEndTime
+      blockNumber
+      journeyType
+      registryNr
+      vehicleId
+    }
+  `,
+  EquipmentColorFragment: gql`
+    fragment EquipmentColorFragment on EquipmentColorReportData {
+      ${departureReportBaseFragment}
+      registryNr
+      equipmentExteriorColor
+    }
+  `,
+  EquipmentTypeFragment: gql`
+    fragment EquipmentTypeFragment on EquipmentTypeReportData {
+      ${departureReportBaseFragment}
+      registryNr
+      plannedEquipmentType
+      observedEquipmentType
+      equipmentTypeRequired
+    }
+  `,
+  ExecutionRequirementsFragment: gql`
+    fragment ExecutionRequirementsFragment on ExecutionRequirementsReportData {
+      id
+      operatorId
+      areaName
+      totalKilometers
+      totalKilometersFulfilled
+      averageAgeWeighted
+      averageAgeWeightedFulfilled
+      requirements {
+        emissionClass
+        kilometerRequirement
+        kilometersFulfilled
+        quotaRequirement
+        quotaFulfilled
+        equipmentCount
+        equipmentCountFulfilled
+        averageAgeWeightedFulfilled
+        differencePercentage
+        cumulativeDifferencePercentage
+        sanctionAmount
+        sanctionThreshold
+        classSanctionAmount
+      }
+    }
+  `,
+  ExtraBlockDeparturesFragment: gql`
+    fragment ExtraBlockDeparturesFragment on ExtraBlockDeparturesReportData {
+      ${departureReportBaseFragment}
+    }
+  `,
+  MissingBlockDeparturesFragment: gql`
+    fragment MissingBlockDeparturesFragment on MissingBlockDeparturesReportData {
+      ${departureReportBaseFragment}
+    }
+  `,
+  MissingEquipmentFragment: gql`
+    fragment MissingEquipmentFragment on MissingEquipmentReportData {
+      id
+      registryNr
+      vehicleId
+      blockNumber
+    }
+  `,
+  OverageDeparturesFragment: gql`
+    fragment OverageDeparturesFragment on OverAgeDeparturesReportData {
+      ${departureReportBaseFragment}
+      registryNr
+      overAgeType
+      observedEquipmentAge
+    }
+  `,
+  UnitExecutionFragment: gql`
+    fragment UnitExecutionFragment on UnitExecutionReportData {
+      id
+      procurementUnitId
+      totalKilometers
+      totalKilometersFulfilled
+      averageAgeWeightedFulfilled
     }
   `,
 }

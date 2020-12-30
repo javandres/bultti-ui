@@ -102,7 +102,6 @@ type DeadrunsReportData {
   deadrunMinutes: Int!
   deadrunPlannedBy: String!
   equipmentRotation: Int
-  groupId: String!
   id: ID!
   schemaId: String
 }
@@ -435,13 +434,13 @@ type ExecutionRequirementQuota {
 }
 
 type ExecutionRequirementValue {
+  averageAgeWeightedFulfilled: Int
   classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float
   emissionClass: Int!
   equipmentCount: Int
   equipmentCountFulfilled: Int
-  fulfilledAverageAgeWeighted: Int
   kilometerRequirement: Float
   kilometersFulfilled: Float
   quotaFulfilled: Float
@@ -1206,6 +1205,7 @@ type Query {
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
   deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DeadrunsReport!
   departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DepartureBlocksReport!
+  earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport!
   emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EmissionClassExecutionReport!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
@@ -1233,7 +1233,6 @@ type Query {
   observedExecutionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedExecutionRequirementsReport!
   observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): LateDeparturesReport!
   observedOverageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedOverAgeDeparturesReport!
-  observedTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport!
   observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
   operator(operatorId: Int!): Operator
   operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): OperatorDeadrunsReport!

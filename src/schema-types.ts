@@ -63,7 +63,7 @@ export type Query = {
   overageDeparturesReport: OverAgeDeparturesReport;
   trackedDeparturesReport: TrackedDeparturesReport;
   unitExecutionReport: UnitExecutionReport;
-  observedTimingStopDeparturesReport: EarlyTimingStopDeparturesReport;
+  earlyTimingStopDeparturesReport: EarlyTimingStopDeparturesReport;
   observedLateDeparturesReport: LateDeparturesReport;
   observedDeviationsReport: ObservedDeviationsReport;
   observedEmissionClassExecutionReport: ObservedEmissionClassExecutionReport;
@@ -336,7 +336,7 @@ export type QueryUnitExecutionReportArgs = {
 };
 
 
-export type QueryObservedTimingStopDeparturesReportArgs = {
+export type QueryEarlyTimingStopDeparturesReportArgs = {
   inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
@@ -823,7 +823,7 @@ export type ExecutionRequirementValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCount?: Maybe<Scalars['Int']>;
   equipmentCountFulfilled?: Maybe<Scalars['Int']>;
-  fulfilledAverageAgeWeighted?: Maybe<Scalars['Int']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Int']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;
@@ -1061,7 +1061,6 @@ export type DeadrunsReport = {
 export type DeadrunsReportData = {
   __typename?: 'DeadrunsReportData';
   id: Scalars['ID'];
-  groupId: Scalars['String'];
   dayType: Scalars['String'];
   aRouteId: Scalars['String'];
   aDirection: Scalars['String'];

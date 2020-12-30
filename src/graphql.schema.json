@@ -2325,7 +2325,7 @@
             "deprecationReason": null
           },
           {
-            "name": "observedTimingStopDeparturesReport",
+            "name": "earlyTimingStopDeparturesReport",
             "description": null,
             "args": [
               {
@@ -7659,7 +7659,7 @@
             "deprecationReason": null
           },
           {
-            "name": "fulfilledAverageAgeWeighted",
+            "name": "averageAgeWeightedFulfilled",
             "description": null,
             "args": [],
             "type": {
@@ -10060,22 +10060,6 @@
               "ofType": {
                 "kind": "SCALAR",
                 "name": "ID",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "groupId",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null
               }
             },
