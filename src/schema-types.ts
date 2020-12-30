@@ -36,7 +36,6 @@ export type Query = {
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
-  blockDeparturesForPreInspection: Array<OperatorBlockDeparture>;
   availableDayTypes: Array<Scalars['String']>;
   currentlyLoadingHfpRanges: Array<HfpDateStatus>;
   loadedHfpRanges: Array<HfpDateStatus>;
@@ -157,11 +156,6 @@ export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
 
 export type QueryUserArgs = {
   userId: Scalars['Int'];
-};
-
-
-export type QueryBlockDeparturesForPreInspectionArgs = {
-  inspectionId: Scalars['String'];
 };
 
 
@@ -599,8 +593,6 @@ export type Equipment = {
   emissionClass: Scalars['Int'];
   equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
   executionRequirementQuotas: Array<ExecutionRequirementQuota>;
-  departures: Array<Departure>;
-  observedDeparturesObserved: Array<ObservedDeparture>;
 };
 
 export type ExecutionRequirementQuota = {
@@ -613,114 +605,6 @@ export type ExecutionRequirementQuota = {
   equipment: Equipment;
   executionRequirement: ExecutionRequirement;
 };
-
-export type Departure = {
-  __typename?: 'Departure';
-  id?: Maybe<Scalars['ID']>;
-  departureId: Scalars['String'];
-  departureType: DepartureType;
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  isNextDay: Scalars['Boolean'];
-  terminalTime?: Maybe<Scalars['Int']>;
-  recoveryTime?: Maybe<Scalars['Int']>;
-  routeId?: Maybe<Scalars['String']>;
-  direction?: Maybe<Scalars['String']>;
-  routeLength?: Maybe<Scalars['Int']>;
-  dayType: Scalars['String'];
-  originStop?: Maybe<Scalars['String']>;
-  destinationStop?: Maybe<Scalars['String']>;
-  plannedEquipmentType?: Maybe<Scalars['String']>;
-  equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
-  registryNr?: Maybe<Scalars['String']>;
-  equipmentRotation?: Maybe<Scalars['Int']>;
-  isTrunkRoute?: Maybe<Scalars['Boolean']>;
-  infoSystems?: Maybe<Scalars['Boolean']>;
-  allowedOverAge?: Maybe<Scalars['Float']>;
-  blockNumber?: Maybe<Scalars['String']>;
-  schemaId?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  equipment?: Maybe<Equipment>;
-  equipmentId?: Maybe<Scalars['String']>;
-  preInspection?: Maybe<Inspection>;
-  preInspectionId?: Maybe<Scalars['String']>;
-  isTracked?: Maybe<Scalars['Boolean']>;
-  trackReason: TrackReason;
-  observedEquipmentType?: Maybe<Scalars['String']>;
-  equipmentExteriorColor?: Maybe<Scalars['String']>;
-  equipmentRegistryDate?: Maybe<Scalars['BulttiDate']>;
-  equipmentAge?: Maybe<Scalars['Float']>;
-};
-
-export enum DepartureType {
-  Schema = 'SCHEMA',
-  Block = 'BLOCK'
-}
-
-export enum TrackReason {
-  NotTracked = 'NOT_TRACKED',
-  DefaultTracked = 'DEFAULT_TRACKED',
-  FirstDepartureInBlock = 'FIRST_DEPARTURE_IN_BLOCK',
-  FirstDepartureAfterDeadrun = 'FIRST_DEPARTURE_AFTER_DEADRUN',
-  ExtraDeparture = 'EXTRA_DEPARTURE',
-  MissingDeparture = 'MISSING_DEPARTURE',
-  RecoveryViolation = 'RECOVERY_VIOLATION',
-  DeadrunDetected = 'DEADRUN_DETECTED',
-  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
-  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
-  InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
-  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
-  TimingStopViolation = 'TIMING_STOP_VIOLATION'
-}
-
-export type ObservedDeparture = {
-  __typename?: 'ObservedDeparture';
-  id: Scalars['ID'];
-  departureId: Scalars['String'];
-  postInspectionId?: Maybe<Scalars['String']>;
-  plannedOperatorId?: Maybe<Scalars['Int']>;
-  observedOperatorId?: Maybe<Scalars['Int']>;
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  uniqueVehicleId?: Maybe<Scalars['String']>;
-  departureIsNextDay: Scalars['Boolean'];
-  arrivalIsNextDay: Scalars['Boolean'];
-  date: Scalars['String'];
-  departureDateTime?: Maybe<Scalars['DateTime']>;
-  observedDepartureDateTime?: Maybe<Scalars['DateTime']>;
-  arrivalDateTime?: Maybe<Scalars['DateTime']>;
-  observedArrivalDateTime?: Maybe<Scalars['DateTime']>;
-  originStop?: Maybe<Scalars['String']>;
-  destinationStop?: Maybe<Scalars['String']>;
-  terminalTime?: Maybe<Scalars['Int']>;
-  recoveryTime?: Maybe<Scalars['Int']>;
-  routeId?: Maybe<Scalars['String']>;
-  direction?: Maybe<Scalars['String']>;
-  routeLength?: Maybe<Scalars['Int']>;
-  dayType: Scalars['String'];
-  plannedEquipmentType?: Maybe<Scalars['String']>;
-  equipmentTypeRequired?: Maybe<Scalars['Boolean']>;
-  observedEquipment?: Maybe<Equipment>;
-  observedEquipmentId?: Maybe<Scalars['String']>;
-  observedEquipmentType?: Maybe<Scalars['String']>;
-  observedRegistryNr?: Maybe<Scalars['String']>;
-  observedRegistryDate?: Maybe<Scalars['String']>;
-  observedExteriorColor?: Maybe<Scalars['String']>;
-  observedEquipmentAge?: Maybe<Scalars['Float']>;
-  equipmentRotation?: Maybe<Scalars['Int']>;
-  isTrunkRoute?: Maybe<Scalars['Boolean']>;
-  schemaId?: Maybe<Scalars['String']>;
-  blockNumber?: Maybe<Scalars['String']>;
-  blockJourneyEndTime?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  isTracked?: Maybe<Scalars['Boolean']>;
-  isComplete?: Maybe<Scalars['Boolean']>;
-  trackReason: TrackReason;
-  journeyId?: Maybe<Scalars['String']>;
-  observedLateDepartureSeconds?: Maybe<Scalars['Int']>;
-  observedLateArrivalSeconds?: Maybe<Scalars['Int']>;
-};
-
 
 export type ProcurementUnitRoute = {
   __typename?: 'ProcurementUnitRoute';
@@ -743,6 +627,7 @@ export type Contract = {
   rulesFile?: Maybe<Scalars['String']>;
   rules?: Maybe<Array<ContractRule>>;
 };
+
 
 export type ContractUserRelation = {
   __typename?: 'ContractUserRelation';
@@ -912,26 +797,6 @@ export type EquipmentSearchResult = {
   _exists: Scalars['Boolean'];
 };
 
-export type OperatorBlockDeparture = {
-  __typename?: 'OperatorBlockDeparture';
-  id: Scalars['ID'];
-  blockNumber?: Maybe<Scalars['String']>;
-  dayType: Scalars['String'];
-  journeyType: Scalars['String'];
-  routeId?: Maybe<Scalars['String']>;
-  direction?: Maybe<Scalars['String']>;
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  registryNr?: Maybe<Scalars['String']>;
-  vehicleId?: Maybe<Scalars['String']>;
-  routeLength?: Maybe<Scalars['Int']>;
-  operatorId?: Maybe<Scalars['String']>;
-  equipment?: Maybe<Equipment>;
-  equipmentId?: Maybe<Scalars['String']>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  inspectionId?: Maybe<Scalars['String']>;
-};
-
 export type HfpDateStatus = {
   __typename?: 'HfpDateStatus';
   date: Scalars['BulttiDate'];
@@ -1021,6 +886,22 @@ export type DeviationsReportData = {
   overlapSeconds: Scalars['Float'];
   overlapPlannedBy?: Maybe<Scalars['String']>;
 };
+
+export enum TrackReason {
+  NotTracked = 'NOT_TRACKED',
+  DefaultTracked = 'DEFAULT_TRACKED',
+  FirstDepartureInBlock = 'FIRST_DEPARTURE_IN_BLOCK',
+  FirstDepartureAfterDeadrun = 'FIRST_DEPARTURE_AFTER_DEADRUN',
+  ExtraDeparture = 'EXTRA_DEPARTURE',
+  MissingDeparture = 'MISSING_DEPARTURE',
+  RecoveryViolation = 'RECOVERY_VIOLATION',
+  DeadrunDetected = 'DEADRUN_DETECTED',
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION'
+}
 
 export type InputPageConfig = {
   page: Scalars['Int'];
@@ -1487,7 +1368,7 @@ export type UnitExecutionReportData = {
   __typename?: 'UnitExecutionReportData';
   id: Scalars['ID'];
   procurementUnitId: Scalars['String'];
-  totalKilometers: Scalars['Int'];
+  totalKilometers: Scalars['Float'];
   totalKilometersFulfilled: Scalars['Float'];
   averageAgeWeightedFulfilled: Scalars['Float'];
 };
@@ -1871,7 +1752,7 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   modifyUser: User;
   removeEquipmentFromCatalogue: Scalars['Boolean'];
-  createBlockDeparturesFromFile?: Maybe<Array<OperatorBlockDeparture>>;
+  createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
   loadHfpDataForInspectionPeriod: Array<HfpDateStatus>;

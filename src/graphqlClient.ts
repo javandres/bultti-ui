@@ -13,7 +13,6 @@ import introspection from './possibleTypes'
 import { getAuthToken } from './util/authToken'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
-import { Departure } from './schema-types'
 
 export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -123,20 +122,6 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     },
     dataIdFromObject: (obj, context) => {
       let typename = obj?.__typename
-
-      if (typename === 'Departure') {
-        let departureObject: Departure = obj as Departure
-        if (!departureObject?.id && !departureObject['_id']) {
-          return (
-            (departureObject?.departureId || '') +
-            (departureObject?.trackReason || '') +
-            '' +
-            typename
-          )
-        }
-
-        return (departureObject?.id || departureObject['_id'] || '') + '' + typename
-      }
 
       if ('id' in obj) {
         return obj?.id + '' + typename

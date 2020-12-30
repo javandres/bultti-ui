@@ -106,43 +106,6 @@ type DeadrunsReportData {
   schemaId: String
 }
 
-type Departure {
-  allowedOverAge: Float
-  blockNumber: String
-  dayType: String!
-  departureId: String!
-  departureType: DepartureType!
-  destinationStop: String
-  direction: String
-  equipment: Equipment
-  equipmentAge: Float
-  equipmentExteriorColor: String
-  equipmentId: String
-  equipmentRegistryDate: BulttiDate
-  equipmentRotation: Int
-  equipmentTypeRequired: Boolean
-  id: ID
-  infoSystems: Boolean
-  isNextDay: Boolean!
-  isTracked: Boolean
-  isTrunkRoute: Boolean
-  journeyEndTime: String!
-  journeyStartTime: String!
-  observedEquipmentType: String
-  originStop: String
-  plannedEquipmentType: String
-  preInspection: Inspection
-  preInspectionId: String
-  procurementUnitId: String
-  recoveryTime: Int
-  registryNr: String
-  routeId: String
-  routeLength: Int
-  schemaId: String
-  terminalTime: Int
-  trackReason: TrackReason!
-}
-
 type DepartureBlocksReport {
   columnLabels: String!
   description: String!
@@ -285,7 +248,6 @@ type EmissionClassExecutionReportData {
 
 type Equipment {
   approvedOverage: Boolean!
-  departures: [Departure!]!
   emissionClass: Int!
   equipmentCatalogueQuotas: [EquipmentCatalogueQuota!]!
   executionRequirementQuotas: [ExecutionRequirementQuota!]!
@@ -293,7 +255,6 @@ type Equipment {
   hasInfoSystems: Boolean!
   id: ID!
   model: String
-  observedDeparturesObserved: [ObservedDeparture!]!
   operator: Operator!
   operatorId: Int!
   option: Boolean!
@@ -681,7 +642,7 @@ type MissingEquipmentReportData {
 
 type Mutation {
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
-  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): [OperatorBlockDeparture!]
+  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
@@ -721,53 +682,6 @@ type Mutation {
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyMetersFromSource(procurementUnitId: String!, startDate: String!): ProcurementUnit!
-}
-
-type ObservedDeparture {
-  arrivalDateTime: DateTime
-  arrivalIsNextDay: Boolean!
-  blockJourneyEndTime: String
-  blockNumber: String
-  date: String!
-  dayType: String!
-  departureDateTime: DateTime
-  departureId: String!
-  departureIsNextDay: Boolean!
-  destinationStop: String
-  direction: String
-  equipmentRotation: Int
-  equipmentTypeRequired: Boolean
-  id: ID!
-  isComplete: Boolean
-  isTracked: Boolean
-  isTrunkRoute: Boolean
-  journeyEndTime: String!
-  journeyId: String
-  journeyStartTime: String!
-  observedArrivalDateTime: DateTime
-  observedDepartureDateTime: DateTime
-  observedEquipment: Equipment
-  observedEquipmentAge: Float
-  observedEquipmentId: String
-  observedEquipmentType: String
-  observedExteriorColor: String
-  observedLateArrivalSeconds: Int
-  observedLateDepartureSeconds: Int
-  observedOperatorId: Int
-  observedRegistryDate: String
-  observedRegistryNr: String
-  originStop: String
-  plannedEquipmentType: String
-  plannedOperatorId: Int
-  postInspectionId: String
-  procurementUnitId: String
-  recoveryTime: Int
-  routeId: String
-  routeLength: Int
-  schemaId: String
-  terminalTime: Int
-  trackReason: TrackReason!
-  uniqueVehicleId: String
 }
 
 type ObservedDeviationsReport {
@@ -1075,25 +989,6 @@ type Operator {
   procurementUnits: [ProcurementUnit!]!
 }
 
-type OperatorBlockDeparture {
-  blockNumber: String
-  dayType: String!
-  direction: String
-  equipment: Equipment
-  equipmentId: String
-  id: ID!
-  inspectionId: String
-  journeyEndTime: String!
-  journeyStartTime: String!
-  journeyType: String!
-  operatorId: String
-  procurementUnitId: String
-  registryNr: String
-  routeId: String
-  routeLength: Int
-  vehicleId: String
-}
-
 type OperatorDeadrunsReport {
   columnLabels: String!
   description: String!
@@ -1192,7 +1087,6 @@ type Query {
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  blockDeparturesForPreInspection(inspectionId: String!): [OperatorBlockDeparture!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): BlockDeviationsReport!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
@@ -1334,7 +1228,7 @@ type UnitExecutionReportData {
   averageAgeWeightedFulfilled: Float!
   id: ID!
   procurementUnitId: String!
-  totalKilometers: Int!
+  totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
 
@@ -1361,11 +1255,6 @@ enum ContractUserRelationType {
   CREATED_BY
   SUBSCRIBED_TO
   UPDATED_BY
-}
-
-enum DepartureType {
-  BLOCK
-  SCHEMA
 }
 
 enum HfpStatus {
