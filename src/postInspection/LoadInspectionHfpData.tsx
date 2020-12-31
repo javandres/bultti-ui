@@ -19,11 +19,12 @@ import {
   parseISO,
   subDays,
 } from 'date-fns'
-import { HfpDateStatus, HfpStatus } from '../schema-types'
+import { HfpDateStatus, HfpStatus, InspectionValidationError } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { LoadingDisplay } from '../common/components/Loading'
+import { useHasInspectionError } from '../util/hasInspectionError'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -130,6 +131,12 @@ type PropTypes = {
 
 const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   const inspection = useContext(InspectionContext)
+
+  let hfpMissing = useHasInspectionError(
+    inspection,
+    InspectionValidationError.HfpUnavailableForInspectionDates
+  )
+
   let [dateProgress, setDateProgress] = useState<Map<string, number>>(
     new Map<string, number>()
   )
@@ -300,7 +307,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   }, [inspectionPeriodLoadingStatuses])
 
   return (
-    <LoadInspectionHfpDataView>
+    <LoadInspectionHfpDataView error={hfpMissing}>
       <InputLabel theme="light">Lataa HFP</InputLabel>
       <LoadDescription>
         Tarkastukseen tarvitaan suuri määrä HFP tietoa, eli tietoa liikenteen toteumasta. Kun
