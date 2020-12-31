@@ -8,7 +8,7 @@ import { InputLabel } from '../common/components/form'
 import { gql, useSubscription } from '@apollo/client'
 import { useQueryData } from '../util/useQueryData'
 import { useMutationData } from '../util/useMutationData'
-import { flatten, orderBy, uniq } from 'lodash'
+import { flatten, orderBy, uniq, uniqBy } from 'lodash'
 import {
   addDays,
   eachDayOfInterval,
@@ -193,7 +193,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
     return eachDayOfInterval(inspectionStatusInterval)
   }, [inspectionStatusInterval])
 
-  let dateStatuses = useMemo(() => {
+  let dateStatuses: HfpDateStatus[] = useMemo(() => {
     if (!inspectionStatusInterval) {
       return []
     }
@@ -207,65 +207,21 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
     let statusPriority = [HfpStatus.Ready, HfpStatus.Loading, HfpStatus.NotLoaded]
     let updatedStatuses = pickGraphqlData(hfpStatusData) || []
 
-    return orderBy(
-      [
-        ...(currentlyLoadingRanges || []),
-        ...(loadedRanges || []),
-        ...(requestedHfpDateRanges || []),
-        ...updatedStatuses,
-        ...inspectionStatusGroup,
-      ].reduce((uniqStatuses: HfpDateStatus[], status, index, allStatuses) => {
-        // We are only interested in dates within the inspection period.
-        if (!isWithinInterval(parseISO(status.date), inspectionStatusInterval!)) {
-          return uniqStatuses
-        }
-
-        // Reduce to a unique array of date statuses. statusPriority[0] and statusPriority[1]
-        // statuses have a priority. A statusPriority[1] status should not be included
-        // instead of a statusPriority[0] status, and a statusPriority[2] status
-        // should not be included instead of a statusPriority[1] status.
-        let isIncluded = uniqStatuses.some((s) => s.date === status.date)
-
-        // Updates for loading dates comes through subscriptions to the updatedStatues array.
-        let updatedDateStatus = updatedStatuses.find((s) => s.date === status.date)
-
-        if (
-          (status.status === statusPriority[0] ||
-            // If the date is updated through the subscription and is ready,
-            // show it as such and circumvent the priority list.
-            (dateProgress.has(status.date) &&
-              updatedDateStatus &&
-              updatedDateStatus.status === HfpStatus.Ready)) &&
-          !isIncluded
-        ) {
-          // As a priority, include the status if the date status is priority 1 and it is not included already
-          uniqStatuses.push(status)
-        } else if (
-          status.status === statusPriority[1] &&
-          !allStatuses.find(
-            (s) => s !== status && s.date === status.date && s.status === statusPriority[0]
-          ) &&
-          !isIncluded
-        ) {
-          // If the status is ready, include only if the date cannot be found
-          // with a loading status among all the items and not included already.
-          uniqStatuses.push(status)
-        } else if (
-          !isIncluded &&
-          !allStatuses.find(
-            (s) =>
-              s !== status &&
-              s.date === status.date &&
-              statusPriority.slice(0, 2).includes(s.status)
-          )
-        ) {
-          // If all other conditions fail, include if the date is not loading
-          // or ready elsewhere among the items and not included already.
-          uniqStatuses.push(status)
-        }
-
-        return uniqStatuses
-      }, []),
+    return uniqBy(
+      orderBy(
+        [
+          ...(currentlyLoadingRanges || []),
+          ...(loadedRanges || []),
+          ...(requestedHfpDateRanges || []),
+          ...updatedStatuses,
+          ...inspectionStatusGroup,
+        ].filter((status) =>
+          // The date needs to be within the inspection period
+          isWithinInterval(parseISO(status.date), inspectionStatusInterval!)
+        ),
+        // Order by date and priority index. This way, the highest priority status will be selected by the uniq function.
+        ['date', (s) => statusPriority.indexOf(s.status)]
+      ),
       'date'
     )
   }, [
@@ -277,7 +233,8 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
     hfpStatusData,
   ])
 
-  let dateStatusByRanges = useMemo(
+  // Group each date status into continuous date ranges/intervals.
+  let dateStatusByRanges: HfpDateStatus[][] = useMemo(
     () =>
       dateStatuses.reduce((statusRanges: HfpDateStatus[][], dateStatus: HfpDateStatus) => {
         let rangeIndex = statusRanges.length === 0 ? 0 : statusRanges.length - 1
