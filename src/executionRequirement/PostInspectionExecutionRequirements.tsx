@@ -32,7 +32,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
-import { exec } from 'child_process'
+import { inspectionQuery } from '../inspection/inspectionQueries'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -132,6 +132,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
+        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
       ],
       notifyOnNetworkStatusChange: true,
       variables: {
@@ -154,6 +155,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
+        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
       ],
     }
   )
