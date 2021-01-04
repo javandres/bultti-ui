@@ -293,11 +293,12 @@ export const reportQueryFragments = {
       averageAgeWeightedFulfilled
     }
   `,
-  UnobservedDepartures: gql`
-    fragment UnobservedDepartures on UnobservedDeparturesReportData {
+  UnobservedDeparturesFragment: gql`
+    fragment UnobservedDeparturesFragment on UnobservedDeparturesReportData {
       ${departureReportBaseFragment}
       journeyKilometers
       procurementUnitId
+      blockNumber
     }
   `,
 }

@@ -1254,6 +1254,7 @@ type UnobservedDeparturesReport {
 }
 
 type UnobservedDeparturesReportData {
+  blockNumber: String
   dayType: String!
   direction: String!
   id: ID!
