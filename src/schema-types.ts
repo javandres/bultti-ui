@@ -1703,11 +1703,11 @@ export type ObservedUnitExecutionReport = {
   sort?: Maybe<Array<SortConfig>>;
   showSanctioned?: Maybe<Scalars['Boolean']>;
   showUnsanctioned?: Maybe<Scalars['Boolean']>;
-  reportData: Array<ObservedUnitExecutionReportData>;
+  reportData: Array<ObservedUnitExecution>;
 };
 
-export type ObservedUnitExecutionReportData = {
-  __typename?: 'ObservedUnitExecutionReportData';
+export type ObservedUnitExecution = {
+  __typename?: 'ObservedUnitExecution';
   id: Scalars['ID'];
   procurementUnitId?: Maybe<Scalars['String']>;
   totalKilometersRequired?: Maybe<Scalars['Float']>;
