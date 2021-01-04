@@ -6,7 +6,7 @@ export const Page = styled.div`
   margin-bottom: 1rem;
 `
 
-export const PageSection = styled.div`
+export const PageSection = styled.div<{ error?: boolean }>`
   padding: 1rem;
   margin: 1rem 0;
   display: flex;
@@ -16,6 +16,7 @@ export const PageSection = styled.div`
   border: 1px solid var(--lighter-grey);
   width: 100%;
   position: relative;
+  border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid var(--lighter-grey)')};
 `
 
 export const TransparentPageSection = styled(PageSection)`

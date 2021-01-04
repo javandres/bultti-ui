@@ -942,6 +942,14 @@ type ObservedOverAgeDeparturesReportData {
   trackReason: TrackReason!
 }
 
+type ObservedUnitExecution {
+  averageAgeWeightedObserved: Float
+  id: ID!
+  procurementUnitId: String
+  totalKilometersObserved: Float
+  totalKilometersRequired: Float
+}
+
 type ObservedUnitExecutionReport {
   columnLabels: String!
   description: String!
@@ -953,21 +961,13 @@ type ObservedUnitExecutionReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedUnitExecutionReportData!]!
+  reportData: [ObservedUnitExecution!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
   sort: [SortConfig!]
   title: String!
   totalCount: Int!
-}
-
-type ObservedUnitExecutionReportData {
-  averageAgeWeightedObserved: Float
-  id: ID!
-  procurementUnitId: String
-  totalKilometersObserved: Float
-  totalKilometersRequired: Float
 }
 
 type OperatingArea {

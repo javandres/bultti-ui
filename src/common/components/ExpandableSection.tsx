@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { ArrowDown } from '../icon/ArrowDown'
 import { SectionHeading } from './Typography'
 
-const ExpandableBoxView = styled.div<{ error: boolean }>`
+const ExpandableBoxView = styled.div<{ error?: boolean }>`
   border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid var(--lighter-grey)')};
   margin-top: 1rem;
   border-radius: 0.5rem;

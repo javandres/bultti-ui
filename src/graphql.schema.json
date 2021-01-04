@@ -18669,7 +18669,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "ObservedUnitExecutionReportData",
+                    "name": "ObservedUnitExecution",
                     "ofType": null
                   }
                 }
@@ -18686,7 +18686,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "ObservedUnitExecutionReportData",
+        "name": "ObservedUnitExecution",
         "description": null,
         "fields": [
           {

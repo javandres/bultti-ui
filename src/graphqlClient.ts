@@ -82,6 +82,9 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           availableDayTypes: {
             merge: cacheMerge,
           },
+          observedExecutionRequirements: {
+            merge: cacheMerge,
+          },
         },
       },
       Inspection: {

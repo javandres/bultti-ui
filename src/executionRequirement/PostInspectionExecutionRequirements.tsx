@@ -9,6 +9,7 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
 import Table, { EditValue } from '../common/components/Table'
 import {
+  InspectionValidationError,
   ObservedExecutionRequirement,
   ObservedExecutionValue,
   ObservedRequirementValueInput,
@@ -30,6 +31,8 @@ import { getTotal } from '../util/getTotal'
 import { LoadingDisplay } from '../common/components/Loading'
 import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
+import { useHasInspectionError } from '../util/hasInspectionError'
+import { inspectionQuery } from '../inspection/inspectionQueries'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -87,6 +90,11 @@ type EditRequirementValue = EditValue<ObservedExecutionValue> & { requirementId:
 const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes) => {
   const inspection = useContext(InspectionContext)
 
+  let execReqsMissing = useHasInspectionError(
+    inspection,
+    InspectionValidationError.MissingExecutionRequirements
+  )
+
   let {
     data: observedRequirements,
     loading: observedRequirementsLoading,
@@ -124,6 +132,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
+        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
       ],
       notifyOnNetworkStatusChange: true,
       variables: {
@@ -146,6 +155,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
+        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
       ],
     }
   )
@@ -170,10 +180,9 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     }
   }, [inspection, removeRequirements, observedRequirements, isEditable])
 
-  let requirementsByAreaAndWeek: Array<[
-    string,
-    Array<[string, ObservedExecutionRequirement[]]>
-  ]> = useMemo(
+  let requirementsByAreaAndWeek: Array<
+    [string, Array<[string, ObservedExecutionRequirement[]]>]
+  > = useMemo(
     () =>
       Object.entries<ObservedExecutionRequirement[]>(
         groupBy<ObservedExecutionRequirement>(observedRequirements, 'area.name')
@@ -292,6 +301,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
   return (
     <ExpandableSection
+      error={execReqsMissing}
       isExpanded={true}
       unmountOnClose={true}
       headerContent={
