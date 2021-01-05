@@ -179,6 +179,7 @@ const ItemForm: React.FC<PropTypes> = observer(
 
     const formId = useMemo(() => uniqueId(), [])
     usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: isDirty })
+
     return (
       <ControlledFormView style={style} frameless={frameless}>
         {itemEntries.map(([key, val], index) => {

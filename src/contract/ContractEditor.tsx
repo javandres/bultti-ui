@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Contract as ContractType, ContractInput } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
-  contractQuery,
   contractsQuery,
   createContractMutation,
   modifyContractMutation,
@@ -21,7 +20,7 @@ import ExpandableSection, {
   ContentWrapper,
   HeaderBoldHeading,
 } from '../common/components/ExpandableSection'
-import { get, orderBy } from 'lodash'
+import { get, isEqual, orderBy } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
@@ -78,12 +77,7 @@ function createContractInput(contract: ContractType): ContractInput {
   }
 }
 
-const renderEditorField = (
-  contract: ContractInput,
-  rulesInputActive,
-  toggleRulesInput,
-  contractFileReadError
-) => (
+const renderEditorField = (contract: ContractInput, contractFileReadError) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
@@ -92,24 +86,18 @@ const renderEditorField = (
   onCancel?: () => unknown
 ) => {
   if (key === 'rules') {
-    let isRulesFileSet = Boolean(contract.rulesFile)
+    let isRulesFileSet = !!contract.rulesFile
+
     return (
       <>
-        <div style={{ marginTop: '1rem', marginBottom: '0.5rem' }}>
-          <Button onClick={toggleRulesInput}>
-            <Text>contract_form.load_new_contracts_button</Text>
-          </Button>
-        </div>
-        {rulesInputActive && (
-          <FileUploadInput
-            label="Lataa sopimusehdot"
-            onChange={onChange}
-            value={val.uploadFile}
-            disabled={readOnly}
-            onReset={onCancel}
-            loading={loading}
-          />
-        )}
+        <FileUploadInput
+          label={text('contract_form.label.upload_rules')}
+          onChange={onChange}
+          value={val.uploadFile}
+          disabled={readOnly}
+          onReset={onCancel}
+          loading={loading}
+        />
         {contractFileReadError && (
           <ErrorView>
             <Text>contract_form.toml_read_error_failed</Text>
@@ -117,7 +105,6 @@ const renderEditorField = (
           </ErrorView>
         )}
         <ExpandableFormSection
-          isExpanded={true}
           style={{ marginTop: '1rem' }}
           headerContent={
             <ExpandableFormSectionHeading>
@@ -234,7 +221,6 @@ const ContractEditor = observer(
   ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
     let [pendingContract, setPendingContract] = useState(createContractInput(contract))
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
-    let [rulesInputActive, setRulesInputActive] = useState(!pendingContract?.rulesFile)
 
     let isDirty = useMemo(() => {
       // New contracts are always dirty
@@ -246,16 +232,8 @@ const ContractEditor = observer(
         return true
       }
 
-      let pendingJson = JSON.stringify(pendingContract)
-      let currentJson = JSON.stringify(createContractInput(contract))
-      return currentJson !== pendingJson
+      return !isEqual(pendingContract, createContractInput(contract))
     }, [rulesFiles, pendingContract, contract])
-
-    useEffect(() => {
-      if (contract) {
-        setPendingContract(createContractInput(contract))
-      }
-    }, [contract])
 
     let pendingContractValid = useMemo(
       () =>
@@ -292,12 +270,18 @@ const ContractEditor = observer(
       modifyContract,
       { loading: modifyLoading, mutationFn: updateMutationFn, error: modifyError },
     ] = useUploader(modifyContractMutation, {
+      onCompleted: (data) => {
+        let mutationResult = pickGraphqlData(data)
+
+        if (mutationResult) {
+          setPendingContract(createContractInput(mutationResult))
+        }
+      },
       refetchQueries: ({ data }) => {
         let mutationResult = pickGraphqlData(data)
 
         return [
           { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
-          { query: contractQuery, variables: { contractId: mutationResult?.id } },
           {
             query: procurementUnitOptionsQuery,
             variables: {
@@ -354,12 +338,8 @@ const ContractEditor = observer(
 
         setRulesFiles([])
 
-        if (result.data) {
-          if (!isNew) {
-            setPendingContract(createContractInput(result.data))
-          } else {
-            goToContract(result.data.id)
-          }
+        if (result?.data && isNew) {
+          goToContract(result.data?.id)
         }
       }
     }, [rulesFiles, pendingContract, pendingContractValid, onReset, isNew, goToContract])
@@ -406,10 +386,6 @@ const ContractEditor = observer(
       }
     }, [removeContract, contract, isNew, onRefresh])
 
-    let onToggleRulesInput = useCallback(() => {
-      setRulesInputActive((currentlyActive) => !currentlyActive)
-    }, [])
-
     return (
       <ContractEditorView>
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
@@ -439,12 +415,7 @@ const ContractEditor = observer(
           isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
           renderLabel={renderEditorLabel}
-          renderInput={renderEditorField(
-            pendingContract,
-            rulesInputActive,
-            onToggleRulesInput,
-            currentError
-          )}
+          renderInput={renderEditorField(pendingContract, currentError)}
         />
       </ContractEditorView>
     )
