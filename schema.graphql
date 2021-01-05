@@ -1143,6 +1143,7 @@ type Query {
   singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
   unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnitExecutionReport!
+  unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnobservedDeparturesReport!
   user(userId: Int!): User
   users: [User!]!
 }
@@ -1230,6 +1231,39 @@ type UnitExecutionReportData {
   procurementUnitId: String!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
+}
+
+type UnobservedDeparturesReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  page: PageConfig
+  pages: Int!
+  reportData: [UnobservedDeparturesReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type UnobservedDeparturesReportData {
+  blockNumber: String
+  dayType: String!
+  direction: String!
+  id: ID!
+  journeyEndTime: String!
+  journeyKilometers: Float!
+  journeyStartTime: String!
+  procurementUnitId: String!
+  routeId: String!
+  trackReason: TrackReason!
 }
 
 type User {
@@ -1326,6 +1360,7 @@ enum TrackReason {
   NOT_TRACKED
   RECOVERY_VIOLATION
   TIMING_STOP_VIOLATION
+  UNOBSERVED_DEPARTURE
 }
 
 enum UserRole {
