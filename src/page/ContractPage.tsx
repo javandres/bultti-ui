@@ -30,9 +30,21 @@ const ContractContentView = styled.div`
 
 const ContractTitle = styled.h4`
   margin: 0 1rem 0 0;
+  flex: 1 0;
+  white-space: nowrap;
+  align-self: flex-start;
 `
 
-const ContractDates = styled(DateRangeDisplay)``
+const ContractDescription = styled.div`
+  font-size: 0.875rem;
+  margin-right: 1rem;
+`
+
+const ContractDates = styled(DateRangeDisplay)`
+  margin-left: auto;
+  flex: 0;
+  align-self: flex-start;
+`
 
 const ContractListItem = styled.button`
   font-family: inherit;
@@ -136,6 +148,10 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
             key={contractItem.id}
             onClick={() => onOpenContract(contractItem.id)}>
             <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
+            {contractItem?.description && (
+              <ContractDescription>{contractItem?.description}</ContractDescription>
+            )}
+
             <ContractDates startDate={contractItem.startDate} endDate={contractItem.endDate} />
             <GoToContractButton>
               <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />

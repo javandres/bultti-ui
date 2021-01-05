@@ -50,10 +50,11 @@
   "contract_form.no_loaded_contract_file": "Ei tallennettua tiedostoa.",
   "contract_form.label.startDate": "Sopimusehdot alkaa",
   "contract_form.label.endDate": "Sopimusehdot loppuu",
-  "contract_form.label.description": "Sopimusehdot loppuu",
+  "contract_form.label.description": "Kuvaus",
   "contract_form.label.operator_id": "Liikennöitsijä",
   "contract_form.label.procurement_units": "Kilpailukohteet",
   "contract_form.label.rules": "Sopimusehdot",
+  "contract_form.label.upload_rules": "Lataa sopimusehdot",
 
   "contract_form.contact_table_label.name": "Nimi",
   "contract_form.contact_table_label.value": "Arvo",
