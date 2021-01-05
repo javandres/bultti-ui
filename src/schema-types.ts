@@ -1757,6 +1757,7 @@ export type UnobservedDeparturesReportData = {
   trackReason: TrackReason;
   procurementUnitId: Scalars['String'];
   journeyKilometers: Scalars['Float'];
+  blockNumber?: Maybe<Scalars['String']>;
 };
 
 export type ProcurementUnitOption = {
