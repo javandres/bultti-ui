@@ -29,6 +29,9 @@ const ContractListItem: React.FC<PropTypes> = observer(
                 {contractData?.operator?.operatorName || 'Uusi sopimus'}
               </ContractTitle>
             </HeaderSection>
+            {contractData?.description && (
+              <HeaderSection>{contractData?.description}</HeaderSection>
+            )}
             <HeaderSection>
               {format(parseISO(contractData?.startDate), READABLE_DATE_FORMAT)} -{' '}
               {format(parseISO(contractData?.endDate), READABLE_DATE_FORMAT)}
