@@ -109,7 +109,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
         <FlexRow
           style={{ marginLeft: 'auto', justifyContent: 'flex-end', marginBottom: '1rem' }}>
           <Button loading={equipmentUpdateLoading} onClick={updateAllEquipmentData}>
-            Update equipment
+            <Text>catalogue.update_equipment</Text>
           </Button>
         </FlexRow>
       </>

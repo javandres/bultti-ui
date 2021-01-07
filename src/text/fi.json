@@ -12,8 +12,10 @@
   "general.app.edit": "Muokkaa",
   "general.app.preview": "Esikatsele",
   "general.app.remove": "Poista",
+  "general.app.cancel": "Peruuta",
   "general.app.save": "Tallenna",
   "general.app.field": "Kenttä",
+  "general.app.add": "Lisää",
   "general.validity_period": "Voimassaoloaika",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
@@ -84,6 +86,17 @@
   "catalogue.empty": "Kalustoluettelossa ei ole ajoneuvoja.",
   "catalogue.add": "Lisää kalustoluettelo",
   "catalogue.catalogues_list_heading": "Kalustoluettelot",
+  "catalogue.show_grouped": "Näytä ryhmissä",
+  "catalogue.update_equipment": "Päivitä ajoneuvotiedot JOREsta",
+  "catalogue.remove_all_equipment": "Päivitä ajoneuvotiedot JOREsta",
+  "catalogue.add_equipment": "Lisää ajoneuvo",
+  "catalogue.batch_add_equipment": "Lisää ajoneuvoja listalta",
+  "catalogue.find.equipment": "Hae kalusto",
+  "catalogue.find.by_vehicle_id": "kylkinumerolla",
+  "catalogue.find.by_registry_number": "rekisterinumerolla",
+  "catalogue.vehicle_id": "Kylkinumero",
+  "catalogue.registry_number": "Rekisterinumero",
+  "catalogue.equipment_not_found": "Kalustoa ei löydetty.",
 
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
@@ -119,5 +132,6 @@
 
   "hint.equipment_catalogue.start_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
   "hint.equipment_catalogue.end_date": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
-  "hint.report.filtering": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo."
+  "hint.report.filtering": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
+  "hint.catalogue.batch_add_equipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi."
 }

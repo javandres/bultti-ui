@@ -10,6 +10,7 @@ import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
+import { Text } from '../util/translate'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -164,7 +165,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             value="grouped"
             checked={groupEquipment}
             onChange={onToggleEquipmentGrouped}>
-            Näytä ryhmissä
+            <Text>catalogue.show_grouped</Text>
           </ToggleButton>
         </FlexRow>
         {!groupEquipment && orderedEquipment.length !== 0 && (

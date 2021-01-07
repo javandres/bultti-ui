@@ -17,6 +17,7 @@ import Modal from '../common/components/Modal'
 import styled from 'styled-components'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
+import { text, Text } from '../util/translate'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -57,7 +58,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     addEquipment,
     addBatchEquipment,
     removeAllEquipment,
-    removeLabel = 'Poista kaikki ajoneuvot',
+    removeLabel = text('catalogue.remove_all_equipment'),
     editableKeys,
     onEquipmentChanged,
     fieldLabels,
@@ -181,17 +182,17 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {!pendingEquipment && (
           <FlexRow>
             <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
-              Lisää ajoneuvo
+              <Text>catalogue.add_equipment</Text>
             </Button>
             {addBatchEquipment && (
               <Button
                 style={{ marginRight: '1rem' }}
                 onClick={() => setBatchFormVisible(true)}>
-                Lisää ajoneuvolista
+                <Text>catalogue.batch_add_equipment</Text>
               </Button>
             )}
             <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
-              Hae ajoneuvo
+              <Text>catalogue.find.equipment</Text>
             </Button>
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
               (DEV) Lisää satunnainen ajoneuvo
@@ -213,7 +214,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {pendingEquipment && (
           <Modal>
             <AddEquipmentFormWrapper>
-              <SubHeading>Lisää ajoneuvo</SubHeading>
+              <SubHeading>
+                <Text>catalogue.add_equipment</Text>
+              </SubHeading>
               <ItemForm
                 item={pendingEquipment}
                 labels={fieldLabels}
@@ -228,7 +231,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 onDone={onAddEquipment}
                 onCancel={onCancelPendingEquipment}
                 doneDisabled={!equipmentIsValid(pendingEquipment)}
-                doneLabel="Lisää"
+                doneLabel={text('general.app.add')}
                 renderInput={(key, val, onChange) => (
                   <EquipmentFormInput
                     fieldComponent={TextInput}
@@ -243,7 +246,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
         )}
         {batchFormVisible && addBatchEquipment && (
           <>
-            <SubHeading>Lisää ajoneuvolista</SubHeading>
+            <SubHeading>
+              <Text>catalogue.batch_add_equipment</Text>
+            </SubHeading>
             <p>
               Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän
               kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.
@@ -260,33 +265,35 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 disabled={!batchInput}
                 style={{ marginRight: '1rem' }}
                 onClick={onAddBatchEquipment}>
-                Lisää ajoneuvoja listalta
+                <Text>catalogue.batch_add_equipment</Text>
               </Button>
               <Button
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                 onClick={() => setBatchFormVisible(false)}>
-                Peruuta
+                <Text>general.app.cancel</Text>
               </Button>
             </ActionsWrapper>
           </>
         )}
         {searchFormVisible && (
           <>
-            <SubHeading>Hae kylkinumerolla</SubHeading>
+            <SubHeading>
+              <Text>catalogue.find.equipment</Text>
+            </SubHeading>
             <InputForm
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
-              doneLabel={`Hae kalusto${
+              doneLabel={`${text('catalogue.find.equipment')}${
                 searchVehicleId
-                  ? ' kylkinumerolla'
+                  ? ' ' + text('catalogue.find.by_vehicle_id')
                   : searchRegistryNr
-                  ? ' rekisterinumerolla'
+                  ? ' ' + text('catalogue.find.by_registry_number')
                   : ''
               }`}
               doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
                 {
-                  label: 'Kylkinumero',
+                  label: text('catalogue.vehicle_id'),
                   field: (
                     <Input
                       onChange={(val) => setSearchVehicleId(val)}
@@ -295,7 +302,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                   ),
                 },
                 {
-                  label: 'Rekisterinumero',
+                  label: text('catalogue.registry_number'),
                   field: (
                     <Input
                       onChange={(val) => setSearchRegistryNr(val)}
@@ -305,7 +312,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 },
               ]}>
               {searchVehicleId && searchCalled && !foundEquipment && !searchLoading && (
-                <MessageView>Kalustoa ei löydetty.</MessageView>
+                <MessageView>
+                  <Text>catalogue.equipment_not_found</Text>
+                </MessageView>
               )}
             </InputForm>
           </>
