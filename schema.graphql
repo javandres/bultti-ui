@@ -319,17 +319,6 @@ type EquipmentColorReportData {
   trackReason: TrackReason!
 }
 
-type EquipmentSearchResult {
-  _exists: Boolean!
-  emissionClass: Int!
-  exteriorColor: String!
-  model: String!
-  registryDate: BulttiDate
-  registryNr: String
-  type: String!
-  vehicleId: String!
-}
-
 type EquipmentTypeReport {
   columnLabels: String!
   description: String!
@@ -641,10 +630,11 @@ type MissingEquipmentReportData {
 }
 
 type Mutation {
+  addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
+  addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
-  createEquipment(catalogueId: String, equipment: EquipmentInput!, executionRequirementId: String, operatorId: Int!): Equipment
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection!
@@ -674,11 +664,11 @@ type Mutation {
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateBaseInspection(inspectionId: String!): Inspection!
-  updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
+  updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
-  updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
-  updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
@@ -1136,7 +1126,7 @@ type Query {
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
-  queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): EquipmentSearchResult
+  queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionType: InspectionType!): [ReportListItem!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
@@ -1384,18 +1374,6 @@ input ContractInput {
 input EquipmentCatalogueInput {
   endDate: BulttiDate!
   startDate: BulttiDate!
-}
-
-input EquipmentInput {
-  emissionClass: Int
-  exteriorColor: String
-  meterRequirement: Float
-  model: String
-  percentageQuota: Float
-  registryDate: BulttiDate
-  registryNr: String
-  type: String
-  vehicleId: String
 }
 
 input InitialInspectionInput {

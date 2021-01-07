@@ -52,6 +52,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
   }) => {
     let [execRemoveEquipment] = useMutationData(removeEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
+
     let [execUpdateEquipmentData, { loading: equipmentUpdateLoading }] = useMutationData(
       updateCatalogueEquipmentDataMutation
     )

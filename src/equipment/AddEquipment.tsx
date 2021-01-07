@@ -113,28 +113,6 @@ const AddEquipment: React.FC<PropTypes> = observer(
       setSearchResultActive(true)
     }, [searchEquipment, operatorId])
 
-    let addDraftEquipment = useCallback(
-      (initialValues?: PendingEquipment) => {
-        const inputRow: PendingEquipment = {
-          vehicleId: initialValues?.vehicleId || '',
-          model: initialValues?.model || '',
-          type: initialValues?.type || '',
-          exteriorColor: initialValues?.exteriorColor || '',
-          emissionClass: initialValues?.emissionClass || 1,
-          registryDate: initialValues?.registryDate || '',
-          registryNr: initialValues?.registryNr || '',
-          _exists: initialValues?._exists || false,
-        }
-
-        for (let editVal of editableKeys) {
-          inputRow[editVal] = 0
-        }
-
-        setPendingEquipment(inputRow)
-      },
-      [editableKeys]
-    )
-
     useEffect(() => {
       if (searchResultActive && foundEquipment) {
         setSearchFormVisible(false)
