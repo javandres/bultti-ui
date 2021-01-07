@@ -12,6 +12,7 @@ import {
   emissionClassLayoutColumnLabels,
   RequirementsTableLayout,
 } from './executionRequirementUtils'
+import Big from 'big.js'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1rem;
