@@ -3,12 +3,15 @@ import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import {
   removeEquipmentMutation,
+  updateCatalogueEquipmentDataMutation,
   updateEquipmentCatalogueQuotaMutation,
 } from '../equipment/equipmentQuery'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 import { MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
+import { Button } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -49,8 +52,11 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
   }) => {
     let [execRemoveEquipment] = useMutationData(removeEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
+    let [execUpdateEquipmentData, { loading: equipmentUpdateLoading }] = useMutationData(
+      updateCatalogueEquipmentDataMutation
+    )
 
-    let updateEquipmentData = useCallback(
+    let updateEquipment = useCallback(
       async (updates: EquipmentUpdate[]) => {
         await Promise.all(
           updates.map((update) =>
@@ -64,6 +70,16 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       },
       [execUpdateEquipment, onEquipmentChanged]
     )
+
+    let updateAllEquipmentData = useCallback(async () => {
+      await execUpdateEquipmentData({
+        variables: {
+          catalogueId,
+        },
+      })
+
+      onEquipmentChanged()
+    }, [execUpdateEquipmentData, catalogueId, onEquipmentChanged])
 
     const removeEquipment = useCallback(
       async (equipmentId: string) => {
@@ -80,15 +96,23 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     )
 
     return equipment.length !== 0 ? (
-      <EquipmentList
-        equipment={equipment}
-        updateEquipment={equipmentEditable ? updateEquipmentData : undefined}
-        removeEquipment={equipmentEditable ? removeEquipment : undefined}
-        startDate={startDate}
-        columnLabels={equipmentColumnLabels}
-        groupedColumnLabels={groupedEquipmentColumnLabels}
-        editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
-      />
+      <>
+        <EquipmentList
+          equipment={equipment}
+          updateEquipment={equipmentEditable ? updateEquipment : undefined}
+          removeEquipment={equipmentEditable ? removeEquipment : undefined}
+          startDate={startDate}
+          columnLabels={equipmentColumnLabels}
+          groupedColumnLabels={groupedEquipmentColumnLabels}
+          editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
+        />
+        <FlexRow
+          style={{ marginLeft: 'auto', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <Button loading={equipmentUpdateLoading} onClick={updateAllEquipmentData}>
+            Update equipment
+          </Button>
+        </FlexRow>
+      </>
     ) : (
       <MessageView>
         <Text>catalogue.empty</Text>
