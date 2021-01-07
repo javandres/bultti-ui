@@ -258,8 +258,8 @@ type Equipment {
   operator: Operator!
   operatorId: Int!
   option: Boolean!
-  registryDate: BulttiDate
-  registryNr: String
+  registryDate: BulttiDate!
+  registryNr: String!
   type: String!
   vehicleId: String!
 }
@@ -677,6 +677,7 @@ type Mutation {
   updateEquipment(equipment: EquipmentInput!, equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
+  updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
   updateEquipmentRequirementQuota(equipment: EquipmentInput!, equipmentId: String!, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!

@@ -637,8 +637,8 @@ export type Equipment = {
   operator: Operator;
   operatorId: Scalars['Int'];
   model?: Maybe<Scalars['String']>;
-  registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDate']>;
+  registryNr: Scalars['String'];
+  registryDate: Scalars['BulttiDate'];
   type: Scalars['String'];
   exteriorColor: Scalars['String'];
   hasInfoSystems: Scalars['Boolean'];
@@ -1801,6 +1801,7 @@ export type Mutation = {
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
   batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
+  updateEquipmentInCatalogue: EquipmentCatalogue;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -1939,6 +1940,11 @@ export type MutationUpdateEquipmentCatalogueArgs = {
 
 export type MutationBatchAddToEquipmentCatalogueArgs = {
   vehicleIds: Array<Scalars['String']>;
+  catalogueId: Scalars['String'];
+};
+
+
+export type MutationUpdateEquipmentInCatalogueArgs = {
   catalogueId: Scalars['String'];
 };
 
