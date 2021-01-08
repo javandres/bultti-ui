@@ -210,7 +210,7 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
 
 type ItemRemover = undefined | false | null | (() => void)
 
-export type CellValType = string | number | null
+export type CellValType = string | number
 export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
 export type PropTypes<ItemType> = {

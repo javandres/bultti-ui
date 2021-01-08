@@ -12,3 +12,16 @@ export const emptyOrNumber = (val: string | number): string | number => {
 
   return val
 }
+
+export const undefinedOrNumber = (val: any): number | undefined => {
+  if (typeof val === 'string' && val !== '') {
+    let numberValue = numval(val, val.includes('.'))
+    return !isNaN(numberValue) ? numberValue : undefined
+  }
+
+  if (typeof val !== 'number' || (val !== 0 && !val) || isNaN(val)) {
+    return undefined
+  }
+
+  return val
+}

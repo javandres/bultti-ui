@@ -58,10 +58,6 @@ export const useLazyQueryData = <TData extends {} = {}, TVariables = OperationVa
 
   let execLazyQuery = useCallback(
     (options?: QueryLazyOptions<TVariables> | undefined) => {
-      if (called) {
-        return availableRefetch(options?.variables)
-      }
-
       return Promise.resolve(queryFn(options))
     },
     [queryFn, availableRefetch, called]

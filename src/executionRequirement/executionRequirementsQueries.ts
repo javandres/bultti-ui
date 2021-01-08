@@ -270,15 +270,6 @@ export const removeExecutionRequirementMutation = gql`
   }
 `
 
-export const removeRequirementEquipmentMutation = gql`
-  mutation removeEquipmentFromRequirement($equipmentId: String!, $requirementId: String!) {
-    removeEquipmentFromExecutionRequirement(
-      equipmentId: $equipmentId
-      executionRequirementId: $requirementId
-    )
-  }
-`
-
 export const removeAllEquipmentFromExecutionRequirement = gql`
   mutation removeAllEquipmentFromRequirement($requirementId: String!) {
     removeAllEquipmentFromExecutionRequirement(executionRequirementId: $requirementId) {
