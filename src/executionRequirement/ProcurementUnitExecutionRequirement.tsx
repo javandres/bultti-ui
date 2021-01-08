@@ -27,6 +27,7 @@ import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
+import { Text } from '../util/translate'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
@@ -170,7 +171,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               onClick={update}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}>
-              Päivitä
+              <Text>general.app.update</Text>
             </Button>
             {isEditable && (
               <Button

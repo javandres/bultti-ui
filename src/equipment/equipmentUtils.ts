@@ -202,7 +202,7 @@ export function useEquipmentCrud(
         await execAddEquipmentToRequirement({
           variables: {
             equipmentId,
-            catalogueId: catalogueOrRequirement.id,
+            requirementId: catalogueOrRequirement.id,
           },
         })
       }
