@@ -10,7 +10,6 @@ import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
 import { Text } from '../util/translate'
-import { numval } from '../util/numval'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
 
 export type EquipmentUpdate = {

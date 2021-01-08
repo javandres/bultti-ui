@@ -1788,6 +1788,7 @@ export type Mutation = {
   addEquipmentToCatalogue?: Maybe<EquipmentCatalogue>;
   batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentInCatalogue: EquipmentCatalogue;
+  removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -1798,7 +1799,6 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   modifyUser: User;
   updateEquipmentCatalogueQuota?: Maybe<Equipment>;
-  removeEquipmentFromCatalogue: Scalars['Boolean'];
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
@@ -1922,6 +1922,12 @@ export type MutationUpdateEquipmentInCatalogueArgs = {
 };
 
 
+export type MutationRemoveEquipmentFromCatalogueArgs = {
+  catalogueId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
 export type MutationRemoveAllEquipmentFromCatalogueArgs = {
   catalogueId: Scalars['String'];
 };
@@ -1969,12 +1975,6 @@ export type MutationModifyUserArgs = {
 export type MutationUpdateEquipmentCatalogueQuotaArgs = {
   quotaId?: Maybe<Scalars['String']>;
   quota: Scalars['Float'];
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationRemoveEquipmentFromCatalogueArgs = {
-  catalogueId: Scalars['String'];
   equipmentId: Scalars['String'];
 };
 
