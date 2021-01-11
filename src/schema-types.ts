@@ -592,9 +592,6 @@ export type ProcurementUnit = {
   operatorId: Scalars['Int'];
   operator: Operator;
   equipmentCatalogues: Array<EquipmentCatalogue>;
-  weeklyMeters: Scalars['Float'];
-  weeklyKilometers: Scalars['Float'];
-  medianAgeRequirement: Scalars['Float'];
   areaId?: Maybe<Scalars['Int']>;
   area?: Maybe<OperatingArea>;
   routes: Array<ProcurementUnitRoute>;
@@ -675,6 +672,7 @@ export type ExecutionRequirement = {
   areaRequirement?: Maybe<ExecutionRequirement>;
   areaRequirementId?: Maybe<Scalars['String']>;
   procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
+  weeklyMeters?: Maybe<Scalars['Float']>;
   totalKilometers?: Maybe<Scalars['Float']>;
   totalKilometersFulfilled?: Maybe<Scalars['Float']>;
   averageAgeWeighted?: Maybe<Scalars['Float']>;
@@ -1756,7 +1754,6 @@ export type ProcurementUnitOption = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   routes: Array<Scalars['String']>;
-  medianAgeRequirement?: Maybe<Scalars['Float']>;
   areaName?: Maybe<Scalars['String']>;
   currentContracts?: Maybe<Array<Contract>>;
 };
@@ -1781,8 +1778,6 @@ export type Mutation = {
   removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
   generateEquipmentForPreInspection: Scalars['Boolean'];
-  updateWeeklyMetersFromSource: ProcurementUnit;
-  updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
@@ -1792,6 +1787,7 @@ export type Mutation = {
   removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
+  updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
   removeEquipmentFromExecutionRequirement: ExecutionRequirement;
@@ -1875,18 +1871,6 @@ export type MutationGenerateEquipmentForPreInspectionArgs = {
 };
 
 
-export type MutationUpdateWeeklyMetersFromSourceArgs = {
-  startDate: Scalars['String'];
-  procurementUnitId: Scalars['String'];
-};
-
-
-export type MutationUpdateProcurementUnitArgs = {
-  procurementUnit: ProcurementUnitEditInput;
-  procurementUnitId: Scalars['String'];
-};
-
-
 export type MutationUpdateEquipmentArgs = {
   equipmentId: Scalars['String'];
 };
@@ -1937,6 +1921,12 @@ export type MutationRemoveAllEquipmentFromCatalogueArgs = {
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
   inspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
+};
+
+
+export type MutationUpdateWeeklyExecutionMetersFromSourceArgs = {
+  date: Scalars['String'];
+  executionRequirementId: Scalars['String'];
 };
 
 
@@ -2072,11 +2062,6 @@ export type InspectionInput = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
   inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
-};
-
-export type ProcurementUnitEditInput = {
-  weeklyMeters: Scalars['Float'];
-  medianAgeRequirement: Scalars['Float'];
 };
 
 export type EquipmentCatalogueInput = {

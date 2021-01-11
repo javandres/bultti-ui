@@ -8,22 +8,21 @@ import {
   executionRequirementForProcurementUnitQuery,
   refreshExecutionRequirementForProcurementUnitMutation,
   removeExecutionRequirementMutation,
+  weeklyMetersFromJoreMutation,
 } from './executionRequirementsQueries'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { InspectionContext } from '../inspection/InspectionContext'
-import { useLazyQueryData } from '../util/useLazyQueryData'
 import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'
 import {
-  EquipmentWithQuota,
   createRequirementEquipment,
+  EquipmentWithQuota,
   useEquipmentCrud,
 } from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
 import AddEquipment from '../equipment/AddEquipment'
 import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
-import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
@@ -78,6 +77,16 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
+
+    let [updateWeeklyMeters, { loading: weeklyMetersUpdateLoading }] = useMutationData(
+      weeklyMetersFromJoreMutation,
+      {
+        variables: {
+          executionRequirementId: procurementUnitRequirement?.id,
+          date: inspection?.inspectionStartDate,
+        },
+      }
+    )
 
     let update = useCallback(() => {
       updateRequirements()
@@ -136,6 +145,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       }
     }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
+    const onUpdateWeeklyMeters = useCallback(async () => {
+      if (isEditable) {
+        await updateWeeklyMeters()
+      }
+    }, [isEditable, updateWeeklyMeters])
+
     const equipment: EquipmentWithQuota[] = useMemo(
       () =>
         procurementUnitRequirement
@@ -160,7 +175,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     return (
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
-          <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
+          <div>
+            <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
+            <SubHeading style={{ marginBottom: 0, fontSize: '1rem' }}>
+              Viikkokilometrit: {(procurementUnitRequirement?.weeklyMeters || 0) / 1000}
+            </SubHeading>
+          </div>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
               loading={isLoading}
@@ -170,14 +190,24 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <Text>general.app.update</Text>
             </Button>
             {isEditable && (
-              <Button
-                loading={refreshLoading}
-                onClick={onRefreshRequirements}
-                style={{ marginLeft: '0.5rem' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}>
-                Virkistä kalustoluettelosta
-              </Button>
+              <>
+                <Button
+                  loading={weeklyMetersUpdateLoading}
+                  style={{ marginLeft: '0.5rem' }}
+                  size={ButtonSize.SMALL}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  onClick={onUpdateWeeklyMeters}>
+                  Päivitä suoritteet JOREsta
+                </Button>
+                <Button
+                  loading={refreshLoading}
+                  onClick={onRefreshRequirements}
+                  style={{ marginLeft: '0.5rem' }}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  size={ButtonSize.SMALL}>
+                  Virkistä kalustoluettelosta
+                </Button>
+              </>
             )}
           </div>
         </FlexRow>
