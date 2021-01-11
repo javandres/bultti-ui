@@ -34,6 +34,7 @@ export type EquipmentWithQuota = Equipment & {
   meterRequirement?: number
   kilometerRequirement?: number
   quotaId: string
+  requirementOnly?: boolean
 }
 
 export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWithQuota[] {
@@ -58,7 +59,7 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
   return compact(equipmentQuotas)
 }
 
-export function requirementEquipment(
+export function createRequirementEquipment(
   executionRequirement?: ExecutionRequirement
 ): EquipmentWithQuota[] {
   if (!executionRequirement) {
@@ -66,17 +67,19 @@ export function requirementEquipment(
   }
 
   let equipmentQuotas = (executionRequirement?.equipmentQuotas || []).map(
-    (quota: ExecutionRequirementQuota) => {
+    (quota: ExecutionRequirementQuota): EquipmentWithQuota | null => {
       if (!quota.equipment) {
         return null
       }
 
+      // noinspection PointlessBooleanExpressionJS
       return {
         ...quota?.equipment,
         percentageQuota: quota.percentageQuota || 0,
         meterRequirement: quota.meterRequirement || 0,
         kilometerRequirement: (quota.meterRequirement || 0) / 1000,
         quotaId: quota.id,
+        requirementOnly: !!quota.requirementOnly,
       }
     }
   )

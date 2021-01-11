@@ -180,6 +180,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
+            highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}

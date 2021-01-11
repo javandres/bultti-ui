@@ -17,7 +17,7 @@ import { useLazyQueryData } from '../util/useLazyQueryData'
 import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'
 import {
   EquipmentWithQuota,
-  requirementEquipment,
+  createRequirementEquipment,
   useEquipmentCrud,
 } from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
@@ -138,7 +138,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
     const equipment: EquipmentWithQuota[] = useMemo(
       () =>
-        procurementUnitRequirement ? requirementEquipment(procurementUnitRequirement) : [],
+        procurementUnitRequirement
+          ? createRequirementEquipment(procurementUnitRequirement)
+          : [],
       [procurementUnitRequirement]
     )
 

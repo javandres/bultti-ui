@@ -99,6 +99,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
         id
         meterRequirement
         percentageQuota
+        requirementOnly
         equipment {
           ...EquipmentFragment
         }
@@ -219,6 +220,7 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
         id
         meterRequirement
         percentageQuota
+        requirementOnly
         equipmentId
         equipment {
           ...EquipmentFragment
@@ -255,6 +257,7 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
         meterRequirement
         percentageQuota
         equipmentId
+        requirementOnly
         equipment {
           ...EquipmentFragment
         }
@@ -272,12 +275,14 @@ export const removeExecutionRequirementMutation = gql`
         id
         meterRequirement
         percentageQuota
+        requirementOnly
         equipment {
           ...EquipmentFragment
         }
       }
     }
   }
+  ${EquipmentFragment}
 `
 
 export const removeAllEquipmentFromExecutionRequirement = gql`
@@ -294,4 +299,5 @@ export const removeAllEquipmentFromExecutionRequirement = gql`
       }
     }
   }
+  ${EquipmentFragment}
 `
