@@ -6,15 +6,16 @@ import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
 import { groupBy, orderBy, uniqBy } from 'lodash'
-import { EquipmentInput } from '../schema-types'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
 import { Text } from '../util/translate'
+import { undefinedOrNumber } from '../util/emptyOrNumber'
 
 export type EquipmentUpdate = {
   equipmentId: string
-  equipmentInput: EquipmentInput
+  quota?: number
+  kilometers?: number
   quotaId: string
 }
 
@@ -77,23 +78,21 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
       setPendingValues([])
 
-      let pendingEquipmentInput = Object.entries(
-        groupBy<EditValue<EquipmentWithQuota>>(pendingValues, getQuotaId)
-      )
-
+      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, getQuotaId))
       let updates: EquipmentUpdate[] = []
 
       for (let [, pendingEditValues] of pendingEquipmentInput) {
-        let updatedValues = {}
         let item = pendingEditValues[0].item
 
-        for (let val of pendingEditValues) {
-          updatedValues[val.key] = val.value
-        }
+        let percentageQuota = pendingEditValues.find((val) => val.key === 'percentageQuota')
+          ?.value
+        let meterRequirement = pendingEditValues.find((val) => val.key === 'meterRequirement')
+          ?.value
 
         updates.push({
           equipmentId: item.id,
-          equipmentInput: updatedValues,
+          quota: undefinedOrNumber(percentageQuota),
+          kilometers: undefinedOrNumber(meterRequirement),
           quotaId: item.quotaId,
         })
       }
@@ -181,6 +180,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
+            highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}

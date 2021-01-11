@@ -96,7 +96,14 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
       },
       EquipmentCatalogue: {
         fields: {
-          equipmentCatalogues: {
+          equipmentQuotas: {
+            merge: cacheMerge,
+          },
+        },
+      },
+      ExecutionRequirement: {
+        fields: {
+          equipmentQuotas: {
             merge: cacheMerge,
           },
         },

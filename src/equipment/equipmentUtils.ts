@@ -2,7 +2,6 @@ import {
   Equipment,
   EquipmentCatalogue,
   EquipmentCatalogueQuota,
-  EquipmentInput,
   ExecutionRequirement,
   ExecutionRequirementQuota,
 } from '../schema-types'
@@ -13,7 +12,11 @@ import { differenceInCalendarDays, parseISO } from 'date-fns'
 import { getTotal } from '../util/getTotal'
 import { useMutationData } from '../util/useMutationData'
 import { removeAllEquipmentFromCatalogueMutation } from '../equipmentCatalogue/equipmentCatalogueQuery'
-import { addBatchEquipmentMutation, createEquipmentMutation } from './equipmentQuery'
+import {
+  addBatchEquipmentMutation,
+  addEquipmentToCatalogueMutation,
+  addEquipmentToRequirementMutation,
+} from './equipmentQuery'
 import { useCallback } from 'react'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 import Big from 'big.js'
@@ -31,6 +34,7 @@ export type EquipmentWithQuota = Equipment & {
   meterRequirement?: number
   kilometerRequirement?: number
   quotaId: string
+  requirementOnly?: boolean
 }
 
 export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWithQuota[] {
@@ -55,7 +59,7 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
   return compact(equipmentQuotas)
 }
 
-export function requirementEquipment(
+export function createRequirementEquipment(
   executionRequirement?: ExecutionRequirement
 ): EquipmentWithQuota[] {
   if (!executionRequirement) {
@@ -63,17 +67,19 @@ export function requirementEquipment(
   }
 
   let equipmentQuotas = (executionRequirement?.equipmentQuotas || []).map(
-    (quota: ExecutionRequirementQuota) => {
+    (quota: ExecutionRequirementQuota): EquipmentWithQuota | null => {
       if (!quota.equipment) {
         return null
       }
 
+      // noinspection PointlessBooleanExpressionJS
       return {
         ...quota?.equipment,
         percentageQuota: quota.percentageQuota || 0,
         meterRequirement: quota.meterRequirement || 0,
         kilometerRequirement: (quota.meterRequirement || 0) / 1000,
         quotaId: quota.id,
+        requirementOnly: !!quota.requirementOnly,
       }
     }
   )
@@ -146,7 +152,9 @@ export function useEquipmentCrud(
   let [execRemoveAllCatalogueEquipment] = useMutationData(
     removeAllEquipmentFromCatalogueMutation
   )
-  let [execCreateEquipment] = useMutationData(createEquipmentMutation)
+  let [execAddEquipmentToCatalogue] = useMutationData(addEquipmentToCatalogueMutation)
+  let [execAddEquipmentToRequirement] = useMutationData(addEquipmentToRequirementMutation)
+
   let [execAddBatchEquipment] = useMutationData(addBatchEquipmentMutation)
 
   let removeAllEquipment = useCallback(async () => {
@@ -180,29 +188,37 @@ export function useEquipmentCrud(
   ])
 
   let addEquipment = useCallback(
-    async (equipmentInput: EquipmentInput) => {
-      let idProp =
-        mode === 'catalogue'
-          ? 'catalogueId'
-          : mode === 'requirement'
-          ? 'executionRequirementId'
-          : false
-
-      if (!catalogueOrRequirement || !idProp) {
+    async (equipmentId: string, quota: number = 0) => {
+      if (!catalogueOrRequirement || (mode === 'catalogue' && typeof quota === 'undefined')) {
         return
       }
 
-      await execCreateEquipment({
-        variables: {
-          operatorId: catalogueOrRequirement.operator.id,
-          equipmentInput,
-          [idProp]: catalogueOrRequirement.id,
-        },
-      })
+      if (mode === 'catalogue') {
+        await execAddEquipmentToCatalogue({
+          variables: {
+            equipmentId,
+            quota,
+            catalogueId: catalogueOrRequirement.id,
+          },
+        })
+      } else if (mode === 'requirement') {
+        await execAddEquipmentToRequirement({
+          variables: {
+            equipmentId,
+            requirementId: catalogueOrRequirement.id,
+          },
+        })
+      }
 
       await onChanged()
     },
-    [onChanged, catalogueOrRequirement, mode, execCreateEquipment]
+    [
+      onChanged,
+      catalogueOrRequirement,
+      mode,
+      execAddEquipmentToCatalogue,
+      execAddEquipmentToRequirement,
+    ]
   )
 
   let addBatchEquipment = useCallback(

@@ -133,6 +133,7 @@ const TableCell = styled.div<{
   editable?: boolean
   isEditing?: boolean
   isEditingRow?: boolean
+  highlightColor?: string
 }>`
   flex: 1 0;
   border-right: 1px solid var(--lighter-grey);
@@ -140,13 +141,15 @@ const TableCell = styled.div<{
   align-items: stretch;
   justify-content: center;
   font-size: 0.875rem;
-  background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'rgba(0, 0, 0, 0.005)')};
+  background: ${(p) =>
+    p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.005)'};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   box-sizing: border-box !important;
 
   &:nth-child(odd) {
-    background: rgba(0, 0, 0, 0.025);
+    background: ${(p) =>
+      p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.025)'};
   }
 
   &:last-child {
@@ -210,7 +213,7 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
 
 type ItemRemover = undefined | false | null | (() => void)
 
-export type CellValType = string | number | null
+export type CellValType = string | number
 export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
 export type PropTypes<ItemType> = {
@@ -231,6 +234,7 @@ export type PropTypes<ItemType> = {
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
   editableValues?: string[]
+  highlightRow?: (item: ItemType) => boolean | string
   renderInput?: (
     key: keyof ItemType,
     val: any,
@@ -312,6 +316,7 @@ type ContextTypes<ItemType> = {
   renderValue?: PropTypes<ItemType>['renderValue']
   keyFromItem?: PropTypes<ItemType>['keyFromItem']
   fluid?: boolean
+  highlightRow?: PropTypes<ItemType>['highlightRow']
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
@@ -331,6 +336,7 @@ const TableCellComponent = observer(
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
       fluid,
+      highlightRow = defaultHighlightRow,
     } = ctx || {}
 
     let [isFocused, setIsFocused] = useState(false)
@@ -359,18 +365,28 @@ const TableCellComponent = observer(
       [makeCellEditable, isFocused]
     )
 
+    let rowHighlight = highlightRow(item)
+    let rowHighlightColor =
+      typeof rowHighlight === 'string'
+        ? rowHighlight
+        : rowHighlight
+        ? '--lightest-blue'
+        : undefined
+
+    let cellWidthStyle =
+      !fluid && !!columnWidth
+        ? {
+            minWidth:
+              typeof columnWidth === 'string'
+                ? columnWidth
+                : Math.min(columnWidth, 300) + 'px',
+          }
+        : {}
+
     return (
       <TableCell
-        style={
-          !fluid && !!columnWidth
-            ? {
-                minWidth:
-                  typeof columnWidth === 'string'
-                    ? columnWidth
-                    : Math.min(columnWidth, 300) + 'px',
-              }
-            : undefined
-        }
+        highlightColor={rowHighlightColor}
+        style={cellWidthStyle}
         isEditing={!!editValue}
         isEditingRow={isEditingRow}
         editable={canEditCell}
@@ -427,6 +443,8 @@ const TableRowComponent = observer(
   }
 )
 
+const defaultHighlightRow = (): string | boolean => false
+
 const Table = observer(
   <ItemType extends {}>({
     items,
@@ -451,6 +469,7 @@ const Table = observer(
     maxHeight = window.innerHeight,
     fluid = false,
     showToolbar = true,
+    highlightRow = defaultHighlightRow,
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
@@ -724,6 +743,7 @@ const Table = observer(
       renderValue,
       keyFromItem,
       fluid,
+      highlightRow,
     }
 
     let tableViewWidth = fluid

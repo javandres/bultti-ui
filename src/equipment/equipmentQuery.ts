@@ -22,44 +22,50 @@ export const searchEquipmentQuery = gql`
       vehicleId: $vehicleId
       registryNr: $registryNr
     ) {
-      type
-      exteriorColor
-      model
-      registryDate
-      registryNr
-      emissionClass
-      vehicleId
-      _exists
+      ...EquipmentFragment
     }
   }
+  ${EquipmentFragment}
 `
 
-export const createEquipmentMutation = gql`
-  mutation createEquipmentMutation(
-    $operatorId: Int!
-    $equipmentInput: EquipmentInput!
-    $catalogueId: String
-    $executionRequirementId: String
+export const addEquipmentToCatalogueMutation = gql`
+  mutation addEquipmentToCatalogueMutation(
+    $equipmentId: String!
+    $catalogueId: String!
+    $quota: Float!
   ) {
-    createEquipment(
-      operatorId: $operatorId
-      equipment: $equipmentInput
+    addEquipmentToCatalogue(
+      equipmentId: $equipmentId
       catalogueId: $catalogueId
-      executionRequirementId: $executionRequirementId
+      quota: $quota
     ) {
-      ...EquipmentFragment
-      equipmentCatalogueQuotas {
+      id
+      equipmentQuotas {
         id
         percentageQuota
-        equipmentCatalogueId
-        equipmentId
+        equipment {
+          ...EquipmentFragment
+        }
       }
-      executionRequirementQuotas {
+    }
+  }
+  ${EquipmentFragment}
+`
+
+export const addEquipmentToRequirementMutation = gql`
+  mutation addEquipmentToRequirementMutation($equipmentId: String!, $requirementId: String!) {
+    addEquipmentToExecutionRequirement(
+      equipmentId: $equipmentId
+      executionRequirementId: $requirementId
+    ) {
+      id
+      equipmentQuotas {
         id
-        percentageQuota
         meterRequirement
-        executionRequirementId
-        equipmentId
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
       }
     }
   }
@@ -88,6 +94,7 @@ export const updateCatalogueEquipmentDataMutation = gql`
       id
       equipmentQuotas {
         id
+        percentageQuota
         equipment {
           ...EquipmentFragment
         }
@@ -98,21 +105,9 @@ export const updateCatalogueEquipmentDataMutation = gql`
 `
 
 export const updateEquipmentMutation = gql`
-  mutation updateEquipmentFromCatalogue(
-    $equipmentId: String!
-    $equipmentInput: EquipmentInput!
-  ) {
-    updateEquipment(equipmentId: $equipmentId, equipment: $equipmentInput) {
+  mutation updateEquipmentFromCatalogue($equipmentId: String!) {
+    updateEquipment(equipmentId: $equipmentId) {
       ...EquipmentFragment
-      equipmentCatalogueQuotas {
-        id
-        percentageQuota
-      }
-      executionRequirementQuotas {
-        id
-        meterRequirement
-        percentageQuota
-      }
     }
   }
   ${EquipmentFragment}
@@ -121,12 +116,12 @@ export const updateEquipmentMutation = gql`
 export const updateEquipmentCatalogueQuotaMutation = gql`
   mutation updateEquipmentCatalogueQuota(
     $equipmentId: String!
-    $equipmentInput: EquipmentInput!
+    $quota: Float!
     $quotaId: String!
   ) {
     updateEquipmentCatalogueQuota(
       equipmentId: $equipmentId
-      equipment: $equipmentInput
+      quota: $quota
       quotaId: $quotaId
     ) {
       ...EquipmentFragment
@@ -142,12 +137,12 @@ export const updateEquipmentCatalogueQuotaMutation = gql`
 export const updateEquipmentRequirementQuotaMutation = gql`
   mutation updateEquipmentRequirementQuota(
     $equipmentId: String!
-    $equipmentInput: EquipmentInput!
+    $quota: Float!
     $quotaId: String!
   ) {
     updateEquipmentRequirementQuota(
       equipmentId: $equipmentId
-      equipment: $equipmentInput
+      quota: $quota
       quotaId: $quotaId
     ) {
       ...EquipmentFragment
@@ -163,6 +158,36 @@ export const updateEquipmentRequirementQuotaMutation = gql`
 
 export const removeEquipmentMutation = gql`
   mutation removeEquipmentFromCatalogue($equipmentId: String!, $catalogueId: String!) {
-    removeEquipmentFromCatalogue(equipmentId: $equipmentId, catalogueId: $catalogueId)
+    removeEquipmentFromCatalogue(equipmentId: $equipmentId, catalogueId: $catalogueId) {
+      id
+      equipmentQuotas {
+        id
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
   }
+  ${EquipmentFragment}
+`
+
+export const removeRequirementEquipmentMutation = gql`
+  mutation removeEquipmentFromRequirement($equipmentId: String!, $requirementId: String!) {
+    removeEquipmentFromExecutionRequirement(
+      equipmentId: $equipmentId
+      executionRequirementId: $requirementId
+    ) {
+      id
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
+  }
+  ${EquipmentFragment}
 `

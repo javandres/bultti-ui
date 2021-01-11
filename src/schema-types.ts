@@ -37,7 +37,7 @@ export type Query = {
   singleEquipment?: Maybe<Equipment>;
   equipment: Array<Equipment>;
   equipmentByOperator: Array<Equipment>;
-  queryEquipmentFromSource?: Maybe<EquipmentSearchResult>;
+  queryEquipmentFromSource?: Maybe<Equipment>;
   singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   equipmentCatalogue: Array<EquipmentCatalogue>;
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
@@ -658,6 +658,7 @@ export type ExecutionRequirementQuota = {
   executionRequirementId: Scalars['String'];
   equipment: Equipment;
   executionRequirement: ExecutionRequirement;
+  requirementOnly: Scalars['Boolean'];
 };
 
 export type ExecutionRequirement = {
@@ -816,18 +817,6 @@ export type InspectionTimelineItem = {
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   version: Scalars['Int'];
-};
-
-export type EquipmentSearchResult = {
-  __typename?: 'EquipmentSearchResult';
-  vehicleId: Scalars['String'];
-  model: Scalars['String'];
-  registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDate']>;
-  type: Scalars['String'];
-  exteriorColor: Scalars['String'];
-  emissionClass: Scalars['Int'];
-  _exists: Scalars['Boolean'];
 };
 
 export type ReportListItem = {
@@ -1794,26 +1783,27 @@ export type Mutation = {
   generateEquipmentForPreInspection: Scalars['Boolean'];
   updateWeeklyMetersFromSource: ProcurementUnit;
   updateProcurementUnit: ProcurementUnit;
-  createEquipment?: Maybe<Equipment>;
   updateEquipment?: Maybe<Equipment>;
-  updateEquipmentCatalogueQuota?: Maybe<Equipment>;
-  updateEquipmentRequirementQuota?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
+  addEquipmentToCatalogue?: Maybe<EquipmentCatalogue>;
   batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentInCatalogue: EquipmentCatalogue;
+  removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
+  addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
+  removeEquipmentFromExecutionRequirement: ExecutionRequirement;
   removeAllEquipmentFromExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeExecutionRequirement: Scalars['Boolean'];
+  removeExecutionRequirement: ExecutionRequirement;
   login?: Maybe<Scalars['String']>;
   logout: Scalars['Boolean'];
   modifyUser: User;
-  removeEquipmentFromCatalogue: Scalars['Boolean'];
+  updateEquipmentCatalogueQuota?: Maybe<Equipment>;
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
-  removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
+  updateEquipmentRequirementQuota?: Maybe<Equipment>;
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
   createContract: Contract;
   modifyContract: Contract;
@@ -1897,30 +1887,7 @@ export type MutationUpdateProcurementUnitArgs = {
 };
 
 
-export type MutationCreateEquipmentArgs = {
-  executionRequirementId?: Maybe<Scalars['String']>;
-  catalogueId?: Maybe<Scalars['String']>;
-  operatorId: Scalars['Int'];
-  equipment: EquipmentInput;
-};
-
-
 export type MutationUpdateEquipmentArgs = {
-  equipment: EquipmentInput;
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationUpdateEquipmentCatalogueQuotaArgs = {
-  quotaId?: Maybe<Scalars['String']>;
-  equipment: EquipmentInput;
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationUpdateEquipmentRequirementQuotaArgs = {
-  quotaId?: Maybe<Scalars['String']>;
-  equipment: EquipmentInput;
   equipmentId: Scalars['String'];
 };
 
@@ -1938,6 +1905,13 @@ export type MutationUpdateEquipmentCatalogueArgs = {
 };
 
 
+export type MutationAddEquipmentToCatalogueArgs = {
+  quota: Scalars['Float'];
+  catalogueId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
 export type MutationBatchAddToEquipmentCatalogueArgs = {
   vehicleIds: Array<Scalars['String']>;
   catalogueId: Scalars['String'];
@@ -1946,6 +1920,12 @@ export type MutationBatchAddToEquipmentCatalogueArgs = {
 
 export type MutationUpdateEquipmentInCatalogueArgs = {
   catalogueId: Scalars['String'];
+};
+
+
+export type MutationRemoveEquipmentFromCatalogueArgs = {
+  catalogueId: Scalars['String'];
+  equipmentId: Scalars['String'];
 };
 
 
@@ -1962,6 +1942,18 @@ export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
 
 export type MutationRefreshExecutionRequirementForProcurementUnitArgs = {
   executionRequirementId: Scalars['String'];
+};
+
+
+export type MutationAddEquipmentToExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
+export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
 };
 
 
@@ -1987,8 +1979,9 @@ export type MutationModifyUserArgs = {
 };
 
 
-export type MutationRemoveEquipmentFromCatalogueArgs = {
-  catalogueId: Scalars['String'];
+export type MutationUpdateEquipmentCatalogueQuotaArgs = {
+  quotaId?: Maybe<Scalars['String']>;
+  quota: Scalars['Float'];
   equipmentId: Scalars['String'];
 };
 
@@ -2006,8 +1999,10 @@ export type MutationRemoveDepartureBlocksForDayTypesArgs = {
 };
 
 
-export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
+export type MutationUpdateEquipmentRequirementQuotaArgs = {
+  quotaId?: Maybe<Scalars['String']>;
+  kilometers?: Maybe<Scalars['Float']>;
+  quota?: Maybe<Scalars['Float']>;
   equipmentId: Scalars['String'];
 };
 
@@ -2082,18 +2077,6 @@ export type InspectionInput = {
 export type ProcurementUnitEditInput = {
   weeklyMeters: Scalars['Float'];
   medianAgeRequirement: Scalars['Float'];
-};
-
-export type EquipmentInput = {
-  percentageQuota?: Maybe<Scalars['Float']>;
-  meterRequirement?: Maybe<Scalars['Float']>;
-  vehicleId?: Maybe<Scalars['String']>;
-  model?: Maybe<Scalars['String']>;
-  registryNr?: Maybe<Scalars['String']>;
-  registryDate?: Maybe<Scalars['BulttiDate']>;
-  type?: Maybe<Scalars['String']>;
-  exteriorColor?: Maybe<Scalars['String']>;
-  emissionClass?: Maybe<Scalars['Int']>;
 };
 
 export type EquipmentCatalogueInput = {

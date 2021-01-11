@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { EquipmentCatalogue as EquipmentCatalogueType, ProcurementUnit } from '../schema-types'
+import {
+  Equipment,
+  EquipmentCatalogue as EquipmentCatalogueType,
+  ProcurementUnit,
+} from '../schema-types'
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipmentList, { equipmentColumnLabels } from './CatalogueEquipmentList'
 import {
@@ -35,7 +39,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     ])
 
     let hasEquipment = useCallback(
-      (checkItem?: any) =>
+      (checkItem?: Equipment) =>
         !checkItem ? false : equipment.some((eq) => eq.vehicleId === checkItem?.vehicleId),
       [equipment]
     )
@@ -73,6 +77,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 removeAllEquipment={removeAllEquipment}
                 addEquipment={addEquipment}
                 addBatchEquipment={addBatchEquipment}
+                updateQuota={true}
               />
             )}
           </>

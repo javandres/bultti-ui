@@ -99,6 +99,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
         id
         meterRequirement
         percentageQuota
+        requirementOnly
         equipment {
           ...EquipmentFragment
         }
@@ -219,6 +220,7 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
         id
         meterRequirement
         percentageQuota
+        requirementOnly
         equipmentId
         equipment {
           ...EquipmentFragment
@@ -255,6 +257,7 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
         meterRequirement
         percentageQuota
         equipmentId
+        requirementOnly
         equipment {
           ...EquipmentFragment
         }
@@ -266,17 +269,20 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
 
 export const removeExecutionRequirementMutation = gql`
   mutation removeExecutionRequirement($requirementId: String!) {
-    removeExecutionRequirement(executionRequirementId: $requirementId)
+    removeExecutionRequirement(executionRequirementId: $requirementId) {
+      id
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        requirementOnly
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
   }
-`
-
-export const removeRequirementEquipmentMutation = gql`
-  mutation removeEquipmentFromRequirement($equipmentId: String!, $requirementId: String!) {
-    removeEquipmentFromExecutionRequirement(
-      equipmentId: $equipmentId
-      executionRequirementId: $requirementId
-    )
-  }
+  ${EquipmentFragment}
 `
 
 export const removeAllEquipmentFromExecutionRequirement = gql`
@@ -285,8 +291,13 @@ export const removeAllEquipmentFromExecutionRequirement = gql`
       id
       equipmentQuotas {
         id
+        meterRequirement
         percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
       }
     }
   }
+  ${EquipmentFragment}
 `

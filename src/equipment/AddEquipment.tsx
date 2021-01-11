@@ -1,23 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
-import ItemForm, { ActionsWrapper } from '../common/input/ItemForm'
+import { ActionsWrapper } from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
-import Input, { TextArea, TextInput } from '../common/input/Input'
-import EquipmentFormInput from './EquipmentFormInput'
-import { omit } from 'lodash'
+import Input, { TextArea } from '../common/input/Input'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { searchEquipmentQuery } from './equipmentQuery'
-import { emptyOrNumber } from '../util/emptyOrNumber'
-import { numval } from '../util/numval'
-import { EquipmentInput } from '../schema-types'
 import { EquipmentWithQuota } from './equipmentUtils'
 import Modal from '../common/components/Modal'
 import styled from 'styled-components'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
+import { Equipment } from '../schema-types'
+import ValueDisplay from '../common/components/ValueDisplay'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -25,31 +22,19 @@ const AddEquipmentFormWrapper = styled.div`
   border-radius: 0.5rem;
 `
 
-type PendingEquipment = { _exists: boolean } & EquipmentInput
-
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
   operatorId: number
   onEquipmentChanged: () => unknown
-  hasEquipment: (checkEquipment?: PendingEquipment) => boolean
-  addEquipment: (equipmentInput: EquipmentInput) => Promise<unknown>
+  hasEquipment: (checkEquipment?: Equipment) => boolean
+  addEquipment: (equipmentId: string, quota?: number) => Promise<unknown>
   addBatchEquipment?: (batchInput: string) => Promise<unknown>
   removeAllEquipment?: () => Promise<unknown>
   removeLabel?: string
   editableKeys: string[]
   fieldLabels: { [key: string]: string }
+  updateQuota?: boolean
 }
-
-const equipmentInputValues = {
-  percentageQuota: (val) => emptyOrNumber(numval(val, true)),
-  emissionClass: (val) => emptyOrNumber(numval(val)),
-}
-
-const defaultGetVal = (val) => val
-const getType = (key) => equipmentInputValues[key] || defaultGetVal
-
-const equipmentIsValid = (e: EquipmentInput): boolean =>
-  !!(e?.model && e?.emissionClass && e?.type && e?.percentageQuota && e?.registryDate)
 
 const AddEquipment: React.FC<PropTypes> = observer(
   ({
@@ -62,8 +47,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
     editableKeys,
     onEquipmentChanged,
     fieldLabels,
+    updateQuota,
   }) => {
-    let [pendingEquipment, setPendingEquipment] = useState<PendingEquipment | null>(null)
+    let [quotaInput, setQuotaInput] = useState<number>(0)
     let [batchInput, setBatchInput] = useState<string>('')
 
     let [searchFormVisible, setSearchFormVisible] = useState(false)
@@ -75,7 +61,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
     let [
       searchEquipment,
       { data: foundEquipment, loading: searchLoading, called: searchCalled },
-    ] = useLazyQueryData<PendingEquipment>(searchEquipmentQuery)
+    ] = useLazyQueryData<Equipment>(searchEquipmentQuery, {
+      fetchPolicy: 'network-only',
+    })
 
     let doSearch = useCallback(async () => {
       if (searchVehicleId || searchRegistryNr) {
@@ -84,6 +72,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
           : searchRegistryNr
           ? 'registryNr'
           : null
+
         let useSearchValue = searchVehicleId
           ? searchVehicleId
           : searchRegistryNr
@@ -113,61 +102,15 @@ const AddEquipment: React.FC<PropTypes> = observer(
       setSearchResultActive(true)
     }, [searchEquipment, operatorId])
 
-    let addDraftEquipment = useCallback(
-      (initialValues?: PendingEquipment) => {
-        const inputRow: PendingEquipment = {
-          vehicleId: initialValues?.vehicleId || '',
-          model: initialValues?.model || '',
-          type: initialValues?.type || '',
-          exteriorColor: initialValues?.exteriorColor || '',
-          emissionClass: initialValues?.emissionClass || 1,
-          registryDate: initialValues?.registryDate || '',
-          registryNr: initialValues?.registryNr || '',
-          _exists: initialValues?._exists || false,
-        }
-
-        for (let editVal of editableKeys) {
-          inputRow[editVal] = 0
-        }
-
-        setPendingEquipment(inputRow)
-      },
-      [editableKeys]
-    )
-
-    useEffect(() => {
-      if (searchResultActive && foundEquipment) {
-        setSearchFormVisible(false)
-        setSearchResultActive(false)
-        setSearchVehicleId('')
-        setSearchRegistryNr('')
-
-        if (!hasEquipment(foundEquipment)) {
-          addDraftEquipment(foundEquipment)
-        } else {
-          alert('Ajoneuvo on jo lisätty.')
-        }
-      }
-    }, [foundEquipment, searchResultActive])
-
-    const onEquipmentInputChange = useCallback((key: string, nextValue) => {
-      setPendingEquipment((currentPending) =>
-        !currentPending ? null : { ...currentPending, [key]: getType(key)(nextValue) }
-      )
-    }, [])
-
     const onAddEquipment = useCallback(async () => {
-      if (!pendingEquipment) {
-        return
+      if (foundEquipment) {
+        await addEquipment(foundEquipment.id, quotaInput)
+        setQuotaInput(0)
+        setSearchResultActive(false)
+        setSearchRegistryNr('')
+        setSearchVehicleId('')
       }
-
-      setPendingEquipment(null)
-      await addEquipment(omit(pendingEquipment, '_exists'))
-    }, [operatorId, addEquipment, pendingEquipment])
-
-    const onCancelPendingEquipment = useCallback(() => {
-      setPendingEquipment(null)
-    }, [])
+    }, [addEquipment, foundEquipment, quotaInput])
 
     let onAddBatchEquipment = useCallback(async () => {
       if (batchInput && addBatchEquipment) {
@@ -177,70 +120,63 @@ const AddEquipment: React.FC<PropTypes> = observer(
       }
     }, [batchInput, addBatchEquipment])
 
+    let onCancel = useCallback(() => {
+      setBatchFormVisible(false)
+      setQuotaInput(0)
+      setSearchResultActive(false)
+      setSearchFormVisible(false)
+    }, [])
+
     return (
       <>
-        {!pendingEquipment && (
-          <FlexRow>
-            <Button style={{ marginRight: '1rem' }} onClick={() => addDraftEquipment()}>
-              <Text>catalogue.add_equipment</Text>
+        <FlexRow>
+          {addBatchEquipment && (
+            <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
+              <Text>catalogue.batch_add_equipment</Text>
             </Button>
-            {addBatchEquipment && (
-              <Button
-                style={{ marginRight: '1rem' }}
-                onClick={() => setBatchFormVisible(true)}>
-                <Text>catalogue.batch_add_equipment</Text>
-              </Button>
-            )}
-            <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
-              <Text>catalogue.find.equipment</Text>
+          )}
+          <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
+            <Text>catalogue.find.equipment</Text>
+          </Button>
+          <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
+            (DEV) Lisää satunnainen ajoneuvo
+          </Button>
+          {removeAllEquipment && !searchResultActive && (
+            <Button
+              style={{ marginLeft: 'auto' }}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+              onClick={removeAllEquipment}>
+              {removeLabel}
             </Button>
-            <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
-              (DEV) Lisää satunnainen ajoneuvo
-            </Button>
-            {removeAllEquipment &&
-              !batchFormVisible &&
-              !searchFormVisible &&
-              !searchResultActive &&
-              !pendingEquipment && (
-                <Button
-                  style={{ marginLeft: 'auto' }}
-                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                  onClick={removeAllEquipment}>
-                  {removeLabel}
-                </Button>
-              )}
-          </FlexRow>
-        )}
-        {pendingEquipment && (
+          )}
+        </FlexRow>
+        {foundEquipment && searchResultActive && (
           <Modal>
             <AddEquipmentFormWrapper>
               <SubHeading>
                 <Text>catalogue.add_equipment</Text>
               </SubHeading>
-              <ItemForm
-                item={pendingEquipment}
-                labels={fieldLabels}
-                readOnly={
-                  pendingEquipment._exists
-                    ? Object.keys(fieldLabels || {}).filter(
-                        (key) => !editableKeys.includes(key)
-                      )
-                    : false
-                }
-                onChange={onEquipmentInputChange}
-                onDone={onAddEquipment}
-                onCancel={onCancelPendingEquipment}
-                doneDisabled={!equipmentIsValid(pendingEquipment)}
-                doneLabel={text('general.app.add')}
-                renderInput={(key, val, onChange) => (
-                  <EquipmentFormInput
-                    fieldComponent={TextInput}
-                    value={val}
-                    valueName={key}
-                    onChange={onChange}
+              <ValueDisplay item={foundEquipment} labels={fieldLabels} />
+              {updateQuota && (
+                <FlexRow style={{ marginTop: '1rem' }}>
+                  <Input
+                    label="% Osuus"
+                    value={quotaInput + ''}
+                    onChange={(val) => setQuotaInput(parseFloat(val))}
                   />
-                )}
-              />
+                </FlexRow>
+              )}
+              <ActionsWrapper style={{ marginTop: '0.5rem' }}>
+                <Button
+                  buttonStyle={ButtonStyle.ACCEPT}
+                  onClick={onAddEquipment}
+                  style={{ marginRight: '1rem' }}>
+                  <Text>catalogue.add_equipment</Text>
+                </Button>
+                <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
+                  <Text>general.app.cancel</Text>
+                </Button>
+              </ActionsWrapper>
             </AddEquipmentFormWrapper>
           </Modal>
         )}
@@ -267,9 +203,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 onClick={onAddBatchEquipment}>
                 <Text>catalogue.batch_add_equipment</Text>
               </Button>
-              <Button
-                buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={() => setBatchFormVisible(false)}>
+              <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
                 <Text>general.app.cancel</Text>
               </Button>
             </ActionsWrapper>
