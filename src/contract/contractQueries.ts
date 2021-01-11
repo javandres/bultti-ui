@@ -38,7 +38,6 @@ export const ContractFragment = gql`
       procurementUnitId
       startDate
       endDate
-      weeklyKilometers
       areaId
       area {
         id
@@ -97,7 +96,6 @@ export const procurementUnitOptionsQuery = gql`
       startDate
       endDate
       routes
-      medianAgeRequirement
       areaName
       currentContracts {
         id
