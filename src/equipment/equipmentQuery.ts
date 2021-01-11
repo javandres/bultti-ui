@@ -177,6 +177,16 @@ export const removeRequirementEquipmentMutation = gql`
     removeEquipmentFromExecutionRequirement(
       equipmentId: $equipmentId
       executionRequirementId: $requirementId
-    )
+    ) {
+      id
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
   }
 `
