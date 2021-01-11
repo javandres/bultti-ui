@@ -61,7 +61,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
     let [
       searchEquipment,
       { data: foundEquipment, loading: searchLoading, called: searchCalled },
-    ] = useLazyQueryData<Equipment>(searchEquipmentQuery)
+    ] = useLazyQueryData<Equipment>(searchEquipmentQuery, {
+      fetchPolicy: 'network-only',
+    })
 
     let doSearch = useCallback(async () => {
       if (searchVehicleId || searchRegistryNr) {
