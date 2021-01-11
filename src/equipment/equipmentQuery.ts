@@ -189,4 +189,5 @@ export const removeRequirementEquipmentMutation = gql`
       }
     }
   }
+  ${EquipmentFragment}
 `
