@@ -658,6 +658,7 @@ export type ExecutionRequirementQuota = {
   executionRequirementId: Scalars['String'];
   equipment: Equipment;
   executionRequirement: ExecutionRequirement;
+  requirementOnly: Scalars['Boolean'];
 };
 
 export type ExecutionRequirement = {
@@ -1793,8 +1794,9 @@ export type Mutation = {
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
+  removeEquipmentFromExecutionRequirement: ExecutionRequirement;
   removeAllEquipmentFromExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeExecutionRequirement: Scalars['Boolean'];
+  removeExecutionRequirement: ExecutionRequirement;
   login?: Maybe<Scalars['String']>;
   logout: Scalars['Boolean'];
   modifyUser: User;
@@ -1802,7 +1804,6 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
-  removeEquipmentFromExecutionRequirement: Scalars['Boolean'];
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
   createContract: Contract;
   modifyContract: Contract;
@@ -1950,6 +1951,12 @@ export type MutationAddEquipmentToExecutionRequirementArgs = {
 };
 
 
+export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
 export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
 };
@@ -1996,12 +2003,6 @@ export type MutationUpdateEquipmentRequirementQuotaArgs = {
   quotaId?: Maybe<Scalars['String']>;
   kilometers?: Maybe<Scalars['Float']>;
   quota?: Maybe<Scalars['Float']>;
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
   equipmentId: Scalars['String'];
 };
 

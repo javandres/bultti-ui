@@ -381,6 +381,7 @@ type ExecutionRequirementQuota {
   id: ID!
   meterRequirement: Float!
   percentageQuota: Float!
+  requirementOnly: Boolean!
 }
 
 type ExecutionRequirementValue {
@@ -655,8 +656,8 @@ type Mutation {
   removeContract(contractId: String!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
-  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): Boolean!
-  removeExecutionRequirement(executionRequirementId: String!): Boolean!
+  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement!
+  removeExecutionRequirement(executionRequirementId: String!): ExecutionRequirement!
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!

@@ -266,7 +266,17 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
 
 export const removeExecutionRequirementMutation = gql`
   mutation removeExecutionRequirement($requirementId: String!) {
-    removeExecutionRequirement(executionRequirementId: $requirementId)
+    removeExecutionRequirement(executionRequirementId: $requirementId) {
+      id
+      equipmentQuotas {
+        id
+        meterRequirement
+        percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
+      }
+    }
   }
 `
 
@@ -276,7 +286,11 @@ export const removeAllEquipmentFromExecutionRequirement = gql`
       id
       equipmentQuotas {
         id
+        meterRequirement
         percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
       }
     }
   }

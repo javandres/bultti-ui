@@ -28,6 +28,7 @@ import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
 import { Text } from '../util/translate'
+import { useQueryData } from '../util/useQueryData'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
@@ -57,10 +58,16 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
   ({ procurementUnit, isEditable, onUpdate, valid = true }) => {
     let inspection = useContext(InspectionContext)
 
-    let [
-      fetchRequirements,
-      { data: procurementUnitRequirement, loading: requirementsLoading },
-    ] = useLazyQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery)
+    let {
+      data: procurementUnitRequirement,
+      loading: requirementsLoading,
+      refetch: updateRequirements,
+    } = useQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery, {
+      variables: {
+        procurementUnitId: procurementUnit.id,
+        inspectionId: inspection?.id,
+      },
+    })
 
     let [createExecutionRequirement, { loading: createLoading }] = useMutationData(
       createExecutionRequirementForProcurementUnitMutation
@@ -71,19 +78,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
-
-    let onFetchRequirements = useCallback(async () => {
-      if (procurementUnit && inspection && fetchRequirements) {
-        await fetchRequirements({
-          variables: {
-            procurementUnitId: procurementUnit.id,
-            inspectionId: inspection?.id,
-          },
-        })
-      }
-    }, [fetchRequirements, procurementUnit, inspection])
-
-    let updateRequirements = useRefetch(onFetchRequirements, true)
 
     let update = useCallback(() => {
       updateRequirements()
