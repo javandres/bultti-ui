@@ -29,7 +29,6 @@ const ContentWrapper = styled.div`
 const CatalogueWrapper = styled.div<{ isInvalid: boolean }>`
   border-radius: 0.5rem;
   position: relative;
-  margin-top: 2rem;
 
   ${(p) =>
     p.isInvalid
@@ -110,11 +109,6 @@ const ProcurementUnitItemContent = observer(
                 valid={!requirementsInvalid}
               />
             )}
-            <FlexRow>
-              <SubHeading>
-                <Text>procurement_unit.unit_info</Text>
-              </SubHeading>
-            </FlexRow>
             <CatalogueWrapper isInvalid={catalogueInvalid}>
               <SubHeading>
                 <Text>catalogue.catalogues_list_heading</Text>
