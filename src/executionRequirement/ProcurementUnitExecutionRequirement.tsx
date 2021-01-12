@@ -46,6 +46,24 @@ const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean 
       : ''}
 `
 
+const ExecutionDisplay = styled.div`
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--white-grey);
+  border: 1px solid var(--lightest-grey);
+  border-radius: 1rem;
+
+  > div {
+    display: flex;
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+
+  button {
+    margin-left: 1rem;
+  }
+`
+
 export type PropTypes = {
   procurementUnit: ProcurementUnit
   isEditable: boolean
@@ -177,9 +195,21 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
           <div>
             <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
-            <SubHeading style={{ marginBottom: 0, fontSize: '1rem' }}>
-              Viikkokilometrit: {(procurementUnitRequirement?.weeklyMeters || 0) / 1000}
-            </SubHeading>
+            <ExecutionDisplay>
+              <div>
+                <strong>Viikkokilometrit</strong>
+                {isEditable && (
+                  <Button
+                    loading={weeklyMetersUpdateLoading}
+                    size={ButtonSize.SMALL}
+                    buttonStyle={ButtonStyle.SECONDARY}
+                    onClick={onUpdateWeeklyMeters}>
+                    Päivitä suoritteet JOREsta
+                  </Button>
+                )}
+              </div>
+              <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
+            </ExecutionDisplay>
           </div>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
@@ -190,24 +220,14 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <Text>general.app.update</Text>
             </Button>
             {isEditable && (
-              <>
-                <Button
-                  loading={weeklyMetersUpdateLoading}
-                  style={{ marginLeft: '0.5rem' }}
-                  size={ButtonSize.SMALL}
-                  buttonStyle={ButtonStyle.SECONDARY}
-                  onClick={onUpdateWeeklyMeters}>
-                  Päivitä suoritteet JOREsta
-                </Button>
-                <Button
-                  loading={refreshLoading}
-                  onClick={onRefreshRequirements}
-                  style={{ marginLeft: '0.5rem' }}
-                  buttonStyle={ButtonStyle.SECONDARY}
-                  size={ButtonSize.SMALL}>
-                  Virkistä kalustoluettelosta
-                </Button>
-              </>
+              <Button
+                loading={refreshLoading}
+                onClick={onRefreshRequirements}
+                style={{ marginLeft: '0.5rem' }}
+                buttonStyle={ButtonStyle.SECONDARY}
+                size={ButtonSize.SMALL}>
+                Virkistä kalustoluettelosta
+              </Button>
             )}
           </div>
         </FlexRow>
