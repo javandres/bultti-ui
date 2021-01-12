@@ -38,8 +38,7 @@ export type Query = {
   equipment: Array<Equipment>;
   equipmentByOperator: Array<Equipment>;
   queryEquipmentFromSource?: Maybe<Equipment>;
-  singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
-  equipmentCatalogue: Array<EquipmentCatalogue>;
+  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -172,7 +171,7 @@ export type QueryQueryEquipmentFromSourceArgs = {
 };
 
 
-export type QuerySingleEquipmentCatalogueArgs = {
+export type QueryEquipmentCatalogueArgs = {
   equipmentCatalogueId: Scalars['String'];
 };
 

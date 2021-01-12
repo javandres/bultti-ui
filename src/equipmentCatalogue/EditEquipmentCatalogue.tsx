@@ -15,6 +15,7 @@ import {
 import ValueDisplay from '../common/components/ValueDisplay'
 import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditEquipmentCatalogueView = styled.div`
   margin-top: 1rem;
@@ -60,6 +61,25 @@ const EditEquipmentCatalogue = observer(
       {
         variables: {
           catalogueId: catalogue?.id,
+        },
+        update: (cache, { data }) => {
+          let result = pickGraphqlData(data)
+          let removeCatalogueId = catalogue?.id
+
+          if (result && removeCatalogueId) {
+            let procurementUnitCacheId = cache.identify(procurementUnit)
+
+            cache.modify({
+              id: procurementUnitCacheId,
+              fields: {
+                equipmentCatalogues(existingCatalogueRefs, { readField }) {
+                  return existingCatalogueRefs.filter(
+                    (catalogueRef) => removeCatalogueId !== readField('id', catalogueRef)
+                  )
+                },
+              },
+            })
+          }
         },
       }
     )

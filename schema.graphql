@@ -1092,7 +1092,7 @@ type Query {
   emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EmissionClassExecutionReport!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
-  equipmentCatalogue: [EquipmentCatalogue!]!
+  equipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
   equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentColorReport!
   equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentTypeReport!
@@ -1129,7 +1129,6 @@ type Query {
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
-  singleEquipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
   unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnitExecutionReport!
   unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnobservedDeparturesReport!
