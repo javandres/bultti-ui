@@ -26,7 +26,7 @@ export type PropTypes = {
   equipment: EquipmentWithQuota[]
   operatorId: number
   onEquipmentChanged: () => unknown
-  hasEquipment: (checkEquipment?: Equipment) => boolean
+  hasEquipment: boolean
   addEquipment: (equipmentId: string, quota?: number) => Promise<unknown>
   addBatchEquipment?: (batchInput: string) => Promise<unknown>
   removeAllEquipment?: () => Promise<unknown>
@@ -141,7 +141,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
           <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
             (DEV) Lisää satunnainen ajoneuvo
           </Button>
-          {removeAllEquipment && !searchResultActive && (
+          {removeAllEquipment && !searchResultActive && hasEquipment && (
             <Button
               style={{ marginLeft: 'auto' }}
               buttonStyle={ButtonStyle.SECONDARY_REMOVE}

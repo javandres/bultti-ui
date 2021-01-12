@@ -74,7 +74,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
                 operatorId={operatorId}
                 equipment={equipment}
                 onEquipmentChanged={onCatalogueChanged}
-                hasEquipment={hasEquipment}
+                hasEquipment={equipment.length !== 0}
                 editableKeys={['percentageQuota']}
                 fieldLabels={equipmentColumnLabels}
                 removeAllEquipment={removeAllEquipment}
