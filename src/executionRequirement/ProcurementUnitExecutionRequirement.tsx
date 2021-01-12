@@ -6,6 +6,7 @@ import RequirementsTable from './RequirementsTable'
 import {
   createExecutionRequirementForProcurementUnitMutation,
   executionRequirementForProcurementUnitQuery,
+  executionSchemaStatsQuery,
   refreshExecutionRequirementForProcurementUnitMutation,
   removeExecutionRequirementMutation,
   weeklyMetersFromJoreMutation,
@@ -28,6 +29,7 @@ import { SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
 import { Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
+import ValueDisplay from '../common/components/ValueDisplay'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
@@ -85,6 +87,18 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         inspectionId: inspection?.id,
       },
     })
+
+    let { data: executionStatsData, loading: statsLoading } = useQueryData(
+      executionSchemaStatsQuery,
+      {
+        skip: !procurementUnitRequirement,
+        variables: {
+          requirementId: procurementUnitRequirement?.id,
+        },
+      }
+    )
+
+    console.log(executionStatsData)
 
     let [createExecutionRequirement, { loading: createLoading }] = useMutationData(
       createExecutionRequirementForProcurementUnitMutation
@@ -224,6 +238,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               </Button>
             )}
           </div>
+        </FlexRow>
+        <FlexRow>
+          <ValueDisplay item={executionStatsData} />
         </FlexRow>
         <LoadingDisplay loading={requirementsLoading} />
         {procurementUnitRequirement ? (

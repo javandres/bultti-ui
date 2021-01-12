@@ -60,6 +60,12 @@ type ContractUserRelation {
   user: User!
 }
 
+type DayTypeEquipmentStat {
+  dayType: String!
+  equipmentCount: Int!
+  kilometers: Float!
+}
+
 type DeadrunsReport {
   columnLabels: String!
   description: String!
@@ -353,6 +359,12 @@ type EquipmentTypeReportData {
   trackReason: TrackReason!
 }
 
+type EquipmentTypeStat {
+  equipmentCount: Int!
+  equipmentType: String!
+  kilometers: Float!
+}
+
 type ExecutionRequirement {
   area: OperatingArea!
   areaRequirement: ExecutionRequirement
@@ -430,6 +442,14 @@ type ExecutionRequirementsReportData {
   requirements: [ExecutionRequirementValue!]!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
+}
+
+type ExecutionSchemaStats {
+  dayTypeEquipment: [DayTypeEquipmentStat!]!
+  equipmentTypes: [EquipmentTypeStat!]!
+  executionRequirementId: String!
+  id: String!
+  procurementUnitId: String!
 }
 
 type ExtraBlockDeparturesReport {
@@ -1100,6 +1120,7 @@ type Query {
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
   executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExecutionRequirementsReport!
+  executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
   inspection(inspectionId: String!): Inspection
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!

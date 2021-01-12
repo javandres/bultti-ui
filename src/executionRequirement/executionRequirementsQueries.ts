@@ -322,3 +322,23 @@ export const weeklyMetersFromJoreMutation = gql`
     }
   }
 `
+
+export const executionSchemaStatsQuery = gql`
+  query executionSchemaStats($requirementId: String!) {
+    executionSchemaStats(executionRequirementId: $requirementId) {
+      id
+      procurementUnitId
+      executionRequirementId
+      dayTypeEquipment {
+        dayType
+        equipmentCount
+        kilometers
+      }
+      equipmentTypes {
+        equipmentCount
+        equipmentType
+        kilometers
+      }
+    }
+  }
+`
