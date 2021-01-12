@@ -38,8 +38,7 @@ export type Query = {
   equipment: Array<Equipment>;
   equipmentByOperator: Array<Equipment>;
   queryEquipmentFromSource?: Maybe<Equipment>;
-  singleEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
-  equipmentCatalogue: Array<EquipmentCatalogue>;
+  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -172,7 +171,7 @@ export type QueryQueryEquipmentFromSourceArgs = {
 };
 
 
-export type QuerySingleEquipmentCatalogueArgs = {
+export type QueryEquipmentCatalogueArgs = {
   equipmentCatalogueId: Scalars['String'];
 };
 
@@ -1786,6 +1785,7 @@ export type Mutation = {
   updateEquipmentInCatalogue: EquipmentCatalogue;
   removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
+  removeEquipmentCatalogue: Scalars['Boolean'];
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -1914,6 +1914,11 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
 
 
 export type MutationRemoveAllEquipmentFromCatalogueArgs = {
+  catalogueId: Scalars['String'];
+};
+
+
+export type MutationRemoveEquipmentCatalogueArgs = {
   catalogueId: Scalars['String'];
 };
 

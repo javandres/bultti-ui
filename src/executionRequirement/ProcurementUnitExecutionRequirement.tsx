@@ -177,12 +177,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       [procurementUnitRequirement]
     )
 
-    let hasEquipment = useCallback(
-      (checkItem?: any) =>
-        !checkItem ? false : equipment.some((eq) => eq.vehicleId === checkItem?.vehicleId),
-      [equipment]
-    )
-
     const inspectionStartDate = useMemo(
       () => (inspection ? parseISO(inspection.startDate) : new Date()),
       [inspection]
@@ -246,7 +240,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 operatorId={procurementUnitRequirement.operator.id}
                 equipment={equipment}
                 onEquipmentChanged={update}
-                hasEquipment={hasEquipment}
+                hasEquipment={equipment.length !== 0}
                 addEquipment={addEquipment}
                 removeAllEquipment={removeExecutionRequirement}
                 removeLabel="Poista suoritevaatimus"

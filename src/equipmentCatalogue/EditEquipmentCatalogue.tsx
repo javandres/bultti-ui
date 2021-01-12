@@ -2,18 +2,20 @@ import React, { useCallback, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import ItemForm from '../common/input/ItemForm'
-import { Button } from '../common/components/Button'
+import { Button, ButtonStyle } from '../common/components/Button'
 import { EquipmentCatalogue, EquipmentCatalogueInput, ProcurementUnit } from '../schema-types'
 import { isEqual } from 'lodash'
 import EquipmentCatalogueFormInput from './EquipmentCatalogueFormInput'
 import { useMutationData } from '../util/useMutationData'
 import {
   createEquipmentCatalogueMutation,
+  removeEquipmentCatalogueMutation,
   updateEquipmentCatalogueMutation,
 } from './equipmentCatalogueQuery'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
+import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditEquipmentCatalogueView = styled.div`
   margin-top: 1rem;
@@ -38,10 +40,11 @@ export type PropTypes = {
   catalogue?: EquipmentCatalogue
   procurementUnit: ProcurementUnit
   onChange: () => unknown
+  hasEquipment?: boolean
 }
 
 const EditEquipmentCatalogue = observer(
-  ({ catalogue, procurementUnit, onChange }: PropTypes) => {
+  ({ catalogue, procurementUnit, onChange, hasEquipment }: PropTypes) => {
     const catalogueEditMode = useRef<CatalogueEditMode>(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
@@ -52,6 +55,34 @@ const EditEquipmentCatalogue = observer(
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)
+
+    let [removeCatalogue, { loading: removeCatalogueLoading }] = useMutationData(
+      removeEquipmentCatalogueMutation,
+      {
+        variables: {
+          catalogueId: catalogue?.id,
+        },
+        update: (cache, { data }) => {
+          let result = pickGraphqlData(data)
+          let removeCatalogueId = catalogue?.id
+
+          if (result && removeCatalogueId) {
+            let procurementUnitCacheId = cache.identify(procurementUnit)
+
+            cache.modify({
+              id: procurementUnitCacheId,
+              fields: {
+                equipmentCatalogues(existingCatalogueRefs, { readField }) {
+                  return existingCatalogueRefs.filter(
+                    (catalogueRef) => removeCatalogueId !== readField('id', catalogueRef)
+                  )
+                },
+              },
+            })
+          }
+        },
+      }
+    )
 
     const addDraftCatalogue = useCallback(() => {
       catalogueEditMode.current = CatalogueEditMode.CREATE
@@ -128,9 +159,20 @@ const EditEquipmentCatalogue = observer(
         <>
           {!pendingCatalogue && catalogue && (
             <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
-              <Button style={{ marginLeft: 'auto' }} onClick={editCurrentCatalogue}>
-                <Text>general.app.edit</Text>
-              </Button>
+              <FlexRow style={{ marginLeft: 'auto' }}>
+                <Button onClick={editCurrentCatalogue}>
+                  <Text>general.app.edit</Text>
+                </Button>
+                {!hasEquipment && (
+                  <Button
+                    style={{ marginLeft: '1rem' }}
+                    buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                    onClick={() => removeCatalogue()}
+                    loading={removeCatalogueLoading}>
+                    <Text>catalogue.remove</Text>
+                  </Button>
+                )}
+              </FlexRow>
             </ValueDisplay>
           )}
           {pendingCatalogue && (

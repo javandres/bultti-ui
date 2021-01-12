@@ -116,6 +116,7 @@ const ProcurementUnitItemContent = observer(
               {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
                 return (
                   <ExpandableSection
+                    isExpanded={catalogues.length === 1}
                     key={catalogue.id}
                     headerContent={
                       <HeaderSection>

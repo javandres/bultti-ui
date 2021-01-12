@@ -781,7 +781,7 @@
             "deprecationReason": null
           },
           {
-            "name": "singleEquipmentCatalogue",
+            "name": "equipmentCatalogue",
             "description": null,
             "args": [
               {
@@ -803,30 +803,6 @@
               "kind": "OBJECT",
               "name": "EquipmentCatalogue",
               "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "equipmentCatalogue",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "EquipmentCatalogue",
-                    "ofType": null
-                  }
-                }
-              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -20077,6 +20053,37 @@
               "ofType": {
                 "kind": "OBJECT",
                 "name": "EquipmentCatalogue",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "removeEquipmentCatalogue",
+            "description": null,
+            "args": [
+              {
+                "name": "catalogueId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
                 "ofType": null
               }
             },
