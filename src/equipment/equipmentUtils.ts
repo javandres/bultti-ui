@@ -149,9 +149,11 @@ export function useEquipmentCrud(
   let [execRemoveAllRequirementEquipment] = useMutationData(
     removeAllEquipmentFromExecutionRequirement
   )
+
   let [execRemoveAllCatalogueEquipment] = useMutationData(
     removeAllEquipmentFromCatalogueMutation
   )
+
   let [execAddEquipmentToCatalogue] = useMutationData(addEquipmentToCatalogueMutation)
   let [execAddEquipmentToRequirement] = useMutationData(addEquipmentToRequirementMutation)
 

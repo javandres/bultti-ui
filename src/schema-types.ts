@@ -1786,6 +1786,7 @@ export type Mutation = {
   updateEquipmentInCatalogue: EquipmentCatalogue;
   removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
+  removeEquipmentCatalogue: Scalars['Boolean'];
   createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
   updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
   refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
@@ -1914,6 +1915,11 @@ export type MutationRemoveEquipmentFromCatalogueArgs = {
 
 
 export type MutationRemoveAllEquipmentFromCatalogueArgs = {
+  catalogueId: Scalars['String'];
+};
+
+
+export type MutationRemoveEquipmentCatalogueArgs = {
   catalogueId: Scalars['String'];
 };
 

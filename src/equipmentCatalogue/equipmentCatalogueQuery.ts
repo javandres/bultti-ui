@@ -57,7 +57,17 @@ export const removeAllEquipmentFromCatalogueMutation = gql`
       equipmentQuotas {
         id
         percentageQuota
+        equipment {
+          ...EquipmentFragment
+        }
       }
     }
+  }
+  ${EquipmentFragment}
+`
+
+export const removeEquipmentCatalogueMutation = gql`
+  mutation removeEquipmentCatalogue($catalogueId: String!) {
+    removeEquipmentCatalogue(catalogueId: $catalogueId)
   }
 `

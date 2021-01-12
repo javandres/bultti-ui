@@ -656,6 +656,7 @@ type Mutation {
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
   removeContract(contractId: String!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
+  removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement!
   removeExecutionRequirement(executionRequirementId: String!): ExecutionRequirement!

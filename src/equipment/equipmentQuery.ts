@@ -40,8 +40,20 @@ export const addEquipmentToCatalogueMutation = gql`
       quota: $quota
     ) {
       id
+      startDate
+      endDate
+      operatorId
+      operator {
+        id
+        operatorId
+        operatorName
+      }
       equipmentQuotas {
         id
+        percentageQuota
+        catalogueStartDate
+        catalogueEndDate
+        equipmentId
         percentageQuota
         equipment {
           ...EquipmentFragment

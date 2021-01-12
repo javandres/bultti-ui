@@ -89,6 +89,7 @@
   "catalogue.show_grouped": "Näytä ryhmissä",
   "catalogue.update_equipment": "Päivitä ajoneuvotiedot JOREsta",
   "catalogue.remove_all_equipment": "Poista kaikki ajoneuvot luettelosta",
+  "catalogue.remove": "Poista kalustoluettelo",
   "catalogue.add_equipment": "Lisää ajoneuvo",
   "catalogue.batch_add_equipment": "Lisää ajoneuvoja listalta",
   "catalogue.find.equipment": "Hae kalusto",
