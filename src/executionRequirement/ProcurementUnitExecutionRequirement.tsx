@@ -8,22 +8,21 @@ import {
   executionRequirementForProcurementUnitQuery,
   refreshExecutionRequirementForProcurementUnitMutation,
   removeExecutionRequirementMutation,
+  weeklyMetersFromJoreMutation,
 } from './executionRequirementsQueries'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useMutationData } from '../util/useMutationData'
 import { InspectionContext } from '../inspection/InspectionContext'
-import { useLazyQueryData } from '../util/useLazyQueryData'
 import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'
 import {
-  EquipmentWithQuota,
   createRequirementEquipment,
+  EquipmentWithQuota,
   useEquipmentCrud,
 } from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
 import AddEquipment from '../equipment/AddEquipment'
 import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
-import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
@@ -45,6 +44,24 @@ const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean 
           background: rgba(255, 252, 252, 1);
         `
       : ''}
+`
+
+const ExecutionDisplay = styled.div`
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--white-grey);
+  border: 1px solid var(--lightest-grey);
+  border-radius: 1rem;
+
+  > div {
+    display: flex;
+    margin-bottom: 0.5rem;
+    align-items: center;
+  }
+
+  button {
+    margin-left: 1rem;
+  }
 `
 
 export type PropTypes = {
@@ -78,6 +95,16 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
+
+    let [updateWeeklyMeters, { loading: weeklyMetersUpdateLoading }] = useMutationData(
+      weeklyMetersFromJoreMutation,
+      {
+        variables: {
+          executionRequirementId: procurementUnitRequirement?.id,
+          date: inspection?.inspectionStartDate,
+        },
+      }
+    )
 
     let update = useCallback(() => {
       updateRequirements()
@@ -136,6 +163,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       }
     }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
+    const onUpdateWeeklyMeters = useCallback(async () => {
+      if (isEditable) {
+        await updateWeeklyMeters()
+      }
+    }, [isEditable, updateWeeklyMeters])
+
     const equipment: EquipmentWithQuota[] = useMemo(
       () =>
         procurementUnitRequirement
@@ -160,7 +193,24 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     return (
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
-          <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
+          <div>
+            <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
+            <ExecutionDisplay>
+              <div>
+                <strong>Viikkokilometrit</strong>
+                {isEditable && (
+                  <Button
+                    loading={weeklyMetersUpdateLoading}
+                    size={ButtonSize.SMALL}
+                    buttonStyle={ButtonStyle.SECONDARY}
+                    onClick={onUpdateWeeklyMeters}>
+                    Päivitä suoritteet JOREsta
+                  </Button>
+                )}
+              </div>
+              <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
+            </ExecutionDisplay>
+          </div>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
               loading={isLoading}

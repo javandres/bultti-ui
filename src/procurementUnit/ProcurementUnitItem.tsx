@@ -95,12 +95,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     .filter((routeId) => !!routeId)
                     .join(', ')}
                 </HeaderSection>
-                <HeaderSection>
-                  <HeaderHeading>
-                    <Text>procurement_unit.kilometers</Text>
-                  </HeaderHeading>
-                  {round((procurementUnit?.weeklyMeters || 0) / 1000)} km
-                </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }}>
                   <HeaderHeading>
                     <Text>procurement_unit.valid_time</Text>

@@ -8,9 +8,6 @@ export const ProcurementUnitFragment = gql`
     operatorId
     startDate
     endDate
-    weeklyMeters
-    weeklyKilometers
-    medianAgeRequirement
     area {
       id
       name
@@ -83,32 +80,4 @@ export const procurementUnitQuery = gql`
   }
   ${ProcurementUnitFragment}
   ${EquipmentFragment}
-`
-
-export const updateProcurementUnitMutation = gql`
-  mutation updateProcurementUnit(
-    $updatedData: ProcurementUnitEditInput!
-    $procurementUnitId: String!
-  ) {
-    updateProcurementUnit(
-      procurementUnit: $updatedData
-      procurementUnitId: $procurementUnitId
-    ) {
-      ...ProcurementUnitFragment
-    }
-  }
-  ${ProcurementUnitFragment}
-`
-
-export const weeklyMetersFromJoreMutation = gql`
-  mutation updateWeeklyMetersFromSource($procurementUnitId: String!, $startDate: String!) {
-    updateWeeklyMetersFromSource(
-      procurementUnitId: $procurementUnitId
-      startDate: $startDate
-    ) {
-      id
-      weeklyMeters
-      weeklyKilometers
-    }
-  }
 `

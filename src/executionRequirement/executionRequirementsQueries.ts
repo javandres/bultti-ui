@@ -43,6 +43,7 @@ export const ObservedRequirementValueFragment = gql`
 export const ExecutionRequirementFragment = gql`
   fragment ExecutionRequirementFragment on ExecutionRequirement {
     id
+    weeklyMeters
     totalKilometers
     totalKilometersFulfilled
     averageAgeWeighted
@@ -207,6 +208,8 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
       inspectionId: $inspectionId
     ) {
       id
+      weeklyMeters
+      totalKilometers
       area {
         id
         name
@@ -243,6 +246,8 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
       executionRequirementId: $executionRequirementId
     ) {
       id
+      weeklyMeters
+      totalKilometers
       area {
         id
         name
@@ -300,4 +305,20 @@ export const removeAllEquipmentFromExecutionRequirement = gql`
     }
   }
   ${EquipmentFragment}
+`
+
+export const weeklyMetersFromJoreMutation = gql`
+  mutation updateWeeklyExecutionMetersFromSource(
+    $executionRequirementId: String!
+    $date: String!
+  ) {
+    updateWeeklyExecutionMetersFromSource(
+      executionRequirementId: $executionRequirementId
+      date: $date
+    ) {
+      id
+      weeklyMeters
+      totalKilometers
+    }
+  }
 `
