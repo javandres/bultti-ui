@@ -227,7 +227,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
         </ExecutionDisplay>
         {procurementUnitRequirement && (
-          <PlannedExecutionStats executionRequirementId={procurementUnitRequirement?.id} />
+          <PlannedExecutionStats executionRequirement={procurementUnitRequirement} />
         )}
         <LoadingDisplay loading={requirementsLoading} />
         {procurementUnitRequirement ? (
