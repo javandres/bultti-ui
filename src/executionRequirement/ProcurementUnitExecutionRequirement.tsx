@@ -24,10 +24,11 @@ import { parseISO } from 'date-fns'
 import AddEquipment from '../equipment/AddEquipment'
 import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
-import { SubHeading } from '../common/components/Typography'
+import { SectionHeading, SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
 import { Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
+import PlannedExecutionStats from './PlannedExecutionStats'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
@@ -187,24 +188,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     return (
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
-          <div>
-            <SubHeading style={{ marginBottom: 0 }}>Kohteen suoritevaatimukset</SubHeading>
-            <ExecutionDisplay>
-              <div>
-                <strong>Viikkokilometrit</strong>
-                {isEditable && (
-                  <Button
-                    loading={weeklyMetersUpdateLoading}
-                    size={ButtonSize.SMALL}
-                    buttonStyle={ButtonStyle.SECONDARY}
-                    onClick={onUpdateWeeklyMeters}>
-                    Päivitä suoritteet JOREsta
-                  </Button>
-                )}
-              </div>
-              <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
-            </ExecutionDisplay>
-          </div>
+          <SectionHeading style={{ marginBottom: 0 }}>
+            Kohteen suoritevaatimukset
+          </SectionHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
               loading={isLoading}
@@ -225,9 +211,28 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             )}
           </div>
         </FlexRow>
+        <ExecutionDisplay>
+          <div>
+            <strong>Viikkokilometrit</strong>
+            {isEditable && (
+              <Button
+                loading={weeklyMetersUpdateLoading}
+                size={ButtonSize.SMALL}
+                buttonStyle={ButtonStyle.SECONDARY}
+                onClick={onUpdateWeeklyMeters}>
+                Päivitä suoritteet JOREsta
+              </Button>
+            )}
+          </div>
+          <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
+        </ExecutionDisplay>
+        {procurementUnitRequirement && (
+          <PlannedExecutionStats executionRequirement={procurementUnitRequirement} />
+        )}
         <LoadingDisplay loading={requirementsLoading} />
         {procurementUnitRequirement ? (
           <>
+            <SubHeading>Suoritevaatimuksen ajoneuvot</SubHeading>
             <RequirementEquipmentList
               isEditable={isEditable}
               startDate={inspectionStartDate}
@@ -248,6 +253,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 fieldLabels={equipmentColumnLabels}
               />
             )}
+            <SubHeading>Kilpailukohteen suoritevaatimus</SubHeading>
             <RequirementsTable
               executionRequirement={procurementUnitRequirement}
               tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}

@@ -9,7 +9,7 @@ import { groupBy, orderBy, uniqBy } from 'lodash'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
 
 export type EquipmentUpdate = {
@@ -102,7 +102,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
     const onRemoveEquipment = useCallback(
       (item: EquipmentWithQuota) => () => {
-        if (removeEquipment) {
+        if (removeEquipment && confirm(text('catalogue.equipment.confirm_remove'))) {
           removeEquipment(item.id)
         }
       },

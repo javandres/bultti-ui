@@ -80,6 +80,13 @@
   "procurement_unit.operation_area": "Seuranta-alue",
   "procurement_unit.contract": "Sopimus",
 
+  "requirement.heading.day_type_stats": "Kaavion ajoneuvot päivätyypittäin",
+  "requirement.heading.equipment_type_stats": "Kaavion ajoneuvot kalustotyypittäin",
+  "requirement.stats.dayType": "Päivätyyppi",
+  "requirement.stats.equipmentType": "Kalsutotyyppi",
+  "requirement.stats.equipmentCount": "Kalustomäärä",
+  "requirement.stats.kilometers": "Kilometrejä viikossa",
+
   "contract.no_valid_contracts": "Ei voimassaolevaa sopimusta.",
 
   "catalogue.new": "Luo uusi kalustoluettelo",
@@ -98,6 +105,7 @@
   "catalogue.vehicle_id": "Kylkinumero",
   "catalogue.registry_number": "Rekisterinumero",
   "catalogue.equipment_not_found": "Kalustoa ei löydetty.",
+  "catalogue.equipment.confirm_remove": "Haluatko varmasti poistaa ajoneuvon?",
 
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
