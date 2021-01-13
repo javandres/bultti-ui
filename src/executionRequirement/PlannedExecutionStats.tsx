@@ -49,7 +49,7 @@ export type PropTypes = {
 }
 
 const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => {
-  let { data: executionStatsData, loading: statsLoading } = useQueryData<ExecutionSchemaStats>(
+  let { data: executionStatsData } = useQueryData<ExecutionSchemaStats>(
     executionSchemaStatsQuery,
     {
       skip: !executionRequirement,

@@ -105,6 +105,7 @@
   "catalogue.vehicle_id": "Kylkinumero",
   "catalogue.registry_number": "Rekisterinumero",
   "catalogue.equipment_not_found": "Kalustoa ei löydetty.",
+  "catalogue.equipment.confirm_remove": "Haluatko varmasti poistaa ajoneuvon?",
 
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
