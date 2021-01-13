@@ -43,6 +43,7 @@ export type Query = {
   executionRequirementsByOperator: Array<ExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
   executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
+  executionSchemaStats?: Maybe<ExecutionSchemaStats>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -194,6 +195,11 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 
 export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type QueryExecutionSchemaStatsArgs = {
+  executionRequirementId: Scalars['String'];
 };
 
 
@@ -814,6 +820,29 @@ export type InspectionTimelineItem = {
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   version: Scalars['Int'];
+};
+
+export type ExecutionSchemaStats = {
+  __typename?: 'ExecutionSchemaStats';
+  id: Scalars['String'];
+  procurementUnitId: Scalars['String'];
+  executionRequirementId: Scalars['String'];
+  dayTypeEquipment: Array<DayTypeEquipmentStat>;
+  equipmentTypes: Array<EquipmentTypeStat>;
+};
+
+export type DayTypeEquipmentStat = {
+  __typename?: 'DayTypeEquipmentStat';
+  dayType: Scalars['String'];
+  equipmentCount: Scalars['Int'];
+  kilometers: Scalars['Float'];
+};
+
+export type EquipmentTypeStat = {
+  __typename?: 'EquipmentTypeStat';
+  equipmentType: Scalars['String'];
+  equipmentCount: Scalars['Int'];
+  kilometers: Scalars['Float'];
 };
 
 export type ReportListItem = {

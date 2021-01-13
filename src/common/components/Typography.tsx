@@ -29,3 +29,9 @@ export const SubHeading = styled.h4`
     margin-top: 0;
   }
 `
+
+export const SmallHeading = styled.h4`
+  font-weight: normal;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+`

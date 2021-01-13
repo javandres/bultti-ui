@@ -7,7 +7,6 @@ import {
   ProcurementUnit as ProcurementUnitType,
   ValidationErrorData,
 } from '../schema-types'
-import { round } from '../util/round'
 import ExpandableSection, {
   HeaderHeading,
   HeaderSection,

@@ -1,11 +1,7 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import {
-  Equipment,
-  EquipmentCatalogue as EquipmentCatalogueType,
-  ProcurementUnit,
-} from '../schema-types'
+import { EquipmentCatalogue as EquipmentCatalogueType, ProcurementUnit } from '../schema-types'
 import ValueDisplay from '../common/components/ValueDisplay'
 import CatalogueEquipmentList, { equipmentColumnLabels } from './CatalogueEquipmentList'
 import {
@@ -15,8 +11,6 @@ import {
 } from '../equipment/equipmentUtils'
 import AddEquipment from '../equipment/AddEquipment'
 import EditEquipmentCatalogue, { equipmentCatalogueLabels } from './EditEquipmentCatalogue'
-import { useMutationData } from '../util/useMutationData'
-import { removeEquipmentCatalogueMutation } from './equipmentCatalogueQuery'
 
 const EquipmentCatalogueView = styled.div``
 
@@ -39,12 +33,6 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     const equipment: EquipmentWithQuota[] = useMemo(() => catalogueEquipment(catalogue), [
       catalogue,
     ])
-
-    let hasEquipment = useCallback(
-      (checkItem?: Equipment) =>
-        !checkItem ? false : equipment.some((eq) => eq.vehicleId === checkItem?.vehicleId),
-      [equipment]
-    )
 
     return (
       <EquipmentCatalogueView>
