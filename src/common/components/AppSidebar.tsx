@@ -147,8 +147,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
     </>
   )
 
-  console.log(user)
-
   return (
     <AppSidebarView>
       <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">

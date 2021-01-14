@@ -15,6 +15,8 @@ import { Text } from '../util/translate'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { removeAuthToken } from '../util/authToken'
 import { navigateWithQueryString } from '../util/urlValue'
+import { TextInput } from '../common/input/Input'
+import Dropdown from '../common/input/Dropdown'
 
 const UserPageView = styled(Page)``
 
@@ -23,8 +25,6 @@ export type PropTypes = RouteComponentProps
 function createUserInput(user: User): UserInput {
   return {
     id: user.id,
-    email: user.email,
-    hslIdGroups: (user?.hslIdGroups || []).join(','),
     name: user.name,
     operatorIds: (user?.operatorIds || []).join(','),
     organisation: user.organisation,
@@ -86,6 +86,32 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     }
   }, [])
 
+  let renderUserInput = useCallback(
+    (key, val, onChange, readOnly) => {
+      if (key === 'role') {
+        return (
+          <Dropdown
+            items={['ADMIN', 'HSL', 'OPERATOR']}
+            onSelect={onChange}
+            selectedItem={val}
+          />
+        )
+      }
+
+      return (
+        <TextInput
+          type="text"
+          theme="light"
+          value={val}
+          onChange={(e) => onChange(e.target.value)}
+          name={key}
+          readOnly={readOnly}
+        />
+      )
+    },
+    [user]
+  )
+
   return (
     <UserPageView>
       <PageTitle
@@ -109,7 +135,8 @@ const UserPage: React.FC<PropTypes> = observer(() => {
         onCancel={onCancel}
         readOnly={['email', 'hslIdGroups']}
         style={{ marginRight: '1rem', marginLeft: '1rem' }}
-        item={pendingUser}
+        item={{ email: user.email, hslIdGroups: user.hslIdGroups, ...pendingUser }}
+        renderInput={renderUserInput}
       />
     </UserPageView>
   )
