@@ -25,7 +25,7 @@ import { useStateValue } from './state/useAppState'
 import { HeaderHeading } from './common/components/ExpandableSection'
 import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
-import { useHasAdminAccessRights } from './util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
 
 const Todo: React.FC<RouteComponentProps> = () => {
@@ -134,7 +134,7 @@ const App: React.FC = observer(() => {
         {hasAdminAccessRights && <InspectionDatePage path="inspection-date" />}
         {DEBUG ? <UserPage path="user" /> : <Redirect from="user" to="/" noThrow />}
         <ContractPage path="contract" />
-        {hasAdminAccessRights && <EditContractPage path="contract/:contractId" />}
+        <EditContractPage path="contract/:contractId" />
         <Todo path="contracts" />
         <Logout path="logout" />
       </Router>

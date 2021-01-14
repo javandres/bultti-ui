@@ -16,6 +16,7 @@ import NavLink from './NavLink'
 import Dropdown from '../input/Dropdown'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
+import { useHasAdminAccessRights } from '../../util/userRoles'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -138,6 +139,8 @@ export type AppSidebarProps = {
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user] = useStateValue('user')
+  let hasAdminAccess = useHasAdminAccessRights()
+
   let unsavedFormIdsState = useStateValue('unsavedFormIds')
 
   let userContent = (
@@ -216,10 +219,12 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Plus fill="white" width="1rem" height="1rem" />
             <Text>nav.new.postinspection</Text>
           </NavLink>
-          <NavLink to="inspection-date">
-            <Plus fill="white" width="1rem" height="1rem" />
-            <Text>nav.category.inspection_date</Text>
-          </NavLink>
+          {hasAdminAccess && (
+            <NavLink to="inspection-date">
+              <Plus fill="white" width="1rem" height="1rem" />
+              <Text>nav.category.inspection_date</Text>
+            </NavLink>
+          )}
           <NavLink to="post-inspection/reports">
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>nav.reports</Text>

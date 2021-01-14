@@ -9,7 +9,7 @@ import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { useHasAdminAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -88,7 +88,7 @@ export type PropTypes = {
 
 const OperatorContractsListPage = observer(({ children }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
-  let hasAdminAccessRights = useHasAdminAccessRights()
+  let hasAccessRights = useHasAdminAccessRights()
 
   let {
     data: contractsData,
@@ -130,7 +130,7 @@ const OperatorContractsListPage = observer(({ children }: PropTypes) => {
           </MessageView>
         </MessageContainer>
       )}
-      {hasAdminAccessRights && (
+      {hasAccessRights && (
         <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
           <Button
             disabled={!operator}
