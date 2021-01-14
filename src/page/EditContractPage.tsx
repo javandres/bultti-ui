@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
+import { Redirect, RouteComponentProps } from '@reach/router'
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
 import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
 import { DATE_FORMAT } from '../constants'
-import { useHasAdminAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { addYears, format } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page } from '../common/components/common'
@@ -24,6 +24,8 @@ export type PropTypes = {
 
 const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [operator] = useStateValue('globalOperator')
+
+  let hasOperatorAccess = useHasOperatorUserAccessRights(operator?.id)
   let hasAdminAccessRights = useHasAdminAccessRights()
 
   let [newContract, setNewContract] = useState<Partial<Contract> | null>(null)
@@ -65,6 +67,10 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
     newContract,
     contractId,
   ])
+
+  if (!hasOperatorAccess) {
+    return <Redirect noThrow to="/contract" />
+  }
 
   return (
     <EditContractPageView>
