@@ -26,6 +26,7 @@ import { HeaderHeading } from './common/components/ExpandableSection'
 import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
+import { DEBUG } from './constants'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -131,7 +132,7 @@ const App: React.FC = observer(() => {
           inspectionType={InspectionType.Post}
         />
         {hasAdminAccessRights && <InspectionDatePage path="inspection-date" />}
-        <UserPage path="user" />
+        {DEBUG ? <UserPage path="user" /> : <Redirect from="user" to="/" noThrow />}
         <ContractPage path="contract" />
         {hasAdminAccessRights && <EditContractPage path="contract/:contractId" />}
         <Todo path="contracts" />

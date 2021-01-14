@@ -15,6 +15,7 @@ import GlobalSeasonFilter from './GlobalSeasonFilter'
 import NavLink from './NavLink'
 import Dropdown from '../input/Dropdown'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
+import { DEBUG } from '../../constants'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -138,6 +139,16 @@ export type AppSidebarProps = {
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user] = useStateValue('user')
   let unsavedFormIdsState = useStateValue('unsavedFormIds')
+
+  let userContent = (
+    <>
+      <User width="1rem" height="1rem" fill="white" />
+      {user && <UserDisplay>{user?.email}</UserDisplay>}
+    </>
+  )
+
+  console.log(user)
+
   return (
     <AppSidebarView>
       <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
@@ -147,10 +158,13 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </h1>
       </AppTitle>
       <UserBar>
-        <UserLink onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="user">
-          <User width="1rem" height="1rem" fill="white" />
-          {user && <UserDisplay>{user?.email}</UserDisplay>}
-        </UserLink>
+        {DEBUG ? (
+          <UserLink onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="user">
+            {userContent}
+          </UserLink>
+        ) : (
+          userContent
+        )}
       </UserBar>
       <GlobalFilters>
         <GlobalOperatorFilter />
