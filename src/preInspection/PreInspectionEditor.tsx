@@ -8,6 +8,7 @@ import PreInspectionExecutionRequirements from '../executionRequirement/PreInspe
 import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { useInspectionErrors } from '../util/useInspectionErrors'
+import { DEBUG } from '../constants'
 
 type PreInspectionProps = {
   refetchData: () => unknown
@@ -53,9 +54,11 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             endDate={inspection.inspectionEndDate}
           />
         )}
-        <PageSection>
-          <PreInspectionDevTools onUpdate={refetchData} inspection={inspection} />
-        </PageSection>
+        {DEBUG && (
+          <PageSection>
+            <PreInspectionDevTools onUpdate={refetchData} inspection={inspection} />
+          </PageSection>
+        )}
       </>
     )
   }
