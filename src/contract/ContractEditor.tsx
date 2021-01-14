@@ -445,6 +445,7 @@ const ContractEditor = observer(
           onCancel={onCancel}
           loading={isLoading}
           readOnly={!editable}
+          showButtons={editable}
           doneDisabled={!pendingContractValid}
           isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
