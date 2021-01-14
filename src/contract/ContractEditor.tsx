@@ -90,21 +90,26 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
 
     return (
       <>
-        <FileUploadInput
-          label={text('contract_form.label.upload_rules')}
-          onChange={onChange}
-          value={val.uploadFile}
-          disabled={readOnly}
-          onReset={onCancel}
-          loading={loading}
-        />
-        {contractFileReadError && (
-          <ErrorView>
-            <Text>contract_form.toml_read_error_failed</Text>
-            {contractFileReadError}`
-          </ErrorView>
+        {!readOnly && (
+          <>
+            <FileUploadInput
+              label={text('contract_form.label.upload_rules')}
+              onChange={onChange}
+              value={val.uploadFile}
+              disabled={readOnly}
+              onReset={onCancel}
+              loading={loading}
+            />
+            {contractFileReadError && (
+              <ErrorView>
+                <Text>contract_form.toml_read_error_failed</Text>
+                {contractFileReadError}`
+              </ErrorView>
+            )}
+          </>
         )}
         <ExpandableFormSection
+          isExpanded={readOnly}
           style={{ marginTop: '1rem' }}
           headerContent={
             <ExpandableFormSectionHeading>
@@ -223,6 +228,10 @@ const ContractEditor = observer(
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
     let isDirty = useMemo(() => {
+      if (!editable) {
+        return false
+      }
+
       // New contracts are always dirty
       if (isNew) {
         return true
@@ -233,7 +242,7 @@ const ContractEditor = observer(
       }
 
       return !isEqual(pendingContract, createContractInput(contract))
-    }, [rulesFiles, pendingContract, contract])
+    }, [rulesFiles, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
       () =>
@@ -243,28 +252,35 @@ const ContractEditor = observer(
       [isNew, pendingContract, rulesFiles]
     )
 
-    let onChange = useCallback((key, nextValue) => {
-      if (key === 'rules') {
-        setRulesFiles(nextValue)
-        return
-      }
-
-      setPendingContract((currentVal) => {
-        let nextProcurementUnits =
-          key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
-
-        // Reset procurement units if operatorId changes.
-        if (key === 'operatorId') {
-          nextProcurementUnits = []
+    let onChange = useCallback(
+      (key, nextValue) => {
+        if (!editable) {
+          return
         }
 
-        return {
-          ...currentVal,
-          [key]: nextValue,
-          procurementUnitIds: nextProcurementUnits,
+        if (key === 'rules') {
+          setRulesFiles(nextValue)
+          return
         }
-      })
-    }, [])
+
+        setPendingContract((currentVal) => {
+          let nextProcurementUnits =
+            key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
+
+          // Reset procurement units if operatorId changes.
+          if (key === 'operatorId') {
+            nextProcurementUnits = []
+          }
+
+          return {
+            ...currentVal,
+            [key]: nextValue,
+            procurementUnitIds: nextProcurementUnits,
+          }
+        })
+      },
+      [editable]
+    )
 
     let [
       modifyContract,
@@ -312,6 +328,10 @@ const ContractEditor = observer(
     let goToContract = useContractPage()
 
     let onDone = useCallback(async () => {
+      if (!editable) {
+        return
+      }
+
       if (pendingContractValid) {
         let result
 
@@ -342,7 +362,15 @@ const ContractEditor = observer(
           goToContract(result.data?.id)
         }
       }
-    }, [rulesFiles, pendingContract, pendingContractValid, onReset, isNew, goToContract])
+    }, [
+      rulesFiles,
+      pendingContract,
+      pendingContractValid,
+      onReset,
+      isNew,
+      goToContract,
+      editable,
+    ])
 
     let onCancel = useCallback(() => {
       setPendingContract(createContractInput(contract))
@@ -365,6 +393,10 @@ const ContractEditor = observer(
     )
 
     let execRemoveContract = useCallback(async () => {
+      if (!editable) {
+        return
+      }
+
       if (isNew) {
         // Go back to the previous page
         navigateWithQueryString('/contract', { replace: true })
@@ -384,20 +416,22 @@ const ContractEditor = observer(
         // Go back to the previous page
         navigateWithQueryString('/contract', { replace: true })
       }
-    }, [removeContract, contract, isNew, onRefresh])
+    }, [removeContract, contract, isNew, onRefresh, editable])
 
     return (
       <ContractEditorView>
-        <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
-          <Button
-            loading={removeLoading}
-            style={{ marginLeft: 'auto', marginRight: 0 }}
-            buttonStyle={ButtonStyle.REMOVE}
-            size={ButtonSize.MEDIUM}
-            onClick={execRemoveContract}>
-            <Text>contract_form.remove</Text>
-          </Button>
-        </FlexRow>
+        {editable && (
+          <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
+            <Button
+              loading={removeLoading}
+              style={{ marginLeft: 'auto', marginRight: 0 }}
+              buttonStyle={ButtonStyle.REMOVE}
+              size={ButtonSize.MEDIUM}
+              onClick={execRemoveContract}>
+              <Text>contract_form.remove</Text>
+            </Button>
+          </FlexRow>
+        )}
         {!isNew && <ContractUsersEditor contractId={contract.id} />}
         <ItemForm
           item={{
@@ -411,6 +445,7 @@ const ContractEditor = observer(
           onCancel={onCancel}
           loading={isLoading}
           readOnly={!editable}
+          showButtons={editable}
           doneDisabled={!pendingContractValid}
           isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}

@@ -30,10 +30,6 @@ const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection, onUpdate
     onCompleted: () => onUpdate(),
   })
 
-  if (!DEBUG) {
-    return null
-  }
-
   return (
     <InspectionDevToolsView>
       <Button onClick={() => generateEquipment()}>

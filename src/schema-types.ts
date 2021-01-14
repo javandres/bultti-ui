@@ -667,8 +667,8 @@ export type ExecutionRequirement = {
   __typename?: 'ExecutionRequirement';
   id: Scalars['ID'];
   area: OperatingArea;
-  operatorId: Scalars['Float'];
   operator: Operator;
+  operatorId: Scalars['Float'];
   inspectionId: Scalars['String'];
   inspection: Inspection;
   equipmentQuotas: Array<ExecutionRequirementQuota>;
@@ -2109,7 +2109,6 @@ export type UserInput = {
   email?: Maybe<Scalars['String']>;
   role?: Maybe<UserRole>;
   organisation?: Maybe<Scalars['String']>;
-  hslIdGroups?: Maybe<Scalars['String']>;
   operatorIds?: Maybe<Scalars['String']>;
 };
 

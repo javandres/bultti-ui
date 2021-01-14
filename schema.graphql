@@ -1443,7 +1443,6 @@ input ObservedRequirementValueInput {
 
 input UserInput {
   email: String
-  hslIdGroups: String
   id: ID!
   name: String
   operatorIds: String

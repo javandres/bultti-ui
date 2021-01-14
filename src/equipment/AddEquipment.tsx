@@ -15,6 +15,7 @@ import { SubHeading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
 import { Equipment } from '../schema-types'
 import ValueDisplay from '../common/components/ValueDisplay'
+import { DEBUG } from '../constants'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -138,9 +139,11 @@ const AddEquipment: React.FC<PropTypes> = observer(
           <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
             <Text>catalogue.find.equipment</Text>
           </Button>
-          <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
-            (DEV) Lisää satunnainen ajoneuvo
-          </Button>
+          {DEBUG && (
+            <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
+              (DEV) Lisää satunnainen ajoneuvo
+            </Button>
+          )}
           {removeAllEquipment && !searchResultActive && hasEquipment && (
             <Button
               style={{ marginLeft: 'auto' }}
@@ -161,6 +164,8 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 <FlexRow style={{ marginTop: '1rem' }}>
                   <Input
                     label="% Osuus"
+                    type="number"
+                    step={0.01}
                     value={quotaInput + ''}
                     onChange={(val) => setQuotaInput(parseFloat(val))}
                   />
