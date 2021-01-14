@@ -164,6 +164,8 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 <FlexRow style={{ marginTop: '1rem' }}>
                   <Input
                     label="% Osuus"
+                    type="number"
+                    step={0.01}
                     value={quotaInput + ''}
                     onChange={(val) => setQuotaInput(parseFloat(val))}
                   />
