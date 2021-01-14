@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
@@ -9,7 +9,7 @@ import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights } from '../util/userRoles'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -82,11 +82,9 @@ const GoToContractButton = styled.div`
   margin-bottom: -0.5rem;
 `
 
-export type PropTypes = {
-  children?: React.ReactNode
-} & RouteComponentProps
+export type PropTypes = RouteComponentProps
 
-const OperatorContractsListPage = observer(({ children }: PropTypes) => {
+const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   let [operator] = useStateValue('globalOperator')
   let hasAccessRights = useHasAdminAccessRights()
 

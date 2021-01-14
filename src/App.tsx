@@ -25,7 +25,7 @@ import { useStateValue } from './state/useAppState'
 import { HeaderHeading } from './common/components/ExpandableSection'
 import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from './util/userRoles'
+import { useHasAdminAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
 
 const Todo: React.FC<RouteComponentProps> = () => {
