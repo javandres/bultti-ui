@@ -1087,7 +1087,6 @@ type ProcurementUnitOption {
 }
 
 type ProcurementUnitRoute {
-  length: Float!
   routeId: String!
 }
 

@@ -719,7 +719,6 @@ export type ExecutionRequirementValue = {
 export type ProcurementUnitRoute = {
   __typename?: 'ProcurementUnitRoute';
   routeId: Scalars['String'];
-  length: Scalars['Float'];
 };
 
 export type ContractRule = {

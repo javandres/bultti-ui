@@ -44,7 +44,6 @@ export const ContractFragment = gql`
         name
       }
       routes {
-        length
         routeId
       }
     }

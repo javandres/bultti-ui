@@ -13,7 +13,6 @@ export const ProcurementUnitFragment = gql`
       name
     }
     routes {
-      length
       routeId
     }
     currentContracts {
