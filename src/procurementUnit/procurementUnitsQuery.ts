@@ -8,6 +8,7 @@ export const ProcurementUnitFragment = gql`
     operatorId
     startDate
     endDate
+    medianAgeRequirement
     area {
       id
       name
@@ -79,4 +80,19 @@ export const procurementUnitQuery = gql`
   }
   ${ProcurementUnitFragment}
   ${EquipmentFragment}
+`
+
+export const updateProcurementUnitMutation = gql`
+  mutation updateProcurementUnit(
+    $updatedData: ProcurementUnitEditInput!
+    $procurementUnitId: String!
+  ) {
+    updateProcurementUnit(
+      procurementUnit: $updatedData
+      procurementUnitId: $procurementUnitId
+    ) {
+      ...ProcurementUnitFragment
+    }
+  }
+  ${ProcurementUnitFragment}
 `

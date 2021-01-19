@@ -1,15 +1,16 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import {
   EquipmentCatalogue as EquipmentCatalogueType,
   ProcurementUnit as ProcurementUnitType,
+  ProcurementUnitEditInput,
 } from '../schema-types'
 import { orderBy } from 'lodash'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/isBetween'
 import { useQueryData } from '../util/useQueryData'
-import { procurementUnitQuery } from './procurementUnitsQuery'
+import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
@@ -17,9 +18,19 @@ import { SubHeading } from '../common/components/Typography'
 import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
+import { useMutationData } from '../util/useMutationData'
+import { numval } from '../util/numval'
+import ItemForm from '../common/input/ItemForm'
+import { TextInput } from '../common/input/Input'
+import ValueDisplay from '../common/components/ValueDisplay'
+import { Button } from '../common/components/Button'
+
+const procurementUnitLabels = {
+  medianAgeRequirement: 'Keski-ikä vaatimus',
+}
 
 const ContentWrapper = styled.div`
   position: relative;
@@ -94,11 +105,86 @@ const ProcurementUnitItemContent = observer(
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
       .some((cat) => cat.equipmentQuotas?.length !== 0)
 
+    let [medianAgeValue, setMedianAgeValue] = useState('')
+    let [unitEditable, setUnitEditable] = useState(false)
+
+    let onEditProcurementUnit = useCallback(() => {
+      if (!unitEditable) {
+        setMedianAgeValue((procurementUnit?.medianAgeRequirement || 0) + '')
+      }
+
+      setUnitEditable((cur) => !cur)
+    }, [unitEditable, procurementUnit])
+
+    let onChangeProcurementUnit = useCallback(
+      (key, nextValue) => {
+        if (key === 'medianAgeRequirement') {
+          setMedianAgeValue(nextValue)
+        }
+      },
+      [medianAgeValue]
+    )
+
+    const [updateProcurementUnit] = useMutationData<ProcurementUnitEditInput>(
+      updateProcurementUnitMutation,
+      {
+        variables: {
+          procurementUnitId,
+          updatedData: null,
+        },
+      }
+    )
+
+    const onSaveProcurementUnit = useCallback(async () => {
+      let unitInput: ProcurementUnitEditInput = {
+        medianAgeRequirement: numval(medianAgeValue, true),
+      }
+
+      await updateProcurementUnit({
+        variables: {
+          updatedData: unitInput,
+        },
+      })
+
+      setUnitEditable(false)
+    }, [medianAgeValue, catalogueEditable])
+
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
+
+    let isDirty = useMemo(
+      () => procurementUnit?.medianAgeRequirement !== numval(medianAgeValue, true),
+      [procurementUnit, medianAgeValue]
+    )
+
+    let renderProcurementItemInput = useCallback((key: string, val: any, onChange) => {
+      return <TextInput type="number" value={val} onChange={(e) => onChange(e.target.value)} />
+    }, [])
 
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
+        <div style={{ marginBottom: '1rem' }}>
+          {!unitEditable ? (
+            <ValueDisplay
+              renderValue={(key, val) => `${val} vuotta`}
+              item={procurementUnit}
+              labels={procurementUnitLabels}>
+              <Button style={{ marginLeft: 'auto' }} onClick={onEditProcurementUnit}>
+                <Text>general.app.edit</Text>
+              </Button>
+            </ValueDisplay>
+          ) : (
+            <ItemForm
+              item={{ medianAgeRequirement: medianAgeValue }}
+              labels={procurementUnitLabels}
+              onChange={onChangeProcurementUnit}
+              onDone={onSaveProcurementUnit}
+              isDirty={isDirty}
+              doneLabel={text('general.app.save')}
+              renderInput={renderProcurementItemInput}
+            />
+          )}
+        </div>
         {procurementUnit && (
           <>
             {showExecutionRequirements && hasEquipment && (
