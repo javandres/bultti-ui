@@ -603,6 +603,7 @@ export type ProcurementUnit = {
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+  optionsUsed: Scalars['Int'];
   executionRequirements: Array<ExecutionRequirement>;
   contracts: Array<Contract>;
   currentContracts?: Maybe<Array<Contract>>;

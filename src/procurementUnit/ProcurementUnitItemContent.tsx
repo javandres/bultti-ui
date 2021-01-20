@@ -15,7 +15,6 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { parseISO } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
-import { useRefetch } from '../util/useRefetch'
 import { MessageView } from '../common/components/Messages'
 import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
 import { text, Text } from '../util/translate'
@@ -30,6 +29,7 @@ import { Button } from '../common/components/Button'
 
 const procurementUnitLabels = {
   medianAgeRequirement: 'Keski-ikä vaatimus',
+  calculatedMedianAgeRequirement: 'Laskettu keski-ikä vaatimus + optiovuodet',
 }
 
 const ContentWrapper = styled.div`
@@ -170,6 +170,12 @@ const ProcurementUnitItemContent = observer(
       return <TextInput type="number" value={val} onChange={(e) => onChange(e.target.value)} />
     }, [])
 
+    let calcMedianAgeRequirement = useMemo(() => {
+      let optionsUsed = procurementUnit?.optionsUsed || 0
+      let medianAgeRequirement = procurementUnit?.medianAgeRequirement || 0
+      return medianAgeRequirement + 0.5 * optionsUsed
+    }, [procurementUnit])
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
@@ -177,7 +183,10 @@ const ProcurementUnitItemContent = observer(
           {!unitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}
-              item={procurementUnit}
+              item={{
+                medianAgeRequirement: procurementUnit?.medianAgeRequirement,
+                calculatedMedianAgeRequirement: calcMedianAgeRequirement,
+              }}
               labels={procurementUnitLabels}>
               <Button
                 style={{ marginLeft: 'auto', marginTop: 'auto' }}

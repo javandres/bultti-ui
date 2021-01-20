@@ -1073,6 +1073,7 @@ type ProcurementUnit {
   medianAgeRequirement: Float!
   operator: Operator!
   operatorId: Int!
+  optionsUsed: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!
   startDate: BulttiDate!
