@@ -75,22 +75,38 @@ const ProcurementUnitItemContent = observer(
     catalogueInvalid,
     requirementsInvalid,
   }: ContentPropTypes) => {
+    let unitQueryVariables = {
+      procurementUnitId,
+      startDate,
+      endDate,
+    }
+
     // Get the operating units for the selected operator.
-    const { data: procurementUnit, loading, refetch: refetchUnitData } =
+    const { data: procurementUnit, loading, refetch } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
         skip: !procurementUnitId || !isVisible,
-        variables: {
-          procurementUnitId,
-          startDate,
-          endDate,
-        },
+        variables: unitQueryVariables,
       }) || {}
-
-    let refetch = useRefetch(refetchUnitData)
 
     let updateUnit = useCallback(() => {
       refetch()
     }, [refetch])
+
+    const [updateProcurementUnit] = useMutationData<ProcurementUnitEditInput>(
+      updateProcurementUnitMutation,
+      {
+        variables: {
+          procurementUnitId,
+          updatedData: null,
+        },
+        refetchQueries: [
+          {
+            query: procurementUnitQuery,
+            variables: unitQueryVariables,
+          },
+        ],
+      }
+    )
 
     // Find the currently active Equipment Catalogue for the Operating Unit
     const catalogues: EquipmentCatalogueType[] = useMemo(() => {
@@ -116,6 +132,10 @@ const ProcurementUnitItemContent = observer(
       setUnitEditable((cur) => !cur)
     }, [unitEditable, procurementUnit])
 
+    let onCancelEdit = useCallback(() => {
+      setUnitEditable(false)
+    }, [])
+
     let onChangeProcurementUnit = useCallback(
       (key, nextValue) => {
         if (key === 'medianAgeRequirement') {
@@ -123,16 +143,6 @@ const ProcurementUnitItemContent = observer(
         }
       },
       [medianAgeValue]
-    )
-
-    const [updateProcurementUnit] = useMutationData<ProcurementUnitEditInput>(
-      updateProcurementUnitMutation,
-      {
-        variables: {
-          procurementUnitId,
-          updatedData: null,
-        },
-      }
     )
 
     const onSaveProcurementUnit = useCallback(async () => {
@@ -169,7 +179,9 @@ const ProcurementUnitItemContent = observer(
               renderValue={(key, val) => `${val} vuotta`}
               item={procurementUnit}
               labels={procurementUnitLabels}>
-              <Button style={{ marginLeft: 'auto' }} onClick={onEditProcurementUnit}>
+              <Button
+                style={{ marginLeft: 'auto', marginTop: 'auto' }}
+                onClick={onEditProcurementUnit}>
                 <Text>general.app.edit</Text>
               </Button>
             </ValueDisplay>
@@ -179,6 +191,7 @@ const ProcurementUnitItemContent = observer(
               labels={procurementUnitLabels}
               onChange={onChangeProcurementUnit}
               onDone={onSaveProcurementUnit}
+              onCancel={onCancelEdit}
               isDirty={isDirty}
               doneLabel={text('general.app.save')}
               renderInput={renderProcurementItemInput}
