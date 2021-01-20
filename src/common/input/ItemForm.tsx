@@ -7,13 +7,13 @@ import { Button, ButtonStyle } from '../components/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import UserHint from '../components/UserHint'
+import { Text } from '../../util/translate'
 
 export const ControlledFormView = styled.div<{ frameless?: boolean }>`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   border: ${(p) => (p.frameless ? '0' : '1px solid var(--lighter-grey)')};
-  border-bottom: 0;
   border-radius: 0.5rem;
   background: white;
 
@@ -86,7 +86,7 @@ export type PropTypes<ItemType = any> = {
   children?: React.ReactChild
   onChange: (key: string, value: string) => void
   onDone: () => void
-  onCancel: () => void
+  onCancel?: () => void
   readOnly?: boolean | string[]
   doneLabel?: string
   doneDisabled?: boolean
@@ -213,9 +213,11 @@ const ItemForm: React.FC<PropTypes> = observer(
                 onClick={onDone}>
                 {doneLabel}
               </Button>
-              <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
-                Peruuta
-              </Button>
+              {onCancel && (
+                <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
+                  <Text>general.app.cancel</Text>
+                </Button>
+              )}
             </ActionsWrapper>
           </FieldWrapper>
         )}

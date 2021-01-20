@@ -694,6 +694,7 @@ type Mutation {
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
+  updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): ExecutionRequirement!
 }
 
@@ -1069,8 +1070,10 @@ type ProcurementUnit {
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
+  medianAgeRequirement: Float!
   operator: Operator!
   operatorId: Int!
+  optionsUsed: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!
   startDate: BulttiDate!
@@ -1234,7 +1237,9 @@ type UnitExecutionReport {
 }
 
 type UnitExecutionReportData {
+  averageAgeRequired: Float!
   averageAgeWeightedFulfilled: Float!
+  averageAgeWeightedFulfilledWithLeeway: Float!
   id: ID!
   procurementUnitId: String!
   totalKilometers: Float!
@@ -1438,6 +1443,10 @@ input ObservedRequirementValueInput {
   kilometersRequired: Float
   quotaRequired: Float
   sanctionAmount: Float
+}
+
+input ProcurementUnitEditInput {
+  medianAgeRequirement: Float!
 }
 
 input UserInput {

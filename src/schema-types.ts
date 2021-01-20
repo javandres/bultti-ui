@@ -596,12 +596,14 @@ export type ProcurementUnit = {
   procurementUnitId: Scalars['String'];
   operatorId: Scalars['Int'];
   operator: Operator;
+  medianAgeRequirement: Scalars['Float'];
   equipmentCatalogues: Array<EquipmentCatalogue>;
   areaId?: Maybe<Scalars['Int']>;
   area?: Maybe<OperatingArea>;
   routes: Array<ProcurementUnitRoute>;
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+  optionsUsed: Scalars['Int'];
   executionRequirements: Array<ExecutionRequirement>;
   contracts: Array<Contract>;
   currentContracts?: Maybe<Array<Contract>>;
@@ -1396,7 +1398,9 @@ export type UnitExecutionReportData = {
   procurementUnitId: Scalars['String'];
   totalKilometers: Scalars['Float'];
   totalKilometersFulfilled: Scalars['Float'];
+  averageAgeRequired: Scalars['Float'];
   averageAgeWeightedFulfilled: Scalars['Float'];
+  averageAgeWeightedFulfilledWithLeeway: Scalars['Float'];
 };
 
 export type EarlyTimingStopDeparturesReport = {
@@ -1805,6 +1809,7 @@ export type Mutation = {
   removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
   generateEquipmentForPreInspection: Scalars['Boolean'];
+  updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
   updateEquipmentCatalogue: EquipmentCatalogue;
@@ -1896,6 +1901,12 @@ export type MutationToggleInspectionUserSubscribedArgs = {
 
 export type MutationGenerateEquipmentForPreInspectionArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type MutationUpdateProcurementUnitArgs = {
+  procurementUnit: ProcurementUnitEditInput;
+  procurementUnitId: Scalars['String'];
 };
 
 
@@ -2095,6 +2106,10 @@ export type InspectionInput = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
   inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
+};
+
+export type ProcurementUnitEditInput = {
+  medianAgeRequirement: Scalars['Float'];
 };
 
 export type EquipmentCatalogueInput = {
