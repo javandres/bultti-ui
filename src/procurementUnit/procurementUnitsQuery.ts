@@ -9,6 +9,7 @@ export const ProcurementUnitFragment = gql`
     startDate
     endDate
     medianAgeRequirement
+    optionsUsed
     area {
       id
       name
