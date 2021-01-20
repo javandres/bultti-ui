@@ -249,10 +249,12 @@ const ProcurementUnitItemContent = observer(
                   <Text>procurement_unit.no_catalogue</Text>
                 </MessageView>
               )}
-              <EditEquipmentCatalogue
-                onChange={updateUnit}
-                procurementUnit={procurementUnit}
-              />
+              {catalogueEditable && (
+                <EditEquipmentCatalogue
+                  onChange={updateUnit}
+                  procurementUnit={procurementUnit}
+                />
+              )}
             </CatalogueWrapper>
           </>
         )}

@@ -46,8 +46,6 @@ export const ExecutionRequirementFragment = gql`
     weeklyMeters
     totalKilometers
     totalKilometersFulfilled
-    averageAgeWeighted
-    averageAgeWeightedFulfilled
     operator {
       id
       operatorId
@@ -95,6 +93,8 @@ export const executionRequirementForProcurementUnitQuery = gql`
       procurementUnitId: $procurementUnitId
       inspectionId: $inspectionId
     ) {
+      averageAgeWeighted
+      averageAgeWeightedFulfilled
       ...ExecutionRequirementFragment
       equipmentQuotas {
         id
