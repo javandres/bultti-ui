@@ -290,7 +290,9 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometers
       totalKilometersFulfilled
+      averageAgeRequired
       averageAgeWeightedFulfilled
+      averageAgeWeightedFulfilledWithLeeway
     }
   `,
   UnobservedDeparturesFragment: gql`

@@ -1237,7 +1237,9 @@ type UnitExecutionReport {
 }
 
 type UnitExecutionReportData {
+  averageAgeRequired: Float!
   averageAgeWeightedFulfilled: Float!
+  averageAgeWeightedFulfilledWithLeeway: Float!
   id: ID!
   procurementUnitId: String!
   totalKilometers: Float!

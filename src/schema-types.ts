@@ -1398,7 +1398,9 @@ export type UnitExecutionReportData = {
   procurementUnitId: Scalars['String'];
   totalKilometers: Scalars['Float'];
   totalKilometersFulfilled: Scalars['Float'];
+  averageAgeRequired: Scalars['Float'];
   averageAgeWeightedFulfilled: Scalars['Float'];
+  averageAgeWeightedFulfilledWithLeeway: Scalars['Float'];
 };
 
 export type EarlyTimingStopDeparturesReport = {
