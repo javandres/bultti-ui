@@ -32,7 +32,16 @@ const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection, onUpdate
 
   return (
     <InspectionDevToolsView>
-      <Button onClick={() => generateEquipment()}>
+      <Button
+        onClick={() => {
+          if (
+            confirm(
+              'Tämä poistaa kaikki tähän tarkastukseen kuuluvia kalustoluetteloiden ajoneuvoja ja generoi testidataa tilalle. Haluatko varmasti jatkaa?'
+            )
+          ) {
+            generateEquipment()
+          }
+        }}>
         Generate equipment and catalogues (do not click more than once)
       </Button>
     </InspectionDevToolsView>

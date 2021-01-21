@@ -26,7 +26,7 @@ import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
 import { SectionHeading, SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
 import PlannedExecutionStats from './PlannedExecutionStats'
 
@@ -134,9 +134,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       if (
         isEditable &&
         procurementUnitRequirement &&
-        confirm(
-          'Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?'
-        )
+        confirm(text('requirement.refresh.warning'))
       ) {
         await refreshExecutionRequirement({
           variables: {
@@ -152,7 +150,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       if (
         isEditable &&
         procurementUnitRequirement &&
-        confirm('Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?')
+        confirm(text('requirement.remove.warning'))
       ) {
         await execRemoveExecutionRequirement({
           variables: {
@@ -189,7 +187,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
           <SectionHeading style={{ marginBottom: 0 }}>
-            Kohteen suoritevaatimukset
+            <Text>procurement_unit.execution_requirements</Text>
           </SectionHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
@@ -206,21 +204,23 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 style={{ marginLeft: '0.5rem' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}>
-                Virkistä kalustoluettelosta
+                <Text>requirement.refresh_equipment</Text>
               </Button>
             )}
           </div>
         </FlexRow>
         <ExecutionDisplay>
           <div>
-            <strong>Viikkokilometrit</strong>
+            <strong>
+              <Text>requirement.weekly_kilometers</Text>
+            </strong>
             {isEditable && (
               <Button
                 loading={weeklyMetersUpdateLoading}
                 size={ButtonSize.SMALL}
                 buttonStyle={ButtonStyle.SECONDARY}
                 onClick={onUpdateWeeklyMeters}>
-                Päivitä suoritteet JOREsta
+                <Text>requirement.update.jore_kilometers</Text>
               </Button>
             )}
           </div>
@@ -232,7 +232,9 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={requirementsLoading} />
         {procurementUnitRequirement ? (
           <>
-            <SubHeading>Suoritevaatimuksen ajoneuvot</SubHeading>
+            <SubHeading>
+              <Text>requirement.equipment_list</Text>
+            </SubHeading>
             <RequirementEquipmentList
               isEditable={isEditable}
               startDate={inspectionStartDate}
@@ -248,12 +250,14 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 hasEquipment={equipment.length !== 0}
                 addEquipment={addEquipment}
                 removeAllEquipment={removeExecutionRequirement}
-                removeLabel="Poista suoritevaatimus"
+                removeLabel={text('requirement.remove')}
                 editableKeys={['percentageQuota']}
                 fieldLabels={equipmentColumnLabels}
               />
             )}
-            <SubHeading>Kilpailukohteen suoritevaatimus</SubHeading>
+            <SubHeading>
+              <Text>requirement.unit_values</Text>
+            </SubHeading>
             <RequirementsTable
               executionRequirement={procurementUnitRequirement}
               tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
@@ -261,9 +265,11 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           </>
         ) : (
           <>
-            <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
+            <MessageView>
+              <Text>requirement.missing</Text>
+            </MessageView>
             <Button loading={createLoading} onClick={onCreateRequirements}>
-              Laske kohteen suoritevaatimukset
+              <Text>requirement.create</Text>
             </Button>
           </>
         )}

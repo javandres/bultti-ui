@@ -17,6 +17,9 @@
   "general.app.field": "Kenttä",
   "general.app.add": "Lisää",
   "general.validity_period": "Voimassaoloaika",
+  "general.time.years": "vuotta",
+  "general.count": "kpl",
+  "general.units.kilometers.short": "km",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
@@ -79,13 +82,25 @@
   "procurement_unit.valid_time": "Voimassaoloaika",
   "procurement_unit.operation_area": "Seuranta-alue",
   "procurement_unit.contract": "Sopimus",
+  "procurement_unit.age_requirement": "Keski-ikä vaatimus",
+  "procurement_unit.execution_requirements": "Kohteen suoritevaatimukset",
 
   "requirement.heading.day_type_stats": "Kaavion ajoneuvot päivätyypittäin",
   "requirement.heading.equipment_type_stats": "Kaavion ajoneuvot kalustotyypittäin",
   "requirement.stats.dayType": "Päivätyyppi",
-  "requirement.stats.equipmentType": "Kalsutotyyppi",
+  "requirement.stats.equipmentType": "Kalustotyyppi",
   "requirement.stats.equipmentCount": "Kalustomäärä",
   "requirement.stats.kilometers": "Kilometrejä viikossa",
+  "requirement.refresh_equipment": "Virkistä kalustoluettelosta",
+  "requirement.weekly_kilometers": "Viikkokilometrit",
+  "requirement.update.jore_kilometers": "Päivitä suoritteet JOREsta",
+  "requirement.equipment_list": "Suoritevaatimuksen ajoneuvot",
+  "requirement.remove": "Poista suoritevaatimus",
+  "requirement.unit_values": "Kilpailukohteen suoritearvot",
+  "requirement.missing": "Suoritevaatimukset ei laskettu.",
+  "requirement.create": "Laske kohteen suoritevaatimukset",
+  "requirement.remove.warning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
+  "requirement.refresh.warning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
 
   "contract.no_valid_contracts": "Ei voimassaolevaa sopimusta.",
 
