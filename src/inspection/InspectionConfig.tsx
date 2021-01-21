@@ -13,6 +13,7 @@ import { DATE_FORMAT } from '../constants'
 import styled from 'styled-components'
 import { format, parseISO, startOfISOWeek } from 'date-fns'
 import InspectionTimeline from './InspectionTimeline'
+import InspectionSelectDates from './inspectionSelectDates'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -41,7 +42,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       InspectionInput
     >(initialInspectionInputValues)
 
-    let onUpdateValue = useCallback((name, value) => {
+    let onUpdateValue = useCallback((name: string, value: any) => {
       setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
         nextValues[name] = value
@@ -75,13 +76,21 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <FormColumn>
                 <Input
                   value={pendingInspectionInputValues.name || ''}
-                  onChange={(val) => onUpdateValue('name', val)}
                   label="Tarkastuksen nimi"
                 />
               </FormColumn>
             </FlexRow>
             <FlexRow>
               <InspectionTimeline currentInspection={inspection} />
+            </FlexRow>
+            <FlexRow>
+              <InspectionSelectDates
+                inspection={inspection}
+                onChange={(startDate: Date, endDate: Date) => {
+                  onUpdateValue('inspectionStartDate', startDate)
+                  onUpdateValue('inspectionEndDate', endDate)
+                }}
+              />
             </FlexRow>
             <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (
