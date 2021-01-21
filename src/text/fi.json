@@ -18,6 +18,8 @@
   "general.app.add": "Lisää",
   "general.validity_period": "Voimassaoloaika",
   "general.time.years": "vuotta",
+  "general.count": "kpl",
+  "general.units.kilometers.short": "km",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 

@@ -13,6 +13,7 @@ import {
   RequirementsTableLayout,
 } from './executionRequirementUtils'
 import Big from 'big.js'
+import { text } from '../util/translate'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1rem;
@@ -142,10 +143,10 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           case 'kilometers':
           case 'kilometerRequirement':
           case 'kilometersFulfilled':
-            return `${totalVal} km`
+            return `${totalVal} ${text('general.units.kilometers.short')}`
           case 'equipmentCount':
           case 'equipmentCountFulfilled':
-            return `${totalVal} kpl`
+            return `${totalVal} ${text('general.count')}`
           default:
             return totalVal
         }
