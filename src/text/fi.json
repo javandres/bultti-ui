@@ -17,6 +17,7 @@
   "general.app.field": "Kenttä",
   "general.app.add": "Lisää",
   "general.validity_period": "Voimassaoloaika",
+  "general.time.years": "vuotta",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
@@ -79,6 +80,7 @@
   "procurement_unit.valid_time": "Voimassaoloaika",
   "procurement_unit.operation_area": "Seuranta-alue",
   "procurement_unit.contract": "Sopimus",
+  "procurement_unit.age_requirement": "Keski-ikä vaatimus",
 
   "requirement.heading.day_type_stats": "Kaavion ajoneuvot päivätyypittäin",
   "requirement.heading.equipment_type_stats": "Kaavion ajoneuvot kalustotyypittäin",

@@ -109,6 +109,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   </HeaderHeading>
                   {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
+                <HeaderSection>
+                  <HeaderHeading>
+                    <Text>procurement_unit.age_requirement</Text>
+                  </HeaderHeading>
+                  {procurementUnit?.medianAgeRequirement || 0} <Text>general.time.years</Text>
+                </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>
                     <Text>procurement_unit.contract</Text>
