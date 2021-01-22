@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
 import { Operator, User, UserRole } from '../../schema-types'
-import Dropdown, { DropdownItem } from './Dropdown'
+import Dropdown from './Dropdown'
 import { gql } from '@apollo/client'
 import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
@@ -107,17 +107,14 @@ const SelectOperator: React.FC<PropTypes> = observer(
     }, [userIsOperator, value, operators, onSelect, selectInitialId])
 
     const onSelectOperator = useCallback(
-      (selectedItem: DropdownItem) => {
-        let selectValue: Operator | null = null
-        let selectedOperator = operators.find(
-          (operator) => operator.id === selectedItem.value
-        )!
+      (selectedItem) => {
+        let selectValue = selectedItem
 
-        if (operatorIsValid(selectedOperator)) {
-          onSelect(selectedOperator)
-        } else {
-          onSelect(null)
+        if (!selectedItem || !operatorIsValid(selectedItem)) {
+          selectValue = null
         }
+
+        onSelect(selectValue)
       },
       [onSelect]
     )
@@ -128,19 +125,6 @@ const SelectOperator: React.FC<PropTypes> = observer(
       return !valueId ? null : operators.find((op) => valueId === op.id) || operators[0]
     }, [operators, value])
 
-    let getDropdownItem = (operator: Operator): DropdownItem => {
-      return {
-        label: operator.operatorName,
-        value: operator.id,
-      }
-    }
-    let dropdownItems: DropdownItem[] = operators.map((operator: Operator) =>
-      getDropdownItem(operator)
-    )
-    let selectedItem: DropdownItem | null = currentOperator
-      ? getDropdownItem(currentOperator)
-      : null
-
     return (
       <Dropdown
         disabled={disabled || operators.length < 2}
@@ -148,9 +132,11 @@ const SelectOperator: React.FC<PropTypes> = observer(
         style={style}
         theme={theme}
         label={label || undefined}
-        items={dropdownItems}
+        items={operators}
         onSelect={onSelectOperator}
-        selectedItem={selectedItem}
+        selectedItem={currentOperator}
+        itemToString="id"
+        itemToLabel="operatorName"
       />
     )
   }

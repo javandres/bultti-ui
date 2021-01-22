@@ -1,9 +1,9 @@
 import { format, fromUnixTime, isSameYear, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT } from '../constants'
+import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 
 type AcceptedDateFormat = Date | string | number
 
-function getDateObject(date: AcceptedDateFormat) {
+function getDateObject(date: AcceptedDateFormat): Date {
   if (date instanceof Date) {
     return date
   }
@@ -15,12 +15,18 @@ function getDateObject(date: AcceptedDateFormat) {
   return parseISO(date)
 }
 
-export function readableDate(date: AcceptedDateFormat) {
+export function readableDate(date: AcceptedDateFormat): string {
   let dateObj = getDateObject(date)
   return format(dateObj, READABLE_DATE_FORMAT)
 }
 
-export function readableDateRange(startDate: AcceptedDateFormat, endDate: AcceptedDateFormat) {
+export function readableDateRange({
+  startDate,
+  endDate,
+}: {
+  startDate: AcceptedDateFormat
+  endDate: AcceptedDateFormat
+}): string {
   let startDateObj = getDateObject(startDate)
   let endDateObj = getDateObject(endDate)
 
@@ -32,4 +38,8 @@ export function readableDateRange(startDate: AcceptedDateFormat, endDate: Accept
     endDateObj,
     READABLE_DATE_FORMAT
   )}`
+}
+
+export function getBulttiDate(date: Date): string {
+  return format(date, DATE_FORMAT)
 }

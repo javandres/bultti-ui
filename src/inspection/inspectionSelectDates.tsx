@@ -2,24 +2,29 @@ import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { eachWeekOfInterval, startOfWeek } from 'date-fns'
-import { Inspection } from '../schema-types'
+import { InspectionInput } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
+import { readableDateRange } from '../util/formatDate'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
+  width: 50%;
 `
 
-interface IDateOption {
-  endDate: Date
-  startDate: Date
+interface DateOption {
+  label: string
+  value: {
+    startDate: Date
+    endDate: Date
+  }
 }
 
 export type PropTypes = {
-  inspection: Inspection
-  onChange: Function
+  inspectionInput: InspectionInput
+  onChange: (startDate: Date, endDate: Date) => void
 }
 
-const InspectionSelectDates = observer(({ inspection, onChange }: PropTypes) => {
+const InspectionSelectDates = observer(({ inspectionInput, onChange }: PropTypes) => {
   // TODO: use inspection.InspectionType to know how to get options
   // preInspections: automatically generated options
   // postInspections: query options from backend
@@ -32,23 +37,41 @@ const InspectionSelectDates = observer(({ inspection, onChange }: PropTypes) => 
     end: endDate,
   })
 
-  let dateOptions: IDateOption[] = dateOptionsEndDates.map((endDate) => {
-    return {
+  let dateOptions: DateOption[] = dateOptionsEndDates.map((endDate) => {
+    const startDate = startOfWeek(endDate, { weekStartsOn: 1 })
+    const value = {
+      startDate,
       endDate,
-      startDate: startOfWeek(endDate, { weekStartsOn: 1 }),
+    }
+    const label = readableDateRange({ startDate, endDate })
+    return {
+      label,
+      value,
     }
   })
-  const onSelectDates = (val: any) => {
-    // TODO, call onChange
+  const onSelectDates = (dateOption: DateOption) => {
+    onChange(dateOption.value.startDate, dateOption.value.endDate)
   }
-
+  let selectedItem: DateOption | null =
+    inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
+      ? {
+          label: readableDateRange({
+            startDate: inspectionInput.inspectionStartDate,
+            endDate: inspectionInput.inspectionEndDate,
+          }),
+          value: {
+            startDate: inspectionInput.inspectionStartDate,
+            endDate: inspectionInput.inspectionEndDate!,
+          },
+        }
+      : null
   return (
     <InspectionSelectDatesView>
       <Dropdown
-        label={'Valitse aika'}
+        label={'Valitse tarkastusjakso'}
         items={dateOptions}
         onSelect={onSelectDates}
-        selectedItem={''}
+        selectedItem={selectedItem}
       />
     </InspectionSelectDatesView>
   )

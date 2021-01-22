@@ -34,13 +34,11 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   font-size: 1rem;
   justify-content: flex-start;
   display: flex;
-
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};
     margin-left: auto;
     margin-right: 0;
   }
-
   ${(p) =>
     !p.disabled
       ? css`
@@ -48,7 +46,6 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
             background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
             color: var(--dark-grey);
             border-color: var(--blue);
-
             svg * {
               fill: ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-grey)')};
             }
@@ -86,11 +83,11 @@ const DropdownItem = styled.li<{ highlighted: boolean }>`
 export type DropdownProps = {
   disabled?: boolean
   label?: string
-  items: any[]
+  items: any[] // any object (remember to pass itemToString, itemToLabel), array, { field, value } object
   onSelect: (selectedItem: any | null) => unknown
-  itemToString?: string | ((item: any | null) => string)
-  itemToLabel?: string | ((item: any | null) => string)
-  selectedItem?: any
+  itemToString?: string | ((item: any | null) => string) // property of given object to get value from
+  itemToLabel?: string | ((item: any | null) => string) // property of given object to get label from
+  selectedItem?: any // TODO: add documentation of this property or change any
   className?: string
   style?: CSSProperties
   theme?: ThemeTypes
@@ -174,6 +171,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
               <>
                 {items.map((item, index) => (
                   <DropdownItem
+                    key={`dropdown-item-${index}`}
                     theme={theme}
                     highlighted={highlightedIndex === index}
                     {...getItemProps({
