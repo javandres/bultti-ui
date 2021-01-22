@@ -1,10 +1,13 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, startOfWeek } from 'date-fns'
-import { InspectionInput } from '../schema-types'
+import { eachWeekOfInterval, parseISO, startOfWeek } from 'date-fns'
+import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { readableDateRange } from '../util/formatDate'
+import { useLazyQueryData } from '../util/useLazyQueryData'
+import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -20,15 +23,72 @@ interface DateOption {
 }
 
 export type PropTypes = {
+  inspectionType: InspectionType
   inspectionInput: InspectionInput
   onChange: (startDate: Date, endDate: Date) => void
 }
 
-const InspectionSelectDates = observer(({ inspectionInput, onChange }: PropTypes) => {
-  // TODO: use inspection.InspectionType to know how to get options
-  // preInspections: automatically generated options
-  // postInspections: query options from backend
+const InspectionSelectDates = observer(
+  ({ inspectionType, inspectionInput, onChange }: PropTypes) => {
+    let [
+      queryInspectionDates,
+      { data: inspectionDatesQueryResult, loading: areInspectionDatesLoading },
+    ] = useLazyQueryData<InspectionDate[]>(allInspectionDatesQuery)
 
+    let _queryPostinspectionDateOptions = async () => {
+      if (!areInspectionDatesLoading && !inspectionDatesQueryResult) {
+        await queryInspectionDates()
+      }
+    }
+
+    let dateOptions: DateOption[] = []
+    if (inspectionType === InspectionType.Pre) {
+      dateOptions = _getPreInspectionDateOptions()
+    } else {
+      if (inspectionDatesQueryResult) {
+        dateOptions = _getPostInspectionDateOptions(inspectionDatesQueryResult)
+      } else {
+        _queryPostinspectionDateOptions()
+      }
+    }
+    dateOptions.sort((a: DateOption, b: DateOption) => {
+      return a.value.startDate.getTime() < b.value.startDate.getTime() ? -1 : 1
+    })
+
+    let onSelectDates = (dateOption: DateOption) => {
+      onChange(dateOption.value.startDate, dateOption.value.endDate)
+    }
+    let selectedItem: DateOption | null =
+      inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
+        ? {
+            label: readableDateRange({
+              startDate: inspectionInput.inspectionStartDate,
+              endDate: inspectionInput.inspectionEndDate,
+            }),
+            value: {
+              startDate: inspectionInput.inspectionStartDate,
+              endDate: inspectionInput.inspectionEndDate!,
+            },
+          }
+        : null
+    return (
+      <InspectionSelectDatesView>
+        {areInspectionDatesLoading ? (
+          <LoadingDisplay />
+        ) : (
+          <Dropdown
+            label={'Valitse tarkastusjakso'}
+            items={dateOptions}
+            onSelect={onSelectDates}
+            selectedItem={selectedItem}
+          />
+        )}
+      </InspectionSelectDatesView>
+    )
+  }
+)
+
+const _getPreInspectionDateOptions = (): DateOption[] => {
   let startDate = new Date()
   let endDate = new Date(startDate)
   endDate.setDate(endDate.getDate() + 90)
@@ -38,43 +98,34 @@ const InspectionSelectDates = observer(({ inspectionInput, onChange }: PropTypes
   })
 
   let dateOptions: DateOption[] = dateOptionsEndDates.map((endDate) => {
-    const startDate = startOfWeek(endDate, { weekStartsOn: 1 })
-    const value = {
+    let startDate = startOfWeek(endDate, { weekStartsOn: 1 })
+    let value = {
       startDate,
       endDate,
     }
-    const label = readableDateRange({ startDate, endDate })
+    let label = readableDateRange({ startDate, endDate })
     return {
       label,
       value,
     }
   })
-  const onSelectDates = (dateOption: DateOption) => {
-    onChange(dateOption.value.startDate, dateOption.value.endDate)
-  }
-  let selectedItem: DateOption | null =
-    inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
-      ? {
-          label: readableDateRange({
-            startDate: inspectionInput.inspectionStartDate,
-            endDate: inspectionInput.inspectionEndDate,
-          }),
-          value: {
-            startDate: inspectionInput.inspectionStartDate,
-            endDate: inspectionInput.inspectionEndDate!,
-          },
-        }
-      : null
-  return (
-    <InspectionSelectDatesView>
-      <Dropdown
-        label={'Valitse tarkastusjakso'}
-        items={dateOptions}
-        onSelect={onSelectDates}
-        selectedItem={selectedItem}
-      />
-    </InspectionSelectDatesView>
-  )
-})
+  return dateOptions
+}
+
+const _getPostInspectionDateOptions = (
+  inspectionDatesQueryResult: InspectionDate[]
+): DateOption[] => {
+  return inspectionDatesQueryResult.map((inspectionDate: InspectionDate) => {
+    let { startDate, endDate } = inspectionDate
+    let label = readableDateRange({ startDate, endDate })
+    return {
+      label,
+      value: {
+        startDate: parseISO(startDate),
+        endDate: parseISO(endDate),
+      },
+    }
+  })
+}
 
 export default InspectionSelectDates

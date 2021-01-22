@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
 import { isEqual, pick } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
@@ -9,9 +8,7 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
-import { DATE_FORMAT } from '../constants'
 import styled from 'styled-components'
-import { format, parseISO, startOfISOWeek } from 'date-fns'
 import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
 import { getBulttiDate } from '../util/formatDate'
@@ -78,6 +75,9 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                 <Input
                   value={pendingInspectionInputValues.name || ''}
                   label="Tarkastuksen nimi"
+                  onChange={(value: string) => {
+                    onUpdateValue('name', value)
+                  }}
                 />
               </FormColumn>
             </FlexRow>
@@ -86,6 +86,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             </FlexRow>
             <FlexRow>
               <InspectionSelectDates
+                inspectionType={inspection.inspectionType}
                 inspectionInput={pendingInspectionInputValues}
                 onChange={(startDate: Date, endDate: Date) => {
                   onUpdateValue('inspectionStartDate', getBulttiDate(startDate))
@@ -115,31 +116,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                   </ControlGroup>
                 </FormColumn>
               )}
-              <FormColumn>
-                <InputLabel theme="light">Tarkastusjakso</InputLabel>
-                <ControlGroup>
-                  <SelectDate
-                    name="inspection_start"
-                    minDate={format(
-                      startOfISOWeek(parseISO(inspection.minStartDate)),
-                      DATE_FORMAT
-                    )}
-                    value={pendingInspectionInputValues.inspectionStartDate}
-                    onChange={(val) => onUpdateValue('inspectionStartDate', val)}
-                    label="Alku"
-                    disabled={!isEditable}
-                  />
-                  <SelectDate
-                    name="inspection_end"
-                    value={pendingInspectionInputValues.inspectionEndDate}
-                    minDate={inspection.inspectionStartDate}
-                    onChange={(val) => onUpdateValue('inspectionEndDate', val)}
-                    label="Loppu"
-                    disabled={!isEditable}
-                    alignDatepicker="right"
-                  />
-                </ControlGroup>
-              </FormColumn>
             </FlexRow>
             <FlexRow>
               <ActionsWrapper>
