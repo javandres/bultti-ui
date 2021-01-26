@@ -3,7 +3,7 @@ import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 
 type AcceptedDateFormat = Date | string | number
 
-function getDateObject(date: AcceptedDateFormat): Date {
+export function getDateObject(date: AcceptedDateFormat): Date {
   if (date instanceof Date) {
     return date
   }

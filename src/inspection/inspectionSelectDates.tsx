@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, parseISO, startOfWeek } from 'date-fns'
+import { eachWeekOfInterval, parseISO, startOfWeek, sub, isBefore } from 'date-fns'
 import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
-import { readableDateRange } from '../util/formatDate'
+import { getDateObject, readableDateRange } from '../util/formatDate'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
@@ -115,17 +115,25 @@ const _getPreInspectionDateOptions = (): DateOption[] => {
 const _getPostInspectionDateOptions = (
   inspectionDatesQueryResult: InspectionDate[]
 ): DateOption[] => {
-  return inspectionDatesQueryResult.map((inspectionDate: InspectionDate) => {
-    let { startDate, endDate } = inspectionDate
-    let label = readableDateRange({ startDate, endDate })
-    return {
-      label,
-      value: {
-        startDate: parseISO(startDate),
-        endDate: parseISO(endDate),
-      },
-    }
-  })
+  let dateOneMonthAgo = sub(new Date(), { months: 1 })
+  const isInspectionDateValid = (inspectionDate: InspectionDate) => {
+    // Only dates that are older than 1 month are valid
+    return isBefore(getDateObject(inspectionDate.endDate), dateOneMonthAgo)
+  }
+
+  return inspectionDatesQueryResult
+    .filter(isInspectionDateValid)
+    .map((inspectionDate: InspectionDate) => {
+      let { startDate, endDate } = inspectionDate
+      let label = readableDateRange({ startDate, endDate })
+      return {
+        label,
+        value: {
+          startDate: parseISO(startDate),
+          endDate: parseISO(endDate),
+        },
+      }
+    })
 }
 
 export default InspectionSelectDates
