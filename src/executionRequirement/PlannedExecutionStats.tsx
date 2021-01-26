@@ -12,6 +12,8 @@ import {
 import Table, { PropTypes as TablePropTypes } from '../common/components/Table'
 import { text, Text } from '../util/translate'
 import { SmallHeading } from '../common/components/Typography'
+import { orderBy } from 'lodash'
+import { normalDayTypes } from '../constants'
 
 const PlannedExecutionStatsView = styled.div`
   display: flex;
@@ -59,9 +61,12 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
     }
   )
 
-  let dayTypeStats = executionStatsData?.dayTypeEquipment || []
-  let equipmentTypeStats = executionStatsData?.equipmentTypes || []
+  let dayTypeStats = orderBy(
+    executionStatsData?.dayTypeEquipment || [],
+    (row) => normalDayTypes.indexOf(row.dayType) || 0
+  )
 
+  let equipmentTypeStats = executionStatsData?.equipmentTypes || []
   let requirementEquipmentCount = executionRequirement.equipmentQuotas.length
 
   return (
