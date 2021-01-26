@@ -8,6 +8,7 @@ import { getDateObject, readableDateRange } from '../util/formatDate'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
+import { text } from '../util/translate'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -77,7 +78,7 @@ const InspectionSelectDates = observer(
           <LoadingDisplay />
         ) : (
           <Dropdown
-            label={'Valitse tarkastusjakso'}
+            label={text('inspection.select_inspection')}
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}

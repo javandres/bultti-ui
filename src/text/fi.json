@@ -107,6 +107,10 @@
   "catalogue.equipment_not_found": "Kalustoa ei löydetty.",
   "catalogue.equipment.confirm_remove": "Haluatko varmasti poistaa ajoneuvon?",
 
+  "inspection.inspection_not_selected": "Tarkastusta ei ole valittu.",
+  "inspection.inspection_name": "Tarkastuksen nimi",
+  "inspection.select_inspection": "Valitse tarkastusjakso",
+  "inspection.inspection_season": "Tuotantojakso",
   "inspection.units.weekly_kilometers": "Kilometrejä viikossa",
   "inspection.units.area": "Seuranta-alue",
   "inspection.units.view_all": "Näytä kaikki kilpailukohteet",

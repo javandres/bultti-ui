@@ -12,6 +12,7 @@ import styled from 'styled-components'
 import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
 import { getBulttiDate } from '../util/formatDate'
+import { Text, text } from '../util/translate'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -67,7 +68,9 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
-            <MessageView>Tarkastusta ei ole valittu.</MessageView>
+            <MessageView>
+              <Text>inspection.inspection_not_selected</Text>
+            </MessageView>
           </MessageContainer>
         ) : (
           <>
@@ -75,7 +78,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <FormColumn>
                 <Input
                   value={pendingInspectionInputValues.name || ''}
-                  label="Tarkastuksen nimi"
+                  label={text('inspection.inspection_name')}
                   onChange={(value: string) => {
                     onUpdateValue('name', value)
                   }}
@@ -98,19 +101,19 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (
                 <FormColumn>
-                  <InputLabel theme="light">Tuotantojakso</InputLabel>
+                  <InputLabel theme="light">{text('inspection.inspection_season')}</InputLabel>
                   <ControlGroup>
                     <Input
                       type="date"
                       value={inspection.startDate}
-                      label="Alku"
+                      label={text('start_date')}
                       subLabel={true}
                       disabled={true}
                     />
                     <Input
                       type="date"
                       value={inspection.endDate}
-                      label="Loppu"
+                      label={text('end_date')}
                       subLabel={true}
                       disabled={true}
                     />
@@ -121,14 +124,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               <ActionsWrapper>
                 <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
-                  Tallenna
+                  <Text>general.app.save</Text>
                 </Button>
                 <Button
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                   onClick={() =>
                     setPendingInspectionInputValues(getInspectionInputValues(inspection))
                   }>
-                  Peruuta
+                  <Text>general.app.cancel</Text>
                 </Button>
               </ActionsWrapper>
             </FlexRow>
