@@ -180,10 +180,9 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     }
   }, [inspection, removeRequirements, observedRequirements, isEditable])
 
-  let requirementsByAreaAndWeek: Array<[
-    string,
-    Array<[string, ObservedExecutionRequirement[]]>
-  ]> = useMemo(
+  let requirementsByAreaAndWeek: Array<
+    [string, Array<[string, ObservedExecutionRequirement[]]>]
+  > = useMemo(
     () =>
       Object.entries<ObservedExecutionRequirement[]>(
         groupBy<ObservedExecutionRequirement>(observedRequirements, 'area.name')
@@ -191,7 +190,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         areaName,
         Object.entries<ObservedExecutionRequirement[]>(
           groupBy<ObservedExecutionRequirement>(areaReqs, (req) =>
-            readableDateRange({ startDate: req.startDate, endDate: req.endDate })
+            readableDateRange({ start: req.startDate, end: req.endDate })
           )
         ),
       ]),

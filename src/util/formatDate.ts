@@ -1,4 +1,4 @@
-import { format, fromUnixTime, isSameYear, parseISO } from 'date-fns'
+import { format, fromUnixTime, isSameYear, parseISO, Interval } from 'date-fns'
 import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 
 type AcceptedDateFormat = Date | string | number
@@ -21,14 +21,14 @@ export function readableDate(date: AcceptedDateFormat): string {
 }
 
 export function readableDateRange({
-  startDate,
-  endDate,
+  start,
+  end,
 }: {
-  startDate: AcceptedDateFormat
-  endDate: AcceptedDateFormat
+  start: AcceptedDateFormat
+  end: AcceptedDateFormat
 }): string {
-  let startDateObj = getDateObject(startDate)
-  let endDateObj = getDateObject(endDate)
+  let startDateObj = getDateObject(start)
+  let endDateObj = getDateObject(end)
 
   // Unnecessary to show the year in the first date if both dates are from the same year
   let showYear = !isSameYear(startDateObj, endDateObj)

@@ -63,8 +63,8 @@ const InspectionSelectDates = observer(
       inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
         ? {
             label: readableDateRange({
-              startDate: inspectionInput.inspectionStartDate,
-              endDate: inspectionInput.inspectionEndDate,
+              start: inspectionInput.inspectionStartDate,
+              end: inspectionInput.inspectionEndDate,
             }),
             value: {
               startDate: inspectionInput.inspectionStartDate,
@@ -104,7 +104,7 @@ const _getPreInspectionDateOptions = (): DateOption[] => {
       startDate,
       endDate,
     }
-    let label = readableDateRange({ startDate, endDate })
+    let label = readableDateRange({ start: startDate, end: endDate })
     return {
       label,
       value,
@@ -126,7 +126,7 @@ const _getPostInspectionDateOptions = (
     .filter(isInspectionDateValid)
     .map((inspectionDate: InspectionDate) => {
       let { startDate, endDate } = inspectionDate
-      let label = readableDateRange({ startDate, endDate })
+      let label = readableDateRange({ start: startDate, end: endDate })
       return {
         label,
         value: {
