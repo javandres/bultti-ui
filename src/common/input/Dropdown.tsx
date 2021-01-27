@@ -83,10 +83,10 @@ const DropdownItem = styled.li<{ highlighted: boolean }>`
 export type DropdownProps = {
   disabled?: boolean
   label?: string
-  items: any[] // any object (remember to pass itemToString, itemToLabel), array, { field, value } object
+  items: any[] // any object (remember to pass itemToString, itemToLabel), array, { field, value } object.
   onSelect: (selectedItem: any | null) => unknown
-  itemToString?: string | ((item: any | null) => string) // property of given object to get value from
-  itemToLabel?: string | ((item: any | null) => string) // property of given object to get label from
+  itemToString?: string | ((item: any | null) => string) // property of given object to get value from or a function that returns the value.
+  itemToLabel?: string | ((item: any | null) => string) // property of given object to get label from or a function that returns the label.
   selectedItem?: any // TODO: add documentation of this property or change any
   className?: string
   style?: CSSProperties
