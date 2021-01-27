@@ -5,9 +5,8 @@ import { getCreatedBy } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
-import { format, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT, READABLE_TIME_FORMAT } from '../constants'
 import InspectionActions from './InspectionActions'
+import { getReadableDate } from '../util/formatDate'
 
 const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -72,12 +71,12 @@ const renderValue = (key, val) => {
   switch (key) {
     case 'createdAt':
     case 'updatedAt':
-      return format(parseISO(val), READABLE_TIME_FORMAT)
+      return getReadableDate(val)
     case 'startDate':
     case 'inspectionStartDate':
     case 'endDate':
     case 'inspectionEndDate':
-      return format(parseISO(val), READABLE_DATE_FORMAT)
+      return getReadableDate(val)
     case 'status':
       if (val === InspectionStatus.InProduction) {
         return 'Tuotannossa'

@@ -7,14 +7,14 @@ import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
 import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
-import { DATE_FORMAT } from '../constants'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
-import { addYears, format } from 'date-fns'
+import { addYears } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import { PageTitle } from '../common/components/PageTitle'
 import { navigateWithQueryString } from '../util/urlValue'
+import { getDateString } from '../util/formatDate'
 
 const EditContractPageView = styled(Page)``
 
@@ -50,8 +50,8 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
       setNewContract({
         operatorId: operator?.id,
         operator,
-        startDate: format(new Date(), DATE_FORMAT),
-        endDate: format(addYears(new Date(), 1), DATE_FORMAT),
+        startDate: getDateString(new Date()),
+        endDate: getDateString(addYears(new Date(), 1)),
       })
     }
   }, [contractId, newContract, operator])

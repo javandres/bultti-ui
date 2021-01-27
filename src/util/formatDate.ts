@@ -1,4 +1,4 @@
-import { format, fromUnixTime, isSameYear, parseISO, Interval } from 'date-fns'
+import { format, fromUnixTime, isSameYear, parseISO } from 'date-fns'
 import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 
 type AcceptedDateFormat = Date | string | number

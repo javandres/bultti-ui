@@ -7,8 +7,8 @@ import { useAppState } from '../state/useAppState'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
-import { addDays, format, parseISO } from 'date-fns'
-import { DATE_FORMAT } from '../constants'
+import { addDays, parseISO } from 'date-fns'
+import { getDateString } from '../util/formatDate'
 
 const ProcurementUnitsView = styled(Page)``
 
@@ -38,7 +38,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
             startDate={globalSeason?.startDate || ''}
             endDate={
               globalSeason?.startDate
-                ? format(addDays(parseISO(globalSeason.startDate), 7), DATE_FORMAT)
+                ? getDateString(addDays(parseISO(globalSeason.startDate), 7))
                 : ''
             }
           />
