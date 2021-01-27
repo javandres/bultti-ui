@@ -89,7 +89,7 @@ const InspectionSelectDates = observer(
   }
 )
 
-const _getPreInspectionDateOptions = (): DateOption[] => {
+function _getPreInspectionDateOptions(): DateOption[] {
   let startDate = new Date()
   let endDate = new Date(startDate)
   endDate.setDate(endDate.getDate() + 90)
@@ -113,9 +113,9 @@ const _getPreInspectionDateOptions = (): DateOption[] => {
   return dateOptions
 }
 
-const _getPostInspectionDateOptions = (
+function _getPostInspectionDateOptions(
   inspectionDatesQueryResult: InspectionDate[]
-): DateOption[] => {
+): DateOption[] {
   let dateOneMonthAgo = sub(new Date(), { months: 1 })
   const isInspectionDateValid = (inspectionDate: InspectionDate) => {
     // Only dates that are older than 1 month are valid
