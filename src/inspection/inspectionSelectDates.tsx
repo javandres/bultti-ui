@@ -44,10 +44,10 @@ const InspectionSelectDates = observer(
 
     let dateOptions: DateOption[] = []
     if (inspectionType === InspectionType.Pre) {
-      dateOptions = _getPreInspectionDateOptions()
+      dateOptions = getPreInspectionDateOptions()
     } else {
       if (inspectionDatesQueryResult) {
-        dateOptions = _getPostInspectionDateOptions(inspectionDatesQueryResult)
+        dateOptions = getPostInspectionDateOptions(inspectionDatesQueryResult)
       } else {
         _queryPostinspectionDateOptions()
       }
@@ -89,7 +89,7 @@ const InspectionSelectDates = observer(
   }
 )
 
-function _getPreInspectionDateOptions(): DateOption[] {
+function getPreInspectionDateOptions(): DateOption[] {
   let startDate = new Date()
   let endDate = new Date(startDate)
   endDate.setDate(endDate.getDate() + 90)
@@ -113,7 +113,7 @@ function _getPreInspectionDateOptions(): DateOption[] {
   return dateOptions
 }
 
-function _getPostInspectionDateOptions(
+function getPostInspectionDateOptions(
   inspectionDatesQueryResult: InspectionDate[]
 ): DateOption[] {
   let dateOneMonthAgo = subMonths(new Date(), 1)
