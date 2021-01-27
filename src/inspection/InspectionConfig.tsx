@@ -11,7 +11,7 @@ import { ActionsWrapper } from '../common/input/ItemForm'
 import styled from 'styled-components'
 import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
-import { getBulttiDate } from '../util/formatDate'
+import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
 
 const InspectionConfigView = styled(PageSection)`
@@ -93,8 +93,8 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                 inspectionType={inspection.inspectionType}
                 inspectionInput={pendingInspectionInputValues}
                 onChange={(startDate: Date, endDate: Date) => {
-                  onUpdateValue('inspectionStartDate', getBulttiDate(startDate))
-                  onUpdateValue('inspectionEndDate', getBulttiDate(endDate))
+                  onUpdateValue('inspectionStartDate', getDateString(startDate))
+                  onUpdateValue('inspectionEndDate', getDateString(endDate))
                 }}
               />
             </FlexRow>

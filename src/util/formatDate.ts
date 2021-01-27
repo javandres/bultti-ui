@@ -15,12 +15,12 @@ export function getDateObject(date: AcceptedDateFormat): Date {
   return parseISO(date)
 }
 
-export function readableDate(date: AcceptedDateFormat): string {
+export function getReadableDate(date: AcceptedDateFormat): string {
   let dateObj = getDateObject(date)
   return format(dateObj, READABLE_DATE_FORMAT)
 }
 
-export function readableDateRange({
+export function getReadableDateRange({
   start,
   end,
 }: {
@@ -40,6 +40,6 @@ export function readableDateRange({
   )}`
 }
 
-export function getBulttiDate(date: Date): string {
-  return format(date, DATE_FORMAT)
+export function getDateString(date: AcceptedDateFormat): string {
+  return format(getDateObject(date), DATE_FORMAT)
 }

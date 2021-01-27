@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { eachWeekOfInterval, parseISO, startOfWeek, subMonths, isBefore } from 'date-fns'
 import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
-import { getDateObject, readableDateRange } from '../util/formatDate'
+import { getDateObject, getReadableDateRange } from '../util/formatDate'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
@@ -62,7 +62,7 @@ const InspectionSelectDates = observer(
     let selectedItem: DateOption | null =
       inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
         ? {
-            label: readableDateRange({
+            label: getReadableDateRange({
               start: inspectionInput.inspectionStartDate,
               end: inspectionInput.inspectionEndDate,
             }),
@@ -104,7 +104,7 @@ function _getPreInspectionDateOptions(): DateOption[] {
       startDate,
       endDate,
     }
-    let label = readableDateRange({ start: startDate, end: endDate })
+    let label = getReadableDateRange({ start: startDate, end: endDate })
     return {
       label,
       value,
@@ -126,7 +126,7 @@ function _getPostInspectionDateOptions(
     .filter(isInspectionDateValid)
     .map((inspectionDate: InspectionDate) => {
       let { startDate, endDate } = inspectionDate
-      let label = readableDateRange({ start: startDate, end: endDate })
+      let label = getReadableDateRange({ start: startDate, end: endDate })
       return {
         label,
         value: {

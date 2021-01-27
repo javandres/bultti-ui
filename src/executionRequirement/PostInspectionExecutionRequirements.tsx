@@ -24,7 +24,7 @@ import {
   updateObservedExecutionRequirementValuesMutation,
 } from './executionRequirementsQueries'
 import { groupBy, toString } from 'lodash'
-import { readableDateRange } from '../util/formatDate'
+import { getReadableDateRange } from '../util/formatDate'
 import { FlexRow } from '../common/components/common'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
@@ -190,7 +190,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         areaName,
         Object.entries<ObservedExecutionRequirement[]>(
           groupBy<ObservedExecutionRequirement>(areaReqs, (req) =>
-            readableDateRange({ start: req.startDate, end: req.endDate })
+            getReadableDateRange({ start: req.startDate, end: req.endDate })
           )
         ),
       ]),
