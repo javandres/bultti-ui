@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, parseISO, startOfWeek, sub, isBefore } from 'date-fns'
+import { eachWeekOfInterval, parseISO, startOfWeek, subMonths, isBefore } from 'date-fns'
 import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, readableDateRange } from '../util/formatDate'
@@ -116,7 +116,7 @@ function _getPreInspectionDateOptions(): DateOption[] {
 function _getPostInspectionDateOptions(
   inspectionDatesQueryResult: InspectionDate[]
 ): DateOption[] {
-  let dateOneMonthAgo = sub(new Date(), { months: 1 })
+  let dateOneMonthAgo = subMonths(new Date(), 1)
   const isInspectionDateValid = (inspectionDate: InspectionDate) => {
     // Only dates that are older than 1 month are valid
     return isBefore(getDateObject(inspectionDate.endDate), dateOneMonthAgo)
