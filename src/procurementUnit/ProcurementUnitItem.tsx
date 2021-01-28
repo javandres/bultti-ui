@@ -19,6 +19,11 @@ const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
 `
 
+const ContractDescription = styled.div`
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+`
+
 export type PropTypes = {
   procurementUnit: ProcurementUnitType
   expanded?: boolean
@@ -120,10 +125,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     <Text>procurement_unit.contract</Text>
                   </HeaderHeading>
                   {(currentContracts || []).length !== 0 ? (
-                    <DateRangeDisplay
-                      startDate={currentContracts![0].startDate}
-                      endDate={currentContracts![currentContracts!.length - 1].endDate}
-                    />
+                    <>
+                      <DateRangeDisplay
+                        startDate={currentContracts![0].startDate}
+                        endDate={currentContracts![currentContracts!.length - 1].endDate}
+                      />
+                      <ContractDescription>
+                        {currentContracts![0].description}
+                      </ContractDescription>
+                    </>
                   ) : (
                     text('contract.no_valid_contracts')
                   )}
