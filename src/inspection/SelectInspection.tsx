@@ -10,13 +10,12 @@ import {
   useCreateInspection,
   useEditInspection,
 } from './inspectionUtils'
-import { format, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT } from '../constants'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
 import { LoadingDisplay } from '../common/components/Loading'
+import { getReadableDate } from '../util/formatDate'
 
 const SelectInspectionView = styled.div`
   position: relative;
@@ -261,24 +260,13 @@ const SelectInspection: React.FC<PropTypes> = observer(
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>
                       <DateTitle>Tuotantojakso</DateTitle>
-                      <StartDate>
-                        {format(parseISO(inspection.startDate), READABLE_DATE_FORMAT)}
-                      </StartDate>
-                      <EndDate>
-                        {format(parseISO(inspection.endDate), READABLE_DATE_FORMAT)}
-                      </EndDate>
+                      <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
+                      <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
                     </InspectionPeriodDisplay>
                     <InspectionPeriodDisplay>
                       <DateTitle>Tarkastusjakso</DateTitle>
-                      <StartDate>
-                        {format(
-                          parseISO(inspection.inspectionStartDate),
-                          READABLE_DATE_FORMAT
-                        )}
-                      </StartDate>
-                      <EndDate>
-                        {format(parseISO(inspection.inspectionEndDate), READABLE_DATE_FORMAT)}
-                      </EndDate>
+                      <StartDate>{getReadableDate(inspection.inspectionStartDate)}</StartDate>
+                      <EndDate>{getReadableDate(inspection.inspectionEndDate)}</EndDate>
                     </InspectionPeriodDisplay>
                   </ItemContent>
                   <InspectionActions onRefresh={refetchInspections} inspection={inspection} />

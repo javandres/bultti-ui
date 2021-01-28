@@ -7,8 +7,8 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import styled from 'styled-components'
-import { addDays, format, max, parseISO } from 'date-fns'
-import { DATE_FORMAT } from '../constants'
+import { addDays, max, parseISO } from 'date-fns'
+import { getDateString } from '../util/formatDate'
 import { LoadingDisplay } from '../common/components/Loading'
 
 const InspectionConfigView = styled.div`
@@ -51,8 +51,8 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
       endDate = max([addDays(startDate, 1), endDate])
 
       return {
-        startDate: format(startDate, DATE_FORMAT),
-        endDate: format(endDate, DATE_FORMAT),
+        startDate: getDateString(startDate),
+        endDate: getDateString(endDate),
       }
     }, [])
 
@@ -96,9 +96,8 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
               <SelectDate
                 name="production_start"
                 value={inspectionValues.endDate}
-                minDate={format(
-                  addDays(parseISO(inspection.startDate || inspection.minStartDate), 1),
-                  DATE_FORMAT
+                minDate={getDateString(
+                  addDays(parseISO(inspection.startDate || inspection.minStartDate), 1)
                 )}
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('startDate', val)}

@@ -6,11 +6,10 @@ import { Inspection, InspectionStatus, InspectionTimelineItem } from '../schema-
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { InputLabel } from '../common/components/form'
 import { ArrowRight } from '../common/icon/ArrowRight'
-import { format, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT } from '../constants'
 import { orderBy } from 'lodash'
 import { useQueryData } from '../util/useQueryData'
 import { inspectionsTimelineByOperatorQuery } from './inspectionQueries'
+import { getReadableDate } from '../util/formatDate'
 
 const InspectionTimelineView = styled.div`
   margin: 1rem 0;
@@ -96,7 +95,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
         <TimelineStart>
           Kauden alku
           <br />
-          <strong>{format(parseISO(season.startDate), READABLE_DATE_FORMAT)}</strong>
+          <strong>{getReadableDate(season.startDate)}</strong>
         </TimelineStart>
         {arrow}
       </>
