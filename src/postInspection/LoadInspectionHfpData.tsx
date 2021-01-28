@@ -90,8 +90,8 @@ const currentlyLoadingRangesQuery = gql`
 `
 
 const loadedRangesQuery = gql`
-  query loadedHfpRanges {
-    loadedHfpRanges {
+  query loadedHfpRanges($startDate: String!, $endDate: String!) {
+    loadedHfpRanges(startDate: $startDate, endDate: $endDate) {
       status
       date
     }
@@ -142,7 +142,13 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   )
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
-  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery)
+  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery, {
+    skip: !inspection,
+    variables: {
+      startDate: inspection?.inspectionStartDate,
+      endDate: inspection?.inspectionEndDate,
+    },
+  })
 
   let [
     loadHfpData,
