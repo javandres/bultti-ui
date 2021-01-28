@@ -28,8 +28,8 @@ import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/Button'
 
 const procurementUnitLabels = {
-  medianAgeRequirement: 'Keski-ikä vaatimus',
-  calculatedMedianAgeRequirement: 'Laskettu keski-ikä vaatimus + optiovuodet',
+  medianAgeRequirement: text('procurement_unit.age_requirement'),
+  calculatedMedianAgeRequirement: text('procurement_unit.age_requirement.calculated'),
 }
 
 const ContentWrapper = styled.div`
