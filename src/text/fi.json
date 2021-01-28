@@ -79,9 +79,9 @@
   "procurement_unit.unit_id": "Kohdetunnus",
   "procurement_unit.routes": "Reitit",
   "procurement_unit.kilometers": "Kilometrejä viikossa",
-  "procurement_unit.valid_time": "Voimassaoloaika",
+  "procurement_unit.valid_time": "Kohteen voimassaoloaika",
   "procurement_unit.operation_area": "Seuranta-alue",
-  "procurement_unit.contract": "Sopimus",
+  "procurement_unit.contract": "Sopimusehdot",
   "procurement_unit.age_requirement": "Keski-ikä vaatimus",
   "procurement_unit.execution_requirements": "Kohteen suoritevaatimukset",
 
