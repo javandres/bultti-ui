@@ -1,14 +1,15 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { eachWeekOfInterval, parseISO, startOfWeek, subMonths, isBefore } from 'date-fns'
 import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getReadableDateRange } from '../util/formatDate'
-import { useLazyQueryData } from '../util/useLazyQueryData'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
+import { addDays } from 'date-fns/esm'
+import { useQueryData } from '../util/useQueryData'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -31,27 +32,22 @@ export type PropTypes = {
 
 const InspectionSelectDates = observer(
   ({ inspectionType, inspectionInput, onChange }: PropTypes) => {
-    let [
-      queryInspectionDates,
-      { data: inspectionDatesQueryResult, loading: areInspectionDatesLoading },
-    ] = useLazyQueryData<InspectionDate[]>(allInspectionDatesQuery)
+    let {
+      data: inspectionDatesQueryResult,
+      loading: areInspectionDatesLoading,
+    } = useQueryData<InspectionDate[]>(allInspectionDatesQuery, {
+      skip: inspectionType === InspectionType.Pre,
+    })
 
-    let _queryPostinspectionDateOptions = async () => {
-      if (!areInspectionDatesLoading && !inspectionDatesQueryResult) {
-        await queryInspectionDates()
+    let dateOptions: DateOption[] = useMemo(() => {
+      if (inspectionType === InspectionType.Pre) {
+        return getPreInspectionDateOptions()
       }
-    }
+      return inspectionDatesQueryResult
+        ? getPostInspectionDateOptions(inspectionDatesQueryResult)
+        : []
+    }, [inspectionType, inspectionDatesQueryResult])
 
-    let dateOptions: DateOption[] = []
-    if (inspectionType === InspectionType.Pre) {
-      dateOptions = getPreInspectionDateOptions()
-    } else {
-      if (inspectionDatesQueryResult) {
-        dateOptions = getPostInspectionDateOptions(inspectionDatesQueryResult)
-      } else {
-        _queryPostinspectionDateOptions()
-      }
-    }
     dateOptions.sort((a: DateOption, b: DateOption) => {
       return a.value.startDate.getTime() < b.value.startDate.getTime() ? -1 : 1
     })
@@ -91,8 +87,7 @@ const InspectionSelectDates = observer(
 
 function getPreInspectionDateOptions(): DateOption[] {
   let startDate = new Date()
-  let endDate = new Date(startDate)
-  endDate.setDate(endDate.getDate() + 90)
+  let endDate = addDays(startDate, 90)
   let dateOptionsEndDates = eachWeekOfInterval({
     start: startDate,
     end: endDate,
