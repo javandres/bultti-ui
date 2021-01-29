@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Colors } from '../util/HSLColors'
 import { LoadingDisplay } from '../common/components/Loading'
 import { HSLLogoNoText } from '../common/icon/HSLLogoNoText'

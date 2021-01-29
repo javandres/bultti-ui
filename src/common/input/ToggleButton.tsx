@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 const Container = styled.label`
   display: flex;
@@ -50,7 +50,8 @@ export const ToggleContainer = styled.div<{
   width: 35px;
   height: 20px;
   border: 1px solid
-    ${({ isSwitch, inverted }) => (inverted ? 'white' : isSwitch ? 'var(--blue)' : 'var(--grey)')};
+    ${({ isSwitch, inverted }) =>
+      inverted ? 'white' : isSwitch ? 'var(--blue)' : 'var(--grey)'};
   background: ${({ isSwitch, inverted }) => (isSwitch || inverted ? 'var(--blue)' : 'white')};
   border-radius: 15px;
   transition: background 0.2s ease-out;

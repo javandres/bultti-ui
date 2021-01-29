@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import { Inspection } from '../schema-types'

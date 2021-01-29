@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { InspectionType } from '../schema-types'
 import { getAuthToken } from '../util/authToken'
 

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { createReportQueryByName } from './reportQueries'
 import { FilterConfig, InspectionType, PageConfig, SortConfig } from '../schema-types'

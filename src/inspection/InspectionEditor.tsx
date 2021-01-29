@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionInput, InspectionStatus, InspectionType } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'

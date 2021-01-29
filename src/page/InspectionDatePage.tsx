@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
 import { Page, PageSection } from '../common/components/common'

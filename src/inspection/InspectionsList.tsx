@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { get, groupBy, orderBy } from 'lodash'
 import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'

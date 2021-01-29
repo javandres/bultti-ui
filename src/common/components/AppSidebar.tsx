@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Text } from '../../util/translate'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
 import { Link } from '@reach/router'

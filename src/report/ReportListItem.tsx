@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InspectionType, ReportListItem as ReportListItemType } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
 import ErrorMessages from './ErrorMessages'

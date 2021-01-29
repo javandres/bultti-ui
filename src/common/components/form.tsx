@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Column } from './common'
 import { ThemeTypes } from '../../type/common'
 

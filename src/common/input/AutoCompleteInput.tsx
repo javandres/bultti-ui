@@ -1,5 +1,5 @@
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { useCombobox } from 'downshift'
 import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icon/ArrowDown'

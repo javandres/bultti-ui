@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { isSameDay, parseISO } from 'date-fns'
 import { getReadableDate } from '../../util/formatDate'

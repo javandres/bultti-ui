@@ -1,5 +1,5 @@
 import React, { CSSProperties, useCallback } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { useSelect } from 'downshift'
 import { text } from '../../util/translate'
 import { Button, ButtonSize } from '../components/Button'

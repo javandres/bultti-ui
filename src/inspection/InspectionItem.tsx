@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { Inspection, InspectionStatus } from '../schema-types'
 import { getCreatedBy } from './inspectionUtils'
 import ValueDisplay, {

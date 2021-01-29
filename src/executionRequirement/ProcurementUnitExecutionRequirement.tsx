@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useMemo } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../common/components/Loading'
 import RequirementsTable from './RequirementsTable'

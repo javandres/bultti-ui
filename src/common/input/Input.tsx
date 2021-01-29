@@ -1,5 +1,5 @@
 import React, { InputHTMLAttributes, useCallback } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { ThemeTypes } from '../../type/common'
 import { InputLabel } from '../components/form'

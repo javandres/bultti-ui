@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { CellContent } from '../common/components/Table'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'

@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Link, LinkProps, useLocation } from '@reach/router'
 import { pathWithQuery } from '../../util/urlValue'

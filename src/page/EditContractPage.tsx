@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Redirect, RouteComponentProps } from '@reach/router'
 import { useQueryData } from '../util/useQueryData'
