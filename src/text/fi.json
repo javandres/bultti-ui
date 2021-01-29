@@ -141,7 +141,7 @@
   "inspection.post.new": "Uusi jälkitarkastus",
 
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
-  "inspection_actions_canBeAccepted": "Hyväksyttävissä",
+  "inspection_actions_canBeAccepted": "Hyväksy",
   "inspection_actions_remove": "Poista",
   "inspection_actions_publish": "Julkaise",
   "inspection_actions_reject": "Hylkää",

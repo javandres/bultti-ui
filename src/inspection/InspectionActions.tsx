@@ -56,13 +56,13 @@ export type PropTypes = {
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
-    var [submitActive, setSubmitActive] = useState(false)
+    var [isSubmitActive, setSubmitActive] = useState<boolean>(false)
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
       inspection?.operatorId || undefined
     )
 
-    var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
+    var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
     var goToInspectionEdit = useEditInspection(inspection.inspectionType)
     var goToInspectionReports = useInspectionReports()
@@ -97,7 +97,9 @@ const InspectionActions = observer(
       submitInspectionMutation
     )
 
-    var [inspectionReady, { loading: readyLoading }] = useMutationData(readyInspectionMutation)
+    var [setInspectionReady, { loading: readyLoading }] = useMutationData(
+      readyInspectionMutation
+    )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
       publishInspectionMutation
@@ -140,7 +142,7 @@ const InspectionActions = observer(
         return
       }
 
-      await inspectionReady({
+      await setInspectionReady({
         variables: {
           inspectionId: inspection.id,
         },
@@ -177,21 +179,22 @@ const InspectionActions = observer(
       await onRefresh()
     }, [onRefresh, inspection, disabledActions])
 
-    let userCanPublish =
+    let canUserPublish =
       inspection.status === InspectionStatus.InReview && hasAdminAccessRights
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
-    let inspectionCanBeSubmitted =
+    let canInspectionBeSubmitted =
       (inspection.inspectionType === InspectionType.Pre &&
         inspection.status === InspectionStatus.Draft) ||
       (inspection.inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Ready)
 
     // Only post-inspections which are in draft state can be readied.
-    let inspectionCanBeReady =
+    let canInspectionBeReady =
       inspection.inspectionType === InspectionType.Post &&
       inspection.status === InspectionStatus.Draft
 
+    let isInspectionSubmitDisabled = disabledActions.includes('submit')
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -220,17 +223,18 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!submitActive && inspectionCanBeSubmitted && isEditing && (
+          {!isSubmitActive && canInspectionBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
+              disabled={isInspectionSubmitDisabled}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitProcessStart}>
               <Text>inspection_actions_openSubmitContainer</Text>
             </Button>
           )}
 
-          {inspectionCanBeReady && hasOperatorUserAccessRights && isEditing && (
+          {canInspectionBeReady && hasOperatorUserAccessRights && isEditing && (
             <Button
               loading={readyLoading}
               buttonStyle={ButtonStyle.ACCEPT}
@@ -255,7 +259,7 @@ const InspectionActions = observer(
               </Button>
             )}
 
-          {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
+          {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
               <Button
                 disabled={disabledActions.includes('publish')}
@@ -278,12 +282,12 @@ const InspectionActions = observer(
             </>
           )}
         </ButtonRow>
-        {submitActive &&
-          inspectionCanBeSubmitted &&
+        {isSubmitActive &&
+          canInspectionBeSubmitted &&
           hasOperatorUserAccessRights &&
           isEditing && (
             <InspectionApprovalSubmit
-              disabled={disabledActions.includes('submit')}
+              disabled={isInspectionSubmitDisabled}
               inspection={inspection}
               onSubmit={onSubmitInspection}
               onCancel={onCancelSubmit}
