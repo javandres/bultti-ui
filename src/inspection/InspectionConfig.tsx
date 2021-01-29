@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import SelectDate from '../common/input/SelectDate'
 import Input from '../common/input/Input'
 import { isEqual, pick } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
@@ -9,10 +8,11 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
-import { DATE_FORMAT } from '../constants'
 import styled from 'styled-components'
-import { format, parseISO, startOfISOWeek } from 'date-fns'
 import InspectionTimeline from './InspectionTimeline'
+import InspectionSelectDates from './inspectionSelectDates'
+import { getDateString } from '../util/formatDate'
+import { Text, text } from '../util/translate'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -37,11 +37,12 @@ const InspectionConfig: React.FC<PropTypes> = observer(
 
     let initialInspectionInputValues = getInspectionInputValues(inspection)
 
-    let [pendingInspectionInputValues, setPendingInspectionInputValues] = useState<
-      InspectionInput
-    >(initialInspectionInputValues)
+    let [
+      pendingInspectionInputValues,
+      setPendingInspectionInputValues,
+    ] = useState<InspectionInput>(initialInspectionInputValues)
 
-    let onUpdateValue = useCallback((name, value) => {
+    let onUpdateValue = useCallback((name: string, value: any) => {
       setPendingInspectionInputValues((currentValues) => {
         let nextValues: InspectionInput = { ...currentValues }
         nextValues[name] = value
@@ -67,7 +68,9 @@ const InspectionConfig: React.FC<PropTypes> = observer(
       <InspectionConfigView>
         {!inspection ? (
           <MessageContainer>
-            <MessageView>Tarkastusta ei ole valittu.</MessageView>
+            <MessageView>
+              <Text>inspection.inspection_not_selected</Text>
+            </MessageView>
           </MessageContainer>
         ) : (
           <>
@@ -75,8 +78,10 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <FormColumn>
                 <Input
                   value={pendingInspectionInputValues.name || ''}
-                  onChange={(val) => onUpdateValue('name', val)}
-                  label="Tarkastuksen nimi"
+                  label={text('inspection.inspection_name')}
+                  onChange={(value: string) => {
+                    onUpdateValue('name', value)
+                  }}
                 />
               </FormColumn>
             </FlexRow>
@@ -84,64 +89,49 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <InspectionTimeline currentInspection={inspection} />
             </FlexRow>
             <FlexRow>
+              <InspectionSelectDates
+                inspectionType={inspection.inspectionType}
+                inspectionInput={pendingInspectionInputValues}
+                onChange={(startDate: Date, endDate: Date) => {
+                  onUpdateValue('inspectionStartDate', getDateString(startDate))
+                  onUpdateValue('inspectionEndDate', getDateString(endDate))
+                }}
+              />
+            </FlexRow>
+            <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (
                 <FormColumn>
-                  <InputLabel theme="light">Tuotantojakso</InputLabel>
+                  <InputLabel theme="light">{text('inspection.inspection_season')}</InputLabel>
                   <ControlGroup>
                     <Input
                       type="date"
                       value={inspection.startDate}
-                      label="Alku"
+                      label={text('start_date')}
                       subLabel={true}
                       disabled={true}
                     />
                     <Input
                       type="date"
                       value={inspection.endDate}
-                      label="Loppu"
+                      label={text('end_date')}
                       subLabel={true}
                       disabled={true}
                     />
                   </ControlGroup>
                 </FormColumn>
               )}
-              <FormColumn>
-                <InputLabel theme="light">Tarkastusjakso</InputLabel>
-                <ControlGroup>
-                  <SelectDate
-                    name="inspection_start"
-                    minDate={format(
-                      startOfISOWeek(parseISO(inspection.minStartDate)),
-                      DATE_FORMAT
-                    )}
-                    value={pendingInspectionInputValues.inspectionStartDate}
-                    onChange={(val) => onUpdateValue('inspectionStartDate', val)}
-                    label="Alku"
-                    disabled={!isEditable}
-                  />
-                  <SelectDate
-                    name="inspection_end"
-                    value={pendingInspectionInputValues.inspectionEndDate}
-                    minDate={inspection.inspectionStartDate}
-                    onChange={(val) => onUpdateValue('inspectionEndDate', val)}
-                    label="Loppu"
-                    disabled={!isEditable}
-                    alignDatepicker="right"
-                  />
-                </ControlGroup>
-              </FormColumn>
             </FlexRow>
             <FlexRow>
               <ActionsWrapper>
                 <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
-                  Tallenna
+                  <Text>general.app.save</Text>
                 </Button>
                 <Button
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                   onClick={() =>
                     setPendingInspectionInputValues(getInspectionInputValues(inspection))
                   }>
-                  Peruuta
+                  <Text>general.app.cancel</Text>
                 </Button>
               </ActionsWrapper>
             </FlexRow>
