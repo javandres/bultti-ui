@@ -31,8 +31,14 @@ export const useQueryData = <TData extends {} = any, TVariables = OperationVaria
   // Execute the Apollo hook
   let queryData = useQuery<TData, TVariables>(query, allOptions)
 
-  let { loading, error, data = {} as TData, refetch, networkStatus, subscribeToMore } =
-    queryData || {}
+  let {
+    loading,
+    error,
+    data = {} as TData,
+    refetch,
+    networkStatus,
+    subscribeToMore = () => {},
+  } = queryData || {}
 
   // Sometimes refetch is unset after fast refresh (in development), so this ensures it is always callable.
   let availableRefetch = useCallback(
