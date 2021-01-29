@@ -122,7 +122,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
       <LoadingDisplay loading={loading} />
       {inspections.length !== 0 && (
         <>
-          <FilterBar>
+          <FilterBar style={{ margin: '1rem' }}>
             <FilterControlGroup>
               <SelectSeason
                 enableAll={true}
