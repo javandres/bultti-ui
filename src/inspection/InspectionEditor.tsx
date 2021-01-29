@@ -14,6 +14,7 @@ import InspectionUsers from './InspectionUsers'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import { pick } from 'lodash'
+import InspectionValidationErrors from './InspectionValidationErrors'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -110,9 +111,12 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       return React.Fragment
     }, [inspection])
 
+    let hasErrors = inspection?.inspectionErrors?.length !== 0
+
     return (
       <EditInspectionView>
         <LoadingDisplay loading={isLoading} />
+        {hasErrors && <InspectionValidationErrors inspection={inspection} />}
         {!!inspection && (
           <>
             <InspectionMeta inspection={inspection} />

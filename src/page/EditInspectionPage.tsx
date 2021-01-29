@@ -20,7 +20,6 @@ import InspectionActions from '../inspection/InspectionActions'
 import { translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
-import InspectionValidationErrors from '../inspection/InspectionValidationErrors'
 import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
@@ -48,10 +47,15 @@ const InspectionActionsRow = styled(InspectionActions)`
   padding: 0.5rem 0.7rem 1rem;
 `
 
-const StatusBox = styled.div`
-  margin: -0.75rem 0.7rem 1rem;
-  padding: 0.5rem 1rem;
+const InspectionStatusContainer = styled.div`
+  padding: 0.25rem 0.75rem;
   border-radius: 0.5rem;
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+`
+
+const InspectionTypeContainer = styled.span`
+  text-transform: capitalize;
 `
 
 const InspectionNameTitle = styled.span`
@@ -104,11 +108,26 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            {inspection?.status !== InspectionStatus.InProduction ? 'Muokkaa ' : ''}
-            {inspection?.status !== InspectionStatus.InProduction
-              ? typeStrings.prefixLC
-              : typeStrings.prefix}
-            tarkastus: <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+            <InspectionTypeContainer>
+              {inspection?.status !== InspectionStatus.InProduction
+                ? typeStrings.prefixLC
+                : typeStrings.prefix}
+              tarkastus
+            </InspectionTypeContainer>
+            <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+            {inspection && (
+              <InspectionStatusContainer
+                style={{
+                  backgroundColor: getInspectionStatusColor(inspection),
+                  borderColor: getInspectionStatusColor(inspection),
+                  color:
+                    inspection.status === InspectionStatus.InReview
+                      ? 'var(--dark-grey)'
+                      : 'white',
+                }}>
+                <strong>{translate(inspection.status)}</strong>
+              </InspectionStatusContainer>
+            )}
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
@@ -122,23 +141,11 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
           ) : (
             inspection && (
               <>
-                <StatusBox
-                  style={{
-                    backgroundColor: getInspectionStatusColor(inspection),
-                    borderColor: getInspectionStatusColor(inspection),
-                    color:
-                      inspection.status === InspectionStatus.InReview
-                        ? 'var(--dark-grey)'
-                        : 'white',
-                  }}>
-                  <strong>{translate(inspection.status)}</strong>
-                </StatusBox>
                 <InspectionActionsRow
                   inspection={inspection}
                   onRefresh={refetch}
                   disabledActions={hasErrors ? ['submit', 'publish'] : []}
                 />
-                {hasErrors && <InspectionValidationErrors inspection={inspection} />}
                 <EditInspectionWrapper>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
