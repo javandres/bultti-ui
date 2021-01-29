@@ -1,5 +1,5 @@
 import React, { CSSProperties, useEffect, useRef, useState } from 'react'
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components/macro'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
 import { Colors } from '../../util/HSLColors'
 import { observer } from 'mobx-react-lite'

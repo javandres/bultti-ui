@@ -1,5 +1,5 @@
 import React, { CSSProperties, useCallback, useEffect, useState } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { ArrowDown } from '../icon/ArrowDown'
 import { SectionHeading } from './Typography'

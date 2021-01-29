@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { PageSection } from '../common/components/common'
 import { Button, ButtonSize } from '../common/components/Button'

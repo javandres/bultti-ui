@@ -1,5 +1,5 @@
 import React, { useCallback, useContext, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import ProcurementUnitItem from './ProcurementUnitItem'
 import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'

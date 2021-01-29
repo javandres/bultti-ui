@@ -1346,6 +1346,7 @@ enum InspectionValidationError {
   MISSING_REQUIREMENT_QUOTAS
   NOT_POST
   NOT_PRE
+  POST_INSPECTION_END_DATE_NOT_IN_THE_PAST
 }
 
 enum OperatingAreaName {

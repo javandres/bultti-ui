@@ -1,5 +1,5 @@
 import React from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { useTooltip } from '../../util/useTooltip'
 import { LoadingDisplay } from './Loading'
 import { observer } from 'mobx-react-lite'

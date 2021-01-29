@@ -1,5 +1,5 @@
 import React, { CSSProperties, useCallback, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'

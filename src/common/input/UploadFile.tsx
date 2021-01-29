@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import FileUploadInput from './FileUploadInput'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 const ErrorMessage = styled.span`
   display: flex;

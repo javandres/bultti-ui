@@ -7,7 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
 import { StyledRemoveButton } from './Button'

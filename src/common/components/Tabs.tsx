@@ -1,6 +1,6 @@
 import React, { Children, ReactNode, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import styled, { keyframes } from 'styled-components'
+import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
 import { Link, Match, RouteComponentProps, Router, useLocation } from '@reach/router'

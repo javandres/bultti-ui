@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { TabsWrapper } from './Tabs'
 import { Button, ButtonSize, ButtonStyle, StyledButton } from './Button'

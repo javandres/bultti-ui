@@ -1,5 +1,5 @@
 import React from 'react'
-import styled, { CSSProperties } from 'styled-components'
+import styled, { CSSProperties } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { useOrderedValues } from '../../util/useOrderedValues'

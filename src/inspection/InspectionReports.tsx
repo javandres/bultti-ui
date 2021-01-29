@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { useQueryData } from '../util/useQueryData'
 import { reportsQuery } from '../report/reportQueries'
 import { LoadingDisplay } from '../common/components/Loading'

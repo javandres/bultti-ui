@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Contract as ContractType, ContractInput } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
