@@ -27,12 +27,19 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
 `
 
 const EditInspectionWrapper = styled(Page)`
   background-color: var(--white-grey);
   padding-top: 0.75rem;
   border-top: 1px solid var(--lighter-grey);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-bottom: 0px;
 `
 
 const InspectionActionsRow = styled(InspectionActions)`

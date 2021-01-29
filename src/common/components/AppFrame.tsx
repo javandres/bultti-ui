@@ -18,16 +18,13 @@ const Sidebar = styled.div`
   height: 100%;
   background: var(--blue);
   color: white;
-  overflow: hidden;
+  overflow-y: auto;
 `
 
 const Main = styled.div`
   min-height: 100%;
   background: #f5f5f5;
-
-  @media screen and (min-height: 700px) {
-    overflow-y: scroll;
-  }
+  overflow-y: auto;
 `
 
 export type AppFrameProps = {

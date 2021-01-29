@@ -12,6 +12,7 @@ export const TabsWrapper = styled.div`
   position: relative;
   z-index: 1;
   max-width: 100%;
+  height: 100%;
 `
 
 const TabButtonsWrapper = styled.div<{ path?: any }>`
@@ -59,13 +60,14 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
 
 const TabContentWrapper = styled.div<RouteComponentProps>`
   padding-top: 1.5rem;
+  overflow-y: auto;
 `
 
 const progress = keyframes`
   from {
     transform: translateX(-100%);
   }
-  
+
   to {
     transform: translateX(100%);
   }
