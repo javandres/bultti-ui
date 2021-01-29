@@ -1,6 +1,6 @@
 import { toString } from 'lodash'
-import { format, isValid } from 'date-fns'
-import { DATE_FORMAT } from '../constants'
+import { isValid } from 'date-fns'
+import { getDateString } from './formatDate'
 
 export const strval = (val: any): string => {
   if ((val !== 0 && !val) || (typeof val === 'number' && isNaN(val))) {
@@ -8,7 +8,7 @@ export const strval = (val: any): string => {
   }
 
   if (val instanceof Date && isValid(val)) {
-    return format(val, DATE_FORMAT)
+    return getDateString(val)
   }
 
   if (Array.isArray(val)) {

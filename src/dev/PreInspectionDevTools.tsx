@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { Button } from '../common/components/Button'
 import { gql } from '@apollo/client'
-import { DEBUG } from '../constants'
 import { useMutationData } from '../util/useMutationData'
 import { Inspection } from '../schema-types'
 

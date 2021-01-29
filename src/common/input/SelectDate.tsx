@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite'
 import { AnyFunction } from '../../type/common'
 import Input from './Input'
 import styled from 'styled-components'
-import { DATE_FORMAT } from '../../constants'
-import { format, isAfter, isBefore, isValid, parseISO } from 'date-fns'
+import { isAfter, isBefore, isValid, parseISO } from 'date-fns'
 import { isEmpty } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
+import { getDateString } from '../../util/formatDate'
 
 const InputWrapper = styled.div`
   position: relative;
@@ -85,7 +85,7 @@ const SelectDate: React.FC<PropTypes> = observer(
       }
 
       let validInput = getValidDate(inputValue)
-      return validInput ? format(validInput, DATE_FORMAT) : value
+      return validInput ? getDateString(validInput) : value
     }, [inputValue, value, getValidDate])
 
     // Update the local input state when then value from props changes
@@ -94,7 +94,7 @@ const SelectDate: React.FC<PropTypes> = observer(
         let validDate = getValidDate(value)
 
         if (validDate) {
-          setInputValue(format(validDate, DATE_FORMAT))
+          setInputValue(getDateString(validDate))
         }
       }
     }, [value])
@@ -113,7 +113,7 @@ const SelectDate: React.FC<PropTypes> = observer(
           `Could not convert inputValue as a valid Date object. Given inputValue: ${inputValue}`
         )
       } else {
-        let onChangeValue = isEmpty(inputValue) ? '' : format(validDate!, DATE_FORMAT)
+        let onChangeValue = isEmpty(inputValue) ? '' : getDateString(validDate!)
         onChange(onChangeValue)
       }
     }, [inputValue])

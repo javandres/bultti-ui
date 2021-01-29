@@ -10,12 +10,11 @@ import {
 } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 import { Button } from '../common/components/Button'
-import { DATE_FORMAT } from '../constants'
-import { format } from 'date-fns'
 import { isBetween } from '../util/isBetween'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
+import { getDateString } from '../util/formatDate'
 
 const InspectionsListView = styled.div`
   min-height: 100%;
@@ -136,7 +135,7 @@ export type PropTypes = {
   onUpdate: () => unknown
 }
 
-let currentDate = format(new Date(), DATE_FORMAT)
+let currentDateString = getDateString(new Date())
 
 const InspectionsList: React.FC<PropTypes> = ({
   inspections,
@@ -175,7 +174,7 @@ const InspectionsList: React.FC<PropTypes> = ({
   let currentSeason = useMemo(
     () =>
       seasons.reduce((curSeason: Season | null, season: Season) => {
-        if (!curSeason && isBetween(currentDate, season.startDate, season.endDate)) {
+        if (!curSeason && isBetween(currentDateString, season.startDate, season.endDate)) {
           return season
         }
 
@@ -228,7 +227,7 @@ const InspectionsList: React.FC<PropTypes> = ({
               {inspections.map((inspection) => {
                 let renderCurrentTemporalLocation =
                   currentSeason?.id === seasonId &&
-                  isBetween(currentDate, inspection.startDate, inspection.endDate)
+                  isBetween(currentDateString, inspection.startDate, inspection.endDate)
 
                 return (
                   <React.Fragment

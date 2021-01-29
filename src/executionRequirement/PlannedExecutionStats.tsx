@@ -14,10 +14,10 @@ import { text, Text } from '../util/translate'
 import { SmallHeading } from '../common/components/Typography'
 import { orderBy } from 'lodash'
 import { normalDayTypes } from '../constants'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { FlexRow } from '../common/components/common'
 
 const PlannedExecutionStatsView = styled.div`
-  display: flex;
-  align-items: flex-start;
   width: 100%;
 `
 
@@ -51,7 +51,7 @@ export type PropTypes = {
 }
 
 const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => {
-  let { data: executionStatsData } = useQueryData<ExecutionSchemaStats>(
+  let { data: executionStatsData, refetch } = useQueryData<ExecutionSchemaStats>(
     executionSchemaStatsQuery,
     {
       skip: !executionRequirement,
@@ -71,29 +71,39 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
 
   return (
     <PlannedExecutionStatsView>
-      <TableWrapper>
-        <SmallHeading>
-          <Text>requirement.heading.day_type_stats</Text>
-        </SmallHeading>
-        <StatsTable<FC<TablePropTypes<DayTypeEquipmentStat>>>
-          items={dayTypeStats}
-          columnLabels={statsTableLabels}
-          fluid={true}
-          highlightRow={(row) =>
-            row.equipmentCount > requirementEquipmentCount ? 'var(--lighter-red)' : false
-          }
-        />
-      </TableWrapper>
-      <TableWrapper>
-        <SmallHeading>
-          <Text>requirement.heading.equipment_type_stats</Text>
-        </SmallHeading>
-        <StatsTable<FC<TablePropTypes<EquipmentTypeStat>>>
-          columnLabels={statsTableLabels}
-          items={equipmentTypeStats}
-          fluid={true}
-        />
-      </TableWrapper>
+      <FlexRow style={{ marginTop: '1.5rem' }}>
+        <Button
+          buttonStyle={ButtonStyle.SECONDARY}
+          size={ButtonSize.SMALL}
+          onClick={() => refetch()}>
+          <Text>general.app.update</Text>
+        </Button>
+      </FlexRow>
+      <FlexRow>
+        <TableWrapper>
+          <SmallHeading style={{ marginTop: '0.5rem' }}>
+            <Text>requirement.heading.day_type_stats</Text>
+          </SmallHeading>
+          <StatsTable<FC<TablePropTypes<DayTypeEquipmentStat>>>
+            items={dayTypeStats}
+            columnLabels={statsTableLabels}
+            fluid={true}
+            highlightRow={(row) =>
+              row.equipmentCount > requirementEquipmentCount ? 'var(--lighter-red)' : false
+            }
+          />
+        </TableWrapper>
+        <TableWrapper>
+          <SmallHeading style={{ marginTop: '0.5rem' }}>
+            <Text>requirement.heading.equipment_type_stats</Text>
+          </SmallHeading>
+          <StatsTable<FC<TablePropTypes<EquipmentTypeStat>>>
+            columnLabels={statsTableLabels}
+            items={equipmentTypeStats}
+            fluid={true}
+          />
+        </TableWrapper>
+      </FlexRow>
     </PlannedExecutionStatsView>
   )
 })

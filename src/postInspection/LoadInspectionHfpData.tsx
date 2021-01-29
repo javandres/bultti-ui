@@ -12,7 +12,6 @@ import { flatten, orderBy, uniq, uniqBy } from 'lodash'
 import {
   addDays,
   eachDayOfInterval,
-  format,
   isSameDay,
   isWithinInterval,
   max,
@@ -21,10 +20,11 @@ import {
 } from 'date-fns'
 import { HfpDateStatus, HfpStatus, InspectionValidationError } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useHasInspectionError } from '../util/hasInspectionError'
+import { getReadableDate } from '../util/formatDate'
+import { getDateString } from '../util/formatDate'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -90,8 +90,8 @@ const currentlyLoadingRangesQuery = gql`
 `
 
 const loadedRangesQuery = gql`
-  query loadedHfpRanges {
-    loadedHfpRanges {
+  query loadedHfpRanges($startDate: String!, $endDate: String!) {
+    loadedHfpRanges(startDate: $startDate, endDate: $endDate) {
       status
       date
     }
@@ -142,7 +142,13 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
   )
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
-  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery)
+  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery, {
+    skip: !inspection,
+    variables: {
+      startDate: inspection?.inspectionStartDate,
+      endDate: inspection?.inspectionEndDate,
+    },
+  })
 
   let [
     loadHfpData,
@@ -206,7 +212,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
     }
 
     let inspectionStatusGroup: HfpDateStatus[] = inspectionDates.map((date) => ({
-      date: format(date, DATE_FORMAT),
+      date: getDateString(date),
       status: HfpStatus.NotLoaded,
     }))
 
@@ -280,8 +286,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       uniq(
         inspectionDates
           .map((date) => {
-            let dateStr = format(date, DATE_FORMAT)
-            return flatten(dateStatusByRanges).find((s) => s.date === dateStr)
+            return flatten(dateStatusByRanges).find((s) => s.date === getDateString(date))
           })
           .map((dateStatus) => dateStatus?.status || HfpStatus.NotLoaded)
       ),
@@ -377,7 +382,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
                 Nyt lataamassa
               </InputLabel>
               {inspectionDates.map((date) => {
-                let dateStr = format(date, 'yyyy-MM-dd')
+                let dateStr = getDateString(date)
                 let currentProgress = dateProgress.get(dateStr)
                 let loadedStatus = dateStatuses.find((status) => status.date === dateStr)
                   ?.status
@@ -396,7 +401,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
 
                 return (
                   <DateStatusDisplay key={`date progress ${dateStr}`}>
-                    <span>{format(date, READABLE_DATE_FORMAT)}</span>
+                    <span>{getReadableDate(date)}</span>
                     <DateProgressValue>{loadedProgress}%</DateProgressValue>
                   </DateStatusDisplay>
                 )

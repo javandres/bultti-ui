@@ -12,6 +12,7 @@ import { useQueryData } from '../util/useQueryData'
 import { allInspectionDatesQuery } from '../inspection/inspectionDate/inspectionDateQuery'
 import { orderBy } from 'lodash'
 import { Text } from '../util/translate'
+import { InspectionDate } from '../schema-types'
 
 const InspectionDatesPage = styled.div`
   padding: 0 1rem 1rem 1rem;
@@ -31,7 +32,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
     data: inspectionDatesQueryResult,
     loading: areInspectionDatesLoading,
     refetch: refetchInspectionDates,
-  } = useQueryData(allInspectionDatesQuery)
+  } = useQueryData<InspectionDate[]>(allInspectionDatesQuery)
 
   let refetch = useRefetch(refetchInspectionDates)
 

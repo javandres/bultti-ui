@@ -15,11 +15,10 @@ import { InspectionStatus, InspectionType, Season } from '../schema-types'
 import SelectSeason from '../common/input/SelectSeason'
 import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
-import { format, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT } from '../constants'
 import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
+import { getReadableDate } from '../util/formatDate'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -102,7 +101,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
       defaultSelectedDate,
       ...inspectionsList.map((p) => ({
         value: p.startDate,
-        label: format(parseISO(p.startDate), READABLE_DATE_FORMAT),
+        label: getReadableDate(p.startDate),
       })),
     ],
     [inspectionsList]

@@ -1,8 +1,8 @@
 import React, { CSSProperties } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { format, isSameDay, parseISO } from 'date-fns'
-import { READABLE_DATE_FORMAT } from '../../constants'
+import { isSameDay, parseISO } from 'date-fns'
+import { getReadableDate } from '../../util/formatDate'
 
 const DateRangeDisplayView = styled.div`
   display: flex;
@@ -43,9 +43,9 @@ const DateRangeDisplay = observer(({ startDate, endDate, className, style }: Pro
 
   return (
     <DateRangeDisplayView className={className} style={style}>
-      <StartDate>{format(startDateObj, READABLE_DATE_FORMAT)}</StartDate>
+      <StartDate>{getReadableDate(startDateObj)}</StartDate>
       {!isSameDay(startDateObj, endDateObj) && (
-        <EndDate>{format(endDateObj, READABLE_DATE_FORMAT)}</EndDate>
+        <EndDate>{getReadableDate(endDateObj)}</EndDate>
       )}
     </DateRangeDisplayView>
   )

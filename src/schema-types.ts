@@ -85,6 +85,12 @@ export type Query = {
 };
 
 
+export type QueryLoadedHfpRangesArgs = {
+  endDate: Scalars['String'];
+  startDate: Scalars['String'];
+};
+
+
 export type QueryInspectionArgs = {
   inspectionId: Scalars['String'];
 };
