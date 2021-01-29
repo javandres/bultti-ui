@@ -17,7 +17,7 @@ import {
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
-import { translate } from '../util/translate'
+import { text, Text, translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
@@ -131,12 +131,16 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
-              <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
+              <MessageView>
+                <Text>inspectionPage_selectOperatorAndSeason</Text>
+              </MessageView>
             </MessageContainer>
           ) : !inspection && !inspectionLoading ? (
             <MessageContainer>
               <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
-              <Button onClick={() => editInspection()}>Takaisin</Button>
+              <Button onClick={() => editInspection()}>
+                <Text>back</Text>
+              </Button>
             </MessageContainer>
           ) : (
             inspection && (
@@ -154,7 +158,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                       <InspectionEditor
                         name="create"
                         path="/"
-                        label="Tarkastuksen tiedot"
+                        label={text('inspectionPage_inspectionInformation')}
                         loading={inspectionLoading}
                         refetchData={refetch}
                         inspection={inspection}
@@ -163,7 +167,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                         inspection={inspection}
                         path="results"
                         name="results"
-                        label="Tulokset"
+                        label={text('inspectionPage_results')}
                       />
                     </Tabs>
                   )}

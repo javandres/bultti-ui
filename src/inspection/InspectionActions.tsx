@@ -20,6 +20,7 @@ import { useMatch } from '@reach/router'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
+import { Text } from '../util/translate'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -225,7 +226,7 @@ const InspectionActions = observer(
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitProcessStart}>
-              Lähetä hyväksyttäväksi
+              <Text>inspection_actions_openSubmitContainer</Text>
             </Button>
           )}
 
@@ -235,7 +236,7 @@ const InspectionActions = observer(
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
               onClick={onReadyInspection}>
-              Valmista
+              <Text>inspection_actions_canBeAccepted</Text>
             </Button>
           )}
 
@@ -250,7 +251,7 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                 size={ButtonSize.MEDIUM}
                 onClick={onRemoveInspection}>
-                Poista
+                <Text>inspection_actions_remove</Text>
               </Button>
             )}
 
@@ -263,7 +264,7 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.NORMAL}
                 size={ButtonSize.MEDIUM}
                 onClick={onPublishInspection}>
-                Julkaise
+                <Text>inspection_actions_publish</Text>
               </Button>
               <Button
                 disabled={disabledActions.includes('reject')}
@@ -272,7 +273,7 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.REMOVE}
                 size={ButtonSize.MEDIUM}
                 onClick={onRejectInspection}>
-                Hylkää
+                <Text>inspection_actions_reject</Text>
               </Button>
             </>
           )}

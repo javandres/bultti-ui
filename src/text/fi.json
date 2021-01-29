@@ -20,6 +20,7 @@
   "general.time.years": "vuotta",
   "general.count": "kpl",
   "general.units.kilometers.short": "km",
+  "back": "Takaisin",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
@@ -123,6 +124,11 @@
   "catalogue.equipment_not_found": "Kalustoa ei löydetty.",
   "catalogue.equipment.confirm_remove": "Haluatko varmasti poistaa ajoneuvon?",
 
+  "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
+  "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
+  "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
+  "inspectionPage_results": "Tulokset",
+
   "inspection.inspection_not_selected": "Tarkastusta ei ole valittu.",
   "inspection.inspection_name": "Tarkastuksen nimi",
   "inspection.select_inspection": "Valitse tarkastusjakso",
@@ -133,6 +139,12 @@
   "inspection.units.hide_all": "Piilota kaikki kilpailukohteet",
   "inspection.pre.new": "Uusi ennakkotarkastus",
   "inspection.post.new": "Uusi jälkitarkastus",
+
+  "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
+  "inspection_actions_canBeAccepted": "Hyväksyttävissä",
+  "inspection_actions_remove": "Poista",
+  "inspection_actions_publish": "Julkaise",
+  "inspection_actions_reject": "Hylkää",
 
   "inspection_date.page.header": "Muokkaa tarkastusjaksoja",
   "inspection_date.page.new_inspection_button": "Lisää tarkastusjakso",
