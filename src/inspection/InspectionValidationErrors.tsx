@@ -13,7 +13,7 @@ const InspectionValidationErrors = observer(({ inspection }: PropTypes) => {
   let deduplicatedErrors = Object.keys(groupBy(inspection?.inspectionErrors || [], 'type'))
 
   return (
-    <MessageContainer>
+    <MessageContainer style={{ padding: 0 }}>
       {deduplicatedErrors.map((err) => (
         <ErrorView key={err}>{text(err)}</ErrorView>
       ))}

@@ -21,6 +21,8 @@
   "general.count": "kpl",
   "general.units.kilometers.short": "km",
   "back": "Takaisin",
+  "show": "Näytä",
+  "hide": "Piilota",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 

@@ -2,6 +2,10 @@ import styled from 'styled-components/macro'
 
 export const MessageContainer = styled.div`
   padding: 0 1rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 export const MessageView = styled.div`
   margin: 1rem 0;
@@ -11,6 +15,10 @@ export const MessageView = styled.div`
   background: var(--lightest-blue);
   padding: 0.75rem;
   line-height: 1.4;
+
+  &:first-child {
+    margin-top: 0;
+  }
 `
 
 export const SuccessView = styled(MessageView)`

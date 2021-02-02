@@ -44,7 +44,7 @@ const EditInspectionWrapper = styled(Page)`
 const InspectionActionsRow = styled(InspectionActions)`
   border-top: 0;
   margin: 0;
-  padding: 1rem;
+  padding: 0.5rem 1rem;
 `
 
 const InspectionStatusContainer = styled.div`
