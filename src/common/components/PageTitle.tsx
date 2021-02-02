@@ -12,7 +12,7 @@ import { useStateValue } from '../../state/useAppState'
 const PageTitleView = styled.h2`
   border-bottom: 1px solid var(--lighter-grey);
   padding: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0;
   margin-left: 0;
   margin-top: 0;
   background: white;

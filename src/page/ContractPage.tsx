@@ -129,7 +129,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
         </MessageContainer>
       )}
       {hasAccessRights && (
-        <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem', marginRight: '1rem' }}>
+        <FlexRow style={{ margin: '1rem' }}>
           <Button
             disabled={!operator}
             onClick={onCreateNewContract}

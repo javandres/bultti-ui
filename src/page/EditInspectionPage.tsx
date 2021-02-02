@@ -17,34 +17,45 @@ import {
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
-import { translate } from '../util/translate'
+import { text, Text, translate } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
-import InspectionValidationErrors from '../inspection/InspectionValidationErrors'
 import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
 `
 
 const EditInspectionWrapper = styled(Page)`
   background-color: var(--white-grey);
   padding-top: 0.75rem;
   border-top: 1px solid var(--lighter-grey);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  margin-bottom: 0px;
 `
 
 const InspectionActionsRow = styled(InspectionActions)`
   border-top: 0;
-  margin: 0 0 0.5rem;
-  padding: 0.5rem 0.7rem 1rem;
+  margin: 0;
+  padding: 1rem;
 `
 
-const StatusBox = styled.div`
-  margin: -0.75rem 0.7rem 1rem;
-  padding: 0.5rem 1rem;
+const InspectionStatusContainer = styled.div`
+  padding: 0.25rem 0.75rem;
   border-radius: 0.5rem;
+  font-size: 1.25rem;
+  margin-left: 0.5rem;
+`
+
+const InspectionTypeContainer = styled.span`
+  text-transform: capitalize;
 `
 
 const InspectionNameTitle = styled.span`
@@ -97,41 +108,48 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       <EditInspectionView>
         <InspectionContext.Provider value={inspection || null}>
           <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            {inspection?.status !== InspectionStatus.InProduction ? 'Muokkaa ' : ''}
-            {inspection?.status !== InspectionStatus.InProduction
-              ? typeStrings.prefixLC
-              : typeStrings.prefix}
-            tarkastus: <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+            <InspectionTypeContainer>
+              {inspection?.status !== InspectionStatus.InProduction
+                ? typeStrings.prefixLC
+                : typeStrings.prefix}
+              tarkastus
+            </InspectionTypeContainer>
+            <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+            {inspection && (
+              <InspectionStatusContainer
+                style={{
+                  backgroundColor: getInspectionStatusColor(inspection),
+                  borderColor: getInspectionStatusColor(inspection),
+                  color:
+                    inspection.status === InspectionStatus.InReview
+                      ? 'var(--dark-grey)'
+                      : 'white',
+                }}>
+                <strong>{translate(inspection.status)}</strong>
+              </InspectionStatusContainer>
+            )}
           </PageTitle>
           {!operator || !season ? (
             <MessageContainer>
-              <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
+              <MessageView>
+                <Text>inspectionPage_selectOperatorAndSeason</Text>
+              </MessageView>
             </MessageContainer>
           ) : !inspection && !inspectionLoading ? (
             <MessageContainer>
               <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
-              <Button onClick={() => editInspection()}>Takaisin</Button>
+              <Button onClick={() => editInspection()}>
+                <Text>back</Text>
+              </Button>
             </MessageContainer>
           ) : (
             inspection && (
               <>
-                <StatusBox
-                  style={{
-                    backgroundColor: getInspectionStatusColor(inspection),
-                    borderColor: getInspectionStatusColor(inspection),
-                    color:
-                      inspection.status === InspectionStatus.InReview
-                        ? 'var(--dark-grey)'
-                        : 'white',
-                  }}>
-                  <strong>{translate(inspection.status)}</strong>
-                </StatusBox>
                 <InspectionActionsRow
                   inspection={inspection}
                   onRefresh={refetch}
                   disabledActions={hasErrors ? ['submit', 'publish'] : []}
                 />
-                {hasErrors && <InspectionValidationErrors inspection={inspection} />}
                 <EditInspectionWrapper>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
@@ -140,7 +158,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                       <InspectionEditor
                         name="create"
                         path="/"
-                        label="Tarkastuksen tiedot"
+                        label={text('inspectionPage_inspectionInformation')}
                         loading={inspectionLoading}
                         refetchData={refetch}
                         inspection={inspection}
@@ -149,7 +167,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                         inspection={inspection}
                         path="results"
                         name="results"
-                        label="Tulokset"
+                        label={text('inspectionPage_results')}
                       />
                     </Tabs>
                   )}

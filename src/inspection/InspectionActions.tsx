@@ -20,6 +20,7 @@ import { useMatch } from '@reach/router'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
+import { Text } from '../util/translate'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -55,13 +56,13 @@ export type PropTypes = {
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
-    var [submitActive, setSubmitActive] = useState(false)
+    var [isSubmitActive, setSubmitActive] = useState<boolean>(false)
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
       inspection?.operatorId || undefined
     )
 
-    var isEditing = useMatch(`/:inspectionType/edit/:inspectionId/*`)
+    var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
     var goToInspectionEdit = useEditInspection(inspection.inspectionType)
     var goToInspectionReports = useInspectionReports()
@@ -96,7 +97,9 @@ const InspectionActions = observer(
       submitInspectionMutation
     )
 
-    var [inspectionReady, { loading: readyLoading }] = useMutationData(readyInspectionMutation)
+    var [setInspectionReady, { loading: readyLoading }] = useMutationData(
+      readyInspectionMutation
+    )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
       publishInspectionMutation
@@ -139,7 +142,7 @@ const InspectionActions = observer(
         return
       }
 
-      await inspectionReady({
+      await setInspectionReady({
         variables: {
           inspectionId: inspection.id,
         },
@@ -176,21 +179,22 @@ const InspectionActions = observer(
       await onRefresh()
     }, [onRefresh, inspection, disabledActions])
 
-    let userCanPublish =
+    let canUserPublish =
       inspection.status === InspectionStatus.InReview && hasAdminAccessRights
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
-    let inspectionCanBeSubmitted =
+    let canInspectionBeSubmitted =
       (inspection.inspectionType === InspectionType.Pre &&
         inspection.status === InspectionStatus.Draft) ||
       (inspection.inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Ready)
 
     // Only post-inspections which are in draft state can be readied.
-    let inspectionCanBeReady =
+    let canInspectionBeReady =
       inspection.inspectionType === InspectionType.Post &&
       inspection.status === InspectionStatus.Draft
 
+    let isInspectionSubmitDisabled = disabledActions.includes('submit')
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -219,23 +223,24 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!submitActive && inspectionCanBeSubmitted && isEditing && (
+          {!isSubmitActive && canInspectionBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
+              disabled={isInspectionSubmitDisabled}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitProcessStart}>
-              Lähetä hyväksyttäväksi
+              <Text>inspection_actions_openSubmitContainer</Text>
             </Button>
           )}
 
-          {inspectionCanBeReady && hasOperatorUserAccessRights && isEditing && (
+          {canInspectionBeReady && hasOperatorUserAccessRights && isEditing && (
             <Button
               loading={readyLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
               onClick={onReadyInspection}>
-              Valmista
+              <Text>inspection_actions_canBeAccepted</Text>
             </Button>
           )}
 
@@ -250,11 +255,11 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                 size={ButtonSize.MEDIUM}
                 onClick={onRemoveInspection}>
-                Poista
+                <Text>inspection_actions_remove</Text>
               </Button>
             )}
 
-          {inspection.status === InspectionStatus.InReview && userCanPublish && isEditing && (
+          {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
               <Button
                 disabled={disabledActions.includes('publish')}
@@ -263,7 +268,7 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.NORMAL}
                 size={ButtonSize.MEDIUM}
                 onClick={onPublishInspection}>
-                Julkaise
+                <Text>inspection_actions_publish</Text>
               </Button>
               <Button
                 disabled={disabledActions.includes('reject')}
@@ -272,17 +277,17 @@ const InspectionActions = observer(
                 buttonStyle={ButtonStyle.REMOVE}
                 size={ButtonSize.MEDIUM}
                 onClick={onRejectInspection}>
-                Hylkää
+                <Text>inspection_actions_reject</Text>
               </Button>
             </>
           )}
         </ButtonRow>
-        {submitActive &&
-          inspectionCanBeSubmitted &&
+        {isSubmitActive &&
+          canInspectionBeSubmitted &&
           hasOperatorUserAccessRights &&
           isEditing && (
             <InspectionApprovalSubmit
-              disabled={disabledActions.includes('submit')}
+              disabled={isInspectionSubmitDisabled}
               inspection={inspection}
               onSubmit={onSubmitInspection}
               onCancel={onCancelSubmit}

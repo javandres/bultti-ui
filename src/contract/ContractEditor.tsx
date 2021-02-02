@@ -421,14 +421,14 @@ const ContractEditor = observer(
     return (
       <ContractEditorView>
         {editable && (
-          <FlexRow style={{ marginTop: '-0.5rem', marginBottom: '1rem' }}>
+          <FlexRow style={{ margin: '1rem' }}>
             <Button
               loading={removeLoading}
               style={{ marginLeft: 'auto', marginRight: 0 }}
               buttonStyle={ButtonStyle.REMOVE}
               size={ButtonSize.MEDIUM}
               onClick={execRemoveContract}>
-              <Text>contract_form.remove</Text>
+              <Text>general.app.remove</Text>
             </Button>
           </FlexRow>
         )}

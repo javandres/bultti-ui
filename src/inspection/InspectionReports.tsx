@@ -14,7 +14,7 @@ import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 
 const InspectionReportsView = styled.div`
-  padding: 0 1rem 2rem;
+  padding: 1rem 1rem 1rem 2rem;
   margin-bottom: 2rem;
   position: relative;
 `
