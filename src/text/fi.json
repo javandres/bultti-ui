@@ -23,6 +23,13 @@
   "back": "Takaisin",
   "show": "Näytä",
   "hide": "Piilota",
+  "createdBy": "Luotu",
+  "updatedBy": "Päivitetty",
+  "subscribedTo": "Tilattu",
+  "publishedBy": "Julkaistu",
+  "rejectedBy": "Peruttu",
+  "submittedBy": "Lisätty sanktioitavaksi",
+  "readiedBy": "Hyväksytty",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 

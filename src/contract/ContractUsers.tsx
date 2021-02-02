@@ -12,6 +12,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
 import { contractUserRelationsQuery, toggleContractUserSubscription } from './contractQueries'
+import { ContractUserRelation } from '../schema-types'
 
 export type PropTypes = {
   contractId: string
@@ -21,7 +22,7 @@ export type PropTypes = {
 const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) => {
   var [user] = useStateValue('user')
 
-  let { data: contractRelations, loading: relationsLoading, refetch } = useQueryData(
+  let { data: contractRelations, loading: relationsLoading, refetch } = useQueryData<ContractUserRelation[]>(
     contractUserRelationsQuery,
     {
       skip: !contractId,

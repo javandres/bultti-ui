@@ -179,7 +179,7 @@ export function useFetchInspections(
   ]
 }
 
-export function getAllUpdatedBy(inspection?: Inspection): User[] {
+export function getAllUpdatedByUsers(inspection?: Inspection): User[] {
   let userRelations = inspection?.userRelations || []
   let updatedRelations = userRelations.filter(
     (rel) => rel.relatedBy === InspectionUserRelationType.UpdatedBy
@@ -188,23 +188,10 @@ export function getAllUpdatedBy(inspection?: Inspection): User[] {
   return orderBy(updatedRelations, 'updatedAt', 'desc').map((rel) => rel.user)
 }
 
-export function getCreatedBy(inspection?: Inspection): User | undefined {
+export function getCreatedByUser(inspection?: Inspection): User | undefined {
   let userRelations = inspection?.userRelations || []
   let createdRelation = userRelations.find(
     (rel) => rel.relatedBy === InspectionUserRelationType.CreatedBy
-  )
-
-  return createdRelation ? createdRelation.user : undefined
-}
-
-export function getPublishedBy(inspection?: Inspection) {
-  if (!inspection || inspection.status !== InspectionStatus.InProduction) {
-    return undefined
-  }
-
-  let userRelations = inspection?.userRelations || []
-  let createdRelation = userRelations.find(
-    (rel) => rel.relatedBy === InspectionUserRelationType.PublishedBy
   )
 
   return createdRelation ? createdRelation.user : undefined

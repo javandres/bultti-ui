@@ -3,6 +3,7 @@
 - Use `<button>` element when you have an element which the user interacts with through clicking (never use eg. `<div>` unless necessary).
 - Use `{}` for empty objects
 - Use `''` for empty strings
+- Avoid using `any` type as much as you can. Only use it if you have to. For example when using useQueryData hook, give it a return type
 
 ### Typescript
 

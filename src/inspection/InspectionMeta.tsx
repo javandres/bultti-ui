@@ -5,7 +5,7 @@ import { READABLE_TIME_FORMAT } from '../constants'
 import styled from 'styled-components/macro'
 import { MetaDisplay, MetaItem, MetaLabel, MetaValue } from '../common/components/MetaDisplay'
 import { InputLabel } from '../common/components/form'
-import { getAllUpdatedBy, getCreatedBy } from './inspectionUtils'
+import { getAllUpdatedByUsers, getCreatedByUser } from './inspectionUtils'
 import { Inspection } from '../schema-types'
 import { text } from '../util/translate'
 import { TextButton } from '../common/components/Button'
@@ -31,8 +31,8 @@ type PropTypes = {
 }
 
 const InspectionMeta: React.FC<PropTypes> = observer(({ className, inspection }) => {
-  let createdBy = getCreatedBy(inspection)
-  let modifiedBy = getAllUpdatedBy(inspection)[0] || createdBy
+  let createdBy = getCreatedByUser(inspection)
+  let modifiedBy = getAllUpdatedByUsers(inspection)[0] || createdBy
   let [isVisible, setIsVisible] = useState(false)
 
   const toggleMetaVisible = useCallback(() => {
