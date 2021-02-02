@@ -5,6 +5,7 @@ import { Inspection, InspectionInput, InspectionStatus, InspectionType } from '.
 import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery, updateInspectionMutation } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
+import InspectionMeta from './InspectionMeta'
 import InspectionConfig from './InspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -118,6 +119,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         {hasErrors && <InspectionValidationErrors inspection={inspection} />}
         {!!inspection && (
           <>
+            <InspectionMeta inspection={inspection} />
             <InspectionUsers inspection={inspection} />
             <InspectionConfig
               inspection={inspection}
