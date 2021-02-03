@@ -49,15 +49,17 @@ export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea', rows: 3
   line-height: 1.4;
   height: auto;
 `
+type InputTypes = 'text' | 'date' | 'number'
 
 export type PropTypes = {
   className?: string
+  value: string
   label?: string
   subLabel?: boolean
-  value: string
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
   onEscPress?: () => unknown
+  type?: InputTypes
   theme?: ThemeTypes
   inputComponent?: React.ComponentType
   tabIndex?: number
@@ -67,13 +69,13 @@ const Input: React.FC<PropTypes> = observer(
   ({
     className,
     value = '',
-    onChange,
-    theme = 'light',
     label,
     subLabel,
+    onChange,
     onEnterPress,
     onEscPress,
     type = 'text',
+    theme = 'light',
     inputComponent = TextInput,
     tabIndex,
     ...inputProps
