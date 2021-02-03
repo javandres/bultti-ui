@@ -6842,7 +6842,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersRequired",
+            "name": "metersRequired",
             "description": null,
             "args": [],
             "type": {
@@ -6854,7 +6854,31 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersObserved",
+            "name": "kilometersRequired",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "metersObserved",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "kilometersObserved",
             "description": null,
             "args": [],
             "type": {
@@ -7352,6 +7376,12 @@
           },
           {
             "name": "HFP_UNAVAILABLE_FOR_INSPECTION_DATES",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "POST_INSPECTION_END_DATE_NOT_IN_THE_PAST",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

@@ -760,8 +760,10 @@ export type ObservedExecutionRequirement = {
   operator: Operator;
   inspection: Inspection;
   inspectionId: Scalars['String'];
-  totalKilometersRequired?: Maybe<Scalars['Float']>;
-  totalKilometersObserved?: Maybe<Scalars['Float']>;
+  metersRequired?: Maybe<Scalars['Float']>;
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  metersObserved?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   _sanctionPercentageValue: Scalars['Float'];
@@ -816,7 +818,8 @@ export enum InspectionValidationError {
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
-  HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES'
+  HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
+  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST'
 }
 
 export type InspectionTimelineItem = {

@@ -26,7 +26,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
 
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]
-  totalKilometersRequired?: number | null
+  kilometersRequired?: number | null
   averageAgeWeightedObserved?: number | null
   averageAgeWeightedRequired?: number | null
 }
@@ -135,12 +135,12 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         valuesPerRow={3}
         style={{ marginBottom: '1rem' }}
         item={pick(executionRequirement, [
-          'totalKilometersRequired',
+          'kilometersRequired',
           'averageAgeWeightedRequired',
           'averageAgeWeightedObserved',
         ])}
         labels={{
-          totalKilometersRequired: 'Suoritekilometrit yhteensä',
+          kilometersRequired: 'Suoritekilometrit yhteensä',
           averageAgeWeightedRequired: 'Suunniteltu painotettu keski-ikä',
           averageAgeWeightedObserved: 'Toteutunut painotettu keski-ikä',
         }}

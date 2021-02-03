@@ -858,12 +858,14 @@ type ObservedExecutionRequirement {
   inspection: Inspection!
   inspectionId: String!
   isCombinedAreaRequirement: Boolean!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  metersObserved: Float
+  metersRequired: Float
   observedRequirements: [ObservedExecutionValue!]!
   operator: Operator!
   operatorId: Int!
   startDate: BulttiDate!
-  totalKilometersObserved: Float
-  totalKilometersRequired: Float
 }
 
 type ObservedExecutionRequirementsReport {

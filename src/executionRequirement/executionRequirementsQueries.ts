@@ -67,8 +67,8 @@ export const ObservedExecutionRequirementFragment = gql`
     operatorId
     averageAgeWeightedObserved
     averageAgeWeightedRequired
-    totalKilometersObserved
-    totalKilometersRequired
+    kilometersObserved
+    kilometersRequired
     area {
       id
       name
