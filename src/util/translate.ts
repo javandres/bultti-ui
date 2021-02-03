@@ -49,7 +49,7 @@ export function text(key: string, keyValueMap?: Object) {
  * @param {Object} props.keyValueMap { key: value } - key is the same as ${key} in textCodeList, ${key} is replaced with value
  **/
 export const Text = observer(
-  ({ children, keyValueMap }: { children?: string; keyValueMap?: any }) => {
+  ({ children, keyValueMap }: { children?: string; keyValueMap?: Object }) => {
     if (!children) {
       return ''
     }
