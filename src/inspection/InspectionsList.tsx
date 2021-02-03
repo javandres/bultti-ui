@@ -18,13 +18,12 @@ import { getDateString } from '../util/formatDate'
 
 const InspectionsListView = styled.div`
   min-height: 100%;
-  padding: 0 1rem;
+  padding-left: 1rem;
   margin-bottom: 2rem;
 `
 
 const InspectionsWrapper = styled.div`
   border-left: 3px solid var(--blue);
-  margin-left: 0.75rem;
   margin-top: 1.5rem;
   padding-bottom: 1.5rem;
   position: relative;

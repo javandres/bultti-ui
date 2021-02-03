@@ -7,7 +7,7 @@ import {
   useInspectionReports,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
@@ -43,7 +43,6 @@ const FilterControlGroup = styled(ControlGroup)`
 const InspectionListWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 1rem;
 `
 
 const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
@@ -114,45 +113,47 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
       <PageTitle loading={loading} onRefresh={refetch}>
         {typeStrings.prefix}tarkastuksien raportit
       </PageTitle>
-      {!operator && (
-        <MessageContainer>
-          <MessageView>Valitse liikennöitsijä.</MessageView>
-        </MessageContainer>
-      )}
-      <LoadingDisplay loading={loading} />
-      {inspections.length !== 0 && (
-        <>
-          <FilterBar style={{ margin: '1rem' }}>
-            <FilterControlGroup>
-              <SelectSeason
-                enableAll={true}
-                label="Valitse aikataulukausi"
-                onSelect={setSelectedSeason}
-                value={selectedSeason}
-              />
-            </FilterControlGroup>
-            <FilterControlGroup>
-              <Dropdown
-                label="Valitse tuotantopäivämäärä"
-                selectedItem={selectedDate}
-                items={startDateOptions}
-                itemToLabel="label"
-                itemToString="value"
-                onSelect={setSelectedDate}
-              />
-            </FilterControlGroup>
-          </FilterBar>
-          <InspectionListWrapper>
-            {inspectionsList.map((inspection) => (
-              <InspectionIndexItem
-                key={inspection.id}
-                inspection={inspection}
-                onClick={() => openReports(inspection.id, inspectionType)}
-              />
-            ))}
-          </InspectionListWrapper>
-        </>
-      )}
+      <PageContainer>
+        {!operator && (
+          <MessageContainer>
+            <MessageView>Valitse liikennöitsijä.</MessageView>
+          </MessageContainer>
+        )}
+        <LoadingDisplay loading={loading} />
+        {inspections.length !== 0 && (
+          <>
+            <FilterBar>
+              <FilterControlGroup>
+                <SelectSeason
+                  enableAll={true}
+                  label="Valitse aikataulukausi"
+                  onSelect={setSelectedSeason}
+                  value={selectedSeason}
+                />
+              </FilterControlGroup>
+              <FilterControlGroup>
+                <Dropdown
+                  label="Valitse tuotantopäivämäärä"
+                  selectedItem={selectedDate}
+                  items={startDateOptions}
+                  itemToLabel="label"
+                  itemToString="value"
+                  onSelect={setSelectedDate}
+                />
+              </FilterControlGroup>
+            </FilterBar>
+            <InspectionListWrapper>
+              {inspectionsList.map((inspection) => (
+                <InspectionIndexItem
+                  key={inspection.id}
+                  inspection={inspection}
+                  onClick={() => openReports(inspection.id, inspectionType)}
+                />
+              ))}
+            </InspectionListWrapper>
+          </>
+        )}
+      </PageContainer>
     </InspectionReportIndexPageView>
   )
 })

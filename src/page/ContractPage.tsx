@@ -2,7 +2,7 @@ import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { FlexRow, Page } from '../common/components/common'
+import { FlexRow, Page, PageContainer } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
@@ -24,8 +24,6 @@ const ContractContentView = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 0 1rem;
-  margin-bottom: 2rem;
 `
 
 const ContractTitle = styled.h4`
@@ -121,42 +119,47 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
         <Text>contract_page.contracts</Text>
       </PageTitle>
-      {contracts.length === 0 && !contractsLoading && (
-        <MessageContainer>
-          <MessageView>
-            <Text>contract_page.no_contracts</Text>
-          </MessageView>
-        </MessageContainer>
-      )}
-      {hasAccessRights && (
-        <FlexRow style={{ margin: '1rem' }}>
-          <Button
-            disabled={!operator}
-            onClick={onCreateNewContract}
-            buttonStyle={ButtonStyle.NORMAL}
-            size={ButtonSize.MEDIUM}
-            style={{ marginLeft: 'auto' }}>
-            <Text>contract_page.new_contract_button</Text>
-          </Button>
-        </FlexRow>
-      )}
-      <ContractContentView>
-        {contracts.map((contractItem) => (
-          <ContractListItem
-            key={contractItem.id}
-            onClick={() => onOpenContract(contractItem.id)}>
-            <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
-            {contractItem?.description && (
-              <ContractDescription>{contractItem?.description}</ContractDescription>
-            )}
+      <PageContainer>
+        {contracts.length === 0 && !contractsLoading && (
+          <MessageContainer>
+            <MessageView>
+              <Text>contract_page.no_contracts</Text>
+            </MessageView>
+          </MessageContainer>
+        )}
+        {hasAccessRights && (
+          <FlexRow style={{ margin: '1rem' }}>
+            <Button
+              disabled={!operator}
+              onClick={onCreateNewContract}
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.MEDIUM}
+              style={{ marginLeft: 'auto' }}>
+              <Text>contract_page.new_contract_button</Text>
+            </Button>
+          </FlexRow>
+        )}
+        <ContractContentView>
+          {contracts.map((contractItem) => (
+            <ContractListItem
+              key={contractItem.id}
+              onClick={() => onOpenContract(contractItem.id)}>
+              <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
+              {contractItem?.description && (
+                <ContractDescription>{contractItem?.description}</ContractDescription>
+              )}
 
-            <ContractDates startDate={contractItem.startDate} endDate={contractItem.endDate} />
-            <GoToContractButton>
-              <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
-            </GoToContractButton>
-          </ContractListItem>
-        ))}
-      </ContractContentView>
+              <ContractDates
+                startDate={contractItem.startDate}
+                endDate={contractItem.endDate}
+              />
+              <GoToContractButton>
+                <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
+              </GoToContractButton>
+            </ContractListItem>
+          ))}
+        </ContractContentView>
+      </PageContainer>
     </ContractPageView>
   )
 })

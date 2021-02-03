@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useAppState } from '../state/useAppState'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
@@ -11,10 +11,6 @@ import { addDays, parseISO } from 'date-fns'
 import { getDateString } from '../util/formatDate'
 
 const ProcurementUnitsView = styled(Page)``
-
-const Content = styled.div`
-  padding: 0 1rem;
-`
 
 export type PropTypes = {} & RouteComponentProps
 
@@ -26,12 +22,12 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
   return (
     <ProcurementUnitsView>
       <PageTitle>Kilpailukohteet</PageTitle>
-      {!(globalOperator && globalSeason && typeof globalSeason !== 'string') ? (
-        <MessageContainer>
-          <MessageView>Valitse liikennöitsijä ja aikautaulukausi.</MessageView>
-        </MessageContainer>
-      ) : (
-        <Content>
+      <PageContainer>
+        {!(globalOperator && globalSeason && typeof globalSeason !== 'string') ? (
+          <MessageContainer>
+            <MessageView>Valitse liikennöitsijä ja aikautaulukausi.</MessageView>
+          </MessageContainer>
+        ) : (
           <ProcurementUnits
             requirementsEditable={false}
             operatorId={globalOperator?.id || 0}
@@ -42,8 +38,8 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
                 : ''
             }
           />
-        </Content>
-      )}
+        )}
+      </PageContainer>
     </ProcurementUnitsView>
   )
 })
