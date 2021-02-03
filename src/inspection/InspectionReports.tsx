@@ -13,11 +13,7 @@ import { SubHeading } from '../common/components/Typography'
 import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 
-const InspectionReportsView = styled.div`
-  padding: 1rem 1rem 1rem 2rem;
-  margin-bottom: 2rem;
-  position: relative;
-`
+const InspectionReportsView = styled.div``
 
 const ReportInspectionView = styled(InspectionItem)`
   margin-bottom: 2rem;

@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
-import { Page, PageSection } from '../common/components/common'
+import { Page, PageSection, PageContainer } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import InspectionDateForm from '../inspection/inspectionDate/InspectionDateForm'
 import { Button } from '../common/components/Button'
@@ -14,9 +14,7 @@ import { orderBy } from 'lodash'
 import { Text } from '../util/translate'
 import { InspectionDate } from '../schema-types'
 
-const InspectionDatesPage = styled.div`
-  padding: 0 1rem 1rem 1rem;
-`
+const InspectionDatesPage = styled(Page)``
 
 const InspectionDateListWrapper = styled(PageSection)``
 
@@ -42,11 +40,11 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
   )
 
   return (
-    <Page>
+    <InspectionDatesPage>
       <PageTitle loading={loading} onRefresh={refetch}>
         <Text>inspection_date.page.header</Text>
       </PageTitle>
-      <InspectionDatesPage>
+      <PageContainer>
         <InspectionDateListWrapper>
           <InspectionDateList
             inspectionDates={sortedInspectionDates}
@@ -65,8 +63,8 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
             refetchInspectionDateList={refetch}
           />
         )}
-      </InspectionDatesPage>
-    </Page>
+      </PageContainer>
+    </InspectionDatesPage>
   )
 })
 

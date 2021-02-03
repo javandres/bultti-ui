@@ -24,7 +24,7 @@ import { Text } from '../util/translate'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
-  padding: 0.75rem 1rem 0.75rem;
+  padding: 0.5rem 1rem 0.5rem;
   border-top: 1px solid var(--lighter-grey);
   display: flex;
   align-items: center;

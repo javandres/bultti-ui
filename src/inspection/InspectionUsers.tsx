@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
+import { orderBy } from 'lodash'
 import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
@@ -15,7 +16,7 @@ import { useQueryData } from '../util/useQueryData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionUserRelation } from '../schema-types'
 
 export type PropTypes = {
   inspection: Inspection
@@ -23,15 +24,13 @@ export type PropTypes = {
 
 const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
   var [user] = useStateValue('user')
-
-  let { data: inspectionRelations, loading: relationsLoading, refetch } = useQueryData(
-    inspectionUserRelationsQuery,
-    {
-      variables: {
-        inspectionId: inspection.id,
-      },
-    }
-  )
+  let { data: inspectionUserRelations, loading: relationsLoading, refetch } = useQueryData<
+    InspectionUserRelation[]
+  >(inspectionUserRelationsQuery, {
+    variables: {
+      inspectionId: inspection.id,
+    },
+  })
 
   let refetchRelations = useRefetch(refetch)
 
@@ -54,9 +53,10 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
 
   return (
     <ExpandableSection
+      isExpanded={true}
       headerContent={
         <>
-          <HeaderMainHeading>Käyttäjät</HeaderMainHeading>
+          <HeaderMainHeading>Tarkastuksen tiedot</HeaderMainHeading>
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
             <Button
               style={{ marginLeft: 'auto' }}
@@ -70,7 +70,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
       }>
       <LoadingDisplay loading={relationsLoading} />
       <UserRelations
-        relations={inspectionRelations}
+        relations={inspectionUserRelations}
         loading={userSubscribedLoading}
         onToggleSubscribed={onToggleSubscribed}
       />

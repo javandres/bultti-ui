@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { Inspection, InspectionStatus } from '../schema-types'
-import { getCreatedBy } from './inspectionUtils'
+import { getCreatedByUser } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
@@ -99,7 +99,7 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
   onInspectionUpdated = () => {},
   showActions = true,
 }) => {
-  let createdBy = getCreatedBy(inspection)
+  let createdBy = getCreatedByUser(inspection)
 
   return (
     <InspectionItemView

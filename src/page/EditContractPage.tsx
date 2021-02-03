@@ -10,7 +10,7 @@ import { useStateValue } from '../state/useAppState'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { addYears } from 'date-fns'
 import { LoadingDisplay } from '../common/components/Loading'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import { PageTitle } from '../common/components/PageTitle'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -77,16 +77,18 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
       <PageTitle loading={loading} onRefresh={refetch}>
         Muokkaa sopimusehdot
       </PageTitle>
-      <LoadingDisplay loading={loading} />
-      {!!contractData && (
-        <ContractEditor
-          onRefresh={refetch}
-          onReset={onCancel}
-          editable={hasAdminAccessRights}
-          contract={contractData}
-          isNew={contractId === 'new'}
-        />
-      )}
+      <PageContainer>
+        <LoadingDisplay loading={loading} />
+        {!!contractData && (
+          <ContractEditor
+            onRefresh={refetch}
+            onReset={onCancel}
+            editable={hasAdminAccessRights}
+            contract={contractData}
+            isNew={contractId === 'new'}
+          />
+        )}
+      </PageContainer>
     </EditContractPageView>
   )
 })

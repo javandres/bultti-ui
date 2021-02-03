@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { orderBy } from 'lodash'
 import {
   ContractUserRelation,
+  ContractUserRelationType,
   InspectionUserRelation,
   InspectionUserRelationType,
 } from '../../schema-types'
@@ -12,6 +13,7 @@ import { READABLE_TIME_FORMAT } from '../../constants'
 import Checkbox from '../input/Checkbox'
 import { useStateValue } from '../../state/useAppState'
 import { CheckboxLabel } from '../input/ToggleLabel'
+import { text } from '../../util/translate'
 
 const UserList = styled.div`
   margin: -1rem -1rem 0;
@@ -69,10 +71,21 @@ const SubscribedCheckbox = styled(Checkbox)`
   }
 `
 
-type RelationType = InspectionUserRelation | ContractUserRelation
+export type UserRelation = InspectionUserRelation | ContractUserRelation
+type UserRelationType = InspectionUserRelationType | ContractUserRelationType
+
+const userRelationTypeMap = {
+  CREATED_BY: 'createdBy',
+  UPDATED_BY: 'updatedBy',
+  SUBSCRIBED_TO: 'subscribedTo',
+  PUBLISHED_BY: 'publishedBy',
+  REJECTED_BY: 'rejectedBy',
+  SUBMITTED_BY: 'submittedBy',
+  READIED_BY: 'readiedBy',
+}
 
 export type PropTypes = {
-  relations: RelationType[]
+  relations: UserRelation[]
   onToggleSubscribed: () => unknown
   loading?: boolean
 }
@@ -81,7 +94,7 @@ const UserRelations = observer(
   ({ relations, onToggleSubscribed, loading = false }: PropTypes) => {
     var [user] = useStateValue('user')
 
-    let allRelations = orderBy<RelationType>(relations || [], 'updatedAt', 'desc')
+    let allRelations = orderBy<UserRelation>(relations || [], 'updatedAt', 'desc')
     let ownRelations = allRelations.filter((rel) => rel.user.email === user.email)
 
     let subscriptionRelation = ownRelations.find(
@@ -110,11 +123,11 @@ const UserRelations = observer(
             />
           </RowContent>
         </UserRow>
-        {allRelations.map((rel) =>
+        {allRelations.map((rel: UserRelation) =>
           rel === subscriptionRelation ? null : (
             <UserRow key={rel.id}>
               <RowTitle>
-                {rel.relatedBy}
+                {getUserRelationTypeText(rel.relatedBy)}
                 <TitleTimestamp>
                   {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
                 </TitleTimestamp>
@@ -134,5 +147,10 @@ const UserRelations = observer(
     )
   }
 )
+
+const getUserRelationTypeText = (rel: UserRelationType) => {
+  let key = userRelationTypeMap[rel]
+  return key ? text(key) : '-'
+}
 
 export default UserRelations

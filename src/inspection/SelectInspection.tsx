@@ -29,7 +29,6 @@ const InspectionItems = styled.div`
 `
 
 const HeaderRow = styled(FlexRow)`
-  margin: -1rem 0 1rem;
   padding: 0 1rem;
   min-height: 35px;
   align-items: center;

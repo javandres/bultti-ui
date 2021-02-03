@@ -3,7 +3,10 @@ import styled from 'styled-components/macro'
 export const Page = styled.div`
   position: relative;
   height: 100%;
-  margin-bottom: 1rem;
+`
+
+export const PageContainer = styled.div`
+  padding: 1rem;
 `
 
 export const PageSection = styled.div<{ error?: boolean }>`
@@ -17,6 +20,9 @@ export const PageSection = styled.div<{ error?: boolean }>`
   width: 100%;
   position: relative;
   border: ${(p) => (p.error ? `1px solid var(--red)` : '1px solid var(--lighter-grey)')};
+  &:first-of-type {
+    margin-top: 0px;
+  }
 `
 
 export const TransparentPageSection = styled(PageSection)`
