@@ -15,6 +15,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
 import { getDateString } from '../util/formatDate'
+import { Text } from '../util/translate'
 
 const InspectionsListView = styled.div`
   min-height: 100%;
@@ -63,12 +64,6 @@ const TimelineHeading = styled.div`
 const TimelineMessage = styled(MessageView)`
   margin-left: 1.5rem;
   margin-top: 0;
-`
-
-const TimelineActions = styled.div`
-  margin-left: 1.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
 `
 
 const TimelineCurrentTime = styled(TimelineHeading)`
@@ -157,20 +152,6 @@ const InspectionsList: React.FC<PropTypes> = ({
   let editInspection = useEditInspection(inspectionType)
   let createInspection = useCreateInspection(operator, season, inspectionType)
 
-  let onCreateInspection = useCallback(
-    async (seasonId) => {
-      setSeason(seasonId)
-      let createdInspection = await createInspection(seasonId)
-
-      if (createdInspection) {
-        editInspection(createdInspection)
-      } else {
-        onUpdate()
-      }
-    },
-    [createInspection, editInspection, onUpdate, setSeason]
-  )
-
   let currentSeason = useMemo(
     () =>
       seasons.reduce((curSeason: Season | null, season: Season) => {
@@ -213,15 +194,13 @@ const InspectionsList: React.FC<PropTypes> = ({
               {!inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
                   <TimelineMessage>
-                    Tällä kaudella ei ole tuotannossa-olevaa {typeStrings.prefixLC}tarkastusta.
+                    <Text
+                      keyValueMap={{
+                        inspection: typeStrings.prefixLC,
+                      }}>
+                      inspectionList_noInspectionInProduction
+                    </Text>
                   </TimelineMessage>
-                  {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-                    <TimelineActions>
-                      <Button onClick={() => onCreateInspection(seasonId)}>
-                        Luo uusi {typeStrings.prefixLC}tarkastus
-                      </Button>
-                    </TimelineActions>
-                  )}
                 </>
               )}
               {inspections.map((inspection) => {
