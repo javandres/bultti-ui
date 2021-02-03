@@ -1,15 +1,9 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { get, groupBy, orderBy } from 'lodash'
 import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
-import {
-  getInspectionTypeStrings,
-  useCreateInspection,
-  useEditInspection,
-} from './inspectionUtils'
-import { useStateValue } from '../state/useAppState'
-import { Button } from '../common/components/Button'
+import { getInspectionTypeStrings } from './inspectionUtils'
 import { isBetween } from '../util/isBetween'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
