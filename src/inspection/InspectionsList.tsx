@@ -138,9 +138,6 @@ const InspectionsList: React.FC<PropTypes> = ({
   onUpdate,
   loading = false,
 }) => {
-  var [season, setSeason] = useStateValue('globalSeason')
-  var [operator] = useStateValue('globalOperator')
-
   let seasons = useSeasons()
   seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
 
@@ -148,9 +145,6 @@ const InspectionsList: React.FC<PropTypes> = ({
     orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
     'season.id'
   )
-
-  let editInspection = useEditInspection(inspectionType)
-  let createInspection = useCreateInspection(operator, season, inspectionType)
 
   let currentSeason = useMemo(
     () =>
@@ -189,7 +183,9 @@ const InspectionsList: React.FC<PropTypes> = ({
             <React.Fragment key={seasonId}>
               <TimelineHeading>{seasonId}</TimelineHeading>
               {renderCurrentTemporalLocationInSeason && (
-                <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
+                <TimelineCurrentTime>
+                  <Text>inspectionList_youAreHere</Text>
+                </TimelineCurrentTime>
               )}
               {!inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
@@ -212,7 +208,9 @@ const InspectionsList: React.FC<PropTypes> = ({
                   <React.Fragment
                     key={inspection.id + (renderCurrentTemporalLocation ? 'iamhere' : '')}>
                     {renderCurrentTemporalLocation && (
-                      <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
+                      <TimelineCurrentTime>
+                        <Text>inspectionList_youAreHere</Text>
+                      </TimelineCurrentTime>
                     )}
                     <TimelineInspectionItem
                       inspection={inspection}
