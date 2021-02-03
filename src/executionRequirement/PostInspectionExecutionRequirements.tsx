@@ -288,7 +288,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         case 'kilometersObserved':
           return `${totalVal} km`
         case 'averageAgeWeightedObserved':
-          return `${totalVal} v`
+          return `${requirement.averageAgeWeightedObserved} v`
         case 'equipmentCountObserved':
           return `${totalVal} kpl`
         default:

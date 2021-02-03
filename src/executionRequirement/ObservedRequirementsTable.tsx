@@ -102,7 +102,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         return ''
       }
 
-      let totalVal = round(getTotal<any, string>(requirementRows, key), 3)
+      let totalValue = round(getTotal<any, string>(requirementRows, key), 3)
 
       switch (key) {
         case 'quotaRequired':
@@ -111,19 +111,19 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequ
         case 'cumulativeDifferencePercentage':
         case 'sanctionablePercentage':
         case 'sanctionAmount':
-          return `${totalVal}%`
+          return `${totalValue}%`
         case 'kilometersRequired':
         case 'kilometersObserved':
-          return `${totalVal} km`
+          return `${totalValue} km`
         case 'equipmentCountRequired':
         case 'equipmentCountObserved':
-          return `${totalVal} kpl`
+          return `${totalValue} kpl`
         case 'averageAgeWeightedObserved':
           return `${round(averageAgeWeightedObserved || 0, 3)} v`
         case 'averageAgeWeightedRequired':
           return `${round(averageAgeWeightedRequired || 0, 3)} v`
         default:
-          return totalVal
+          return totalValue
       }
     },
     [executionRequirement]
