@@ -17,7 +17,7 @@ import {
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
-import { text, Text, translate } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
@@ -132,7 +132,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                       ? 'var(--dark-grey)'
                       : 'white',
                 }}>
-                <strong>{translate(inspection.status)}</strong>
+                <strong>{text(inspection.status)}</strong>
               </InspectionStatusContainer>
             )}
           </PageTitle>

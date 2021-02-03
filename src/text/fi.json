@@ -147,6 +147,8 @@
   "inspection.units.hide_all": "Piilota kaikki kilpailukohteet",
   "inspection.pre.new": "Uusi ennakkotarkastus",
   "inspection.post.new": "Uusi jälkitarkastus",
+  "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
+  "inspectionList_youAreHere": "Olet tässä",
 
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
   "inspection_actions_canBeAccepted": "Hyväksy",

@@ -1,20 +1,15 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { get, groupBy, orderBy } from 'lodash'
 import InspectionItem from './InspectionItem'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
-import {
-  getInspectionTypeStrings,
-  useCreateInspection,
-  useEditInspection,
-} from './inspectionUtils'
-import { useStateValue } from '../state/useAppState'
-import { Button } from '../common/components/Button'
+import { getInspectionTypeStrings } from './inspectionUtils'
 import { isBetween } from '../util/isBetween'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
 import { getDateString } from '../util/formatDate'
+import { Text } from '../util/translate'
 
 const InspectionsListView = styled.div`
   min-height: 100%;
@@ -62,12 +57,6 @@ const TimelineHeading = styled.div`
 const TimelineMessage = styled(MessageView)`
   margin-left: 1.5rem;
   margin-top: 0;
-`
-
-const TimelineActions = styled.div`
-  margin-left: 1.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
 `
 
 const TimelineCurrentTime = styled(TimelineHeading)`
@@ -142,32 +131,12 @@ const InspectionsList: React.FC<PropTypes> = ({
   onUpdate,
   loading = false,
 }) => {
-  var [season, setSeason] = useStateValue('globalSeason')
-  var [operator] = useStateValue('globalOperator')
-
   let seasons = useSeasons()
   seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
 
   const seasonGroups = groupBy(
     orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
     'season.id'
-  )
-
-  let editInspection = useEditInspection(inspectionType)
-  let createInspection = useCreateInspection(operator, season, inspectionType)
-
-  let onCreateInspection = useCallback(
-    async (seasonId) => {
-      setSeason(seasonId)
-      let createdInspection = await createInspection(seasonId)
-
-      if (createdInspection) {
-        editInspection(createdInspection)
-      } else {
-        onUpdate()
-      }
-    },
-    [createInspection, editInspection, onUpdate, setSeason]
   )
 
   let currentSeason = useMemo(
@@ -207,20 +176,20 @@ const InspectionsList: React.FC<PropTypes> = ({
             <React.Fragment key={seasonId}>
               <TimelineHeading>{seasonId}</TimelineHeading>
               {renderCurrentTemporalLocationInSeason && (
-                <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
+                <TimelineCurrentTime>
+                  <Text>inspectionList_youAreHere</Text>
+                </TimelineCurrentTime>
               )}
               {!inspections.some((pi) => pi.status === InspectionStatus.InProduction) && (
                 <>
                   <TimelineMessage>
-                    Tällä kaudella ei ole tuotannossa-olevaa {typeStrings.prefixLC}tarkastusta.
+                    <Text
+                      keyValueMap={{
+                        inspection: typeStrings.prefixLC,
+                      }}>
+                      inspectionList_noInspectionInProduction
+                    </Text>
                   </TimelineMessage>
-                  {!inspections.some((pi) => pi.status === InspectionStatus.Draft) && (
-                    <TimelineActions>
-                      <Button onClick={() => onCreateInspection(seasonId)}>
-                        Luo uusi {typeStrings.prefixLC}tarkastus
-                      </Button>
-                    </TimelineActions>
-                  )}
                 </>
               )}
               {inspections.map((inspection) => {
@@ -232,7 +201,9 @@ const InspectionsList: React.FC<PropTypes> = ({
                   <React.Fragment
                     key={inspection.id + (renderCurrentTemporalLocation ? 'iamhere' : '')}>
                     {renderCurrentTemporalLocation && (
-                      <TimelineCurrentTime>Olet tässä</TimelineCurrentTime>
+                      <TimelineCurrentTime>
+                        <Text>inspectionList_youAreHere</Text>
+                      </TimelineCurrentTime>
                     )}
                     <TimelineInspectionItem
                       inspection={inspection}
