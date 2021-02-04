@@ -197,7 +197,7 @@ const ContractProcurementUnitsEditor = observer(
                 </HeaderBoldHeading>
                 <HeaderSection title={fullRoutesString}>
                   <HeaderHeading>
-                    <Text>Reitit</Text>
+                    <Text>contract_procurementUnitsEditorRoutes</Text>
                   </HeaderHeading>
                   {shortRoutesString}
                 </HeaderSection>

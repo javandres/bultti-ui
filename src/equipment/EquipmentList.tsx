@@ -102,7 +102,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
     const onRemoveEquipment = useCallback(
       (item: EquipmentWithQuota) => () => {
-        if (removeEquipment && confirm(text('catalogue.equipment.confirm_remove'))) {
+        if (removeEquipment && confirm(text('catalogue_equipmentConfirmRemove'))) {
           removeEquipment(item.id)
         }
       },
@@ -164,7 +164,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             value="grouped"
             checked={groupEquipment}
             onChange={onToggleEquipmentGrouped}>
-            <Text>catalogue.show_grouped</Text>
+            <Text>catalogue_showGrouped</Text>
           </ToggleButton>
         </FlexRow>
         {!groupEquipment && orderedEquipment.length !== 0 && (

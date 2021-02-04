@@ -44,7 +44,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     addEquipment,
     addBatchEquipment,
     removeAllEquipment,
-    removeLabel = text('catalogue.remove_all_equipment'),
+    removeLabel = text('catalogue_removeAllEquipment'),
     editableKeys,
     onEquipmentChanged,
     fieldLabels,
@@ -133,11 +133,11 @@ const AddEquipment: React.FC<PropTypes> = observer(
         <FlexRow>
           {addBatchEquipment && (
             <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
-              <Text>catalogue.batch_add_equipment</Text>
+              <Text>catalogue_batchAddequipment</Text>
             </Button>
           )}
           <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
-            <Text>catalogue.find.equipment</Text>
+            <Text>catalogue_findEquipment</Text>
           </Button>
           {DEBUG && (
             <Button style={{ marginRight: '1rem' }} onClick={findRandomEquipment}>
@@ -157,7 +157,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
           <Modal>
             <AddEquipmentFormWrapper>
               <SubHeading>
-                <Text>catalogue.add_equipment</Text>
+                <Text>catalogue_addEquipment</Text>
               </SubHeading>
               <ValueDisplay item={foundEquipment} labels={fieldLabels} />
               {updateQuota && (
@@ -176,7 +176,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                   buttonStyle={ButtonStyle.ACCEPT}
                   onClick={onAddEquipment}
                   style={{ marginRight: '1rem' }}>
-                  <Text>catalogue.add_equipment</Text>
+                  <Text>catalogue_addEquipment</Text>
                 </Button>
                 <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
                   <Text>cancel</Text>
@@ -188,12 +188,9 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {batchFormVisible && addBatchEquipment && (
           <>
             <SubHeading>
-              <Text>catalogue.batch_add_equipment</Text>
+              <Text>catalogue_batchAddequipment</Text>
             </SubHeading>
-            <p>
-              Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän
-              kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.
-            </p>
+            <Text>equipment_batchAddEquipment</Text>
             <TextArea
               theme="light"
               value={batchInput}
@@ -206,7 +203,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 disabled={!batchInput}
                 style={{ marginRight: '1rem' }}
                 onClick={onAddBatchEquipment}>
-                <Text>catalogue.batch_add_equipment</Text>
+                <Text>catalogue_batchAddequipment</Text>
               </Button>
               <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
                 <Text>cancel</Text>
@@ -217,22 +214,22 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {searchFormVisible && (
           <>
             <SubHeading>
-              <Text>catalogue.find.equipment</Text>
+              <Text>catalogue_findEquipment</Text>
             </SubHeading>
             <InputForm
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
-              doneLabel={`${text('catalogue.find.equipment')}${
+              doneLabel={`${text('catalogue_findEquipment')}${
                 searchVehicleId
-                  ? ' ' + text('catalogue.find.by_vehicle_id')
+                  ? ' ' + text('catalogue_findByVehicleId')
                   : searchRegistryNr
-                  ? ' ' + text('catalogue.find.by_registry_number')
+                  ? ' ' + text('catalogue_findByRegistryNumber')
                   : ''
               }`}
               doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
                 {
-                  label: text('catalogue.vehicle_id'),
+                  label: text('vehicleId'),
                   field: (
                     <Input
                       onChange={(val) => setSearchVehicleId(val)}
@@ -241,7 +238,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                   ),
                 },
                 {
-                  label: text('catalogue.registry_number'),
+                  label: text('registryNumber'),
                   field: (
                     <Input
                       onChange={(val) => setSearchRegistryNr(val)}
@@ -252,7 +249,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
               ]}>
               {searchVehicleId && searchCalled && !foundEquipment && !searchLoading && (
                 <MessageView>
-                  <Text>catalogue.equipment_not_found</Text>
+                  <Text>catalogue_equipmentNotFound</Text>
                 </MessageView>
               )}
             </InputForm>

@@ -40,10 +40,10 @@ const StatsTable = styled(Table)`
 `
 
 const statsTableLabels = {
-  dayType: text('requirement.stats.dayType'),
-  equipmentType: text('requirement.stats.equipmentType'),
-  equipmentCount: text('requirement.stats.equipmentCount'),
-  kilometers: text('requirement.stats.kilometers'),
+  dayType: text('executionRequirement_statsDayType'),
+  equipmentType: text('executionRequirement_statsEquipmentType'),
+  equipmentCount: text('executionRequirement_statsEquipmentCount'),
+  kilometers: text('executionRequirement_statsKilometers'),
 }
 
 export type PropTypes = {
@@ -82,7 +82,7 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
       <FlexRow>
         <TableWrapper>
           <SmallHeading style={{ marginTop: '0.5rem' }}>
-            <Text>requirement.heading.day_type_stats</Text>
+            <Text>executionRequirement_headingDayTypeStats</Text>
           </SmallHeading>
           <StatsTable<FC<TablePropTypes<DayTypeEquipmentStat>>>
             items={dayTypeStats}
@@ -95,7 +95,7 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
         </TableWrapper>
         <TableWrapper>
           <SmallHeading style={{ marginTop: '0.5rem' }}>
-            <Text>requirement.heading.equipment_type_stats</Text>
+            <Text>executionRequirement_headingEquipmentTypeStats</Text>
           </SmallHeading>
           <StatsTable<FC<TablePropTypes<EquipmentTypeStat>>>
             columnLabels={statsTableLabels}

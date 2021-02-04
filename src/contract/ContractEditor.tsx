@@ -91,7 +91,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
         {!readOnly && (
           <>
             <FileUploadInput
-              label={text('contract_form.label.upload_rules')}
+              label={text('contractForm_labelUploadRules')}
               onChange={onChange}
               value={val.uploadFile}
               disabled={readOnly}
@@ -100,7 +100,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
             />
             {contractFileReadError && (
               <ErrorView>
-                <Text>contract_form.toml_read_error_failed</Text>
+                <Text>contractForm_tomlReadError</Text>
                 {contractFileReadError}`
               </ErrorView>
             )}
@@ -111,7 +111,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
           style={{ marginTop: '1rem' }}
           headerContent={
             <ExpandableFormSectionHeading>
-              <Text>contract_form.current_contract</Text>
+              <Text>contractForm_currentContract</Text>
             </ExpandableFormSectionHeading>
           }>
           <div style={{ padding: '1rem 1rem 0' }}>
@@ -119,17 +119,17 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
               {isRulesFileSet ? (
                 <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
               ) : (
-                <Text>contract_form.no_loaded_contract_file</Text>
+                <Text>contractForm_noLoadedContractFile</Text>
               )}
             </SubHeading>
             {isRulesFileSet && (
               <Table
                 columnLabels={{
-                  name: text('contract_form.contact_table_label.name'),
-                  value: text('contract_form.contact_table_label.value'),
-                  condition: text('contract_form.contact_table_label.condition'),
-                  category: text('contract_form.contact_table_label.category'),
-                  code: text('contract_form.contact_table_label.code'),
+                  name: text('name'),
+                  value: text('value'),
+                  condition: text('contractForm_condition'),
+                  category: text('contractForm_category'),
+                  code: text('contractForm_code'),
                 }}
                 items={val.currentRules}
               />
@@ -145,7 +145,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
       <ExpandableFormSection
         headerContent={
           <ExpandableFormSectionHeading>
-            <Text>contract_form.procurement_units</Text>
+            <Text>procurementUnits</Text>
           </ExpandableFormSectionHeading>
         }>
         <ContractProcurementUnitsEditor
@@ -204,12 +204,12 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
 }
 
 let formLabels = {
-  startDate: text('contract_form.label.startDate'),
-  endDate: text('contract_form.label.endDate'),
-  description: text('contract_form.label.description'),
-  operatorId: text('contract_form.label.operator_id'),
-  procurementUnitIds: text('contract_form.label.procurement_units'),
-  rules: text('contract_form.label.rules'),
+  startDate: text('contractForm_labelStartDate'),
+  endDate: text('contractForm_labelEndDate'),
+  description: text('contractForm_labelDescription'),
+  operatorId: text('contractForm_labelOperatorId'),
+  procurementUnitIds: text('procurementUnits'),
+  rules: text('contracts'),
 }
 
 const renderEditorLabel = (key, val, labels) => {
@@ -400,7 +400,7 @@ const ContractEditor = observer(
         navigateWithQueryString('/contract', { replace: true })
         return
       }
-      if (confirm(text('contract_form.remove_confirm'))) {
+      if (confirm(text('contractForm_removeConfirm'))) {
         let result = await removeContract({
           variables: {
             contractId: contract.id,

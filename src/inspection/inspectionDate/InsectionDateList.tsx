@@ -62,7 +62,7 @@ const InspectionDateList: React.FC<PropTypes> = observer(
     return (
       <ListWrapper>
         <Header>
-          <Text>inspection_date.list.header</Text>
+          <Text>inspectionDateList_header</Text>
         </Header>
         {isLoading ? (
           <LoadingDisplay />
@@ -70,7 +70,7 @@ const InspectionDateList: React.FC<PropTypes> = observer(
           <>
             {inspectionDates.length === 0 && (
               <MessageView>
-                <Text>inspection_date.list.noResults</Text>
+                <Text>inspectionDateList_noResults</Text>
               </MessageView>
             )}
             {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {

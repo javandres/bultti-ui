@@ -33,6 +33,7 @@ import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { inspectionQuery } from '../inspection/inspectionQueries'
+import { Text } from '../util/translate'
 
 const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -306,7 +307,9 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
       unmountOnClose={true}
       headerContent={
         <>
-          <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
+          <HeaderMainHeading>
+            <Text>executionRequirements</Text>
+          </HeaderMainHeading>
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
             {observedRequirements?.length !== 0 && (
               <Button

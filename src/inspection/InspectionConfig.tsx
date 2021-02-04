@@ -69,7 +69,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
         {!inspection ? (
           <MessageContainer>
             <MessageView>
-              <Text>inspection.inspection_not_selected</Text>
+              <Text>inspection_inspectionNotSelected</Text>
             </MessageView>
           </MessageContainer>
         ) : (
@@ -78,7 +78,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <FormColumn>
                 <Input
                   value={pendingInspectionInputValues.name || ''}
-                  label={text('inspection.inspection_name')}
+                  label={text('inspection_inspectionName')}
                   onChange={(value: string) => {
                     onUpdateValue('name', value)
                   }}
@@ -101,7 +101,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (
                 <FormColumn>
-                  <InputLabel theme="light">{text('inspection.inspection_season')}</InputLabel>
+                  <InputLabel theme="light">{text('inspection_inspectionSeason')}</InputLabel>
                   <ControlGroup>
                     <Input
                       type="date"

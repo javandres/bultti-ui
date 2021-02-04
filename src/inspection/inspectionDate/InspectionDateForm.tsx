@@ -76,7 +76,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
     return (
       <InspectionDateFormContainer>
         <Header>
-          <Text>inspection_date.form.header</Text>
+          <Text>inspectionDateForm_header</Text>
         </Header>
         <ItemForm
           item={pendingInspectionDate}

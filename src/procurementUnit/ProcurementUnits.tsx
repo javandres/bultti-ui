@@ -58,7 +58,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={procurementUnitsLoading} />
         {!procurementUnitsLoading && (!procurementUnits || procurementUnits?.length === 0) ? (
           <MessageView>
-            <Text>procurement_unit.no_valid_for_operator</Text>
+            <Text>procurementUnit_noValidForOperator</Text>
           </MessageView>
         ) : (
           <>
@@ -66,8 +66,8 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
               {procurementUnits.length !== 0 && (
                 <TextButton onClick={toggleProcurementUnitsExpanded}>
                   {procurementUnitsExpanded
-                    ? text('procurement_unit.hide_all')
-                    : text('procurement_unit.show_all')}
+                    ? text('procurementUnit_hideAllProcurementUnits')
+                    : text('procurementUnit_showAllProcurementUnits')}
                 </TextButton>
               )}
               <Button
