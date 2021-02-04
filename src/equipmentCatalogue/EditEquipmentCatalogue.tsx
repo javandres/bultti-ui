@@ -22,8 +22,8 @@ const EditEquipmentCatalogueView = styled.div`
 `
 
 export const equipmentCatalogueLabels = {
-  startDate: text('start_date'),
-  endDate: text('end_date'),
+  startDate: text('startDate'),
+  endDate: text('endDate'),
 }
 
 const equipmentCatalogueHints = {

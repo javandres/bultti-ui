@@ -17,8 +17,8 @@ const Header = styled.div`
 `
 
 const inspectionDateLabels = {
-  startDate: text('start_date'),
-  endDate: text('end_date'),
+  startDate: text('startDate'),
+  endDate: text('endDate'),
 }
 
 interface PropTypes {

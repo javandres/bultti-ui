@@ -13,6 +13,7 @@ import { useQueryData } from '../util/useQueryData'
 import ReportTableFilters from './ReportTableFilters'
 import ReportPaging from './ReportPaging'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
+import { Text } from '../util/translate'
 
 const ReportView = styled.div`
   position: relative;
@@ -128,7 +129,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}
           onClick={onUpdateFetchProps}>
-          Päivitä
+          <Text>update</Text>
         </Button>
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />

@@ -318,7 +318,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
                 onClick={refetch}>
-                Päivitä
+                <Text>update</Text>
               </Button>
             )}
           </HeaderSection>

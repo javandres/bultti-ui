@@ -60,7 +60,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
                   buttonStyle={ButtonStyle.SECONDARY}
                   size={ButtonSize.SMALL}
                   onClick={refetch}>
-                  Päivitä
+                  <Text>update</Text>
                 </Button>
               )}
             </HeaderSection>

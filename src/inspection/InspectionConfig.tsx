@@ -106,14 +106,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
                     <Input
                       type="date"
                       value={inspection.startDate}
-                      label={text('start_date')}
+                      label={text('startDate')}
                       subLabel={true}
                       disabled={true}
                     />
                     <Input
                       type="date"
                       value={inspection.endDate}
-                      label={text('end_date')}
+                      label={text('endDate')}
                       subLabel={true}
                       disabled={true}
                     />
