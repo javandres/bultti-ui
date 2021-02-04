@@ -124,14 +124,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               <ActionsWrapper>
                 <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
-                  <Text>general.app.save</Text>
+                  <Text>save</Text>
                 </Button>
                 <Button
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                   onClick={() =>
                     setPendingInspectionInputValues(getInspectionInputValues(inspection))
                   }>
-                  <Text>general.app.cancel</Text>
+                  <Text>cancel</Text>
                 </Button>
               </ActionsWrapper>
             </FlexRow>

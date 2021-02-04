@@ -167,12 +167,12 @@ const ReportTableFilters = observer(
                       type="text"
                       theme="light"
                       label={`${text('report.filtering.filter_on')} ${
-                        selectedFilterOption?.label || text('general.app.all')
+                        selectedFilterOption?.label || text('all')
                       }`}
                     />
                     {filterFieldOptions.length !== 0 && (
                       <Dropdown
-                        label={text('general.app.field')}
+                        label={text('field')}
                         items={filterFieldOptions}
                         selectedItem={selectedFilterOption}
                         itemToString={(item) => item.field}

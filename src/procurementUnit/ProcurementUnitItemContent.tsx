@@ -191,7 +191,7 @@ const ProcurementUnitItemContent = observer(
               <Button
                 style={{ marginLeft: 'auto', marginTop: 'auto' }}
                 onClick={onEditProcurementUnit}>
-                <Text>general.app.edit</Text>
+                <Text>edit</Text>
               </Button>
             </ValueDisplay>
           ) : (
@@ -202,7 +202,7 @@ const ProcurementUnitItemContent = observer(
               onDone={onSaveProcurementUnit}
               onCancel={onCancelEdit}
               isDirty={isDirty}
-              doneLabel={text('general.app.save')}
+              doneLabel={text('save')}
               renderInput={renderProcurementItemInput}
             />
           )}

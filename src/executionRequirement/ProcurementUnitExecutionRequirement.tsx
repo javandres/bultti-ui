@@ -195,7 +195,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               onClick={update}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}>
-              <Text>general.app.update</Text>
+              <Text>update</Text>
             </Button>
             {isEditable && (
               <Button

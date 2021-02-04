@@ -179,7 +179,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                   <Text>catalogue.add_equipment</Text>
                 </Button>
                 <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
-                  <Text>general.app.cancel</Text>
+                  <Text>cancel</Text>
                 </Button>
               </ActionsWrapper>
             </AddEquipmentFormWrapper>
@@ -209,7 +209,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 <Text>catalogue.batch_add_equipment</Text>
               </Button>
               <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
-                <Text>general.app.cancel</Text>
+                <Text>cancel</Text>
               </Button>
             </ActionsWrapper>
           </>

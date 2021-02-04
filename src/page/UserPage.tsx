@@ -121,7 +121,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
             onClick={onLogout}
             size={ButtonSize.MEDIUM}
             buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-            <Text>general.app.logout</Text>
+            <Text>logout</Text>
           </Button>
         }>
         Käyttäjä

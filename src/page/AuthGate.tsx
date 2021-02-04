@@ -94,7 +94,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
           <LoadingIndicator loading={true} size={80} />
         )}
         <Title>
-          <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+          <Text>companyName</Text> <Text>title</Text>
         </Title>
       </Header>
       {unauthenticated && (
@@ -103,7 +103,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
             <LoginButton onClick={openAuthForm}>
               <Login height="1em" fill="white" />
               <span className="buttonText">
-                <Text>general.app.login</Text>
+                <Text>login</Text>
               </span>
             </LoginButton>
           </ButtonWrapper>

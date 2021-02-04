@@ -76,7 +76,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
                 onClick={() => refetch()}>
-                <Text>general.app.update</Text>
+                <Text>update</Text>
               </Button>
             </FlexRow>
             {procurementUnits.map((procurementUnit) => {

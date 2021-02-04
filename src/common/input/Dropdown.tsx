@@ -158,7 +158,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
               disabled,
             })}
             theme={theme}>
-            <span>{toString(currentlySelected, itemToLabel) || text('general.app.all')}</span>
+            <span>{toString(currentlySelected, itemToLabel) || text('all')}</span>
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 

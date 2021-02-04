@@ -161,7 +161,7 @@ const EditEquipmentCatalogue = observer(
             <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
               <FlexRow style={{ marginLeft: 'auto' }}>
                 <Button onClick={editCurrentCatalogue}>
-                  <Text>general.app.edit</Text>
+                  <Text>edit</Text>
                 </Button>
                 {!hasEquipment && (
                   <Button
@@ -188,7 +188,7 @@ const EditEquipmentCatalogue = observer(
               renderInput={renderCatalogueInput}
               doneLabel={
                 catalogueEditMode.current === CatalogueEditMode.UPDATE
-                  ? text('general.app.save')
+                  ? text('save')
                   : text('catalogue.add')
               }
             />

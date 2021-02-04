@@ -155,7 +155,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
-          <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+          <Text>companyName</Text> <Text>title</Text>
         </h1>
       </AppTitle>
       <UserBar>

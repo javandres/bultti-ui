@@ -426,7 +426,7 @@ const ContractEditor = observer(
               buttonStyle={ButtonStyle.REMOVE}
               size={ButtonSize.MEDIUM}
               onClick={execRemoveContract}>
-              <Text>general.app.remove</Text>
+              <Text>remove</Text>
             </Button>
           </FlexRow>
         )}

@@ -76,7 +76,7 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}
           onClick={() => refetch()}>
-          <Text>general.app.update</Text>
+          <Text>update</Text>
         </Button>
       </FlexRow>
       <FlexRow>
