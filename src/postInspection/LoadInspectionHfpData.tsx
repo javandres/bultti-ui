@@ -313,7 +313,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
 
   return (
     <LoadInspectionHfpDataView error={hfpMissing}>
-      <InputLabel theme="light">Lataa HFP</InputLabel>
+      <InputLabel>Lataa HFP</InputLabel>
       <LoadDescription>
         Tarkastukseen tarvitaan suuri määrä HFP tietoa, eli tietoa liikenteen toteumasta. Kun
         olet säätänyt tarkastuksen tarkastusjakso mieleiseksi, lataa toteutunut tieto siltä
@@ -351,9 +351,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
       </div>
       {!loadedRangesLoading && (
         <LoadedRangesDisplay>
-          <InputLabel theme="light" style={{ marginLeft: '1rem' }}>
-            HFP tietojen tilanne
-          </InputLabel>
+          <InputLabel style={{ marginLeft: '1rem' }}>HFP tietojen tilanne</InputLabel>
           {dateStatusByRanges.map((dateStatusRange) => {
             let status = dateStatusRange[0].status
 
@@ -378,7 +376,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
           })}
           {dateProgress.size !== 0 && (
             <>
-              <InputLabel theme="light" style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
+              <InputLabel style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
                 Nyt lataamassa
               </InputLabel>
               {inspectionDates.map((date) => {

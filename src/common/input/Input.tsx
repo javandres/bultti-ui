@@ -56,13 +56,14 @@ export type PropTypes = {
   value: string
   label?: string
   subLabel?: boolean
+  type?: InputTypes
+  theme?: ThemeTypes
+  hintText?: string
+  inputComponent?: React.ComponentType
+  tabIndex?: number
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
   onEscPress?: () => unknown
-  type?: InputTypes
-  theme?: ThemeTypes
-  inputComponent?: React.ComponentType
-  tabIndex?: number
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
@@ -71,13 +72,14 @@ const Input: React.FC<PropTypes> = observer(
     value = '',
     label,
     subLabel,
+    type = 'text',
+    theme = 'light',
+    hintText,
+    inputComponent = TextInput,
+    tabIndex,
     onChange,
     onEnterPress,
     onEscPress,
-    type = 'text',
-    theme = 'light',
-    inputComponent = TextInput,
-    tabIndex,
     ...inputProps
   }) => {
     const onValueChange = useCallback(
@@ -109,7 +111,7 @@ const Input: React.FC<PropTypes> = observer(
     return (
       <InputView className={className}>
         {!!label && (
-          <InputLabel subLabel={subLabel} theme={theme}>
+          <InputLabel subLabel={subLabel} theme={theme} hintText={hintText}>
             {label}
           </InputLabel>
         )}
