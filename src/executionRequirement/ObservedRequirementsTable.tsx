@@ -37,19 +37,19 @@ export type PropTypes = {
 
 const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
-  kilometersRequired: 'Km vaatimus',
-  quotaRequired: '% Osuus',
-  equipmentCountRequired: 'Vaatimus kpl',
+  kilometersRequired: 'Kaavioiden km',
   kilometersObserved: 'Toteuma km',
+  quotaRequired: '% Osuus',
   quotaObserved: 'Toteuma % osuus',
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
+  equipmentCountRequired: 'Vaatimus kpl',
   equipmentCountObserved: 'Toteuma kpl',
   averageAgeWeightedRequired: 'Suun. painotettu keski-ikä',
   averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
   sanctionThreshold: 'Sanktioraja',
-  sanctionablePercentage: 'Sanktioitavat',
   sanctionAmount: 'Sanktiomäärä',
+  sanctionablePercentage: 'Sanktioitavat',
 }
 
 const ObservedRequirementsTable: React.FC<PropTypes> = observer(({ executionRequirement }) => {
