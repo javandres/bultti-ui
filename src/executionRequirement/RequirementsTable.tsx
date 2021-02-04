@@ -87,6 +87,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       (key, val) => {
         let bg = 'transparent'
 
+        // Highlight the age value in red if the fulfilled average age goes below the requirement.
         if (key === 'averageAgeWeightedFulfilled') {
           let ageReq = executionRequirement.averageAgeRequirement
           bg = val > (ageReq || 0) ? 'var(--light-red)' : 'transparent'
