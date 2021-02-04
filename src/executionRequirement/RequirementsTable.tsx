@@ -143,7 +143,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           case 'kilometers':
           case 'kilometerRequirement':
           case 'kilometersFulfilled':
-            return `${totalVal} ${text('units.kilometers.short')}`
+            return `${totalVal} ${text('kilometersAbbreviation')}`
           case 'equipmentCount':
           case 'equipmentCountFulfilled':
             return `${totalVal} ${text('count')}`

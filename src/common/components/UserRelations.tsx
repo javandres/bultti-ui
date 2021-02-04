@@ -150,7 +150,7 @@ const UserRelations = observer(
 
 const getUserRelationTypeText = (rel: UserRelationType) => {
   let key = userRelationTypeMap[rel]
-  return key ? text(key) : '-'
+  return key ? text(`userRelations_${key}`) : '-'
 }
 
 export default UserRelations

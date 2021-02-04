@@ -16,20 +16,13 @@
   "save": "Tallenna",
   "field": "Kenttä",
   "add": "Lisää",
-  "validity_period": "Voimassaoloaika",
-  "time.years": "vuotta",
+  "validityPeriod": "Voimassaoloaika",
+  "area": "Alue",
   "count": "kpl",
-  "units.kilometers.short": "km",
+  "kilometersAbbreviation": "km",
   "back": "Takaisin",
   "show": "Näytä",
   "hide": "Piilota",
-  "createdBy": "Luotu",
-  "updatedBy": "Päivitetty",
-  "subscribedTo": "Tilattu",
-  "publishedBy": "Julkaistu",
-  "rejectedBy": "Peruttu",
-  "submittedBy": "Lisätty sanktioitavaksi",
-  "readiedBy": "Hyväksytty",
 
   "domain.all.operators": "Kaikki liikennöitsijät",
 
@@ -93,6 +86,7 @@
   "procurement_unit.contract": "Sopimusehdot",
   "procurement_unit.age_requirement": "Maksimi keski-ikä vaatimus",
   "procurement_unit.age_requirement.calculated": "Laskettu maksimi keski-ikä vaatimus + optiovuodet",
+  "procurementUnit.ageRequirementYears": "Vuotta",
   "procurement_unit.execution_requirements": "Kohteen suoritevaatimukset",
 
   "requirement.heading.day_type_stats": "Kaavion ajoneuvot päivätyypittäin",
@@ -111,6 +105,14 @@
   "requirement.create": "Laske kohteen suoritevaatimukset",
   "requirement.remove.warning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
   "requirement.refresh.warning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
+
+  "userRelations_createdBy": "Luotu",
+  "userRelations_updatedBy": "Päivitetty",
+  "userRelations_subscribedTo": "Tilattu",
+  "userRelations_publishedBy": "Julkaistu",
+  "userRelations_rejectedBy": "Peruttu",
+  "userRelations_submittedBy": "Lisätty sanktioitavaksi",
+  "userRelations_readiedBy": "Hyväksytty",
 
   "contract.no_valid_contracts": "Ei voimassaolevaa sopimusta.",
 
