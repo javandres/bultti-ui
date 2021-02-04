@@ -169,6 +169,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
             totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
             averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
+            averageAgeRequirement: 'Painotettu keski-ikä vaatimus',
           }}
           renderValue={renderDisplayValue}
         />
