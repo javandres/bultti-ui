@@ -49,14 +49,14 @@ export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea', rows: 3
   line-height: 1.4;
   height: auto;
 `
-type InputTypes = 'text' | 'date' | 'number'
+type InputType = 'text' | 'date' | 'number'
 
 export type PropTypes = {
   className?: string
   value: string
   label?: string
   subLabel?: boolean
-  type?: InputTypes
+  type?: InputType
   theme?: ThemeTypes
   hintText?: string
   inputComponent?: React.ComponentType

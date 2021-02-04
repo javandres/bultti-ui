@@ -161,7 +161,7 @@
   "inspection_date.list.header": "Nykyiset tarkastusjaksot",
   "inspection_date.list.noResults": "Tarkastusjaksoja ei löytynyt",
   "inspection_date.form.header": "Lisää uusi tarkastusjakso",
-  "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä",
+  "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
 
   "report.filtering.add_field": "Lisää kenttä",
   "report.filtering.title": "Suodatus",
