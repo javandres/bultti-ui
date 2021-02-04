@@ -219,13 +219,10 @@ const AddEquipment: React.FC<PropTypes> = observer(
             <InputForm
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
-              doneLabel={`${text('catalogue_findEquipment')}${
-                searchVehicleId
-                  ? ' ' + text('catalogue_findByVehicleId')
-                  : searchRegistryNr
-                  ? ' ' + text('catalogue_findByRegistryNumber')
-                  : ''
-              }`}
+              doneLabel={text('catalogue_findByVehicleIdAndRegistryNumber', {
+                vehicleId: searchVehicleId ? searchVehicleId : '-',
+                registryNumber: searchRegistryNr ? searchRegistryNr : '-',
+              })}
               doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
                 {

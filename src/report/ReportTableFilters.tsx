@@ -136,7 +136,7 @@ const ReportTableFilters = observer(
           <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>
             <Text>report_filtering_title</Text>
             <UserHint
-              hintText={text('report_filteringHint')}
+              hintText={text('report_filtering_hint')}
               style={{ marginLeft: '0.75rem' }}
             />
           </SubHeading>

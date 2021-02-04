@@ -116,11 +116,15 @@
   "catalogue_removeEquipment": "Poista kalustoluettelo",
   "catalogue_addEquipment": "Lisää ajoneuvo",
   "catalogue_batchAddequipment": "Lisää ajoneuvoja listalta",
-  "catalogue_findEquipment": "Hae kalusto",
-  "catalogue_findByVehicleId": "kylkinumerolla",
-  "catalogue_findByRegistryNumber": "rekisterinumerolla",
-  "catalogue_equipmentNotFound": "Kalustoa ei löydetty.",
+  "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa kylkinumerolla: ${vehicleId}, rekisterinumerolla: ${registryNumber}",
+  "catalogue_findEquipment": "Hae kalustoa",
+  "catalogue_equipmentNotFound": "Kalustoa ei löytynyt.",
   "catalogue_equipmentConfirmRemove": "Haluatko varmasti poistaa ajoneuvon?",
+
+  "equipmentCatalogue_startDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
+  "equipmentCatalogue_endDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
+
+  "equipment_batchAddEquipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.",
 
   "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
   "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
@@ -131,6 +135,11 @@
   "inspection_inspectionName": "Tarkastuksen nimi",
   "inspection_selectInspection": "Valitse tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
+  "inspection_state_draft": "Muokattavissa",
+  "inspection_state_prosessing": "Käsiteltävänä",
+  "inspection_state_review": "Hyväksyttävänä",
+  "inspection_state_production": "Tuotannossa",
+
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",
 
@@ -150,10 +159,7 @@
   "report_filtering_title": "Suodatus",
   "report_filtering_filter_on": "Suodata saraketta",
   "report_filtering_apply": "Käytä suodatus",
-
-  "Draft": "Muokattavissa",
-  "InReview": "Hyväksyttävänä",
-  "InProduction": "Tuotannossa",
+  "report_filtering_hint": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
 
   "NOT_PRE": "Tarkastus ei ole ennakko-tarkastus",
   "NOT_POST": "Tarkastus ei ole jälkitarkastus",
@@ -163,10 +169,5 @@
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
   "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaolevaa sopimusta.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
-  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
-
-  "equipmentCatalogue_startDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
-  "equipmentCatalogue_endDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
-  "report_filteringHint": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
-  "equipment_batchAddEquipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi."
+  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
 }
