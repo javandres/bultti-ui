@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import { logoutMutation, modifyUserMutation } from '../common/query/authQueries'
@@ -126,18 +126,19 @@ const UserPage: React.FC<PropTypes> = observer(() => {
         }>
         Käyttäjä
       </PageTitle>
-      <LoadingDisplay loading={userLoading} />
-      <ItemForm
-        showButtons={isDirty}
-        hideKeys={['id']}
-        onChange={onChange}
-        onDone={onDone}
-        onCancel={onCancel}
-        readOnly={['email', 'hslIdGroups']}
-        style={{ marginRight: '1rem', marginLeft: '1rem' }}
-        item={{ email: user.email, hslIdGroups: user.hslIdGroups, ...pendingUser }}
-        renderInput={renderUserInput}
-      />
+      <PageContainer>
+        <LoadingDisplay loading={userLoading} />
+        <ItemForm
+          showButtons={isDirty}
+          hideKeys={['id']}
+          onChange={onChange}
+          onDone={onDone}
+          onCancel={onCancel}
+          readOnly={['email', 'hslIdGroups']}
+          item={{ email: user.email, hslIdGroups: user.hslIdGroups, ...pendingUser }}
+          renderInput={renderUserInput}
+        />
+      </PageContainer>
     </UserPageView>
   )
 })

@@ -1,8 +1,6 @@
 import styled from 'styled-components/macro'
 
 export const MessageContainer = styled.div`
-  padding: 0 1rem;
-
   &:first-child {
     margin-top: 0;
   }

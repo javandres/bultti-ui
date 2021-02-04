@@ -33,9 +33,7 @@ import Table from '../common/components/Table'
 import { text, Text } from '../util/translate'
 import { navigateWithQueryString } from '../util/urlValue'
 
-const ContractEditorView = styled.div`
-  padding: 0 1rem;
-`
+const ContractEditorView = styled.div``
 
 const ExpandableFormSection = styled(ExpandableSection)`
   margin-top: 0;

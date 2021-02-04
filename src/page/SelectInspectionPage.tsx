@@ -1,6 +1,6 @@
 import React from 'react'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionType } from '../schema-types'
@@ -38,12 +38,14 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
       <PageTitle loading={loading} onRefresh={refetch}>
         Valitse {typeStrings.prefixLC}tarkastus muokattavaksi
       </PageTitle>
-      <SelectInspection
-        inspections={inspections}
-        inspectionType={inspectionType}
-        refetchInspections={refetch}
-        loading={loading}
-      />
+      <PageContainer>
+        <SelectInspection
+          inspections={inspections}
+          inspectionType={inspectionType}
+          refetchInspections={refetch}
+          loading={loading}
+        />
+      </PageContainer>
     </Page>
   )
 })

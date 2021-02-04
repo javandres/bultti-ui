@@ -1,7 +1,7 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import InspectionsList from '../inspection/InspectionsList'
 import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/Button'
@@ -35,20 +35,22 @@ const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
         }>
         {typeStrings.prefix}tarkastukset
       </PageTitle>
-      {!operator ? (
-        <MessageContainer>
-          <MessageView>Valitse liikennöitsijä.</MessageView>
-        </MessageContainer>
-      ) : (
-        inspections.length !== 0 && (
-          <InspectionsList
-            inspections={inspections}
-            inspectionType={inspectionType}
-            loading={loading}
-            onUpdate={refetch}
-          />
-        )
-      )}
+      <PageContainer>
+        {!operator ? (
+          <MessageContainer>
+            <MessageView>Valitse liikennöitsijä.</MessageView>
+          </MessageContainer>
+        ) : (
+          inspections.length !== 0 && (
+            <InspectionsList
+              inspections={inspections}
+              inspectionType={inspectionType}
+              loading={loading}
+              onUpdate={refetch}
+            />
+          )
+        )}
+      </PageContainer>
     </Page>
   )
 })

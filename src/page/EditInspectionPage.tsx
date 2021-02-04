@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { RouteComponentProps } from '@reach/router'
-import { Page } from '../common/components/common'
+import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import InspectionPreview from '../inspection/InspectionPreview'
@@ -17,7 +17,7 @@ import {
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
-import { text, Text, translate } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
@@ -29,6 +29,13 @@ const EditInspectionView = styled(Page)`
   display: flex;
   height: 100%;
   flex-direction: column;
+`
+
+const EditInspectionPageContainer = styled(PageContainer)`
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
 `
 
 const EditInspectionWrapper = styled(Page)`
@@ -125,56 +132,58 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                       ? 'var(--dark-grey)'
                       : 'white',
                 }}>
-                <strong>{translate(inspection.status)}</strong>
+                <strong>{text(inspection.status)}</strong>
               </InspectionStatusContainer>
             )}
           </PageTitle>
-          {!operator || !season ? (
-            <MessageContainer>
-              <MessageView>
-                <Text>inspectionPage_selectOperatorAndSeason</Text>
-              </MessageView>
-            </MessageContainer>
-          ) : !inspection && !inspectionLoading ? (
-            <MessageContainer>
-              <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
-              <Button onClick={() => editInspection()}>
-                <Text>back</Text>
-              </Button>
-            </MessageContainer>
-          ) : (
-            inspection && (
-              <>
-                <InspectionActionsRow
-                  inspection={inspection}
-                  onRefresh={refetch}
-                  disabledActions={hasErrors ? ['submit', 'publish'] : []}
-                />
-                <EditInspectionWrapper>
-                  {inspection?.status === InspectionStatus.InProduction ? (
-                    <InspectionEditor inspection={inspection} refetchData={refetch} />
-                  ) : (
-                    <Tabs>
-                      <InspectionEditor
-                        name="create"
-                        path="/"
-                        label={text('inspectionPage_inspectionInformation')}
-                        loading={inspectionLoading}
-                        refetchData={refetch}
-                        inspection={inspection}
-                      />
-                      <InspectionPreview
-                        inspection={inspection}
-                        path="results"
-                        name="results"
-                        label={text('inspectionPage_results')}
-                      />
-                    </Tabs>
-                  )}
-                </EditInspectionWrapper>
-              </>
-            )
-          )}
+          <EditInspectionPageContainer>
+            {!operator || !season ? (
+              <MessageContainer style={{ margin: '1rem' }}>
+                <MessageView>
+                  <Text>inspectionPage_selectOperatorAndSeason</Text>
+                </MessageView>
+              </MessageContainer>
+            ) : !inspection && !inspectionLoading ? (
+              <MessageContainer style={{ margin: '1rem' }}>
+                <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
+                <Button onClick={() => editInspection()}>
+                  <Text>back</Text>
+                </Button>
+              </MessageContainer>
+            ) : (
+              inspection && (
+                <>
+                  <InspectionActionsRow
+                    inspection={inspection}
+                    onRefresh={refetch}
+                    disabledActions={hasErrors ? ['submit', 'publish'] : []}
+                  />
+                  <EditInspectionWrapper>
+                    {inspection?.status === InspectionStatus.InProduction ? (
+                      <InspectionEditor inspection={inspection} refetchData={refetch} />
+                    ) : (
+                      <Tabs>
+                        <InspectionEditor
+                          name="create"
+                          path="/"
+                          label={text('inspectionPage_inspectionInformation')}
+                          loading={inspectionLoading}
+                          refetchData={refetch}
+                          inspection={inspection}
+                        />
+                        <InspectionPreview
+                          inspection={inspection}
+                          path="results"
+                          name="results"
+                          label={text('inspectionPage_results')}
+                        />
+                      </Tabs>
+                    )}
+                  </EditInspectionWrapper>
+                </>
+              )
+            )}
+          </EditInspectionPageContainer>
         </InspectionContext.Provider>
       </EditInspectionView>
     )
