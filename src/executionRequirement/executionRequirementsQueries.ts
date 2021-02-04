@@ -94,6 +94,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       inspectionId: $inspectionId
     ) {
       averageAgeWeighted
+      averageAgeRequirement
       averageAgeWeightedFulfilled
       ...ExecutionRequirementFragment
       equipmentQuotas {

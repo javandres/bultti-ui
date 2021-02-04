@@ -690,6 +690,7 @@ export type ExecutionRequirement = {
   totalKilometersFulfilled?: Maybe<Scalars['Float']>;
   averageAgeWeighted?: Maybe<Scalars['Float']>;
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
   requirements: Array<ExecutionRequirementValue>;
 };
 
@@ -766,8 +767,6 @@ export type ObservedExecutionRequirement = {
   kilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
-  _sanctionPercentageValue: Scalars['Float'];
-  _sanctionThresholdValue: Scalars['Float'];
   observedRequirements: Array<ObservedExecutionValue>;
 };
 
@@ -1194,8 +1193,9 @@ export type ExecutionRequirementsReportData = {
   areaName: Scalars['String'];
   totalKilometers: Scalars['Float'];
   totalKilometersFulfilled: Scalars['Float'];
-  averageAgeWeighted: Scalars['Float'];
-  averageAgeWeightedFulfilled: Scalars['Float'];
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
   requirements: Array<ExecutionRequirementValue>;
 };
 

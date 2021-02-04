@@ -34,6 +34,7 @@ export interface IExecutionRequirement {
   requirements: ExecutionRequirementValue[]
   totalKilometers?: number | null
   averageAgeWeighted?: number | null
+  averageAgeRequirement?: number | null
   averageAgeWeightedFulfilled?: number | null
 }
 
@@ -82,12 +83,22 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       return [kilometerRow, percentageRow]
     }, [executionRequirement, tableLayout])
 
-    let renderDisplayValue = useCallback((key, val) => {
-      let displayVal = round(val)
-      let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
+    let renderDisplayValue = useCallback(
+      (key, val) => {
+        let bg = 'transparent'
 
-      return `${displayVal} ${displayUnit}`
-    }, [])
+        if (key === 'averageAgeWeightedFulfilled') {
+          let ageReq = executionRequirement.averageAgeRequirement
+          bg = val > (ageReq || 0) ? 'var(--light-red)' : 'transparent'
+        }
+
+        let displayVal = round(val)
+        let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
+
+        return <span style={{ backgroundColor: bg }}>{`${displayVal} ${displayUnit}`}</span>
+      },
+      [executionRequirement]
+    )
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
       if (isHeader || key === 'unit' || !isNumeric(val) || val === 0) {
@@ -160,16 +171,16 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           valuesPerRow={3}
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, [
+            'averageAgeWeighted',
+            'averageAgeRequirement',
+            'averageAgeWeightedFulfilled',
             'totalKilometers',
-            ...(tableLayout === RequirementsTableLayout.BY_VALUES
-              ? ['averageAgeWeighted', 'averageAgeWeightedFulfilled']
-              : ['averageAgeWeighted']),
           ])}
           labels={{
-            totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
-            averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
             averageAgeRequirement: 'Painotettu keski-ikä vaatimus',
+            averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
+            totalKilometers: 'Suoritekilometrit yhteensä',
           }}
           renderValue={renderDisplayValue}
         />
