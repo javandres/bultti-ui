@@ -146,8 +146,6 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
       [requirementRows]
     )
 
-    console.log(requirementRows)
-
     return (
       <ExecutionRequirementsAreaContainer>
         <ValueDisplay
