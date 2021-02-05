@@ -10,6 +10,7 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
 import LoadInspectionHfpData from './LoadInspectionHfpData'
 import { MessageContainer, MessageView } from '../common/components/Messages'
+import { Text } from '../util/translate'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -69,7 +70,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
                       onClick={onUpdateConnectedInspection}
                       buttonStyle={ButtonStyle.SECONDARY}
                       size={ButtonSize.SMALL}>
-                      Päivitä
+                      <Text>update</Text>
                     </Button>
                   )}
                 </Heading>

@@ -37,8 +37,8 @@ export type PropTypes = {
 }
 
 const operatingAreaNameLocalizationObj = {
-  [OperatingAreaName.Center]: text('procurement_unit.operating_area_name.center'),
-  [OperatingAreaName.Other]: text('procurement_unit.operating_area_name.other'),
+  [OperatingAreaName.Center]: text('center'),
+  [OperatingAreaName.Other]: text('other'),
   [OperatingAreaName.Unknown]: text('unknown'),
 }
 
@@ -86,13 +86,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
               <>
                 <HeaderSection>
                   <HeaderHeading>
-                    <Text>procurement_unit.unit_id</Text>
+                    <Text>procurementUnit_unitId</Text>
                   </HeaderHeading>
                   {procurementUnit.procurementUnitId}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
-                    <Text>procurement_unit.routes</Text>
+                    <Text>routes</Text>
                   </HeaderHeading>
                   {(routes || [])
                     .map((route) => route?.routeId)
@@ -101,7 +101,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }}>
                   <HeaderHeading>
-                    <Text>procurement_unit.valid_time</Text>
+                    <Text>procurementUnit_unitValidTime</Text>
                   </HeaderHeading>
                   <DateRangeDisplay
                     startDate={procurementUnit.startDate}
@@ -110,19 +110,20 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
-                    <Text>procurement_unit.operation_area</Text>
+                    <Text>procurementUnit_operationArea</Text>
                   </HeaderHeading>
                   {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
-                    <Text>procurement_unit.age_requirement</Text>
+                    <Text>procurementUnit_ageRequirement</Text>
                   </HeaderHeading>
-                  {procurementUnit?.medianAgeRequirement || 0} <Text>general.time.years</Text>
+                  {procurementUnit?.medianAgeRequirement || 0}{' '}
+                  <Text>procurementUnit_ageRequirementYears</Text>
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>
-                    <Text>procurement_unit.contract</Text>
+                    <Text>contracts</Text>
                   </HeaderHeading>
                   {(currentContracts || []).length !== 0 ? (
                     <>
@@ -135,7 +136,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                       </ContractDescription>
                     </>
                   ) : (
-                    text('contract.no_valid_contracts')
+                    text('procurementUnit_noValidContracts')
                   )}
                 </HeaderSection>
               </>

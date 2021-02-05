@@ -110,13 +110,13 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
         <FlexRow
           style={{ marginLeft: 'auto', justifyContent: 'flex-end', marginBottom: '1rem' }}>
           <Button loading={equipmentUpdateLoading} onClick={updateAllEquipmentData}>
-            <Text>catalogue.update_equipment</Text>
+            <Text>catalogue_updateEquipment</Text>
           </Button>
         </FlexRow>
       </>
     ) : (
       <MessageView>
-        <Text>catalogue.empty</Text>
+        <Text>catalogue_emptyCatalogue</Text>
       </MessageView>
     )
   }

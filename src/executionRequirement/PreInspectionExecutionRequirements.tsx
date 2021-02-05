@@ -14,6 +14,7 @@ import {
   RequirementsTableLayout,
   usePreInspectionAreaRequirements,
 } from './executionRequirementUtils'
+import { Text } from '../util/translate'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -48,7 +49,9 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
         error={!isValid}
         headerContent={
           <>
-            <HeaderMainHeading>Suoritevaatimukset</HeaderMainHeading>
+            <HeaderMainHeading>
+              <Text>executionRequirements</Text>
+            </HeaderMainHeading>
             <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
               {areaExecutionRequirements?.length !== 0 && (
                 <Button
@@ -57,7 +60,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
                   buttonStyle={ButtonStyle.SECONDARY}
                   size={ButtonSize.SMALL}
                   onClick={refetch}>
-                  Päivitä
+                  <Text>update</Text>
                 </Button>
               )}
             </HeaderSection>

@@ -17,8 +17,8 @@ const Header = styled.div`
 `
 
 const inspectionDateLabels = {
-  startDate: text('start_date'),
-  endDate: text('end_date'),
+  startDate: text('startDate'),
+  endDate: text('endDate'),
 }
 
 interface PropTypes {
@@ -76,7 +76,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
     return (
       <InspectionDateFormContainer>
         <Header>
-          <Text>inspection_date.form.header</Text>
+          <Text>inspectionDateForm_header</Text>
         </Header>
         <ItemForm
           item={pendingInspectionDate}

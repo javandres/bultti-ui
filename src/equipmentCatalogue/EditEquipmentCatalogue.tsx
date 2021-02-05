@@ -22,13 +22,13 @@ const EditEquipmentCatalogueView = styled.div`
 `
 
 export const equipmentCatalogueLabels = {
-  startDate: text('start_date'),
-  endDate: text('end_date'),
+  startDate: text('startDate'),
+  endDate: text('endDate'),
 }
 
 const equipmentCatalogueHints = {
-  startDate: text('hint.equipment_catalogue.start_date'),
-  endDate: text('hint.equipment_catalogue.end_date'),
+  startDate: text('equipmentCatalogue_startDateHint'),
+  endDate: text('equipmentCatalogue_endDateHint'),
 }
 
 enum CatalogueEditMode {
@@ -161,7 +161,7 @@ const EditEquipmentCatalogue = observer(
             <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
               <FlexRow style={{ marginLeft: 'auto' }}>
                 <Button onClick={editCurrentCatalogue}>
-                  <Text>general.app.edit</Text>
+                  <Text>edit</Text>
                 </Button>
                 {!hasEquipment && (
                   <Button
@@ -169,7 +169,7 @@ const EditEquipmentCatalogue = observer(
                     buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                     onClick={() => removeCatalogue()}
                     loading={removeCatalogueLoading}>
-                    <Text>catalogue.remove</Text>
+                    <Text>catalogue_removeEquipment</Text>
                   </Button>
                 )}
               </FlexRow>
@@ -188,8 +188,8 @@ const EditEquipmentCatalogue = observer(
               renderInput={renderCatalogueInput}
               doneLabel={
                 catalogueEditMode.current === CatalogueEditMode.UPDATE
-                  ? text('general.app.save')
-                  : text('catalogue.add')
+                  ? text('save')
+                  : text('catalogue_addCatalogue')
               }
             />
           )}
@@ -205,7 +205,7 @@ const EditEquipmentCatalogue = observer(
               borderTop: '1px solid var(--lighter-grey)',
             }}>
             <Button onClick={addDraftCatalogue}>
-              <Text>catalogue.new</Text>
+              <Text>catalogue_newCatalogue</Text>
             </Button>
           </FlexRow>
         )}

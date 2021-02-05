@@ -28,8 +28,8 @@ import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/Button'
 
 const procurementUnitLabels = {
-  medianAgeRequirement: text('procurement_unit.age_requirement'),
-  calculatedMedianAgeRequirement: text('procurement_unit.age_requirement.calculated'),
+  medianAgeRequirement: text('procurementUnit_ageRequirement'),
+  calculatedMedianAgeRequirement: text('procurementUnit_ageRequirementCalculated'),
 }
 
 const ContentWrapper = styled.div`
@@ -191,7 +191,7 @@ const ProcurementUnitItemContent = observer(
               <Button
                 style={{ marginLeft: 'auto', marginTop: 'auto' }}
                 onClick={onEditProcurementUnit}>
-                <Text>general.app.edit</Text>
+                <Text>edit</Text>
               </Button>
             </ValueDisplay>
           ) : (
@@ -202,7 +202,7 @@ const ProcurementUnitItemContent = observer(
               onDone={onSaveProcurementUnit}
               onCancel={onCancelEdit}
               isDirty={isDirty}
-              doneLabel={text('general.app.save')}
+              doneLabel={text('save')}
               renderInput={renderProcurementItemInput}
             />
           )}
@@ -218,7 +218,7 @@ const ProcurementUnitItemContent = observer(
             )}
             <CatalogueWrapper isInvalid={catalogueInvalid}>
               <SubHeading>
-                <Text>catalogue.catalogues_list_heading</Text>
+                <Text>catalogue_cataloguesListHeading</Text>
               </SubHeading>
               {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
                 return (
@@ -246,7 +246,7 @@ const ProcurementUnitItemContent = observer(
               })}
               {catalogues.length === 0 && (
                 <MessageView>
-                  <Text>procurement_unit.no_catalogue</Text>
+                  <Text>procurementUnit_noCatalogueForUnit</Text>
                 </MessageView>
               )}
               {catalogueEditable && (

@@ -42,7 +42,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
   return (
     <InspectionDatesPage>
       <PageTitle loading={loading} onRefresh={refetch}>
-        <Text>inspection_date.page.header</Text>
+        <Text>inspectionDate_pageHeader</Text>
       </PageTitle>
       <PageContainer>
         <InspectionDateListWrapper>
@@ -53,7 +53,7 @@ const InspectionDatePage: React.FC<PropTypes> = observer(() => {
           />
           <NewInspectionButtonWrapper>
             <Button onClick={() => setInspectionDateFormVisibility(true)}>
-              <Text>inspection_date.page.new_inspection_button</Text>
+              <Text>inspectionDatePage_newInspectionButton</Text>
             </Button>
           </NewInspectionButtonWrapper>
         </InspectionDateListWrapper>

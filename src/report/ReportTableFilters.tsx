@@ -134,9 +134,9 @@ const ReportTableFilters = observer(
       <ReportTableFiltersView>
         <FlexRow style={{ alignItems: 'center' }}>
           <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>
-            <Text>report.filtering.title</Text>
+            <Text>report_filtering_title</Text>
             <UserHint
-              hintText={text('hint.report.filtering')}
+              hintText={text('report_filtering_hint')}
               style={{ marginLeft: '0.75rem' }}
             />
           </SubHeading>
@@ -145,7 +145,7 @@ const ReportTableFilters = observer(
             onClick={() => onAddFilter()}
             buttonStyle={ButtonStyle.SECONDARY}
             size={ButtonSize.SMALL}>
-            <Text>report.filtering.add_field</Text>
+            <Text>report_filtering_addField</Text>
           </Button>
         </FlexRow>
         {filters.length !== 0 && (
@@ -166,13 +166,13 @@ const ReportTableFilters = observer(
                       name="filter"
                       type="text"
                       theme="light"
-                      label={`${text('report.filtering.filter_on')} ${
-                        selectedFilterOption?.label || text('general.app.all')
+                      label={`${text('report_filtering_filter_on')} ${
+                        selectedFilterOption?.label || text('all')
                       }`}
                     />
                     {filterFieldOptions.length !== 0 && (
                       <Dropdown
-                        label={text('general.app.field')}
+                        label={text('field')}
                         items={filterFieldOptions}
                         selectedItem={selectedFilterOption}
                         itemToString={(item) => item.field}
@@ -191,7 +191,7 @@ const ReportTableFilters = observer(
               {filters.length !== 0 && (
                 <FilterButtonBar>
                   <Button size={ButtonSize.LARGE} onClick={onClickApply}>
-                    <Text>report.filtering.apply</Text>
+                    <Text>report_filtering_apply</Text>
                   </Button>
                 </FilterButtonBar>
               )}

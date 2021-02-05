@@ -134,7 +134,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       if (
         isEditable &&
         procurementUnitRequirement &&
-        confirm(text('requirement.refresh.warning'))
+        confirm(text('executionRequirement_refreshWarning'))
       ) {
         await refreshExecutionRequirement({
           variables: {
@@ -150,7 +150,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       if (
         isEditable &&
         procurementUnitRequirement &&
-        confirm(text('requirement.remove.warning'))
+        confirm(text('executionRequirement_removeWarning'))
       ) {
         await execRemoveExecutionRequirement({
           variables: {
@@ -187,7 +187,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
           <SectionHeading style={{ marginBottom: 0 }}>
-            <Text>procurement_unit.execution_requirements</Text>
+            <Text>executionRequirement_unitExecutionRequirements</Text>
           </SectionHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
             <Button
@@ -195,7 +195,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               onClick={update}
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}>
-              <Text>general.app.update</Text>
+              <Text>update</Text>
             </Button>
             {isEditable && (
               <Button
@@ -204,7 +204,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 style={{ marginLeft: '0.5rem' }}
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}>
-                <Text>requirement.refresh_equipment</Text>
+                <Text>executionRequirement_refreshEquipment</Text>
               </Button>
             )}
           </div>
@@ -212,7 +212,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         <ExecutionDisplay>
           <div>
             <strong>
-              <Text>requirement.weekly_kilometers</Text>
+              <Text>executionRequirement_weeklyKilometers</Text>
             </strong>
             {isEditable && (
               <Button
@@ -220,7 +220,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 size={ButtonSize.SMALL}
                 buttonStyle={ButtonStyle.SECONDARY}
                 onClick={onUpdateWeeklyMeters}>
-                <Text>requirement.update.jore_kilometers</Text>
+                <Text>executionRequirement_updateJoreKilometers</Text>
               </Button>
             )}
           </div>
@@ -233,7 +233,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         {procurementUnitRequirement ? (
           <>
             <SubHeading>
-              <Text>requirement.equipment_list</Text>
+              <Text>executionRequirement_equipmentList</Text>
             </SubHeading>
             <RequirementEquipmentList
               isEditable={isEditable}
@@ -250,13 +250,13 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 hasEquipment={equipment.length !== 0}
                 addEquipment={addEquipment}
                 removeAllEquipment={removeExecutionRequirement}
-                removeLabel={text('requirement.remove')}
+                removeLabel={text('executionRequirement_remove')}
                 editableKeys={['percentageQuota']}
                 fieldLabels={equipmentColumnLabels}
               />
             )}
             <SubHeading>
-              <Text>requirement.unit_values</Text>
+              <Text>executionRequirement_unitValues</Text>
             </SubHeading>
             <RequirementsTable
               executionRequirement={procurementUnitRequirement}
@@ -266,10 +266,10 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         ) : (
           <>
             <MessageView>
-              <Text>requirement.missing</Text>
+              <Text>executionRequirement_missing</Text>
             </MessageView>
             <Button loading={createLoading} onClick={onCreateRequirements}>
-              <Text>requirement.create</Text>
+              <Text>executionRequirement_create</Text>
             </Button>
           </>
         )}

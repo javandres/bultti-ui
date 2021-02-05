@@ -14,6 +14,7 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
+import { Text } from '../util/translate'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
@@ -86,7 +87,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
       error={!isValid}
       headerContent={
         <>
-          <HeaderMainHeading>Lähtöketjut</HeaderMainHeading>
+          <HeaderMainHeading>
+            <Text>departureBlocks</Text>
+          </HeaderMainHeading>
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
             {dayTypesWithDepartures.length !== 0 && (
               <Button
@@ -95,7 +98,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
                 buttonStyle={ButtonStyle.SECONDARY}
                 size={ButtonSize.SMALL}
                 onClick={() => refetch()}>
-                Päivitä
+                <Text>update</Text>
               </Button>
             )}
           </HeaderSection>

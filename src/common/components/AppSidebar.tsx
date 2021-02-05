@@ -155,7 +155,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
-          <Text>general.app.companyName</Text> <Text>general.app.title</Text>
+          <Text>companyName</Text> <Text>title</Text>
         </h1>
       </AppTitle>
       <UserBar>
@@ -174,60 +174,60 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       <AppNav>
         <NavCategory>
           <CategoryTitle>
-            <Text>nav.category.procurementunits</Text>
+            <Text>procurementUnits</Text>
           </CategoryTitle>
           <NavLink to="procurement-units">
             <Bus fill="white" width="1rem" height="1rem" />
-            <Text>nav.list.procurementunits</Text>
+            <Text>nav_editProcurementUnits</Text>
           </NavLink>
         </NavCategory>
         <NavCategory>
           <CategoryTitle>
-            <Text>nav.category.reports_contracts</Text>
+            <Text>contracts</Text>
           </CategoryTitle>
           <NavLink to="contract">
             <Menu fill="white" width="1rem" height="1rem" />
-            <Text>nav.contracts.edit</Text>
+            <Text>nav_editContracts</Text>
           </NavLink>
         </NavCategory>
         <NavCategory>
           <CategoryTitle>
-            <Text>nav.category.preinspection</Text>
+            <Text>preInspection</Text>
           </CategoryTitle>
           <NavLink to="pre-inspection">
             <Search fill="white" width="1rem" height="1rem" />
-            <Text>nav.list.preinspection</Text>
+            <Text>preInspections</Text>
           </NavLink>
           <NavLink to="pre-inspection/edit">
             <Plus fill="white" width="1rem" height="1rem" />
-            <Text>nav.new.preinspection</Text>
+            <Text>nav_newPreInspection</Text>
           </NavLink>
           <NavLink to="pre-inspection/reports">
             <Menu fill="white" width="1rem" height="1rem" />
-            <Text>nav.reports</Text>
+            <Text>reports</Text>
           </NavLink>
         </NavCategory>
         <NavCategory>
           <CategoryTitle>
-            <Text>nav.category.postinspection</Text>
+            <Text>postInspection</Text>
           </CategoryTitle>
           <NavLink to="post-inspection">
             <Search fill="white" width="1rem" height="1rem" />
-            <Text>nav.list.postinspection</Text>
+            <Text>postInspections</Text>
           </NavLink>
           <NavLink to="post-inspection/edit">
             <Plus fill="white" width="1rem" height="1rem" />
-            <Text>nav.new.postinspection</Text>
+            <Text>nav_newPostInspection</Text>
           </NavLink>
           {hasAdminAccess && (
             <NavLink to="inspection-date">
               <Plus fill="white" width="1rem" height="1rem" />
-              <Text>nav.category.inspection_date</Text>
+              <Text>nav_editInspectionDates</Text>
             </NavLink>
           )}
           <NavLink to="post-inspection/reports">
             <Menu fill="white" width="1rem" height="1rem" />
-            <Text>nav.reports</Text>
+            <Text>reports</Text>
           </NavLink>
         </NavCategory>
       </AppNav>
