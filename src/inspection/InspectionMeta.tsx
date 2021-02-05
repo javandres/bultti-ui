@@ -21,10 +21,6 @@ const InspectionMetaContainer = styled.div`
   margin-top: 1rem;
 `
 
-const MetaHeading = styled(InputLabel).attrs(() => ({ theme: 'light' }))`
-  margin-top: 0;
-`
-
 type PropTypes = {
   className?: string
   inspection: Inspection
@@ -41,14 +37,14 @@ const InspectionMeta: React.FC<PropTypes> = observer(({ className, inspection })
 
   return (
     <InspectionMetaView className={className}>
-      <MetaHeading style={{ display: 'flex', alignItems: 'center', paddingBottom: 0 }}>
+      <InputLabel style={{ justifyContent: 'start', alignItems: 'center', paddingBottom: 0 }}>
         Tarkastuksen tiedot
         <TextButton
           style={{ display: 'inline-block', marginLeft: '1rem' }}
           onClick={toggleMetaVisible}>
           {isVisible ? text('hide') : text('show')}
         </TextButton>
-      </MetaHeading>
+      </InputLabel>
       {isVisible && (
         <InspectionMetaContainer>
           <MetaDisplay>
