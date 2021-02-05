@@ -209,6 +209,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             )}
           </div>
         </FlexRow>
+        {procurementUnitRequirement && (
+          <RequirementsTable
+            executionRequirement={procurementUnitRequirement}
+            tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
+          />
+        )}
         <ExecutionDisplay>
           <div>
             <strong>
@@ -255,13 +261,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 fieldLabels={equipmentColumnLabels}
               />
             )}
-            <SubHeading>
-              <Text>executionRequirement_unitValues</Text>
-            </SubHeading>
-            <RequirementsTable
-              executionRequirement={procurementUnitRequirement}
-              tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
-            />
           </>
         ) : (
           <>

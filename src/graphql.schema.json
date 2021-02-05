@@ -6143,6 +6143,18 @@
             "deprecationReason": null
           },
           {
+            "name": "averageAgeRequirement",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "requirements",
             "description": null,
             "args": [],
@@ -6842,7 +6854,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersRequired",
+            "name": "metersRequired",
             "description": null,
             "args": [],
             "type": {
@@ -6854,7 +6866,31 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersObserved",
+            "name": "kilometersRequired",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "metersObserved",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "kilometersObserved",
             "description": null,
             "args": [],
             "type": {
@@ -6885,38 +6921,6 @@
               "kind": "SCALAR",
               "name": "Float",
               "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_sanctionPercentageValue",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "_sanctionThresholdValue",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -7352,6 +7356,12 @@
           },
           {
             "name": "HFP_UNAVAILABLE_FOR_INSPECTION_DATES",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "POST_INSPECTION_END_DATE_NOT_IN_THE_PAST",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11742,13 +11752,21 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "averageAgeRequirement",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -11758,13 +11776,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -14481,6 +14495,22 @@
             "deprecationReason": null
           },
           {
+            "name": "averageAgeMax",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "averageAgeRequired",
             "description": null,
             "args": [],
@@ -14497,7 +14527,7 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeightedFulfilled",
+            "name": "averageAgeWeighted",
             "description": null,
             "args": [],
             "type": {
@@ -14513,7 +14543,7 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeightedFulfilledWithLeeway",
+            "name": "averageAgeWeightedFulfilled",
             "description": null,
             "args": [],
             "type": {

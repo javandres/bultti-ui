@@ -34,6 +34,7 @@ export interface IExecutionRequirement {
   requirements: ExecutionRequirementValue[]
   totalKilometers?: number | null
   averageAgeWeighted?: number | null
+  averageAgeRequirement?: number | null
   averageAgeWeightedFulfilled?: number | null
 }
 
@@ -45,12 +46,12 @@ export type PropTypes = {
 const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
   emissionClass: 'Päästöluokka',
   kilometerRequirement: 'Km vaatimus',
-  quotaRequirement: '% Osuus',
-  equipmentCount: 'Vaatimus kpl',
   kilometersFulfilled: 'Toteuma km',
+  quotaRequirement: '% Osuus',
   quotaFulfilled: 'Toteuma % osuus',
   differencePercentage: '% ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
+  equipmentCount: 'Vaatimus kpl',
   equipmentCountFulfilled: 'Toteuma kpl',
   sanctionThreshold: 'Sanktioraja',
   sanctionAmount: 'Sanktioitavat',
@@ -82,12 +83,23 @@ const RequirementsTable: React.FC<PropTypes> = observer(
       return [kilometerRow, percentageRow]
     }, [executionRequirement, tableLayout])
 
-    let renderDisplayValue = useCallback((key, val) => {
-      let displayVal = round(val)
-      let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
+    let renderDisplayValue = useCallback(
+      (key, val) => {
+        let bg = 'transparent'
 
-      return `${displayVal} ${displayUnit}`
-    }, [])
+        // Highlight the age value in red if the fulfilled average age goes below the requirement.
+        if (key === 'averageAgeWeightedFulfilled') {
+          let ageReq = executionRequirement.averageAgeRequirement
+          bg = val > (ageReq || 0) ? 'var(--light-red)' : 'transparent'
+        }
+
+        let displayVal = round(val)
+        let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
+
+        return <span style={{ backgroundColor: bg }}>{`${displayVal} ${displayUnit}`}</span>
+      },
+      [executionRequirement]
+    )
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
       if (isHeader || key === 'unit' || !isNumeric(val) || val === 0) {
@@ -160,15 +172,16 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           valuesPerRow={3}
           style={{ marginBottom: '1rem' }}
           item={pick(executionRequirement, [
+            'averageAgeWeighted',
+            'averageAgeRequirement',
+            'averageAgeWeightedFulfilled',
             'totalKilometers',
-            ...(tableLayout === RequirementsTableLayout.BY_VALUES
-              ? ['averageAgeWeighted', 'averageAgeWeightedFulfilled']
-              : ['averageAgeWeighted']),
           ])}
           labels={{
-            totalKilometers: 'Suoritekilometrit yhteensä',
             averageAgeWeighted: 'Painotettu keski-ikä',
+            averageAgeRequirement: 'Painotettu keski-ikä vaatimus',
             averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
+            totalKilometers: 'Suoritekilometrit yhteensä',
           }}
           renderValue={renderDisplayValue}
         />

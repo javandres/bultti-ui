@@ -67,8 +67,8 @@ export const ObservedExecutionRequirementFragment = gql`
     operatorId
     averageAgeWeightedObserved
     averageAgeWeightedRequired
-    totalKilometersObserved
-    totalKilometersRequired
+    kilometersObserved
+    kilometersRequired
     area {
       id
       name
@@ -94,6 +94,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       inspectionId: $inspectionId
     ) {
       averageAgeWeighted
+      averageAgeRequirement
       averageAgeWeightedFulfilled
       ...ExecutionRequirementFragment
       equipmentQuotas {

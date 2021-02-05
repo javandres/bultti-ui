@@ -7,11 +7,9 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
-import Table, { EditValue } from '../common/components/Table'
 import {
   InspectionValidationError,
   ObservedExecutionRequirement,
-  ObservedExecutionValue,
   ObservedRequirementValueInput,
 } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
@@ -26,24 +24,13 @@ import {
 import { groupBy, toString } from 'lodash'
 import { getReadableDateRange } from '../util/formatDate'
 import { FlexRow } from '../common/components/common'
-import { round } from '../util/round'
-import { getTotal } from '../util/getTotal'
 import { LoadingDisplay } from '../common/components/Loading'
 import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { inspectionQuery } from '../inspection/inspectionQueries'
+import ObservedRequirementsTable, { EditRequirementValue } from './ObservedRequirementsTable'
 import { Text } from '../util/translate'
-
-const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
-  emissionClass: 'Päästöluokka',
-  kilometersRequired: 'Km vaatimus',
-  kilometersObserved: 'Toteutetut km',
-  quotaRequired: '% Osuus',
-  quotaObserved: 'Toteutettu % osuus',
-  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
-  equipmentCountObserved: 'Ajoneuvomäärä',
-}
 
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
@@ -64,29 +51,19 @@ const ExecutionRequirementWeek = styled.div`
   margin-bottom: 2rem;
 `
 
-const AreaHeading = styled.h4`
-  margin-bottom: 1rem;
-  margin-top: 0;
+const WeekHeading = styled.h4`
+  margin: 0;
+  font-size: 1.2rem;
 `
 
-const WeekHeading = styled.h3`
+const AreaHeading = styled.h3`
   margin-bottom: 0.5rem;
   font-weight: normal;
 `
 
-const WeekDateHeading = styled.h5`
-  margin-bottom: 1rem;
-  margin-top: 0;
-  font-weight: bold;
-`
-
-const RequirementValueTable = styled(Table)``
-
 export type PropTypes = {
-  isEditable: Boolean
+  isEditable: boolean
 }
-
-type EditRequirementValue = EditValue<ObservedExecutionValue> & { requirementId: string }
 
 const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes) => {
   const inspection = useContext(InspectionContext)
@@ -143,7 +120,17 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
   )
 
   let [updateRequirements, { loading: updateLoading }] = useMutationData(
-    updateObservedExecutionRequirementValuesMutation
+    updateObservedExecutionRequirementValuesMutation,
+    {
+      refetchQueries: [
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: {
+            postInspectionId: inspection?.id,
+          },
+        },
+      ],
+    }
   )
 
   let [removeRequirements, { loading: removeLoading }] = useMutationData(
@@ -186,13 +173,13 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
   > = useMemo(
     () =>
       Object.entries<ObservedExecutionRequirement[]>(
-        groupBy<ObservedExecutionRequirement>(observedRequirements, 'area.name')
+        groupBy<ObservedExecutionRequirement>(observedRequirements, (req) =>
+          getReadableDateRange({ start: req.startDate, end: req.endDate })
+        )
       ).map(([areaName, areaReqs]) => [
         areaName,
         Object.entries<ObservedExecutionRequirement[]>(
-          groupBy<ObservedExecutionRequirement>(areaReqs, (req) =>
-            getReadableDateRange({ start: req.startDate, end: req.endDate })
-          )
+          groupBy<ObservedExecutionRequirement>(areaReqs, 'area.name')
         ),
       ]),
     [observedRequirements]
@@ -274,32 +261,6 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     setPendingValues([])
   }, [])
 
-  let createGetColumnTotal = useCallback(
-    (requirement: ObservedExecutionRequirement) => (key: string) => {
-      if (key === 'emissionClass') {
-        return ''
-      }
-
-      let totalVal = round(getTotal<any, string>(requirement.observedRequirements, key), 3)
-
-      switch (key) {
-        case 'quotaRequired':
-        case 'quotaObserved':
-          return `${totalVal}%`
-        case 'kilometersRequired':
-        case 'kilometersObserved':
-          return `${totalVal} km`
-        case 'averageAgeWeightedObserved':
-          return `${totalVal} v`
-        case 'equipmentCountObserved':
-          return `${totalVal} kpl`
-        default:
-          return totalVal
-      }
-    },
-    []
-  )
-
   return (
     <ExpandableSection
       error={execReqsMissing}
@@ -346,50 +307,58 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         )}
         {observedRequirements.length !== 0 ? (
           <RequirementAreasWrapper>
-            {requirementsByAreaAndWeek.map(([areaLabel, areaReqs]) => (
-              <RequirementAreaRow key={areaLabel}>
-                <AreaHeading>{areaLabel}</AreaHeading>
-                <RequirementWeeksWrapper key="asd">
-                  {areaReqs.map(([weekLabel, weekRequirementAreas], index) => (
-                    <ExecutionRequirementWeek key={areaLabel + weekLabel}>
-                      <FlexRow>
-                        <WeekHeading>{index + 1}. Viikko</WeekHeading>
-                        <WeekDateHeading style={{ marginLeft: 'auto' }}>
-                          {weekLabel}
-                        </WeekDateHeading>
-                      </FlexRow>
-                      {weekRequirementAreas.map((requirement) => (
-                        <React.Fragment key={requirement.id}>
-                          <RequirementValueTable
-                            fluid={true}
-                            onEditValue={isEditable ? createValueEdit(requirement) : undefined}
-                            pendingValues={isEditable ? pendingValues : []}
-                            editableValues={isEditable ? ['quotaRequired'] : undefined}
-                            items={requirement.observedRequirements}
-                            columnLabels={columnLabels}
-                            getColumnTotal={createGetColumnTotal(requirement)}
-                            onSaveEdit={isEditable ? onSaveEditedValues : undefined}
-                            onCancelEdit={isEditable ? onCancelEdit : undefined}
-                            showToolbar={false}
-                          />
-                          {isEditable && (
-                            <FlexRow>
-                              <Button
-                                onClick={() => onPreviewRequirement(requirement.id)}
-                                loading={
-                                  requirementPreviewLoadingId === requirement.id &&
-                                  previewLoading
-                                }>
-                                {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
-                              </Button>
-                            </FlexRow>
-                          )}
-                        </React.Fragment>
-                      ))}
-                    </ExecutionRequirementWeek>
-                  ))}
-                </RequirementWeeksWrapper>
-              </RequirementAreaRow>
+            {requirementsByAreaAndWeek.map(([weekLabel, areaReqs]) => (
+              <ExpandableSection
+                key={weekLabel}
+                headerContent={
+                  <HeaderSection>
+                    <WeekHeading>{weekLabel}</WeekHeading>
+                  </HeaderSection>
+                }>
+                <RequirementAreaRow key={weekLabel}>
+                  <RequirementWeeksWrapper>
+                    {areaReqs.map(([areaLabel, weekRequirementAreas]) => (
+                      <ExecutionRequirementWeek key={areaLabel + weekLabel}>
+                        <FlexRow>
+                          <AreaHeading>{areaLabel}</AreaHeading>
+                        </FlexRow>
+                        {weekRequirementAreas.map((requirement) => (
+                          <React.Fragment key={requirement.id}>
+                            <ObservedRequirementsTable
+                              executionRequirement={requirement}
+                              isEditable={isEditable}
+                              onEditValue={
+                                isEditable ? createValueEdit(requirement) : undefined
+                              }
+                              pendingValues={
+                                isEditable
+                                  ? pendingValues.filter(
+                                      (val) => val.requirementId === requirement.id
+                                    )
+                                  : []
+                              }
+                              onSaveEdit={isEditable ? onSaveEditedValues : undefined}
+                              onCancelEdit={isEditable ? onCancelEdit : undefined}
+                            />
+                            {isEditable && (
+                              <FlexRow>
+                                <Button
+                                  onClick={() => onPreviewRequirement(requirement.id)}
+                                  loading={
+                                    requirementPreviewLoadingId === requirement.id &&
+                                    previewLoading
+                                  }>
+                                  {isEditable ? 'Esikatsele' : 'Hae'} viikon toteuma
+                                </Button>
+                              </FlexRow>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </ExecutionRequirementWeek>
+                    ))}
+                  </RequirementWeeksWrapper>
+                </RequirementAreaRow>
+              </ExpandableSection>
             ))}
           </RequirementAreasWrapper>
         ) : null}

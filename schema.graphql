@@ -369,6 +369,7 @@ type ExecutionRequirement {
   area: OperatingArea!
   areaRequirement: ExecutionRequirement
   areaRequirementId: String
+  averageAgeRequirement: Float
   averageAgeWeighted: Float
   averageAgeWeightedFulfilled: Float
   equipmentQuotas: [ExecutionRequirementQuota!]!
@@ -435,8 +436,9 @@ type ExecutionRequirementsReport {
 
 type ExecutionRequirementsReportData {
   areaName: String!
-  averageAgeWeighted: Float!
-  averageAgeWeightedFulfilled: Float!
+  averageAgeRequirement: Float
+  averageAgeWeighted: Float
+  averageAgeWeightedFulfilled: Float
   id: ID!
   operatorId: Int!
   requirements: [ExecutionRequirementValue!]!
@@ -847,8 +849,6 @@ type ObservedEquipmentTypeReportData {
 }
 
 type ObservedExecutionRequirement {
-  _sanctionPercentageValue: Float!
-  _sanctionThresholdValue: Float!
   area: OperatingArea!
   areaId: Int!
   averageAgeWeightedObserved: Float
@@ -858,12 +858,14 @@ type ObservedExecutionRequirement {
   inspection: Inspection!
   inspectionId: String!
   isCombinedAreaRequirement: Boolean!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  metersObserved: Float
+  metersRequired: Float
   observedRequirements: [ObservedExecutionValue!]!
   operator: Operator!
   operatorId: Int!
   startDate: BulttiDate!
-  totalKilometersObserved: Float
-  totalKilometersRequired: Float
 }
 
 type ObservedExecutionRequirementsReport {
@@ -1237,9 +1239,10 @@ type UnitExecutionReport {
 }
 
 type UnitExecutionReportData {
+  averageAgeMax: Float!
   averageAgeRequired: Float!
+  averageAgeWeighted: Float!
   averageAgeWeightedFulfilled: Float!
-  averageAgeWeightedFulfilledWithLeeway: Float!
   id: ID!
   procurementUnitId: String!
   totalKilometers: Float!
