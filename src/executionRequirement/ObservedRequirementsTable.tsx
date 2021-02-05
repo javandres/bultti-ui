@@ -51,14 +51,13 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   quotaRequired: '% Osuus',
   quotaObserved: 'Toteuma % osuus',
   differencePercentage: '% ero',
+  differenceKilometers: 'Km ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   sanctionThreshold: 'Sanktioraja',
   sanctionAmount: 'Sanktiomäärä',
   sanctionablePercentage: 'Sanktioitavat',
   equipmentCountRequired: 'Vaatimus kpl',
   equipmentCountObserved: 'Toteuma kpl',
-  averageAgeWeightedRequired: 'Vaad. painotettu keski-ikä',
-  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
 }
 
 const ObservedRequirementsTable: React.FC<PropTypes> = observer(
