@@ -7,11 +7,9 @@ import ExpandableSection, {
 } from '../common/components/ExpandableSection'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
-import Table, { EditValue } from '../common/components/Table'
 import {
   InspectionValidationError,
   ObservedExecutionRequirement,
-  ObservedExecutionValue,
   ObservedRequirementValueInput,
 } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
@@ -26,28 +24,12 @@ import {
 import { groupBy, toString } from 'lodash'
 import { getReadableDateRange } from '../util/formatDate'
 import { FlexRow } from '../common/components/common'
-import { round } from '../util/round'
-import { getTotal } from '../util/getTotal'
 import { LoadingDisplay } from '../common/components/Loading'
 import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { inspectionQuery } from '../inspection/inspectionQueries'
-
-const columnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
-  emissionClass: 'Päästöluokka',
-  kilometersRequired: 'Km vaatimus',
-  kilometersObserved: 'Toteutetut km',
-  quotaRequired: '% Osuus',
-  quotaObserved: 'Toteutettu % osuus',
-  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
-  equipmentCountObserved: 'Ajoneuvomäärä',
-  differencePercentage: '% ero',
-  cumulativeDifferencePercentage: 'Kumul. % ero',
-  sanctionThreshold: 'Sanktioraja',
-  sanctionablePercentage: 'Sanktioitavat',
-  sanctionAmount: 'Sanktiomäärä',
-}
+import ObservedRequirementsTable, { EditRequirementValue } from './ObservedRequirementsTable'
 
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
@@ -78,13 +60,9 @@ const AreaHeading = styled.h3`
   font-weight: normal;
 `
 
-const RequirementValueTable = styled(Table)``
-
 export type PropTypes = {
-  isEditable: Boolean
+  isEditable: boolean
 }
-
-type EditRequirementValue = EditValue<ObservedExecutionValue> & { requirementId: string }
 
 const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes) => {
   const inspection = useContext(InspectionContext)
@@ -272,32 +250,6 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     setPendingValues([])
   }, [])
 
-  let createGetColumnTotal = useCallback(
-    (requirement: ObservedExecutionRequirement) => (key: string) => {
-      if (key === 'emissionClass') {
-        return ''
-      }
-
-      let totalVal = round(getTotal<any, string>(requirement.observedRequirements, key), 3)
-
-      switch (key) {
-        case 'quotaRequired':
-        case 'quotaObserved':
-          return `${totalVal}%`
-        case 'kilometersRequired':
-        case 'kilometersObserved':
-          return `${totalVal} km`
-        case 'averageAgeWeightedObserved':
-          return `${requirement.averageAgeWeightedObserved} v`
-        case 'equipmentCountObserved':
-          return `${totalVal} kpl`
-        default:
-          return totalVal
-      }
-    },
-    []
-  )
-
   return (
     <ExpandableSection
       error={execReqsMissing}
@@ -359,18 +311,15 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                         </FlexRow>
                         {weekRequirementAreas.map((requirement) => (
                           <React.Fragment key={requirement.id}>
-                            <RequirementValueTable
+                            <ObservedRequirementsTable
+                              executionRequirement={requirement}
+                              isEditable={isEditable}
                               onEditValue={
                                 isEditable ? createValueEdit(requirement) : undefined
                               }
                               pendingValues={isEditable ? pendingValues : []}
-                              editableValues={isEditable ? ['quotaRequired'] : undefined}
-                              items={requirement.observedRequirements}
-                              columnLabels={columnLabels}
-                              getColumnTotal={createGetColumnTotal(requirement)}
                               onSaveEdit={isEditable ? onSaveEditedValues : undefined}
                               onCancelEdit={isEditable ? onCancelEdit : undefined}
-                              showToolbar={false}
                             />
                             {isEditable && (
                               <FlexRow>
