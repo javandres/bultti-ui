@@ -151,11 +151,12 @@
   "inspectionDateList_header": "Nykyiset tarkastusjaksot",
   "inspectionDateList_noResults": "Tarkastusjaksoja ei löytynyt",
   "inspectionDateForm_header": "Lisää uusi tarkastusjakso",
+  "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",
   "report_filtering_filter_on": "Suodata saraketta",
-  "report_filtering_apply": "Käytä suodatus",
+  "report_filtering_apply": "Suodata",
   "report_filtering_hint": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
 
   "NOT_PRE": "Tarkastus ei ole ennakko-tarkastus",

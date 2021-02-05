@@ -49,33 +49,37 @@ export const TextArea = styled(TextInput).attrs(() => ({ as: 'textarea', rows: 3
   line-height: 1.4;
   height: auto;
 `
+type InputType = 'text' | 'date' | 'number'
 
 export type PropTypes = {
   className?: string
+  value: string
   label?: string
   subLabel?: boolean
-  value: string
+  type?: InputType
+  theme?: ThemeTypes
+  hintText?: string
+  inputComponent?: React.ComponentType
+  tabIndex?: number
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
   onEscPress?: () => unknown
-  theme?: ThemeTypes
-  inputComponent?: React.ComponentType
-  tabIndex?: number
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
   ({
     className,
     value = '',
-    onChange,
-    theme = 'light',
     label,
     subLabel,
-    onEnterPress,
-    onEscPress,
     type = 'text',
+    theme = 'light',
+    hintText,
     inputComponent = TextInput,
     tabIndex,
+    onChange,
+    onEnterPress,
+    onEscPress,
     ...inputProps
   }) => {
     const onValueChange = useCallback(
@@ -107,7 +111,7 @@ const Input: React.FC<PropTypes> = observer(
     return (
       <InputView className={className}>
         {!!label && (
-          <InputLabel subLabel={subLabel} theme={theme}>
+          <InputLabel subLabel={subLabel} theme={theme} hintText={hintText}>
             {label}
           </InputLabel>
         )}
