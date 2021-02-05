@@ -119,7 +119,17 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
   )
 
   let [updateRequirements, { loading: updateLoading }] = useMutationData(
-    updateObservedExecutionRequirementValuesMutation
+    updateObservedExecutionRequirementValuesMutation,
+    {
+      refetchQueries: [
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: {
+            postInspectionId: inspection?.id,
+          },
+        },
+      ],
+    }
   )
 
   let [removeRequirements, { loading: removeLoading }] = useMutationData(
@@ -303,9 +313,9 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                   </HeaderSection>
                 }>
                 <RequirementAreaRow key={weekLabel}>
-                  <RequirementWeeksWrapper key="asd">
+                  <RequirementWeeksWrapper>
                     {areaReqs.map(([areaLabel, weekRequirementAreas]) => (
-                      <ExecutionRequirementWeek key={areaLabel + areaLabel}>
+                      <ExecutionRequirementWeek key={areaLabel + weekLabel}>
                         <FlexRow>
                           <AreaHeading>{areaLabel}</AreaHeading>
                         </FlexRow>
@@ -317,7 +327,13 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                               onEditValue={
                                 isEditable ? createValueEdit(requirement) : undefined
                               }
-                              pendingValues={isEditable ? pendingValues : []}
+                              pendingValues={
+                                isEditable
+                                  ? pendingValues.filter(
+                                      (val) => val.requirementId === requirement.id
+                                    )
+                                  : []
+                              }
                               onSaveEdit={isEditable ? onSaveEditedValues : undefined}
                               onCancelEdit={isEditable ? onCancelEdit : undefined}
                             />
