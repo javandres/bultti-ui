@@ -7,6 +7,7 @@ import ValueDisplay, {
 } from '../common/components/ValueDisplay'
 import InspectionActions from './InspectionActions'
 import { getReadableDate } from '../util/formatDate'
+import { text } from '../util/translate'
 
 const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -79,14 +80,14 @@ const renderValue = (key, val) => {
       return getReadableDate(val)
     case 'status':
       if (val === InspectionStatus.InProduction) {
-        return 'Tuotannossa'
+        return text('inspection_state_production')
       }
 
       if (val === InspectionStatus.InReview) {
-        return 'Hyväksyttävänä'
+        return text('inspection_state_review')
       }
 
-      return 'Muokattavissa'
+      return text('inspection_state_draft')
     default:
       return val
   }

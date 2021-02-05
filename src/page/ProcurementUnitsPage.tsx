@@ -9,6 +9,7 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
 import { addDays, parseISO } from 'date-fns'
 import { getDateString } from '../util/formatDate'
+import { Text } from '../util/translate'
 
 const ProcurementUnitsView = styled(Page)``
 
@@ -21,7 +22,9 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
 
   return (
     <ProcurementUnitsView>
-      <PageTitle>Kilpailukohteet</PageTitle>
+      <PageTitle>
+        <Text>procurementUnits</Text>
+      </PageTitle>
       <PageContainer>
         {!(globalOperator && globalSeason && typeof globalSeason !== 'string') ? (
           <MessageContainer>

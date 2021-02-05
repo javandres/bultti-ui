@@ -1,6 +1,9 @@
 import styled from 'styled-components/macro'
 import { Column } from './common'
 import { ThemeTypes } from '../../type/common'
+import { observer } from 'mobx-react-lite'
+import UserHint from './UserHint'
+import { CSSProperties } from 'react'
 
 export const FormColumn = styled(Column)`
   padding: 1rem 0;
@@ -29,8 +32,14 @@ export const ControlGroup = styled.div`
     }
   }
 `
-export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }>`
-  display: block;
+
+const InputLabelWrapper = styled.label<{
+  theme?: ThemeTypes
+  subLabel?: boolean
+  hintText?: string
+}>`
+  display: flex;
+  justify-content: space-between;
   font-size: ${(p) => (p.subLabel ? '0.65rem' : '0.875rem')};
   font-weight: bold;
   text-transform: uppercase;
@@ -38,3 +47,22 @@ export const InputLabel = styled.label<{ theme: ThemeTypes; subLabel?: boolean }
   margin: 0;
   padding-bottom: 0.5rem;
 `
+
+type PropTypes = {
+  theme?: ThemeTypes
+  subLabel?: boolean
+  hintText?: string
+  style?: CSSProperties
+  className?: string
+}
+
+export const InputLabel: React.FC<PropTypes> = observer(
+  ({ theme = 'light', subLabel, hintText, children, style = {}, className }) => {
+    return (
+      <InputLabelWrapper theme={theme} subLabel={subLabel} style={style} className={className}>
+        {children}
+        {hintText && <UserHint hintText={hintText} />}
+      </InputLabelWrapper>
+    )
+  }
+)

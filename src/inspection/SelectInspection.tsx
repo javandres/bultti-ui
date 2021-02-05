@@ -16,6 +16,7 @@ import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
 import { LoadingDisplay } from '../common/components/Loading'
 import { getReadableDate } from '../util/formatDate'
+import { text } from '../util/translate'
 
 const SelectInspectionView = styled.div`
   position: relative;
@@ -250,12 +251,12 @@ const SelectInspection: React.FC<PropTypes> = observer(
                     <InspectionVersion>{inspection.version}</InspectionVersion>
                     <InspectionStatusDisplay status={inspection.status}>
                       {inspection.status === InspectionStatus.Draft
-                        ? 'Muokattavissa'
+                        ? text('inspection_state_draft')
                         : inspection.status === InspectionStatus.InReview
-                        ? 'Hyväksyttävänä'
+                        ? text('inspection_state_review')
                         : inspection.status === InspectionStatus.Processing
-                        ? 'Käsittelyssä'
-                        : 'Tuotannossa'}
+                        ? text('inspection_state_prosessing')
+                        : text('inspection_state_production')}
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>
                       <DateTitle>Tuotantojakso</DateTitle>

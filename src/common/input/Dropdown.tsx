@@ -89,6 +89,7 @@ export type DropdownProps = {
   itemToLabel?: string | ((item: any | null) => string) // property of given object to get label from or a function that returns the label.
   selectedItem?: any // TODO: add documentation of this property or change any
   className?: string
+  hintText?: string
   style?: CSSProperties
   theme?: ThemeTypes
 }
@@ -118,6 +119,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
     items,
     onSelect,
     selectedItem,
+    hintText,
     itemToString = 'id',
     itemToLabel = 'label',
     theme = 'light',
@@ -148,7 +150,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
     return (
       <DropdownView className={className} style={style} theme={theme}>
         {!!label && (
-          <InputLabel {...getLabelProps()} htmlFor="null" theme={theme}>
+          <InputLabel {...getLabelProps()} htmlFor="null" hintText={hintText} theme={theme}>
             {label}
           </InputLabel>
         )}
@@ -158,7 +160,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
               disabled,
             })}
             theme={theme}>
-            <span>{toString(currentlySelected, itemToLabel) || text('general.app.all')}</span>
+            <span>{toString(currentlySelected, itemToLabel) || text('all')}</span>
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 

@@ -215,7 +215,7 @@ const ItemForm: React.FC<PropTypes> = observer(
               </Button>
               {onCancel && (
                 <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
-                  <Text>general.app.cancel</Text>
+                  <Text>cancel</Text>
                 </Button>
               )}
             </ActionsWrapper>

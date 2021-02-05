@@ -8,6 +8,7 @@ import { ArrowLeftLong } from '../icon/ArrowLeftLong'
 import { history, pathWithQuery } from '../../util/urlValue'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { useStateValue } from '../../state/useAppState'
+import { Text } from '../../util/translate'
 
 const PageTitleView = styled.h2`
   border-bottom: 1px solid var(--lighter-grey);
@@ -89,7 +90,7 @@ export const PageTitle = observer(
               size={ButtonSize.MEDIUM}
               buttonStyle={ButtonStyle.SECONDARY}
               onClick={() => onRefresh()}>
-              Päivitä
+              <Text>update</Text>
             </Button>
           )}
           {headerButtons}

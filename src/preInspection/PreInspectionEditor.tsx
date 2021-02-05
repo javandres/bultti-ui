@@ -9,6 +9,7 @@ import { PageSection } from '../common/components/common'
 import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { useInspectionErrors } from '../util/useInspectionErrors'
 import { DEBUG } from '../constants'
+import { Text } from '../util/translate'
 
 type PreInspectionProps = {
   refetchData: () => unknown
@@ -44,7 +45,9 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           isValid={!departureBlocksInvalid}
         />
         <PreInspectionExecutionRequirements isValid={!executionRequirementsInvalid} />
-        <SectionHeading theme="light">Kilpailukohteet</SectionHeading>
+        <SectionHeading theme="light">
+          <Text>procurementUnits</Text>
+        </SectionHeading>
         {inspection && (
           <ProcurementUnits
             requirementsEditable={isEditable}

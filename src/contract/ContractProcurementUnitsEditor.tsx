@@ -21,6 +21,7 @@ import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
+import { Text } from '../util/translate'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -195,15 +196,21 @@ const ContractProcurementUnitsEditor = observer(
                   {unitOption.name}
                 </HeaderBoldHeading>
                 <HeaderSection title={fullRoutesString}>
-                  <HeaderHeading>Reitit</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>contract_procurementUnitsEditorRoutes</Text>
+                  </HeaderHeading>
                   {shortRoutesString}
                 </HeaderSection>
                 <HeaderSection>
-                  <HeaderHeading>Voimassaoloaika</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>validityPeriod</Text>
+                  </HeaderHeading>
                   {unitOption.startDate} - {unitOption.endDate}
                 </HeaderSection>
                 <HeaderSection style={{ flex: '1 0 7rem' }}>
-                  <HeaderHeading>Alue</HeaderHeading>
+                  <HeaderHeading>
+                    <Text>area</Text>
+                  </HeaderHeading>
                   {unitOption?.areaName || 'OTHER'}
                 </HeaderSection>
                 <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>

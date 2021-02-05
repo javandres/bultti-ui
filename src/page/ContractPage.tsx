@@ -117,13 +117,13 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   return (
     <ContractPageView>
       <PageTitle loading={contractsLoading} onRefresh={refetch}>
-        <Text>contract_page.contracts</Text>
+        <Text>contracts</Text>
       </PageTitle>
       <PageContainer>
         {contracts.length === 0 && !contractsLoading && (
           <MessageContainer>
             <MessageView>
-              <Text>contract_page.no_contracts</Text>
+              <Text>contractPage_noContracts</Text>
             </MessageView>
           </MessageContainer>
         )}
@@ -135,7 +135,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               style={{ marginLeft: 'auto' }}>
-              <Text>contract_page.new_contract_button</Text>
+              <Text>contractPage_newContractButton</Text>
             </Button>
           </FlexRow>
         )}

@@ -2,7 +2,6 @@ import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import { orderBy } from 'lodash'
 import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
@@ -17,6 +16,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
 import { Inspection, InspectionUserRelation } from '../schema-types'
+import { Text } from '../util/translate'
 
 export type PropTypes = {
   inspection: Inspection
@@ -63,7 +63,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
               buttonStyle={ButtonStyle.SECONDARY}
               size={ButtonSize.SMALL}
               onClick={refetchRelations}>
-              Päivitä
+              <Text>update</Text>
             </Button>
           </HeaderSection>
         </>

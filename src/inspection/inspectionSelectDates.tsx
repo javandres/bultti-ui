@@ -74,10 +74,15 @@ const InspectionSelectDates = observer(
           <LoadingDisplay />
         ) : (
           <Dropdown
-            label={text('inspection.select_inspection')}
+            label={text('inspection_selectInspection')}
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}
+            hintText={
+              inspectionType === InspectionType.Post
+                ? text('inspection_date_postInspectionDateSelectionHint')
+                : undefined
+            }
           />
         )}
       </InspectionSelectDatesView>

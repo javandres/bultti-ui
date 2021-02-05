@@ -69,7 +69,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
         {!inspection ? (
           <MessageContainer>
             <MessageView>
-              <Text>inspection.inspection_not_selected</Text>
+              <Text>inspection_inspectionNotSelected</Text>
             </MessageView>
           </MessageContainer>
         ) : (
@@ -78,7 +78,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
               <FormColumn>
                 <Input
                   value={pendingInspectionInputValues.name || ''}
-                  label={text('inspection.inspection_name')}
+                  label={text('inspection_inspectionName')}
                   onChange={(value: string) => {
                     onUpdateValue('name', value)
                   }}
@@ -101,19 +101,19 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               {inspection.status !== InspectionStatus.Draft && (
                 <FormColumn>
-                  <InputLabel theme="light">{text('inspection.inspection_season')}</InputLabel>
+                  <InputLabel theme="light">{text('inspection_inspectionSeason')}</InputLabel>
                   <ControlGroup>
                     <Input
                       type="date"
                       value={inspection.startDate}
-                      label={text('start_date')}
+                      label={text('startDate')}
                       subLabel={true}
                       disabled={true}
                     />
                     <Input
                       type="date"
                       value={inspection.endDate}
-                      label={text('end_date')}
+                      label={text('endDate')}
                       subLabel={true}
                       disabled={true}
                     />
@@ -124,14 +124,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               <ActionsWrapper>
                 <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
-                  <Text>general.app.save</Text>
+                  <Text>save</Text>
                 </Button>
                 <Button
                   buttonStyle={ButtonStyle.SECONDARY_REMOVE}
                   onClick={() =>
                     setPendingInspectionInputValues(getInspectionInputValues(inspection))
                   }>
-                  <Text>general.app.cancel</Text>
+                  <Text>cancel</Text>
                 </Button>
               </ActionsWrapper>
             </FlexRow>
