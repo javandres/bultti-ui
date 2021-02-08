@@ -71,9 +71,9 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
 
   let reportDataItems = useMemo(() => report?.reportData || [], [report])
 
-  let isExecutionRequirementReport = reportDataItems.some((d) =>
+  let isExecutionRequirementReport = reportDataItems.some((dataItem) =>
     ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
-      d.__typename
+      dataItem.__typename
     )
   )
 

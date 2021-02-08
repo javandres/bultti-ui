@@ -79,10 +79,10 @@ export const reportQueryFragments = {
   ObservedUnitExecutionFragment: gql`
     fragment ObservedUnitExecutionFragment on ObservedUnitExecution {
       id
-      averageAgeWeightedObserved
       procurementUnitId
       totalKilometersObserved
-      totalKilometersRequired
+      totalUnitKilometers
+      averageAgeWeightedObserved
     }
   `,
   ObservedLateDeparturesFragment: gql`

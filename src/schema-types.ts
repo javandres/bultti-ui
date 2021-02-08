@@ -1743,7 +1743,7 @@ export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution';
   id: Scalars['ID'];
   procurementUnitId?: Maybe<Scalars['String']>;
-  totalKilometersRequired?: Maybe<Scalars['Float']>;
+  totalUnitKilometers?: Maybe<Scalars['Float']>;
   totalKilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
 };

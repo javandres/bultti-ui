@@ -18925,7 +18925,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersRequired",
+            "name": "totalUnitKilometers",
             "description": null,
             "args": [],
             "type": {
