@@ -79,10 +79,10 @@ export const reportQueryFragments = {
   ObservedUnitExecutionFragment: gql`
     fragment ObservedUnitExecutionFragment on ObservedUnitExecution {
       id
-      averageAgeWeightedObserved
       procurementUnitId
       totalKilometersObserved
-      totalKilometersRequired
+      totalUnitKilometers
+      averageAgeWeightedObserved
     }
   `,
   ObservedLateDeparturesFragment: gql`
@@ -143,8 +143,6 @@ export const reportQueryFragments = {
       endDate
       totalKilometersRequired
       totalKilometersObserved
-      averageAgeWeightedRequired
-      averageAgeWeightedObserved
       observedRequirements {
         id
         emissionClass
@@ -156,8 +154,6 @@ export const reportQueryFragments = {
         cumulativeDifferencePercentage
         equipmentCountRequired
         equipmentCountObserved
-        averageAgeWeightedRequired
-        averageAgeWeightedObserved
         sanctionThreshold
         sanctionablePercentage
         sanctionAmount

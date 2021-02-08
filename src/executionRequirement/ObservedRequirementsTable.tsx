@@ -31,8 +31,6 @@ export type EditRequirementValue = EditValue<ObservedExecutionValue> & {
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]
   kilometersRequired?: number | null
-  averageAgeWeightedObserved?: number | null
-  averageAgeWeightedRequired?: number | null
 }
 
 export type PropTypes = {
@@ -51,14 +49,13 @@ const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string
   quotaRequired: '% Osuus',
   quotaObserved: 'Toteuma % osuus',
   differencePercentage: '% ero',
+  differenceKilometers: 'Km ero',
   cumulativeDifferencePercentage: 'Kumul. % ero',
   sanctionThreshold: 'Sanktioraja',
   sanctionAmount: 'Sanktiomäärä',
   sanctionablePercentage: 'Sanktioitavat',
   equipmentCountRequired: 'Vaatimus kpl',
   equipmentCountObserved: 'Toteuma kpl',
-  averageAgeWeightedRequired: 'Vaad. painotettu keski-ikä',
-  averageAgeWeightedObserved: 'Tot. painotettu keski-ikä',
 }
 
 const ObservedRequirementsTable: React.FC<PropTypes> = observer(
@@ -99,6 +96,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           break
         case 'kilometersRequired':
         case 'kilometersObserved':
+        case 'differenceKilometers':
           unit = 'km'
           break
         case 'equipmentCountRequired':
@@ -111,20 +109,24 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
       return `${round(val, 6)} ${unit}`
     }, [])
 
-    let { averageAgeWeightedObserved, averageAgeWeightedRequired } = executionRequirement
-
     let getColumnTotal = useCallback(
       (key: string) => {
-        if (['emissionClass', 'sanctionThreshold'].includes(key)) {
+        if (
+          [
+            'differencePercentage',
+            'differenceKilometers',
+            'emissionClass',
+            'sanctionThreshold',
+          ].includes(key)
+        ) {
           return ''
         }
 
-        let totalValue = round(getTotal<any, string>(requirementRows, key), 3)
+        let totalValue = round(getTotal<any, string>(requirementRows, key), 6)
 
         switch (key) {
           case 'quotaRequired':
           case 'quotaObserved':
-          case 'differencePercentage':
           case 'cumulativeDifferencePercentage':
           case 'sanctionablePercentage':
           case 'sanctionAmount':
@@ -135,15 +137,11 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           case 'equipmentCountRequired':
           case 'equipmentCountObserved':
             return `${totalValue} kpl`
-          case 'averageAgeWeightedObserved':
-            return `${round(averageAgeWeightedObserved || 0, 3)} v`
-          case 'averageAgeWeightedRequired':
-            return `${round(averageAgeWeightedRequired || 0, 3)} v`
           default:
             return totalValue
         }
       },
-      [executionRequirement]
+      [requirementRows]
     )
 
     return (
@@ -151,15 +149,9 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
         <ValueDisplay
           valuesPerRow={3}
           style={{ marginBottom: '1rem' }}
-          item={pick(executionRequirement, [
-            'kilometersRequired',
-            'averageAgeWeightedRequired',
-            'averageAgeWeightedObserved',
-          ])}
+          item={pick(executionRequirement, ['kilometersRequired'])}
           labels={{
             kilometersRequired: 'Suoritekilometrit yhteensä',
-            averageAgeWeightedRequired: 'Suunniteltu painotettu keski-ikä',
-            averageAgeWeightedObserved: 'Toteutunut painotettu keski-ikä',
           }}
           renderValue={renderDisplayValue}
         />

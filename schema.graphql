@@ -851,8 +851,6 @@ type ObservedEquipmentTypeReportData {
 type ObservedExecutionRequirement {
   area: OperatingArea!
   areaId: Int!
-  averageAgeWeightedObserved: Float
-  averageAgeWeightedRequired: Float
   endDate: BulttiDate!
   id: ID!
   inspection: Inspection!
@@ -890,8 +888,6 @@ type ObservedExecutionRequirementsReport {
 
 type ObservedExecutionRequirementsReportData {
   areaName: String!
-  averageAgeWeightedObserved: Float!
-  averageAgeWeightedRequired: Float!
   endDate: BulttiDate!
   id: ID!
   observedRequirements: [ObservedExecutionValue!]!
@@ -902,9 +898,8 @@ type ObservedExecutionRequirementsReportData {
 }
 
 type ObservedExecutionValue {
-  averageAgeWeightedObserved: Float
-  averageAgeWeightedRequired: Float
   cumulativeDifferencePercentage: Float
+  differenceKilometers: Float
   differencePercentage: Float
   emissionClass: Int!
   equipmentCountObserved: Int
@@ -963,7 +958,7 @@ type ObservedUnitExecution {
   id: ID!
   procurementUnitId: String
   totalKilometersObserved: Float
-  totalKilometersRequired: Float
+  totalUnitKilometers: Float
 }
 
 type ObservedUnitExecutionReport {

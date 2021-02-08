@@ -34,7 +34,7 @@ export const ObservedRequirementValueFragment = gql`
     sanctionablePercentage
     cumulativeDifferencePercentage
     differencePercentage
-    averageAgeWeightedObserved
+    differenceKilometers
     equipmentCountObserved
     equipmentCountRequired
   }
@@ -65,8 +65,6 @@ export const ObservedExecutionRequirementFragment = gql`
     endDate
     inspectionId
     operatorId
-    averageAgeWeightedObserved
-    averageAgeWeightedRequired
     kilometersObserved
     kilometersRequired
     area {
