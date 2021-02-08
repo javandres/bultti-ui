@@ -31,8 +31,6 @@ export type EditRequirementValue = EditValue<ObservedExecutionValue> & {
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]
   kilometersRequired?: number | null
-  averageAgeWeightedObserved?: number | null
-  averageAgeWeightedRequired?: number | null
 }
 
 export type PropTypes = {

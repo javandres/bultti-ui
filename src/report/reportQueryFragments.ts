@@ -143,8 +143,6 @@ export const reportQueryFragments = {
       endDate
       totalKilometersRequired
       totalKilometersObserved
-      averageAgeWeightedRequired
-      averageAgeWeightedObserved
       observedRequirements {
         id
         emissionClass
@@ -156,8 +154,6 @@ export const reportQueryFragments = {
         cumulativeDifferencePercentage
         equipmentCountRequired
         equipmentCountObserved
-        averageAgeWeightedRequired
-        averageAgeWeightedObserved
         sanctionThreshold
         sanctionablePercentage
         sanctionAmount
