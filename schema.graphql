@@ -665,7 +665,7 @@ type Mutation {
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
-  inspectionReady(inspectionId: String!): Inspection!
+  inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
   logout: Boolean!
@@ -1313,7 +1313,7 @@ enum InspectionStatus {
   InProduction
   InReview
   Processing
-  Ready
+  Sanctionable
 }
 
 enum InspectionType {
@@ -1367,7 +1367,6 @@ enum TrackReason {
   EXTRA_DEPARTURE
   FIRST_DEPARTURE_AFTER_DEADRUN
   FIRST_DEPARTURE_IN_BLOCK
-  INFO_SYSTEMS_VIOLATION
   MISSING_DEPARTURE
   NOT_TRACKED
   RECOVERY_VIOLATION

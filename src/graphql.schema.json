@@ -7163,7 +7163,7 @@
             "deprecationReason": null
           },
           {
-            "name": "Ready",
+            "name": "Sanctionable",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -8438,12 +8438,6 @@
           },
           {
             "name": "EQUIPMENT_AGE_VIOLATION",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "INFO_SYSTEMS_VIOLATION",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -19762,7 +19756,7 @@
             "deprecationReason": null
           },
           {
-            "name": "inspectionReady",
+            "name": "inspectionSanctionable",
             "description": null,
             "args": [
               {

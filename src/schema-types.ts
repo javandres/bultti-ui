@@ -792,7 +792,7 @@ export enum InspectionStatus {
   InReview = 'InReview',
   InProduction = 'InProduction',
   Processing = 'Processing',
-  Ready = 'Ready'
+  Sanctionable = 'Sanctionable'
 }
 
 export type ValidationErrorData = {
@@ -930,7 +930,6 @@ export enum TrackReason {
   DeadrunDetected = 'DEADRUN_DETECTED',
   EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
   EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
-  InfoSystemsViolation = 'INFO_SYSTEMS_VIOLATION',
   ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   UnobservedDeparture = 'UNOBSERVED_DEPARTURE'
@@ -1807,7 +1806,7 @@ export type Mutation = {
   createInspection: Inspection;
   updateBaseInspection: Inspection;
   updateInspection: Inspection;
-  inspectionReady: Inspection;
+  inspectionSanctionable: Inspection;
   submitInspection: Inspection;
   publishInspection: Inspection;
   rejectInspection: Inspection;
@@ -1871,7 +1870,7 @@ export type MutationUpdateInspectionArgs = {
 };
 
 
-export type MutationInspectionReadyArgs = {
+export type MutationInspectionSanctionableArgs = {
   inspectionId: Scalars['String'];
 };
 

@@ -11,7 +11,7 @@ import {
 import { useMutationData } from '../util/useMutationData'
 import {
   publishInspectionMutation,
-  readyInspectionMutation,
+  makeInspectionSanctionableMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
 } from './inspectionQueries'
@@ -98,7 +98,7 @@ const InspectionActions = observer(
     )
 
     var [setInspectionReady, { loading: readyLoading }] = useMutationData(
-      readyInspectionMutation
+      makeInspectionSanctionableMutation
     )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
@@ -187,7 +187,7 @@ const InspectionActions = observer(
       (inspection.inspectionType === InspectionType.Pre &&
         inspection.status === InspectionStatus.Draft) ||
       (inspection.inspectionType === InspectionType.Post &&
-        inspection.status === InspectionStatus.Ready)
+        inspection.status === InspectionStatus.Sanctionable)
 
     // Only post-inspections which are in draft state can be readied.
     let canInspectionBeReady =
