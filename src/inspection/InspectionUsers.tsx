@@ -56,7 +56,9 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
       isExpanded={true}
       headerContent={
         <>
-          <HeaderMainHeading>Tarkastuksen tiedot</HeaderMainHeading>
+          <HeaderMainHeading>
+            <Text>inspectionPage_relatedUsers</Text>
+          </HeaderMainHeading>
           <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
             <Button
               style={{ marginLeft: 'auto' }}

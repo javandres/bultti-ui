@@ -10,8 +10,8 @@ import {
 } from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
-  publishInspectionMutation,
   makeInspectionSanctionableMutation,
+  publishInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
 } from './inspectionQueries'
@@ -189,12 +189,11 @@ const InspectionActions = observer(
       (inspection.inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Sanctionable)
 
-    // Only post-inspections which are in draft state can be readied.
-    let canInspectionBeReady =
-      inspection.inspectionType === InspectionType.Post &&
-      inspection.status === InspectionStatus.Draft
+    // Only post-inspections which are in draft state can be made sanctionable.
+    let canInspectionBeSanctionable = inspection.inspectionType === InspectionType.Post && true // inspection.status === InspectionStatus.Draft
 
     let isInspectionSubmitDisabled = disabledActions.includes('submit')
+
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -234,13 +233,13 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {canInspectionBeReady && hasOperatorUserAccessRights && isEditing && (
+          {canInspectionBeSanctionable && hasOperatorUserAccessRights && isEditing && (
             <Button
               loading={readyLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
               onClick={onReadyInspection}>
-              <Text>inspection_actions_canBeAccepted</Text>
+              <Text>inspection_actions_startSanctioning</Text>
             </Button>
           )}
 

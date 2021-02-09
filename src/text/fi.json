@@ -127,6 +127,7 @@
   "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
   "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
   "inspectionPage_results": "Tulokset",
+  "inspectionPage_relatedUsers": "Käyttäjät",
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
@@ -141,7 +142,7 @@
   "inspectionList_youAreHere": "Olet tässä",
 
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
-  "inspection_actions_canBeAccepted": "Hyväksy",
+  "inspection_actions_startSanctioning": "Aloita sanktiointi",
   "inspection_actions_remove": "Poista",
   "inspection_actions_publish": "Julkaise",
   "inspection_actions_reject": "Hylkää",
