@@ -38,7 +38,7 @@ const hslLogin = () => {
     const AUTH_URI = Cypress.env('CYPRESS_HSLID_AUTH_URI');
     const HSLID_CLIENT_ID = Cypress.env('CYPRESS_HSLID_CLIENT_ID');
     const HSLID_CLIENT_SECRET = Cypress.env('CYPRESS_HSLID_CLIENT_SECRET');
-    const AUTH_SCOPE = Cypress.env('AUTH_SCOPE');
+    const AUTH_SCOPE = Cypress.env('CYPRESS_AUTH_SCOPE');
 
     let HSLID_USERNAME;
     let HSLID_PASSWORD;
@@ -72,7 +72,7 @@ const hslLogin = () => {
         expect(response.status).to.eq(200);
         expect(access_token).to.be.ok;
         // testing = QueryParams.testing
-        cy.visit(`/afterLogin?code=${access_token}&testing=true`);
+        cy.visit(`/afterLogin?code=${access_token}&is_test=true`);
         cy.wait(1000);
     });
 };

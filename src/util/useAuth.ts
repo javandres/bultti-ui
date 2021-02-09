@@ -17,17 +17,19 @@ export enum AuthState {
 
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
-  const [user, setUser] = useStateValue('user')
+  const [currentUser, setCurrentUser] = useStateValue('user')
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const { data: fetchedUser, refetch, loading: currentUserLoading } = useQueryData<User>(
-    currentUserQuery
-  )
+  const {
+    data: fetchedUser,
+    refetch: refetchUserCb,
+    loading: currentUserLoading,
+  } = useQueryData<User>(currentUserQuery)
 
-  let fetchUser = useRefetch(refetch)
+  let refetchUser = useRefetch(refetchUserCb)
 
   let navigateNext = useCallback(() => {
     if (shouldNavigate.current) {
@@ -39,16 +41,16 @@ export const useAuth = (): [AuthState, boolean] => {
   }, [navigate, shouldNavigate.current])
 
   useEffect(() => {
-    if (fetchedUser && !user) {
-      setUser(fetchedUser)
+    if (fetchedUser && !currentUser) {
+      setCurrentUser(fetchedUser)
     }
-  }, [fetchedUser, user])
+  }, [fetchedUser, currentUser])
 
   useEffect(() => {
-    if (getAuthToken() && !user && !fetchedUser && !currentUserLoading) {
-      fetchUser()
+    if (getAuthToken() && !currentUser && !fetchedUser && !currentUserLoading) {
+      refetchUser()
     }
-  }, [fetchedUser, fetchUser, user])
+  }, [fetchedUser, refetchUser, currentUser])
 
   const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
     () => ({
@@ -62,18 +64,21 @@ export const useAuth = (): [AuthState, boolean] => {
     let currentAuthToken = getAuthToken()
 
     if (!code && currentAuthToken) {
-      if (user && authState === AuthState.AUTHENTICATED) {
+      if (currentUser && authState === AuthState.AUTHENTICATED) {
         navigateNext()
         return
       }
 
-      if (user && authState === AuthState.UNAUTHENTICATED) {
+      if (currentUser && authState === AuthState.UNAUTHENTICATED) {
         setAuthState(AuthState.AUTHENTICATED)
         return
       }
     }
 
-    if (!code && (!currentAuthToken || (!user && authState === AuthState.AUTHENTICATED))) {
+    if (
+      !code &&
+      (!currentAuthToken || (!currentUser && authState === AuthState.AUTHENTICATED))
+    ) {
       setAuthState(AuthState.UNAUTHENTICATED)
       return
     }
@@ -96,13 +101,13 @@ export const useAuth = (): [AuthState, boolean] => {
           setAuthState(AuthState.AUTHENTICATED)
 
           shouldNavigate.current = true
-          fetchUser()
+          refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
         }
       })
     }
-  }, [user, code, authState, login, fetchUser, navigateNext])
+  }, [currentUser, code, authState, login, refetchUser, navigateNext])
 
   return [authState, loginLoading]
 }

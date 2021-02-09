@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
 import { Link } from '@reach/router'
@@ -12,12 +12,18 @@ import GlobalOperatorFilter from './GlobalOperatorFilter'
 import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
 import NavLink from './NavLink'
+import { logoutMutation } from '../query/authQueries'
+import { Button, ButtonSize, ButtonStyle } from './Button'
+import { Text } from '../../util/translate'
+import { useMutationData } from '../../util/useMutationData'
+import { pickGraphqlData } from '../../util/pickGraphqlData'
+import { removeAuthToken } from '../../util/authToken'
+import { navigateWithQueryString } from '../../util/urlValue'
 import Dropdown from '../input/Dropdown'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { User } from '../../schema-types'
-import { Text } from '../../util/translate'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -124,7 +130,7 @@ export type AppSidebarProps = {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user] = useStateValue<User>('user')
+  const [user, setUser] = useStateValue<User>('user')
   let hasAdminAccess = useHasAdminAccessRights()
 
   let unsavedFormIdsState = useStateValue('unsavedFormIds')
@@ -142,6 +148,20 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       )}
     </>
   )
+
+  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
+
+  const onLogout = useCallback(async () => {
+    navigateWithQueryString('/')
+
+    const result = await logout()
+    let isLoggedOut = pickGraphqlData(result.data)
+
+    if (isLoggedOut) {
+      removeAuthToken()
+      setUser(null)
+    }
+  }, [])
 
   return (
     <AppSidebarView>
@@ -222,6 +242,16 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>reports</Text>
           </NavLink>
+        </NavCategory>
+        <NavCategory>
+          <Button
+            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+            loading={logoutLoading}
+            onClick={onLogout}
+            size={ButtonSize.MEDIUM}
+            data-cy="logoutButton">
+            <Text>logout</Text>
+          </Button>
         </NavCategory>
       </AppNav>
     </AppSidebarView>

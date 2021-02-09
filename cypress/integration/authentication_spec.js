@@ -8,7 +8,7 @@ describe.only('Authentication tests - admin user', () => {
         cy.loginAdmin();
 
         cy.getTestElement('authInfo').should('exist');
-        cy.getTestElement('authInfo').contains('admin');
+        cy.getTestElement('userRole').contains('Admin');
     });
 
     it('Can log out', () => {
@@ -19,7 +19,7 @@ describe.only('Authentication tests - admin user', () => {
             .click();
 
         cy.getTestElement('authInfo').should('not.exist');
-        cy.getTestElement('lineSearch').should('not.exist');
+        cy.getTestElement('userRole').should('not.exist');
     });
 });
 
