@@ -1,17 +1,17 @@
-describe.only('Authentication tests - admin user', () => {
+describe('Authentication tests - admin user', () => {
     it('Cannot see unauthorized elements when not logged in', () => {
         cy.visit('/');
         cy.getTestElement('authInfo').should('not.exist');
     });
 
-    it('Can log in with HSL ID', () => {
+    it('Can log in with HSL ID - admin', () => {
         cy.loginAdmin();
 
         cy.getTestElement('authInfo').should('exist');
         cy.getTestElement('userRole').contains('Admin');
     });
 
-    it('Can log out', () => {
+    it('Can log out - admin', () => {
         cy.loginAdmin();
 
         cy.getTestElement('logoutButton')
@@ -21,7 +21,18 @@ describe.only('Authentication tests - admin user', () => {
         cy.getTestElement('authInfo').should('not.exist');
         cy.getTestElement('userRole').should('not.exist');
     });
-});
 
-// TODO: describe('Authentication tests - hsl user', () => {...}
-// TODO: describe('Authentication tests - operator', () => {...}
+    it('Can log in with HSL ID - HSL User', () => {
+        cy.loginHSL();
+
+        cy.getTestElement('authInfo').should('exist');
+        cy.getTestElement('userRole').contains('HSL käyttäjä');
+    });
+
+    it('Can log in with HSL ID - Operator', () => {
+        cy.loginOperator();
+
+        cy.getTestElement('authInfo').should('exist');
+        cy.getTestElement('userRole').contains('Liikennöitsijä');
+    });
+});

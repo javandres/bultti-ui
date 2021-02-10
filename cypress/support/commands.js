@@ -29,12 +29,25 @@ Cypress.Commands.add('getTestElement', (selector, options = {}) => {
 });
 
 Cypress.Commands.add('loginAdmin', () => {
-    hslLogin();
+    hslLogin({ role: 'ADMIN'});
     cy.getTestElement('authInfo').should('exist');
 });
 
-// TODO: add logins for other roles, parameterize hslIdLogin to handle different role logins?
-const hslLogin = () => {
+Cypress.Commands.add('loginHSL', () => {
+    hslLogin({ role: 'HSL' });
+    cy.getTestElement('authInfo').should('exist');
+});
+
+Cypress.Commands.add('loginOperator', () => {
+    hslLogin({ role: 'OPERATOR'});
+    cy.getTestElement('authInfo').should('exist');
+});
+
+/**
+ * @param {Object} props
+ * @param {String} props.role ADMIN / HSL / OPERATOR
+ */
+const hslLogin = ({ role }) => {
     const AUTH_URI = Cypress.env('CYPRESS_HSLID_AUTH_URI');
     const HSLID_CLIENT_ID = Cypress.env('CYPRESS_HSLID_CLIENT_ID');
     const HSLID_CLIENT_SECRET = Cypress.env('CYPRESS_HSLID_CLIENT_SECRET');
@@ -71,8 +84,8 @@ const hslLogin = () => {
 
         expect(response.status).to.eq(200);
         expect(access_token).to.be.ok;
-        // testing = QueryParams.testing
-        cy.visit(`/afterLogin?code=${access_token}&is_test=true`);
+
+        cy.visit(`/afterLogin?code=${access_token}&isTest=true&role=${role}`);
         cy.wait(1000);
     });
 };

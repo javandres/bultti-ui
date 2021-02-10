@@ -765,8 +765,6 @@ export type ObservedExecutionRequirement = {
   kilometersRequired?: Maybe<Scalars['Float']>;
   metersObserved?: Maybe<Scalars['Float']>;
   kilometersObserved?: Maybe<Scalars['Float']>;
-  averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
-  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   observedRequirements: Array<ObservedExecutionValue>;
 };
 
@@ -780,14 +778,13 @@ export type ObservedExecutionValue = {
   kilometersObserved?: Maybe<Scalars['Float']>;
   quotaObserved?: Maybe<Scalars['Float']>;
   differencePercentage?: Maybe<Scalars['Float']>;
+  differenceKilometers?: Maybe<Scalars['Float']>;
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCountRequired?: Maybe<Scalars['Int']>;
   equipmentCountObserved?: Maybe<Scalars['Int']>;
-  averageAgeWeightedRequired?: Maybe<Scalars['Float']>;
-  averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
-  sanctionablePercentage?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
+  sanctionablePercentage?: Maybe<Scalars['Float']>;
 };
 
 export enum InspectionStatus {
@@ -1678,8 +1675,6 @@ export type ObservedExecutionRequirementsReportData = {
   areaName: Scalars['String'];
   totalKilometersRequired: Scalars['Float'];
   totalKilometersObserved: Scalars['Float'];
-  averageAgeWeightedRequired: Scalars['Float'];
-  averageAgeWeightedObserved: Scalars['Float'];
   observedRequirements: Array<ObservedExecutionValue>;
 };
 
@@ -1748,7 +1743,7 @@ export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution';
   id: Scalars['ID'];
   procurementUnitId?: Maybe<Scalars['String']>;
-  totalKilometersRequired?: Maybe<Scalars['Float']>;
+  totalUnitKilometers?: Maybe<Scalars['Float']>;
   totalKilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
 };
@@ -2012,8 +2007,8 @@ export type MutationRemoveExecutionRequirementArgs = {
 
 
 export type MutationLoginArgs = {
+  role: Scalars['String'];
   isTest?: Maybe<Scalars['Boolean']>;
-  redirectUri?: Maybe<Scalars['String']>;
   authorizationCode: Scalars['String'];
 };
 

@@ -52,10 +52,19 @@ export const useAuth = (): [AuthState, boolean] => {
     }
   }, [fetchedUser, refetchUser, currentUser])
 
-  const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
+  const {
+    codeUrlParam,
+    isTestUrlParam = false,
+    roleUrlParam,
+  }: {
+    codeUrlParam: string
+    isTestUrlParam: boolean
+    roleUrlParam: string
+  } = useMemo(
     () => ({
-      code: (getUrlValue('code', '') || '') as string,
-      is_test: (getUrlValue('is_test', false) || false) as boolean,
+      codeUrlParam: (getUrlValue('code', '') || '') as string,
+      isTestUrlParam: (getUrlValue('isTest', false) || false) as boolean,
+      roleUrlParam: (getUrlValue('role', '') || '') as string,
     }),
     [authState] // Re-evaluate after authState changes
   )
@@ -63,7 +72,7 @@ export const useAuth = (): [AuthState, boolean] => {
   useEffect(() => {
     let currentAuthToken = getAuthToken()
 
-    if (!code && currentAuthToken) {
+    if (!codeUrlParam && currentAuthToken) {
       if (currentUser && authState === AuthState.AUTHENTICATED) {
         navigateNext()
         return
@@ -76,22 +85,24 @@ export const useAuth = (): [AuthState, boolean] => {
     }
 
     if (
-      !code &&
+      !codeUrlParam &&
       (!currentAuthToken || (!currentUser && authState === AuthState.AUTHENTICATED))
     ) {
       setAuthState(AuthState.UNAUTHENTICATED)
       return
     }
 
-    if (code && authState === AuthState.UNAUTHENTICATED) {
+    if (codeUrlParam && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
       setUrlValue('code', null)
-      setUrlValue('is_test', null)
-
+      setUrlValue('isTest', null)
+      setUrlValue('role', null)
+      console.log('roleUrlParam ', roleUrlParam)
       login({
         variables: {
-          authorizationCode: code + '',
-          isTest: is_test,
+          authorizationCode: codeUrlParam,
+          isTest: isTestUrlParam,
+          role: roleUrlParam,
         },
       }).then(({ data }) => {
         let token = pickGraphqlData(data)
@@ -107,7 +118,7 @@ export const useAuth = (): [AuthState, boolean] => {
         }
       })
     }
-  }, [currentUser, code, authState, login, refetchUser, navigateNext])
+  }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
 
   return [authState, loginLoading]
 }

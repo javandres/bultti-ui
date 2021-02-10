@@ -6902,30 +6902,6 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeightedRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "averageAgeWeightedObserved",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "observedRequirements",
             "description": null,
             "args": [],
@@ -7065,6 +7041,18 @@
             "deprecationReason": null
           },
           {
+            "name": "differenceKilometers",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "cumulativeDifferencePercentage",
             "description": null,
             "args": [],
@@ -7101,30 +7089,6 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeightedRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "averageAgeWeightedObserved",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "sanctionThreshold",
             "description": null,
             "args": [],
@@ -7137,7 +7101,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionablePercentage",
+            "name": "sanctionAmount",
             "description": null,
             "args": [],
             "type": {
@@ -7149,7 +7113,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionablePercentage",
             "description": null,
             "args": [],
             "type": {
@@ -18073,38 +18037,6 @@
             "deprecationReason": null
           },
           {
-            "name": "averageAgeWeightedRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "averageAgeWeightedObserved",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "observedRequirements",
             "description": null,
             "args": [],
@@ -18993,7 +18925,7 @@
             "deprecationReason": null
           },
           {
-            "name": "totalKilometersRequired",
+            "name": "totalUnitKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -20756,6 +20688,20 @@
             "description": null,
             "args": [
               {
+                "name": "role",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "isTest",
                 "description": null,
                 "type": {
@@ -20764,16 +20710,6 @@
                   "ofType": null
                 },
                 "defaultValue": "false"
-              },
-              {
-                "name": "redirectUri",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": "\"http://localhost:3001\""
               },
               {
                 "name": "authorizationCode",
