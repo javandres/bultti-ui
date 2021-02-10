@@ -700,43 +700,6 @@ type Mutation {
   updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): ExecutionRequirement!
 }
 
-type ObservedDeviationsReport {
-  columnLabels: String!
-  description: String!
-  filteredCount: Int!
-  filters: [FilterConfig!]
-  inspectionId: String!
-  inspectionType: InspectionType!
-  name: String!
-  operatorId: Float!
-  page: PageConfig
-  pages: Int!
-  reportData: [ObservedDeviationsReportData!]!
-  seasonId: String!
-  showSanctioned: Boolean
-  showUnsanctioned: Boolean
-  sort: [SortConfig!]
-  title: String!
-  totalCount: Int!
-}
-
-type ObservedDeviationsReportData {
-  date: String!
-  dayType: String!
-  direction: String!
-  id: ID!
-  journeyEndTime: String!
-  journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
-  observedOverlapSeconds: Float!
-  recoveryTime: Float!
-  registryNr: String!
-  routeId: String!
-  terminalTime: Float!
-  trackReason: TrackReason!
-}
-
 type ObservedEmissionClassExecutionReport {
   columnLabels: String!
   description: String!
@@ -1122,13 +1085,13 @@ type Query {
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
   inspection(inspectionId: String!): Inspection
+  inspectionSanctions(inspectionId: String!): [Sanction!]!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   loadedHfpRanges(endDate: String!, startDate: String!): [HfpDateStatus!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingBlockDeparturesReport!
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingEquipmentReport!
-  observedDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedDeviationsReport!
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
   observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentColorReport!
   observedEquipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentTypeReport!
@@ -1161,6 +1124,18 @@ type ReportListItem {
   inspectionType: InspectionType!
   name: String!
   title: String!
+}
+
+type Sanction {
+  appliedSanctionAmount: Float!
+  entityIdentifier: String!
+  id: ID!
+  inspection: Inspection!
+  inspectionId: String!
+  sanctionAmount: Float!
+  sanctionReason: SanctionReason!
+  sanctionableKilometers: Float!
+  sanctionableType: SanctionableEntity!
 }
 
 type Season {
@@ -1324,8 +1299,8 @@ enum InspectionType {
 
 enum InspectionUserRelationType {
   CREATED_BY
+  MADE_SANCTIONABLE_BY
   PUBLISHED_BY
-  READIED_BY
   REJECTED_BY
   SUBMITTED_BY
   SUBSCRIBED_TO
@@ -1351,6 +1326,22 @@ enum OperatingAreaName {
   CENTER
   OTHER
   UNKNOWN
+}
+
+enum SanctionReason {
+  EMISSION_CLASS_DEFICIENCY
+  EQUIPMENT_AGE_VIOLATION
+  EQUIPMENT_TYPE_VIOLATION
+  EXTERIOR_COLOR_VIOLATION
+  LATE_DEPARTURE
+  TIMING_STOP_VIOLATION
+  UNIT_EQUIPMENT_MAX_AGE_VIOLATION
+}
+
+enum SanctionableEntity {
+  DEPARTURE
+  EMISSION_CLASS
+  EQUIPMENT
 }
 
 enum SortOrder {

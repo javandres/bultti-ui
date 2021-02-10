@@ -1,9 +1,9 @@
-export type ReportComponentProps<T> = {
+export type ReportComponentProps<T = {}> = {
   items: T[]
-  columnLabels?: { [key in keyof T]: string }
+  columnLabels?: { [key: string]: string }
 }
 
-export type ReportType = 'list' | 'pair' | 'executionRequirement'
+export type ReportType = 'list' | 'executionRequirement' | 'observedExecutionRequirement'
 
 export const reportTypes: { [key: string]: ReportType } = {
   ObservedExecutionRequirementsReportData: 'executionRequirement',

@@ -66,7 +66,6 @@ export type Query = {
   unitExecutionReport: UnitExecutionReport;
   earlyTimingStopDeparturesReport: EarlyTimingStopDeparturesReport;
   observedLateDeparturesReport: LateDeparturesReport;
-  observedDeviationsReport: ObservedDeviationsReport;
   observedEmissionClassExecutionReport: ObservedEmissionClassExecutionReport;
   observedEquipmentColorReport: ObservedEquipmentColorReport;
   observedEquipmentTypeReport: ObservedEquipmentTypeReport;
@@ -82,6 +81,7 @@ export type Query = {
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
+  inspectionSanctions: Array<Sanction>;
 };
 
 
@@ -360,14 +360,6 @@ export type QueryObservedLateDeparturesReportArgs = {
 };
 
 
-export type QueryObservedDeviationsReportArgs = {
-  inspectionId: Scalars['String'];
-  page?: Maybe<InputPageConfig>;
-  filters?: Maybe<Array<InputFilterConfig>>;
-  sort?: Maybe<Array<InputSortConfig>>;
-};
-
-
 export type QueryObservedEmissionClassExecutionReportArgs = {
   inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
@@ -459,6 +451,11 @@ export type QueryObservedExecutionRequirementsArgs = {
 
 export type QueryPreviewObservedRequirementArgs = {
   requirementId: Scalars['String'];
+};
+
+
+export type QueryInspectionSanctionsArgs = {
+  inspectionId: Scalars['String'];
 };
 
 export type HfpDateStatus = {
@@ -593,7 +590,7 @@ export enum InspectionUserRelationType {
   PublishedBy = 'PUBLISHED_BY',
   RejectedBy = 'REJECTED_BY',
   SubmittedBy = 'SUBMITTED_BY',
-  ReadiedBy = 'READIED_BY'
+  MadeSanctionableBy = 'MADE_SANCTIONABLE_BY'
 }
 
 export type ProcurementUnit = {
@@ -1488,45 +1485,6 @@ export type LateDeparturesReportData = {
   observedLateArrivalSeconds: Scalars['Float'];
 };
 
-export type ObservedDeviationsReport = {
-  __typename?: 'ObservedDeviationsReport';
-  name: Scalars['String'];
-  title: Scalars['String'];
-  description: Scalars['String'];
-  inspectionType: InspectionType;
-  columnLabels: Scalars['String'];
-  filteredCount: Scalars['Int'];
-  totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  seasonId: Scalars['String'];
-  operatorId: Scalars['Float'];
-  inspectionId: Scalars['String'];
-  page?: Maybe<PageConfig>;
-  filters?: Maybe<Array<FilterConfig>>;
-  sort?: Maybe<Array<SortConfig>>;
-  showSanctioned?: Maybe<Scalars['Boolean']>;
-  showUnsanctioned?: Maybe<Scalars['Boolean']>;
-  reportData: Array<ObservedDeviationsReportData>;
-};
-
-export type ObservedDeviationsReportData = {
-  __typename?: 'ObservedDeviationsReportData';
-  id: Scalars['ID'];
-  routeId: Scalars['String'];
-  dayType: Scalars['String'];
-  journeyStartTime: Scalars['String'];
-  journeyEndTime: Scalars['String'];
-  direction: Scalars['String'];
-  trackReason: TrackReason;
-  date: Scalars['String'];
-  observedDepartureTime: Scalars['DateTime'];
-  observedArrivalTime: Scalars['DateTime'];
-  registryNr: Scalars['String'];
-  terminalTime: Scalars['Float'];
-  recoveryTime: Scalars['Float'];
-  observedOverlapSeconds: Scalars['Float'];
-};
-
 export type ObservedEmissionClassExecutionReport = {
   __typename?: 'ObservedEmissionClassExecutionReport';
   name: Scalars['String'];
@@ -1799,6 +1757,35 @@ export type InspectionDate = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
 };
+
+export type Sanction = {
+  __typename?: 'Sanction';
+  id: Scalars['ID'];
+  inspection: Inspection;
+  inspectionId: Scalars['String'];
+  sanctionableType: SanctionableEntity;
+  sanctionReason: SanctionReason;
+  entityIdentifier: Scalars['String'];
+  sanctionAmount: Scalars['Float'];
+  appliedSanctionAmount: Scalars['Float'];
+  sanctionableKilometers: Scalars['Float'];
+};
+
+export enum SanctionableEntity {
+  Departure = 'DEPARTURE',
+  EmissionClass = 'EMISSION_CLASS',
+  Equipment = 'EQUIPMENT'
+}
+
+export enum SanctionReason {
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION',
+  LateDeparture = 'LATE_DEPARTURE',
+  UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
+}
 
 export type Mutation = {
   __typename?: 'Mutation';

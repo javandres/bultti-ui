@@ -3,6 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import Dropdown from '../common/input/Dropdown'
+import { ReportStats } from '../type/report'
 
 const ReportPagingView = styled.div`
   display: flex;
@@ -53,46 +54,46 @@ const PageSelectDropdown = styled(Dropdown)`
 `
 
 export type PropTypes = {
-  reportData: any
+  reportStats: ReportStats
   onNextPage: () => unknown
   onPrevPage: () => unknown
   onSetPage: (setToPage: number) => unknown
 }
 
 const ReportPaging = observer(
-  ({ reportData, onNextPage, onPrevPage, onSetPage }: PropTypes) => {
+  ({ reportStats, onNextPage, onPrevPage, onSetPage }: PropTypes) => {
     let pageOptions = useMemo(() => {
       let opts: number[] = []
       let pageIdx = 1
 
-      while (opts.length < (reportData.pages || 1)) {
+      while (opts.length < (reportStats.pages || 1)) {
         opts.push(pageIdx++)
       }
 
       return opts
-    }, [reportData.pages])
+    }, [reportStats.pages])
 
     return (
       <ReportPagingView>
         <PageValue>
-          Rivejä: <strong>{reportData.totalCount}</strong>
+          Rivejä: <strong>{reportStats.totalCount}</strong>
         </PageValue>
-        {(reportData.filters || []).length !== 0 && (
+        {reportStats.filteredCount !== reportStats.totalCount && (
           <PageValue>
-            Filtteröityjä rivejä: <strong>{reportData.filteredCount}</strong>
+            Filtteröityjä rivejä: <strong>{reportStats.filteredCount}</strong>
           </PageValue>
         )}
         <PageValue>
-          Rivejä per sivu: <strong>{reportData.page?.pageSize}</strong>
+          Rivejä per sivu: <strong>{reportStats.pageSize}</strong>
         </PageValue>
-        {reportData.page?.pageSize !== reportData.reportData?.length && (
+        {reportStats.pageSize !== reportStats.totalCount && (
           <PageValue>
-            Rivejä näkymässä: <strong>{reportData.reportData?.length}</strong>
+            Rivejä näkymässä: <strong>{reportStats.itemsOnPage}</strong>
           </PageValue>
         )}
         <PagingWrapper>
           <Button
-            disabled={(reportData.page?.page || 1) <= 1}
+            disabled={(reportStats.currentPage || 1) <= 1}
             size={ButtonSize.SMALL}
             buttonStyle={ButtonStyle.SECONDARY}
             onClick={onPrevPage}>
@@ -107,16 +108,16 @@ const ReportPaging = observer(
             }}>
             <PageSelectDropdown
               theme="light"
-              selectedItem={reportData.page?.page || 1}
+              selectedItem={reportStats.currentPage || 1}
               items={pageOptions}
               onSelect={onSetPage}
               itemToString={(idx) => idx}
               itemToLabel={(idx) => idx}
             />
-            <strong>/ {reportData.pages}</strong>
+            <strong>/ {reportStats.pages}</strong>
           </PageValue>
           <Button
-            disabled={!((reportData.page?.page || 1) < (reportData.pages || 1))}
+            disabled={!((reportStats.currentPage || 1) < (reportStats.pages || 1))}
             size={ButtonSize.SMALL}
             buttonStyle={ButtonStyle.SECONDARY}
             onClick={onNextPage}>

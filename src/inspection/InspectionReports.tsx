@@ -5,13 +5,14 @@ import { useQueryData } from '../util/useQueryData'
 import { reportsQuery } from '../report/reportQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../report/ReportListItem'
-import Report from '../report/Report'
 import { TextButton } from '../common/components/Button'
 import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
+import ReportContainer from '../report/ReportContainer'
+import ReportStateContext from '../report/ReportStateContext'
 
 const InspectionReportsView = styled.div``
 
@@ -78,11 +79,13 @@ const InspectionReports = observer(
               inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportListItem}
               isExpanded={reportsExpanded}>
-              <Report
-                reportName={reportListItem.name}
-                inspectionId={inspectionId}
-                inspectionType={inspection.inspectionType}
-              />
+              <ReportStateContext>
+                <ReportContainer
+                  reportName={reportListItem.name}
+                  inspectionId={inspectionId}
+                  inspectionType={inspection.inspectionType}
+                />
+              </ReportStateContext>
             </ReportListItem>
           ))}
       </InspectionReportsView>

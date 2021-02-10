@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
@@ -11,6 +11,7 @@ import PostInspectionExecutionRequirements from '../executionRequirement/PostIns
 import LoadInspectionHfpData from './LoadInspectionHfpData'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
+import PostInspectionSanctions from './PostInspectionSanctions'
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -56,6 +57,9 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     return (
       <div>
+        {inspection.status === InspectionStatus.Sanctionable && (
+          <PostInspectionSanctions></PostInspectionSanctions>
+        )}
         <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
         {hfpLoaded ? (
           <>
