@@ -29,7 +29,7 @@ const ReportView = observer(
   ({
     items,
     columnLabels,
-    loading,
+    loading = false,
     onUpdate = () => {},
     reportStats,
     reportType = 'list',
@@ -43,13 +43,22 @@ const ReportView = observer(
       setSort = () => {},
     } = useContext(ReportStateCtx)
 
+    let useReportStats = reportStats || {
+      currentPage: page.page,
+      itemsOnPage: items.length,
+      totalCount: items.length,
+      pages: 1,
+      pageSize: items.length,
+      filteredCount: items.length,
+    }
+
     let onPageNav = useCallback(
       (offset) => {
         return () => {
           setPage((currentPage) => {
             let nextPageIdx = Math.min(
               Math.max(currentPage.page + offset, 1),
-              reportStats?.pages || 1
+              useReportStats.pages || 1
             )
 
             return {
@@ -59,13 +68,13 @@ const ReportView = observer(
           })
         }
       },
-      [reportStats?.pages]
+      [useReportStats.pages]
     )
 
     let onSetPage = useCallback(
       (setPageTo) => {
         setPage((currentPage) => {
-          let nextPageIdx = Math.min(Math.max(setPageTo, 1), reportStats?.pages || 1)
+          let nextPageIdx = Math.min(Math.max(setPageTo, 1), useReportStats.pages || 1)
 
           return {
             ...currentPage,
@@ -73,13 +82,13 @@ const ReportView = observer(
           }
         })
       },
-      [reportStats?.pages]
+      [useReportStats.pages]
     )
 
     return (
       <ReportViewWrapper>
         <LoadingDisplay loading={loading} style={{ top: '-1rem' }} />
-        {reportStats && reportType !== 'executionRequirement' && (
+        {useReportStats && reportType !== 'executionRequirement' && (
           <>
             <ReportTableFilters
               filters={filters}
@@ -92,7 +101,7 @@ const ReportView = observer(
               onSetPage={onSetPage}
               onNextPage={onPageNav(1)}
               onPrevPage={onPageNav(-1)}
-              reportStats={reportStats}
+              reportStats={useReportStats}
             />
           </>
         )}

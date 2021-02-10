@@ -4,11 +4,13 @@ import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { gql } from '@apollo/client'
 import { InspectionContext } from '../inspection/InspectionContext'
-import Table from '../common/components/Table'
-import { Sanction } from '../schema-types'
 import { PageSection } from '../common/components/common'
+import ReportView from '../report/ReportView'
+import ReportStateContext from '../report/ReportStateContext'
 
-const PostInspectionSanctionsView = styled(PageSection)``
+const PostInspectionSanctionsView = styled(PageSection)`
+  margin-top: 1rem;
+`
 
 export type PropTypes = {
   children?: React.ReactNode
@@ -41,7 +43,7 @@ let sanctionColumnLabels = {
 const PostInspectionSanctions = observer(({ children }: PropTypes) => {
   const inspection = useContext(InspectionContext)
 
-  let { data: sanctionsData } = useQueryData(sanctionsQuery, {
+  let { data: sanctionsData, loading } = useQueryData(sanctionsQuery, {
     skip: !inspection,
     variables: {
       inspectionId: inspection?.id,
@@ -50,11 +52,14 @@ const PostInspectionSanctions = observer(({ children }: PropTypes) => {
 
   return (
     <PostInspectionSanctionsView>
-      <Table<Sanction>
-        fluid={true}
-        columnLabels={sanctionColumnLabels}
-        items={sanctionsData || []}
-      />
+      <ReportStateContext>
+        <ReportView
+          loading={loading}
+          reportType="list"
+          columnLabels={sanctionColumnLabels}
+          items={sanctionsData || []}
+        />
+      </ReportStateContext>
     </PostInspectionSanctionsView>
   )
 })
