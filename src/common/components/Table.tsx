@@ -646,7 +646,7 @@ const Table = observer(
       visibleRowCountOptions &&
       !visibleRowCountOptions.includes(selectedRowCountOption)
     ) {
-      throw 'visibleRowCountOptions didnt include given selectedRowCountOption'
+      throw new Error('visibleRowCountOptions did not include given selectedRowCountOption')
     }
     let [selectedRowCount, setSelectedRowCount] = useState<number>(
       selectedRowCountOption ? selectedRowCountOption : visibleRowCountOptions[0]
