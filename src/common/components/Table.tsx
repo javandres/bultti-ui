@@ -10,8 +10,7 @@ import React, {
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { StyledRemoveButton } from './Button'
-import { CrossThick } from '../icon/CrossThick'
+import { RemoveButton } from './Button'
 import { ScrollContext } from './AppFrame'
 import { FixedSizeList as List } from 'react-window'
 import Input, { TextInput } from '../input/Input'
@@ -58,30 +57,11 @@ export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' })
   height: calc(100% + 1px);
 `
 
-const RowRemoveButton = styled(StyledRemoveButton)`
-  width: 2rem;
-  border: 0;
+const RowRemoveButton = styled(RemoveButton)`
   transition: opacity 0.05s ease-out, right 0.1s ease-out;
-  background-color: var(--red);
-  color: white;
-  transform: none;
+  right: -2rem;
   opacity: 0;
   position: absolute;
-  right: -2rem;
-  top: 0;
-  bottom: 0;
-
-  svg * {
-    fill: white;
-  }
-
-  svg *.fill-inverse {
-    fill: var(--red);
-  }
-
-  &:hover {
-    transform: none;
-  }
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -456,9 +436,7 @@ const TableRowComponent = observer(
           />
         ))}
         {onRemoveRow && (
-          <RowRemoveButton onClick={() => onRemoveRow!(row.item)}>
-            <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-          </RowRemoveButton>
+          <RowRemoveButton style={{ opacity: '0' }} onClick={() => onRemoveRow!(row.item)} />
         )}
       </TableRow>
     )
