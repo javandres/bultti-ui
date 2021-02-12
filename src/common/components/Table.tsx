@@ -234,8 +234,6 @@ const PageSelectorOption = styled.span`
   }
 `
 
-type ItemRemover = undefined | false | null | (() => void)
-
 export type CellValType = string | number
 export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
@@ -246,8 +244,7 @@ export type PropTypes<ItemType> = {
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => undefined | ItemRemover
-  canRemoveRow?: (item: ItemType) => boolean
+  onRemoveRow?: (item: ItemType) => void
   className?: string
   visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
   selectedRowCountOption?: number // Which of visibleRowCountOptions is selected by default
@@ -306,7 +303,7 @@ const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) =>
 type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
   isEditingRow: boolean
-  removeItem: ItemRemover
+  onRemoveRow?: (item: ItemType) => void
   onMakeEditable: (key: string, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
   itemEntries: [string, CellValType][]
@@ -314,9 +311,9 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
 }
 
 type RowPropTypes<ItemType = any> = {
-  data?: TableRowWithDataAndFunctions<ItemType>[]
-  row?: TableRowWithDataAndFunctions<ItemType>
   index: number
+  row: TableRowWithDataAndFunctions<ItemType>
+  data?: TableRowWithDataAndFunctions<ItemType>[]
   style?: CSSProperties
   isScrolling?: boolean
 }
@@ -443,7 +440,7 @@ const TableRowComponent = observer(
       return null
     }
 
-    let { itemEntries = [], key: rowKey, isEditingRow, removeItem } = rowItem
+    let { itemEntries = [], key: rowKey, isEditingRow, onRemoveRow } = rowItem
     let rowId = rowKey ?? `row-${index}`
 
     return (
@@ -458,8 +455,8 @@ const TableRowComponent = observer(
             cell={[key as keyof ItemType, val]}
           />
         ))}
-        {!isEditingRow && removeItem && (
-          <RowRemoveButton onClick={removeItem}>
+        {onRemoveRow && (
+          <RowRemoveButton onClick={() => onRemoveRow!(row.item)}>
             <CrossThick fill="white" width="0.5rem" height="0.5rem" />
           </RowRemoveButton>
         )}
@@ -479,7 +476,6 @@ const Table = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
-    canRemoveRow = () => !!onRemoveRow,
     renderCell = defaultRenderCellContent,
     renderValue = defaultRenderValue,
     getColumnTotal,
@@ -630,8 +626,6 @@ const Table = observer(
             !!pendingValues &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
 
-          const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
-
           const onMakeEditable = (key: string, val: CellValType) => () => {
             if (!isEditingRow && onEditValue) {
               onEditValue(key, val, item)
@@ -647,7 +641,7 @@ const Table = observer(
           return {
             key: rowKey,
             isEditingRow,
-            removeItem: itemRemover,
+            onRemoveRow,
             onMakeEditable,
             onValueChange,
             itemEntries,
@@ -659,7 +653,6 @@ const Table = observer(
         sortedItems,
         pendingValues,
         editableValues,
-        canRemoveRow,
         onRemoveRow,
         onEditValue,
         keyFromItem,

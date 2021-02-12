@@ -112,6 +112,7 @@
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
   "catalogue_cataloguesListHeading": "Kalustoluettelot",
   "catalogue_showGrouped": "Näytä ryhmissä",
+  "catalogue_itemRemovalNotAllowedInGroupedListModeNotification": "Poistaaksesi ajoneuvon, näytä ajoneuvot ilman ryhmiä ensin.",
   "catalogue_updateEquipment": "Päivitä ajoneuvotiedot JOREsta",
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
   "catalogue_removeEquipment": "Poista kalustoluettelo",
