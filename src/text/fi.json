@@ -12,6 +12,8 @@
   "remove": "Poista",
   "cancel": "Peruuta",
   "save": "Tallenna",
+  "next": "Seuraava",
+  "previous": "Edellinen",
   "field": "Kenttä",
   "add": "Lisää",
   "area": "Alue",
@@ -36,6 +38,8 @@
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
+
+  "table_rowsPerPage": "riviä per sivu",
 
   "nav_editProcurementUnits": "Muokkaa kilpailukohteita",
   "nav_editInspectionDates": "Muokkaa tarkistusjaksoja",

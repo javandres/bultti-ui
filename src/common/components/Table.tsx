@@ -20,16 +20,15 @@ import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from './FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
+import { Text } from '../../util/translate'
 
 const TableWrapper = styled.div`
   position: relative;
   width: calc(100% + 2rem);
   max-width: calc(100% + 2rem);
-  border-top: 1px solid var(--lighter-grey);
-  border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
-  margin: 0 -1rem 1rem -1rem;
-  overflow-x: scroll;
+  margin: 0 -1rem 0rem -1rem;
+  overflow-x: auto;
 
   &:last-child {
     margin-bottom: 0;
@@ -37,14 +36,12 @@ const TableWrapper = styled.div`
 `
 
 const TableView = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
   overflow-x: hidden;
+  border-top: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
 `
 
 const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
@@ -210,6 +207,32 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
+const PageSelectorContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1rem 0rem 1rem 0rem;
+`
+const PageSelector = styled.div`
+  span {
+    margin-left: 0.5rem;
+  }
+`
+const RowsPerPageOptions = styled.div`
+  span {
+    margin-left: 0.5rem;
+  }
+`
+
+const PageSelectorOption = styled.span`
+  cursor: pointer;
+  color: var(--blue);
+  padding: 0.5rem;
+  transition: 0.5s;
+  &:hover {
+    background-color: var(--white-grey);
+  }
+`
 
 type ItemRemover = undefined | false | null | (() => void)
 
@@ -226,6 +249,8 @@ export type PropTypes<ItemType> = {
   onRemoveRow?: (item: ItemType) => undefined | ItemRemover
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
+  visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
+  selectedRowCountOption?: number // Which of visibleRowCountOptions is selected by default
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
@@ -459,6 +484,8 @@ const Table = observer(
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
+    visibleRowCountOptions = [10, 20, 50],
+    selectedRowCountOption,
     onEditValue,
     onCancelEdit,
     onSaveEdit,
@@ -640,6 +667,35 @@ const Table = observer(
       ]
     )
 
+    // Variables to handle shown rows per page
+    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountOption
+    // Sanity check
+    if (
+      selectedRowCountOption &&
+      visibleRowCountOptions &&
+      !visibleRowCountOptions.includes(selectedRowCountOption)
+    ) {
+      throw 'visibleRowCountOptions didnt include given selectedRowCountOption'
+    }
+    let [selectedRowCount, setSelectedRowCount] = useState<number>(
+      selectedRowCountOption ? selectedRowCountOption : visibleRowCountOptions[0]
+    )
+    let [selectedPageIndex, setSelectedPageIndex] = useState<number>(0)
+    let rowsToRender = areVisibleRowCountOptionsShown
+      ? rows.slice(
+          selectedPageIndex * selectedRowCount,
+          (selectedPageIndex + 1) * selectedRowCount
+        )
+      : rows
+    let pageOptions: number[] = []
+    for (let i = 1; i <= Math.ceil(rows.length / selectedRowCount); i++) {
+      pageOptions.push(i)
+    }
+    let selectedPageOptionStyles = {
+      color: 'var(--dark-grey)',
+      cursor: 'default',
+    }
+
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
         let percentageWidth = columnNames.length / 100 + '%'
@@ -653,7 +709,7 @@ const Table = observer(
         let nameLength = Math.max(colName[1].length, 8)
         let colWidth = nameLength * 10
 
-        for (let row of rows) {
+        for (let row of rowsToRender) {
           let [colKey, colValue] = row.itemEntries[colIdx]
           let strVal = toString(renderValue(colKey, colValue))
           let valLength = Math.max(strVal.length, 5)
@@ -665,7 +721,7 @@ const Table = observer(
       }
 
       return widths
-    }, [columnNames, rows, fluid])
+    }, [columnNames, rowsToRender, fluid])
 
     // The table is empty if we don't have any items,
     // OR
@@ -687,7 +743,7 @@ const Table = observer(
             }, 0)
           )
     let rowHeight = 27
-    let listHeight = rows.length * rowHeight // height of all rows combined
+    let listHeight = rowsToRender.length * rowHeight // height of all rowsToRender combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
     let hasVerticalScroll = listHeight > height
 
@@ -828,7 +884,7 @@ const Table = observer(
                   {TableRowComponent}
                 </List>
               ) : (
-                rows.map((row, rowIndex) => (
+                rowsToRender.map((row, rowIndex) => (
                   <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
                 ))
               )}
@@ -860,6 +916,59 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
+        {areVisibleRowCountOptionsShown && (
+          <PageSelectorContainer>
+            <PageSelector>
+              <PageSelectorOption
+                style={selectedPageIndex === 0 ? selectedPageOptionStyles : {}}
+                onClick={() =>
+                  selectedPageIndex > 0
+                    ? setSelectedPageIndex(selectedPageIndex - 1)
+                    : undefined
+                }>
+                <Text>previous</Text>
+              </PageSelectorOption>
+              {pageOptions.map((option: number, index: number) => {
+                return (
+                  <PageSelectorOption
+                    key={`option-${index}`}
+                    onClick={() => setSelectedPageIndex(index)}
+                    style={selectedPageIndex === index ? selectedPageOptionStyles : {}}>
+                    {option}
+                  </PageSelectorOption>
+                )
+              })}
+              <PageSelectorOption
+                style={
+                  selectedPageIndex === pageOptions.length - 1 ? selectedPageOptionStyles : {}
+                }
+                onClick={() =>
+                  selectedPageIndex < pageOptions.length - 1
+                    ? setSelectedPageIndex(selectedPageIndex + 1)
+                    : undefined
+                }>
+                <Text>next</Text>
+              </PageSelectorOption>
+            </PageSelector>
+            <RowsPerPageOptions>
+              <Text>show</Text>
+              {visibleRowCountOptions.map((rowCount: number, index: number) => {
+                return (
+                  <PageSelectorOption
+                    style={selectedRowCount === rowCount ? selectedPageOptionStyles : {}}
+                    key={`option-${index}`}
+                    onClick={() => {
+                      setSelectedRowCount(rowCount)
+                      setSelectedPageIndex(0)
+                    }}>
+                    {rowCount}
+                  </PageSelectorOption>
+                )
+              })}{' '}
+              <Text>table_rowsPerPage</Text>
+            </RowsPerPageOptions>
+          </PageSelectorContainer>
+        )}
         {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <FormSaveToolbar
             onSave={onSaveEdit!}
