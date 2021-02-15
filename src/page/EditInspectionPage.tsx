@@ -23,6 +23,7 @@ import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import PostInspectionSanctions from '../postInspection/PostInspectionSanctions'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -171,6 +172,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                           refetchData={refetch}
                           inspection={inspection}
                         />
+                        {inspection.status === InspectionStatus.Sanctionable && (
+                          <PostInspectionSanctions
+                            inspection={inspection}
+                            name="sanction"
+                            path="sanctions"
+                            label={text('inspectionPage_sanctions')}
+                          />
+                        )}
                         <InspectionPreview
                           inspection={inspection}
                           path="results"

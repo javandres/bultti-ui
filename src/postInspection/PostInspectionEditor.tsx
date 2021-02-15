@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
@@ -11,7 +11,11 @@ import PostInspectionExecutionRequirements from '../executionRequirement/PostIns
 import LoadInspectionHfpData from './LoadInspectionHfpData'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
-import PostInspectionSanctions from './PostInspectionSanctions'
+import styled from 'styled-components/macro'
+
+const PostInspectionEditorView = styled.div`
+  margin-top: 1rem;
+`
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -56,10 +60,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
     }, [updateConnectedInspection, isEditable])
 
     return (
-      <div>
-        {inspection.status === InspectionStatus.Sanctionable && (
-          <PostInspectionSanctions></PostInspectionSanctions>
-        )}
+      <PostInspectionEditorView>
         <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
         {hfpLoaded ? (
           <>
@@ -91,7 +92,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
             <MessageView>Lataa tarkastusjakson HFP-tiedot ennen jatkamista.</MessageView>
           </MessageContainer>
         )}
-      </div>
+      </PostInspectionEditorView>
     )
   }
 )

@@ -1,20 +1,23 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { gql } from '@apollo/client'
-import { InspectionContext } from '../inspection/InspectionContext'
-import { PageSection } from '../common/components/common'
 import ReportView from '../report/ReportView'
 import ReportStateContext from '../report/ReportStateContext'
+import { TabChildProps } from '../common/components/Tabs'
+import { Inspection } from '../schema-types'
 
-const PostInspectionSanctionsView = styled(PageSection)`
-  margin-top: 1rem;
+const PostInspectionSanctionsView = styled.div`
+  width: 100%;
+  min-height: 100%;
+  padding: 0 0.75rem 2rem;
+  background-color: white;
 `
 
 export type PropTypes = {
-  children?: React.ReactNode
-}
+  inspection: Inspection
+} & TabChildProps
 
 let sanctionsQuery = gql`
   query sanctions($inspectionId: String!) {
@@ -40,9 +43,7 @@ let sanctionColumnLabels = {
   sanctionableKilometers: 'Sanktioitavat kilometrit',
 }
 
-const PostInspectionSanctions = observer(({ children }: PropTypes) => {
-  const inspection = useContext(InspectionContext)
-
+const PostInspectionSanctions = observer(({ inspection }: PropTypes) => {
   let { data: sanctionsData, loading } = useQueryData(sanctionsQuery, {
     skip: !inspection,
     variables: {
