@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { FilterConfig, PageConfig, SortConfig } from '../schema-types'
-
-const ReportStateContextView = styled.div``
 
 export type ReportStateContextType = {
   filters: FilterConfig[]

@@ -1833,6 +1833,7 @@ export type Mutation = {
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
+  setSanctionValue: Sanction;
 };
 
 
@@ -2078,6 +2079,12 @@ export type MutationCreateInspectionDateArgs = {
 
 export type MutationRemoveInspectionDateArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationSetSanctionValueArgs = {
+  sanctionValue: Scalars['Float'];
+  sanctionId: Scalars['String'];
 };
 
 export type InitialInspectionInput = {
