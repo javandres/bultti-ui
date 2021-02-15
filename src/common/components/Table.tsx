@@ -245,7 +245,6 @@ export type PropTypes<ItemType> = {
     onCancel?: () => unknown,
     tabIndex?: number
   ) => React.ReactChild
-  virtualized?: boolean
   maxHeight?: number
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
@@ -458,7 +457,7 @@ const Table = observer(
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
-    visibleRowCountOptions = [10, 20, 50],
+    visibleRowCountOptions = [],
     selectedRowCountOption,
     onEditValue,
     onCancelEdit,
@@ -466,7 +465,6 @@ const Table = observer(
     pendingValues = [],
     renderInput = defaultRenderInput,
     editableValues = [],
-    virtualized = false,
     maxHeight = window.innerHeight,
     fluid = false,
     showToolbar = true,
@@ -836,29 +834,11 @@ const Table = observer(
               })}
             </TableHeader>
             <TableBodyWrapper>
-              {tableIsEmpty ? (
-                emptyContent
-              ) : virtualized ? (
-                <List
-                  style={{
-                    minWidth: '100%',
-                    overflowX: 'hidden',
-                    overflowY: hasVerticalScroll ? 'scroll' : 'hidden',
-                  }}
-                  height={height}
-                  width={tableViewWidth}
-                  itemCount={rows.length}
-                  itemSize={rowHeight}
-                  layout="vertical"
-                  itemData={rows}
-                  itemKey={getListItemKey}>
-                  {TableRowComponent}
-                </List>
-              ) : (
-                rowsToRender.map((row, rowIndex) => (
-                  <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
-                ))
-              )}
+              {tableIsEmpty
+                ? emptyContent
+                : rowsToRender.map((row, rowIndex) => (
+                    <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+                  ))}
             </TableBodyWrapper>
             {typeof getColumnTotal === 'function' && (
               <TableRow key="totals" footer={true}>

@@ -37,7 +37,7 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
   let [sort, setSort] = useState<SortConfig[]>([])
   let [page, setPage] = useState<PageConfig>({
     page: 1,
-    pageSize: 500,
+    pageSize: 20,
   })
 
   let requestVars = useRef({
@@ -81,39 +81,6 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
     return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
   }, [report])
 
-  let onPageNav = useCallback(
-    (offset) => {
-      return () => {
-        setPage((currentPage) => {
-          let nextPageIdx = Math.min(
-            Math.max(currentPage.page + offset, 1),
-            report?.pages || 1
-          )
-
-          return {
-            ...currentPage,
-            page: nextPageIdx,
-          }
-        })
-      }
-    },
-    [report?.pages]
-  )
-
-  let onSetPage = useCallback(
-    (setPageTo) => {
-      setPage((currentPage) => {
-        let nextPageIdx = Math.min(Math.max(setPageTo, 1), report?.pages || 1)
-
-        return {
-          ...currentPage,
-          page: nextPageIdx,
-        }
-      })
-    },
-    [report?.pages]
-  )
-
   return (
     <ReportView>
       <ReportFunctionsRow>
@@ -143,9 +110,31 @@ const Report = observer(({ reportName, inspectionId, inspectionType }: PropTypes
             onApply={onUpdateFetchProps}
           />
           <ReportPaging
-            onSetPage={onSetPage}
-            onNextPage={onPageNav(1)}
-            onPrevPage={onPageNav(-1)}
+            selectedPageSize={page.pageSize}
+            onSetPage={(targetPageNumber: number) =>
+              setPage({
+                page: targetPageNumber,
+                pageSize: page.pageSize,
+              })
+            }
+            onNextPage={() =>
+              setPage({
+                page: page.page + 1,
+                pageSize: page.pageSize,
+              })
+            }
+            onPrevPage={() =>
+              setPage({
+                page: page.page - 1,
+                pageSize: page.pageSize,
+              })
+            }
+            onSetPageSize={(targetPageSize: number) =>
+              setPage({
+                page: page.page,
+                pageSize: targetPageSize,
+              })
+            }
             reportData={report}
           />
         </>

@@ -52,15 +52,31 @@ const PageSelectDropdown = styled(Dropdown)`
   }
 `
 
+const PageSelectorOption = styled.div`
+  cursor: pointer;
+  color: var(--blue);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+`
+
 export type PropTypes = {
   reportData: any
-  onNextPage: () => unknown
-  onPrevPage: () => unknown
-  onSetPage: (setToPage: number) => unknown
+  selectedPageSize: number
+  onNextPage: () => void
+  onPrevPage: () => void
+  onSetPage: (targetPageNumber: number) => void
+  onSetPageSize: (targetPageSize: number) => void
 }
 
 const ReportPaging = observer(
-  ({ reportData, onNextPage, onPrevPage, onSetPage }: PropTypes) => {
+  ({
+    reportData,
+    selectedPageSize,
+    onNextPage,
+    onPrevPage,
+    onSetPage,
+    onSetPageSize,
+  }: PropTypes) => {
     let pageOptions = useMemo(() => {
       let opts: number[] = []
       let pageIdx = 1
@@ -71,6 +87,14 @@ const ReportPaging = observer(
 
       return opts
     }, [reportData.pages])
+
+    let pageSizeOptions = [20, 50, 100]
+
+    let selectedPageOptionStyles = {
+      color: 'var(--dark-grey)',
+      cursor: 'default',
+      fontWeight: 'bold' as 'bold',
+    }
 
     return (
       <ReportPagingView>
@@ -83,7 +107,17 @@ const ReportPaging = observer(
           </PageValue>
         )}
         <PageValue>
-          Rivejä per sivu: <strong>{reportData.page?.pageSize}</strong>
+          Näytä
+          {pageSizeOptions.map((option: number, index: number) => {
+            return (
+              <PageSelectorOption
+                key={`option-${index}`}
+                onClick={() => onSetPageSize(option)}
+                style={selectedPageSize === option ? selectedPageOptionStyles : {}}>
+                {option}
+              </PageSelectorOption>
+            )
+          })}
         </PageValue>
         {reportData.page?.pageSize !== reportData.reportData?.length && (
           <PageValue>
