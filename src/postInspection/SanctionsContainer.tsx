@@ -1,18 +1,18 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection } from '../schema-types'
-import { defaultPageConfig, ReportStateCtx } from '../report/ReportStateContext'
-import ReportView from '../report/ReportView'
+import { Inspection, Sanction } from '../schema-types'
+import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
-import { ReportStats } from '../type/report'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
+import { PageState } from '../common/table/tableUtils'
+import StatefulTable from '../common/table/StatefulTable'
 
-const ReportFunctionsRow = styled(FlexRow)`
+const FunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
   margin: -0.25rem -1rem 0;
@@ -56,7 +56,8 @@ export type PropTypes = {
 }
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
-  let { filters = [], sort = [], page = defaultPageConfig } = useContext(ReportStateCtx)
+  let tableState = useTableState()
+  let { filters = [], sort = [], page = defaultPageConfig } = tableState
 
   let requestVars = useRef({
     inspectionId: inspection.id,
@@ -94,9 +95,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     onUpdateFetchProps()
   }, [sort, page])
 
-  let sanctionDataItems = useMemo(() => sanctionsData?.sanctionsData || [], [sanctionsData])
+  let sanctionDataItems = useMemo(() => sanctionsData || [], [sanctionsData])
 
-  let sanctionStats: ReportStats = useMemo(
+  // TODO: Create paged sanction response.
+  let sanctionPageState: PageState = useMemo(
     () => ({
       totalCount: sanctionsData?.totalCount || 0,
       pages: sanctionsData?.pages || 0,
@@ -110,7 +112,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   return (
     <>
-      <ReportFunctionsRow>
+      <FunctionsRow>
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
@@ -118,14 +120,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onClick={onUpdateFetchProps}>
           <Text>update</Text>
         </Button>
-      </ReportFunctionsRow>
-      <ReportView
-        reportType="list"
-        loading={loading}
+      </FunctionsRow>
+      <StatefulTable<Sanction>
         items={sanctionDataItems}
-        reportStats={sanctionStats}
+        pageState={sanctionPageState}
+        tableState={tableState}
         onUpdate={onUpdateFetchProps}
         columnLabels={sanctionColumnLabels}
+        keyFromItem={(item) => item.id}
       />
     </>
   )

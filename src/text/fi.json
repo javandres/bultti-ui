@@ -36,6 +36,7 @@
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
+  "tableEmpty": "Taulukko on tyhjä.",
 
   "nav_editProcurementUnits": "Muokkaa kilpailukohteita",
   "nav_editInspectionDates": "Muokkaa tarkistusjaksoja",

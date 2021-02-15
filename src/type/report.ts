@@ -19,12 +19,3 @@ export interface BaseReport {
   showSanctioned?: boolean
   showUnsanctioned?: boolean
 }
-
-export type ReportStats = {
-  pages: number
-  totalCount: number
-  filteredCount: number
-  pageSize: number
-  itemsOnPage: number
-  currentPage: number
-}

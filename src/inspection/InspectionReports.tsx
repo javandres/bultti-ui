@@ -12,7 +12,6 @@ import { SubHeading } from '../common/components/Typography'
 import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import ReportContainer from '../report/ReportContainer'
-import ReportStateContext from '../report/ReportStateContext'
 
 const InspectionReportsView = styled.div``
 
@@ -79,13 +78,11 @@ const InspectionReports = observer(
               inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportListItem}
               isExpanded={reportsExpanded}>
-              <ReportStateContext>
-                <ReportContainer
-                  reportName={reportListItem.name}
-                  inspectionId={inspectionId}
-                  inspectionType={inspection.inspectionType}
-                />
-              </ReportStateContext>
+              <ReportContainer
+                reportName={reportListItem.name}
+                inspectionId={inspectionId}
+                inspectionType={inspection.inspectionType}
+              />
             </ReportListItem>
           ))}
       </InspectionReportsView>

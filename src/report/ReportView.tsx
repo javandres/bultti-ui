@@ -1,15 +1,13 @@
-import React, { useCallback, useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import ListReport from './ListReport'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
-import ReportTableFilters from './ReportTableFilters'
-import ReportPaging from './ReportPaging'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
-import { defaultPageConfig, ReportStateCtx } from './ReportStateContext'
-import { ReportStats } from '../type/report'
+import { defaultTableStateValue, TableStateType } from '../common/table/useTableState'
 import { ReportType } from './reportUtil'
+import { PageState } from '../common/table/tableUtils'
+import StatefulTable from '../common/table/StatefulTable'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -19,11 +17,15 @@ const ReportViewWrapper = styled.div`
 export type PropTypes = {
   items: any[]
   columnLabels: { [key: string]: string }
+  pageState: PageState
   loading?: boolean
   onUpdate?: () => unknown
-  reportStats?: ReportStats
+  tableState?: TableStateType
   reportType?: ReportType
 }
+
+let reportKeyFromItem = (item: any) =>
+  item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
 const ReportView = observer(
   ({
@@ -31,90 +33,25 @@ const ReportView = observer(
     columnLabels,
     loading = false,
     onUpdate = () => {},
-    reportStats,
+    pageState,
+    tableState = defaultTableStateValue,
     reportType = 'list',
   }: PropTypes) => {
-    let {
-      filters = [],
-      sort = [],
-      page = defaultPageConfig,
-      setPage = () => {},
-      setFilters = () => {},
-      setSort = () => {},
-    } = useContext(ReportStateCtx)
-
-    let useReportStats = reportStats || {
-      currentPage: page.page,
-      itemsOnPage: items.length,
-      totalCount: items.length,
-      pages: 1,
-      pageSize: items.length,
-      filteredCount: items.length,
-    }
-
-    let onPageNav = useCallback(
-      (offset) => {
-        return () => {
-          setPage((currentPage) => {
-            let nextPageIdx = Math.min(
-              Math.max(currentPage.page + offset, 1),
-              useReportStats.pages || 1
-            )
-
-            return {
-              ...currentPage,
-              page: nextPageIdx,
-            }
-          })
-        }
-      },
-      [useReportStats.pages]
-    )
-
-    let onSetPage = useCallback(
-      (setPageTo) => {
-        setPage((currentPage) => {
-          let nextPageIdx = Math.min(Math.max(setPageTo, 1), useReportStats.pages || 1)
-
-          return {
-            ...currentPage,
-            page: nextPageIdx,
-          }
-        })
-      },
-      [useReportStats.pages]
-    )
-
     return (
       <ReportViewWrapper>
         <LoadingDisplay loading={loading} style={{ top: '-1rem' }} />
-        {useReportStats && reportType !== 'executionRequirement' && (
-          <>
-            <ReportTableFilters
-              filters={filters}
-              setFilters={setFilters}
-              fieldLabels={columnLabels}
-              excludeFields={['id', '__typename']}
-              onApply={onUpdate}
-            />
-            <ReportPaging
-              onSetPage={onSetPage}
-              onNextPage={onPageNav(1)}
-              onPrevPage={onPageNav(-1)}
-              reportStats={useReportStats}
-            />
-          </>
-        )}
         {reportType === 'executionRequirement' ? (
           <ExecutionRequirementsReport items={items} />
         ) : reportType === 'observedExecutionRequirement' ? (
           <ObservedExecutionRequirementsReport items={items} />
         ) : (
-          <ListReport
-            sort={sort}
-            setSort={setSort}
+          <StatefulTable
             items={items}
+            pageState={pageState}
+            tableState={tableState}
+            onUpdate={onUpdate}
             columnLabels={columnLabels}
+            keyFromItem={reportKeyFromItem}
           />
         )}
       </ReportViewWrapper>

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Table, { CellValType, EditValue } from '../common/components/Table'
+import Table, { CellValType, EditValue } from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionValue } from '../schema-types'
 import { lowerCase, orderBy, pick } from 'lodash'

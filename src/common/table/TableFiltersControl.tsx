@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Input from '../common/input/Input'
+import Input from '../input/Input'
 import { omit } from 'lodash'
-import { ControlGroup } from '../common/components/form'
-import Dropdown from '../common/input/Dropdown'
-import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
-import { text, Text } from '../util/translate'
-import { FlexRow } from '../common/components/common'
-import { SubHeading } from '../common/components/Typography'
-import { FilterConfig } from '../schema-types'
-import UserHint from '../common/components/UserHint'
+import { ControlGroup } from '../components/form'
+import Dropdown from '../input/Dropdown'
+import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../components/Button'
+import { text, Text } from '../../util/translate'
+import { FlexRow } from '../components/common'
+import { SubHeading } from '../components/Typography'
+import { FilterConfig } from '../../schema-types'
+import UserHint from '../components/UserHint'
 
-const ReportTableFiltersView = styled.div`
+const TableFiltersView = styled.div`
   margin: 1rem 0 0;
   padding: 1rem;
   background: var(--white-grey);
@@ -40,7 +40,7 @@ export type PropTypes<ItemType = any> = {
   setFilters: (arg: ((filters: FilterConfig[]) => FilterConfig[]) | FilterConfig[]) => unknown
 }
 
-const ReportTableFilters = observer(
+const TableFiltersControl = observer(
   <ItemType extends {}>({
     excludeFields = [],
     fieldLabels = {},
@@ -131,7 +131,7 @@ const ReportTableFilters = observer(
     }, [fieldLabels, excludeFields])
 
     return (
-      <ReportTableFiltersView>
+      <TableFiltersView>
         <FlexRow style={{ alignItems: 'center' }}>
           <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>
             <Text>report_filtering_title</Text>
@@ -198,9 +198,9 @@ const ReportTableFilters = observer(
             </FlexRow>
           </>
         )}
-      </ReportTableFiltersView>
+      </TableFiltersView>
     )
   }
 )
 
-export default ReportTableFilters
+export default TableFiltersControl

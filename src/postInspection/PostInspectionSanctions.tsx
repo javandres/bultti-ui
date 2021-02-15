@@ -1,7 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import ReportStateContext from '../report/ReportStateContext'
 import { TabChildProps } from '../common/components/Tabs'
 import { Inspection } from '../schema-types'
 import SanctionsContainer from './SanctionsContainer'
@@ -19,11 +18,7 @@ export type PropTypes = {
 const PostInspectionSanctions = observer(({ inspection }: PropTypes) => {
   return (
     <PostInspectionSanctionsView>
-      {inspection && (
-        <ReportStateContext>
-          <SanctionsContainer inspection={inspection} />
-        </ReportStateContext>
-      )}
+      {inspection && <SanctionsContainer inspection={inspection} />}
     </PostInspectionSanctionsView>
   )
 })

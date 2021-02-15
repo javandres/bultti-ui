@@ -9,7 +9,7 @@ import {
   ExecutionRequirement,
   ExecutionSchemaStats,
 } from '../schema-types'
-import Table, { PropTypes as TablePropTypes } from '../common/components/Table'
+import Table, { PropTypes as TablePropTypes } from '../common/table/Table'
 import { text, Text } from '../util/translate'
 import { SmallHeading } from '../common/components/Typography'
 import { orderBy } from 'lodash'

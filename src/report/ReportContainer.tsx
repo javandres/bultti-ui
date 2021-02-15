@@ -1,16 +1,17 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { createReportQueryByName } from './reportQueries'
 import { InspectionType } from '../schema-types'
-import { defaultPageConfig, ReportStateCtx } from './ReportStateContext'
+import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import ReportView from './ReportView'
 import DownloadReport from './DownloadReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
-import { BaseReport, ReportStats } from '../type/report'
+import { BaseReport } from '../type/report'
+import { createPageState, PageState } from '../common/table/tableUtils'
 
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -25,7 +26,8 @@ export type PropTypes = {
 }
 
 const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
-  let { filters = [], sort = [], page = defaultPageConfig } = useContext(ReportStateCtx)
+  let tableState = useTableState()
+  let { filters = [], sort = [], page = defaultPageConfig } = tableState
 
   let requestVars = useRef({
     reportName,
@@ -68,17 +70,20 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
   }, [report])
 
-  let reportStats: ReportStats = useMemo(
-    () => ({
-      totalCount: report?.totalCount || 0,
-      pages: report?.pages || 0,
-      filteredCount: report?.filteredCount || report?.totalCount || 0,
-      currentPage: report?.page?.page || 0,
-      pageSize: report?.page?.pageSize || 0,
-      itemsOnPage: report?.reportData?.length,
-    }),
-    [report]
-  )
+  // TODO: Make BaseReport conform to FilteredPagedSortedResponse
+  let reportPageState: PageState = useMemo(() => {
+    let { reportData, filteredCount, totalCount, pages, page, filters, sort } = report
+
+    return createPageState<BaseReport>({
+      rows: reportData,
+      page,
+      filters,
+      sort,
+      filteredCount,
+      totalCount,
+      pages,
+    })
+  }, [report])
 
   return (
     <>
@@ -108,7 +113,8 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
         }
         loading={reportLoading}
         items={reportDataItems}
-        reportStats={reportStats}
+        tableState={tableState}
+        pageState={reportPageState}
         onUpdate={onUpdateFetchProps}
         columnLabels={columnLabels}
       />
