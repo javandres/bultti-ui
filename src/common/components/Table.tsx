@@ -227,7 +227,7 @@ export type PropTypes<ItemType> = {
   onRemoveRow?: (item: ItemType) => void
   className?: string
   visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
-  selectedRowCountOption?: number // Which of visibleRowCountOptions is selected by default
+  selectedRowCountIndex?: number
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
@@ -458,7 +458,7 @@ const Table = observer(
     getColumnTotal,
     className,
     visibleRowCountOptions = [],
-    selectedRowCountOption,
+    selectedRowCountIndex = 0,
     onEditValue,
     onCancelEdit,
     onSaveEdit,
@@ -637,17 +637,9 @@ const Table = observer(
     )
 
     // Variables to handle shown rows per page
-    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountOption
-    // Sanity check
-    if (
-      selectedRowCountOption &&
-      visibleRowCountOptions &&
-      !visibleRowCountOptions.includes(selectedRowCountOption)
-    ) {
-      throw new Error('visibleRowCountOptions did not include given selectedRowCountOption')
-    }
+    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountIndex
     let [selectedRowCount, setSelectedRowCount] = useState<number>(
-      selectedRowCountOption ? selectedRowCountOption : visibleRowCountOptions[0]
+      visibleRowCountOptions[selectedRowCountIndex]
     )
     let [selectedPageIndex, setSelectedPageIndex] = useState<number>(0)
     let rowsToRender = areVisibleRowCountOptionsShown

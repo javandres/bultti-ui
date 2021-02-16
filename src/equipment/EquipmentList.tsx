@@ -182,6 +182,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
+            visibleRowCountOptions={[10, 20, 50]}
             highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
@@ -201,6 +202,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}
             getColumnTotal={renderColumnTotals}
+            visibleRowCountOptions={[10, 20, 50]}
             editableValues={[]}
             onRemoveRow={() =>
               alert(text('catalogue_itemRemovalNotAllowedInGroupedListModeNotification'))
