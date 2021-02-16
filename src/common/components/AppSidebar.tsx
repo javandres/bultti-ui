@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
-import { Text } from '../../util/translate'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
 import { Link } from '@reach/router'
 import { Search } from '../icon/Search'
@@ -8,15 +7,23 @@ import { Plus } from '../icon/Plus'
 import { Menu } from '../icon/Menu'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import { User } from '../icon/User'
+import { UserIcon } from '../icon/UserIcon'
 import GlobalOperatorFilter from './GlobalOperatorFilter'
 import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
 import NavLink from './NavLink'
+import { logoutMutation } from '../query/authQueries'
+import { Button, ButtonSize, ButtonStyle } from './Button'
+import { Text } from '../../util/translate'
+import { useMutationData } from '../../util/useMutationData'
+import { pickGraphqlData } from '../../util/pickGraphqlData'
+import { removeAuthToken } from '../../util/authToken'
+import { navigateWithQueryString } from '../../util/urlValue'
 import Dropdown from '../input/Dropdown'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
+import { User } from '../../schema-types'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -76,12 +83,14 @@ const UserBar = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  &:hover {
+    background: rgba(0, 0, 0, 0.2);
+  }
 `
 
 const UserDisplay = styled.div`
-  font-weight: bold;
-  margin-left: 0.75rem;
-  font-size: 0.875rem;
+  margin-left: 0.5rem;
+  font-size: 1rem;
 `
 
 const UserLink = styled(Link)`
@@ -116,46 +125,50 @@ export const SidebarStyledSelect = styled(Dropdown)`
   }
 `
 
-/*const LangButton = styled(Button).attrs({
-  small: true,
-  transparent: true,
-})<{ selected: boolean }>`
-  background: ${(p) => (p.selected ? 'white' : 'transparent')};
-  color: ${(p) => (p.selected ? 'var(--dark-blue)' : 'white')};
-  padding: 0 0.55rem;
-  text-transform: uppercase;
-  border-radius: 5px;
-  font-size: 0.875rem;
-  font-weight: bold;
-
-  &:hover {
-    color: white;
-  }
-`*/
-
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user] = useStateValue('user')
+  const [user, setUser] = useStateValue<User>('user')
   let hasAdminAccess = useHasAdminAccessRights()
 
   let unsavedFormIdsState = useStateValue('unsavedFormIds')
 
   let userContent = (
     <>
-      <User width="1rem" height="1rem" fill="white" />
-      {user && <UserDisplay>{user?.email}</UserDisplay>}
+      <UserIcon width="1rem" height="1rem" fill="white" />
+      {user && (
+        <UserDisplay data-cy="authInfo">
+          <div data-cy="userEmail">{user?.email}</div>
+          <div data-cy="userRole">
+            <Text>{`role_${user?.role.toLowerCase()}`}</Text>
+          </div>
+        </UserDisplay>
+      )}
     </>
   )
+
+  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
+
+  const onLogout = useCallback(async () => {
+    navigateWithQueryString('/')
+
+    const result = await logout()
+    let isLoggedOut = pickGraphqlData(result.data)
+
+    if (isLoggedOut) {
+      removeAuthToken()
+      setUser(null)
+    }
+  }, [])
 
   return (
     <AppSidebarView>
       <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
-          <Text>companyName</Text> <Text>title</Text>
+          <Text>appName</Text>
         </h1>
       </AppTitle>
       <UserBar>
@@ -229,6 +242,16 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>reports</Text>
           </NavLink>
+        </NavCategory>
+        <NavCategory>
+          <Button
+            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+            loading={logoutLoading}
+            onClick={onLogout}
+            size={ButtonSize.MEDIUM}
+            data-cy="logoutButton">
+            <Text>logout</Text>
+          </Button>
         </NavCategory>
       </AppNav>
     </AppSidebarView>

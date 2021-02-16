@@ -24,3 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 src/data
 .eslintcache
+
+# env
+.env
+
+# Visual Studio Code
+.vscode

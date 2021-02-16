@@ -42,7 +42,9 @@
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen --config codegen.yml",
     "codestyle": "prettier \"src/**/*.{ts,js,json}\" --write",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "cypress": "CYPRESS_E2E=true cypress",
+    "cypress:run:dev": "CYPRESS_E2E=true cypress run --env configFile=dev"
   },
   "eslintConfig": {
     "extends": "react-app",
@@ -90,6 +92,9 @@
     "@typescript-eslint/parser": "^4.11.1",
     "babel-plugin-polished": "^1.1.0",
     "babel-plugin-styled-components": "^1.12.0",
+    "cypress": "^6.4.0",
+    "cypress-commands": "^1.1.0",
+    "cypress-wait-until": "^1.7.1",
     "eslint-config-react-app": "^6.0.0",
     "husky": "^4.3.6",
     "lint-staged": "^10.5.3",
