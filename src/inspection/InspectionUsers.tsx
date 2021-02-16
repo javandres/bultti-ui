@@ -1,11 +1,7 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
-import ExpandableSection, {
-  HeaderMainHeading,
-  HeaderSection,
-} from '../common/components/ExpandableSection'
+import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
 import { useMutationData } from '../util/useMutationData'
 import {
   inspectionUserRelationsQuery,
@@ -16,7 +12,6 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
 import { Inspection, InspectionUserRelation } from '../schema-types'
-import { Text } from '../util/translate'
 
 export type PropTypes = {
   inspection: Inspection
@@ -57,15 +52,6 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
       headerContent={
         <>
           <HeaderMainHeading>Tarkastuksen tiedot</HeaderMainHeading>
-          <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
-            <Button
-              style={{ marginLeft: 'auto' }}
-              buttonStyle={ButtonStyle.SECONDARY}
-              size={ButtonSize.SMALL}
-              onClick={refetchRelations}>
-              <Text>update</Text>
-            </Button>
-          </HeaderSection>
         </>
       }>
       <LoadingDisplay loading={relationsLoading} />

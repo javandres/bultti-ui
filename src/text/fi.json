@@ -153,6 +153,9 @@
   "inspectionDateForm_header": "Lisää uusi tarkastusjakso",
   "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
 
+  "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
+  "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
+
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",
   "report_filtering_filter_on": "Suodata saraketta",
