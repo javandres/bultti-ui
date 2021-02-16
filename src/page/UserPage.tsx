@@ -6,15 +6,10 @@ import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
-import { logoutMutation, modifyUserMutation } from '../common/query/authQueries'
+import { modifyUserMutation } from '../common/query/authQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import { User, UserInput } from '../schema-types'
 import { PageTitle } from '../common/components/PageTitle'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { Text } from '../util/translate'
-import { pickGraphqlData } from '../util/pickGraphqlData'
-import { removeAuthToken } from '../util/authToken'
-import { navigateWithQueryString } from '../util/urlValue'
 import { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
 
@@ -72,20 +67,6 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     setPendingUser(createUserInput(user))
   }, [])
 
-  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
-
-  const onLogout = useCallback(async () => {
-    navigateWithQueryString('/')
-
-    const result = await logout()
-    let isLoggedOut = pickGraphqlData(result.data)
-
-    if (isLoggedOut) {
-      removeAuthToken()
-      setUser(null)
-    }
-  }, [])
-
   let renderUserInput = useCallback(
     (key, val, onChange, readOnly) => {
       if (key === 'role') {
@@ -114,18 +95,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
 
   return (
     <UserPageView>
-      <PageTitle
-        headerButtons={
-          <Button
-            loading={logoutLoading}
-            onClick={onLogout}
-            size={ButtonSize.MEDIUM}
-            buttonStyle={ButtonStyle.SECONDARY_REMOVE}>
-            <Text>logout</Text>
-          </Button>
-        }>
-        Käyttäjä
-      </PageTitle>
+      <PageTitle>Käyttäjä</PageTitle>
       <PageContainer>
         <LoadingDisplay loading={userLoading} />
         <ItemForm

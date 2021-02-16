@@ -2008,8 +2008,8 @@ export type MutationRemoveExecutionRequirementArgs = {
 
 
 export type MutationLoginArgs = {
+  role: Scalars['String'];
   isTest?: Maybe<Scalars['Boolean']>;
-  redirectUri?: Maybe<Scalars['String']>;
   authorizationCode: Scalars['String'];
 };
 

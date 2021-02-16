@@ -17,17 +17,19 @@ export enum AuthState {
 
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
-  const [user, setUser] = useStateValue('user')
+  const [currentUser, setCurrentUser] = useStateValue('user')
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
 
   const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
-  const { data: fetchedUser, refetch, loading: currentUserLoading } = useQueryData<User>(
-    currentUserQuery
-  )
+  const {
+    data: fetchedUser,
+    refetch: refetchUserCb,
+    loading: currentUserLoading,
+  } = useQueryData<User>(currentUserQuery)
 
-  let fetchUser = useRefetch(refetch)
+  let refetchUser = useRefetch(refetchUserCb)
 
   let navigateNext = useCallback(() => {
     if (shouldNavigate.current) {
@@ -39,21 +41,30 @@ export const useAuth = (): [AuthState, boolean] => {
   }, [navigate, shouldNavigate.current])
 
   useEffect(() => {
-    if (fetchedUser && !user) {
-      setUser(fetchedUser)
+    if (fetchedUser && !currentUser) {
+      setCurrentUser(fetchedUser)
     }
-  }, [fetchedUser, user])
+  }, [fetchedUser, currentUser])
 
   useEffect(() => {
-    if (getAuthToken() && !user && !fetchedUser && !currentUserLoading) {
-      fetchUser()
+    if (getAuthToken() && !currentUser && !fetchedUser && !currentUserLoading) {
+      refetchUser()
     }
-  }, [fetchedUser, fetchUser, user])
+  }, [fetchedUser, refetchUser, currentUser])
 
-  const { code, is_test = false }: { code: string; is_test: boolean } = useMemo(
+  const {
+    codeUrlParam,
+    isTestUrlParam = false,
+    roleUrlParam,
+  }: {
+    codeUrlParam: string
+    isTestUrlParam: boolean
+    roleUrlParam: string
+  } = useMemo(
     () => ({
-      code: (getUrlValue('code', '') || '') as string,
-      is_test: (getUrlValue('is_test', false) || false) as boolean,
+      codeUrlParam: (getUrlValue('code', '') || '') as string,
+      isTestUrlParam: (getUrlValue('isTest', false) || false) as boolean,
+      roleUrlParam: (getUrlValue('role', '') || '') as string,
     }),
     [authState] // Re-evaluate after authState changes
   )
@@ -61,32 +72,37 @@ export const useAuth = (): [AuthState, boolean] => {
   useEffect(() => {
     let currentAuthToken = getAuthToken()
 
-    if (!code && currentAuthToken) {
-      if (user && authState === AuthState.AUTHENTICATED) {
+    if (!codeUrlParam && currentAuthToken) {
+      if (currentUser && authState === AuthState.AUTHENTICATED) {
         navigateNext()
         return
       }
 
-      if (user && authState === AuthState.UNAUTHENTICATED) {
+      if (currentUser && authState === AuthState.UNAUTHENTICATED) {
         setAuthState(AuthState.AUTHENTICATED)
         return
       }
     }
 
-    if (!code && (!currentAuthToken || (!user && authState === AuthState.AUTHENTICATED))) {
+    if (
+      !codeUrlParam &&
+      (!currentAuthToken || (!currentUser && authState === AuthState.AUTHENTICATED))
+    ) {
       setAuthState(AuthState.UNAUTHENTICATED)
       return
     }
 
-    if (code && authState === AuthState.UNAUTHENTICATED) {
+    if (codeUrlParam && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
       setUrlValue('code', null)
-      setUrlValue('is_test', null)
-
+      setUrlValue('isTest', null)
+      setUrlValue('role', null)
+      console.log('roleUrlParam ', roleUrlParam)
       login({
         variables: {
-          authorizationCode: code + '',
-          isTest: is_test,
+          authorizationCode: codeUrlParam,
+          isTest: isTestUrlParam,
+          role: roleUrlParam,
         },
       }).then(({ data }) => {
         let token = pickGraphqlData(data)
@@ -96,13 +112,13 @@ export const useAuth = (): [AuthState, boolean] => {
           setAuthState(AuthState.AUTHENTICATED)
 
           shouldNavigate.current = true
-          fetchUser()
+          refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
         }
       })
     }
-  }, [user, code, authState, login, fetchUser, navigateNext])
+  }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
 
   return [authState, loginLoading]
 }

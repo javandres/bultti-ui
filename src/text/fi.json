@@ -1,6 +1,5 @@
 {
-  "companyName": "HSL",
-  "title": "Bultti",
+  "appName": "HSL Bultti",
   "startDate": "Alkupäivä",
   "endDate": "Loppupäivä",
   "validityPeriod": "Voimassaoloaika",
@@ -37,6 +36,10 @@
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
+
+  "role_admin": "Admin",
+  "role_hsl": "HSL käyttäjä",
+  "role_operator": "Liikennöitsijä",
 
   "nav_editProcurementUnits": "Muokkaa kilpailukohteita",
   "nav_editInspectionDates": "Muokkaa tarkistusjaksoja",

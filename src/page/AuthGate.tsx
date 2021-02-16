@@ -94,7 +94,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
           <LoadingIndicator loading={true} size={80} />
         )}
         <Title>
-          <Text>companyName</Text> <Text>title</Text>
+          <Text>appName</Text>
         </Title>
       </Header>
       {unauthenticated && (
