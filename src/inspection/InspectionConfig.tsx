@@ -91,6 +91,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(
             <FlexRow>
               <InspectionSelectDates
                 inspectionType={inspection.inspectionType}
+                isEditingDisabled={inspection.status !== InspectionStatus.Draft}
                 inspectionInput={pendingInspectionInputValues}
                 onChange={(startDate: Date, endDate: Date) => {
                   onUpdateValue('inspectionStartDate', getDateString(startDate))

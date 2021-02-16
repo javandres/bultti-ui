@@ -50,7 +50,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
     // Update the pre-inspection on changes
-    var updatePreInspectionValues = useCallback(
+    let updatePreInspectionCb = useCallback(
       async (updatedValues: InspectionInput = {}) => {
         if (Object.keys(updatedValues).length === 0) {
           return
@@ -82,11 +82,6 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         }
       },
       [isUpdating.current, inspection, loading, updatePreInspection, refetchData]
-    )
-
-    let createUpdateCallback = useCallback(
-      (updatedValues: InspectionInput) => updatePreInspectionValues(updatedValues),
-      [updatePreInspectionValues]
     )
 
     useEffect(() => {
@@ -124,7 +119,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
             <InspectionConfig
               inspection={inspection}
               isEditable={isEditable}
-              saveValues={createUpdateCallback}
+              saveValues={updatePreInspectionCb}
             />
             <InspectionTypeEditor
               inspection={inspection}
