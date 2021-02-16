@@ -19,8 +19,8 @@ export const UserFragment = gql`
 `
 
 export const loginMutation = gql`
-  mutation login($authorizationCode: String!, $isTest: Boolean) {
-    login(authorizationCode: $authorizationCode, isTest: $isTest)
+  mutation login($authorizationCode: String!, $isTest: Boolean, $role: String!) {
+    login(authorizationCode: $authorizationCode, isTest: $isTest, role: $role)
   }
 `
 

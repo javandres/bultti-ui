@@ -1,4 +1,3 @@
-import React from 'react'
 import { svgSize } from '../../util/svg'
 
 type IconProps = {
@@ -9,7 +8,7 @@ type IconProps = {
   [propName: string]: string | number
 }
 
-export function User({ fill, height, width, ...rest }: IconProps) {
+export function UserIcon({ fill, height, width, ...rest }: IconProps) {
   return (
     <svg
       {...rest}

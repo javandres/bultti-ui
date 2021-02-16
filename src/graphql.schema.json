@@ -20688,6 +20688,20 @@
             "description": null,
             "args": [
               {
+                "name": "role",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "isTest",
                 "description": null,
                 "type": {
@@ -20696,16 +20710,6 @@
                   "ofType": null
                 },
                 "defaultValue": "false"
-              },
-              {
-                "name": "redirectUri",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": "\"http://localhost:3001\""
               },
               {
                 "name": "authorizationCode",
