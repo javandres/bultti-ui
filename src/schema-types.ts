@@ -81,7 +81,7 @@ export type Query = {
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
-  inspectionSanctions: Array<Sanction>;
+  inspectionSanctions: SanctionsResponse;
 };
 
 
@@ -456,6 +456,9 @@ export type QueryPreviewObservedRequirementArgs = {
 
 export type QueryInspectionSanctionsArgs = {
   inspectionId: Scalars['String'];
+  page?: Maybe<InputPageConfig>;
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
 };
 
 export type HfpDateStatus = {
@@ -1756,6 +1759,17 @@ export type InspectionDate = {
   id: Scalars['ID'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+};
+
+export type SanctionsResponse = {
+  __typename?: 'SanctionsResponse';
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  pages: Scalars['Int'];
+  page?: Maybe<PageConfig>;
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  rows: Array<Sanction>;
 };
 
 export type Sanction = {

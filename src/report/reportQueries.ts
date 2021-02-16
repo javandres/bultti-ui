@@ -14,7 +14,10 @@ export const reportsQuery = gql`
 
 export const createReportQueryByName = (reportName: string) => {
   // Uppercase the first letter and add Fragment to the end to get the fragment name of the report.
-  let dataFragmentName = `${reportName[0].toUpperCase() + reportName.substring(1)}Fragment`
+  let dataFragmentName = `${
+    reportName[0].toUpperCase() + reportName.substring(1)
+  }Fragment` as keyof typeof reportQueryFragments
+
   let dataFragment = reportQueryFragments[dataFragmentName]
 
   return gql`

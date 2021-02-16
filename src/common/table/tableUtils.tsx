@@ -10,9 +10,9 @@ export interface FilteredPagedSortedResponse<DataType> {
   filteredCount: number
   totalCount: number
   pages: number
-  page?: PageConfig
-  filters?: FilterConfig[]
-  sort?: SortConfig[]
+  page?: PageConfig | null
+  filters?: FilterConfig[] | null
+  sort?: SortConfig[] | null
 }
 
 export type PageState = {

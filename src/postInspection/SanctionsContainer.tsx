@@ -2,14 +2,14 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection, Sanction } from '../schema-types'
+import { Inspection, Sanction, SanctionsResponse } from '../schema-types'
 import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
-import { PageState } from '../common/table/tableUtils'
+import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 
 const FunctionsRow = styled(FlexRow)`
@@ -30,14 +30,31 @@ let sanctionColumnLabels = {
 let sanctionsQuery = gql`
   query sanctions($inspectionId: String!) {
     inspectionSanctions(inspectionId: $inspectionId) {
-      id
-      entityIdentifier
-      inspectionId
-      sanctionAmount
-      sanctionReason
-      sanctionableKilometers
-      sanctionableType
-      appliedSanctionAmount
+      filteredCount
+      pages
+      totalCount
+      sort {
+        column
+        order
+      }
+      filters {
+        field
+        filterValue
+      }
+      page {
+        page
+        pageSize
+      }
+      rows {
+        id
+        entityIdentifier
+        inspectionId
+        sanctionAmount
+        sanctionReason
+        sanctionableKilometers
+        sanctionableType
+        appliedSanctionAmount
+      }
     }
   }
 `
@@ -66,10 +83,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     page,
   })
 
-  let { data: sanctionsData, loading, refetch } = useQueryData(sanctionsQuery, {
-    skip: !inspection,
-    variables: { ...requestVars.current },
-  })
+  let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
+    sanctionsQuery,
+    {
+      fetchPolicy: 'network-only',
+      skip: !inspection,
+      variables: { ...requestVars.current },
+    }
+  )
 
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData(
     setSanctionMutation
@@ -92,23 +113,15 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   // Trigger the refetch when sort or page state changes. Does NOT react to
   // filter state, which is triggered separately with a button.
   useEffect(() => {
+    console.log(page)
     onUpdateFetchProps()
   }, [sort, page])
 
-  let sanctionDataItems = useMemo(() => sanctionsData || [], [sanctionsData])
+  let sanctionDataItems = useMemo(() => sanctionsData?.rows || [], [sanctionsData])
 
-  // TODO: Create paged sanction response.
-  let sanctionPageState: PageState = useMemo(
-    () => ({
-      totalCount: sanctionsData?.totalCount || 0,
-      pages: sanctionsData?.pages || 0,
-      filteredCount: sanctionsData?.filteredCount || sanctionsData?.totalCount || 0,
-      currentPage: sanctionsData?.page?.page || 0,
-      pageSize: sanctionsData?.page?.pageSize || 0,
-      itemsOnPage: sanctionsData?.sanctionsData?.length,
-    }),
-    [sanctionsData]
-  )
+  let sanctionPageState: PageState = useMemo(() => createPageState(sanctionsData), [
+    sanctionsData,
+  ])
 
   return (
     <>
@@ -122,6 +135,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         </Button>
       </FunctionsRow>
       <StatefulTable<Sanction>
+        loading={loading}
         items={sanctionDataItems}
         pageState={sanctionPageState}
         tableState={tableState}

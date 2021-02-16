@@ -74,7 +74,7 @@ const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
   let onPageNav = useCallback(
     (offset) => {
       return () => {
-        onSelectPage((currentPage) => {
+        onSetPage((currentPage) => {
           let nextPageIdx = Math.min(
             Math.max(currentPage.page + offset, 1),
             pageState.pages || 1
@@ -127,7 +127,7 @@ const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
           disabled={(pageState.currentPage || 1) <= 1}
           size={ButtonSize.SMALL}
           buttonStyle={ButtonStyle.SECONDARY}
-          onClick={() => onPageNav(-1)}>
+          onClick={onPageNav(-1)}>
           Edellinen
         </Button>
         <PageValue
@@ -151,7 +151,7 @@ const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
           disabled={!((pageState.currentPage || 1) < (pageState.pages || 1))}
           size={ButtonSize.SMALL}
           buttonStyle={ButtonStyle.SECONDARY}
-          onClick={() => onPageNav(1)}>
+          onClick={onPageNav(1)}>
           Seuraava
         </Button>
       </PagingWrapper>

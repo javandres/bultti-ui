@@ -1086,7 +1086,7 @@ type Query {
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
   inspection(inspectionId: String!): Inspection
-  inspectionSanctions(inspectionId: String!): [Sanction!]!
+  inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
@@ -1137,6 +1137,16 @@ type Sanction {
   sanctionReason: SanctionReason!
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+}
+
+type SanctionsResponse {
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  page: PageConfig
+  pages: Int!
+  rows: [Sanction!]!
+  sort: [SortConfig!]
+  totalCount: Int!
 }
 
 type Season {
