@@ -26,15 +26,15 @@ export type PageState = {
 
 // It really doesn't matter for this component what the datatype is.
 export function createPageState<DataType = unknown>(
-  pagedResponse: FilteredPagedSortedResponse<DataType>
+  pagedResponse?: FilteredPagedSortedResponse<DataType>
 ) {
   return {
-    totalCount: pagedResponse.totalCount || 0,
-    pages: pagedResponse.pages || 0,
-    filteredCount: pagedResponse.filteredCount || pagedResponse.totalCount || 0,
-    currentPage: pagedResponse.page?.page || 0,
-    pageSize: pagedResponse.page?.pageSize || 0,
-    itemsOnPage: pagedResponse.rows?.length,
+    totalCount: pagedResponse?.totalCount || 0,
+    pages: pagedResponse?.pages || 0,
+    filteredCount: pagedResponse?.filteredCount || pagedResponse?.totalCount || 0,
+    currentPage: pagedResponse?.page?.page || 0,
+    pageSize: pagedResponse?.page?.pageSize || 0,
+    itemsOnPage: pagedResponse?.rows?.length || 0,
   }
 }
 

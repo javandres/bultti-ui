@@ -9,9 +9,11 @@ import { TextButton } from '../common/components/Button'
 import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
+import type { ReportListItem as ReportListItemType } from '../schema-types'
 import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import ReportContainer from '../report/ReportContainer'
+import { ReportTypeByName } from '../report/reportTypes'
 
 const InspectionReportsView = styled.div``
 
@@ -42,11 +44,14 @@ const InspectionReports = observer(
 
     let inspectionId = inspection?.id || ''
 
-    let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {
-      variables: {
-        inspectionType: inspection.inspectionType,
-      },
-    })
+    let { data: reportsData, loading: reportsLoading } = useQueryData<ReportListItemType[]>(
+      reportsQuery,
+      {
+        variables: {
+          inspectionType: inspection.inspectionType,
+        },
+      }
+    )
 
     let reports = useMemo(() => reportsData || [], [reportsData])
 
@@ -79,7 +84,7 @@ const InspectionReports = observer(
               reportData={reportListItem}
               isExpanded={reportsExpanded}>
               <ReportContainer
-                reportName={reportListItem.name}
+                reportName={reportListItem.name as keyof ReportTypeByName}
                 inspectionId={inspectionId}
                 inspectionType={inspection.inspectionType}
               />

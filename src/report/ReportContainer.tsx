@@ -12,6 +12,7 @@ import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { BaseReport } from '../type/report'
 import { createPageState, PageState } from '../common/table/tableUtils'
+import { ReportTypeByName } from './reportTypes'
 
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -20,7 +21,7 @@ const ReportFunctionsRow = styled(FlexRow)`
 `
 
 export type PropTypes = {
-  reportName: string
+  reportName: keyof ReportTypeByName
   inspectionType: InspectionType
   inspectionId: string
 }
@@ -38,14 +39,15 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     page,
   })
 
-  let { data: report, loading: reportLoading, refetch } = useQueryData<BaseReport>(
-    createReportQueryByName(reportName),
-    {
-      notifyOnNetworkStatusChange: true,
-      fetchPolicy: 'network-only',
-      variables: { ...requestVars.current },
-    }
-  )
+  type ReportDataType = ReportTypeByName[typeof reportName]
+
+  let { data: report, loading: reportLoading, refetch } = useQueryData<
+    BaseReport<ReportDataType>
+  >(createReportQueryByName(reportName), {
+    notifyOnNetworkStatusChange: true,
+    fetchPolicy: 'network-only',
+    variables: { ...requestVars.current },
+  })
 
   let onUpdateFetchProps = useCallback(() => {
     requestVars.current.filters = filters
@@ -58,7 +60,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     onUpdateFetchProps()
   }, [sort, page])
 
-  let reportDataItems = useMemo(() => report?.reportData || [], [report])
+  let reportDataItems = useMemo(() => report?.rows || [], [report])
 
   let isExecutionRequirementReport = reportDataItems.some((dataItem) =>
     ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
@@ -70,20 +72,10 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
   }, [report])
 
-  // TODO: Make BaseReport conform to FilteredPagedSortedResponse
-  let reportPageState: PageState = useMemo(() => {
-    let { reportData, filteredCount, totalCount, pages, page, filters, sort } = report
-
-    return createPageState<BaseReport>({
-      rows: reportData,
-      page,
-      filters,
-      sort,
-      filteredCount,
-      totalCount,
-      pages,
-    })
-  }, [report])
+  let reportPageState: PageState = useMemo(
+    () => createPageState<BaseReport<ReportDataType>>(report),
+    [report]
+  )
 
   return (
     <>

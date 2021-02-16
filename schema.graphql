@@ -17,7 +17,7 @@ type BlockDeviationsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [DeviationsReportData!]!
+  rows: [DeviationsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -77,7 +77,7 @@ type DeadrunsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [DeadrunsReportData!]!
+  rows: [DeadrunsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -123,7 +123,7 @@ type DepartureBlocksReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [DepartureBlocksReportData!]!
+  rows: [DepartureBlocksReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -156,7 +156,7 @@ type DeviationsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [DeviationsReportData!]!
+  rows: [DeviationsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -191,7 +191,7 @@ type EarlyTimingStopDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [EarlyTimingStopDeparturesReportData!]!
+  rows: [EarlyTimingStopDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -228,7 +228,7 @@ type EmissionClassExecutionReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [EmissionClassExecutionReportData!]!
+  rows: [EmissionClassExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -304,7 +304,7 @@ type EquipmentColorReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [EquipmentColorReportData!]!
+  rows: [EquipmentColorReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -336,7 +336,7 @@ type EquipmentTypeReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [EquipmentTypeReportData!]!
+  rows: [EquipmentTypeReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -425,7 +425,7 @@ type ExecutionRequirementsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ExecutionRequirementsReportData!]!
+  rows: [ExecutionRequirementsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -465,7 +465,7 @@ type ExtraBlockDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ExtraBlockDeparturesReportData!]!
+  rows: [ExtraBlockDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -569,7 +569,7 @@ type LateDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [LateDeparturesReportData!]!
+  rows: [LateDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -607,7 +607,7 @@ type MissingBlockDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [MissingBlockDeparturesReportData!]!
+  rows: [MissingBlockDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -637,7 +637,7 @@ type MissingEquipmentReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [MissingEquipmentReportData!]!
+  rows: [MissingEquipmentReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -712,7 +712,7 @@ type ObservedEmissionClassExecutionReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedEmissionClassExecutionReportData!]!
+  rows: [ObservedEmissionClassExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -747,7 +747,7 @@ type ObservedEquipmentColorReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedEquipmentColorReportData!]!
+  rows: [ObservedEquipmentColorReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -784,7 +784,7 @@ type ObservedEquipmentTypeReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedEquipmentTypeReportData!]!
+  rows: [ObservedEquipmentTypeReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -841,7 +841,7 @@ type ObservedExecutionRequirementsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedExecutionRequirementsReportData!]!
+  rows: [ObservedExecutionRequirementsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -890,7 +890,7 @@ type ObservedOverAgeDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedOverAgeDeparturesReportData!]!
+  rows: [ObservedOverAgeDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -936,7 +936,7 @@ type ObservedUnitExecutionReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [ObservedUnitExecution!]!
+  rows: [ObservedUnitExecution!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -975,7 +975,7 @@ type OperatorDeadrunsReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [DeadrunsReportData!]!
+  rows: [DeadrunsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -995,7 +995,7 @@ type OverAgeDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [OverAgeDeparturesReportData!]!
+  rows: [OverAgeDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -1170,7 +1170,7 @@ type TrackedDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [TrackedDeparturesReportData!]!
+  rows: [TrackedDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -1200,7 +1200,7 @@ type UnitExecutionReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [UnitExecutionReportData!]!
+  rows: [UnitExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean
@@ -1231,7 +1231,7 @@ type UnobservedDeparturesReport {
   operatorId: Float!
   page: PageConfig
   pages: Int!
-  reportData: [UnobservedDeparturesReportData!]!
+  rows: [UnobservedDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
   showUnsanctioned: Boolean

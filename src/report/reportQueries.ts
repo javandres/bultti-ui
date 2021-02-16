@@ -54,7 +54,7 @@ export const createReportQueryByName = (reportName: string) => {
           column
           order
         }
-        reportData {
+        rows {
         ...${dataFragmentName}
         }
       }

@@ -1,12 +1,14 @@
 import { FilterConfig, InspectionType, PageConfig, SortConfig } from '../schema-types'
+import { FilteredPagedSortedResponse } from '../common/table/tableUtils'
 
-export interface BaseReport {
+export interface BaseReport<DataType extends {}>
+  extends FilteredPagedSortedResponse<DataType> {
   name: string
   title: string
   description: string
   inspectionType: InspectionType
   columnLabels: string
-  reportData: any[]
+  rows: any[]
   filteredCount: number
   totalCount: number
   pages: number

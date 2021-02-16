@@ -5,7 +5,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 import { defaultTableStateValue, TableStateType } from '../common/table/useTableState'
-import { ReportType } from './reportUtil'
+import { ReportType } from './reportTypes'
 import { PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 
