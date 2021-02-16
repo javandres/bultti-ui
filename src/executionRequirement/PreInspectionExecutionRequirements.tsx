@@ -45,11 +45,9 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
       <ExpandableSection
         error={!isValid}
         headerContent={
-          <>
-            <HeaderMainHeading>
-              <Text>executionRequirements</Text>
-            </HeaderMainHeading>
-          </>
+          <HeaderMainHeading>
+            <Text>executionRequirements</Text>
+          </HeaderMainHeading>
         }>
         {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
           <>

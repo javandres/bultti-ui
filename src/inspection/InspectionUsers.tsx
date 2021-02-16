@@ -49,11 +49,7 @@ const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
   return (
     <ExpandableSection
       isExpanded={true}
-      headerContent={
-        <>
-          <HeaderMainHeading>Tarkastuksen tiedot</HeaderMainHeading>
-        </>
-      }>
+      headerContent={<HeaderMainHeading>Tarkastuksen tiedot</HeaderMainHeading>}>
       <LoadingDisplay loading={relationsLoading} />
       <UserRelations
         relations={inspectionUserRelations}
