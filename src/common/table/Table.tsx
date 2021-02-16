@@ -216,6 +216,23 @@ type ItemRemover = undefined | false | null | (() => void)
 export type CellValType = string | number
 export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
 
+export type TableEditProps<ItemType> = {
+  onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
+  pendingValues?: EditValue<ItemType>[]
+  onCancelEdit?: () => unknown
+  onSaveEdit?: () => unknown
+  editableValues?: string[]
+}
+
+export type RenderInputType<ItemType> = (
+  key: keyof ItemType,
+  val: any,
+  onChange: (val: any) => void,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown,
+  tabIndex?: number
+) => React.ReactChild
+
 export type PropTypes<ItemType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
@@ -229,20 +246,8 @@ export type PropTypes<ItemType> = {
   renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
   renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
-  onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType>[]
-  onCancelEdit?: () => unknown
-  onSaveEdit?: () => unknown
-  editableValues?: string[]
   highlightRow?: (item: ItemType) => boolean | string
-  renderInput?: (
-    key: keyof ItemType,
-    val: any,
-    onChange: (val: any) => void,
-    onAccept?: () => unknown,
-    onCancel?: () => unknown,
-    tabIndex?: number
-  ) => React.ReactChild
+  renderInput?: RenderInputType<ItemType>
   virtualized?: boolean
   maxHeight?: number
   fluid?: boolean // Fluid or calculated-then-static table and columns width
@@ -250,7 +255,7 @@ export type PropTypes<ItemType> = {
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
-}
+} & TableEditProps<ItemType>
 
 const defaultKeyFromItem = (item) => item.id
 

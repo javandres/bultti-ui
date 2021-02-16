@@ -7,7 +7,7 @@ import TablePagingControl from './TablePagingControl'
 import { TableStateType } from './useTableState'
 import { PageState, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
-import Table from './Table'
+import Table, { RenderInputType, TableEditProps } from './Table'
 import { EmptyView } from '../components/Messages'
 
 const TableViewWrapper = styled.div`
@@ -26,7 +26,9 @@ export type PropTypes<ItemType extends {}> = {
   loading?: boolean
   onUpdate?: () => unknown
   keyFromItem?: (item: ItemType) => string
-}
+  renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
+  renderInput?: RenderInputType<ItemType>
+} & TableEditProps<ItemType>
 
 const StatefulTable = observer(
   <ItemType extends {}>({
@@ -37,6 +39,13 @@ const StatefulTable = observer(
     pageState,
     tableState,
     keyFromItem,
+    onEditValue,
+    onCancelEdit,
+    onSaveEdit,
+    pendingValues = [],
+    editableValues = [],
+    renderCell,
+    renderInput,
   }: PropTypes<ItemType>) => {
     let {
       filters = [],
@@ -83,6 +92,13 @@ const StatefulTable = observer(
           renderValue={renderCellValue}
           sort={sort}
           setSort={setSort}
+          pendingValues={pendingValues}
+          editableValues={editableValues}
+          onCancelEdit={onCancelEdit}
+          onSaveEdit={onSaveEdit}
+          onEditValue={onEditValue}
+          renderInput={renderInput}
+          renderCell={renderCell}
           columnLabels={existingPropLabels}>
           <TableEmptyView>tableEmpty</TableEmptyView>
         </Table>

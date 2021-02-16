@@ -11,6 +11,7 @@ import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
+import Checkbox from '../common/input/Checkbox'
 
 const FunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -25,6 +26,26 @@ let sanctionColumnLabels = {
   appliedSanctionAmount: 'Sovellettu sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
   sanctionableKilometers: 'Sanktioitavat kilometrit',
+}
+
+let renderSanctionInput = (onChange) => (key: string, val: number, item?: Sanction) => {
+  if (key !== 'appliedSanctionAmount') {
+    return val
+  }
+
+  let onToggleCheckbox = (val) => {
+    console.log(val)
+  }
+
+  return (
+    <Checkbox
+      value={val + ''}
+      onChange={onToggleCheckbox}
+      checked={!!val && val === item?.sanctionAmount}
+      name="sanctionable"
+      label="Sanktioidaan"
+    />
+  )
 }
 
 let sanctionsQuery = gql`
@@ -123,7 +144,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   // Trigger the refetch when sort or page state changes. Does NOT react to
   // filter state, which is triggered separately with a button.
   useEffect(() => {
-    console.log(page)
     onUpdateFetchProps()
   }, [sort, page])
 
@@ -152,6 +172,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         onUpdate={onUpdateFetchProps}
         columnLabels={sanctionColumnLabels}
         keyFromItem={(item) => item.id}
+        renderCell={renderSanctionInput(onSetSanction)}
       />
     </>
   )
