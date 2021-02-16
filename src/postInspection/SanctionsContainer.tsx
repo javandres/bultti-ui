@@ -28,8 +28,18 @@ let sanctionColumnLabels = {
 }
 
 let sanctionsQuery = gql`
-  query sanctions($inspectionId: String!) {
-    inspectionSanctions(inspectionId: $inspectionId) {
+  query sanctions(
+    $inspectionId: String!
+    $page: InputPageConfig
+    $filters: [InputFilterConfig!]
+    $sort: [InputSortConfig!]
+  ) {
+    inspectionSanctions(
+      inspectionId: $inspectionId
+      page: $page
+      filters: $filters
+      sort: $sort
+    ) {
       filteredCount
       pages
       totalCount

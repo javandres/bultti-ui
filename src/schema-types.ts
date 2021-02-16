@@ -225,194 +225,194 @@ export type QueryReportsArgs = {
 
 
 export type QueryBlockDeviationsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryDeadrunsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryDepartureBlocksReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryAllDeviationsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryEmissionClassExecutionReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryEquipmentColorReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryEquipmentTypeReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryExecutionRequirementsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryExtraBlockDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryMissingBlockDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryMissingEquipmentReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryOperatorDeadrunsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryOverageDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryTrackedDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryUnitExecutionReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryEarlyTimingStopDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedLateDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedEmissionClassExecutionReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedEquipmentColorReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedEquipmentTypeReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedExecutionRequirementsReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedOverageDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryObservedUnitExecutionReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
 export type QueryUnobservedDeparturesReportArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 
@@ -455,10 +455,10 @@ export type QueryPreviewObservedRequirementArgs = {
 
 
 export type QueryInspectionSanctionsArgs = {
-  inspectionId: Scalars['String'];
   page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
 };
 
 export type HfpDateStatus = {

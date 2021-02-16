@@ -667,7 +667,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
-  login(authorizationCode: String!, isTest: Boolean = false, redirectUri: String = "http://localhost:3001"): String
+  login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
   modifyUser(userInput: UserInput!): User!
