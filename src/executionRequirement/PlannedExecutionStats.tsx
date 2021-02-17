@@ -14,7 +14,6 @@ import { text, Text } from '../util/translate'
 import { SmallHeading } from '../common/components/Typography'
 import { orderBy } from 'lodash'
 import { normalDayTypes } from '../constants'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
 
 const PlannedExecutionStatsView = styled.div`
@@ -51,7 +50,7 @@ export type PropTypes = {
 }
 
 const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => {
-  let { data: executionStatsData, refetch } = useQueryData<ExecutionSchemaStats>(
+  let { data: executionStatsData } = useQueryData<ExecutionSchemaStats>(
     executionSchemaStatsQuery,
     {
       skip: !executionRequirement,
@@ -71,14 +70,6 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
 
   return (
     <PlannedExecutionStatsView>
-      <FlexRow style={{ marginTop: '1.5rem' }}>
-        <Button
-          buttonStyle={ButtonStyle.SECONDARY}
-          size={ButtonSize.SMALL}
-          onClick={() => refetch()}>
-          <Text>update</Text>
-        </Button>
-      </FlexRow>
       <FlexRow>
         <TableWrapper>
           <SmallHeading style={{ marginTop: '0.5rem' }}>

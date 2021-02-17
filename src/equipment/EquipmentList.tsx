@@ -39,14 +39,14 @@ const EquipmentList: React.FC<PropTypes> = observer(
     groupedColumnLabels,
     editableValues = [],
   }) => {
-    let [groupEquipment, setEquipmentGrouped] = useState(true)
+    let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(true)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
     let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
 
     const onEditValue = useCallback(
       (key: keyof EquipmentWithQuota, value: CellValType, item: EquipmentWithQuota) => {
-        if (groupEquipment || !editableValues.includes(key)) {
+        if (isEquipmentShownInGroup || !editableValues.includes(key)) {
           return
         }
 
@@ -65,7 +65,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
           return [...currentValues, editValue]
         })
       },
-      [groupEquipment, editableValues]
+      [isEquipmentShownInGroup, editableValues]
     )
 
     const onCancelPendingValue = useCallback(() => {
@@ -102,7 +102,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     }, [updateEquipment, pendingValues])
 
     const onRemoveEquipment = useCallback(
-      (item: EquipmentWithQuota) => () => {
+      (item: EquipmentWithQuota) => {
         if (removeEquipment && confirm(text('catalogue_equipmentConfirmRemove'))) {
           removeEquipment(item.id)
         }
@@ -111,7 +111,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     )
 
     const onToggleEquipmentGrouped = useCallback((checked: boolean) => {
-      setEquipmentGrouped(checked)
+      setIsEquipmentShownInGroup(checked)
     }, [])
 
     const equipmentGroups: EquipmentQuotaGroup[] = useMemo(
@@ -157,18 +157,20 @@ const EquipmentList: React.FC<PropTypes> = observer(
       [equipment]
     )
 
+    let isEquipmentListEditable = !isEquipmentShownInGroup && orderedEquipment.length !== 0
+
     return equipment.length !== 0 ? (
       <>
         <FlexRow style={{ marginTop: '1rem', marginBottom: '1rem' }}>
           <ToggleButton
             name="grouped-equipment"
             value="grouped"
-            checked={groupEquipment}
+            checked={isEquipmentShownInGroup}
             onChange={onToggleEquipmentGrouped}>
             <Text>catalogue_showGrouped</Text>
           </ToggleButton>
         </FlexRow>
-        {!groupEquipment && orderedEquipment.length !== 0 && (
+        {isEquipmentListEditable && (
           <Table<EquipmentWithQuota>
             items={orderedEquipment}
             keyFromItem={getQuotaId}
@@ -181,6 +183,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
+            visibleRowCountOptions={[10, 20, 50]}
             highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
@@ -194,13 +197,17 @@ const EquipmentList: React.FC<PropTypes> = observer(
             )}
           />
         )}
-        {groupEquipment && (
+        {isEquipmentShownInGroup && (
           <Table<EquipmentQuotaGroup>
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}
             getColumnTotal={renderColumnTotals}
+            visibleRowCountOptions={[10, 20, 50]}
             editableValues={[]}
+            onRemoveRow={() =>
+              alert(text('catalogue_itemRemovalNotAllowedInGroupedListModeNotification'))
+            }
           />
         )}
       </>

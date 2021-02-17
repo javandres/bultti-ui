@@ -13,7 +13,6 @@ import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from './InspectionUsers'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
-import { pick } from 'lodash'
 import InspectionValidationErrors from './InspectionValidationErrors'
 
 const EditInspectionView = styled.div`
@@ -49,44 +48,21 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
 
     let isLoading = useMemo(() => loading || updateLoading, [loading, updateLoading])
 
-    // Update the pre-inspection on changes
-    var updatePreInspectionValues = useCallback(
+    let updatePreInspectionCb = useCallback(
       async (updatedValues: InspectionInput = {}) => {
-        if (Object.keys(updatedValues).length === 0) {
-          return
-        }
+        isUpdating.current = true
 
-        let updateValues = updatedValues
+        await updatePreInspection({
+          variables: {
+            inspectionId: inspection.id,
+            inspectionInput: updatedValues,
+          },
+        })
 
-        if (!isEditable) {
-          updatedValues = pick(updateValues, 'name')
-        }
-
-        if (
-          Object.keys(updateValues).length !== 0 &&
-          !isUpdating.current &&
-          inspection &&
-          !loading
-        ) {
-          isUpdating.current = true
-
-          await updatePreInspection({
-            variables: {
-              inspectionId: inspection.id,
-              inspectionInput: updatedValues,
-            },
-          })
-
-          isUpdating.current = false
-          await refetchData()
-        }
+        isUpdating.current = false
+        await refetchData()
       },
-      [isUpdating.current, inspection, loading, updatePreInspection, refetchData]
-    )
-
-    let createUpdateCallback = useCallback(
-      (updatedValues: InspectionInput) => updatePreInspectionValues(updatedValues),
-      [updatePreInspectionValues]
+      [isUpdating.current, inspection, updatePreInspection, refetchData]
     )
 
     useEffect(() => {
@@ -121,11 +97,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
           <>
             <InspectionMeta inspection={inspection} />
             <InspectionUsers inspection={inspection} />
-            <InspectionConfig
-              inspection={inspection}
-              isEditable={isEditable}
-              saveValues={createUpdateCallback}
-            />
+            <InspectionConfig inspection={inspection} saveValues={updatePreInspectionCb} />
             <InspectionTypeEditor
               inspection={inspection}
               isEditable={isEditable}

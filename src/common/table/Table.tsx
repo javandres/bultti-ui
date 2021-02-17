@@ -10,26 +10,23 @@ import React, {
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { StyledRemoveButton } from '../components/Button'
-import { CrossThick } from '../icon/CrossThick'
+import { RemoveButton } from '../components/Button'
 import { ScrollContext } from '../components/AppFrame'
-import { FixedSizeList as List } from 'react-window'
 import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
+import { Text } from '../../util/translate'
 
 const TableWrapper = styled.div`
   position: relative;
   width: calc(100% + 2rem);
   max-width: calc(100% + 2rem);
-  border-top: 1px solid var(--lighter-grey);
-  border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
-  margin: 0 -1rem 1rem -1rem;
-  overflow-x: scroll;
+  margin: 0 -1rem 0rem -1rem;
+  overflow-x: auto;
 
   &:last-child {
     margin-bottom: 0;
@@ -37,14 +34,12 @@ const TableWrapper = styled.div`
 `
 
 const TableView = styled.div`
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
   display: flex;
   flex-direction: column;
   width: 100%;
   overflow-x: hidden;
+  border-top: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
 `
 
 const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
@@ -61,30 +56,11 @@ export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' })
   height: calc(100% + 1px);
 `
 
-const RowRemoveButton = styled(StyledRemoveButton)`
-  width: 2rem;
-  border: 0;
+const RowRemoveButton = styled(RemoveButton)`
   transition: opacity 0.05s ease-out, right 0.1s ease-out;
-  background-color: var(--red);
-  color: white;
-  transform: none;
+  right: -2rem;
   opacity: 0;
   position: absolute;
-  right: -2rem;
-  top: 0;
-  bottom: 0;
-
-  svg * {
-    fill: white;
-  }
-
-  svg *.fill-inverse {
-    fill: var(--red);
-  }
-
-  &:hover {
-    transform: none;
-  }
 `
 
 const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -210,8 +186,32 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
+const PageSelectorContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 1rem 0rem 1rem 0rem;
+`
+const PageSelector = styled.div`
+  span {
+    margin-left: 0.5rem;
+  }
+`
+const RowsPerPageOptions = styled.div`
+  span {
+    margin-left: 0.5rem;
+  }
+`
 
-type ItemRemover = undefined | false | null | (() => void)
+const PageSelectorOption = styled.span`
+  cursor: pointer;
+  color: var(--blue);
+  padding: 0.5rem;
+  transition: 0.5s;
+  &:hover {
+    background-color: var(--white-grey);
+  }
+`
 
 export type CellValType = string | number
 export type EditValue<ItemType = any> = {
@@ -246,7 +246,7 @@ export type TablePropTypes<ItemType> = {
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => undefined | ItemRemover
+  onRemoveRow?: (item: ItemType) => unknown
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
@@ -259,7 +259,8 @@ export type TablePropTypes<ItemType> = {
   getColumnTotal?: (key: keyof ItemType) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
-  virtualized?: boolean
+  visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
+  selectedRowCountIndex?: number
   maxHeight?: number
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
@@ -304,7 +305,7 @@ const defaultRenderInput = <ItemType extends {}>(
 type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
   isEditingRow: boolean
-  removeItem: ItemRemover
+  onRemoveRow?: (item: ItemType) => void
   onMakeEditable: (key: keyof ItemType, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
   itemEntries: [string, CellValType][]
@@ -312,9 +313,9 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
 }
 
 type RowPropTypes<ItemType = any> = {
-  data?: TableRowWithDataAndFunctions<ItemType>[]
-  row?: TableRowWithDataAndFunctions<ItemType>
   index: number
+  row: TableRowWithDataAndFunctions<ItemType>
+  data?: TableRowWithDataAndFunctions<ItemType>[]
   style?: CSSProperties
   isScrolling?: boolean
 }
@@ -372,16 +373,16 @@ const TableCellComponent = observer(
     let [key, val] = cell
     let valueKey = key as keyof ItemType
 
+    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
+
     let editValue: EditValue<ItemType> | undefined =
       pendingValues.length !== 0
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
-        : isAlwaysEditable
+        : isAlwaysEditable && canEditCell
         ? { key, value: val, item, itemId }
         : undefined
 
     let columnWidth = columnWidths[colIndex]
-
-    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
 
     let onKeyUp = useCallback(
@@ -446,7 +447,7 @@ const TableRowComponent = observer(
       return null
     }
 
-    let { itemEntries = [], key: rowKey, isEditingRow, removeItem } = rowItem
+    let { itemEntries = [], key: rowKey, isEditingRow, onRemoveRow } = rowItem
     let rowId = rowKey ?? `row-${index}`
 
     return (
@@ -461,10 +462,8 @@ const TableRowComponent = observer(
             cell={[key as keyof ItemType, val]}
           />
         ))}
-        {!isEditingRow && removeItem && (
-          <RowRemoveButton onClick={removeItem}>
-            <CrossThick fill="white" width="0.5rem" height="0.5rem" />
-          </RowRemoveButton>
+        {onRemoveRow && (
+          <RowRemoveButton style={{ opacity: '0' }} onClick={() => onRemoveRow!(row.item)} />
         )}
       </TableRow>
     )
@@ -482,11 +481,12 @@ const Table = observer(
     indexCell = '',
     keyFromItem = defaultKeyFromItem,
     onRemoveRow,
-    canRemoveRow = () => !!onRemoveRow,
     renderCell = defaultRenderCellContent,
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
+    visibleRowCountOptions = [],
+    selectedRowCountIndex = 0,
     onEditValue,
     onCancelEdit,
     onSaveEdit,
@@ -494,8 +494,7 @@ const Table = observer(
     isAlwaysEditable = false,
     renderInput = defaultRenderInput,
     editableValues = [],
-    virtualized = false,
-    maxHeight = window.innerHeight * 0.5,
+    maxHeight = window.innerHeight * 0.6,
     fluid = false,
     showToolbar = true,
     highlightRow = defaultHighlightRow,
@@ -587,11 +586,6 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
-    let getListItemKey = useCallback((index, data) => {
-      let item = data[index]
-      return item.key
-    }, [])
-
     let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
       if (!items || !Array.isArray(items)) {
         return []
@@ -632,8 +626,6 @@ const Table = observer(
             (!!pendingValues || isAlwaysEditable) &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
 
-          const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
-
           const onMakeEditable = (key: keyof ItemType, val: CellValType) => () => {
             if (!isEditingRow && onEditValue) {
               onEditValue(key, val, item)
@@ -649,7 +641,7 @@ const Table = observer(
           return {
             key: rowKey,
             isEditingRow,
-            removeItem: itemRemover,
+            onRemoveRow,
             onMakeEditable,
             onValueChange,
             itemEntries,
@@ -661,7 +653,6 @@ const Table = observer(
         sortedItems,
         pendingValues,
         editableValues,
-        canRemoveRow,
         onRemoveRow,
         onEditValue,
         keyFromItem,
@@ -670,6 +661,27 @@ const Table = observer(
         isAlwaysEditable,
       ]
     )
+
+    // Variables to handle shown rows per page
+    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountIndex
+    let [selectedRowCount, setSelectedRowCount] = useState<number>(
+      visibleRowCountOptions[selectedRowCountIndex]
+    )
+    let [selectedPageIndex, setSelectedPageIndex] = useState<number>(0)
+    let rowsToRender = areVisibleRowCountOptionsShown
+      ? rows.slice(
+          selectedPageIndex * selectedRowCount,
+          (selectedPageIndex + 1) * selectedRowCount
+        )
+      : rows
+    let pageOptions: number[] = []
+    for (let i = 1; i <= Math.ceil(rows.length / selectedRowCount); i++) {
+      pageOptions.push(i)
+    }
+    let selectedPageOptionStyles = {
+      color: 'var(--dark-grey)',
+      cursor: 'default',
+    }
 
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
@@ -684,7 +696,7 @@ const Table = observer(
         let nameLength = Math.max(colName[1].length, 8)
         let colWidth = nameLength * 10
 
-        for (let row of rows) {
+        for (let row of rowsToRender) {
           let [colKey, colValue] = row.itemEntries[colIdx]
           let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
           let valLength = Math.max(strVal.length, 5)
@@ -696,7 +708,7 @@ const Table = observer(
       }
 
       return widths
-    }, [columnNames, rows, fluid])
+    }, [columnNames, rowsToRender, fluid])
 
     // The table is empty if we don't have any items,
     // OR
@@ -718,7 +730,7 @@ const Table = observer(
             }, 0)
           )
     let rowHeight = 27
-    let listHeight = rows.length * rowHeight // height of all rows combined
+    let listHeight = rowsToRender.length * rowHeight // height of all rowsToRender combined
     let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
     let hasVerticalScroll = listHeight > height
 
@@ -841,29 +853,11 @@ const Table = observer(
               })}
             </TableHeader>
             <TableBodyWrapper>
-              {tableIsEmpty ? (
-                emptyContent
-              ) : virtualized ? (
-                <List
-                  style={{
-                    minWidth: '100%',
-                    overflowX: 'hidden',
-                    overflowY: hasVerticalScroll ? 'scroll' : 'hidden',
-                  }}
-                  height={height}
-                  width={tableViewWidth}
-                  itemCount={rows.length}
-                  itemSize={rowHeight}
-                  layout="vertical"
-                  itemData={rows}
-                  itemKey={getListItemKey}>
-                  {TableRowComponent}
-                </List>
-              ) : (
-                rows.map((row, rowIndex) => (
-                  <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
-                ))
-              )}
+              {tableIsEmpty
+                ? emptyContent
+                : rowsToRender.map((row, rowIndex) => (
+                    <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+                  ))}
             </TableBodyWrapper>
             {typeof getColumnTotal === 'function' && (
               <TableRow key="totals" footer={true}>
@@ -894,6 +888,59 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
+        {areVisibleRowCountOptionsShown && (
+          <PageSelectorContainer>
+            <PageSelector>
+              <PageSelectorOption
+                style={selectedPageIndex === 0 ? selectedPageOptionStyles : {}}
+                onClick={() =>
+                  selectedPageIndex > 0
+                    ? setSelectedPageIndex(selectedPageIndex - 1)
+                    : undefined
+                }>
+                <Text>previous</Text>
+              </PageSelectorOption>
+              {pageOptions.map((option: number, index: number) => {
+                return (
+                  <PageSelectorOption
+                    key={`option-${index}`}
+                    onClick={() => setSelectedPageIndex(index)}
+                    style={selectedPageIndex === index ? selectedPageOptionStyles : {}}>
+                    {option}
+                  </PageSelectorOption>
+                )
+              })}
+              <PageSelectorOption
+                style={
+                  selectedPageIndex === pageOptions.length - 1 ? selectedPageOptionStyles : {}
+                }
+                onClick={() =>
+                  selectedPageIndex < pageOptions.length - 1
+                    ? setSelectedPageIndex(selectedPageIndex + 1)
+                    : undefined
+                }>
+                <Text>next</Text>
+              </PageSelectorOption>
+            </PageSelector>
+            <RowsPerPageOptions>
+              <Text>show</Text>
+              {visibleRowCountOptions.map((rowCount: number, index: number) => {
+                return (
+                  <PageSelectorOption
+                    style={selectedRowCount === rowCount ? selectedPageOptionStyles : {}}
+                    key={`option-${index}`}
+                    onClick={() => {
+                      setSelectedRowCount(rowCount)
+                      setSelectedPageIndex(0)
+                    }}>
+                    {rowCount}
+                  </PageSelectorOption>
+                )
+              })}{' '}
+              <Text>table_rowsPerPage</Text>
+            </RowsPerPageOptions>
+          </PageSelectorContainer>
+        )}
         {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <FormSaveToolbar
             onSave={onSaveEdit!}

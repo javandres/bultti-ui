@@ -108,7 +108,12 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
           editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
         />
         <FlexRow
-          style={{ marginLeft: 'auto', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          style={{
+            marginLeft: 'auto',
+            justifyContent: 'flex-end',
+            marginBottom: '1rem',
+            marginTop: '1rem',
+          }}>
           <Button loading={equipmentUpdateLoading} onClick={updateAllEquipmentData}>
             <Text>catalogue_updateEquipment</Text>
           </Button>

@@ -181,8 +181,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       [inspection]
     )
 
-    let isLoading = requirementsLoading || createLoading || refreshLoading
-
     return (
       <ProcurementUnitExecutionRequirementView isInvalid={!valid}>
         <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-start' }}>
@@ -190,13 +188,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             <Text>executionRequirement_unitExecutionRequirements</Text>
           </SectionHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
-            <Button
-              loading={isLoading}
-              onClick={update}
-              buttonStyle={ButtonStyle.SECONDARY}
-              size={ButtonSize.SMALL}>
-              <Text>update</Text>
-            </Button>
             {isEditable && (
               <Button
                 loading={refreshLoading}

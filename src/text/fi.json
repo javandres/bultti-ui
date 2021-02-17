@@ -11,6 +11,8 @@
   "remove": "Poista",
   "cancel": "Peruuta",
   "save": "Tallenna",
+  "next": "Seuraava",
+  "previous": "Edellinen",
   "field": "Kenttä",
   "add": "Lisää",
   "area": "Alue",
@@ -36,6 +38,8 @@
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
+
+  "table_rowsPerPage": "riviä per sivu",
 
   "role_admin": "Admin",
   "role_hsl": "HSL käyttäjä",
@@ -112,6 +116,7 @@
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
   "catalogue_cataloguesListHeading": "Kalustoluettelot",
   "catalogue_showGrouped": "Näytä ryhmissä",
+  "catalogue_itemRemovalNotAllowedInGroupedListModeNotification": "Poistaaksesi ajoneuvon, näytä ajoneuvot ilman ryhmiä ensin.",
   "catalogue_updateEquipment": "Päivitä ajoneuvotiedot JOREsta",
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
   "catalogue_removeEquipment": "Poista kalustoluettelo",
@@ -136,7 +141,7 @@
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
-  "inspection_selectInspection": "Valitse tarkastusjakso",
+  "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_state_draft": "Muokattavissa",
   "inspection_state_prosessing": "Käsiteltävänä",
@@ -158,6 +163,9 @@
   "inspectionDateList_noResults": "Tarkastusjaksoja ei löytynyt",
   "inspectionDateForm_header": "Lisää uusi tarkastusjakso",
   "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
+
+  "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
+  "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",

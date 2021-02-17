@@ -201,6 +201,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     sanctionsData,
   ])
 
+  let isLoading = loading || setSanctionLoading || false
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -214,7 +216,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
       </FunctionsRow>
       <PageSection>
         <StatefulTable<Sanction>
-          loading={loading}
+          loading={isLoading}
           items={sanctionDataItems}
           pageState={sanctionPageState}
           tableState={tableState}

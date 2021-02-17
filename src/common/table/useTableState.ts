@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { FilterConfig, PageConfig, SortConfig } from '../../schema-types'
 
 export type TableStateType = {

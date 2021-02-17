@@ -74,7 +74,6 @@ const StatefulTable = observer(
         <Table<ItemType>
           {...tableProps}
           items={items}
-          virtualized={tableProps.virtualized || true}
           hideKeys={tableProps.hideKeys || (!columnLabels ? ['id'] : undefined)}
           renderValue={tableProps.renderValue || renderCellValue}
           sort={sort}

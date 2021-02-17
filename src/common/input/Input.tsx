@@ -13,7 +13,11 @@ export const TextInput = styled.input<{
 }>`
   font-family: var(--font-family);
   background: ${(p) =>
-    p.theme === 'light' ? (p.readOnly || p.disabled ? '#f8f8f8' : 'white') : 'white'};
+    p.theme === 'light'
+      ? p.readOnly || p.disabled
+        ? 'var(--disabled-grey)'
+        : 'white'
+      : 'white'};
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem;

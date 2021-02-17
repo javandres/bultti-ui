@@ -1,15 +1,12 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button } from '../common/components/Button'
 import RequirementsTable from './RequirementsTable'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
-import ExpandableSection, {
-  HeaderMainHeading,
-  HeaderSection,
-} from '../common/components/ExpandableSection'
+import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
 import {
   RequirementsTableLayout,
   usePreInspectionAreaRequirements,
@@ -48,29 +45,19 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
       <ExpandableSection
         error={!isValid}
         headerContent={
-          <>
-            <HeaderMainHeading>
-              <Text>executionRequirements</Text>
-            </HeaderMainHeading>
-            <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
-              {areaExecutionRequirements?.length !== 0 && (
-                <Button
-                  loading={requirementsLoading}
-                  style={{ marginLeft: 'auto' }}
-                  buttonStyle={ButtonStyle.SECONDARY}
-                  size={ButtonSize.SMALL}
-                  onClick={refetch}>
-                  <Text>update</Text>
-                </Button>
-              )}
-            </HeaderSection>
-          </>
+          <HeaderMainHeading>
+            <Text>executionRequirements</Text>
+          </HeaderMainHeading>
         }>
         {!requirementsLoading && areaExecutionRequirements?.length === 0 && (
           <>
-            <MessageView>Suoritevaatimukset ei laskettu.</MessageView>
+            <MessageView>
+              <Text>preInspection_noCalculatedExecutionRequirements</Text>
+            </MessageView>
             <div>
-              <Button onClick={refetch}>Laske suoritevaatimukset ja toteumat</Button>
+              <Button onClick={refetch}>
+                <Text>preInspection_calculateExecutionRequirements</Text>
+              </Button>
             </div>
           </>
         )}
