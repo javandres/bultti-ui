@@ -214,7 +214,12 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
 type ItemRemover = undefined | false | null | (() => void)
 
 export type CellValType = string | number
-export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
+export type EditValue<ItemType = any> = {
+  key: string
+  value: CellValType
+  item: ItemType
+  itemId: string
+}
 
 export type TableEditProps<ItemType> = {
   onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
@@ -222,6 +227,7 @@ export type TableEditProps<ItemType> = {
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
   editableValues?: string[]
+  isAlwaysEditable?: boolean
 }
 
 export type RenderInputType<ItemType> = (
@@ -468,6 +474,7 @@ const Table = observer(
     onCancelEdit,
     onSaveEdit,
     pendingValues = [],
+    isAlwaysEditable = false,
     renderInput = defaultRenderInput,
     editableValues = [],
     virtualized = false,
@@ -642,6 +649,7 @@ const Table = observer(
         onEditValue,
         keyFromItem,
         columnKeysOrdering,
+        onEditValue,
       ]
     )
 

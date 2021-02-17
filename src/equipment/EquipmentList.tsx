@@ -50,11 +50,12 @@ const EquipmentList: React.FC<PropTypes> = observer(
           return
         }
 
-        let editValue = { key, value, item }
+        let itemId = getQuotaId(item)
+        let editValue: EditValue<EquipmentWithQuota> = { key, value, item, itemId }
 
         setPendingValues((currentValues) => {
           let existingEditValueIndex = currentValues.findIndex(
-            (val) => val.key === key && getQuotaId(val.item) === getQuotaId(item)
+            (val) => val.key === key && val.itemId === itemId
           )
 
           if (existingEditValueIndex !== -1) {

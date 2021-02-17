@@ -24,9 +24,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type EditRequirementValue = EditValue<ObservedExecutionValue> & {
-  requirementId: string
-}
+export type EditRequirementValue = EditValue<ObservedExecutionValue>
 
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]

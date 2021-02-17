@@ -197,13 +197,12 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         key,
         value,
         item,
-        requirementId: requirement.id,
+        itemId: requirement.id,
       }
 
       setPendingValues((currentValues) => {
         let existingEditValueIndex = currentValues.findIndex(
-          (val) =>
-            val.key === key && val.item.id === item.id && val.requirementId === requirement.id
+          (val) => val.key === key && val.item.id === item.id && val.itemId === requirement.id
         )
 
         if (existingEditValueIndex !== -1) {
@@ -333,7 +332,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                               pendingValues={
                                 isEditable
                                   ? pendingValues.filter(
-                                      (val) => val.requirementId === requirement.id
+                                      (val) => val.itemId === requirement.id
                                     )
                                   : []
                               }

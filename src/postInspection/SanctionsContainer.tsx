@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
@@ -11,7 +11,7 @@ import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
-import { CellContent } from '../common/table/Table'
+import { CellValType, EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
 
 const PostInspectionSanctionsView = styled.div`
@@ -38,21 +38,13 @@ let sanctionColumnLabels = {
   sanctionResultKilometers: 'Sanktioidut kilometrit',
 }
 
-let renderSanctionInput = (onChange) => (key: string, val: number, item?: Sanction) => {
-  if (key !== 'appliedSanctionAmount') {
-    return <CellContent>{val}</CellContent>
-  }
-
-  let onToggleCheckbox = (val) => {
-    console.log(val)
-  }
-
+let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, onChange) => {
   return (
     <input
       type="checkbox"
       value={val + ''}
-      onChange={onToggleCheckbox}
-      checked={!!val && val === item?.sanctionAmount}
+      onChange={() => onChange(val)}
+      checked={val !== 0}
       name="sanctionable"
     />
   )
@@ -116,6 +108,7 @@ export type PropTypes = {
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
   let { filters = [], sort = [], page = defaultPageConfig } = tableState
+  let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
 
   let requestVars = useRef({
     inspectionId: inspection.id,
@@ -137,13 +130,41 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setSanctionMutation
   )
 
-  let onSetSanction = useCallback((sanctionId: string, sanctionValue: number) => {
-    execSetSanctionMutation({
-      variables: {
-        sanctionId,
-        sanctionValue,
-      },
+  let onChangeSanction = useCallback((key: string, value: CellValType, item: Sanction) => {
+    setPendingValues((currentValues) => {
+      let existingEditValueIndex = currentValues.findIndex(
+        (val) => val.key === key && val.itemId === item.id
+      )
+
+      let setValue = value
+
+      if (existingEditValueIndex !== -1) {
+        currentValues.splice(existingEditValueIndex, 1)
+        // Toggle value only if already editing it
+        setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+      }
+
+      let editValue = { item, itemId: item.id, key, value: setValue }
+      return [...currentValues, editValue]
     })
+  }, [])
+
+  let onSaveSanctions = useCallback(async () => {
+    if (pendingValues.length === 0) {
+      return
+    }
+
+    setPendingValues([])
+
+    for (let updateValue of pendingValues) {
+      await execSetSanctionMutation({
+        variables: updateValue,
+      })
+    }
+  }, [pendingValues])
+
+  let onCancelEdit = useCallback(() => {
+    setPendingValues([])
   }, [])
 
   let onUpdateFetchProps = useCallback(() => {
@@ -197,8 +218,13 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onUpdate={onUpdateFetchProps}
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}
-          renderCell={renderSanctionInput(onSetSanction)}
+          renderInput={renderSanctionInput}
           maxHeight={window.innerHeight * 0.65}
+          pendingValues={pendingValues}
+          editableValues={['appliedSanctionAmount']}
+          onSaveEdit={onSaveSanctions}
+          onEditValue={onChangeSanction}
+          onCancelEdit={onCancelEdit}
         />
       </PageSection>
     </PostInspectionSanctionsView>
