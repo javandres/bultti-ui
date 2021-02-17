@@ -11,6 +11,8 @@
   "remove": "Poista",
   "cancel": "Peruuta",
   "save": "Tallenna",
+  "next": "Seuraava",
+  "previous": "Edellinen",
   "field": "Kenttä",
   "add": "Lisää",
   "area": "Alue",
@@ -35,6 +37,8 @@
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
+
+  "table_rowsPerPage": "riviä per sivu",
 
   "role_admin": "Admin",
   "role_hsl": "HSL käyttäjä",
@@ -111,6 +115,7 @@
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
   "catalogue_cataloguesListHeading": "Kalustoluettelot",
   "catalogue_showGrouped": "Näytä ryhmissä",
+  "catalogue_itemRemovalNotAllowedInGroupedListModeNotification": "Poistaaksesi ajoneuvon, näytä ajoneuvot ilman ryhmiä ensin.",
   "catalogue_updateEquipment": "Päivitä ajoneuvotiedot JOREsta",
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
   "catalogue_removeEquipment": "Poista kalustoluettelo",

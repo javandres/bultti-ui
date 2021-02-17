@@ -271,11 +271,18 @@ export const StyledRemoveButton = styled.button`
 export type RemoveButtonProps = {
   children?: HTMLCollection | string
   onClick: (e?: React.MouseEvent) => void
+  className?: string
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
 
-export const RemoveButton = ({ onClick, children, ...props }: RemoveButtonProps) => {
+export const RemoveButton = ({
+  onClick,
+  children,
+  style,
+  className,
+  ...props
+}: RemoveButtonProps) => {
   return (
-    <StyledRemoveButton onClick={onClick} {...props}>
+    <StyledRemoveButton onClick={onClick} className={className} {...props}>
       <Trash fill="var(--red)" width="1rem" height="1rem" />
     </StyledRemoveButton>
   )

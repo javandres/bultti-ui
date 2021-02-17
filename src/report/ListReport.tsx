@@ -70,7 +70,6 @@ const ListReport = observer(
     return (
       <ListReportView>
         <Table<ItemType>
-          virtualized={true}
           keyFromItem={(item: any) =>
             item?.id || item?._id || item?.departureId || item?.registryNr || ''
           }
