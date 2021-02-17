@@ -155,7 +155,9 @@ const Tabs: React.FC<PropTypes> = decorate(
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>
-          <Router primary={false}>{children}</Router>
+          <Router style={{ width: '100%' }} primary={false}>
+            {children}
+          </Router>
         </TabContentWrapper>
       </TabsWrapper>
     )

@@ -86,7 +86,6 @@ const StatefulTable = observer(
         <Table<ItemType>
           virtualized={true}
           keyFromItem={keyFromItem}
-          maxHeight={window.innerHeight * 0.75}
           items={items}
           hideKeys={!columnLabels ? ['id'] : undefined}
           renderValue={renderCellValue}

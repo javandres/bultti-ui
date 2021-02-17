@@ -6,17 +6,19 @@ import { Inspection, Sanction, SanctionsResponse } from '../schema-types'
 import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
-import { FlexRow } from '../common/components/common'
+import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 import { CellContent } from '../common/table/Table'
 
+const SanctionsView = styled.div``
+
 const FunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
-  margin: -0.25rem -1rem 0;
+  margin: -0.25rem -0.75rem 0;
 `
 
 let sanctionColumnLabels = {
@@ -169,7 +171,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   ])
 
   return (
-    <>
+    <SanctionsView>
       <FunctionsRow>
         <Button
           style={{ marginLeft: 'auto' }}
@@ -179,17 +181,19 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           <Text>update</Text>
         </Button>
       </FunctionsRow>
-      <StatefulTable<Sanction>
-        loading={loading}
-        items={sanctionDataItems}
-        pageState={sanctionPageState}
-        tableState={tableState}
-        onUpdate={onUpdateFetchProps}
-        columnLabels={sanctionColumnLabels}
-        keyFromItem={(item) => item.id}
-        renderCell={renderSanctionInput(onSetSanction)}
-      />
-    </>
+      <PageSection>
+        <StatefulTable<Sanction>
+          loading={loading}
+          items={sanctionDataItems}
+          pageState={sanctionPageState}
+          tableState={tableState}
+          onUpdate={onUpdateFetchProps}
+          columnLabels={sanctionColumnLabels}
+          keyFromItem={(item) => item.id}
+          renderCell={renderSanctionInput(onSetSanction)}
+        />
+      </PageSection>
+    </SanctionsView>
   )
 })
 

@@ -7,8 +7,9 @@ import SanctionsContainer from './SanctionsContainer'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
-  padding: 0 1rem 2rem;
-  background-color: white;
+  width: 100%;
+  padding: 0 0.75rem 2rem;
+  background-color: var(--white-grey);
 `
 
 export type PropTypes = {

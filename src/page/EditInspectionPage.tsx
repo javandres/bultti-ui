@@ -37,6 +37,7 @@ const EditInspectionPageContainer = styled(PageContainer)`
   display: flex;
   flex-direction: column;
   padding: 0;
+  flex: 1;
 `
 
 const EditInspectionWrapper = styled(Page)`
@@ -46,7 +47,9 @@ const EditInspectionWrapper = styled(Page)`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  margin-bottom: 0px;
+  margin-bottom: 0;
+  min-height: auto;
+  flex: 1;
 `
 
 const InspectionActionsRow = styled(InspectionActions)`
