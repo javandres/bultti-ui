@@ -8,7 +8,7 @@ import { ErrorView, MessageContainer } from '../common/components/Messages'
 import InspectionReports from './InspectionReports'
 
 const PreviewInspectionView = styled.div`
-  padding: 0 0.75rem 2rem;
+  padding: 1rem 0.75rem 2rem;
 `
 
 export type PropTypes = {

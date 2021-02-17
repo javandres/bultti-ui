@@ -59,8 +59,9 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
 `
 
 const TabContentWrapper = styled.div<RouteComponentProps>`
-  padding-top: 1.5rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 `
 
 const progress = keyframes`
@@ -155,7 +156,7 @@ const Tabs: React.FC<PropTypes> = decorate(
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>
-          <Router style={{ width: '100%' }} primary={false}>
+          <Router style={{ width: '100%', flex: 1 }} primary={false}>
             {children}
           </Router>
         </TabContentWrapper>

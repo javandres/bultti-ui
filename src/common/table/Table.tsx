@@ -233,7 +233,7 @@ export type RenderInputType<ItemType> = (
   tabIndex?: number
 ) => React.ReactChild
 
-export type PropTypes<ItemType> = {
+export type TablePropTypes<ItemType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
@@ -312,16 +312,16 @@ type CellPropTypes<ItemType = any> = {
 type ContextTypes<ItemType> = {
   pendingValues?: EditValue[]
   columnWidths?: Array<number | string>
-  editableValues?: PropTypes<ItemType>['editableValues']
-  onEditValue?: PropTypes<ItemType>['onEditValue']
-  renderInput?: PropTypes<ItemType>['renderInput']
-  onSaveEdit?: PropTypes<ItemType>['onSaveEdit']
-  onCancelEdit?: PropTypes<ItemType>['onCancelEdit']
-  renderCell?: PropTypes<ItemType>['renderCell']
-  renderValue?: PropTypes<ItemType>['renderValue']
-  keyFromItem?: PropTypes<ItemType>['keyFromItem']
+  editableValues?: TablePropTypes<ItemType>['editableValues']
+  onEditValue?: TablePropTypes<ItemType>['onEditValue']
+  renderInput?: TablePropTypes<ItemType>['renderInput']
+  onSaveEdit?: TablePropTypes<ItemType>['onSaveEdit']
+  onCancelEdit?: TablePropTypes<ItemType>['onCancelEdit']
+  renderCell?: TablePropTypes<ItemType>['renderCell']
+  renderValue?: TablePropTypes<ItemType>['renderValue']
+  keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
   fluid?: boolean
-  highlightRow?: PropTypes<ItemType>['highlightRow']
+  highlightRow?: TablePropTypes<ItemType>['highlightRow']
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
@@ -478,7 +478,7 @@ const Table = observer(
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
-  }: PropTypes<ItemType>) => {
+  }: TablePropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
 

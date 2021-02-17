@@ -12,13 +12,20 @@ import { gql } from '@apollo/client'
 import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 import { CellContent } from '../common/table/Table'
+import { TabChildProps } from '../common/components/Tabs'
 
-const SanctionsView = styled.div``
+const PostInspectionSanctionsView = styled.div`
+  min-height: 100%;
+  width: 100%;
+  padding: 0 0.75rem 2rem;
+  background-color: var(--white-grey);
+`
 
 const FunctionsRow = styled(FlexRow)`
-  padding: 0 1rem 0.75rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid var(--lighter-grey);
-  margin: -0.25rem -0.75rem 0;
+  margin: 0 -0.75rem 0;
+  background: white;
 `
 
 let sanctionColumnLabels = {
@@ -104,7 +111,7 @@ let setSanctionMutation = gql`
 
 export type PropTypes = {
   inspection: Inspection
-}
+} & TabChildProps
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
@@ -171,7 +178,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   ])
 
   return (
-    <SanctionsView>
+    <PostInspectionSanctionsView>
       <FunctionsRow>
         <Button
           style={{ marginLeft: 'auto' }}
@@ -191,9 +198,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}
           renderCell={renderSanctionInput(onSetSanction)}
+          maxHeight={window.innerHeight * 0.65}
         />
       </PageSection>
-    </SanctionsView>
+    </PostInspectionSanctionsView>
   )
 })
 

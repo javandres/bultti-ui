@@ -19,7 +19,7 @@ import InspectionValidationErrors from './InspectionValidationErrors'
 const EditInspectionView = styled.div`
   width: 100%;
   min-height: 100%;
-  padding: 0 0.75rem 2rem;
+  padding: 1rem 0.75rem 2rem;
   background-color: var(--white-grey);
 `
 

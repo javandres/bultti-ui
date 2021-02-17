@@ -23,7 +23,7 @@ import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import PostInspectionSanctions from '../postInspection/PostInspectionSanctions'
+import SanctionsContainer from '../postInspection/SanctionsContainer'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -176,7 +176,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                           inspection={inspection}
                         />
                         {inspection.status === InspectionStatus.Sanctionable && (
-                          <PostInspectionSanctions
+                          <SanctionsContainer
                             inspection={inspection}
                             name="sanction"
                             path="sanctions"

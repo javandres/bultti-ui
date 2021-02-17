@@ -7,7 +7,7 @@ import TablePagingControl from './TablePagingControl'
 import { TableStateType } from './useTableState'
 import { PageState, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
-import Table, { RenderInputType, TableEditProps } from './Table'
+import Table, { TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
 
 const TableViewWrapper = styled.div`
@@ -19,16 +19,11 @@ const TableEmptyView = styled(EmptyView)`
 `
 
 export type PropTypes<ItemType extends {}> = {
-  items: ItemType[]
-  columnLabels: { [key in keyof ItemType]?: string }
   pageState: PageState
   tableState: TableStateType
   loading?: boolean
   onUpdate?: () => unknown
-  keyFromItem?: (item: ItemType) => string
-  renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
-  renderInput?: RenderInputType<ItemType>
-} & TableEditProps<ItemType>
+} & TablePropTypes<ItemType>
 
 const StatefulTable = observer(
   <ItemType extends {}>({
@@ -38,14 +33,7 @@ const StatefulTable = observer(
     onUpdate = () => {},
     pageState,
     tableState,
-    keyFromItem,
-    onEditValue,
-    onCancelEdit,
-    onSaveEdit,
-    pendingValues = [],
-    editableValues = [],
-    renderCell,
-    renderInput,
+    ...tableProps
   }: PropTypes<ItemType>) => {
     let {
       filters = [],
@@ -84,20 +72,13 @@ const StatefulTable = observer(
           </>
         )}
         <Table<ItemType>
-          virtualized={true}
-          keyFromItem={keyFromItem}
+          {...tableProps}
           items={items}
-          hideKeys={!columnLabels ? ['id'] : undefined}
-          renderValue={renderCellValue}
+          virtualized={tableProps.virtualized || true}
+          hideKeys={tableProps.hideKeys || (!columnLabels ? ['id'] : undefined)}
+          renderValue={tableProps.renderValue || renderCellValue}
           sort={sort}
           setSort={setSort}
-          pendingValues={pendingValues}
-          editableValues={editableValues}
-          onCancelEdit={onCancelEdit}
-          onSaveEdit={onSaveEdit}
-          onEditValue={onEditValue}
-          renderInput={renderInput}
-          renderCell={renderCell}
           columnLabels={existingPropLabels}>
           <TableEmptyView>tableEmpty</TableEmptyView>
         </Table>
