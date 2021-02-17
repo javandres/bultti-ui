@@ -11,7 +11,7 @@ import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import { createPageState, PageState } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
-import Checkbox from '../common/input/Checkbox'
+import { CellContent } from '../common/table/Table'
 
 const FunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -23,14 +23,15 @@ let sanctionColumnLabels = {
   sanctionableType: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
   sanctionAmount: 'Sanktiomäärä',
-  appliedSanctionAmount: 'Sovellettu sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
-  sanctionableKilometers: 'Sanktioitavat kilometrit',
+  sanctionableKilometers: 'Kilometrisuorite',
+  appliedSanctionAmount: 'Sanktioidaan',
+  sanctionResultKilometers: 'Sanktioidut kilometrit',
 }
 
 let renderSanctionInput = (onChange) => (key: string, val: number, item?: Sanction) => {
   if (key !== 'appliedSanctionAmount') {
-    return val
+    return <CellContent>{val}</CellContent>
   }
 
   let onToggleCheckbox = (val) => {
@@ -38,12 +39,12 @@ let renderSanctionInput = (onChange) => (key: string, val: number, item?: Sancti
   }
 
   return (
-    <Checkbox
+    <input
+      type="checkbox"
       value={val + ''}
       onChange={onToggleCheckbox}
       checked={!!val && val === item?.sanctionAmount}
       name="sanctionable"
-      label="Sanktioidaan"
     />
   )
 }
@@ -147,7 +148,21 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     onUpdateFetchProps()
   }, [sort, page])
 
-  let sanctionDataItems = useMemo(() => sanctionsData?.rows || [], [sanctionsData])
+  let sanctionDataItems = useMemo(
+    () =>
+      (sanctionsData?.rows || []).map((sanction) => {
+        // Set a virtual sanctionResultKilometers prop on all sanction rows.
+        // This tells the user the concrete kilometer amount that is sanctioned.
+        let sanctionResult =
+          sanction.sanctionableKilometers * (sanction.appliedSanctionAmount / 100)
+
+        return {
+          ...sanction,
+          sanctionResultKilometers: sanctionResult,
+        }
+      }),
+    [sanctionsData]
+  )
 
   let sanctionPageState: PageState = useMemo(() => createPageState(sanctionsData), [
     sanctionsData,
