@@ -21,6 +21,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   background: ${(p) => (p.disabled ? 'transparent' : 'white')};
   color: ${(p) =>
     p.disabled ? (p.theme === 'light' ? 'var(--dark-grey)' : 'white') : 'var(--dark-grey)'};
+  background: ${(p) => (p.disabled ? 'var(--disabled-grey)' : 'white')};
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 1rem;
   border-radius: 8px;

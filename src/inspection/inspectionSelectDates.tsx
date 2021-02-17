@@ -25,13 +25,14 @@ interface DateOption {
 }
 
 export type PropTypes = {
+  isEditingDisabled: boolean
   inspectionType: InspectionType
   inspectionInput: InspectionInput
   onChange: (startDate: Date, endDate: Date) => void
 }
 
 const InspectionSelectDates = observer(
-  ({ inspectionType, inspectionInput, onChange }: PropTypes) => {
+  ({ isEditingDisabled, inspectionType, inspectionInput, onChange }: PropTypes) => {
     let {
       data: inspectionDatesQueryResult,
       loading: areInspectionDatesLoading,
@@ -74,6 +75,7 @@ const InspectionSelectDates = observer(
           <LoadingDisplay />
         ) : (
           <Dropdown
+            disabled={isEditingDisabled}
             label={text('inspection_selectInspection')}
             items={dateOptions}
             onSelect={onSelectDates}

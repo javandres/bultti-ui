@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useEffect, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { difference } from 'lodash'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button } from '../common/components/Button'
 import { defaultDayTypeGroup, useDayTypeGroups } from './departureBlocksCommon'
 import DepartureBlockGroupItem from './DepartureBlockGroupItem'
 import { useQueryData } from '../util/useQueryData'
@@ -10,10 +10,7 @@ import { availableDayTypesQuery } from './blockDeparturesQuery'
 import { normalDayTypes } from '../constants'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { useRefetch } from '../util/useRefetch'
-import ExpandableSection, {
-  HeaderMainHeading,
-  HeaderSection,
-} from '../common/components/ExpandableSection'
+import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
 import { Text } from '../util/translate'
 
 const DepartureBlocksView = styled.div`
@@ -86,23 +83,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
     <ExpandableSection
       error={!isValid}
       headerContent={
-        <>
-          <HeaderMainHeading>
-            <Text>departureBlocks</Text>
-          </HeaderMainHeading>
-          <HeaderSection style={{ padding: '0.5rem 0.75rem', justifyContent: 'center' }}>
-            {dayTypesWithDepartures.length !== 0 && (
-              <Button
-                loading={departureBlocksLoading}
-                style={{ marginLeft: 'auto' }}
-                buttonStyle={ButtonStyle.SECONDARY}
-                size={ButtonSize.SMALL}
-                onClick={() => refetch()}>
-                <Text>update</Text>
-              </Button>
-            )}
-          </HeaderSection>
-        </>
+        <HeaderMainHeading>
+          <Text>departureBlocks</Text>
+        </HeaderMainHeading>
       }>
       <DepartureBlocksView>
         {dayTypeGroups.map((dayTypeGroup, groupIndex) => {

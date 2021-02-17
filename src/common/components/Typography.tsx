@@ -10,7 +10,6 @@ export const Heading = styled.h3`
 
 export const SectionHeading = styled(Heading)`
   margin-top: 2rem;
-  user-select: none;
   color: var(--dark-grey);
 
   &:first-child {

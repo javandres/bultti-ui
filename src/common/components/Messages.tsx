@@ -30,6 +30,6 @@ export const ErrorView = styled(MessageView)`
 `
 
 export const EmptyView = styled(MessageView)`
-  background: #f8f8f8;
+  background: var(--disabled-grey);
   border-color: #ccc;
 `

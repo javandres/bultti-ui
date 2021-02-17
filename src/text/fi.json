@@ -138,7 +138,7 @@
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
-  "inspection_selectInspection": "Valitse tarkastusjakso",
+  "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_state_draft": "Muokattavissa",
   "inspection_state_prosessing": "Käsiteltävänä",
@@ -160,6 +160,9 @@
   "inspectionDateList_noResults": "Tarkastusjaksoja ei löytynyt",
   "inspectionDateForm_header": "Lisää uusi tarkastusjakso",
   "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
+
+  "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
+  "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",
