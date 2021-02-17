@@ -45,7 +45,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
 
     const onEditValue = useCallback(
-      (key: string, value: CellValType, item: EquipmentWithQuota) => {
+      (key: keyof EquipmentWithQuota, value: CellValType, item: EquipmentWithQuota) => {
         if (groupEquipment || !editableValues.includes(key)) {
           return
         }

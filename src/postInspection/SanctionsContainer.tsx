@@ -130,24 +130,27 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setSanctionMutation
   )
 
-  let onChangeSanction = useCallback((key: string, value: CellValType, item: Sanction) => {
-    setPendingValues((currentValues) => {
-      let existingEditValueIndex = currentValues.findIndex(
-        (val) => val.key === key && val.itemId === item.id
-      )
+  let onChangeSanction = useCallback(
+    (key: keyof Sanction, value: CellValType, item: Sanction) => {
+      setPendingValues((currentValues) => {
+        let existingEditValueIndex = currentValues.findIndex(
+          (val) => val.key === key && val.itemId === item.id
+        )
 
-      let setValue = value
+        let setValue = value
 
-      if (existingEditValueIndex !== -1) {
-        currentValues.splice(existingEditValueIndex, 1)
-        // Toggle value only if already editing it
-        setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
-      }
+        if (existingEditValueIndex !== -1) {
+          currentValues.splice(existingEditValueIndex, 1)
+          // Toggle value only if already editing it
+          setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+        }
 
-      let editValue = { item, itemId: item.id, key, value: setValue }
-      return [...currentValues, editValue]
-    })
-  }, [])
+        let editValue = { item, itemId: item.id, key, value: setValue }
+        return [...currentValues, editValue]
+      })
+    },
+    []
+  )
 
   let onSaveSanctions = useCallback(async () => {
     if (pendingValues.length === 0) {
@@ -225,6 +228,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onSaveEdit={onSaveSanctions}
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
+          isAlwaysEditable={true}
         />
       </PageSection>
     </PostInspectionSanctionsView>

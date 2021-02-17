@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Table, { CellValType, EditValue } from '../common/table/Table'
+import Table, { EditValue, TableEditProps } from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionValue } from '../schema-types'
 import { lowerCase, orderBy, pick } from 'lodash'
@@ -33,12 +33,8 @@ export interface IObservedExecutionRequirement {
 
 export type PropTypes = {
   executionRequirement: IObservedExecutionRequirement
-  onEditValue?: (key: string, value: CellValType, item: EditRequirementValue) => unknown
   isEditable?: boolean
-  pendingValues?: EditRequirementValue[]
-  onCancelEdit?: () => unknown
-  onSaveEdit?: () => unknown
-}
+} & TableEditProps<ObservedExecutionValue>
 
 const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -108,7 +104,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let getColumnTotal = useCallback(
-      (key: string) => {
+      (key: keyof ObservedExecutionValue) => {
         if (
           [
             'differencePercentage',
@@ -153,11 +149,11 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           }}
           renderValue={renderDisplayValue}
         />
-        <Table<any>
+        <Table<ObservedExecutionValue>
           items={requirementRows}
           columnLabels={valuesLayoutColumnLabels}
           renderValue={renderTableValue}
-          keyFromItem={(item) => item.emissionClass}
+          keyFromItem={(item) => item.emissionClass + ''}
           getColumnTotal={getColumnTotal}
           editableValues={isEditable ? ['quotaRequired'] : undefined}
           onEditValue={onEditValue}

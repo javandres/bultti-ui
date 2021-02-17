@@ -215,14 +215,14 @@ type ItemRemover = undefined | false | null | (() => void)
 
 export type CellValType = string | number
 export type EditValue<ItemType = any> = {
-  key: string
+  key: keyof ItemType
   value: CellValType
   item: ItemType
   itemId: string
 }
 
 export type TableEditProps<ItemType> = {
-  onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
+  onEditValue?: (key: keyof ItemType, value: CellValType, item: ItemType) => unknown
   pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
@@ -249,9 +249,14 @@ export type TablePropTypes<ItemType> = {
   onRemoveRow?: (item: ItemType) => undefined | ItemRemover
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
-  renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
-  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
-  getColumnTotal?: (key: string) => React.ReactChild
+  renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
+  renderValue?: (
+    key: unknown,
+    val: any,
+    isHeader?: boolean,
+    item?: ItemType
+  ) => React.ReactNode
+  getColumnTotal?: (key: keyof ItemType) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
   virtualized?: boolean
@@ -265,7 +270,7 @@ export type TablePropTypes<ItemType> = {
 
 const defaultKeyFromItem = (item) => item.id
 
-const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
+const defaultRenderCellContent = (key: unknown, val: any): React.ReactChild => (
   <>
     {!(val === false || val === null || typeof val === 'undefined') && (
       <CellContent>{val}</CellContent>
@@ -273,16 +278,23 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
   </>
 )
 
-const defaultRenderValue = (key, val) => toString(val)
+const defaultRenderValue = (key: unknown, val: any) => toString(val)
 
-const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) => (
+const defaultRenderInput = <ItemType extends {}>(
+  key: keyof ItemType,
+  val: any,
+  onChange,
+  onAccept,
+  onCancel,
+  tabIndex
+) => (
   <TableInput
     autoFocus
     tabIndex={tabIndex}
     theme="light"
     value={val}
     onChange={(value) => onChange(value)}
-    name={key}
+    name={key as string}
     onEnterPress={onAccept}
     onEscPress={onCancel}
     inputComponent={TableTextInput}
@@ -293,7 +305,7 @@ type TableRowWithDataAndFunctions<ItemType = any> = {
   key: string
   isEditingRow: boolean
   removeItem: ItemRemover
-  onMakeEditable: (key: string, value: CellValType) => () => unknown
+  onMakeEditable: (key: keyof ItemType, value: CellValType) => () => unknown
   onValueChange: (key: string) => (value: CellValType) => unknown
   itemEntries: [string, CellValType][]
   item: ItemType
@@ -328,13 +340,15 @@ type ContextTypes<ItemType> = {
   keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
   fluid?: boolean
   highlightRow?: TablePropTypes<ItemType>['highlightRow']
+  isAlwaysEditable?: TablePropTypes<ItemType>['isAlwaysEditable']
 }
 
 const TableContext = React.createContext<ContextTypes<any>>({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
+  <ItemType extends {}>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
     let ctx = useContext(TableContext)
+
     let {
       pendingValues = [],
       onEditValue,
@@ -348,6 +362,7 @@ const TableCellComponent = observer(
       keyFromItem = defaultKeyFromItem,
       fluid,
       highlightRow = defaultHighlightRow,
+      isAlwaysEditable,
     } = ctx || {}
 
     let [isFocused, setIsFocused] = useState(false)
@@ -355,21 +370,23 @@ const TableCellComponent = observer(
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
     let [key, val] = cell
-    let valueKey: string = key as string
+    let valueKey = key as keyof ItemType
 
-    let editValue =
+    let editValue: EditValue<ItemType> | undefined =
       pendingValues.length !== 0
         ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
+        : isAlwaysEditable
+        ? { key, value: val, item, itemId }
         : undefined
 
     let columnWidth = columnWidths[colIndex]
 
-    let canEditCell = onEditValue && editableValues.includes(valueKey)
+    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
 
     let onKeyUp = useCallback(
       (e) => {
-        if (isFocused && e.key === 'Enter' && canEditCell) {
+        if (!isAlwaysEditable && isFocused && e.key === 'Enter' && canEditCell) {
           makeCellEditable()
         }
       },
@@ -408,9 +425,9 @@ const TableCellComponent = observer(
         onDoubleClick={makeCellEditable}>
         {onEditValue && editValue
           ? renderInput(
-              key as keyof ItemType,
+              key as string,
               editValue.value,
-              onValueChange(valueKey),
+              onValueChange((valueKey as unknown) as string),
               onSaveEdit,
               onCancelEdit,
               tabIndex
@@ -612,12 +629,12 @@ const Table = observer(
           const rowKey = keyFromItem(item)
 
           let isEditingRow: boolean =
-            !!pendingValues &&
+            (!!pendingValues || isAlwaysEditable) &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
 
           const itemRemover = onRemoveRow && canRemoveRow(item) ? onRemoveRow(item) : null
 
-          const onMakeEditable = (key: string, val: CellValType) => () => {
+          const onMakeEditable = (key: keyof ItemType, val: CellValType) => () => {
             if (!isEditingRow && onEditValue) {
               onEditValue(key, val, item)
             }
@@ -650,6 +667,7 @@ const Table = observer(
         keyFromItem,
         columnKeysOrdering,
         onEditValue,
+        isAlwaysEditable,
       ]
     )
 
@@ -668,7 +686,7 @@ const Table = observer(
 
         for (let row of rows) {
           let [colKey, colValue] = row.itemEntries[colIdx]
-          let strVal = toString(renderValue(colKey, colValue))
+          let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
           let valLength = Math.max(strVal.length, 5)
           colWidth = Math.max(valLength * 10, colWidth)
         }
@@ -757,6 +775,7 @@ const Table = observer(
       keyFromItem,
       fluid,
       highlightRow,
+      isAlwaysEditable,
     }
 
     let tableViewWidth = fluid
@@ -787,7 +806,7 @@ const Table = observer(
               {columnNames.map(([colKey, colName], colIdx) => {
                 let isEditingColumn =
                   pendingValues.length !== 0 &&
-                  pendingValues.map((val) => val.key).includes(colKey)
+                  pendingValues.map((val) => val.key).includes(colKey as keyof ItemType)
 
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
@@ -810,7 +829,7 @@ const Table = observer(
                     key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
-                      {renderValue('', colName, true)}
+                      {renderValue('' as unknown, colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
                           {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
@@ -849,7 +868,9 @@ const Table = observer(
             {typeof getColumnTotal === 'function' && (
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
-                  const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+                  const total =
+                    getColumnTotal(col as keyof ItemType) || (colIdx === 0 ? 'Yhteensä' : '')
+
                   let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
