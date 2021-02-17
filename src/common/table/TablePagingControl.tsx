@@ -54,6 +54,14 @@ const PageSelectDropdown = styled(Dropdown)`
   }
 `
 
+let pageSizeOptions = [20, 50, 100]
+
+let selectedPageOptionStyles = {
+  color: 'var(--dark-grey)',
+  cursor: 'default',
+  fontWeight: 'bold' as 'bold',
+}
+
 export type PropTypes = {
   pageState: PageState
   onSetPage: Dispatch<SetStateAction<PageConfig>>
@@ -104,6 +112,8 @@ const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
     [pageState.pages]
   )
 
+  let pageSizeOptions = [20, 50, 100]
+
   return (
     <PagingControlView>
       <PageValue>
@@ -114,6 +124,19 @@ const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
           Filtteröityjä rivejä: <strong>{pageState.filteredCount}</strong>
         </PageValue>
       )}
+      {/*      <PageValue>
+        Näytä
+        {pageSizeOptions.map((option: number, index: number) => {
+          return (
+            <PageSelectorOption
+              key={`option-${index}`}
+              onClick={() => onSetPageSize(option)}
+              style={selectedPageSize === option ? selectedPageOptionStyles : {}}>
+              {option}
+            </PageSelectorOption>
+          )
+        })}
+      </PageValue>*/}
       <PageValue>
         Rivejä per sivu: <strong>{pageState.pageSize}</strong>
       </PageValue>
