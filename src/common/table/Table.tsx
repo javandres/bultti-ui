@@ -14,11 +14,12 @@ import { RemoveButton } from '../components/Button'
 import { ScrollContext } from '../components/AppFrame'
 import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
-import { SCROLLBAR_WIDTH } from '../../constants'
 import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
-import { SortConfig, SortOrder } from '../../schema-types'
-import { Text } from '../../util/translate'
+import { PageConfig, SortConfig, SortOrder } from '../../schema-types'
+import { SetCurrentPagePropTypes, usePagingState } from './useTableState'
+import TablePagingControl from './TablePagingControl'
+import { PageMeta } from './tableUtils'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -267,6 +268,11 @@ export type TablePropTypes<ItemType> = {
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
+  disablePaging?: boolean
+  pageState?: PageConfig
+  setPage?: (props: SetCurrentPagePropTypes) => unknown
+  setPageSize?: (targetPageSize: number) => unknown
+  pageMeta?: PageMeta
 } & TableEditProps<ItemType>
 
 const defaultKeyFromItem = (item) => item.id
@@ -485,8 +491,6 @@ const Table = observer(
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
-    visibleRowCountOptions = [],
-    selectedRowCountIndex = 0,
     onEditValue,
     onCancelEdit,
     onSaveEdit,
@@ -494,19 +498,31 @@ const Table = observer(
     isAlwaysEditable = false,
     renderInput = defaultRenderInput,
     editableValues = [],
-    maxHeight = window.innerHeight * 0.6,
     fluid = false,
     showToolbar = true,
     highlightRow = defaultHighlightRow,
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
+    disablePaging = false,
+    pageState: propPageConfig,
+    setPage: propSetPage,
+    setPageSize: propSetPageSize,
+    pageMeta: propPageMeta,
   }: TablePropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
+    let pageState = usePagingState()
 
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
+
+    // Use internal "UI" paging when it is not explicitly disabled and there is no page config set through props.
+    let page = propPageConfig ?? pageState.page
+    let setPage = propSetPage ?? pageState.setCurrentPage
+    let setPageSize = propSetPageSize ?? pageState.setPageSize
+    let usePaging = !disablePaging
+    let useUIPaging = usePaging && !propPageConfig
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -662,26 +678,37 @@ const Table = observer(
       ]
     )
 
-    // Variables to handle shown rows per page
-    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountIndex
-    let [selectedRowCount, setSelectedRowCount] = useState<number>(
-      visibleRowCountOptions[selectedRowCountIndex]
+    let rowsToRender = useMemo(
+      () =>
+        useUIPaging
+          ? rows.slice(page.page * page.pageSize, (page.page + 1) * page.pageSize)
+          : rows,
+      [rows, useUIPaging, page, page.pageSize]
     )
-    let [selectedPageIndex, setSelectedPageIndex] = useState<number>(0)
-    let rowsToRender = areVisibleRowCountOptionsShown
-      ? rows.slice(
-          selectedPageIndex * selectedRowCount,
-          (selectedPageIndex + 1) * selectedRowCount
-        )
-      : rows
-    let pageOptions: number[] = []
-    for (let i = 1; i <= Math.ceil(rows.length / selectedRowCount); i++) {
-      pageOptions.push(i)
+
+    let rowPages: number[] = []
+
+    for (let i = 1; i <= Math.ceil(rows.length / page.pageSize); i++) {
+      rowPages.push(i)
     }
-    let selectedPageOptionStyles = {
-      color: 'var(--dark-grey)',
-      cursor: 'default',
+
+    let internalPageMeta = {
+      itemsOnPage: rowsToRender.length,
+      pages: rowPages.length,
+      filteredCount: rows.length,
+      totalCount: rows.length,
     }
+
+    let pageMeta = propPageMeta ?? internalPageMeta
+
+    useEffect(() => {
+      let currentPage = page.page
+      let pagesCount = pageMeta.pages
+
+      if (currentPage > pagesCount) {
+        setPage({ setToPage: pagesCount })
+      }
+    }, [pageMeta.pages, page.page])
 
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
@@ -787,8 +814,25 @@ const Table = observer(
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
     })
 
+    let uiPagingControl = useMemo(
+      () => (
+        <>
+          {usePaging && (
+            <TablePagingControl
+              onSetPageSize={setPageSize}
+              onSetPage={setPage}
+              pageState={page}
+              pageMeta={pageMeta}
+            />
+          )}
+        </>
+      ),
+      [usePaging, setPage, setPageSize, page, pageMeta]
+    )
+
     return (
       <TableContext.Provider value={contextValue}>
+        {uiPagingControl}
         <TableWrapper
           className={className}
           style={{ overflowX: fluid ? 'auto' : 'scroll' }}
@@ -873,59 +917,7 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
-        {areVisibleRowCountOptionsShown && (
-          <PageSelectorContainer>
-            <PageSelector>
-              <PageSelectorOption
-                style={selectedPageIndex === 0 ? selectedPageOptionStyles : {}}
-                onClick={() =>
-                  selectedPageIndex > 0
-                    ? setSelectedPageIndex(selectedPageIndex - 1)
-                    : undefined
-                }>
-                <Text>previous</Text>
-              </PageSelectorOption>
-              {pageOptions.map((option: number, index: number) => {
-                return (
-                  <PageSelectorOption
-                    key={`option-${index}`}
-                    onClick={() => setSelectedPageIndex(index)}
-                    style={selectedPageIndex === index ? selectedPageOptionStyles : {}}>
-                    {option}
-                  </PageSelectorOption>
-                )
-              })}
-              <PageSelectorOption
-                style={
-                  selectedPageIndex === pageOptions.length - 1 ? selectedPageOptionStyles : {}
-                }
-                onClick={() =>
-                  selectedPageIndex < pageOptions.length - 1
-                    ? setSelectedPageIndex(selectedPageIndex + 1)
-                    : undefined
-                }>
-                <Text>next</Text>
-              </PageSelectorOption>
-            </PageSelector>
-            <RowsPerPageOptions>
-              <Text>show</Text>
-              {visibleRowCountOptions.map((rowCount: number, index: number) => {
-                return (
-                  <PageSelectorOption
-                    style={selectedRowCount === rowCount ? selectedPageOptionStyles : {}}
-                    key={`option-${index}`}
-                    onClick={() => {
-                      setSelectedRowCount(rowCount)
-                      setSelectedPageIndex(0)
-                    }}>
-                    {rowCount}
-                  </PageSelectorOption>
-                )
-              })}{' '}
-              <Text>table_rowsPerPage</Text>
-            </RowsPerPageOptions>
-          </PageSelectorContainer>
-        )}
+        {rowsToRender.length >= 50 && uiPagingControl}
         {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <FormSaveToolbar
             onSave={onSaveEdit!}

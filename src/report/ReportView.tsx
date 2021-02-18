@@ -6,7 +6,7 @@ import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 import { defaultTableStateValue, TableStateType } from '../common/table/useTableState'
 import { ReportType } from './reportTypes'
-import { PageState } from '../common/table/tableUtils'
+import { PageMeta } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 
 const ReportViewWrapper = styled.div`
@@ -17,7 +17,7 @@ const ReportViewWrapper = styled.div`
 export type PropTypes = {
   items: any[]
   columnLabels: { [key: string]: string }
-  pageState: PageState
+  pageState: PageMeta
   loading?: boolean
   onUpdate?: () => unknown
   tableState?: TableStateType
@@ -47,7 +47,7 @@ const ReportView = observer(
         ) : (
           <StatefulTable
             items={items}
-            pageState={pageState}
+            pageMeta={pageState}
             tableState={tableState}
             onUpdate={onUpdate}
             columnLabels={columnLabels}

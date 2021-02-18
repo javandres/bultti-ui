@@ -11,7 +11,7 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { BaseReport } from '../type/report'
-import { createPageState, PageState } from '../common/table/tableUtils'
+import { createPageState, PageMeta } from '../common/table/tableUtils'
 import { ReportTypeByName } from './reportTypes'
 
 const ReportFunctionsRow = styled(FlexRow)`
@@ -72,7 +72,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
   }, [report])
 
-  let reportPageState: PageState = useMemo(
+  let reportPageState: PageMeta = useMemo(
     () => createPageState<BaseReport<ReportDataType>>(report),
     [report]
   )

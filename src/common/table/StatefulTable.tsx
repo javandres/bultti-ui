@@ -5,7 +5,7 @@ import { LoadingDisplay } from '../components/Loading'
 import TableFiltersControl from './TableFiltersControl'
 import TablePagingControl from './TablePagingControl'
 import { defaultPageConfig, TableStateType } from './useTableState'
-import { PageState, useRenderCellValue } from './tableUtils'
+import { PageMeta, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
 import Table, { TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
@@ -19,7 +19,7 @@ const TableEmptyView = styled(EmptyView)`
 `
 
 export type PropTypes<ItemType extends {}> = {
-  pageState: PageState
+  pageMeta: PageMeta
   tableState: TableStateType
   loading?: boolean
   onUpdate?: () => unknown
@@ -31,7 +31,7 @@ const StatefulTable = observer(
     columnLabels,
     loading = false,
     onUpdate = () => {},
-    pageState,
+    pageMeta,
     tableState,
     ...tableProps
   }: PropTypes<ItemType>) => {
@@ -39,8 +39,6 @@ const StatefulTable = observer(
       filters = [],
       sort = [],
       page = defaultPageConfig,
-
-      setPage = () => {},
       setFilters = () => {},
       setSort = () => {},
     } = tableState
@@ -61,25 +59,21 @@ const StatefulTable = observer(
     return (
       <TableViewWrapper>
         <LoadingDisplay loading={loading} style={{ top: '-1rem' }} />
-        {pageState && (
-          <>
-            <TableFiltersControl
-              filters={filters}
-              setFilters={setFilters}
-              fieldLabels={columnLabels}
-              excludeFields={['id', '__typename']}
-              onApply={onUpdate}
-            />
-            <TablePagingControl
-              onSetPage={tableState.setCurrentPage}
-              onSetPageSize={tableState.setPageSize}
-              pageSize={page.pageSize}
-              pageState={pageState}
-            />
-          </>
+        {pageMeta && (
+          <TableFiltersControl
+            filters={filters}
+            setFilters={setFilters}
+            fieldLabels={columnLabels}
+            excludeFields={['id', '__typename']}
+            onApply={onUpdate}
+          />
         )}
         <Table<ItemType>
           {...tableProps}
+          setPage={tableState.setCurrentPage}
+          setPageSize={tableState.setPageSize}
+          pageState={page}
+          pageMeta={pageMeta}
           items={items}
           hideKeys={tableProps.hideKeys || (!columnLabels ? ['id'] : undefined)}
           renderValue={tableProps.renderValue || renderCellValue}

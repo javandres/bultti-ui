@@ -4,19 +4,22 @@ import { FilterConfig, PageConfig, SortConfig } from '../../schema-types'
 export type SetCurrentPagePropTypes = {
   setToPage?: number
   offset?: number
-  maxPages: number
+  maxPages?: number
+}
+
+export type TablePagingStateType = {
+  page: PageConfig
+  setPage: Dispatch<SetStateAction<PageConfig>>
+  setPageSize: (pageSize: number) => void
+  setCurrentPage: (props: SetCurrentPagePropTypes) => void
 }
 
 export type TableStateType = {
   filters: FilterConfig[]
   setFilters: Dispatch<SetStateAction<FilterConfig[]>>
-  page: PageConfig
-  setPage: Dispatch<SetStateAction<PageConfig>>
-  setPageSize: (pageSize: number) => void
-  setCurrentPage: (props: SetCurrentPagePropTypes) => void
   sort: SortConfig[]
   setSort: Dispatch<SetStateAction<SortConfig[]>>
-}
+} & TablePagingStateType
 
 export const pageSizeOptions = [10, 20, 30, 50, 100]
 
@@ -30,13 +33,13 @@ export let defaultTableStateValue = {
   setFilters: () => {},
   page: defaultPageConfig,
   setPage: () => {},
+  setPageSize: () => {},
+  setCurrentPage: () => {},
   sort: [],
   setSort: () => {},
 }
 
-export function useTableState() {
-  let [filters, setFilters] = useState<FilterConfig[]>([])
-  let [sort, setSort] = useState<SortConfig[]>([])
+export function usePagingState(): TablePagingStateType {
   let [page, setPage] = useState<PageConfig>(defaultPageConfig)
 
   let setPageSize = useCallback((pageSizeIdx: number) => {
@@ -49,15 +52,17 @@ export function useTableState() {
   }, [])
 
   let setCurrentPage = useCallback(
-    ({ setToPage, offset, maxPages = 1 }: SetCurrentPagePropTypes) => {
+    ({ setToPage, offset, maxPages }: SetCurrentPagePropTypes) => {
       setPage((currentPageVal) => {
         let nextPageValue = currentPageVal.page
         let attemptPageValue = currentPageVal.page
-        let useMaxPages = Math.max(maxPages, 1) // No sense for it to be under 0
+        let useMaxPages = !maxPages ? false : Math.max(maxPages, 1) // No sense for it to be under 0 if enabled
 
         if (typeof setToPage !== 'undefined') {
           attemptPageValue = Math.max(setToPage, 1)
-          nextPageValue = Math.min(attemptPageValue, useMaxPages)
+          nextPageValue = useMaxPages
+            ? Math.min(attemptPageValue, useMaxPages)
+            : attemptPageValue
 
           // Not logical to set both
           if (typeof offset !== 'undefined') {
@@ -65,11 +70,13 @@ export function useTableState() {
           }
         } else if (typeof offset !== 'undefined') {
           attemptPageValue = Math.max(currentPageVal.page + offset, 1)
-          nextPageValue = Math.min(attemptPageValue, useMaxPages)
+          nextPageValue = useMaxPages
+            ? Math.min(attemptPageValue, useMaxPages)
+            : attemptPageValue
         }
 
         // Warn if attempted to set a larger page number than there are pages.
-        if (attemptPageValue > useMaxPages) {
+        if (useMaxPages && attemptPageValue > useMaxPages) {
           console.warn(
             `Attempted to set page ${attemptPageValue} on a table with only ${useMaxPages} pages.`
           )
@@ -84,16 +91,24 @@ export function useTableState() {
     []
   )
 
-  let stateValue: TableStateType = {
-    filters,
-    setFilters,
+  return {
     page,
     setPage,
     setPageSize,
     setCurrentPage,
+  }
+}
+
+export function useTableState(): TableStateType {
+  let [filters, setFilters] = useState<FilterConfig[]>([])
+  let [sort, setSort] = useState<SortConfig[]>([])
+  let pagingState = usePagingState()
+
+  return {
+    filters,
+    setFilters,
     sort,
     setSort,
+    ...pagingState,
   }
-
-  return stateValue
 }
