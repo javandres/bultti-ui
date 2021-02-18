@@ -121,7 +121,7 @@
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
   "catalogue_removeEquipment": "Poista kalustoluettelo",
   "catalogue_addEquipment": "Lisää ajoneuvo",
-  "catalogue_batchAddequipment": "Lisää ajoneuvoja listalta",
+  "catalogue_batchAddEquipment": "Lisää ajoneuvoja listalta",
   "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa kylkinumerolla: ${vehicleId}, rekisterinumerolla: ${registryNumber}",
   "catalogue_findEquipment": "Hae kalustoa",
   "catalogue_equipmentNotFound": "Kalustoa ei löytynyt.",
