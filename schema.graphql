@@ -685,7 +685,7 @@ type Mutation {
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
-  setSanctionValue(sanctionId: String!, sanctionValue: Float!): Sanction!
+  setSanctionValue(sanctionId: String!, setAppliedSanctionAmount: Float!): Sanction!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation

@@ -11,7 +11,7 @@ export const FormSaveToolbarView = styled.div<{ floating?: boolean }>`
   bottom: 1rem;
   border-radius: ${(p) => (p.floating ? '0.5rem' : 0)};
   background: white;
-  padding: ${(p) => (p.floating ? '1rem' : '0.25rem 1rem 1.25rem')};
+  padding: ${(p) => (p.floating ? '1rem' : '1rem 1rem 1.25rem')};
   margin: ${(p) => (p.floating ? 0 : '0 -1rem 1.25rem -1rem')};
   right: ${(p) => (p.floating ? '2rem' : 'auto')};
   left: ${(p) => (p.floating ? '2rem' : 'auto')};

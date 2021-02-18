@@ -7,7 +7,7 @@ import TablePagingControl from './TablePagingControl'
 import { defaultPageConfig, TableStateType } from './useTableState'
 import { PageMeta, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
-import Table, { TablePropTypes } from './Table'
+import Table, { CellValType, TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
 
 const TableViewWrapper = styled.div`
@@ -18,15 +18,15 @@ const TableEmptyView = styled(EmptyView)`
   margin: 1rem !important;
 `
 
-export type PropTypes<ItemType extends {}> = {
+export type PropTypes<ItemType extends {}, EditValueType = CellValType> = {
   pageMeta: PageMeta
   tableState: TableStateType
   loading?: boolean
   onUpdate?: () => unknown
-} & TablePropTypes<ItemType>
+} & TablePropTypes<ItemType, EditValueType>
 
 const StatefulTable = observer(
-  <ItemType extends {}>({
+  <ItemType extends {}, EditValueType = CellValType>({
     items,
     columnLabels,
     loading = false,
@@ -34,7 +34,7 @@ const StatefulTable = observer(
     pageMeta,
     tableState,
     ...tableProps
-  }: PropTypes<ItemType>) => {
+  }: PropTypes<ItemType, EditValueType>) => {
     let {
       filters = [],
       sort = [],
@@ -68,7 +68,7 @@ const StatefulTable = observer(
             onApply={onUpdate}
           />
         )}
-        <Table<ItemType>
+        <Table<ItemType, EditValueType>
           {...tableProps}
           setPage={tableState.setCurrentPage}
           setPageSize={tableState.setPageSize}

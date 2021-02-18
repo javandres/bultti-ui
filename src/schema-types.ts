@@ -2097,7 +2097,7 @@ export type MutationRemoveInspectionDateArgs = {
 
 
 export type MutationSetSanctionValueArgs = {
-  sanctionValue: Scalars['Float'];
+  setAppliedSanctionAmount: Scalars['Float'];
   sanctionId: Scalars['String'];
 };
 

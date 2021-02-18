@@ -187,44 +187,18 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
-const PageSelectorContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin: 1rem 0rem 1rem 0rem;
-`
-const PageSelector = styled.div`
-  span {
-    margin-left: 0.5rem;
-  }
-`
-const RowsPerPageOptions = styled.div`
-  span {
-    margin-left: 0.5rem;
-  }
-`
-
-const PageSelectorOption = styled.span`
-  cursor: pointer;
-  color: var(--blue);
-  padding: 0.5rem;
-  transition: 0.5s;
-  &:hover {
-    background-color: var(--white-grey);
-  }
-`
 
 export type CellValType = string | number
-export type EditValue<ItemType = any> = {
+export type EditValue<ItemType = any, ValueType = CellValType> = {
   key: keyof ItemType
-  value: CellValType
+  value: ValueType
   item: ItemType
   itemId: string
 }
 
-export type TableEditProps<ItemType> = {
-  onEditValue?: (key: keyof ItemType, value: CellValType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType>[]
+export type TableEditProps<ItemType, EditValueType = CellValType> = {
+  onEditValue?: (key: keyof ItemType, value: EditValueType, item: ItemType) => unknown
+  pendingValues?: EditValue<ItemType, EditValueType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
   editableValues?: string[]
@@ -240,7 +214,7 @@ export type RenderInputType<ItemType> = (
   tabIndex?: number
 ) => React.ReactChild
 
-export type TablePropTypes<ItemType> = {
+export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
@@ -273,7 +247,7 @@ export type TablePropTypes<ItemType> = {
   setPage?: (props: SetCurrentPagePropTypes) => unknown
   setPageSize?: (targetPageSize: number) => unknown
   pageMeta?: PageMeta
-} & TableEditProps<ItemType>
+} & TableEditProps<ItemType, EditValueType>
 
 const defaultKeyFromItem = (item) => item.id
 
@@ -308,53 +282,58 @@ const defaultRenderInput = <ItemType extends {}>(
   />
 )
 
-type TableRowWithDataAndFunctions<ItemType = any> = {
+type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellValType> = {
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: keyof ItemType, value: CellValType) => () => unknown
-  onValueChange: (key: string) => (value: CellValType) => unknown
-  itemEntries: [string, CellValType][]
+  onMakeEditable: (key: keyof ItemType, value: EditValueType) => () => unknown
+  onValueChange: (key: string) => (value: EditValueType) => unknown
+  itemEntries: [string, EditValueType][]
   item: ItemType
 }
 
-type RowPropTypes<ItemType = any> = {
+type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
   index: number
-  row: TableRowWithDataAndFunctions<ItemType>
-  data?: TableRowWithDataAndFunctions<ItemType>[]
+  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
+  data?: TableRowWithDataAndFunctions<ItemType, EditValueType>[]
   style?: CSSProperties
   isScrolling?: boolean
 }
 
-type CellPropTypes<ItemType = any> = {
-  row: TableRowWithDataAndFunctions<ItemType>
-  cell: [keyof ItemType, CellValType]
+type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
+  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
+  cell: [keyof ItemType, EditValueType]
   colIndex: number
   tabIndex?: number
   rowId: string
 }
 
-type ContextTypes<ItemType> = {
-  pendingValues?: EditValue[]
+type ContextTypes<ItemType, EditValueType = CellValType> = {
+  pendingValues?: EditValue<ItemType, EditValueType>[]
   columnWidths?: Array<number | string>
-  editableValues?: TablePropTypes<ItemType>['editableValues']
-  onEditValue?: TablePropTypes<ItemType>['onEditValue']
-  renderInput?: TablePropTypes<ItemType>['renderInput']
-  onSaveEdit?: TablePropTypes<ItemType>['onSaveEdit']
-  onCancelEdit?: TablePropTypes<ItemType>['onCancelEdit']
-  renderCell?: TablePropTypes<ItemType>['renderCell']
-  renderValue?: TablePropTypes<ItemType>['renderValue']
-  keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
+  editableValues?: TablePropTypes<ItemType, EditValueType>['editableValues']
+  onEditValue?: TablePropTypes<ItemType, EditValueType>['onEditValue']
+  renderInput?: TablePropTypes<ItemType, EditValueType>['renderInput']
+  onSaveEdit?: TablePropTypes<ItemType, EditValueType>['onSaveEdit']
+  onCancelEdit?: TablePropTypes<ItemType, EditValueType>['onCancelEdit']
+  renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
+  renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
+  keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
   fluid?: boolean
-  highlightRow?: TablePropTypes<ItemType>['highlightRow']
-  isAlwaysEditable?: TablePropTypes<ItemType>['isAlwaysEditable']
+  highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
+  isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
 }
 
-const TableContext = React.createContext<ContextTypes<any>>({})
+const TableContext = React.createContext({})
 
 const TableCellComponent = observer(
-  <ItemType extends {}>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
-    let ctx = useContext(TableContext)
+  <ItemType extends {}, EditValueType = CellValType>({
+    row,
+    cell,
+    colIndex,
+    tabIndex = 1,
+  }: CellPropTypes<ItemType, EditValueType>) => {
+    let ctx: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
 
     let {
       pendingValues = [],
@@ -381,12 +360,18 @@ const TableCellComponent = observer(
 
     let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
 
-    let editValue: EditValue<ItemType> | undefined =
-      pendingValues.length !== 0
-        ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
-        : isAlwaysEditable && canEditCell
-        ? { key, value: val, item, itemId }
-        : undefined
+    let pendingValue = pendingValues.find(
+      (val) => keyFromItem(val.item) === itemId && val.key === key
+    )
+
+    let cellIsEditable = (isAlwaysEditable || !!pendingValue) && canEditCell
+
+    let editValue = (pendingValue || {
+      key,
+      value: val,
+      item,
+      itemId,
+    }) as EditValue<ItemType, EditValueType>
 
     let columnWidth = columnWidths[colIndex]
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
@@ -422,7 +407,7 @@ const TableCellComponent = observer(
       <TableCell
         highlightColor={rowHighlightColor}
         style={cellWidthStyle}
-        isEditing={!!editValue}
+        isEditing={cellIsEditable}
         isEditingRow={isEditingRow}
         editable={canEditCell}
         tabIndex={!canEditCell || editValue ? -1 : tabIndex}
@@ -430,9 +415,9 @@ const TableCellComponent = observer(
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onDoubleClick={makeCellEditable}>
-        {onEditValue && editValue
+        {cellIsEditable
           ? renderInput(
-              key as string,
+              key,
               editValue.value,
               onValueChange((valueKey as unknown) as string),
               onSaveEdit,
@@ -446,7 +431,12 @@ const TableCellComponent = observer(
 )
 
 const TableRowComponent = observer(
-  <ItemType extends {}>({ row, style, index, data: allRows = [] }: RowPropTypes<ItemType>) => {
+  <ItemType extends {}, EditValueType = CellValType>({
+    row,
+    style,
+    index,
+    data: allRows = [],
+  }: RowPropTypes<ItemType, EditValueType>) => {
     let rowItem = row || allRows[index]
 
     if (!rowItem) {
@@ -459,7 +449,7 @@ const TableRowComponent = observer(
     return (
       <TableRow key={rowId} isEditing={isEditingRow} style={style}>
         {itemEntries.map(([key, val], colIndex) => (
-          <TableCellComponent<ItemType>
+          <TableCellComponent<ItemType, EditValueType>
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}
@@ -479,7 +469,7 @@ const TableRowComponent = observer(
 const defaultHighlightRow = (): string | boolean => false
 
 const Table = observer(
-  <ItemType extends {}>({
+  <ItemType extends {}, EditValueType = CellValType>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -509,7 +499,7 @@ const Table = observer(
     setPage: propSetPage,
     setPageSize: propSetPageSize,
     pageMeta: propPageMeta,
-  }: TablePropTypes<ItemType>) => {
+  }: TablePropTypes<ItemType, EditValueType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
     let pageState = usePagingState()
@@ -619,11 +609,11 @@ const Table = observer(
       )
     }, [items, sort])
 
-    let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
+    let rows: TableRowWithDataAndFunctions<ItemType, EditValueType>[] = useMemo(
       () =>
         sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
-          let itemEntries = Object.entries<CellValType>(item)
+          let itemEntries = Object.entries<EditValueType>(item)
 
           itemEntries = itemEntries.filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
@@ -639,10 +629,11 @@ const Table = observer(
           const rowKey = keyFromItem(item)
 
           let isEditingRow: boolean =
-            (!!pendingValues || isAlwaysEditable) &&
-            pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
+            isAlwaysEditable ||
+            (!!pendingValues &&
+              pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey))
 
-          const onMakeEditable = (key: keyof ItemType, val: CellValType) => () => {
+          const onMakeEditable = (key: keyof ItemType, val: EditValueType) => () => {
             if (!isEditingRow && onEditValue) {
               onEditValue(key, val, item)
             }
@@ -656,7 +647,7 @@ const Table = observer(
 
           return {
             key: rowKey,
-            isEditingRow,
+            isEditingRow: isAlwaysEditable ? false : isEditingRow,
             onRemoveRow,
             onMakeEditable,
             onValueChange,
@@ -791,7 +782,7 @@ const Table = observer(
       return scrollBottom < tableBottom + 58 && scrollBottom > tableTop + 58
     }, [tableViewRef.current, currentScroll, pendingValues])
 
-    let contextValue: ContextTypes<ItemType> = {
+    let contextValue: ContextTypes<ItemType, EditValueType> = {
       columnWidths,
       editableValues,
       pendingValues,
@@ -886,7 +877,11 @@ const Table = observer(
               {tableIsEmpty
                 ? emptyContent
                 : rowsToRender.map((row, rowIndex) => (
-                    <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+                    <TableRowComponent<ItemType, EditValueType>
+                      key={row.key || rowIndex}
+                      row={row}
+                      index={rowIndex}
+                    />
                   ))}
             </TableBodyWrapper>
             {typeof getColumnTotal === 'function' && (

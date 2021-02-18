@@ -2,7 +2,12 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection, Sanction, SanctionsResponse } from '../schema-types'
+import {
+  Inspection,
+  MutationSetSanctionValueArgs,
+  Sanction,
+  SanctionsResponse,
+} from '../schema-types'
 import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
@@ -94,7 +99,7 @@ let sanctionsQuery = gql`
 
 let setSanctionMutation = gql`
   mutation setSanction($sanctionId: String!, $sanctionValue: Float!) {
-    setSanctionValue(sanctionId: $sanctionId, sanctionValue: $sanctionValue) {
+    setSanctionValue(sanctionId: $sanctionId, setAppliedSanctionAmount: $sanctionValue) {
       id
       appliedSanctionAmount
     }
@@ -107,8 +112,8 @@ export type PropTypes = {
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
-  let { filters = [], sort = [], page = defaultPageConfig } = tableState
-  let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
+  let { filters = [], sort = [], page = defaultPageConfig, setSort } = tableState
+  let [pendingValues, setPendingValues] = useState<EditValue<Sanction, number>[]>([])
 
   let requestVars = useRef({
     inspectionId: inspection.id,
@@ -130,27 +135,24 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setSanctionMutation
   )
 
-  let onChangeSanction = useCallback(
-    (key: keyof Sanction, value: CellValType, item: Sanction) => {
-      setPendingValues((currentValues) => {
-        let existingEditValueIndex = currentValues.findIndex(
-          (val) => val.key === key && val.itemId === item.id
-        )
+  let onChangeSanction = useCallback((key: keyof Sanction, value: number, item: Sanction) => {
+    setPendingValues((currentValues) => {
+      let existingEditValueIndex = currentValues.findIndex(
+        (val) => val.key === key && val.itemId === item.id
+      )
 
-        let setValue = value
+      let setValue = value
 
-        if (existingEditValueIndex !== -1) {
-          currentValues.splice(existingEditValueIndex, 1)
-          // Toggle value only if already editing it
-          setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
-        }
+      if (existingEditValueIndex !== -1) {
+        currentValues.splice(existingEditValueIndex, 1)
+        // Toggle value only if already editing it
+        setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+      }
 
-        let editValue = { item, itemId: item.id, key, value: setValue }
-        return [...currentValues, editValue]
-      })
-    },
-    []
-  )
+      let editValue = { item, itemId: item.id, key, value: setValue }
+      return [...currentValues, editValue]
+    })
+  }, [])
 
   let onSaveSanctions = useCallback(async () => {
     if (pendingValues.length === 0) {
@@ -159,7 +161,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
     setPendingValues([])
 
-    for (let updateValue of pendingValues) {
+    for (let editValue of pendingValues) {
+      let updateValue = {
+        sanctionId: editValue.itemId,
+        sanctionValue: editValue.value as number,
+      }
+
       await execSetSanctionMutation({
         variables: updateValue,
       })
@@ -171,6 +178,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   }, [])
 
   let onUpdateFetchProps = useCallback(() => {
+    console.log(sort)
+
     requestVars.current.filters = filters
     refetch({ ...requestVars.current, sort, page })
   }, [refetch, requestVars.current, filters, sort, page])
@@ -215,7 +224,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         </Button>
       </FunctionsRow>
       <PageSection>
-        <StatefulTable<Sanction>
+        <StatefulTable<Sanction, number>
           loading={isLoading}
           items={sanctionDataItems}
           pageMeta={sanctionPageState}

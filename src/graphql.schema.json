@@ -21193,7 +21193,7 @@
             "description": null,
             "args": [
               {
-                "name": "sanctionValue",
+                "name": "setAppliedSanctionAmount",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
