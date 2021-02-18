@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../components/Loading'
 import TableFiltersControl from './TableFiltersControl'
 import TablePagingControl from './TablePagingControl'
-import { TableStateType } from './useTableState'
+import { defaultPageConfig, TableStateType } from './useTableState'
 import { PageState, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
 import Table, { TablePropTypes } from './Table'
@@ -38,6 +38,8 @@ const StatefulTable = observer(
     let {
       filters = [],
       sort = [],
+      page = defaultPageConfig,
+
       setPage = () => {},
       setFilters = () => {},
       setSort = () => {},
@@ -68,7 +70,12 @@ const StatefulTable = observer(
               excludeFields={['id', '__typename']}
               onApply={onUpdate}
             />
-            <TablePagingControl onSetPage={setPage} pageState={pageState} />
+            <TablePagingControl
+              onSetPage={tableState.setCurrentPage}
+              onSetPageSize={tableState.setPageSize}
+              pageSize={page.pageSize}
+              pageState={pageState}
+            />
           </>
         )}
         <Table<ItemType>

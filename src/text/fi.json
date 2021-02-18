@@ -39,7 +39,10 @@
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
 
-  "table_rowsPerPage": "riviä per sivu",
+  "table_rowsPerPage": "Riviä per sivu",
+  "table_rowsInView": "Riviä näkymässä",
+  "table_totalRows": "Rivejä yhteensä",
+  "table_filteredRows": "Suodattuja rivejä",
 
   "role_admin": "Admin",
   "role_hsl": "HSL käyttäjä",

@@ -1,19 +1,28 @@
-import React, { Dispatch, SetStateAction, useCallback, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../components/Button'
 import Dropdown from '../input/Dropdown'
 import { PageState } from './tableUtils'
-import { PageConfig } from '../../schema-types'
+import { pageSizeOptions, SetCurrentPagePropTypes } from './useTableState'
+import { FlexRow } from '../components/common'
+import { Text } from '../../util/translate'
 
 const PagingControlView = styled.div`
-  display: flex;
-  justify-content: space-between;
   padding: 0.5rem 1rem;
   margin: 0 -1rem;
 `
 
-const PageValue = styled.div`
+const PagingElementsRow = styled(FlexRow)`
+  justify-content: space-between;
+  margin-top: 1rem;
+
+  &:first-child {
+    margin-top: 0;
+  }
+`
+
+const PageElement = styled.div`
   flex: 1;
   margin: 0 1rem;
   display: flex;
@@ -28,6 +37,10 @@ const PageValue = styled.div`
   }
 `
 
+const PageValue = styled(PageElement)`
+  margin: 0 0.25rem;
+`
+
 const PagingWrapper = styled.div`
   margin-left: auto;
   text-align: right;
@@ -39,7 +52,7 @@ const PagingWrapper = styled.div`
 `
 
 const PageSelectDropdown = styled(Dropdown)`
-  margin-right: 0.5rem;
+  margin-right: 0.25rem;
   flex: 1 1 available;
   justify-content: flex-end;
 
@@ -54,7 +67,16 @@ const PageSelectDropdown = styled(Dropdown)`
   }
 `
 
-let pageSizeOptions = [20, 50, 100]
+const PageSelectorOption = styled.div`
+  cursor: pointer;
+  color: var(--blue);
+  margin-left: 0.5rem;
+  margin-right: 0.5rem;
+
+  &:last-child {
+    margin-right: 0;
+  }
+`
 
 let selectedPageOptionStyles = {
   color: 'var(--dark-grey)',
@@ -64,122 +86,99 @@ let selectedPageOptionStyles = {
 
 export type PropTypes = {
   pageState: PageState
-  onSetPage: Dispatch<SetStateAction<PageConfig>>
+  onSetPage: (props: SetCurrentPagePropTypes) => unknown
+  onSetPageSize: (targetPageSize: number) => unknown
+  pageSize: number
 }
 
-const TablePagingControl = observer(({ pageState, onSetPage }: PropTypes) => {
-  let pageOptions = useMemo(() => {
-    let opts: number[] = []
-    let pageIdx = 1
+const TablePagingControl = observer(
+  ({ pageState, onSetPage, onSetPageSize, pageSize = pageSizeOptions[0] }: PropTypes) => {
+    let pageOptions = useMemo(() => {
+      let opts: number[] = []
+      let pageIdx = 1
 
-    while (opts.length < (pageState.pages || 1)) {
-      opts.push(pageIdx++)
-    }
-
-    return opts
-  }, [pageState.pages])
-
-  let onPageNav = useCallback(
-    (offset) => {
-      return () => {
-        onSetPage((currentPage) => {
-          let nextPageIdx = Math.min(
-            Math.max(currentPage.page + offset, 1),
-            pageState.pages || 1
-          )
-
-          return {
-            ...currentPage,
-            page: nextPageIdx,
-          }
-        })
+      while (opts.length < (pageState.pages || 1)) {
+        opts.push(pageIdx++)
       }
-    },
-    [pageState.pages]
-  )
 
-  let onSelectPage = useCallback(
-    (setPageTo) => {
-      onSetPage((currentPage) => {
-        let nextPageIdx = Math.min(Math.max(setPageTo, 1), pageState.pages || 1)
+      return opts
+    }, [pageState.pages])
 
-        return {
-          ...currentPage,
-          page: nextPageIdx,
-        }
-      })
-    },
-    [pageState.pages]
-  )
+    let setPageOffset = useCallback(
+      (offset: number) => () => onSetPage({ offset, maxPages: pageState.pages }),
+      [onSetPage]
+    )
 
-  let pageSizeOptions = [20, 50, 100]
-
-  return (
-    <PagingControlView>
-      <PageValue>
-        Rivejä: <strong>{pageState.totalCount}</strong>
-      </PageValue>
-      {pageState.filteredCount !== pageState.totalCount && (
-        <PageValue>
-          Filtteröityjä rivejä: <strong>{pageState.filteredCount}</strong>
-        </PageValue>
-      )}
-      {/*      <PageValue>
-        Näytä
-        {pageSizeOptions.map((option: number, index: number) => {
-          return (
-            <PageSelectorOption
-              key={`option-${index}`}
-              onClick={() => onSetPageSize(option)}
-              style={selectedPageSize === option ? selectedPageOptionStyles : {}}>
-              {option}
-            </PageSelectorOption>
-          )
-        })}
-      </PageValue>*/}
-      <PageValue>
-        Rivejä per sivu: <strong>{pageState.pageSize}</strong>
-      </PageValue>
-      {pageState.pageSize !== pageState.totalCount && (
-        <PageValue>
-          Rivejä näkymässä: <strong>{pageState.itemsOnPage}</strong>
-        </PageValue>
-      )}
-      <PagingWrapper>
-        <Button
-          disabled={(pageState.currentPage || 1) <= 1}
-          size={ButtonSize.SMALL}
-          buttonStyle={ButtonStyle.SECONDARY}
-          onClick={onPageNav(-1)}>
-          Edellinen
-        </Button>
-        <PageValue
-          style={{
-            whiteSpace: 'nowrap',
-            textAlign: 'center',
-            minWidth: '8rem',
-            justifyContent: 'center',
-          }}>
-          <PageSelectDropdown
-            theme="light"
-            selectedItem={pageState.currentPage || 1}
-            items={pageOptions}
-            onSelect={onSelectPage}
-            itemToString={(idx) => idx}
-            itemToLabel={(idx) => idx}
-          />
-          <strong>/ {pageState.pages}</strong>
-        </PageValue>
-        <Button
-          disabled={!((pageState.currentPage || 1) < (pageState.pages || 1))}
-          size={ButtonSize.SMALL}
-          buttonStyle={ButtonStyle.SECONDARY}
-          onClick={onPageNav(1)}>
-          Seuraava
-        </Button>
-      </PagingWrapper>
-    </PagingControlView>
-  )
-})
+    return (
+      <PagingControlView>
+        <PagingElementsRow>
+          <PageElement>
+            <Text>table_totalRows</Text> <strong>{pageState.totalCount}</strong>
+          </PageElement>
+          {pageState.filteredCount !== pageState.totalCount && (
+            <PageElement>
+              <Text>table_filteredRows</Text> <strong>{pageState.filteredCount}</strong>
+            </PageElement>
+          )}
+          {pageState.pageSize !== pageState.totalCount && (
+            <PageElement>
+              <Text>table_rowsInView</Text> <strong>{pageState.itemsOnPage}</strong>
+            </PageElement>
+          )}
+          <PagingWrapper>
+            <Button
+              disabled={(pageState.currentPage || 1) <= 1}
+              size={ButtonSize.SMALL}
+              buttonStyle={ButtonStyle.SECONDARY}
+              onClick={setPageOffset(-1)}>
+              {'<'}
+            </Button>
+            <PageValue
+              style={{
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+                minWidth: '8rem',
+                justifyContent: 'center',
+              }}>
+              <PageSelectDropdown
+                theme="light"
+                selectedItem={pageState.currentPage || 1}
+                items={pageOptions}
+                onSelect={(selectedPage) =>
+                  onSetPage({ setToPage: selectedPage, maxPages: pageState.pages })
+                }
+                itemToString={(idx) => idx}
+                itemToLabel={(idx) => idx}
+              />
+              <strong>/ {pageState.pages}</strong>
+            </PageValue>
+            <Button
+              disabled={!((pageState.currentPage || 1) < (pageState.pages || 1))}
+              size={ButtonSize.SMALL}
+              buttonStyle={ButtonStyle.SECONDARY}
+              onClick={setPageOffset(1)}>
+              {'>'}
+            </Button>
+          </PagingWrapper>
+        </PagingElementsRow>
+        <PagingElementsRow style={{ justifyContent: 'flex-end' }}>
+          <PageElement style={{ justifyContent: 'flex-end', marginRight: 0 }}>
+            <Text>table_rowsPerPage</Text>
+            {pageSizeOptions.map((option: number, index: number) => {
+              return (
+                <PageSelectorOption
+                  key={`option-${index}`}
+                  onClick={() => onSetPageSize(index)}
+                  style={pageSize === option ? selectedPageOptionStyles : {}}>
+                  {option}
+                </PageSelectorOption>
+              )
+            })}
+          </PageElement>
+        </PagingElementsRow>
+      </PagingControlView>
+    )
+  }
+)
 
 export default TablePagingControl
