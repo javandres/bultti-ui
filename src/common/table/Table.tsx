@@ -729,17 +729,6 @@ const Table = observer(
               return total + col
             }, 0)
           )
-    let rowHeight = 27
-    let listHeight = rowsToRender.length * rowHeight // height of all rowsToRender combined
-    let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
-    let hasVerticalScroll = listHeight > height
-
-    let wrapperHeight = Math.max(
-      tableIsEmpty ? 150 : rowHeight,
-      (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
-        2 +
-        (fluid ? 0 : SCROLLBAR_WIDTH)
-    )
 
     // Scroll listeners for the floating toolbar.
     let [currentScroll, setCurrentScroll] = useState({ scrollTop: 0, viewportHeight: 0 })
@@ -790,10 +779,7 @@ const Table = observer(
       isAlwaysEditable,
     }
 
-    let tableViewWidth = fluid
-      ? '100%'
-      : Math.ceil((width as number) + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
-
+    let tableViewWidth = fluid ? '100%' : width
     const formId = useMemo(() => uniqueId(), [])
 
     usePromptUnsavedChanges({
@@ -805,11 +791,10 @@ const Table = observer(
       <TableContext.Provider value={contextValue}>
         <TableWrapper
           className={className}
-          style={{ minHeight: wrapperHeight + 'px', overflowX: fluid ? 'auto' : 'scroll' }}
+          style={{ overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
-            <TableHeader
-              style={{ paddingRight: hasVerticalScroll ? Math.round(SCROLLBAR_WIDTH) : 0 }}>
+            <TableHeader>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}

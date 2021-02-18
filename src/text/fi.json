@@ -39,8 +39,8 @@
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
 
-  "table_rowsPerPage": "Riviä per sivu",
-  "table_rowsInView": "Riviä näkymässä",
+  "table_rowsPerPage": "Rivejä per sivu",
+  "table_rowsInView": "Rivejä näkymässä",
   "table_totalRows": "Rivejä yhteensä",
   "table_filteredRows": "Suodattuja rivejä",
 
