@@ -108,8 +108,8 @@
   "userRelations_subscribedTo": "Tilattu",
   "userRelations_publishedBy": "Julkaistu",
   "userRelations_rejectedBy": "Peruttu",
-  "userRelations_submittedBy": "Lisätty sanktioitavaksi",
-  "userRelations_readiedBy": "Hyväksytty",
+  "userRelations_submittedBy": "Lähetetty hyväksyttäväksi",
+  "userRelations_sanctionableBy": "Sanktioitavaksi",
 
   "catalogue_newCatalogue": "Luo uusi kalustoluettelo",
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
@@ -144,9 +144,10 @@
   "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_state_draft": "Muokattavissa",
-  "inspection_state_prosessing": "Käsiteltävänä",
+  "inspection_state_prosessing": "Käsittelee tietoja",
   "inspection_state_review": "Hyväksyttävänä",
   "inspection_state_production": "Tuotannossa",
+  "inspection_state_sanctioning": "Sanktioitavana",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",
