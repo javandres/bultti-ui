@@ -522,7 +522,7 @@ const Table = observer(
     let setPage = propSetPage ?? pageState.setCurrentPage
     let setPageSize = propSetPageSize ?? pageState.setPageSize
     let usePaging = !disablePaging
-    let useUIPaging = usePaging && !propPageConfig
+    let useUIPaging = usePaging && !propPageConfig && items.length > 20
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -701,6 +701,7 @@ const Table = observer(
 
     let pageMeta = propPageMeta ?? internalPageMeta
 
+    // Adjust the current page if it is set to a higher number than there are pages.
     useEffect(() => {
       let currentPage = page.page
       let pagesCount = pageMeta.pages

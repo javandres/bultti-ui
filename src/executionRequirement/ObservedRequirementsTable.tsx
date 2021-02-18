@@ -140,15 +140,6 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
 
     return (
       <ExecutionRequirementsAreaContainer>
-        <ValueDisplay
-          valuesPerRow={3}
-          style={{ marginBottom: '1rem' }}
-          item={pick(executionRequirement, ['kilometersRequired'])}
-          labels={{
-            kilometersRequired: 'Suoritekilometrit yhteensä',
-          }}
-          renderValue={renderDisplayValue}
-        />
         <Table<ObservedExecutionValue>
           items={requirementRows}
           columnLabels={valuesLayoutColumnLabels}
