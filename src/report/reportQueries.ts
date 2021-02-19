@@ -33,6 +33,7 @@ export const createReportQueryByName = (reportName: string) => {
         filters: $filters
         sort: $sort
       ) {
+        id
         description
         name
         title

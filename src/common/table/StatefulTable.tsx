@@ -29,7 +29,6 @@ const StatefulTable = observer(
     items,
     columnLabels,
     loading = false,
-    onUpdate = () => {},
     pageMeta,
     tableState,
     ...tableProps
@@ -64,7 +63,6 @@ const StatefulTable = observer(
             setFilters={setFilters}
             fieldLabels={columnLabels}
             excludeFields={['id', '__typename']}
-            onApply={onUpdate}
           />
         )}
         <Table<ItemType, EditValueType>

@@ -39,8 +39,8 @@ export let defaultTableStateValue = {
   setSort: () => {},
 }
 
-export function usePagingState(): TablePagingStateType {
-  let [page, setPage] = useState<PageConfig>(defaultPageConfig)
+export function usePagingState(initialPageState?: PageConfig): TablePagingStateType {
+  let [page, setPage] = useState<PageConfig>(initialPageState || defaultPageConfig)
 
   let setPageSize = useCallback((pageSizeIdx: number) => {
     let nextPageSize = pageSizeOptions[pageSizeIdx] || pageSizeOptions[0]
@@ -99,10 +99,16 @@ export function usePagingState(): TablePagingStateType {
   }
 }
 
-export function useTableState(): TableStateType {
-  let [filters, setFilters] = useState<FilterConfig[]>([])
-  let [sort, setSort] = useState<SortConfig[]>([])
-  let pagingState = usePagingState()
+export type InitialTableState = {
+  sort?: SortConfig[]
+  page?: PageConfig
+  filter?: FilterConfig[]
+}
+
+export function useTableState(initialState?: InitialTableState): TableStateType {
+  let [filters, setFilters] = useState<FilterConfig[]>(initialState?.filter || [])
+  let [sort, setSort] = useState<SortConfig[]>(initialState?.sort || [])
+  let pagingState = usePagingState(initialState?.page)
 
   return {
     filters,

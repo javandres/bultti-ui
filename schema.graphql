@@ -11,12 +11,14 @@ type BlockDeviationsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [DeviationsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -71,12 +73,14 @@ type DeadrunsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [DeadrunsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -117,12 +121,14 @@ type DepartureBlocksReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [DepartureBlocksReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -150,12 +156,14 @@ type DeviationsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [DeviationsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -185,12 +193,14 @@ type EarlyTimingStopDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [EarlyTimingStopDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -222,12 +232,14 @@ type EmissionClassExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [EmissionClassExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -298,12 +310,14 @@ type EquipmentColorReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [EquipmentColorReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -330,12 +344,14 @@ type EquipmentTypeReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [EquipmentTypeReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -419,12 +435,14 @@ type ExecutionRequirementsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ExecutionRequirementsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -459,12 +477,14 @@ type ExtraBlockDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ExtraBlockDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -563,12 +583,14 @@ type LateDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [LateDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -601,12 +623,14 @@ type MissingBlockDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [MissingBlockDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -631,12 +655,14 @@ type MissingEquipmentReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [MissingEquipmentReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -706,12 +732,14 @@ type ObservedEmissionClassExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedEmissionClassExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -741,12 +769,14 @@ type ObservedEquipmentColorReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedEquipmentColorReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -778,12 +808,14 @@ type ObservedEquipmentTypeReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedEquipmentTypeReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -835,12 +867,14 @@ type ObservedExecutionRequirementsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedExecutionRequirementsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -884,12 +918,14 @@ type ObservedOverAgeDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedOverAgeDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -930,12 +966,14 @@ type ObservedUnitExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [ObservedUnitExecution!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -969,12 +1007,14 @@ type OperatorDeadrunsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [DeadrunsReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -989,12 +1029,14 @@ type OverAgeDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [OverAgeDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -1142,8 +1184,11 @@ type Sanction {
 type SanctionsResponse {
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [Sanction!]!
   sort: [SortConfig!]
   totalCount: Int!
@@ -1174,12 +1219,14 @@ type TrackedDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [TrackedDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -1204,12 +1251,14 @@ type UnitExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [UnitExecutionReportData!]!
   seasonId: String!
   showSanctioned: Boolean
@@ -1235,12 +1284,14 @@ type UnobservedDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  id: String!
   inspectionId: String!
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   page: PageConfig
   pages: Int!
+  responseId: String!
   rows: [UnobservedDeparturesReportData!]!
   seasonId: String!
   showSanctioned: Boolean

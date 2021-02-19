@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useMemo } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
@@ -30,35 +30,21 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
   let tableState = useTableState()
   let { filters = [], sort = [], page = defaultPageConfig } = tableState
 
-  let requestVars = useRef({
-    reportName,
-    inspectionId,
-    inspectionType,
-    filters,
-    sort,
-    page,
-  })
-
   type ReportDataType = ReportTypeByName[typeof reportName]
 
   let { data: report, loading: reportLoading, refetch } = useQueryData<
     BaseReport<ReportDataType>
   >(createReportQueryByName(reportName), {
     notifyOnNetworkStatusChange: true,
-    fetchPolicy: 'network-only',
-    variables: { ...requestVars.current },
+    variables: {
+      reportName,
+      inspectionId,
+      inspectionType,
+      filters,
+      sort,
+      page,
+    },
   })
-
-  let onUpdateFetchProps = useCallback(() => {
-    requestVars.current.filters = filters
-    refetch({ ...requestVars.current, sort, page })
-  }, [refetch, requestVars.current, filters, sort, page])
-
-  // Trigger the refetch when sort or page state changes. Does NOT react to
-  // filter state, which is triggered separately with a button.
-  useEffect(() => {
-    onUpdateFetchProps()
-  }, [sort, page])
 
   let reportDataItems = useMemo(() => report?.rows || [], [report])
 
@@ -91,7 +77,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}
-          onClick={onUpdateFetchProps}>
+          onClick={() => refetch()}>
           <Text>update</Text>
         </Button>
       </ReportFunctionsRow>
@@ -107,7 +93,6 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
         items={reportDataItems}
         tableState={tableState}
         pageState={reportPageState}
-        onUpdate={onUpdateFetchProps}
         columnLabels={columnLabels}
       />
     </>

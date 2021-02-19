@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
@@ -28,6 +28,16 @@ const FunctionsRow = styled(FlexRow)`
   background: white;
 `
 
+const SanctionToggleLabel = styled.label`
+  display: block;
+  cursor: pointer;
+  width: 100%;
+`
+
+const SanctionToggleInput = styled.input`
+  display: block;
+`
+
 let sanctionColumnLabels = {
   sanctionableType: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
@@ -40,13 +50,15 @@ let sanctionColumnLabels = {
 
 let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, onChange) => {
   return (
-    <input
-      type="checkbox"
-      value={val + ''}
-      onChange={() => onChange(val)}
-      checked={val !== 0}
-      name="sanctionable"
-    />
+    <SanctionToggleLabel>
+      <SanctionToggleInput
+        type="checkbox"
+        value={val + ''}
+        onChange={() => onChange(val)}
+        checked={val !== 0}
+        name="sanctionable"
+      />
+    </SanctionToggleLabel>
   )
 }
 
@@ -63,6 +75,8 @@ let sanctionsQuery = gql`
       filters: $filters
       sort: $sort
     ) {
+      id
+      inspectionId
       filteredCount
       pages
       totalCount
@@ -110,27 +124,34 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let { filters = [], sort = [], page = defaultPageConfig } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction, number>[]>([])
 
-  let requestVars = useRef({
-    inspectionId: inspection.id,
-    filters,
-    sort,
-    page,
-  })
-
   let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
     sanctionsQuery,
     {
       notifyOnNetworkStatusChange: true,
-      fetchPolicy: 'network-only',
       skip: !inspection,
-      variables: { ...requestVars.current },
+      variables: { inspectionId: inspection.id, filters, sort, page },
     }
   )
 
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData(
     setSanctionMutation,
     {
-      refetchQueries: [{ query: sanctionsQuery, variables: { ...requestVars.current } }],
+      update: (cache, { data: { updateSanctions } }) => {
+        for (let update of updateSanctions) {
+          let cacheId = cache.identify(update)
+          cache.writeFragment({
+            id: cacheId,
+            data: {
+              appliedSanctionAmount: update.appliedSanctionAmount,
+            },
+            fragment: gql`
+              fragment SanctionFragment on Sanction {
+                appliedSanctionAmount
+              }
+            `,
+          })
+        }
+      },
     }
   )
 
@@ -179,17 +200,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setPendingValues([])
   }, [])
 
-  let onUpdateFetchProps = useCallback(() => {
-    requestVars.current.filters = filters
-    refetch({ ...requestVars.current, sort, page })
-  }, [refetch, requestVars.current, filters, sort, page])
-
-  // Trigger the refetch when sort or page state changes. Does NOT react to
-  // filter state, which is triggered separately with a button.
-  useEffect(() => {
-    onUpdateFetchProps()
-  }, [sort, page])
-
   let sanctionDataItems = useMemo(
     () =>
       (sanctionsData?.rows || []).map((sanction) => {
@@ -219,7 +229,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
           size={ButtonSize.SMALL}
-          onClick={onUpdateFetchProps}>
+          onClick={() => refetch()}>
           <Text>update</Text>
         </Button>
       </FunctionsRow>
@@ -229,7 +239,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           items={sanctionDataItems}
           pageMeta={sanctionPageState}
           tableState={tableState}
-          onUpdate={onUpdateFetchProps}
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}
           renderInput={renderSanctionInput}
