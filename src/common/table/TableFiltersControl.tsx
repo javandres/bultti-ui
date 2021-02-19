@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import Input from '../input/Input'
@@ -36,7 +36,7 @@ export type PropTypes<ItemType = any> = {
   excludeFields?: string[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
-  setFilters: (arg: ((filters: FilterConfig[]) => FilterConfig[]) | FilterConfig[]) => unknown
+  setFilters: React.Dispatch<SetStateAction<FilterConfig[]>>
 }
 
 const TableFiltersControl = observer(
@@ -116,10 +116,10 @@ const TableFiltersControl = observer(
 
     // If all filters were removed, apply to update the view.
     useEffect(() => {
-      if (tempFilters.length === 0) {
+      if (filters.length !== 0 && tempFilters.length === 0) {
         onApplyFilters()
       }
-    }, [tempFilters])
+    }, [filters, tempFilters])
 
     let filterFieldOptions = useMemo(() => {
       let fields = omit(fieldLabels, excludeFields)

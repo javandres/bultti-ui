@@ -1,3 +1,4 @@
+import objectHash from 'object-hash'
 import { Dispatch, SetStateAction, useCallback, useState } from 'react'
 import { FilterConfig, PageConfig, SortConfig } from '../../schema-types'
 
@@ -5,6 +6,12 @@ export type SetCurrentPagePropTypes = {
   setToPage?: number
   offset?: number
   maxPages?: number
+}
+
+export type TableStateValuesType = {
+  page: PageConfig
+  filters: FilterConfig[]
+  sort: SortConfig[]
 }
 
 export type TablePagingStateType = {
@@ -15,11 +22,10 @@ export type TablePagingStateType = {
 }
 
 export type TableStateType = {
-  filters: FilterConfig[]
   setFilters: Dispatch<SetStateAction<FilterConfig[]>>
-  sort: SortConfig[]
   setSort: Dispatch<SetStateAction<SortConfig[]>>
-} & TablePagingStateType
+} & TablePagingStateType &
+  TableStateValuesType
 
 export const pageSizeOptions = [10, 20, 30, 50, 100]
 
@@ -117,4 +123,11 @@ export function useTableState(initialState?: InitialTableState): TableStateType 
     setSort,
     ...pagingState,
   }
+}
+
+export function createResponseId(tableState: TableStateValuesType): string {
+  return objectHash(tableState, {
+    unorderedObjects: true,
+    unorderedArrays: true,
+  })
 }

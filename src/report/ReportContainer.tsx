@@ -4,7 +4,11 @@ import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { createReportQueryByName } from './reportQueries'
 import { InspectionType } from '../schema-types'
-import { defaultPageConfig, useTableState } from '../common/table/useTableState'
+import {
+  createResponseId,
+  defaultPageConfig,
+  useTableState,
+} from '../common/table/useTableState'
 import ReportView from './ReportView'
 import DownloadReport from './DownloadReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
@@ -37,6 +41,9 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
   >(createReportQueryByName(reportName), {
     notifyOnNetworkStatusChange: true,
     variables: {
+      // Add a string variable that changes when the table state changes.
+      // Without this it wouldn't refetch if eg. filters change.
+      responseId: createResponseId({ page, filters, sort }),
       reportName,
       inspectionId,
       inspectionType,

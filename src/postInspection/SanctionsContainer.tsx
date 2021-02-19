@@ -3,7 +3,11 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { Inspection, Sanction, SanctionsResponse, SanctionUpdate } from '../schema-types'
-import { defaultPageConfig, useTableState } from '../common/table/useTableState'
+import {
+  createResponseId,
+  defaultPageConfig,
+  useTableState,
+} from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow, PageSection } from '../common/components/common'
@@ -129,7 +133,16 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     {
       notifyOnNetworkStatusChange: true,
       skip: !inspection,
-      variables: { inspectionId: inspection.id, filters, sort, page },
+      partialRefetch: true,
+      variables: {
+        // Add a string variable that changes when the table state changes.
+        // Without this it wouldn't refetch if eg. filters change.
+        responseId: createResponseId({ page, filters, sort }),
+        inspectionId: inspection.id,
+        filters,
+        sort,
+        page,
+      },
     }
   )
 
