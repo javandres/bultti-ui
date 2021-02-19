@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection, Sanction, SanctionsResponse } from '../schema-types'
+import { Inspection, Sanction, SanctionsResponse, SanctionUpdate } from '../schema-types'
 import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
@@ -93,8 +93,8 @@ let sanctionsQuery = gql`
 `
 
 let setSanctionMutation = gql`
-  mutation setSanction($sanctionId: String!, $sanctionValue: Float!) {
-    setSanctionValue(sanctionId: $sanctionId, setAppliedSanctionAmount: $sanctionValue) {
+  mutation setSanction($sanctionUpdates: [SanctionUpdate!]!) {
+    updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
       appliedSanctionAmount
     }
@@ -120,6 +120,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
     sanctionsQuery,
     {
+      notifyOnNetworkStatusChange: true,
       fetchPolicy: 'network-only',
       skip: !inspection,
       variables: { ...requestVars.current },
@@ -127,7 +128,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   )
 
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData(
-    setSanctionMutation
+    setSanctionMutation,
+    {
+      refetchQueries: [{ query: sanctionsQuery, variables: { ...requestVars.current } }],
+    }
   )
 
   let onChangeSanction = useCallback((key: keyof Sanction, value: number, item: Sanction) => {
@@ -153,17 +157,22 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
 
     setPendingValues([])
+    let updateValues: SanctionUpdate[] = []
 
     for (let editValue of pendingValues) {
-      let updateValue = {
+      let updateValue: SanctionUpdate = {
         sanctionId: editValue.itemId,
-        sanctionValue: editValue.value as number,
+        appliedSanctionAmount: editValue.value as number,
       }
 
-      await execSetSanctionMutation({
-        variables: updateValue,
-      })
+      updateValues.push(updateValue)
     }
+
+    await execSetSanctionMutation({
+      variables: {
+        sanctionUpdates: updateValues,
+      },
+    })
   }, [pendingValues])
 
   let onCancelEdit = useCallback(() => {

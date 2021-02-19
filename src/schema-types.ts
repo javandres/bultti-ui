@@ -1847,7 +1847,7 @@ export type Mutation = {
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
-  setSanctionValue: Sanction;
+  updateSanctions: Array<Sanction>;
 };
 
 
@@ -2096,9 +2096,8 @@ export type MutationRemoveInspectionDateArgs = {
 };
 
 
-export type MutationSetSanctionValueArgs = {
-  setAppliedSanctionAmount: Scalars['Float'];
-  sanctionId: Scalars['String'];
+export type MutationUpdateSanctionsArgs = {
+  sanctionUpdates: Array<SanctionUpdate>;
 };
 
 export type InitialInspectionInput = {
@@ -2160,6 +2159,11 @@ export type ObservedRequirementValueInput = {
 export type InspectionDateInput = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
+};
+
+export type SanctionUpdate = {
+  sanctionId: Scalars['String'];
+  appliedSanctionAmount: Scalars['Float'];
 };
 
 export type Subscription = {

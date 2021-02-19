@@ -685,7 +685,6 @@ type Mutation {
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
-  setSanctionValue(sanctionId: String!, setAppliedSanctionAmount: Float!): Sanction!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -698,6 +697,7 @@ type Mutation {
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
+  updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
   updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): ExecutionRequirement!
 }
 
@@ -1447,6 +1447,11 @@ input ObservedRequirementValueInput {
 
 input ProcurementUnitEditInput {
   medianAgeRequirement: Float!
+}
+
+input SanctionUpdate {
+  appliedSanctionAmount: Float!
+  sanctionId: String!
 }
 
 input UserInput {

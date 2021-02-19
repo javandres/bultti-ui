@@ -101,13 +101,8 @@ export function usePagingState(): TablePagingStateType {
 
 export function useTableState(): TableStateType {
   let [filters, setFilters] = useState<FilterConfig[]>([])
-  let [sort, _setSort] = useState<SortConfig[]>([])
+  let [sort, setSort] = useState<SortConfig[]>([])
   let pagingState = usePagingState()
-
-  let setSort = (val) => {
-    console.log(val)
-    return _setSort(val)
-  }
 
   return {
     filters,

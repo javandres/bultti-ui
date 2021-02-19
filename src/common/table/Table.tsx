@@ -519,10 +519,6 @@ const Table = observer(
     // Adding a column a second time switches its order between asc, desc and no sorting.
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
-        if (!items[0] || !Object.keys(items[0] as {}).includes(columnName)) {
-          return currentSort
-        }
-
         let currentColumnSortIndex = currentSort.findIndex((s) => s.column === columnName)
         // New array instance so that the state update will actually trigger
         let nextSort = [...currentSort]
