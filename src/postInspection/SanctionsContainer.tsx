@@ -2,12 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import {
-  Inspection,
-  MutationSetSanctionValueArgs,
-  Sanction,
-  SanctionsResponse,
-} from '../schema-types'
+import { Inspection, Sanction, SanctionsResponse } from '../schema-types'
 import { defaultPageConfig, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
@@ -16,7 +11,7 @@ import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import { createPageState, PageMeta } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
-import { CellValType, EditValue, RenderInputType } from '../common/table/Table'
+import { EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
 
 const PostInspectionSanctionsView = styled.div`
@@ -112,7 +107,7 @@ export type PropTypes = {
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
-  let { filters = [], sort = [], page = defaultPageConfig, setSort } = tableState
+  let { filters = [], sort = [], page = defaultPageConfig } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction, number>[]>([])
 
   let requestVars = useRef({
@@ -141,12 +136,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         (val) => val.key === key && val.itemId === item.id
       )
 
-      let setValue = value
+      let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
 
       if (existingEditValueIndex !== -1) {
         currentValues.splice(existingEditValueIndex, 1)
-        // Toggle value only if already editing it
-        setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
       }
 
       let editValue = { item, itemId: item.id, key, value: setValue }
@@ -178,8 +171,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   }, [])
 
   let onUpdateFetchProps = useCallback(() => {
-    console.log(sort)
-
     requestVars.current.filters = filters
     refetch({ ...requestVars.current, sort, page })
   }, [refetch, requestVars.current, filters, sort, page])
@@ -233,7 +224,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}
           renderInput={renderSanctionInput}
-          maxHeight={window.innerHeight * 0.65}
           pendingValues={pendingValues}
           editableValues={['appliedSanctionAmount']}
           onSaveEdit={onSaveSanctions}
