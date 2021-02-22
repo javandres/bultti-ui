@@ -103,7 +103,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       }
     }, [errorUpdateData])
 
-    let hasErrors = inspection?.inspectionErrors?.length !== 0
     let typeStrings = getInspectionTypeStrings(inspectionType)
     let inspectionGenericName = inspection
       ? `${inspection.operator.operatorName}/${inspection.seasonId}`
@@ -157,11 +156,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             ) : (
               inspection && (
                 <>
-                  <InspectionActionsRow
-                    inspection={inspection}
-                    onRefresh={refetch}
-                    disabledActions={hasErrors ? ['submit', 'publish'] : []}
-                  />
+                  <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
                   <EditInspectionWrapper>
                     {inspection?.status === InspectionStatus.InProduction ? (
                       <InspectionEditor inspection={inspection} refetchData={refetch} />

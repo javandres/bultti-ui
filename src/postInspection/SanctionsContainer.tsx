@@ -265,7 +265,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     <PostInspectionSanctionsView>
       <FunctionsRow>
         <Button
-          style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY_REMOVE}
           size={ButtonSize.SMALL}
           onClick={onAbandonSanctions}>
