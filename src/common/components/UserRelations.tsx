@@ -81,7 +81,8 @@ const userRelationTypeMap = {
   PUBLISHED_BY: 'publishedBy',
   REJECTED_BY: 'rejectedBy',
   SUBMITTED_BY: 'submittedBy',
-  READIED_BY: 'readiedBy',
+  MADE_SANCTIONABLE_BY: 'madeSanctionableBy',
+  SANCTIONS_ABANDONED_BY: 'sanctionsAbandonedBy',
 }
 
 export type PropTypes = {

@@ -4900,6 +4900,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "SANCTIONS_ABANDONED_BY",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -20423,6 +20429,37 @@
           },
           {
             "name": "inspectionSanctionable",
+            "description": null,
+            "args": [
+              {
+                "name": "inspectionId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "String",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Inspection",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "abandonSanctions",
             "description": null,
             "args": [
               {

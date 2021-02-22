@@ -680,6 +680,7 @@ type MissingEquipmentReportData {
 }
 
 type Mutation {
+  abandonSanctions(inspectionId: String!): Inspection!
   addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
   addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
@@ -1364,6 +1365,7 @@ enum InspectionUserRelationType {
   MADE_SANCTIONABLE_BY
   PUBLISHED_BY
   REJECTED_BY
+  SANCTIONS_ABANDONED_BY
   SUBMITTED_BY
   SUBSCRIBED_TO
   UPDATED_BY

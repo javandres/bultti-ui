@@ -190,7 +190,9 @@ const InspectionActions = observer(
         inspection.status === InspectionStatus.Sanctionable)
 
     // Only post-inspections which are in draft state can be made sanctionable.
-    let canInspectionBeSanctionable = inspection.inspectionType === InspectionType.Post && true // inspection.status === InspectionStatus.Draft
+    let canInspectionBeSanctionable =
+      inspection.inspectionType === InspectionType.Post &&
+      inspection.status === InspectionStatus.Draft
 
     let isInspectionSubmitDisabled = disabledActions.includes('submit')
 

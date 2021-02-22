@@ -593,7 +593,8 @@ export enum InspectionUserRelationType {
   PublishedBy = 'PUBLISHED_BY',
   RejectedBy = 'REJECTED_BY',
   SubmittedBy = 'SUBMITTED_BY',
-  MadeSanctionableBy = 'MADE_SANCTIONABLE_BY'
+  MadeSanctionableBy = 'MADE_SANCTIONABLE_BY',
+  SanctionsAbandonedBy = 'SANCTIONS_ABANDONED_BY'
 }
 
 export type ProcurementUnit = {
@@ -1859,6 +1860,7 @@ export type Mutation = {
   updateBaseInspection: Inspection;
   updateInspection: Inspection;
   inspectionSanctionable: Inspection;
+  abandonSanctions: Inspection;
   submitInspection: Inspection;
   publishInspection: Inspection;
   rejectInspection: Inspection;
@@ -1924,6 +1926,11 @@ export type MutationUpdateInspectionArgs = {
 
 
 export type MutationInspectionSanctionableArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationAbandonSanctionsArgs = {
   inspectionId: Scalars['String'];
 };
 

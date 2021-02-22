@@ -102,6 +102,7 @@ export type TabChildProps = {
   path?: string
   loading?: boolean
   testId?: string
+  default?: boolean
 }
 
 type PropTypes = {
@@ -116,7 +117,7 @@ let getPathName = (path) => (path === '/' ? './' : path)
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
     // The children usually contain an empty string as the first element.
-    // Compact() removes all such falsy values from the array.
+    // Remove all such falsy values from the array.
     const validChildren: ReactNode[] = useMemo(
       () => compact<ReactNode>(Children.toArray(children)),
       [children]

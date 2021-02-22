@@ -112,7 +112,8 @@
   "userRelations_publishedBy": "Julkaistu",
   "userRelations_rejectedBy": "Peruttu",
   "userRelations_submittedBy": "Lähetetty hyväksyttäväksi",
-  "userRelations_sanctionableBy": "Sanktioitavaksi",
+  "userRelations_madeSanctionableBy": "Sanktioitavaksi",
+  "userRelations_sanctionsAbandonedBy": "Sanktiointi peruttu",
 
   "catalogue_newCatalogue": "Luo uusi kalustoluettelo",
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
@@ -160,6 +161,7 @@
   "inspection_actions_remove": "Poista",
   "inspection_actions_publish": "Julkaise",
   "inspection_actions_reject": "Hylkää",
+  "inspection_actions_abandonSanctions": "Peruuta sanktiointi",
 
   "inspectionDate_pageHeader": "Muokkaa tarkastusjaksoja",
   "inspectionDatePage_newInspectionButton": "Lisää tarkastusjakso",
@@ -170,6 +172,8 @@
 
   "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
   "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
+
+  "postInspection_confirmAbandonSanctions": "Haluatko varmasti poistaa kaikki tarkastuksen sanktiot ja palauttaa tarkastus muokattavaan tilaan?",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",

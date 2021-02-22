@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
-import { RouteComponentProps } from '@reach/router'
+import { Redirect, RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
@@ -168,6 +168,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                     ) : (
                       <Tabs>
                         <InspectionEditor
+                          default={true}
                           name="create"
                           path="/"
                           label={text('inspectionPage_inspectionInformation')}

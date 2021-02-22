@@ -9,7 +9,7 @@ import {
   useTableState,
 } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
@@ -17,6 +17,7 @@ import { createPageState, PageMeta } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 import { EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
+import { navigateWithQueryString } from '../util/urlValue'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -119,6 +120,15 @@ let setSanctionMutation = gql`
   }
 `
 
+let abandonSanctionsMutation = gql`
+  mutation abandonSanctions($inspectionId: String!) {
+    abandonSanctions(inspectionId: $inspectionId) {
+      id
+      status
+    }
+  }
+`
+
 export type PropTypes = {
   inspection: Inspection
 } & TabChildProps
@@ -164,6 +174,15 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
             `,
           })
         }
+      },
+    }
+  )
+
+  let [execAbandonSanctions, { loading: abandonSanctionsLoading }] = useMutationData(
+    abandonSanctionsMutation,
+    {
+      variables: {
+        inspectionId: inspection.id,
       },
     }
   )
@@ -235,9 +254,23 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let isLoading = loading || setSanctionLoading || false
 
+  let onAbandonSanctions = useCallback(async () => {
+    if (confirm(text('postInspection_confirmAbandonSanctions'))) {
+      await execAbandonSanctions()
+      navigateWithQueryString(`/post-inspection/edit/${inspection.id}/`)
+    }
+  }, [execAbandonSanctions, inspection])
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
+        <Button
+          style={{ marginLeft: 'auto' }}
+          buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+          size={ButtonSize.SMALL}
+          onClick={onAbandonSanctions}>
+          <Text>inspection_actions_abandonSanctions</Text>
+        </Button>
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
