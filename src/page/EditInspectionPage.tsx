@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
-import { RouteComponentProps } from '@reach/router'
+import { Redirect, RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
@@ -10,6 +10,7 @@ import { Button } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionStatusColor,
+  getInspectionStatusName,
   getInspectionTypeStrings,
   useEditInspection,
   useInspectionById,
@@ -23,6 +24,7 @@ import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
+import SanctionsContainer from '../postInspection/SanctionsContainer'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -36,6 +38,7 @@ const EditInspectionPageContainer = styled(PageContainer)`
   display: flex;
   flex-direction: column;
   padding: 0;
+  flex: 1;
 `
 
 const EditInspectionWrapper = styled(Page)`
@@ -45,7 +48,9 @@ const EditInspectionWrapper = styled(Page)`
   display: flex;
   flex-direction: column;
   overflow-y: auto;
-  margin-bottom: 0px;
+  margin-bottom: 0;
+  min-height: auto;
+  flex: 1;
 `
 
 const InspectionActionsRow = styled(InspectionActions)`
@@ -99,7 +104,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       }
     }, [errorUpdateData])
 
-    let hasErrors = inspection?.inspectionErrors?.length !== 0
     let typeStrings = getInspectionTypeStrings(inspectionType)
     let inspectionGenericName = inspection
       ? `${inspection.operator.operatorName}/${inspection.seasonId}`
@@ -125,14 +129,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             {inspection && (
               <InspectionStatusContainer
                 style={{
-                  backgroundColor: getInspectionStatusColor(inspection),
-                  borderColor: getInspectionStatusColor(inspection),
+                  backgroundColor: getInspectionStatusColor(inspection.status),
+                  borderColor: getInspectionStatusColor(inspection.status),
                   color:
                     inspection.status === InspectionStatus.InReview
                       ? 'var(--dark-grey)'
                       : 'white',
                 }}>
-                <strong>{text(inspection.status)}</strong>
+                <strong>{getInspectionStatusName(inspection.status)}</strong>
               </InspectionStatusContainer>
             )}
           </PageTitle>
@@ -153,17 +157,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             ) : (
               inspection && (
                 <>
-                  <InspectionActionsRow
-                    inspection={inspection}
-                    onRefresh={refetch}
-                    disabledActions={hasErrors ? ['submit', 'publish'] : []}
-                  />
+                  <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
                   <EditInspectionWrapper>
                     {inspection?.status === InspectionStatus.InProduction ? (
                       <InspectionEditor inspection={inspection} refetchData={refetch} />
                     ) : (
                       <Tabs>
                         <InspectionEditor
+                          default={true}
                           name="create"
                           path="/"
                           label={text('inspectionPage_inspectionInformation')}
@@ -171,6 +172,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                           refetchData={refetch}
                           inspection={inspection}
                         />
+                        {inspection.status === InspectionStatus.Sanctionable && (
+                          <SanctionsContainer
+                            inspection={inspection}
+                            name="sanction"
+                            path="sanctions"
+                            label={text('inspectionPage_sanctions')}
+                          />
+                        )}
                         <InspectionPreview
                           inspection={inspection}
                           path="results"

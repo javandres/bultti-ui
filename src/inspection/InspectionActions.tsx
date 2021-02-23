@@ -10,8 +10,8 @@ import {
 } from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
+  makeInspectionSanctionableMutation,
   publishInspectionMutation,
-  readyInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
 } from './inspectionQueries'
@@ -50,11 +50,10 @@ export type PropTypes = {
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
-  disabledActions?: Actions[]
 }
 
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style, disabledActions = [] }: PropTypes) => {
+  ({ inspection, onRefresh, className, style }: PropTypes) => {
     var [season, setSeason] = useStateValue<Season>('globalSeason')
     var [isSubmitActive, setSubmitActive] = useState<boolean>(false)
     let hasAdminAccessRights = useHasAdminAccessRights()
@@ -66,6 +65,8 @@ const InspectionActions = observer(
 
     var goToInspectionEdit = useEditInspection(inspection.inspectionType)
     var goToInspectionReports = useInspectionReports()
+
+    var hasErrors = inspection?.inspectionErrors?.length !== 0
 
     var onEditInspection = useCallback(
       (inspection: Inspection) => {
@@ -97,8 +98,8 @@ const InspectionActions = observer(
       submitInspectionMutation
     )
 
-    var [setInspectionReady, { loading: readyLoading }] = useMutationData(
-      readyInspectionMutation
+    var [setInspectionSanctionable, { loading: sanctionableLoading }] = useMutationData(
+      makeInspectionSanctionableMutation
     )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
@@ -119,7 +120,7 @@ const InspectionActions = observer(
 
     var onSubmitInspection = useCallback(
       async (startDate: string, endDate: string) => {
-        if (disabledActions.includes('submit')) {
+        if (hasErrors) {
           return
         }
 
@@ -134,25 +135,25 @@ const InspectionActions = observer(
         await onRefresh()
         setSubmitActive(false)
       },
-      [onRefresh, inspection, disabledActions]
+      [onRefresh, inspection, hasErrors]
     )
 
-    var onReadyInspection = useCallback(async () => {
-      if (disabledActions.includes('ready')) {
+    var onMakeInspectionSanctionable = useCallback(async () => {
+      if (hasErrors) {
         return
       }
 
-      await setInspectionReady({
+      await setInspectionSanctionable({
         variables: {
           inspectionId: inspection.id,
         },
       })
 
       await onRefresh()
-    }, [onRefresh, inspection, disabledActions])
+    }, [onRefresh, inspection, hasErrors])
 
     var onPublishInspection = useCallback(async () => {
-      if (disabledActions.includes('publish')) {
+      if (hasErrors) {
         return
       }
 
@@ -163,13 +164,9 @@ const InspectionActions = observer(
       })
 
       await onRefresh()
-    }, [onRefresh, inspection, disabledActions])
+    }, [onRefresh, inspection, hasErrors])
 
     var onRejectInspection = useCallback(async () => {
-      if (disabledActions.includes('reject')) {
-        return
-      }
-
       await rejectInspection({
         variables: {
           inspectionId: inspection.id,
@@ -177,7 +174,7 @@ const InspectionActions = observer(
       })
 
       await onRefresh()
-    }, [onRefresh, inspection, disabledActions])
+    }, [onRefresh, inspection])
 
     let canUserPublish =
       inspection.status === InspectionStatus.InReview && hasAdminAccessRights
@@ -187,14 +184,13 @@ const InspectionActions = observer(
       (inspection.inspectionType === InspectionType.Pre &&
         inspection.status === InspectionStatus.Draft) ||
       (inspection.inspectionType === InspectionType.Post &&
-        inspection.status === InspectionStatus.Ready)
+        inspection.status === InspectionStatus.Sanctionable)
 
-    // Only post-inspections which are in draft state can be readied.
-    let canInspectionBeReady =
+    // Only post-inspections which are in draft state can be made sanctionable.
+    let canInspectionBeSanctionable =
       inspection.inspectionType === InspectionType.Post &&
       inspection.status === InspectionStatus.Draft
 
-    let isInspectionSubmitDisabled = disabledActions.includes('submit')
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -227,20 +223,21 @@ const InspectionActions = observer(
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
-              disabled={isInspectionSubmitDisabled}
+              disabled={hasErrors}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitProcessStart}>
               <Text>inspection_actions_openSubmitContainer</Text>
             </Button>
           )}
 
-          {canInspectionBeReady && hasOperatorUserAccessRights && isEditing && (
+          {canInspectionBeSanctionable && hasOperatorUserAccessRights && isEditing && (
             <Button
-              loading={readyLoading}
+              loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
-              onClick={onReadyInspection}>
-              <Text>inspection_actions_canBeAccepted</Text>
+              disabled={hasErrors}
+              onClick={onMakeInspectionSanctionable}>
+              <Text>inspection_actions_startSanctioning</Text>
             </Button>
           )}
 
@@ -249,7 +246,6 @@ const InspectionActions = observer(
           ) &&
             hasAdminAccessRights && (
               <Button
-                disabled={disabledActions.includes('remove')}
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={removeLoading}
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
@@ -262,7 +258,7 @@ const InspectionActions = observer(
           {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
               <Button
-                disabled={disabledActions.includes('publish')}
+                disabled={hasErrors}
                 style={{ marginLeft: 'auto' }}
                 loading={publishLoading}
                 buttonStyle={ButtonStyle.NORMAL}
@@ -271,7 +267,6 @@ const InspectionActions = observer(
                 <Text>inspection_actions_publish</Text>
               </Button>
               <Button
-                disabled={disabledActions.includes('reject')}
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={rejectLoading}
                 buttonStyle={ButtonStyle.REMOVE}
@@ -287,7 +282,7 @@ const InspectionActions = observer(
           hasOperatorUserAccessRights &&
           isEditing && (
             <InspectionApprovalSubmit
-              disabled={isInspectionSubmitDisabled}
+              disabled={hasErrors}
               inspection={inspection}
               onSubmit={onSubmitInspection}
               onCancel={onCancelSubmit}

@@ -5,15 +5,19 @@ import { useQueryData } from '../util/useQueryData'
 import { reportsQuery } from '../report/reportQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../report/ReportListItem'
-import Report from '../report/Report'
 import { TextButton } from '../common/components/Button'
 import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
+import type { ReportListItem as ReportListItemType } from '../schema-types'
 import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
+import ReportContainer from '../report/ReportContainer'
+import { ReportTypeByName } from '../report/reportTypes'
 
-const InspectionReportsView = styled.div``
+const InspectionReportsView = styled.div`
+  min-height: 100%;
+`
 
 const ReportInspectionView = styled(InspectionItem)`
   margin-bottom: 2rem;
@@ -34,19 +38,16 @@ export type PropTypes = {
 
 const InspectionReports = observer(
   ({ showInfo = true, showItemActions = true, inspection }: PropTypes) => {
-    const [reportsExpanded, setReportsExpanded] = useState(false)
-
-    const toggleReportsExpanded = useCallback(() => {
-      setReportsExpanded((currentVal) => !currentVal)
-    }, [])
-
     let inspectionId = inspection?.id || ''
 
-    let { data: reportsData, loading: reportsLoading } = useQueryData(reportsQuery, {
-      variables: {
-        inspectionType: inspection.inspectionType,
-      },
-    })
+    let { data: reportsData, loading: reportsLoading } = useQueryData<ReportListItemType[]>(
+      reportsQuery,
+      {
+        variables: {
+          inspectionType: inspection.inspectionType,
+        },
+      }
+    )
 
     let reports = useMemo(() => reportsData || [], [reportsData])
 
@@ -64,11 +65,6 @@ const InspectionReports = observer(
             <ReportInspectionView inspection={inspection} showActions={false} />
           </>
         )}
-        {reports.length !== 0 && (
-          <TextButton onClick={toggleReportsExpanded}>
-            {reportsExpanded ? 'Piilota kaikki raportit' : 'Näytä kaikki raportit'}
-          </TextButton>
-        )}
         <LoadingDisplay loading={reportsLoading} />
         {inspection &&
           reports.map((reportListItem) => (
@@ -76,10 +72,9 @@ const InspectionReports = observer(
               key={reportListItem.name}
               inspectionType={showItemActions ? inspection.inspectionType! : undefined}
               inspectionId={showItemActions ? inspectionId : undefined}
-              reportData={reportListItem}
-              isExpanded={reportsExpanded}>
-              <Report
-                reportName={reportListItem.name}
+              reportData={reportListItem}>
+              <ReportContainer
+                reportName={reportListItem.name as keyof ReportTypeByName}
                 inspectionId={inspectionId}
                 inspectionType={inspection.inspectionType}
               />

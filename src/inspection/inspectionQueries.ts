@@ -178,9 +178,9 @@ export const submitInspectionMutation = gql`
   ${inspectionFragment}
 `
 
-export const readyInspectionMutation = gql`
+export const makeInspectionSanctionableMutation = gql`
   mutation inspectionReady($inspectionId: String!) {
-    inspectionReady(inspectionId: $inspectionId) {
+    inspectionSanctionable(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }

@@ -1,18 +1,18 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { SetStateAction, useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Input from '../common/input/Input'
+import Input from '../input/Input'
 import { omit } from 'lodash'
-import { ControlGroup } from '../common/components/form'
-import Dropdown from '../common/input/Dropdown'
-import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../common/components/Button'
-import { text, Text } from '../util/translate'
-import { FlexRow } from '../common/components/common'
-import { SubHeading } from '../common/components/Typography'
-import { FilterConfig } from '../schema-types'
-import UserHint from '../common/components/UserHint'
+import { ControlGroup } from '../components/form'
+import Dropdown from '../input/Dropdown'
+import { Button, ButtonSize, ButtonStyle, RemoveButton } from '../components/Button'
+import { text, Text } from '../../util/translate'
+import { FlexRow } from '../components/common'
+import { SubHeading } from '../components/Typography'
+import { FilterConfig } from '../../schema-types'
+import UserHint from '../components/UserHint'
 
-const ReportTableFiltersView = styled.div`
+const TableFiltersView = styled.div`
   margin: 1rem 0 0;
   padding: 1rem;
   background: var(--white-grey);
@@ -33,23 +33,23 @@ const FilterButtonsWrapper = styled.div`
 `
 
 export type PropTypes<ItemType = any> = {
-  onApply: () => unknown
   excludeFields?: string[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
-  setFilters: (arg: ((filters: FilterConfig[]) => FilterConfig[]) | FilterConfig[]) => unknown
+  setFilters: React.Dispatch<SetStateAction<FilterConfig[]>>
 }
 
-const ReportTableFilters = observer(
+const TableFiltersControl = observer(
   <ItemType extends {}>({
     excludeFields = [],
     fieldLabels = {},
-    onApply = () => {},
     filters,
     setFilters,
   }: PropTypes<ItemType>) => {
+    let [tempFilters, setTempFilters] = useState<FilterConfig[]>(filters)
+
     let onAddFilter = useCallback((field = '') => {
-      setFilters((currentFilters) => {
+      setTempFilters((currentFilters) => {
         let newFilter: FilterConfig = {
           field,
           filterValue: '',
@@ -59,7 +59,7 @@ const ReportTableFilters = observer(
     }, [])
 
     let onChangeFilter = useCallback((index: number, value: string) => {
-      setFilters((currentFilters) => {
+      setTempFilters((currentFilters) => {
         let nextFilters = [...currentFilters]
         let filterConfig = nextFilters[index]
 
@@ -78,7 +78,7 @@ const ReportTableFilters = observer(
           return
         }
 
-        setFilters((currentFilters) => {
+        setTempFilters((currentFilters) => {
           let nextFilters = [...currentFilters]
           let filterConfig = nextFilters[index]
 
@@ -94,7 +94,7 @@ const ReportTableFilters = observer(
     )
 
     let onRemoveFilter = useCallback((index) => {
-      setFilters((currentFilters) => {
+      setTempFilters((currentFilters) => {
         let nextFilters = [...currentFilters]
         let removed = nextFilters.splice(index, 1)
 
@@ -106,18 +106,20 @@ const ReportTableFilters = observer(
       })
     }, [])
 
-    let currentFilters = useRef<FilterConfig[]>([])
-
-    let onClickApply = useCallback(() => {
-      currentFilters.current = filters
-      onApply()
-    }, [filters, onApply])
+    let onApplyFilters = useCallback(() => {
+      setFilters(tempFilters)
+    }, [tempFilters, setFilters])
 
     useEffect(() => {
-      if (currentFilters.current.length !== 0 && filters.length === 0) {
-        onClickApply()
+      setTempFilters(filters)
+    }, [filters])
+
+    // If all filters were removed, apply to update the view.
+    useEffect(() => {
+      if (filters.length !== 0 && tempFilters.length === 0) {
+        onApplyFilters()
       }
-    }, [currentFilters.current, filters, onClickApply])
+    }, [filters, tempFilters])
 
     let filterFieldOptions = useMemo(() => {
       let fields = omit(fieldLabels, excludeFields)
@@ -131,7 +133,7 @@ const ReportTableFilters = observer(
     }, [fieldLabels, excludeFields])
 
     return (
-      <ReportTableFiltersView>
+      <TableFiltersView>
         <FlexRow style={{ alignItems: 'center' }}>
           <SubHeading style={{ marginTop: 0, marginBottom: 0 }}>
             <Text>report_filtering_title</Text>
@@ -148,10 +150,10 @@ const ReportTableFilters = observer(
             <Text>report_filtering_addField</Text>
           </Button>
         </FlexRow>
-        {filters.length !== 0 && (
+        {tempFilters.length !== 0 && (
           <>
             <FlexRow style={{ marginTop: '1.5rem', flexDirection: 'column' }}>
-              {filters.map((filterConfig, index) => {
+              {tempFilters.map((filterConfig, index) => {
                 let selectedFilterOption = filterFieldOptions.find(
                   (f) => f.field === filterConfig.field
                 )
@@ -188,9 +190,9 @@ const ReportTableFilters = observer(
               })}
             </FlexRow>
             <FlexRow>
-              {filters.length !== 0 && (
+              {tempFilters.length !== 0 && (
                 <FilterButtonBar>
-                  <Button size={ButtonSize.LARGE} onClick={onClickApply}>
+                  <Button size={ButtonSize.LARGE} onClick={onApplyFilters}>
                     <Text>report_filtering_apply</Text>
                   </Button>
                 </FilterButtonBar>
@@ -198,9 +200,9 @@ const ReportTableFilters = observer(
             </FlexRow>
           </>
         )}
-      </ReportTableFiltersView>
+      </TableFiltersView>
     )
   }
 )
 
-export default ReportTableFilters
+export default TableFiltersControl

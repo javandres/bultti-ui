@@ -37,8 +37,12 @@
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
+  "tableEmpty": "Taulukko on tyhjä.",
 
-  "table_rowsPerPage": "riviä per sivu",
+  "table_rowsPerPage": "Rivejä per sivu",
+  "table_rowsInView": "Rivejä näkymässä",
+  "table_totalRows": "Rivejä yhteensä",
+  "table_filteredRows": "Suodattuja rivejä",
 
   "role_admin": "Admin",
   "role_hsl": "HSL käyttäjä",
@@ -107,8 +111,9 @@
   "userRelations_subscribedTo": "Tilattu",
   "userRelations_publishedBy": "Julkaistu",
   "userRelations_rejectedBy": "Peruttu",
-  "userRelations_submittedBy": "Lisätty sanktioitavaksi",
-  "userRelations_readiedBy": "Hyväksytty",
+  "userRelations_submittedBy": "Lähetetty hyväksyttäväksi",
+  "userRelations_madeSanctionableBy": "Sanktioitavaksi",
+  "userRelations_sanctionsAbandonedBy": "Sanktiointi peruttu",
 
   "catalogue_newCatalogue": "Luo uusi kalustoluettelo",
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
@@ -120,7 +125,7 @@
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
   "catalogue_removeEquipment": "Poista kalustoluettelo",
   "catalogue_addEquipment": "Lisää ajoneuvo",
-  "catalogue_batchAddequipment": "Lisää ajoneuvoja listalta",
+  "catalogue_batchAddEquipment": "Lisää ajoneuvoja listalta",
   "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa kylkinumerolla: ${vehicleId}, rekisterinumerolla: ${registryNumber}",
   "catalogue_findEquipment": "Hae kalustoa",
   "catalogue_equipmentNotFound": "Kalustoa ei löytynyt.",
@@ -135,24 +140,29 @@
   "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
   "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
   "inspectionPage_results": "Tulokset",
+  "inspectionPage_sanctions": "Sanktiointi",
+  "inspectionPage_relatedUsers": "Käyttäjät",
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
   "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
-  "inspection_state_draft": "Muokattavissa",
-  "inspection_state_prosessing": "Käsiteltävänä",
-  "inspection_state_review": "Hyväksyttävänä",
-  "inspection_state_production": "Tuotannossa",
+
+  "inspection_state_Draft": "Muokattavissa",
+  "inspection_state_Processing": "Käsittelee tietoja",
+  "inspection_state_InReview": "Hyväksyttävänä",
+  "inspection_state_InProduction": "Tuotannossa",
+  "inspection_state_Sanctionable": "Sanktiointi",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",
 
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
-  "inspection_actions_canBeAccepted": "Hyväksy",
+  "inspection_actions_startSanctioning": "Aloita sanktiointi",
   "inspection_actions_remove": "Poista",
   "inspection_actions_publish": "Julkaise",
   "inspection_actions_reject": "Hylkää",
+  "inspection_actions_abandonSanctions": "Peruuta sanktiointi",
 
   "inspectionDate_pageHeader": "Muokkaa tarkastusjaksoja",
   "inspectionDatePage_newInspectionButton": "Lisää tarkastusjakso",
@@ -163,6 +173,8 @@
 
   "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
   "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
+
+  "postInspection_confirmAbandonSanctions": "Haluatko varmasti poistaa kaikki tarkastuksen sanktiot ja palauttaa tarkastus muokattavaan tilaan?",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",
