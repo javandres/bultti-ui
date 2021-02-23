@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Contract, ContractInput, Operator } from '../schema-types'
@@ -236,6 +236,16 @@ const ContractEditor = observer(
       setPendingContract(initialContract)
     }, [initialContract])
     let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
+
+    useEffect(() => {
+      if (isNew && pendingContract.operatorId !== globalOperator.operatorId) {
+        console.log('updatign! ! ')
+        setPendingContract({
+          ...pendingContract,
+          operatorId: globalOperator.operatorId,
+        })
+      }
+    }, [globalOperator.operatorId, isNew])
 
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 

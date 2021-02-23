@@ -11,6 +11,7 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page, PageContainer } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
+import { Text } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import { navigateWithQueryString } from '../util/urlValue'
 
@@ -55,18 +56,18 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
     <EditContractPageView>
       <PageTitle loading={loading} onRefresh={refetch}>
         {loading ? (
-          <span>Sopimusehdot</span>
+          <Text>contracts</Text>
         ) : (
           <>
             {existingContract ? (
               <>
-                Sopimusehdot{' '}
+                <Text>Sopimusehdot</Text>
                 <PageTitleOperator>{existingContract.operator.operatorName}</PageTitleOperator>
               </>
             ) : (
               <>
-                Luo uudet sopimusehdot{' '}
-                <PageTitleOperator>{globalOperator.operatorName}</PageTitleOperator>
+                <Text>Luo uudet sopimusehdot</Text>
+                <PageTitleOperator>{globalOperator?.operatorName}</PageTitleOperator>
               </>
             )}
           </>
@@ -74,7 +75,7 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
       </PageTitle>
       <PageContainer>
         <LoadingDisplay loading={loading} />
-        {!loading && (
+        {!loading && globalOperator && (
           <ContractEditor
             onRefresh={refetch}
             editable={hasAdminAccessRights}

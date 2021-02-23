@@ -54,6 +54,7 @@
 
   "contractPage_newContractButton": "Uudet sopimusehdot",
   "contractPage_noContracts": "Ei sopimusehtoja.",
+  "contractPage_createNewContract": "Luo uudet sopimusehdot",
 
   "contractForm_tomlReadError": "Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe: ",
   "contractForm_currentContract": "Nykyiset ehdot",
