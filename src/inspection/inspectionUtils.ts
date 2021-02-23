@@ -24,6 +24,7 @@ import { useRefetch } from '../util/useRefetch'
 import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
+import { text } from '../util/translate'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -197,24 +198,28 @@ export function getCreatedByUser(inspection?: Inspection): User | undefined {
   return createdRelation ? createdRelation.user : undefined
 }
 
-export function getInspectionStatusColor(inspection: Inspection) {
-  if (inspection.status === InspectionStatus.Draft) {
+export function getInspectionStatusColor(inspectionStatus?: InspectionStatus) {
+  if (inspectionStatus === InspectionStatus.Draft) {
     return 'var(--blue)'
   }
 
-  if (inspection.status === InspectionStatus.Sanctionable) {
-    return 'var(--light-green)'
+  if (inspectionStatus === InspectionStatus.Sanctionable) {
+    return 'var(--light-blue)'
   }
 
-  if (inspection.status === InspectionStatus.InReview) {
+  if (inspectionStatus === InspectionStatus.InReview) {
     return 'var(--yellow)'
   }
 
-  if (inspection.status === InspectionStatus.InProduction) {
+  if (inspectionStatus === InspectionStatus.InProduction) {
     return 'var(--green)'
   }
 
   return 'var(--light-grey)'
+}
+
+export function getInspectionStatusName(inspectionStatus: InspectionStatus) {
+  return text('inspection_state_' + inspectionStatus)
 }
 
 export function getInspectionTypeStrings(inspectionType: InspectionType) {

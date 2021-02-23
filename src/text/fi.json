@@ -147,11 +147,12 @@
   "inspection_inspectionName": "Tarkastuksen nimi",
   "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
-  "inspection_state_draft": "Muokattavissa",
-  "inspection_state_prosessing": "Käsittelee tietoja",
-  "inspection_state_review": "Hyväksyttävänä",
-  "inspection_state_production": "Tuotannossa",
-  "inspection_state_sanctioning": "Sanktioitavana",
+
+  "inspection_state_Draft": "Muokattavissa",
+  "inspection_state_InReview": "Käsittelee tietoja",
+  "inspection_state_InProduction": "Hyväksyttävänä",
+  "inspection_state_Processing": "Tuotannossa",
+  "inspection_state_Sanctionable": "Sanktiointi",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",

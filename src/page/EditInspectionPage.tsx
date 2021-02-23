@@ -10,6 +10,7 @@ import { Button } from '../common/components/Button'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionStatusColor,
+  getInspectionStatusName,
   getInspectionTypeStrings,
   useEditInspection,
   useInspectionById,
@@ -128,14 +129,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             {inspection && (
               <InspectionStatusContainer
                 style={{
-                  backgroundColor: getInspectionStatusColor(inspection),
-                  borderColor: getInspectionStatusColor(inspection),
+                  backgroundColor: getInspectionStatusColor(inspection.status),
+                  borderColor: getInspectionStatusColor(inspection.status),
                   color:
                     inspection.status === InspectionStatus.InReview
                       ? 'var(--dark-grey)'
                       : 'white',
                 }}>
-                <strong>{text(inspection.status)}</strong>
+                <strong>{getInspectionStatusName(inspection.status)}</strong>
               </InspectionStatusContainer>
             )}
           </PageTitle>

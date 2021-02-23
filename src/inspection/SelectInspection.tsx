@@ -6,6 +6,8 @@ import { orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
+  getInspectionStatusColor,
+  getInspectionStatusName,
   getInspectionTypeStrings,
   useCreateInspection,
   useEditInspection,
@@ -39,24 +41,14 @@ const ListHeading = styled.h4`
   margin: 0 1rem 0 0;
 `
 
-type StatusProps = { status?: InspectionStatus | 'new' }
+type StatusProps = { status?: InspectionStatus }
 
 const InspectionItem = styled.div<StatusProps>`
   padding: 0.75rem 1rem 0;
   border-radius: 5px;
   margin-bottom: 1rem;
   background: white;
-  border: 2px solid
-    ${(p) =>
-      p.status === 'new'
-        ? 'var(--blue)'
-        : p.status === InspectionStatus.Draft
-        ? 'var(--lighter-grey)'
-        : p.status === InspectionStatus.InReview
-        ? 'var(--yellow)'
-        : p.status === InspectionStatus.Processing
-        ? 'var(--light-grey)'
-        : 'var(--light-green)'};
+  border: 2px solid ${(p) => getInspectionStatusColor(p.status)};
   font-family: inherit;
   margin-left: 1rem;
   text-align: left;
@@ -130,14 +122,7 @@ const InspectionVersion = styled.div`
 const InspectionStatusDisplay = styled.div<StatusProps>`
   padding: 0.25rem 0;
   text-align: center;
-  background: ${(p) =>
-    p.status === InspectionStatus.Draft
-      ? 'var(--blue)'
-      : p.status === InspectionStatus.InReview
-      ? 'var(--yellow)'
-      : p.status === InspectionStatus.Processing
-      ? 'var(--light-grey)'
-      : 'var(--light-green)'};
+  background: ${(p) => getInspectionStatusColor(p.status)};
   color: ${(p) => (p.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white')};
   margin: 0 0 1rem;
   border-radius: 5px;
@@ -250,13 +235,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
                     )}
                     <InspectionVersion>{inspection.version}</InspectionVersion>
                     <InspectionStatusDisplay status={inspection.status}>
-                      {inspection.status === InspectionStatus.Draft
-                        ? text('inspection_state_draft')
-                        : inspection.status === InspectionStatus.InReview
-                        ? text('inspection_state_review')
-                        : inspection.status === InspectionStatus.Processing
-                        ? text('inspection_state_prosessing')
-                        : text('inspection_state_production')}
+                      {getInspectionStatusName(inspection.status)}
                     </InspectionStatusDisplay>
                     <InspectionPeriodDisplay>
                       <DateTitle>Tuotantojakso</DateTitle>
