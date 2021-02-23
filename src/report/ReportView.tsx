@@ -17,7 +17,7 @@ const ReportViewWrapper = styled.div`
 export type PropTypes = {
   items: any[]
   columnLabels: { [key: string]: string }
-  pageState: PageMeta
+  pageMeta: PageMeta
   loading?: boolean
   onUpdate?: () => unknown
   tableState?: TableStateType
@@ -33,7 +33,7 @@ const ReportView = observer(
     columnLabels,
     loading = false,
     onUpdate = () => {},
-    pageState,
+    pageMeta,
     tableState = defaultTableStateValue,
     reportType = 'list',
   }: PropTypes) => {
@@ -47,7 +47,7 @@ const ReportView = observer(
         ) : (
           <StatefulTable
             items={items}
-            pageMeta={pageState}
+            pageMeta={pageMeta}
             tableState={tableState}
             onUpdate={onUpdate}
             columnLabels={columnLabels}

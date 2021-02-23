@@ -23,7 +23,7 @@ export type PageMeta = {
 }
 
 // It really doesn't matter for this component what the datatype is.
-export function createPageState<DataType = unknown>(
+export function createPageMeta<DataType = unknown>(
   pagedResponse?: FilteredPagedSortedResponse<DataType>
 ) {
   return {

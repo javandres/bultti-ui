@@ -495,24 +495,24 @@ const Table = observer(
     sort: propSort,
     setSort: propSetSort,
     disablePaging = false,
-    pageState: propPageConfig,
+    pageState: propPageState,
     setPage: propSetPage,
     setPageSize: propSetPageSize,
     pageMeta: propPageMeta,
   }: TablePropTypes<ItemType, EditValueType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
-    let pageState = usePagingState()
+    let pagingState = usePagingState()
 
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
 
     // Use internal "UI" paging when it is not explicitly disabled and there is no page config set through props.
-    let page = propPageConfig ?? pageState.page
-    let setPage = propSetPage ?? pageState.setCurrentPage
-    let setPageSize = propSetPageSize ?? pageState.setPageSize
+    let pageState = propPageState ?? pagingState.page
+    let setPage = propSetPage ?? pagingState.setCurrentPage
+    let setPageSize = propSetPageSize ?? pagingState.setPageSize
     let usePaging = !disablePaging
-    let useUIPaging = usePaging && !propPageConfig && items.length > 20
+    let useUIPaging = usePaging && !propPageState && items.length > 20
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -668,14 +668,17 @@ const Table = observer(
     let rowsToRender = useMemo(
       () =>
         useUIPaging
-          ? rows.slice(page.page * page.pageSize, (page.page + 1) * page.pageSize)
+          ? rows.slice(
+              pageState.page * pageState.pageSize,
+              (pageState.page + 1) * pageState.pageSize
+            )
           : rows,
-      [rows, useUIPaging, page, page.pageSize]
+      [rows, useUIPaging, pageState, pageState.pageSize]
     )
 
     let rowPages: number[] = []
 
-    for (let i = 1; i <= Math.ceil(rows.length / page.pageSize); i++) {
+    for (let i = 1; i <= Math.ceil(rows.length / pageState.pageSize); i++) {
       rowPages.push(i)
     }
 
@@ -690,13 +693,13 @@ const Table = observer(
 
     // Adjust the current page if it is set to a higher number than there are pages.
     useEffect(() => {
-      let currentPage = page.page
+      let currentPage = pageState.page
       let pagesCount = pageMeta.pages
 
       if (currentPage > pagesCount) {
         setPage({ setToPage: pagesCount })
       }
-    }, [pageMeta.pages, page.page])
+    }, [pageMeta.pages, pageState.page])
 
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
@@ -809,13 +812,13 @@ const Table = observer(
             <TablePagingControl
               onSetPageSize={setPageSize}
               onSetPage={setPage}
-              pageState={page}
+              pageState={pageState}
               pageMeta={pageMeta}
             />
           )}
         </>
       ),
-      [usePaging, setPage, setPageSize, page, pageMeta]
+      [usePaging, setPage, setPageSize, pageState, pageMeta]
     )
 
     return (

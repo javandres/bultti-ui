@@ -13,7 +13,7 @@ import { text, Text } from '../util/translate'
 import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
-import { createPageState, PageMeta } from '../common/table/tableUtils'
+import { createPageMeta, PageMeta } from '../common/table/tableUtils'
 import StatefulTable from '../common/table/StatefulTable'
 import { EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
@@ -248,7 +248,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     [sanctionsData]
   )
 
-  let sanctionPageState: PageMeta = useMemo(() => createPageState(sanctionsData), [
+  let sanctionPageMeta: PageMeta = useMemo(() => createPageMeta(sanctionsData), [
     sanctionsData,
   ])
 
@@ -282,7 +282,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         <StatefulTable<Sanction, number>
           loading={isLoading}
           items={sanctionDataItems}
-          pageMeta={sanctionPageState}
+          pageMeta={sanctionPageMeta}
           tableState={tableState}
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}
