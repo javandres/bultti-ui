@@ -215,6 +215,7 @@ export function getInspectionStatusColor(inspectionStatus?: InspectionStatus) {
     return 'var(--green)'
   }
 
+  // Processing
   return 'var(--light-grey)'
 }
 

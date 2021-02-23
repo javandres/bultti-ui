@@ -8,6 +8,7 @@ import { PageMeta, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
 import Table, { CellValType, TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
+import { Text } from '../../util/translate'
 
 const TableViewWrapper = styled.div`
   position: relative;
@@ -77,7 +78,9 @@ const StatefulTable = observer(
           sort={sort}
           setSort={setSort}
           columnLabels={existingPropLabels}>
-          <TableEmptyView>tableEmpty</TableEmptyView>
+          <TableEmptyView>
+            <Text>tableEmpty</Text>
+          </TableEmptyView>
         </Table>
       </TableViewWrapper>
     )

@@ -149,9 +149,9 @@
   "inspection_inspectionSeason": "Tuotantojakso",
 
   "inspection_state_Draft": "Muokattavissa",
-  "inspection_state_InReview": "Käsittelee tietoja",
-  "inspection_state_InProduction": "Hyväksyttävänä",
-  "inspection_state_Processing": "Tuotannossa",
+  "inspection_state_Processing": "Käsittelee tietoja",
+  "inspection_state_InReview": "Hyväksyttävänä",
+  "inspection_state_InProduction": "Tuotannossa",
   "inspection_state_Sanctionable": "Sanktiointi",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
