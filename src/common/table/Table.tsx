@@ -511,7 +511,7 @@ const Table = observer(
     let pageState = propPageState ?? pagingState.page
     let setPage = propSetPage ?? pagingState.setCurrentPage
     let setPageSize = propSetPageSize ?? pagingState.setPageSize
-    let usePaging = !disablePaging
+    let usePaging = !disablePaging && (propPageState || items.length > 20)
     let useUIPaging = usePaging && !propPageState && items.length > 20
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
@@ -808,7 +808,7 @@ const Table = observer(
     let uiPagingControl = useMemo(
       () => (
         <>
-          {usePaging && (
+          {(useUIPaging || usePaging) && (
             <TablePagingControl
               onSetPageSize={setPageSize}
               onSetPage={setPage}
@@ -818,7 +818,7 @@ const Table = observer(
           )}
         </>
       ),
-      [usePaging, setPage, setPageSize, pageState, pageMeta]
+      [usePaging, useUIPaging, setPage, setPageSize, pageState, pageMeta]
     )
 
     return (

@@ -115,6 +115,10 @@ const TablePagingControl = observer(
       [onSetPage]
     )
 
+    let visiblePageSizeOptions = pageSizeOptions.filter(
+      (opt) => (pageMeta?.totalCount || 0) >= opt
+    )
+
     return (
       <PagingControlView>
         <PagingElementsRow>
@@ -161,7 +165,7 @@ const TablePagingControl = observer(
           </PagingWrapper>
           <PageElement style={{ justifyContent: 'flex-end', marginRight: 0 }}>
             <Text>table_rowsPerPage</Text>
-            {pageSizeOptions.map((option: number, index: number) => {
+            {visiblePageSizeOptions.map((option: number, index: number) => {
               return (
                 <PageSelectorOption
                   key={`option-${index}`}
