@@ -7,10 +7,8 @@ import { Inspection, InspectionStatus } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
 import InspectionReports from './InspectionReports'
 
-const PreviewInspectionView = styled.div``
-
-const PreviewMeta = styled(InspectionMeta)`
-  margin-left: 0.75rem;
+const PreviewInspectionView = styled.div`
+  padding: 1rem 0.75rem 2rem;
 `
 
 export type PropTypes = {
@@ -43,7 +41,7 @@ const InspectionPreview: React.FC<PropTypes> = observer(({ inspection }) => {
           ))}
         </MessageContainer>
       )}
-      {inspection && <PreviewMeta inspection={inspection} />}
+      {inspection && <InspectionMeta inspection={inspection} />}
       <InspectionReports showInfo={false} showItemActions={false} inspection={inspection} />
     </PreviewInspectionView>
   )

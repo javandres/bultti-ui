@@ -1,11 +1,10 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Table, { CellValType, EditValue } from '../common/components/Table'
+import Table, { EditValue, TableEditProps } from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionValue } from '../schema-types'
-import { lowerCase, orderBy, pick } from 'lodash'
-import ValueDisplay from '../common/components/ValueDisplay'
+import { lowerCase, orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 
@@ -24,9 +23,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type EditRequirementValue = EditValue<ObservedExecutionValue> & {
-  requirementId: string
-}
+export type EditRequirementValue = EditValue<ObservedExecutionValue>
 
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]
@@ -35,12 +32,8 @@ export interface IObservedExecutionRequirement {
 
 export type PropTypes = {
   executionRequirement: IObservedExecutionRequirement
-  onEditValue?: (key: string, value: CellValType, item: EditRequirementValue) => unknown
   isEditable?: boolean
-  pendingValues?: EditRequirementValue[]
-  onCancelEdit?: () => unknown
-  onSaveEdit?: () => unknown
-}
+} & TableEditProps<ObservedExecutionValue>
 
 const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
   emissionClass: 'Päästöluokka',
@@ -110,7 +103,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let getColumnTotal = useCallback(
-      (key: string) => {
+      (key: keyof ObservedExecutionValue) => {
         if (
           [
             'differencePercentage',
@@ -146,20 +139,11 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
 
     return (
       <ExecutionRequirementsAreaContainer>
-        <ValueDisplay
-          valuesPerRow={3}
-          style={{ marginBottom: '1rem' }}
-          item={pick(executionRequirement, ['kilometersRequired'])}
-          labels={{
-            kilometersRequired: 'Suoritekilometrit yhteensä',
-          }}
-          renderValue={renderDisplayValue}
-        />
-        <Table<any>
+        <Table<ObservedExecutionValue>
           items={requirementRows}
           columnLabels={valuesLayoutColumnLabels}
           renderValue={renderTableValue}
-          keyFromItem={(item) => item.emissionClass}
+          keyFromItem={(item) => item.emissionClass + ''}
           getColumnTotal={getColumnTotal}
           editableValues={isEditable ? ['quotaRequired'] : undefined}
           onEditValue={onEditValue}

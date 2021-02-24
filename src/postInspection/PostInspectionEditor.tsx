@@ -11,6 +11,11 @@ import PostInspectionExecutionRequirements from '../executionRequirement/PostIns
 import LoadInspectionHfpData from './LoadInspectionHfpData'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
+import styled from 'styled-components/macro'
+
+const PostInspectionEditorView = styled.div`
+  margin-top: 1rem;
+`
 
 type PostInspectionProps = {
   refetchData: () => unknown
@@ -55,7 +60,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
     }, [updateConnectedInspection, isEditable])
 
     return (
-      <div>
+      <PostInspectionEditorView>
         <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
         {hfpLoaded ? (
           <>
@@ -87,7 +92,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
             <MessageView>Lataa tarkastusjakson HFP-tiedot ennen jatkamista.</MessageView>
           </MessageContainer>
         )}
-      </div>
+      </PostInspectionEditorView>
     )
   }
 )

@@ -59,8 +59,9 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
 `
 
 const TabContentWrapper = styled.div<RouteComponentProps>`
-  padding-top: 1.5rem;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 `
 
 const progress = keyframes`
@@ -101,6 +102,7 @@ export type TabChildProps = {
   path?: string
   loading?: boolean
   testId?: string
+  default?: boolean
 }
 
 type PropTypes = {
@@ -115,7 +117,7 @@ let getPathName = (path) => (path === '/' ? './' : path)
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
     // The children usually contain an empty string as the first element.
-    // Compact() removes all such falsy values from the array.
+    // Remove all such falsy values from the array.
     const validChildren: ReactNode[] = useMemo(
       () => compact<ReactNode>(Children.toArray(children)),
       [children]
@@ -155,7 +157,9 @@ const Tabs: React.FC<PropTypes> = decorate(
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>
-          <Router primary={false}>{children}</Router>
+          <Router style={{ width: '100%', flex: 1 }} primary={false}>
+            {children}
+          </Router>
         </TabContentWrapper>
       </TabsWrapper>
     )
