@@ -115,56 +115,58 @@ const TablePagingControl = observer(
 
     return (
       <PagingControlView>
-        <PagingElementsRow>
-          <PagingWrapper>
-            <Button
-              disabled={(pageState.currentPage || 1) <= 1}
-              size={ButtonSize.SMALL}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={setPageOffset(-1)}>
-              <Text>previous</Text>
-            </Button>
-            {pageState.pageCount > 1 && (
-              <PageValue
-                style={{
-                  whiteSpace: 'nowrap',
-                  textAlign: 'center',
-                  minWidth: '8rem',
-                  justifyContent: 'center',
-                }}>
-                <PageSelectDropdown
-                  theme="light"
-                  selectedItem={pageState.currentPage || 1}
-                  items={pageOptions}
-                  onSelect={(selectedPage) => pageState.setCurrentPage(selectedPage)}
-                  itemToString={(idx) => idx}
-                  itemToLabel={(idx) => idx}
-                />
-                <strong>/ {pageState.pageCount}</strong>
-              </PageValue>
-            )}
-            <Button
-              disabled={pageState.currentPage >= pageState.pageCount}
-              size={ButtonSize.SMALL}
-              buttonStyle={ButtonStyle.SECONDARY}
-              onClick={setPageOffset(1)}>
-              <Text>next</Text>
-            </Button>
-          </PagingWrapper>
-          <PageElement style={{ justifyContent: 'flex-end', marginRight: 0 }}>
-            <Text>table_rowsPerPage</Text>
-            {pageState.pageSizeOptions.map((option: number, index: number) => {
-              return (
-                <PageSelectorOption
-                  key={`option-${index}`}
-                  onClick={() => pageState.setPageSize(index)}
-                  style={pageState.pageSize === option ? selectedPageOptionStyles : {}}>
-                  {option}
-                </PageSelectorOption>
-              )
-            })}
-          </PageElement>
-        </PagingElementsRow>
+        {pageState.pageCount > 1 && pageState.pageSizeOptions.length !== 0 && (
+          <PagingElementsRow>
+            <PagingWrapper>
+              <Button
+                disabled={(pageState.currentPage || 1) <= 1}
+                size={ButtonSize.SMALL}
+                buttonStyle={ButtonStyle.SECONDARY}
+                onClick={setPageOffset(-1)}>
+                <Text>previous</Text>
+              </Button>
+              {pageState.pageCount > 1 && (
+                <PageValue
+                  style={{
+                    whiteSpace: 'nowrap',
+                    textAlign: 'center',
+                    minWidth: '8rem',
+                    justifyContent: 'center',
+                  }}>
+                  <PageSelectDropdown
+                    theme="light"
+                    selectedItem={pageState.currentPage || 1}
+                    items={pageOptions}
+                    onSelect={(selectedPage) => pageState.setCurrentPage(selectedPage)}
+                    itemToString={(idx) => idx}
+                    itemToLabel={(idx) => idx}
+                  />
+                  <strong>/ {pageState.pageCount}</strong>
+                </PageValue>
+              )}
+              <Button
+                disabled={pageState.currentPage >= pageState.pageCount}
+                size={ButtonSize.SMALL}
+                buttonStyle={ButtonStyle.SECONDARY}
+                onClick={setPageOffset(1)}>
+                <Text>next</Text>
+              </Button>
+            </PagingWrapper>
+            <PageElement style={{ justifyContent: 'flex-end', marginRight: 0 }}>
+              <Text>table_rowsPerPage</Text>
+              {pageState.pageSizeOptions.map((option: number, index: number) => {
+                return (
+                  <PageSelectorOption
+                    key={`option-${index}`}
+                    onClick={() => pageState.setPageSize(index)}
+                    style={pageState.pageSize === option ? selectedPageOptionStyles : {}}>
+                    {option}
+                  </PageSelectorOption>
+                )
+              })}
+            </PageElement>
+          </PagingElementsRow>
+        )}
         <PagingElementsRow>
           <PageElement>
             <Text>table_totalRows</Text> <strong>{totalItemsCount}</strong>

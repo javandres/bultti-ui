@@ -28,19 +28,30 @@ export const defaultPageConfig = {
 
 export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateType<ItemType> {
   let itemsLength = items.length
+  // Use paging only when there are more than 20 items.
+  let pagingIsEnabled = itemsLength > 20
   // Limit the page size options to the actual number of items, so that the user does not see
   // options for larger page sizes than there are items.
-  let pageSizeOptions = defaultPageSizeOptions.filter((size) => itemsLength > size)
+  let pageSizeOptions = !pagingIsEnabled
+    ? []
+    : defaultPageSizeOptions.filter((size) => itemsLength > size)
 
   let [currentPage, setCurrentPage] = useState<number>(1)
   let [pageSize, setPageSize] = useState<number>(10)
 
-  let itemPages = useMemo(() => chunk(items, pageSize), [items, pageSize])
+  let itemPages = useMemo(() => (!pagingIsEnabled ? [items] : chunk(items, pageSize)), [
+    items,
+    pagingIsEnabled,
+    pageSize,
+  ])
+
   let pagesLength = itemPages.length
 
   let setPageSizeByIndex = useCallback(
     (pageSizeIdx: number) => {
-      let nextPageSize = pageSizeOptions[pageSizeIdx] || pageSizeOptions[0]
+      let nextPageSize =
+        pageSizeOptions[pageSizeIdx] || pageSizeOptions[0] || defaultPageSizeOptions[0]
+
       setPageSize(nextPageSize)
     },
     [pageSizeOptions]
@@ -53,7 +64,7 @@ export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateTyp
       let nextPageValue = Math.min(attemptPageValue, pagesLength)
       setCurrentPage(nextPageValue)
     },
-    [pagesLength]
+    [pagesLength, pagingIsEnabled]
   )
 
   let setCurrentPageWithOffset = useCallback(
