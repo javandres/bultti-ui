@@ -239,7 +239,6 @@ const ContractEditor = observer(
 
     useEffect(() => {
       if (isNew && pendingContract.operatorId !== globalOperator.operatorId) {
-        console.log('updatign! ! ')
         setPendingContract({
           ...pendingContract,
           operatorId: globalOperator.operatorId,
