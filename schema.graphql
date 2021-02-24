@@ -16,8 +16,6 @@ type BlockDeviationsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [DeviationsReportData!]!
   seasonId: String!
@@ -78,8 +76,6 @@ type DeadrunsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [DeadrunsReportData!]!
   seasonId: String!
@@ -126,8 +122,6 @@ type DepartureBlocksReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [DepartureBlocksReportData!]!
   seasonId: String!
@@ -161,8 +155,6 @@ type DeviationsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [DeviationsReportData!]!
   seasonId: String!
@@ -198,8 +190,6 @@ type EarlyTimingStopDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [EarlyTimingStopDeparturesReportData!]!
   seasonId: String!
@@ -237,8 +227,6 @@ type EmissionClassExecutionReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [EmissionClassExecutionReportData!]!
   seasonId: String!
@@ -315,8 +303,6 @@ type EquipmentColorReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [EquipmentColorReportData!]!
   seasonId: String!
@@ -349,8 +335,6 @@ type EquipmentTypeReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [EquipmentTypeReportData!]!
   seasonId: String!
@@ -440,8 +424,6 @@ type ExecutionRequirementsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ExecutionRequirementsReportData!]!
   seasonId: String!
@@ -482,8 +464,6 @@ type ExtraBlockDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ExtraBlockDeparturesReportData!]!
   seasonId: String!
@@ -588,8 +568,6 @@ type LateDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [LateDeparturesReportData!]!
   seasonId: String!
@@ -628,8 +606,6 @@ type MissingBlockDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [MissingBlockDeparturesReportData!]!
   seasonId: String!
@@ -660,8 +636,6 @@ type MissingEquipmentReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [MissingEquipmentReportData!]!
   seasonId: String!
@@ -738,8 +712,6 @@ type ObservedEmissionClassExecutionReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedEmissionClassExecutionReportData!]!
   seasonId: String!
@@ -775,8 +747,6 @@ type ObservedEquipmentColorReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedEquipmentColorReportData!]!
   seasonId: String!
@@ -814,8 +784,6 @@ type ObservedEquipmentTypeReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedEquipmentTypeReportData!]!
   seasonId: String!
@@ -873,8 +841,6 @@ type ObservedExecutionRequirementsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedExecutionRequirementsReportData!]!
   seasonId: String!
@@ -924,8 +890,6 @@ type ObservedOverAgeDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedOverAgeDeparturesReportData!]!
   seasonId: String!
@@ -972,8 +936,6 @@ type ObservedUnitExecutionReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [ObservedUnitExecution!]!
   seasonId: String!
@@ -1013,8 +975,6 @@ type OperatorDeadrunsReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [DeadrunsReportData!]!
   seasonId: String!
@@ -1035,8 +995,6 @@ type OverAgeDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [OverAgeDeparturesReportData!]!
   seasonId: String!
@@ -1058,11 +1016,6 @@ type OverAgeDeparturesReportData {
   registryNr: String!
   routeId: String!
   trackReason: TrackReason!
-}
-
-type PageConfig {
-  page: Int!
-  pageSize: Int!
 }
 
 type ProcurementUnit {
@@ -1098,11 +1051,11 @@ type ProcurementUnitRoute {
 }
 
 type Query {
-  allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DeviationsReport!
+  allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport!
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): BlockDeviationsReport!
+  blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport!
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
@@ -1112,42 +1065,42 @@ type Query {
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
-  deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DeadrunsReport!
-  departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): DepartureBlocksReport!
-  earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport!
-  emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EmissionClassExecutionReport!
+  deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeadrunsReport!
+  departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DepartureBlocksReport!
+  earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport!
+  emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EmissionClassExecutionReport!
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
-  equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentColorReport!
-  equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): EquipmentTypeReport!
+  equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentColorReport!
+  equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentTypeReport!
   executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
   executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
-  executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExecutionRequirementsReport!
+  executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExecutionRequirementsReport!
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
-  extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
+  extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport!
   inspection(inspectionId: String!): Inspection
-  inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): SanctionsResponse!
+  inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   loadedHfpRanges(endDate: String!, startDate: String!): [HfpDateStatus!]!
-  missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingBlockDeparturesReport!
-  missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): MissingEquipmentReport!
-  observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
-  observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentColorReport!
-  observedEquipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedEquipmentTypeReport!
+  missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport!
+  missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport!
+  observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport!
+  observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEquipmentColorReport!
+  observedEquipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEquipmentTypeReport!
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
-  observedExecutionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedExecutionRequirementsReport!
-  observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): LateDeparturesReport!
-  observedOverageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedOverAgeDeparturesReport!
-  observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
+  observedExecutionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedExecutionRequirementsReport!
+  observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): LateDeparturesReport!
+  observedOverageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedOverAgeDeparturesReport!
+  observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedUnitExecutionReport!
   operator(operatorId: Int!): Operator
-  operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): OperatorDeadrunsReport!
+  operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OperatorDeadrunsReport!
   operators: [Operator!]!
-  overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): OverAgeDeparturesReport!
+  overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
@@ -1156,9 +1109,9 @@ type Query {
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
-  trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): TrackedDeparturesReport!
-  unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnitExecutionReport!
-  unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, page: InputPageConfig, sort: [InputSortConfig!]): UnobservedDeparturesReport!
+  trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): TrackedDeparturesReport!
+  unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnitExecutionReport!
+  unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnobservedDeparturesReport!
   user(userId: Int!): User
   users: [User!]!
 }
@@ -1187,8 +1140,6 @@ type SanctionsResponse {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [Sanction!]!
   sort: [SortConfig!]
@@ -1225,8 +1176,6 @@ type TrackedDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [TrackedDeparturesReportData!]!
   seasonId: String!
@@ -1257,8 +1206,6 @@ type UnitExecutionReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [UnitExecutionReportData!]!
   seasonId: String!
@@ -1290,8 +1237,6 @@ type UnobservedDeparturesReport {
   inspectionType: InspectionType!
   name: String!
   operatorId: Float!
-  page: PageConfig
-  pages: Int!
   responseId: String!
   rows: [UnobservedDeparturesReportData!]!
   seasonId: String!
@@ -1465,11 +1410,6 @@ input InitialInspectionInput {
 input InputFilterConfig {
   field: String!
   filterValue: String!
-}
-
-input InputPageConfig {
-  page: Int!
-  pageSize: Int!
 }
 
 input InputSortConfig {

@@ -58,6 +58,7 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
 const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
   list-style: none;
   width: 100%;
+  min-width: 5rem;
   border-radius: 8px;
   background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
   max-height: 265px;
@@ -77,6 +78,7 @@ const DropdownItem = styled.li<{ highlighted: boolean }>`
     p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
   cursor: pointer;
   padding: 0.75rem 1rem;
+  text-align: left;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
   user-select: none;
 `

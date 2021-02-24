@@ -1167,16 +1167,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -1243,16 +1233,6 @@
             "name": "deadrunsReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -1321,16 +1301,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -1397,16 +1367,6 @@
             "name": "allDeviationsReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -1475,16 +1435,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -1551,16 +1501,6 @@
             "name": "equipmentColorReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -1629,16 +1569,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -1705,16 +1635,6 @@
             "name": "executionRequirementsReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -1783,16 +1703,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -1859,16 +1769,6 @@
             "name": "missingBlockDeparturesReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -1937,16 +1837,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2013,16 +1903,6 @@
             "name": "operatorDeadrunsReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2091,16 +1971,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2167,16 +2037,6 @@
             "name": "trackedDeparturesReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2245,16 +2105,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2321,16 +2171,6 @@
             "name": "earlyTimingStopDeparturesReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2399,16 +2239,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2475,16 +2305,6 @@
             "name": "observedEmissionClassExecutionReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2553,16 +2373,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2629,16 +2439,6 @@
             "name": "observedEquipmentTypeReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2707,16 +2507,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2783,16 +2573,6 @@
             "name": "observedOverageDeparturesReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -2861,16 +2641,6 @@
             "description": null,
             "args": [
               {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
-              {
                 "name": "filters",
                 "description": null,
                 "type": {
@@ -2937,16 +2707,6 @@
             "name": "unobservedDeparturesReport",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -3321,16 +3081,6 @@
             "name": "inspectionSanctions",
             "description": null,
             "args": [
-              {
-                "name": "page",
-                "description": null,
-                "type": {
-                  "kind": "INPUT_OBJECT",
-                  "name": "InputPageConfig",
-                  "ofType": null
-                },
-                "defaultValue": null
-              },
               {
                 "name": "filters",
                 "description": null,
@@ -7784,34 +7534,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -8054,49 +7776,6 @@
                     "ofType": null
                   }
                 }
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
-        "inputFields": null,
-        "interfaces": [],
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "OBJECT",
-        "name": "PageConfig",
-        "description": null,
-        "fields": [
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pageSize",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -8503,45 +8182,6 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "InputPageConfig",
-        "description": null,
-        "fields": null,
-        "inputFields": [
-          {
-            "name": "page",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "pageSize",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          }
-        ],
-        "interfaces": null,
-        "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "INPUT_OBJECT",
         "name": "InputFilterConfig",
         "description": null,
         "fields": null,
@@ -8651,34 +8291,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -9342,34 +8954,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -9824,34 +9408,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -10138,34 +9694,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -10621,34 +10149,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -11090,34 +10590,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -11601,34 +11073,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -12071,34 +11515,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -12508,34 +11924,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -12955,34 +12343,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -13337,34 +12697,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -13651,34 +12983,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -14146,34 +13450,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -14583,34 +13859,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -15041,34 +14289,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -15595,34 +14815,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -16170,34 +15362,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -16643,34 +15807,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -17197,34 +16333,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -17788,34 +16896,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -18249,34 +17329,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -18824,34 +17876,6 @@
             "deprecationReason": null
           },
           {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "filters",
             "description": null,
             "args": [],
@@ -19213,34 +18237,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -19889,34 +18885,6 @@
                 "name": "Int",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "pages",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "page",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "OBJECT",
-              "name": "PageConfig",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

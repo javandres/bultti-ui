@@ -225,7 +225,6 @@ export type QueryReportsArgs = {
 
 
 export type QueryBlockDeviationsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -233,7 +232,6 @@ export type QueryBlockDeviationsReportArgs = {
 
 
 export type QueryDeadrunsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -241,7 +239,6 @@ export type QueryDeadrunsReportArgs = {
 
 
 export type QueryDepartureBlocksReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -249,7 +246,6 @@ export type QueryDepartureBlocksReportArgs = {
 
 
 export type QueryAllDeviationsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -257,7 +253,6 @@ export type QueryAllDeviationsReportArgs = {
 
 
 export type QueryEmissionClassExecutionReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -265,7 +260,6 @@ export type QueryEmissionClassExecutionReportArgs = {
 
 
 export type QueryEquipmentColorReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -273,7 +267,6 @@ export type QueryEquipmentColorReportArgs = {
 
 
 export type QueryEquipmentTypeReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -281,7 +274,6 @@ export type QueryEquipmentTypeReportArgs = {
 
 
 export type QueryExecutionRequirementsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -289,7 +281,6 @@ export type QueryExecutionRequirementsReportArgs = {
 
 
 export type QueryExtraBlockDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -297,7 +288,6 @@ export type QueryExtraBlockDeparturesReportArgs = {
 
 
 export type QueryMissingBlockDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -305,7 +295,6 @@ export type QueryMissingBlockDeparturesReportArgs = {
 
 
 export type QueryMissingEquipmentReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -313,7 +302,6 @@ export type QueryMissingEquipmentReportArgs = {
 
 
 export type QueryOperatorDeadrunsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -321,7 +309,6 @@ export type QueryOperatorDeadrunsReportArgs = {
 
 
 export type QueryOverageDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -329,7 +316,6 @@ export type QueryOverageDeparturesReportArgs = {
 
 
 export type QueryTrackedDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -337,7 +323,6 @@ export type QueryTrackedDeparturesReportArgs = {
 
 
 export type QueryUnitExecutionReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -345,7 +330,6 @@ export type QueryUnitExecutionReportArgs = {
 
 
 export type QueryEarlyTimingStopDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -353,7 +337,6 @@ export type QueryEarlyTimingStopDeparturesReportArgs = {
 
 
 export type QueryObservedLateDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -361,7 +344,6 @@ export type QueryObservedLateDeparturesReportArgs = {
 
 
 export type QueryObservedEmissionClassExecutionReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -369,7 +351,6 @@ export type QueryObservedEmissionClassExecutionReportArgs = {
 
 
 export type QueryObservedEquipmentColorReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -377,7 +358,6 @@ export type QueryObservedEquipmentColorReportArgs = {
 
 
 export type QueryObservedEquipmentTypeReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -385,7 +365,6 @@ export type QueryObservedEquipmentTypeReportArgs = {
 
 
 export type QueryObservedExecutionRequirementsReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -393,7 +372,6 @@ export type QueryObservedExecutionRequirementsReportArgs = {
 
 
 export type QueryObservedOverageDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -401,7 +379,6 @@ export type QueryObservedOverageDeparturesReportArgs = {
 
 
 export type QueryObservedUnitExecutionReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -409,7 +386,6 @@ export type QueryObservedUnitExecutionReportArgs = {
 
 
 export type QueryUnobservedDeparturesReportArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -455,7 +431,6 @@ export type QueryPreviewObservedRequirementArgs = {
 
 
 export type QueryInspectionSanctionsArgs = {
-  page?: Maybe<InputPageConfig>;
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -864,8 +839,6 @@ export type BlockDeviationsReport = {
   __typename?: 'BlockDeviationsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -881,12 +854,6 @@ export type BlockDeviationsReport = {
   showSanctioned?: Maybe<Scalars['Boolean']>;
   showUnsanctioned?: Maybe<Scalars['Boolean']>;
   rows: Array<DeviationsReportData>;
-};
-
-export type PageConfig = {
-  __typename?: 'PageConfig';
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
 };
 
 export type FilterConfig = {
@@ -938,11 +905,6 @@ export enum TrackReason {
   UnobservedDeparture = 'UNOBSERVED_DEPARTURE'
 }
 
-export type InputPageConfig = {
-  page: Scalars['Int'];
-  pageSize: Scalars['Int'];
-};
-
 export type InputFilterConfig = {
   field: Scalars['String'];
   filterValue: Scalars['String'];
@@ -957,8 +919,6 @@ export type DeadrunsReport = {
   __typename?: 'DeadrunsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1007,8 +967,6 @@ export type DepartureBlocksReport = {
   __typename?: 'DepartureBlocksReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1044,8 +1002,6 @@ export type DeviationsReport = {
   __typename?: 'DeviationsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1067,8 +1023,6 @@ export type EmissionClassExecutionReport = {
   __typename?: 'EmissionClassExecutionReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1106,8 +1060,6 @@ export type EquipmentColorReport = {
   __typename?: 'EquipmentColorReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1142,8 +1094,6 @@ export type EquipmentTypeReport = {
   __typename?: 'EquipmentTypeReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1180,8 +1130,6 @@ export type ExecutionRequirementsReport = {
   __typename?: 'ExecutionRequirementsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1216,8 +1164,6 @@ export type ExtraBlockDeparturesReport = {
   __typename?: 'ExtraBlockDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1250,8 +1196,6 @@ export type MissingBlockDeparturesReport = {
   __typename?: 'MissingBlockDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1284,8 +1228,6 @@ export type MissingEquipmentReport = {
   __typename?: 'MissingEquipmentReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1315,8 +1257,6 @@ export type OperatorDeadrunsReport = {
   __typename?: 'OperatorDeadrunsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1338,8 +1278,6 @@ export type OverAgeDeparturesReport = {
   __typename?: 'OverAgeDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1375,8 +1313,6 @@ export type TrackedDeparturesReport = {
   __typename?: 'TrackedDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1409,8 +1345,6 @@ export type UnitExecutionReport = {
   __typename?: 'UnitExecutionReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1444,8 +1378,6 @@ export type EarlyTimingStopDeparturesReport = {
   __typename?: 'EarlyTimingStopDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1485,8 +1417,6 @@ export type LateDeparturesReport = {
   __typename?: 'LateDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1527,8 +1457,6 @@ export type ObservedEmissionClassExecutionReport = {
   __typename?: 'ObservedEmissionClassExecutionReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1566,8 +1494,6 @@ export type ObservedEquipmentColorReport = {
   __typename?: 'ObservedEquipmentColorReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1607,8 +1533,6 @@ export type ObservedEquipmentTypeReport = {
   __typename?: 'ObservedEquipmentTypeReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1650,8 +1574,6 @@ export type ObservedExecutionRequirementsReport = {
   __typename?: 'ObservedExecutionRequirementsReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1685,8 +1607,6 @@ export type ObservedOverAgeDeparturesReport = {
   __typename?: 'ObservedOverAgeDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1727,8 +1647,6 @@ export type ObservedUnitExecutionReport = {
   __typename?: 'ObservedUnitExecutionReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1759,8 +1677,6 @@ export type UnobservedDeparturesReport = {
   __typename?: 'UnobservedDeparturesReport';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];
@@ -1814,8 +1730,6 @@ export type SanctionsResponse = {
   __typename?: 'SanctionsResponse';
   filteredCount: Scalars['Int'];
   totalCount: Scalars['Int'];
-  pages: Scalars['Int'];
-  page?: Maybe<PageConfig>;
   filters?: Maybe<Array<FilterConfig>>;
   sort?: Maybe<Array<SortConfig>>;
   responseId: Scalars['String'];

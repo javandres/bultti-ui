@@ -1,11 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { CellContent } from '../common/table/Table'
 import styled from 'styled-components/macro'
 import Dropdown from '../common/input/Dropdown'
 import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
 import { TextInput } from '../common/input/Input'
+import { CellContent } from '../common/table/TableCell'
 
 export const FormDropdown = styled(Dropdown)`
   width: 100%;

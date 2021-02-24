@@ -23,13 +23,11 @@ export const createReportQueryByName = (reportName: string) => {
   return gql`
     query ${reportName}Report(
       $inspectionId: String!
-      $page: InputPageConfig
       $filters: [InputFilterConfig!]
       $sort: [InputSortConfig!]
     ) {
       ${reportName}Report(
         inspectionId: $inspectionId
-        page: $page
         filters: $filters
         sort: $sort
       ) {
@@ -41,7 +39,6 @@ export const createReportQueryByName = (reportName: string) => {
         inspectionType
         totalCount
         filteredCount
-        pages
         operatorId
         seasonId
         showSanctioned
@@ -49,10 +46,6 @@ export const createReportQueryByName = (reportName: string) => {
         filters {
           field
           filterValue
-        }
-        page {
-          page
-          pageSize
         }
         sort {
           column

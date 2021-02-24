@@ -43,8 +43,6 @@ const ButtonRow = styled.div`
   }
 `
 
-type Actions = 'publish' | 'reject' | 'submit' | 'remove' | 'ready'
-
 export type PropTypes = {
   inspection: Inspection
   onRefresh: () => unknown

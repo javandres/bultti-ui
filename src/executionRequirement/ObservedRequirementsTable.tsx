@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Table, { EditValue, TableEditProps } from '../common/table/Table'
+import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ObservedExecutionValue } from '../schema-types'
-import { lowerCase, orderBy } from 'lodash'
+import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
+import { EditValue, TableEditProps } from '../common/table/tableUtils'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
@@ -64,11 +65,6 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
       let requirementValues = executionRequirement.observedRequirements
       return orderBy(requirementValues, 'emissionClass', 'desc')
     }, [executionRequirement])
-
-    let renderDisplayValue = useCallback((key, val) => {
-      let displayUnit = lowerCase(key).includes('kilo') ? 'km' : 'vuotta'
-      return `${round(val, 3)} ${displayUnit}`
-    }, [])
 
     let renderTableValue = useCallback((key, val, isHeader = false, item) => {
       if (isHeader || ['unit'].includes(key || '') || !isNumeric(val) || val === 0) {

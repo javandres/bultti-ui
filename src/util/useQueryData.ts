@@ -1,12 +1,7 @@
-import {
-  ApolloQueryResult,
-  OperationVariables,
-  QueryHookOptions,
-  useQuery,
-} from '@apollo/client'
+import { OperationVariables, QueryHookOptions, useQuery } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { pickGraphqlData } from './pickGraphqlData'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
 import { merge } from 'lodash'
 
 const defaultOptions = {
