@@ -11,6 +11,7 @@ export const RowRemoveButton = styled(RemoveButton)`
   opacity: 0;
   position: absolute;
 `
+
 export const TableRowElement = styled.div<{ isEditing?: boolean; footer?: boolean }>`
   width: 100%;
   display: flex;
@@ -47,10 +48,12 @@ export const TableRowElement = styled.div<{ isEditing?: boolean; footer?: boolea
     }
   }
 `
+
 export const TableHeader = styled(TableRowElement)`
   outline: none !important;
   border-bottom-color: var(--lighter-grey) !important;
 `
+
 type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
   index: number
   row: TableRowWithDataAndFunctions<ItemType, EditValueType>
@@ -58,6 +61,7 @@ type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
   style?: CSSProperties
   isScrolling?: boolean
 }
+
 export const TableRow = observer(
   <ItemType extends {}, EditValueType = CellValType>({
     row,

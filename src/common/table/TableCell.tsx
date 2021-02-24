@@ -91,8 +91,6 @@ export const TableCell = observer(
     colIndex,
     tabIndex = 1,
   }: CellPropTypes<ItemType, EditValueType>) => {
-    let ctx: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
-
     let {
       pendingValues = [],
       onEditValue,
@@ -107,7 +105,7 @@ export const TableCell = observer(
       fluid,
       highlightRow = defaultHighlightRow,
       isAlwaysEditable,
-    } = ctx || {}
+    }: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
 
     let [isFocused, setIsFocused] = useState(false)
 
