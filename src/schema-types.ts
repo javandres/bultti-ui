@@ -1446,6 +1446,8 @@ export type LateDeparturesReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   journeyKilometers: Scalars['Float'];
@@ -1523,6 +1525,8 @@ export type ObservedEquipmentColorReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   observedExteriorColor: Scalars['String'];
@@ -1562,6 +1566,8 @@ export type ObservedEquipmentTypeReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   registryNr: Scalars['String'];
   plannedEquipmentType: Scalars['String'];
   equipmentTypeRequired: Scalars['Boolean'];
@@ -1636,6 +1642,8 @@ export type ObservedOverAgeDeparturesReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   observedEquipmentAge: Scalars['Float'];

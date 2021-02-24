@@ -15,6 +15,8 @@ ${departureReportBaseFragment}
 date
 observedArrivalTime
 observedDepartureTime
+sanctionAmount
+sanctionedKilometers
 `
 
 let emissionClassExecutionBaseFragment = `

@@ -593,6 +593,8 @@ type LateDeparturesReportData {
   procurementUnitId: String!
   registryNr: String!
   routeId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   trackReason: TrackReason!
 }
 
@@ -771,6 +773,8 @@ type ObservedEquipmentColorReportData {
   procurementUnitId: String!
   registryNr: String!
   routeId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   trackReason: TrackReason!
 }
 
@@ -810,6 +814,8 @@ type ObservedEquipmentTypeReportData {
   procurementUnitId: String!
   registryNr: String!
   routeId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   trackReason: TrackReason!
 }
 
@@ -915,6 +921,8 @@ type ObservedOverAgeDeparturesReportData {
   procurementUnitId: String!
   registryNr: String!
   routeId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   trackReason: TrackReason!
 }
 
