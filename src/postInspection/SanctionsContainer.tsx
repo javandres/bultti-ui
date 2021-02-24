@@ -90,6 +90,7 @@ let sanctionsQuery = gql`
         sanctionableKilometers
         sanctionableType
         appliedSanctionAmount
+        sanctionResultKilometers
       }
     }
   }
@@ -100,6 +101,7 @@ let setSanctionMutation = gql`
     updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
       appliedSanctionAmount
+      sanctionResultKilometers
     }
   }
 `
@@ -149,10 +151,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
             id: cacheId,
             data: {
               appliedSanctionAmount: update.appliedSanctionAmount,
+              sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
               fragment SanctionFragment on Sanction {
                 appliedSanctionAmount
+                sanctionResultKilometers
               }
             `,
           })

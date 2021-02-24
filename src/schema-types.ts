@@ -1749,6 +1749,7 @@ export type Sanction = {
   sanctionAmount: Scalars['Float'];
   appliedSanctionAmount: Scalars['Float'];
   sanctionableKilometers: Scalars['Float'];
+  sanctionResultKilometers?: Maybe<Scalars['Float']>;
 };
 
 export enum SanctionableEntity {
