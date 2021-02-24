@@ -171,7 +171,7 @@ const TablePagingControl = observer(
           </PageElement>
           {filteredItemsCount !== totalItemsCount && (
             <PageElement>
-              <Text>table_filteredRows</Text> <strong>{totalItemsCount}</strong>
+              <Text>table_filteredRows</Text> <strong>{filteredItemsCount}</strong>
             </PageElement>
           )}
           {itemsOnPage !== totalItemsCount && (

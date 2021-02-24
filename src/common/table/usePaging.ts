@@ -38,10 +38,13 @@ export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateTyp
   let itemPages = useMemo(() => chunk(items, pageSize), [items, pageSize])
   let pagesLength = itemPages.length
 
-  let setPageSizeByIndex = useCallback((pageSizeIdx: number) => {
-    let nextPageSize = pageSizeOptions[pageSizeIdx] || pageSizeOptions[0]
-    setPageSize(nextPageSize)
-  }, [])
+  let setPageSizeByIndex = useCallback(
+    (pageSizeIdx: number) => {
+      let nextPageSize = pageSizeOptions[pageSizeIdx] || pageSizeOptions[0]
+      setPageSize(nextPageSize)
+    },
+    [pageSizeOptions]
+  )
 
   // Set the current page to some index. Upper boundary is the number of pages, lower boundary is 1.
   let setCurrentPageToIndex = useCallback(

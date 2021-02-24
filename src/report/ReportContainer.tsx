@@ -16,6 +16,11 @@ import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 
+const ReportViewWrapper = styled.div`
+  position: relative;
+  min-height: 10rem;
+`
+
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
   border-bottom: 1px solid var(--lighter-grey);
@@ -72,7 +77,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     : 'list'
 
   return (
-    <>
+    <ReportViewWrapper>
       <ReportFunctionsRow>
         {inspectionType && inspectionId && (
           <DownloadReport
@@ -89,7 +94,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
           <Text>update</Text>
         </Button>
       </ReportFunctionsRow>
-      <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
+      <LoadingDisplay loading={reportLoading} />
       {reportType === 'executionRequirement' ? (
         <ExecutionRequirementsReport items={reportDataItems} />
       ) : reportType === 'observedExecutionRequirement' ? (
@@ -102,7 +107,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
           keyFromItem={reportKeyFromItem}
         />
       )}
-    </>
+    </ReportViewWrapper>
   )
 })
 
