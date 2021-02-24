@@ -10,16 +10,16 @@ import React, {
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { RemoveButton } from './Button'
-import { ScrollContext } from './AppFrame'
-import { FixedSizeList as List } from 'react-window'
+import { RemoveButton } from '../components/Button'
+import { ScrollContext } from '../components/AppFrame'
 import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
-import { SCROLLBAR_WIDTH } from '../../constants'
-import FormSaveToolbar from './FormSaveToolbar'
+import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
-import { SortConfig, SortOrder } from '../../schema-types'
-import { Text } from '../../util/translate'
+import { PageConfig, SortConfig, SortOrder } from '../../schema-types'
+import { SetCurrentPagePropTypes, usePagingState } from './useTableState'
+import TablePagingControl from './TablePagingControl'
+import { PageMeta } from './tableUtils'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -187,75 +187,71 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
-const PageSelectorContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin: 1rem 0rem 1rem 0rem;
-`
-const PageSelector = styled.div`
-  span {
-    margin-left: 0.5rem;
-  }
-`
-const RowsPerPageOptions = styled.div`
-  span {
-    margin-left: 0.5rem;
-  }
-`
-
-const PageSelectorOption = styled.span`
-  cursor: pointer;
-  color: var(--blue);
-  padding: 0.5rem;
-  transition: 0.5s;
-  &:hover {
-    background-color: var(--white-grey);
-  }
-`
 
 export type CellValType = string | number
-export type EditValue<ItemType = any> = { key: string; value: CellValType; item: ItemType }
+export type EditValue<ItemType = any, ValueType = CellValType> = {
+  key: keyof ItemType
+  value: ValueType
+  item: ItemType
+  itemId: string
+}
 
-export type PropTypes<ItemType> = {
+export type TableEditProps<ItemType, EditValueType = CellValType> = {
+  onEditValue?: (key: keyof ItemType, value: EditValueType, item: ItemType) => unknown
+  pendingValues?: EditValue<ItemType, EditValueType>[]
+  onCancelEdit?: () => unknown
+  onSaveEdit?: () => unknown
+  editableValues?: string[]
+  isAlwaysEditable?: boolean
+}
+
+export type RenderInputType<ItemType> = (
+  key: keyof ItemType,
+  val: any,
+  onChange: (val: any) => void,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown,
+  tabIndex?: number
+) => React.ReactChild
+
+export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
   hideKeys?: string[]
   indexCell?: React.ReactChild
   keyFromItem?: (item: ItemType) => string
-  onRemoveRow?: (item: ItemType) => void
+  onRemoveRow?: (item: ItemType) => unknown
+  canRemoveRow?: (item: ItemType) => boolean
   className?: string
+  renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
+  renderValue?: (
+    key: unknown,
+    val: any,
+    isHeader?: boolean,
+    item?: ItemType
+  ) => React.ReactNode
+  getColumnTotal?: (key: keyof ItemType) => React.ReactChild
+  highlightRow?: (item: ItemType) => boolean | string
+  renderInput?: RenderInputType<ItemType>
   visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
   selectedRowCountIndex?: number
-  renderCell?: (key: string, val: any, item?: ItemType) => React.ReactNode
-  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
-  getColumnTotal?: (key: string) => React.ReactChild
-  onEditValue?: (key: string, value: CellValType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType>[]
-  onCancelEdit?: () => unknown
-  onSaveEdit?: () => unknown
-  editableValues?: string[]
-  highlightRow?: (item: ItemType) => boolean | string
-  renderInput?: (
-    key: keyof ItemType,
-    val: any,
-    onChange: (val: any) => void,
-    onAccept?: () => unknown,
-    onCancel?: () => unknown,
-    tabIndex?: number
-  ) => React.ReactChild
   maxHeight?: number
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
-}
+  disablePaging?: boolean
+  pageState?: PageConfig
+  setPage?: (props: SetCurrentPagePropTypes) => unknown
+  setPageSize?: (targetPageSize: number) => unknown
+  pageMeta?: PageMeta
+} & TableEditProps<ItemType, EditValueType>
 
 const defaultKeyFromItem = (item) => item.id
 
-const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
+const defaultRenderCellContent = (key: unknown, val: any): React.ReactChild => (
   <>
     {!(val === false || val === null || typeof val === 'undefined') && (
       <CellContent>{val}</CellContent>
@@ -263,68 +259,82 @@ const defaultRenderCellContent = (key: string, val: any): React.ReactChild => (
   </>
 )
 
-const defaultRenderValue = (key, val) => toString(val)
+const defaultRenderValue = (key: unknown, val: any) => toString(val)
 
-const defaultRenderInput = (key, val, onChange, onAccept, onCancel, tabIndex) => (
+const defaultRenderInput = <ItemType extends {}>(
+  key: keyof ItemType,
+  val: any,
+  onChange,
+  onAccept,
+  onCancel,
+  tabIndex
+) => (
   <TableInput
     autoFocus
     tabIndex={tabIndex}
     theme="light"
     value={val}
     onChange={(value) => onChange(value)}
-    name={key}
+    name={key as string}
     onEnterPress={onAccept}
     onEscPress={onCancel}
     inputComponent={TableTextInput}
   />
 )
 
-type TableRowWithDataAndFunctions<ItemType = any> = {
+type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellValType> = {
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: string, value: CellValType) => () => unknown
-  onValueChange: (key: string) => (value: CellValType) => unknown
-  itemEntries: [string, CellValType][]
+  onMakeEditable: (key: keyof ItemType, value: EditValueType) => () => unknown
+  onValueChange: (key: string) => (value: EditValueType) => unknown
+  itemEntries: [string, EditValueType][]
   item: ItemType
 }
 
-type RowPropTypes<ItemType = any> = {
+type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
   index: number
-  row: TableRowWithDataAndFunctions<ItemType>
-  data?: TableRowWithDataAndFunctions<ItemType>[]
+  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
+  data?: TableRowWithDataAndFunctions<ItemType, EditValueType>[]
   style?: CSSProperties
   isScrolling?: boolean
 }
 
-type CellPropTypes<ItemType = any> = {
-  row: TableRowWithDataAndFunctions<ItemType>
-  cell: [keyof ItemType, CellValType]
+type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
+  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
+  cell: [keyof ItemType, EditValueType]
   colIndex: number
   tabIndex?: number
   rowId: string
 }
 
-type ContextTypes<ItemType> = {
-  pendingValues?: EditValue[]
+type ContextTypes<ItemType, EditValueType = CellValType> = {
+  pendingValues?: EditValue<ItemType, EditValueType>[]
   columnWidths?: Array<number | string>
-  editableValues?: PropTypes<ItemType>['editableValues']
-  onEditValue?: PropTypes<ItemType>['onEditValue']
-  renderInput?: PropTypes<ItemType>['renderInput']
-  onSaveEdit?: PropTypes<ItemType>['onSaveEdit']
-  onCancelEdit?: PropTypes<ItemType>['onCancelEdit']
-  renderCell?: PropTypes<ItemType>['renderCell']
-  renderValue?: PropTypes<ItemType>['renderValue']
-  keyFromItem?: PropTypes<ItemType>['keyFromItem']
+  editableValues?: TablePropTypes<ItemType, EditValueType>['editableValues']
+  onEditValue?: TablePropTypes<ItemType, EditValueType>['onEditValue']
+  renderInput?: TablePropTypes<ItemType, EditValueType>['renderInput']
+  onSaveEdit?: TablePropTypes<ItemType, EditValueType>['onSaveEdit']
+  onCancelEdit?: TablePropTypes<ItemType, EditValueType>['onCancelEdit']
+  renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
+  renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
+  keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
   fluid?: boolean
-  highlightRow?: PropTypes<ItemType>['highlightRow']
+  highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
+  isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
 }
 
-const TableContext = React.createContext<ContextTypes<any>>({})
+const TableContext = React.createContext({})
 
 const TableCellComponent = observer(
-  <ItemType extends any>({ row, cell, colIndex, tabIndex = 1 }: CellPropTypes<ItemType>) => {
-    let ctx = useContext(TableContext)
+  <ItemType extends {}, EditValueType = CellValType>({
+    row,
+    cell,
+    colIndex,
+    tabIndex = 1,
+  }: CellPropTypes<ItemType, EditValueType>) => {
+    let ctx: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
+
     let {
       pendingValues = [],
       onEditValue,
@@ -338,6 +348,7 @@ const TableCellComponent = observer(
       keyFromItem = defaultKeyFromItem,
       fluid,
       highlightRow = defaultHighlightRow,
+      isAlwaysEditable,
     } = ctx || {}
 
     let [isFocused, setIsFocused] = useState(false)
@@ -345,21 +356,29 @@ const TableCellComponent = observer(
     let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
 
     let [key, val] = cell
-    let valueKey: string = key as string
+    let valueKey = key as keyof ItemType
 
-    let editValue =
-      pendingValues.length !== 0
-        ? pendingValues.find((val) => keyFromItem(val.item) === itemId && val.key === key)
-        : undefined
+    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
+
+    let pendingValue = pendingValues.find(
+      (val) => keyFromItem(val.item) === itemId && val.key === key
+    )
+
+    let cellIsEditable = (isAlwaysEditable || !!pendingValue) && canEditCell
+
+    let editValue = (pendingValue || {
+      key,
+      value: val,
+      item,
+      itemId,
+    }) as EditValue<ItemType, EditValueType>
 
     let columnWidth = columnWidths[colIndex]
-
-    let canEditCell = onEditValue && editableValues.includes(valueKey)
     let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
 
     let onKeyUp = useCallback(
       (e) => {
-        if (isFocused && e.key === 'Enter' && canEditCell) {
+        if (!isAlwaysEditable && isFocused && e.key === 'Enter' && canEditCell) {
           makeCellEditable()
         }
       },
@@ -388,7 +407,7 @@ const TableCellComponent = observer(
       <TableCell
         highlightColor={rowHighlightColor}
         style={cellWidthStyle}
-        isEditing={!!editValue}
+        isEditing={cellIsEditable}
         isEditingRow={isEditingRow}
         editable={canEditCell}
         tabIndex={!canEditCell || editValue ? -1 : tabIndex}
@@ -396,11 +415,11 @@ const TableCellComponent = observer(
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onDoubleClick={makeCellEditable}>
-        {onEditValue && editValue
+        {cellIsEditable
           ? renderInput(
-              key as keyof ItemType,
+              key,
               editValue.value,
-              onValueChange(valueKey),
+              onValueChange((valueKey as unknown) as string),
               onSaveEdit,
               onCancelEdit,
               tabIndex
@@ -412,7 +431,12 @@ const TableCellComponent = observer(
 )
 
 const TableRowComponent = observer(
-  <ItemType extends {}>({ row, style, index, data: allRows = [] }: RowPropTypes<ItemType>) => {
+  <ItemType extends {}, EditValueType = CellValType>({
+    row,
+    style,
+    index,
+    data: allRows = [],
+  }: RowPropTypes<ItemType, EditValueType>) => {
     let rowItem = row || allRows[index]
 
     if (!rowItem) {
@@ -425,7 +449,7 @@ const TableRowComponent = observer(
     return (
       <TableRow key={rowId} isEditing={isEditingRow} style={style}>
         {itemEntries.map(([key, val], colIndex) => (
-          <TableCellComponent<ItemType>
+          <TableCellComponent<ItemType, EditValueType>
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}
@@ -445,7 +469,7 @@ const TableRowComponent = observer(
 const defaultHighlightRow = (): string | boolean => false
 
 const Table = observer(
-  <ItemType extends {}>({
+  <ItemType extends {}, EditValueType = CellValType>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -457,37 +481,44 @@ const Table = observer(
     renderValue = defaultRenderValue,
     getColumnTotal,
     className,
-    visibleRowCountOptions = [],
-    selectedRowCountIndex = 0,
     onEditValue,
     onCancelEdit,
     onSaveEdit,
     pendingValues = [],
+    isAlwaysEditable = false,
     renderInput = defaultRenderInput,
     editableValues = [],
-    maxHeight = window.innerHeight,
     fluid = false,
     showToolbar = true,
     highlightRow = defaultHighlightRow,
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
-  }: PropTypes<ItemType>) => {
+    disablePaging = false,
+    pageState: propPageState,
+    setPage: propSetPage,
+    setPageSize: propSetPageSize,
+    pageMeta: propPageMeta,
+  }: TablePropTypes<ItemType, EditValueType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
+    let pagingState = usePagingState()
 
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
+
+    // Use internal "UI" paging when it is not explicitly disabled and there is no page config set through props.
+    let pageState = propPageState ?? pagingState.page
+    let setPage = propSetPage ?? pagingState.setCurrentPage
+    let setPageSize = propSetPageSize ?? pagingState.setPageSize
+    let usePaging = !disablePaging
+    let useUIPaging = usePaging && !propPageState && items.length > 20
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
     // Adding a column a second time switches its order between asc, desc and no sorting.
     let sortByColumn = useCallback((columnName) => {
       setSort((currentSort) => {
-        if (!items[0] || !Object.keys(items[0] as {}).includes(columnName)) {
-          return currentSort
-        }
-
         let currentColumnSortIndex = currentSort.findIndex((s) => s.column === columnName)
         // New array instance so that the state update will actually trigger
         let nextSort = [...currentSort]
@@ -557,11 +588,6 @@ const Table = observer(
       columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
     }
 
-    let getListItemKey = useCallback((index, data) => {
-      let item = data[index]
-      return item.key
-    }, [])
-
     let sortedItems: ItemType[] = useMemo<ItemType[]>(() => {
       if (!items || !Array.isArray(items)) {
         return []
@@ -579,11 +605,11 @@ const Table = observer(
       )
     }, [items, sort])
 
-    let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
+    let rows: TableRowWithDataAndFunctions<ItemType, EditValueType>[] = useMemo(
       () =>
         sortedItems.map((item) => {
           // Again, omit keys that start with an underscore.
-          let itemEntries = Object.entries<CellValType>(item)
+          let itemEntries = Object.entries<EditValueType>(item)
 
           itemEntries = itemEntries.filter(
             ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
@@ -599,10 +625,11 @@ const Table = observer(
           const rowKey = keyFromItem(item)
 
           let isEditingRow: boolean =
-            !!pendingValues &&
-            pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey)
+            isAlwaysEditable ||
+            (!!pendingValues &&
+              pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey))
 
-          const onMakeEditable = (key: string, val: CellValType) => () => {
+          const onMakeEditable = (key: keyof ItemType, val: EditValueType) => () => {
             if (!isEditingRow && onEditValue) {
               onEditValue(key, val, item)
             }
@@ -616,7 +643,7 @@ const Table = observer(
 
           return {
             key: rowKey,
-            isEditingRow,
+            isEditingRow: isAlwaysEditable ? false : isEditingRow,
             onRemoveRow,
             onMakeEditable,
             onValueChange,
@@ -633,29 +660,46 @@ const Table = observer(
         onEditValue,
         keyFromItem,
         columnKeysOrdering,
+        onEditValue,
+        isAlwaysEditable,
       ]
     )
 
-    // Variables to handle shown rows per page
-    const areVisibleRowCountOptionsShown = visibleRowCountOptions.length > 1 // selectedRowCountIndex
-    let [selectedRowCount, setSelectedRowCount] = useState<number>(
-      visibleRowCountOptions[selectedRowCountIndex]
+    let rowsToRender = useMemo(
+      () =>
+        useUIPaging
+          ? rows.slice(
+              pageState.page * pageState.pageSize,
+              (pageState.page + 1) * pageState.pageSize
+            )
+          : rows,
+      [rows, useUIPaging, pageState, pageState.pageSize]
     )
-    let [selectedPageIndex, setSelectedPageIndex] = useState<number>(0)
-    let rowsToRender = areVisibleRowCountOptionsShown
-      ? rows.slice(
-          selectedPageIndex * selectedRowCount,
-          (selectedPageIndex + 1) * selectedRowCount
-        )
-      : rows
-    let pageOptions: number[] = []
-    for (let i = 1; i <= Math.ceil(rows.length / selectedRowCount); i++) {
-      pageOptions.push(i)
+
+    let rowPages: number[] = []
+
+    for (let i = 1; i <= Math.ceil(rows.length / pageState.pageSize); i++) {
+      rowPages.push(i)
     }
-    let selectedPageOptionStyles = {
-      color: 'var(--dark-grey)',
-      cursor: 'default',
+
+    let internalPageMeta = {
+      itemsOnPage: rowsToRender.length,
+      pages: rowPages.length,
+      filteredCount: rows.length,
+      totalCount: rows.length,
     }
+
+    let pageMeta = propPageMeta ?? internalPageMeta
+
+    // Adjust the current page if it is set to a higher number than there are pages.
+    useEffect(() => {
+      let currentPage = pageState.page
+      let pagesCount = pageMeta.pages
+
+      if (currentPage > pagesCount) {
+        setPage({ setToPage: pagesCount })
+      }
+    }, [pageMeta.pages, pageState.page])
 
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
@@ -672,7 +716,7 @@ const Table = observer(
 
         for (let row of rowsToRender) {
           let [colKey, colValue] = row.itemEntries[colIdx]
-          let strVal = toString(renderValue(colKey, colValue))
+          let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
           let valLength = Math.max(strVal.length, 5)
           colWidth = Math.max(valLength * 10, colWidth)
         }
@@ -703,17 +747,6 @@ const Table = observer(
               return total + col
             }, 0)
           )
-    let rowHeight = 27
-    let listHeight = rowsToRender.length * rowHeight // height of all rowsToRender combined
-    let height = Math.min(maxHeight, listHeight) // Limit height to maxHeight if needed
-    let hasVerticalScroll = listHeight > height
-
-    let wrapperHeight = Math.max(
-      tableIsEmpty ? 150 : rowHeight,
-      (typeof getColumnTotal !== 'undefined' ? height + rowHeight * 2 : height + rowHeight) +
-        2 +
-        (fluid ? 0 : SCROLLBAR_WIDTH)
-    )
 
     // Scroll listeners for the floating toolbar.
     let [currentScroll, setCurrentScroll] = useState({ scrollTop: 0, viewportHeight: 0 })
@@ -748,7 +781,7 @@ const Table = observer(
       return scrollBottom < tableBottom + 58 && scrollBottom > tableTop + 58
     }, [tableViewRef.current, currentScroll, pendingValues])
 
-    let contextValue: ContextTypes<ItemType> = {
+    let contextValue: ContextTypes<ItemType, EditValueType> = {
       columnWidths,
       editableValues,
       pendingValues,
@@ -761,12 +794,10 @@ const Table = observer(
       keyFromItem,
       fluid,
       highlightRow,
+      isAlwaysEditable,
     }
 
-    let tableViewWidth = fluid
-      ? '100%'
-      : Math.ceil((width as number) + (hasVerticalScroll ? SCROLLBAR_WIDTH : 0))
-
+    let tableViewWidth = fluid ? '100%' : width
     const formId = useMemo(() => uniqueId(), [])
 
     usePromptUnsavedChanges({
@@ -774,15 +805,31 @@ const Table = observer(
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
     })
 
+    let uiPagingControl = useMemo(
+      () => (
+        <>
+          {usePaging && (
+            <TablePagingControl
+              onSetPageSize={setPageSize}
+              onSetPage={setPage}
+              pageState={pageState}
+              pageMeta={pageMeta}
+            />
+          )}
+        </>
+      ),
+      [usePaging, setPage, setPageSize, pageState, pageMeta]
+    )
+
     return (
       <TableContext.Provider value={contextValue}>
+        {uiPagingControl}
         <TableWrapper
           className={className}
-          style={{ minHeight: wrapperHeight + 'px', overflowX: fluid ? 'auto' : 'scroll' }}
+          style={{ overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
-            <TableHeader
-              style={{ paddingRight: hasVerticalScroll ? Math.round(SCROLLBAR_WIDTH) : 0 }}>
+            <TableHeader>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -791,7 +838,7 @@ const Table = observer(
               {columnNames.map(([colKey, colName], colIdx) => {
                 let isEditingColumn =
                   pendingValues.length !== 0 &&
-                  pendingValues.map((val) => val.key).includes(colKey)
+                  pendingValues.map((val) => val.key).includes(colKey as keyof ItemType)
 
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
@@ -814,7 +861,7 @@ const Table = observer(
                     key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
-                      {renderValue('', colName, true)}
+                      {renderValue('' as unknown, colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
                           {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
@@ -829,13 +876,19 @@ const Table = observer(
               {tableIsEmpty
                 ? emptyContent
                 : rowsToRender.map((row, rowIndex) => (
-                    <TableRowComponent key={row.key || rowIndex} row={row} index={rowIndex} />
+                    <TableRowComponent<ItemType, EditValueType>
+                      key={row.key || rowIndex}
+                      row={row}
+                      index={rowIndex}
+                    />
                   ))}
             </TableBodyWrapper>
             {typeof getColumnTotal === 'function' && (
               <TableRow key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
-                  const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
+                  const total =
+                    getColumnTotal(col as keyof ItemType) || (colIdx === 0 ? 'Yhteensä' : '')
+
                   let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
@@ -859,59 +912,7 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
-        {areVisibleRowCountOptionsShown && (
-          <PageSelectorContainer>
-            <PageSelector>
-              <PageSelectorOption
-                style={selectedPageIndex === 0 ? selectedPageOptionStyles : {}}
-                onClick={() =>
-                  selectedPageIndex > 0
-                    ? setSelectedPageIndex(selectedPageIndex - 1)
-                    : undefined
-                }>
-                <Text>previous</Text>
-              </PageSelectorOption>
-              {pageOptions.map((option: number, index: number) => {
-                return (
-                  <PageSelectorOption
-                    key={`option-${index}`}
-                    onClick={() => setSelectedPageIndex(index)}
-                    style={selectedPageIndex === index ? selectedPageOptionStyles : {}}>
-                    {option}
-                  </PageSelectorOption>
-                )
-              })}
-              <PageSelectorOption
-                style={
-                  selectedPageIndex === pageOptions.length - 1 ? selectedPageOptionStyles : {}
-                }
-                onClick={() =>
-                  selectedPageIndex < pageOptions.length - 1
-                    ? setSelectedPageIndex(selectedPageIndex + 1)
-                    : undefined
-                }>
-                <Text>next</Text>
-              </PageSelectorOption>
-            </PageSelector>
-            <RowsPerPageOptions>
-              <Text>show</Text>
-              {visibleRowCountOptions.map((rowCount: number, index: number) => {
-                return (
-                  <PageSelectorOption
-                    style={selectedRowCount === rowCount ? selectedPageOptionStyles : {}}
-                    key={`option-${index}`}
-                    onClick={() => {
-                      setSelectedRowCount(rowCount)
-                      setSelectedPageIndex(0)
-                    }}>
-                    {rowCount}
-                  </PageSelectorOption>
-                )
-              })}{' '}
-              <Text>table_rowsPerPage</Text>
-            </RowsPerPageOptions>
-          </PageSelectorContainer>
-        )}
+        {rowsToRender.length >= 50 && uiPagingControl}
         {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <FormSaveToolbar
             onSave={onSaveEdit!}

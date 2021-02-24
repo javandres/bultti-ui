@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { ReportComponentProps } from './reportUtil'
+import { ReportComponentProps } from './reportTypes'
 import { ObservedExecutionRequirementsReportData } from '../schema-types'
 import ObservedRequirementsTable from '../executionRequirement/ObservedRequirementsTable'
 

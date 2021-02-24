@@ -10,6 +10,11 @@ import PreInspectionDevTools from '../dev/PreInspectionDevTools'
 import { useInspectionErrors } from '../util/useInspectionErrors'
 import { DEBUG } from '../constants'
 import { Text } from '../util/translate'
+import styled from 'styled-components/macro'
+
+const PreInspectionEditorView = styled.div`
+  margin-top: 1rem;
+`
 
 type PreInspectionProps = {
   refetchData: () => unknown
@@ -38,7 +43,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
     )
 
     return (
-      <>
+      <PreInspectionEditorView>
         <DepartureBlocks
           onUpdate={refetchData}
           isEditable={isEditable}
@@ -62,7 +67,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             <PreInspectionDevTools onUpdate={refetchData} inspection={inspection} />
           </PageSection>
         )}
-      </>
+      </PreInspectionEditorView>
     )
   }
 )

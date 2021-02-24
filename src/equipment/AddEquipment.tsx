@@ -133,7 +133,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
         <FlexRow>
           {addBatchEquipment && (
             <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
-              <Text>catalogue_batchAddequipment</Text>
+              <Text>catalogue_batchAddEquipment</Text>
             </Button>
           )}
           <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
@@ -188,7 +188,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
         {batchFormVisible && addBatchEquipment && (
           <>
             <SubHeading>
-              <Text>catalogue_batchAddequipment</Text>
+              <Text>catalogue_batchAddEquipment</Text>
             </SubHeading>
             <Text>equipment_batchAddEquipment</Text>
             <TextArea
@@ -203,7 +203,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                 disabled={!batchInput}
                 style={{ marginRight: '1rem' }}
                 onClick={onAddBatchEquipment}>
-                <Text>catalogue_batchAddequipment</Text>
+                <Text>catalogue_batchAddEquipment</Text>
               </Button>
               <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
                 <Text>cancel</Text>

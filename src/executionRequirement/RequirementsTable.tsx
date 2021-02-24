@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
-import Table from '../common/components/Table'
+import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
 import { ExecutionRequirementValue } from '../schema-types'
 import { orderBy, pick } from 'lodash'
@@ -58,9 +58,12 @@ const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: str
   classSanctionAmount: 'Sanktiomäärä',
 }
 
+type SummaryType = { unit: string; total: string }
+type ValueItemType = ExecutionRequirementValue | SummaryType
+
 const RequirementsTable: React.FC<PropTypes> = observer(
   ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
-    let requirementRows = useMemo(() => {
+    let requirementRows = useMemo((): Array<ValueItemType> => {
       let requirementValues = executionRequirement.requirements
 
       if (tableLayout === RequirementsTableLayout.BY_VALUES) {
@@ -136,7 +139,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let getColumnTotal = useCallback(
-      (key: string) => {
+      (key: keyof ValueItemType) => {
         if (['emissionClass', 'sanctionThreshold'].includes(key)) {
           return ''
         }
@@ -185,7 +188,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           }}
           renderValue={renderDisplayValue}
         />
-        <Table<any>
+        <Table<ValueItemType>
           items={requirementRows}
           columnLabels={
             tableLayout === RequirementsTableLayout.BY_VALUES
@@ -196,8 +199,10 @@ const RequirementsTable: React.FC<PropTypes> = observer(
             tableLayout === RequirementsTableLayout.BY_VALUES ? undefined : ['unit']
           }
           renderValue={renderTableValue}
-          keyFromItem={(item) =>
-            tableLayout === RequirementsTableLayout.BY_VALUES ? item.emissionClass : item.unit
+          keyFromItem={(item: ValueItemType): string =>
+            tableLayout === RequirementsTableLayout.BY_VALUES
+              ? (item as ExecutionRequirementValue).emissionClass + ''
+              : (item as SummaryType).unit
           }
           getColumnTotal={
             tableLayout === RequirementsTableLayout.BY_VALUES ? getColumnTotal : undefined
