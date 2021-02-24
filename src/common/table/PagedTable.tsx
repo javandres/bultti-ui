@@ -1,12 +1,12 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import Table, { CellValType, TablePropTypes } from './Table'
+import Table, { TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
 import { Text } from '../../util/translate'
 import { usePaging } from './usePaging'
 import TablePagingControl from './TablePagingControl'
-import { FilteredResponseMeta } from './tableUtils'
+import { CellValType, FilteredResponseMeta } from './tableUtils'
 
 const TableViewWrapper = styled.div`
   position: relative;

@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { CellValType, EditValue, TableTextInput } from '../common/table/Table'
+import { TableTextInput } from '../common/table/Table'
 import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
@@ -12,6 +12,7 @@ import EquipmentFormInput from './EquipmentFormInput'
 import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
 import PagedTable from '../common/table/PagedTable'
+import { CellValType, EditValue } from '../common/table/tableUtils'
 
 export type EquipmentUpdate = {
   equipmentId: string

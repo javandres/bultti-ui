@@ -10,9 +10,9 @@ import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
-import { EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
+import { EditValue, RenderInputType } from '../common/table/tableUtils'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;

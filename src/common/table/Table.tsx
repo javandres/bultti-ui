@@ -1,22 +1,28 @@
-import React, {
-  CSSProperties,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
-import { RemoveButton } from '../components/Button'
 import { ScrollContext } from '../components/AppFrame'
 import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
 import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
+import {
+  CellValType,
+  ContextTypes,
+  defaultHighlightRow,
+  defaultKeyFromItem,
+  defaultRenderCellContent,
+  defaultRenderInput,
+  defaultRenderValue,
+  RenderInputType,
+  TableContext,
+  TableEditProps,
+  TableRowWithDataAndFunctions,
+} from './tableUtils'
+import { TableHeader, TableRow, TableRowElement } from './TableRow'
+import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -40,7 +46,7 @@ const TableView = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
 `
 
-const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
+export const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
   width: 100%;
 `
 
@@ -52,103 +58,6 @@ export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' })
   border-radius: 0;
   background: transparent;
   height: calc(100% + 1px);
-`
-
-const RowRemoveButton = styled(RemoveButton)`
-  transition: opacity 0.05s ease-out, right 0.1s ease-out;
-  right: -2rem;
-  opacity: 0;
-  position: absolute;
-`
-
-const TableRow = styled.div<{ isEditing?: boolean; footer?: boolean }>`
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  align-items: stretch;
-  height: 27px;
-  flex-wrap: nowrap;
-  border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
-  border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
-  position: relative;
-  transition: outline 0.1s ease-out;
-  outline: ${(p) =>
-    !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
-  z-index: ${(p) => (p.isEditing ? 101 : 'auto')};
-  user-select: ${(p) => (p.isEditing ? 'none' : 'text')};
-
-  &:last-child {
-    border-bottom: 0;
-  }
-
-  &:hover {
-    outline: ${(p) =>
-      !p.footer
-        ? p.isEditing
-          ? '1px solid var(--light-blue)'
-          : `1px solid var(--lighter-blue)`
-        : 'none'};
-    border-bottom-color: transparent;
-    z-index: 100;
-
-    ${RowRemoveButton} {
-      right: 1px;
-      opacity: 1;
-    }
-  }
-`
-
-const TableHeader = styled(TableRow)`
-  outline: none !important;
-  border-bottom-color: var(--lighter-grey) !important;
-`
-
-const TableCell = styled.div<{
-  editable?: boolean
-  isEditing?: boolean
-  isEditingRow?: boolean
-  highlightColor?: string
-}>`
-  flex: 1 0;
-  border-right: 1px solid var(--lighter-grey);
-  display: flex;
-  align-items: stretch;
-  justify-content: center;
-  font-size: 0.875rem;
-  background: ${(p) =>
-    p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.005)'};
-  position: relative;
-  cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
-  box-sizing: border-box !important;
-
-  &:nth-child(odd) {
-    background: ${(p) =>
-      p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.025)'};
-  }
-
-  &:last-child {
-    border-right: 1px solid transparent;
-  }
-`
-
-const ColumnHeaderCell = styled(TableCell)<{ isEditing?: boolean }>`
-  padding: 0;
-  font-weight: bold;
-  background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
-  border: 0;
-  border-right: 1px solid var(--lighter-grey);
-  font-family: inherit;
-  color: var(--darker-grey);
-  cursor: pointer;
-  text-align: left;
-  justify-content: flex-start;
-  white-space: nowrap;
-  position: relative;
-  display: flex;
-
-  &:last-child {
-    border-right: 1px solid transparent;
-  }
 `
 
 const HeaderCellContent = styled.div`
@@ -170,46 +79,6 @@ const ColumnSortIndicator = styled.div`
   display: flex;
   align-items: center;
 `
-
-export const CellContent = styled.div<{ footerCell?: boolean }>`
-  user-select: text;
-  padding: 0.1rem 0.15rem 0.1rem 0.25rem;
-  border: 0;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-  font-weight: ${(p) => (p.footerCell ? 'bold' : 'normal')};
-  background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
-`
-
-export type CellValType = string | number
-export type EditValue<ItemType = any, ValueType = CellValType> = {
-  key: keyof ItemType
-  value: ValueType
-  item: ItemType
-  itemId: string
-}
-
-export type TableEditProps<ItemType, EditValueType = CellValType> = {
-  onEditValue?: (key: keyof ItemType, value: EditValueType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType, EditValueType>[]
-  onCancelEdit?: () => unknown
-  onSaveEdit?: () => unknown
-  editableValues?: string[]
-  isAlwaysEditable?: boolean
-}
-
-export type RenderInputType<ItemType> = (
-  key: keyof ItemType,
-  val: any,
-  onChange: (val: any) => void,
-  onAccept?: () => unknown,
-  onCancel?: () => unknown,
-  tabIndex?: number
-) => React.ReactChild
 
 export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   items: ItemType[]
@@ -238,225 +107,6 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
 } & TableEditProps<ItemType, EditValueType>
-
-const defaultKeyFromItem = (item) => item.id
-
-const defaultRenderCellContent = (key: unknown, val: any): React.ReactChild => (
-  <>
-    {!(val === false || val === null || typeof val === 'undefined') && (
-      <CellContent>{val}</CellContent>
-    )}
-  </>
-)
-
-const defaultRenderValue = (key: unknown, val: any) => toString(val)
-
-const defaultRenderInput = <ItemType extends {}>(
-  key: keyof ItemType,
-  val: any,
-  onChange,
-  onAccept,
-  onCancel,
-  tabIndex
-) => (
-  <TableInput
-    autoFocus
-    tabIndex={tabIndex}
-    theme="light"
-    value={val}
-    onChange={(value) => onChange(value)}
-    name={key as string}
-    onEnterPress={onAccept}
-    onEscPress={onCancel}
-    inputComponent={TableTextInput}
-  />
-)
-
-type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellValType> = {
-  key: string
-  isEditingRow: boolean
-  onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: keyof ItemType, value: EditValueType) => () => unknown
-  onValueChange: (key: string) => (value: EditValueType) => unknown
-  itemEntries: [string, EditValueType][]
-  item: ItemType
-}
-
-type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
-  index: number
-  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
-  data?: TableRowWithDataAndFunctions<ItemType, EditValueType>[]
-  style?: CSSProperties
-  isScrolling?: boolean
-}
-
-type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
-  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
-  cell: [keyof ItemType, EditValueType]
-  colIndex: number
-  tabIndex?: number
-  rowId: string
-}
-
-type ContextTypes<ItemType, EditValueType = CellValType> = {
-  pendingValues?: EditValue<ItemType, EditValueType>[]
-  columnWidths?: Array<number | string>
-  editableValues?: TablePropTypes<ItemType, EditValueType>['editableValues']
-  onEditValue?: TablePropTypes<ItemType, EditValueType>['onEditValue']
-  renderInput?: TablePropTypes<ItemType, EditValueType>['renderInput']
-  onSaveEdit?: TablePropTypes<ItemType, EditValueType>['onSaveEdit']
-  onCancelEdit?: TablePropTypes<ItemType, EditValueType>['onCancelEdit']
-  renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
-  renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
-  keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
-  fluid?: boolean
-  highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
-  isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
-}
-
-const TableContext = React.createContext({})
-
-const TableCellComponent = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
-    row,
-    cell,
-    colIndex,
-    tabIndex = 1,
-  }: CellPropTypes<ItemType, EditValueType>) => {
-    let ctx: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
-
-    let {
-      pendingValues = [],
-      onEditValue,
-      columnWidths = [],
-      renderValue = defaultRenderValue,
-      editableValues = [],
-      onSaveEdit,
-      onCancelEdit,
-      renderCell = defaultRenderCellContent,
-      renderInput = defaultRenderInput,
-      keyFromItem = defaultKeyFromItem,
-      fluid,
-      highlightRow = defaultHighlightRow,
-      isAlwaysEditable,
-    } = ctx || {}
-
-    let [isFocused, setIsFocused] = useState(false)
-
-    let { item, key: itemId, isEditingRow, onMakeEditable, onValueChange } = row
-
-    let [key, val] = cell
-    let valueKey = key as keyof ItemType
-
-    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
-
-    let pendingValue = pendingValues.find(
-      (val) => keyFromItem(val.item) === itemId && val.key === key
-    )
-
-    let cellIsEditable = (isAlwaysEditable || !!pendingValue) && canEditCell
-
-    let editValue = (pendingValue || {
-      key,
-      value: val,
-      item,
-      itemId,
-    }) as EditValue<ItemType, EditValueType>
-
-    let columnWidth = columnWidths[colIndex]
-    let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
-
-    let onKeyUp = useCallback(
-      (e) => {
-        if (!isAlwaysEditable && isFocused && e.key === 'Enter' && canEditCell) {
-          makeCellEditable()
-        }
-      },
-      [makeCellEditable, isFocused]
-    )
-
-    let rowHighlight = highlightRow(item)
-    let rowHighlightColor =
-      typeof rowHighlight === 'string'
-        ? rowHighlight
-        : rowHighlight
-        ? '--lightest-blue'
-        : undefined
-
-    let cellWidthStyle =
-      !fluid && !!columnWidth
-        ? {
-            minWidth:
-              typeof columnWidth === 'string'
-                ? columnWidth
-                : Math.min(columnWidth, 300) + 'px',
-          }
-        : {}
-
-    return (
-      <TableCell
-        highlightColor={rowHighlightColor}
-        style={cellWidthStyle}
-        isEditing={cellIsEditable}
-        isEditingRow={isEditingRow}
-        editable={canEditCell}
-        tabIndex={!canEditCell || editValue ? -1 : tabIndex}
-        onKeyUp={!editValue && canEditCell ? onKeyUp : undefined}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onDoubleClick={makeCellEditable}>
-        {cellIsEditable
-          ? renderInput(
-              key,
-              editValue.value,
-              onValueChange((valueKey as unknown) as string),
-              onSaveEdit,
-              onCancelEdit,
-              tabIndex
-            )
-          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
-      </TableCell>
-    )
-  }
-)
-
-const TableRowComponent = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
-    row,
-    style,
-    index,
-    data: allRows = [],
-  }: RowPropTypes<ItemType, EditValueType>) => {
-    let rowItem = row || allRows[index]
-
-    if (!rowItem) {
-      return null
-    }
-
-    let { itemEntries = [], key: rowKey, isEditingRow, onRemoveRow } = rowItem
-    let rowId = rowKey ?? `row-${index}`
-
-    return (
-      <TableRow key={rowId} isEditing={isEditingRow} style={style}>
-        {itemEntries.map(([key, val], colIndex) => (
-          <TableCellComponent<ItemType, EditValueType>
-            key={`${rowId}_${key as string}`}
-            row={rowItem}
-            rowId={rowId}
-            colIndex={colIndex}
-            tabIndex={index * allRows.length + colIndex + 1}
-            cell={[key as keyof ItemType, val]}
-          />
-        ))}
-        {onRemoveRow && (
-          <RowRemoveButton style={{ opacity: '0' }} onClick={() => onRemoveRow!(row.item)} />
-        )}
-      </TableRow>
-    )
-  }
-)
-
-const defaultHighlightRow = (): string | boolean => false
 
 const Table = observer(
   <ItemType extends {}, EditValueType = CellValType>({
@@ -800,7 +450,7 @@ const Table = observer(
               {tableIsEmpty
                 ? emptyContent
                 : rows.map((row, rowIndex) => (
-                    <TableRowComponent<ItemType, EditValueType>
+                    <TableRow<ItemType, EditValueType>
                       key={row.key || rowIndex}
                       row={row}
                       index={rowIndex}
@@ -808,7 +458,7 @@ const Table = observer(
                   ))}
             </TableBodyWrapper>
             {typeof getColumnTotal === 'function' && (
-              <TableRow key="totals" footer={true}>
+              <TableRowElement key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total =
                     getColumnTotal(col as keyof ItemType) || (colIdx === 0 ? 'Yhteensä' : '')
@@ -816,7 +466,7 @@ const Table = observer(
                   let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
-                    <TableCell
+                    <TableCellElement
                       key={`footer_${col}`}
                       style={
                         !fluid && !!columnWidth
@@ -829,10 +479,10 @@ const Table = observer(
                           : undefined
                       }>
                       <CellContent footerCell={true}>{total}</CellContent>
-                    </TableCell>
+                    </TableCellElement>
                   )
                 })}
-              </TableRow>
+              </TableRowElement>
             )}
           </TableView>
         </TableWrapper>
