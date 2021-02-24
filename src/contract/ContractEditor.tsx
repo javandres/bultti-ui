@@ -29,9 +29,9 @@ import { FlexRow } from '../common/components/common'
 import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
-import Table from '../common/table/Table'
 import { text, Text } from '../util/translate'
 import { navigateWithQueryString } from '../util/urlValue'
+import PagedTable from '../common/table/PagedTable'
 
 const ContractEditorView = styled.div``
 
@@ -123,7 +123,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
               )}
             </SubHeading>
             {isRulesFileSet && (
-              <Table
+              <PagedTable
                 columnLabels={{
                   name: text('name'),
                   value: text('value'),
