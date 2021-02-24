@@ -1,20 +1,15 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { Inspection, Sanction, SanctionsResponse, SanctionUpdate } from '../schema-types'
-import {
-  createResponseId,
-  defaultPageConfig,
-  useTableState,
-} from '../common/table/useTableState'
+import { createResponseId, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { text, Text } from '../util/translate'
 import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
-import { createPageMeta, PageMeta } from '../common/table/tableUtils'
-import StatefulTable from '../common/table/StatefulTable'
+import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { EditValue, RenderInputType } from '../common/table/Table'
 import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
@@ -70,20 +65,13 @@ let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, 
 let sanctionsQuery = gql`
   query sanctions(
     $inspectionId: String!
-    $page: InputPageConfig
     $filters: [InputFilterConfig!]
     $sort: [InputSortConfig!]
   ) {
-    inspectionSanctions(
-      inspectionId: $inspectionId
-      page: $page
-      filters: $filters
-      sort: $sort
-    ) {
+    inspectionSanctions(inspectionId: $inspectionId, filters: $filters, sort: $sort) {
       id
       inspectionId
       filteredCount
-      pages
       totalCount
       sort {
         column
@@ -92,10 +80,6 @@ let sanctionsQuery = gql`
       filters {
         field
         filterValue
-      }
-      page {
-        page
-        pageSize
       }
       rows {
         id
@@ -135,7 +119,7 @@ export type PropTypes = {
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
-  let { filters = [], sort = [], page = defaultPageConfig } = tableState
+  let { filters = [], sort = [] } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction, number>[]>([])
 
   let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
@@ -147,11 +131,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
       variables: {
         // Add a string variable that changes when the table state changes.
         // Without this it wouldn't refetch if eg. filters change.
-        responseId: createResponseId({ page, filters, sort }),
+        responseId: createResponseId({ filters, sort }),
         inspectionId: inspection.id,
         filters,
         sort,
-        page,
       },
     }
   )
@@ -232,26 +215,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setPendingValues([])
   }, [])
 
-  let sanctionDataItems = useMemo(
-    () =>
-      (sanctionsData?.rows || []).map((sanction) => {
-        // Set a virtual sanctionResultKilometers prop on all sanction rows.
-        // This tells the user the concrete kilometer amount that is sanctioned.
-        let sanctionResult =
-          sanction.sanctionableKilometers * (sanction.appliedSanctionAmount / 100)
-
-        return {
-          ...sanction,
-          sanctionResultKilometers: sanctionResult,
-        }
-      }),
-    [sanctionsData]
-  )
-
-  let sanctionPageMeta: PageMeta = useMemo(() => createPageMeta(sanctionsData), [
-    sanctionsData,
-  ])
-
   let isLoading = loading || setSanctionLoading || false
 
   let onAbandonSanctions = useCallback(async () => {
@@ -265,6 +228,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     <PostInspectionSanctionsView>
       <FunctionsRow>
         <Button
+          loading={abandonSanctionsLoading}
           buttonStyle={ButtonStyle.SECONDARY_REMOVE}
           size={ButtonSize.SMALL}
           onClick={onAbandonSanctions}>
@@ -279,10 +243,9 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         </Button>
       </FunctionsRow>
       <PageSection>
-        <StatefulTable<Sanction, number>
+        <FilteredResponseTable<Sanction, number>
           loading={isLoading}
-          items={sanctionDataItems}
-          pageMeta={sanctionPageMeta}
+          data={sanctionsData}
           tableState={tableState}
           columnLabels={sanctionColumnLabels}
           keyFromItem={(item) => item.id}

@@ -1,8 +1,7 @@
-import { FilterConfig, InspectionType, PageConfig, SortConfig } from '../schema-types'
-import { FilteredPagedSortedResponse } from '../common/table/tableUtils'
+import { FilterConfig, InspectionType, SortConfig } from '../schema-types'
+import { IFilteredSortedResponse } from '../common/table/tableUtils'
 
-export interface BaseReport<DataType extends {}>
-  extends FilteredPagedSortedResponse<DataType> {
+export interface BaseReport<DataType extends {}> extends IFilteredSortedResponse<DataType> {
   name: string
   title: string
   description: string
@@ -15,7 +14,6 @@ export interface BaseReport<DataType extends {}>
   seasonId: string
   operatorId: number
   inspectionId: string
-  page?: PageConfig
   filters?: FilterConfig[]
   sort?: SortConfig[]
   showSanctioned?: boolean

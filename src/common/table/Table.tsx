@@ -16,10 +16,7 @@ import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
 import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
-import { PageConfig, SortConfig, SortOrder } from '../../schema-types'
-import { SetCurrentPagePropTypes, usePagingState } from './useTableState'
-import TablePagingControl from './TablePagingControl'
-import { PageMeta } from './tableUtils'
+import { SortConfig, SortOrder } from '../../schema-types'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -234,19 +231,12 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   getColumnTotal?: (key: keyof ItemType) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
-  visibleRowCountOptions?: number[] // Options to limit number of rows shown. Give an empty array to display all rows
-  selectedRowCountIndex?: number
   maxHeight?: number
   fluid?: boolean // Fluid or calculated-then-static table and columns width
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
-  disablePaging?: boolean
-  pageState?: PageConfig
-  setPage?: (props: SetCurrentPagePropTypes) => unknown
-  setPageSize?: (targetPageSize: number) => unknown
-  pageMeta?: PageMeta
 } & TableEditProps<ItemType, EditValueType>
 
 const defaultKeyFromItem = (item) => item.id
@@ -494,25 +484,12 @@ const Table = observer(
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
-    disablePaging = false,
-    pageState: propPageState,
-    setPage: propSetPage,
-    setPageSize: propSetPageSize,
-    pageMeta: propPageMeta,
   }: TablePropTypes<ItemType, EditValueType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
-    let pagingState = usePagingState()
 
     let sort = propSort ?? _sort
     let setSort = propSetSort ?? _setSort
-
-    // Use internal "UI" paging when it is not explicitly disabled and there is no page config set through props.
-    let pageState = propPageState ?? pagingState.page
-    let setPage = propSetPage ?? pagingState.setCurrentPage
-    let setPageSize = propSetPageSize ?? pagingState.setPageSize
-    let usePaging = !disablePaging && (propPageState || items.length > 20)
-    let useUIPaging = usePaging && !propPageState && items.length > 20
 
     // Sort the table by some column. Multiple columns can be sorted by at the same time.
     // Sorting is performed in the order that the columns were added to the sort config.
@@ -665,42 +642,6 @@ const Table = observer(
       ]
     )
 
-    let rowsToRender = useMemo(
-      () =>
-        useUIPaging
-          ? rows.slice(
-              pageState.page * pageState.pageSize,
-              (pageState.page + 1) * pageState.pageSize
-            )
-          : rows,
-      [rows, useUIPaging, pageState, pageState.pageSize]
-    )
-
-    let rowPages: number[] = []
-
-    for (let i = 1; i <= Math.ceil(rows.length / pageState.pageSize); i++) {
-      rowPages.push(i)
-    }
-
-    let internalPageMeta = {
-      itemsOnPage: rowsToRender.length,
-      pages: rowPages.length,
-      filteredCount: rows.length,
-      totalCount: rows.length,
-    }
-
-    let pageMeta = propPageMeta ?? internalPageMeta
-
-    // Adjust the current page if it is set to a higher number than there are pages.
-    useEffect(() => {
-      let currentPage = pageState.page
-      let pagesCount = pageMeta.pages
-
-      if (currentPage > pagesCount) {
-        setPage({ setToPage: pagesCount })
-      }
-    }, [pageMeta.pages, pageState.page])
-
     let columnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
         let percentageWidth = columnNames.length / 100 + '%'
@@ -714,7 +655,7 @@ const Table = observer(
         let nameLength = Math.max(colName[1].length, 8)
         let colWidth = nameLength * 10
 
-        for (let row of rowsToRender) {
+        for (let row of rows) {
           let [colKey, colValue] = row.itemEntries[colIdx]
           let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
           let valLength = Math.max(strVal.length, 5)
@@ -726,7 +667,7 @@ const Table = observer(
       }
 
       return widths
-    }, [columnNames, rowsToRender, fluid])
+    }, [columnNames, rows, fluid])
 
     // The table is empty if we don't have any items,
     // OR
@@ -805,25 +746,8 @@ const Table = observer(
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
     })
 
-    let uiPagingControl = useMemo(
-      () => (
-        <>
-          {(useUIPaging || usePaging) && (
-            <TablePagingControl
-              onSetPageSize={setPageSize}
-              onSetPage={setPage}
-              pageState={pageState}
-              pageMeta={pageMeta}
-            />
-          )}
-        </>
-      ),
-      [usePaging, useUIPaging, setPage, setPageSize, pageState, pageMeta]
-    )
-
     return (
       <TableContext.Provider value={contextValue}>
-        {uiPagingControl}
         <TableWrapper
           className={className}
           style={{ overflowX: fluid ? 'auto' : 'scroll' }}
@@ -875,7 +799,7 @@ const Table = observer(
             <TableBodyWrapper>
               {tableIsEmpty
                 ? emptyContent
-                : rowsToRender.map((row, rowIndex) => (
+                : rows.map((row, rowIndex) => (
                     <TableRowComponent<ItemType, EditValueType>
                       key={row.key || rowIndex}
                       row={row}
@@ -912,7 +836,6 @@ const Table = observer(
             )}
           </TableView>
         </TableWrapper>
-        {rowsToRender.length >= 50 && uiPagingControl}
         {showToolbar && (!!onSaveEdit || !!onCancelEdit) && pendingValues.length !== 0 && (
           <FormSaveToolbar
             onSave={onSaveEdit!}

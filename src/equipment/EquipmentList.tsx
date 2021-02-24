@@ -11,6 +11,7 @@ import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
 import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
+import PagedTable from '../common/table/PagedTable'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -171,7 +172,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
           </ToggleButton>
         </FlexRow>
         {isEquipmentListEditable && (
-          <Table<EquipmentWithQuota>
+          <PagedTable<EquipmentWithQuota>
             items={orderedEquipment}
             keyFromItem={getQuotaId}
             columnLabels={columnLabels}
@@ -183,7 +184,6 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
-            visibleRowCountOptions={[10, 20, 50]}
             highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
@@ -198,12 +198,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
           />
         )}
         {isEquipmentShownInGroup && (
-          <Table<EquipmentQuotaGroup>
+          <PagedTable<EquipmentQuotaGroup>
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}
             getColumnTotal={renderColumnTotals}
-            visibleRowCountOptions={[10, 20, 50]}
             editableValues={[]}
             onRemoveRow={() =>
               alert(text('catalogue_itemRemovalNotAllowedInGroupedListModeNotification'))

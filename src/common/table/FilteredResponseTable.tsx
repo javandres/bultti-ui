@@ -3,12 +3,13 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../components/Loading'
 import TableFiltersControl from './TableFiltersControl'
-import { defaultPageConfig, TableStateType } from './useTableState'
-import { PageMeta, useRenderCellValue } from './tableUtils'
+import { TableStateType } from './useTableState'
+import { IFilteredSortedResponse, useRenderCellValue } from './tableUtils'
 import { pick } from 'lodash'
-import Table, { CellValType, TablePropTypes } from './Table'
+import { CellValType, TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
 import { Text } from '../../util/translate'
+import PagedTable from './PagedTable'
 
 const TableViewWrapper = styled.div`
   position: relative;
@@ -19,30 +20,22 @@ const TableEmptyView = styled(EmptyView)`
 `
 
 export type PropTypes<ItemType extends {}, EditValueType = CellValType> = {
-  pageMeta: PageMeta
   tableState: TableStateType
+  data?: IFilteredSortedResponse<ItemType>
   loading?: boolean
-  onUpdate?: () => unknown
-} & TablePropTypes<ItemType, EditValueType>
+} & Omit<TablePropTypes<ItemType, EditValueType>, 'items'>
 
-const StatefulTable = observer(
+const FilteredResponseTable = observer(
   <ItemType extends {}, EditValueType = CellValType>({
-    items,
+    data,
     columnLabels,
     loading = false,
-    pageMeta,
     tableState,
     ...tableProps
   }: PropTypes<ItemType, EditValueType>) => {
-    let {
-      filters = [],
-      sort = [],
-      page = defaultPageConfig,
-      setFilters = () => {},
-      setSort = () => {},
-    } = tableState
-
+    let { filters = [], sort = [], setFilters = () => {}, setSort = () => {} } = tableState
     const renderCellValue = useRenderCellValue()
+    let items = useMemo(() => data?.rows || [], [data])
 
     // Return columnLabels only for props that exist.
     let existingPropLabels = useMemo(() => {
@@ -58,21 +51,17 @@ const StatefulTable = observer(
     return (
       <TableViewWrapper>
         <LoadingDisplay loading={loading} style={{ top: '-1rem' }} />
-        {pageMeta && (
-          <TableFiltersControl
-            filters={filters}
-            setFilters={setFilters}
-            fieldLabels={columnLabels}
-            excludeFields={['id', '__typename']}
-          />
-        )}
-        <Table<ItemType, EditValueType>
+        <TableFiltersControl
+          filters={filters}
+          setFilters={setFilters}
+          fieldLabels={columnLabels}
+          excludeFields={['id', '__typename']}
+        />
+        <PagedTable<ItemType, EditValueType>
           {...tableProps}
-          setPage={tableState.setCurrentPage}
-          setPageSize={tableState.setPageSize}
-          pageState={page}
-          pageMeta={pageMeta}
           items={items}
+          totalCount={data?.totalCount}
+          filteredCount={data?.filteredCount}
           hideKeys={tableProps.hideKeys || (!columnLabels ? ['id'] : undefined)}
           renderValue={tableProps.renderValue || renderCellValue}
           sort={sort}
@@ -81,10 +70,10 @@ const StatefulTable = observer(
           <TableEmptyView>
             <Text>tableEmpty</Text>
           </TableEmptyView>
-        </Table>
+        </PagedTable>
       </TableViewWrapper>
     )
   }
 )
 
-export default StatefulTable
+export default FilteredResponseTable

@@ -4,19 +4,17 @@ import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { createReportQueryByName } from './reportQueries'
 import { InspectionType } from '../schema-types'
-import {
-  createResponseId,
-  defaultPageConfig,
-  useTableState,
-} from '../common/table/useTableState'
-import ReportView from './ReportView'
+import { createResponseId, useTableState } from '../common/table/useTableState'
 import DownloadReport from './DownloadReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { BaseReport } from '../type/report'
-import { createPageMeta, PageMeta } from '../common/table/tableUtils'
 import { ReportTypeByName } from './reportTypes'
+import { LoadingDisplay } from '../common/components/Loading'
+import ExecutionRequirementsReport from './ExecutionRequirementsReport'
+import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
+import FilteredResponseTable from '../common/table/FilteredResponseTable'
 
 const ReportFunctionsRow = styled(FlexRow)`
   padding: 0 1rem 0.75rem;
@@ -30,9 +28,12 @@ export type PropTypes = {
   inspectionId: string
 }
 
+let reportKeyFromItem = (item: any) =>
+  item?.id || item?._id || item?.departureId || item?.registryNr || ''
+
 const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
   let tableState = useTableState()
-  let { filters = [], sort = [], page = defaultPageConfig } = tableState
+  let { filters = [], sort = [] } = tableState
 
   type ReportDataType = ReportTypeByName[typeof reportName]
 
@@ -43,15 +44,18 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     variables: {
       // Add a string variable that changes when the table state changes.
       // Without this it wouldn't refetch if eg. filters change.
-      responseId: createResponseId({ page, filters, sort }),
+      responseId: createResponseId({ filters, sort }),
       reportName,
       inspectionId,
       inspectionType,
       filters,
       sort,
-      page,
     },
   })
+
+  let columnLabels = useMemo(() => {
+    return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
+  }, [report])
 
   let reportDataItems = useMemo(() => report?.rows || [], [report])
 
@@ -61,14 +65,11 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     )
   )
 
-  let columnLabels = useMemo(() => {
-    return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
-  }, [report])
-
-  let reportPageMeta: PageMeta = useMemo(
-    () => createPageMeta<BaseReport<ReportDataType>>(report),
-    [report]
-  )
+  let reportType = isExecutionRequirementReport
+    ? inspectionType === InspectionType.Post
+      ? 'observedExecutionRequirement'
+      : 'executionRequirement'
+    : 'list'
 
   return (
     <>
@@ -88,20 +89,19 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
           <Text>update</Text>
         </Button>
       </ReportFunctionsRow>
-      <ReportView
-        reportType={
-          isExecutionRequirementReport
-            ? inspectionType === InspectionType.Post
-              ? 'observedExecutionRequirement'
-              : 'executionRequirement'
-            : 'list'
-        }
-        loading={reportLoading}
-        items={reportDataItems}
-        tableState={tableState}
-        pageMeta={reportPageMeta}
-        columnLabels={columnLabels}
-      />
+      <LoadingDisplay loading={reportLoading} style={{ top: '-1rem' }} />
+      {reportType === 'executionRequirement' ? (
+        <ExecutionRequirementsReport items={reportDataItems} />
+      ) : reportType === 'observedExecutionRequirement' ? (
+        <ObservedExecutionRequirementsReport items={reportDataItems} />
+      ) : (
+        <FilteredResponseTable
+          data={report}
+          tableState={tableState}
+          columnLabels={columnLabels}
+          keyFromItem={reportKeyFromItem}
+        />
+      )}
     </>
   )
 })

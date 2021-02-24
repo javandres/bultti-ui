@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
-import { Redirect, RouteComponentProps } from '@reach/router'
+import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'

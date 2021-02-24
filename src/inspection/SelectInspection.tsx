@@ -18,7 +18,6 @@ import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
 import { LoadingDisplay } from '../common/components/Loading'
 import { getReadableDate } from '../util/formatDate'
-import { text } from '../util/translate'
 
 const SelectInspectionView = styled.div`
   position: relative;

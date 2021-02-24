@@ -1,37 +1,21 @@
-import { FilterConfig, PageConfig, SortConfig } from '../../schema-types'
+import { FilterConfig, SortConfig } from '../../schema-types'
 import { useCallback } from 'react'
 import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
 import { READABLE_TIME_FORMAT } from '../../constants'
 import { toString } from 'lodash'
 
-export interface FilteredPagedSortedResponse<DataType> {
+export type FilteredResponseMeta = {
+  filteredCount?: number
+  totalCount?: number
+}
+
+export interface IFilteredSortedResponse<DataType> {
   rows: DataType[]
   filteredCount: number
   totalCount: number
-  pages: number
-  page?: PageConfig | null
   filters?: FilterConfig[] | null
   sort?: SortConfig[] | null
-}
-
-export type PageMeta = {
-  pages: number
-  totalCount: number
-  filteredCount: number
-  itemsOnPage: number
-}
-
-// It really doesn't matter for this component what the datatype is.
-export function createPageMeta<DataType = unknown>(
-  pagedResponse?: FilteredPagedSortedResponse<DataType>
-) {
-  return {
-    totalCount: pagedResponse?.totalCount || 0,
-    pages: pagedResponse?.pages || 0,
-    filteredCount: pagedResponse?.filteredCount || pagedResponse?.totalCount || 0,
-    itemsOnPage: pagedResponse?.rows?.length || 0,
-  }
 }
 
 // Sensible default rendering function for nice looking data.
