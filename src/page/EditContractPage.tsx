@@ -12,6 +12,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { Page, PageContainer } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import { Text } from '../util/translate'
+import { MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
 import { navigateWithQueryString } from '../util/urlValue'
 
@@ -30,23 +31,23 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
   let [globalOperator] = useStateValue<Operator>('globalOperator')
   let hasOperatorAccess = useHasOperatorUserAccessRights(globalOperator?.id)
   let hasAdminAccessRights = useHasAdminAccessRights()
+  let isNew = contractId === 'new'
 
-  let { data: existingContract, loading, refetch: refetchContract } = useQueryData<Contract>(
-    contractQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      skip: !contractId || contractId === 'new',
-      variables: { contractId },
-    }
-  )
+  let { data: contract, loading, refetch: refetchContract } = useQueryData<
+    Contract | undefined
+  >(contractQuery, {
+    notifyOnNetworkStatusChange: true,
+    skip: !contractId || contractId === 'new',
+    variables: { contractId },
+  })
 
   let refetch = useRefetch(refetchContract)
 
   useEffect(() => {
-    if (!existingContract && !loading && contractId !== 'new') {
+    if (!contract && !loading && contractId !== 'new') {
       navigateWithQueryString('/contract', { replace: true })
     }
-  }, [contractId, existingContract, loading])
+  }, [contractId, contract, loading])
 
   if (!hasOperatorAccess) {
     return <Redirect noThrow to="/contract" />
@@ -59,10 +60,10 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
           <Text>contracts</Text>
         ) : (
           <>
-            {existingContract ? (
+            {contract ? (
               <>
                 <Text>Sopimusehdot</Text>
-                <PageTitleOperator>{existingContract.operator.operatorName}</PageTitleOperator>
+                <PageTitleOperator>{contract.operator.operatorName}</PageTitleOperator>
               </>
             ) : (
               <>
@@ -75,13 +76,21 @@ const EditContractPage = observer(({ contractId }: PropTypes) => {
       </PageTitle>
       <PageContainer>
         <LoadingDisplay loading={loading} />
-        {!loading && globalOperator && (
-          <ContractEditor
-            onRefresh={refetch}
-            editable={hasAdminAccessRights}
-            existingContract={existingContract}
-            isNew={contractId === 'new'}
-          />
+        {!loading && (
+          <>
+            {isNew && !globalOperator ? (
+              <MessageView>
+                <Text>selectOperator</Text>
+              </MessageView>
+            ) : (
+              <ContractEditor
+                onRefresh={refetch}
+                editable={hasAdminAccessRights}
+                contract={contract}
+                isNew={isNew}
+              />
+            )}
+          </>
         )}
       </PageContainer>
     </EditContractPageView>

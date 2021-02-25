@@ -55,7 +55,7 @@ const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
 `
 
 export type PropTypes = {
-  existingContract: Contract | null
+  contract?: Contract
   onRefresh: () => unknown
   isNew?: boolean
   editable: boolean
@@ -219,19 +219,22 @@ const renderLabel = (key, val, labels) => {
 }
 
 const ContractEditor = observer(
-  ({ existingContract, onRefresh, isNew = false, editable }: PropTypes) => {
+  ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
     let [globalOperator] = useStateValue<Operator>('globalOperator')
-    let newContract: Partial<Contract> = {
-      operatorId: globalOperator?.id,
-      operator: globalOperator,
-      startDate: getDateString(new Date()),
-      endDate: getDateString(addYears(new Date(), 1)),
-    }
-    let initialContract: ContractInput = useMemo(
-      () =>
-        isNew ? createContractInput(newContract) : createContractInput(existingContract!),
-      [isNew, newContract, existingContract]
-    )
+    let initialContract: ContractInput = useMemo(() => {
+      if (isNew) {
+        let newContract: Partial<Contract> = {
+          operatorId: globalOperator?.id,
+          operator: globalOperator,
+          startDate: getDateString(new Date()),
+          endDate: getDateString(addYears(new Date(), 1)),
+        }
+        return createContractInput(newContract)
+      } else {
+        return createContractInput(contract!)
+      }
+    }, [isNew, contract])
+
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
     }, [initialContract])
@@ -244,7 +247,7 @@ const ContractEditor = observer(
           operatorId: globalOperator.operatorId,
         })
       }
-    }, [globalOperator.operatorId, isNew])
+    }, [globalOperator && globalOperator.operatorId, isNew])
 
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
@@ -262,8 +265,8 @@ const ContractEditor = observer(
         return true
       }
 
-      return !isEqual(pendingContract, createContractInput(existingContract!))
-    }, [rulesFiles, pendingContract, existingContract, editable])
+      return !isEqual(pendingContract, createContractInput(contract!))
+    }, [rulesFiles, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
       () =>
@@ -389,7 +392,7 @@ const ContractEditor = observer(
       setPendingContract(initialContract)
       setRulesFiles([])
       resetChanges()
-    }, [existingContract, resetChanges])
+    }, [contract, resetChanges])
 
     let [removeContract, { loading: removeLoading }] = useMutationData<Contract>(
       removeContractMutation,
@@ -398,7 +401,7 @@ const ContractEditor = observer(
           {
             query: contractsQuery,
             variables: {
-              operatorId: existingContract ? existingContract.operatorId : null,
+              operatorId: contract ? contract.operatorId : null,
             },
           },
         ],
@@ -418,7 +421,7 @@ const ContractEditor = observer(
       if (confirm(text('contractForm_removeConfirm'))) {
         let result = await removeContract({
           variables: {
-            contractId: existingContract!.id,
+            contractId: contract!.id,
           },
         })
 
@@ -429,7 +432,7 @@ const ContractEditor = observer(
         // Go back to the previous page
         navigateWithQueryString('/contract', { replace: true })
       }
-    }, [removeContract, existingContract, isNew, onRefresh, editable])
+    }, [removeContract, contract, isNew, onRefresh, editable])
 
     return (
       <ContractEditorView>
@@ -445,11 +448,11 @@ const ContractEditor = observer(
             </Button>
           </FlexRow>
         )}
-        {!isNew && <ContractUsersEditor contractId={existingContract!.id} />}
+        {!isNew && <ContractUsersEditor contractId={contract!.id} />}
         <ItemForm
           item={{
             ...pendingContract,
-            rules: { uploadFile: rulesFiles, currentRules: existingContract?.rules || [] },
+            rules: { uploadFile: rulesFiles, currentRules: contract?.rules || [] },
           }}
           hideKeys={['id', 'rulesFile']}
           labels={formLabels}
@@ -466,8 +469,8 @@ const ContractEditor = observer(
           renderInput={renderInput({
             contractFileReadError,
             contract: pendingContract,
-            operatorName: existingContract
-              ? existingContract.operator.operatorName
+            operatorName: contract
+              ? contract.operator.operatorName
               : globalOperator.operatorName,
           })}
         />

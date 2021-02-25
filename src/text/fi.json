@@ -38,6 +38,7 @@
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
+  "selectOperator": "Valitse liikennöitsijä.",
 
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",
