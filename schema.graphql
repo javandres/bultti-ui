@@ -213,6 +213,8 @@ type EarlyTimingStopDeparturesReportData {
   plannedDepartureTime: String!
   procurementUnitId: String!
   routeId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   stopId: String!
   trackReason: TrackReason!
 }
@@ -1114,6 +1116,7 @@ type Query {
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionType: InspectionType!): [ReportListItem!]!
+  runSanctioning(inspectionId: String!): [Sanction!]!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
@@ -1349,6 +1352,8 @@ enum OperatingAreaName {
 enum SanctionReason {
   EMISSION_CLASS_DEFICIENCY
   EQUIPMENT_AGE_VIOLATION
+  EQUIPMENT_APPROVED_AGE_VIOLATION
+  EQUIPMENT_OPTION_AGE_VIOLATION
   EQUIPMENT_TYPE_VIOLATION
   EXTERIOR_COLOR_VIOLATION
   LATE_DEPARTURE

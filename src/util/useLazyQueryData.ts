@@ -12,14 +12,12 @@ import { pickGraphqlData } from './pickGraphqlData'
 import { useCallback, useMemo } from 'react'
 
 type QueryExecutor<TData, TVariables> = [
-  (
-    overrideOptions?: QueryLazyOptions<TVariables> | undefined
-  ) => Promise<void | ApolloQueryResult<TData>>,
+  (overrideOptions?: QueryLazyOptions<TVariables> | undefined) => void,
   {
     data: null | TData
     loading: boolean
     error?: ApolloError
-    refetch?: (variables?: TVariables | undefined) => Promise<ApolloQueryResult<TData>>
+    refetch?: (variables?: TVariables | undefined) => Promise<void>
     called: boolean
   }
 ]
@@ -38,6 +36,7 @@ export const useLazyQueryData = <TData extends {} = {}, TVariables = OperationVa
     ...defaultOptions,
     ...options,
   }
+
   let queryHookArr = useLazyQuery<TData, TVariables>(query, allOptions)
 
   let [
@@ -46,31 +45,17 @@ export const useLazyQueryData = <TData extends {} = {}, TVariables = OperationVa
   ] = queryHookArr || [() => {}, {}]
 
   let availableRefetch = useCallback(
-    async (variables?: TVariables): Promise<ApolloQueryResult<TData>> => {
+    async (variables?: TVariables): Promise<void> => {
       if (refetch) {
-        return refetch(variables)
+        return refetch(variables).then(() => undefined)
       }
 
-      return { data, loading, networkStatus }
+      return queryFn({ variables })
     },
     [refetch, data, loading, networkStatus]
   )
 
-  let execLazyQuery = useCallback(
-    (options?: QueryLazyOptions<TVariables> | undefined) => {
-      if (called) {
-        return availableRefetch(options?.variables)
-      }
-
-      return Promise.resolve(queryFn(options))
-    },
-    [queryFn, availableRefetch, called]
-  )
-
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
 
-  return [
-    execLazyQuery,
-    { data: pickedData, loading, error, refetch: availableRefetch, called },
-  ]
+  return [queryFn, { data: pickedData, loading, error, refetch: availableRefetch, called }]
 }

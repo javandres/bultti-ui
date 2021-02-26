@@ -82,6 +82,7 @@ export type Query = {
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
+  runSanctioning: Array<Sanction>;
 };
 
 
@@ -433,6 +434,11 @@ export type QueryPreviewObservedRequirementArgs = {
 export type QueryInspectionSanctionsArgs = {
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryRunSanctioningArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -1411,6 +1417,8 @@ export type EarlyTimingStopDeparturesReportData = {
   observedDepartureTime: Scalars['String'];
   observedDepartureDifferenceSeconds: Scalars['Int'];
   journeyKilometers: Scalars['Float'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type LateDeparturesReport = {
@@ -1769,6 +1777,8 @@ export enum SanctionableEntity {
 export enum SanctionReason {
   EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
   EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
+  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
   ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',

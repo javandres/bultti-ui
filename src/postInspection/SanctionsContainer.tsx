@@ -13,6 +13,7 @@ import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
+import { useLazyQueryData } from '../util/useLazyQueryData'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -102,6 +103,14 @@ let setSanctionMutation = gql`
       id
       appliedSanctionAmount
       sanctionResultKilometers
+    }
+  }
+`
+
+let devLoadSanctions = gql`
+  query runSanctioning($inspectionId: String!) {
+    runSanctioning(inspectionId: $inspectionId) {
+      id
     }
   }
 `
@@ -228,6 +237,10 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   }, [execAbandonSanctions, inspection])
 
+  let [loadSanctions, { loading: devLoadingSanctions }] = useLazyQueryData(devLoadSanctions, {
+    variables: { inspectionId: inspection?.id },
+  })
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -237,6 +250,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           size={ButtonSize.SMALL}
           onClick={onAbandonSanctions}>
           <Text>inspection_actions_abandonSanctions</Text>
+        </Button>
+        <Button
+          loading={devLoadingSanctions}
+          size={ButtonSize.SMALL}
+          onClick={() => loadSanctions()}>
+          DEV Load sanctions
         </Button>
         <Button
           style={{ marginLeft: 'auto' }}

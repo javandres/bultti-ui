@@ -81,7 +81,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
           : ''
 
         if (useSearchTerm) {
-          await searchEquipment({
+          searchEquipment({
             variables: {
               operatorId,
               [useSearchTerm]: useSearchValue,
