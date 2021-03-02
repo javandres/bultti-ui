@@ -38,6 +38,7 @@
   "vehicleId": "Kylkinumero",
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
+  "selectOperator": "Valitse liikennöitsijä.",
 
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",
@@ -58,6 +59,7 @@
 
   "contractPage_newContractButton": "Uudet sopimusehdot",
   "contractPage_noContracts": "Ei sopimusehtoja.",
+  "contractPage_createNewContract": "Luo uudet sopimusehdot",
 
   "contractForm_tomlReadError": "Toml-tiedoston lukeminen epäonnistui. Palvelimen antaman virhe: ",
   "contractForm_currentContract": "Nykyiset ehdot",
