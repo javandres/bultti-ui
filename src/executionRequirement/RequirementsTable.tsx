@@ -139,7 +139,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let getColumnTotal = useCallback(
-      (key: keyof ValueItemType) => {
+      (key: string) => {
         if (['emissionClass', 'sanctionThreshold'].includes(key)) {
           return ''
         }

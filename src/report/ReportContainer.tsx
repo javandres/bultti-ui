@@ -16,6 +16,7 @@ import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { hasReportTransform, transformReport } from './transformReports'
+import { createColumnTotalCallback } from './reportTotals'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -42,6 +43,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
   let { filters = [], sort = [] } = tableState
 
   type ReportDataType = ReportTypeByName[typeof reportName]
+  type ReportRowsType = ReportDataType['rows']
 
   let { data: report, loading: reportLoading, refetch } = useQueryData<
     BaseReport<ReportDataType>
@@ -73,7 +75,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
 
     // Column labels from the response are already OK if rows were not transformed.
     if (!rowModel || !columnLabels || !hasReportTransform(reportName)) {
-      return { ...report, columnLabels }
+      return { ...report, columnLabels, rows: transformedRows }
     }
 
     let totalRowsCount = transformedRows.length
@@ -117,6 +119,11 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
       : 'executionRequirement'
     : 'list'
 
+  let calculateReportTotals = useMemo(
+    () => createColumnTotalCallback(reportName, preparedReport?.rows || []),
+    [reportName, preparedReport]
+  )
+
   return (
     <ReportViewWrapper>
       <ReportFunctionsRow>
@@ -146,6 +153,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
           tableState={tableState}
           columnLabels={columnLabels}
           keyFromItem={reportKeyFromItem}
+          getColumnTotal={calculateReportTotals}
         />
       )}
     </ReportViewWrapper>

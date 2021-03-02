@@ -99,7 +99,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     }, [])
 
     let getColumnTotal = useCallback(
-      (key: keyof ObservedExecutionValue) => {
+      (key: string) => {
         if (
           [
             'differencePercentage',

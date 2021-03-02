@@ -5,10 +5,7 @@ const reportTransforms = {
   sanctionSummary: sanctionSummaryTransform,
 }
 
-export function transformReport<RowType extends {}>(
-  reportName: string,
-  reportRows: RowType[]
-) {
+export function transformReport(reportName: string, reportRows: unknown[]) {
   let transformFn = reportTransforms[reportName] || ((rows) => rows)
   return transformFn(reportRows)
 }
