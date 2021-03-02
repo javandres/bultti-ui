@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState, useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Contract as ContractType, ContractInput } from '../schema-types'
+import { Contract, ContractInput, Operator } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -11,10 +11,11 @@ import {
   procurementUnitOptionsQuery,
   removeContractMutation,
 } from './contractQueries'
+import { addYears } from 'date-fns'
+import { useStateValue } from '../state/useAppState'
 import { ErrorView } from '../common/components/Messages'
-import { TextArea, TextInput } from '../common/input/Input'
+import Input, { TextArea, TextInput } from '../common/input/Input'
 import SelectDate from '../common/input/SelectDate'
-import SelectOperator from '../common/input/SelectOperator'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
@@ -31,6 +32,7 @@ import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
 import { navigateWithQueryString } from '../util/urlValue'
+import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 
 const ContractEditorView = styled.div``
@@ -53,14 +55,13 @@ const ExpandableFormSectionHeading = styled(HeaderBoldHeading)`
 `
 
 export type PropTypes = {
-  contract: ContractType
-  onReset: () => unknown
+  contract?: Contract
   onRefresh: () => unknown
   isNew?: boolean
   editable: boolean
 }
 
-function createContractInput(contract: ContractType): ContractInput {
+function createContractInput(contract: Partial<Contract>): ContractInput {
   return {
     id: contract.id,
     description: contract.description ? contract.description : '',
@@ -75,7 +76,15 @@ function createContractInput(contract: ContractType): ContractInput {
   }
 }
 
-const renderEditorField = (contract: ContractInput, contractFileReadError) => (
+const renderInput = ({
+  contract,
+  operatorName,
+  contractFileReadError,
+}: {
+  contract: ContractInput
+  operatorName: string
+  contractFileReadError?: string
+}) => (
   key: string,
   val: any,
   onChange: (val: any) => void,
@@ -158,18 +167,7 @@ const renderEditorField = (contract: ContractInput, contractFileReadError) => (
   }
 
   if (key === 'operatorId') {
-    let onChangeOperator = (operator) => onChange(operator?.id || operator)
-    let opVal = val || contract.operatorId
-
-    return (
-      <SelectOperator
-        useUnselected={false}
-        disabled={readOnly}
-        style={{ color: 'var(--dark-grey)' }}
-        value={opVal}
-        onSelect={onChangeOperator}
-      />
-    )
+    return <Input disabled={true} style={{ color: 'var(--dark-grey)' }} value={operatorName} />
   }
 
   if (readOnly) {
@@ -212,7 +210,7 @@ let formLabels = {
   rules: text('contracts'),
 }
 
-const renderEditorLabel = (key, val, labels) => {
+const renderLabel = (key, val, labels) => {
   if (['procurementUnitIds'].includes(key)) {
     return false
   }
@@ -221,8 +219,36 @@ const renderEditorLabel = (key, val, labels) => {
 }
 
 const ContractEditor = observer(
-  ({ contract, onReset, onRefresh, isNew = false, editable }: PropTypes) => {
-    let [pendingContract, setPendingContract] = useState(createContractInput(contract))
+  ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
+    let [globalOperator] = useStateValue<Operator>('globalOperator')
+    let initialContract: ContractInput = useMemo(() => {
+      if (isNew) {
+        let newContract: Partial<Contract> = {
+          operatorId: globalOperator?.id,
+          operator: globalOperator,
+          startDate: getDateString(new Date()),
+          endDate: getDateString(addYears(new Date(), 1)),
+        }
+        return createContractInput(newContract)
+      } else {
+        return createContractInput(contract!)
+      }
+    }, [isNew, contract, globalOperator])
+
+    let resetChanges = useCallback(() => {
+      setPendingContract(initialContract)
+    }, [initialContract])
+    let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
+
+    useEffect(() => {
+      if (isNew && pendingContract.operatorId !== globalOperator.operatorId) {
+        setPendingContract({
+          ...pendingContract,
+          operatorId: globalOperator.operatorId,
+        })
+      }
+    }, [globalOperator && globalOperator.operatorId, isNew])
+
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
     let isDirty = useMemo(() => {
@@ -239,7 +265,7 @@ const ContractEditor = observer(
         return true
       }
 
-      return !isEqual(pendingContract, createContractInput(contract))
+      return !isEqual(pendingContract, createContractInput(contract!))
     }, [rulesFiles, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
@@ -317,7 +343,7 @@ const ContractEditor = observer(
       }
     )
 
-    let currentError = useMemo(() => (createError || modifyError)?.message, [
+    let contractFileReadError = useMemo(() => (createError || modifyError)?.message, [
       modifyError,
       createError,
     ])
@@ -351,7 +377,7 @@ const ContractEditor = observer(
         }
 
         if (isNew) {
-          onReset()
+          resetChanges()
         }
 
         setRulesFiles([])
@@ -360,30 +386,22 @@ const ContractEditor = observer(
           goToContract(result.data?.id)
         }
       }
-    }, [
-      rulesFiles,
-      pendingContract,
-      pendingContractValid,
-      onReset,
-      isNew,
-      goToContract,
-      editable,
-    ])
+    }, [rulesFiles, pendingContract, pendingContractValid, isNew, goToContract, editable])
 
     let onCancel = useCallback(() => {
-      setPendingContract(createContractInput(contract))
+      setPendingContract(initialContract)
       setRulesFiles([])
-      onReset()
-    }, [contract, onReset])
+      resetChanges()
+    }, [contract, resetChanges])
 
-    let [removeContract, { loading: removeLoading }] = useMutationData<ContractType>(
+    let [removeContract, { loading: removeLoading }] = useMutationData<Contract>(
       removeContractMutation,
       {
         refetchQueries: [
           {
             query: contractsQuery,
             variables: {
-              operatorId: contract.operatorId,
+              operatorId: contract ? contract.operatorId : null,
             },
           },
         ],
@@ -403,7 +421,7 @@ const ContractEditor = observer(
       if (confirm(text('contractForm_removeConfirm'))) {
         let result = await removeContract({
           variables: {
-            contractId: contract.id,
+            contractId: contract!.id,
           },
         })
 
@@ -430,7 +448,7 @@ const ContractEditor = observer(
             </Button>
           </FlexRow>
         )}
-        {!isNew && <ContractUsersEditor contractId={contract.id} />}
+        {!isNew && <ContractUsersEditor contractId={contract!.id} />}
         <ItemForm
           item={{
             ...pendingContract,
@@ -447,8 +465,14 @@ const ContractEditor = observer(
           doneDisabled={!pendingContractValid}
           isDirty={isDirty}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
-          renderLabel={renderEditorLabel}
-          renderInput={renderEditorField(pendingContract, currentError)}
+          renderLabel={renderLabel}
+          renderInput={renderInput({
+            contractFileReadError,
+            contract: pendingContract,
+            operatorName: contract
+              ? contract.operator.operatorName
+              : globalOperator.operatorName,
+          })}
         />
       </ContractEditorView>
     )
