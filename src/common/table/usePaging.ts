@@ -34,7 +34,7 @@ export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateTyp
   // options for larger page sizes than there are items.
   let pageSizeOptions = !pagingIsEnabled
     ? []
-    : defaultPageSizeOptions.filter((size) => itemsLength > size)
+    : defaultPageSizeOptions.filter((size) => itemsLength >= size)
 
   let [currentPage, setCurrentPage] = useState<number>(1)
   let [pageSize, setPageSize] = useState<number>(10)
