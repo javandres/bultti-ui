@@ -20,6 +20,7 @@ import {
   ObservedUnitExecutionReport,
   OperatorDeadrunsReport,
   OverAgeDeparturesReport,
+  SanctionSummaryReport,
   TrackedDeparturesReport,
   UnitExecutionReport,
   UnobservedDeparturesReport,
@@ -29,8 +30,6 @@ export type ReportComponentProps<T = {}> = {
   items: T[]
   columnLabels?: { [key: string]: string }
 }
-
-export type ReportType = 'list' | 'executionRequirement' | 'observedExecutionRequirement'
 
 export type ReportTypeByName = {
   blockDeviationsReport: BlockDeviationsReport
@@ -57,4 +56,5 @@ export type ReportTypeByName = {
   observedOverageDeparturesReport: ObservedOverAgeDeparturesReport
   observedUnitExecutionReport: ObservedUnitExecutionReport
   unobservedDeparturesReport: UnobservedDeparturesReport
+  sanctionSummaryReport: SanctionSummaryReport
 }

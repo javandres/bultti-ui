@@ -73,6 +73,7 @@ export type Query = {
   observedOverageDeparturesReport: ObservedOverAgeDeparturesReport;
   observedUnitExecutionReport: ObservedUnitExecutionReport;
   unobservedDeparturesReport: UnobservedDeparturesReport;
+  sanctionSummaryReport: SanctionSummaryReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -387,6 +388,13 @@ export type QueryObservedUnitExecutionReportArgs = {
 
 
 export type QueryUnobservedDeparturesReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
+};
+
+
+export type QuerySanctionSummaryReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
   inspectionId: Scalars['String'];
@@ -1683,9 +1691,12 @@ export type ObservedUnitExecutionReport = {
 export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution';
   id: Scalars['ID'];
-  procurementUnitId?: Maybe<Scalars['String']>;
-  totalUnitKilometers?: Maybe<Scalars['Float']>;
+  procurementUnitId: Scalars['String'];
+  area?: Maybe<OperatingAreaName>;
+  totalUnitKilometers: Scalars['Float'];
   totalKilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeMax?: Maybe<Scalars['Float']>;
+  averageAgeRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
 };
 
@@ -1724,6 +1735,38 @@ export type UnobservedDeparturesReportData = {
   blockNumber?: Maybe<Scalars['String']>;
 };
 
+export type SanctionSummaryReport = {
+  __typename?: 'SanctionSummaryReport';
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  responseId: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  rows: Array<SanctionSummaryReportData>;
+};
+
+export type SanctionSummaryReportData = {
+  __typename?: 'SanctionSummaryReportData';
+  id: Scalars['ID'];
+  procurementUnitId: Scalars['String'];
+  areaName: Scalars['String'];
+  sanctionAmount: Scalars['Float'];
+  sanctionAmountRatio: Scalars['Float'];
+  sanctionedKilometers: Scalars['Float'];
+  averageAgeWeightedObserved: Scalars['Float'];
+};
+
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption';
   id: Scalars['String'];
@@ -1759,6 +1802,8 @@ export type Sanction = {
   id: Scalars['ID'];
   inspection: Inspection;
   inspectionId: Scalars['String'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  area?: Maybe<OperatingAreaName>;
   sanctionableType: SanctionableEntity;
   sanctionReason: SanctionReason;
   entityIdentifier: Scalars['String'];

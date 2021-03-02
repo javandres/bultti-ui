@@ -929,11 +929,14 @@ type ObservedOverAgeDeparturesReportData {
 }
 
 type ObservedUnitExecution {
+  area: OperatingAreaName
+  averageAgeMax: Float
+  averageAgeRequired: Float
   averageAgeWeightedObserved: Float
   id: ID!
-  procurementUnitId: String
+  procurementUnitId: String!
   totalKilometersObserved: Float
-  totalUnitKilometers: Float
+  totalUnitKilometers: Float!
 }
 
 type ObservedUnitExecutionReport {
@@ -1117,6 +1120,7 @@ type Query {
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionType: InspectionType!): [ReportListItem!]!
   runSanctioning(inspectionId: String!): [Sanction!]!
+  sanctionSummaryReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionSummaryReport!
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
@@ -1136,15 +1140,47 @@ type ReportListItem {
 
 type Sanction {
   appliedSanctionAmount: Float!
+  area: OperatingAreaName
   entityIdentifier: String!
   id: ID!
   inspection: Inspection!
   inspectionId: String!
+  procurementUnitId: String
   sanctionAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+}
+
+type SanctionSummaryReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  inspectionType: InspectionType!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [SanctionSummaryReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type SanctionSummaryReportData {
+  areaName: String!
+  averageAgeWeightedObserved: Float!
+  id: ID!
+  procurementUnitId: String!
+  sanctionAmount: Float!
+  sanctionAmountRatio: Float!
+  sanctionedKilometers: Float!
 }
 
 type SanctionsResponse {

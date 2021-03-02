@@ -1,5 +1,13 @@
 import { gql } from '@apollo/client'
 
+/**
+ * This file contains GraphQL fragments for all report data items. Common fields can be
+ * extracted into strings and reused in many fragments.
+ *
+ * The name of the fragment should be the capitalized name of the report and appended with
+ * "Fragment". The report names are listed in reportNames.ts in the server repo.
+ */
+
 let departureReportBaseFragment = `
 id
 dayType
@@ -300,6 +308,17 @@ export const reportQueryFragments = {
       journeyKilometers
       procurementUnitId
       blockNumber
+    }
+  `,
+  SanctionSummaryFragment: gql`
+    fragment SanctionSummaryFragment on SanctionSummaryReportData {
+      id
+      procurementUnitId
+      areaName
+      averageAgeWeightedObserved
+      sanctionAmount
+      sanctionAmountRatio
+      sanctionedKilometers
     }
   `,
 }
