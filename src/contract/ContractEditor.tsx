@@ -233,7 +233,7 @@ const ContractEditor = observer(
       } else {
         return createContractInput(contract!)
       }
-    }, [isNew, contract])
+    }, [isNew, contract, globalOperator])
 
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
