@@ -1698,6 +1698,8 @@ export type ObservedUnitExecution = {
   averageAgeMax?: Maybe<Scalars['Float']>;
   averageAgeRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type UnobservedDeparturesReport = {

@@ -935,6 +935,8 @@ type ObservedUnitExecution {
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
+  sanctionAmount: Float
+  sanctionedKilometers: Float
   totalKilometersObserved: Float
   totalUnitKilometers: Float!
 }

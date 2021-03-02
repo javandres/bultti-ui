@@ -93,6 +93,8 @@ export const reportQueryFragments = {
       totalKilometersObserved
       totalUnitKilometers
       averageAgeWeightedObserved
+      sanctionAmount
+      sanctionedKilometers
     }
   `,
   ObservedLateDeparturesFragment: gql`
