@@ -317,6 +317,7 @@ export const reportQueryFragments = {
       areaName
       averageAgeWeightedObserved
       sanctionAmount
+      sanctionReason
       sanctionAmountRatio
       sanctionedKilometers
     }

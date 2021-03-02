@@ -175,6 +175,15 @@
   "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
 
   "postInspection_confirmAbandonSanctions": "Haluatko varmasti poistaa kaikki tarkastuksen sanktiot ja palauttaa tarkastus muokattavaan tilaan?",
+  "postInspection_sanctionReason_EQUIPMENT_TYPE_VIOLATION": "Kalustotyyppi",
+  "postInspection_sanctionReason_EQUIPMENT_AGE_VIOLATION": "Kaluston ikä",
+  "postInspection_sanctionReason_EQUIPMENT_OPTION_AGE_VIOLATION": "Optiokaluston ikä",
+  "postInspection_sanctionReason_EQUIPMENT_APPROVED_AGE_VIOLATION": "Hyv. kaluston ikä",
+  "postInspection_sanctionReason_EXTERIOR_COLOR_VIOLATION": "Ulkoväri",
+  "postInspection_sanctionReason_TIMING_STOP_VIOLATION": "Ajantasauspysäkki",
+  "postInspection_sanctionReason_LATE_DEPARTURE": "Myöhäinen lähtö",
+  "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen ikävaatimus",
+  "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Päästöluokka",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",

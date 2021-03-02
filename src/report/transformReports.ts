@@ -1,4 +1,5 @@
 import { SanctionSummaryReportData } from '../schema-types'
+import { text } from '../util/translate'
 
 const reportTransforms = {
   sanctionSummary: sanctionSummaryTransform,
@@ -24,6 +25,25 @@ type SanctionSummaryReportItemConstants = {
 
 type SanctionSummaryReportItem = SanctionSummaryReportItemConstants & Record<string, number>
 
+function getSanctionCols(
+  sanctionAmount,
+  sanctionReason,
+  values: { sanctionAmountRatio: number; sanctionedKilometers: number } = {
+    sanctionedKilometers: 0,
+    sanctionAmountRatio: 0,
+  }
+) {
+  let cols = {}
+  let reasonText = text('postInspection_sanctionReason_' + sanctionReason)
+  let sanctionAmountCol = `${reasonText} ${sanctionAmount}%`
+  let sanctionAmountKmCol = `${reasonText} ${sanctionAmount}KM`
+
+  cols[sanctionAmountCol] = values.sanctionAmountRatio
+  cols[sanctionAmountKmCol] = values.sanctionedKilometers
+
+  return cols
+}
+
 function sanctionSummaryTransform(
   rows: SanctionSummaryReportData[]
 ): SanctionSummaryReportItem[] {
@@ -31,20 +51,22 @@ function sanctionSummaryTransform(
 
   // Template for dynamic keyed sanction summary items
   let sanctionAmountColumnsTemplate = rows.reduce(
-    (cols: Record<string, number>, { sanctionAmount }) => {
-      let sanctionAmountCol = `Sanktio ${sanctionAmount}%`
-      let sanctionAmountKmCol = `Sanktio ${sanctionAmount}KM`
-
-      cols[sanctionAmountCol] = 0
-      cols[sanctionAmountKmCol] = 0
-
-      return cols
+    (cols: Record<string, number>, { sanctionAmount, sanctionReason }) => {
+      let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason)
+      return { ...cols, ...sanctionCols }
     },
     {}
   )
 
   for (let row of rows) {
-    let { sanctionAmount, sanctionAmountRatio, sanctionedKilometers, procurementUnitId } = row
+    let {
+      sanctionAmount,
+      sanctionReason,
+      sanctionAmountRatio,
+      sanctionedKilometers,
+      procurementUnitId,
+    } = row
+
     let resultRow: SanctionSummaryReportItemConstants | undefined = resultRows.get(
       procurementUnitId
     )
@@ -58,10 +80,17 @@ function sanctionSummaryTransform(
       }
     }
 
-    resultRow[`Sanktio ${sanctionAmount}%`] = sanctionAmountRatio
-    resultRow[`Sanktio ${sanctionAmount}KM`] = sanctionedKilometers
+    let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {
+      sanctionedKilometers,
+      sanctionAmountRatio,
+    })
 
-    resultRows.set(procurementUnitId, resultRow as SanctionSummaryReportItem)
+    let fullResultRow = {
+      ...resultRow,
+      ...sanctionCols,
+    } as SanctionSummaryReportItem
+
+    resultRows.set(procurementUnitId, fullResultRow)
   }
 
   return Array.from(resultRows.values())

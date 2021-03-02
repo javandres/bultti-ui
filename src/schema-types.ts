@@ -1765,7 +1765,20 @@ export type SanctionSummaryReportData = {
   sanctionAmountRatio: Scalars['Float'];
   sanctionedKilometers: Scalars['Float'];
   averageAgeWeightedObserved: Scalars['Float'];
+  sanctionReason: SanctionReason;
 };
+
+export enum SanctionReason {
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
+  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION',
+  LateDeparture = 'LATE_DEPARTURE',
+  UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
+}
 
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption';
@@ -1817,18 +1830,6 @@ export enum SanctionableEntity {
   Departure = 'DEPARTURE',
   EmissionClass = 'EMISSION_CLASS',
   Equipment = 'EQUIPMENT'
-}
-
-export enum SanctionReason {
-  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
-  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
-  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
-  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
-  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
-  TimingStopViolation = 'TIMING_STOP_VIOLATION',
-  LateDeparture = 'LATE_DEPARTURE',
-  UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
-  EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
 }
 
 export type Mutation = {
