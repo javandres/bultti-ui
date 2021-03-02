@@ -36,7 +36,7 @@ function getSanctionCols(
   let cols = {}
   let reasonText = text('postInspection_sanctionReason_' + sanctionReason)
   let sanctionAmountCol = `${reasonText} ${sanctionAmount}%`
-  let sanctionAmountKmCol = `${reasonText} ${sanctionAmount}KM`
+  let sanctionAmountKmCol = `${reasonText} ${sanctionAmount}% = KM`
 
   cols[sanctionAmountCol] = values.sanctionAmountRatio
   cols[sanctionAmountKmCol] = values.sanctionedKilometers
