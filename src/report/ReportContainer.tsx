@@ -76,6 +76,8 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
       return { ...report, columnLabels }
     }
 
+    let totalRowsCount = transformedRows.length
+
     // Add the transformed row keys to the column labels in order to actually show them.
     for (let colName of Object.keys(rowModel)) {
       // Skip id col
@@ -89,7 +91,13 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     }
 
     // Return amended report object with transformed rows and column labels.
-    return { ...report, rows: transformedRows, columnLabels }
+    return {
+      ...report,
+      totalCount: totalRowsCount,
+      filteredCount: totalRowsCount,
+      rows: transformedRows,
+      columnLabels,
+    }
   }, [report, reportName])
 
   let columnLabels = preparedReport?.columnLabels
