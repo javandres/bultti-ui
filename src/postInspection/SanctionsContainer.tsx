@@ -242,6 +242,11 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     variables: { inspectionId: inspection?.id },
   })
 
+  let groupByFn = useCallback(
+    (item) => text('postInspection_sanctionReason_' + item.sanctionReason),
+    []
+  )
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -282,6 +287,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
           isAlwaysEditable={true}
+          groupBy={groupByFn}
         />
       </PageSection>
     </PostInspectionSanctionsView>
