@@ -14,6 +14,7 @@ import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
+import { DEBUG } from '../constants'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -251,12 +252,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onClick={onAbandonSanctions}>
           <Text>inspection_actions_abandonSanctions</Text>
         </Button>
-        <Button
-          loading={devLoadingSanctions}
-          size={ButtonSize.SMALL}
-          onClick={() => loadSanctions()}>
-          DEV Load sanctions
-        </Button>
+        {DEBUG && (
+          <Button
+            loading={devLoadingSanctions}
+            size={ButtonSize.SMALL}
+            onClick={() => loadSanctions()}>
+            DEV Load sanctions
+          </Button>
+        )}
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
