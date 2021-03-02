@@ -15,6 +15,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
+import { hasReportTransform, transformReport } from './transformReports'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -58,11 +59,42 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     },
   })
 
-  let columnLabels = useMemo(() => {
-    return report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
-  }, [report])
+  let transformedReport = useMemo(() => {
+    if (!report) {
+      return report
+    }
 
-  let reportDataItems = useMemo(() => report?.rows || [], [report])
+    let transformedRows = transformReport(reportName, report.rows)
+    return { ...report, rows: transformedRows }
+  }, [report, reportName])
+
+  let columnLabels = useMemo(() => {
+    let columnLabels = transformedReport?.columnLabels
+      ? JSON.parse(transformedReport?.columnLabels)
+      : undefined
+
+    let rowModel = transformedReport?.rows[0]
+
+    // Skip if rows were not transformed.
+    if (!rowModel || !hasReportTransform(reportName)) {
+      return columnLabels
+    }
+
+    for (let colName of Object.keys(rowModel)) {
+      // Skip id col
+      if (colName === 'id') {
+        continue
+      }
+
+      if (!columnLabels[colName]) {
+        columnLabels[colName] = colName
+      }
+    }
+
+    return columnLabels
+  }, [transformedReport, reportName])
+
+  let reportDataItems = useMemo(() => transformedReport?.rows || [], [transformedReport])
 
   let isExecutionRequirementReport = reportDataItems.some((dataItem) =>
     ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
@@ -101,7 +133,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
         <ObservedExecutionRequirementsReport items={reportDataItems} />
       ) : (
         <FilteredResponseTable
-          data={report}
+          data={transformedReport}
           tableState={tableState}
           columnLabels={columnLabels}
           keyFromItem={reportKeyFromItem}

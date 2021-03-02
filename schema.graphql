@@ -1180,6 +1180,7 @@ type SanctionSummaryReportData {
   procurementUnitId: String!
   sanctionAmount: Float!
   sanctionAmountRatio: Float!
+  sanctionReason: SanctionReason!
   sanctionedKilometers: Float!
 }
 
