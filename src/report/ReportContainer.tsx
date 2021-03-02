@@ -59,27 +59,24 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
     },
   })
 
-  let transformedReport = useMemo(() => {
+  // Prepare report data by transforming report rows (if necessary) and parsing the column labels.
+  let preparedReport = useMemo(() => {
     if (!report) {
       return report
     }
 
+    // Transform data. Will be passed through untouched if no transform is implemented.
     let transformedRows = transformReport(reportName, report.rows)
-    return { ...report, rows: transformedRows }
-  }, [report, reportName])
+    let columnLabels = report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
 
-  let columnLabels = useMemo(() => {
-    let columnLabels = transformedReport?.columnLabels
-      ? JSON.parse(transformedReport?.columnLabels)
-      : undefined
+    let rowModel = transformedRows[0]
 
-    let rowModel = transformedReport?.rows[0]
-
-    // Skip if rows were not transformed.
-    if (!rowModel || !hasReportTransform(reportName)) {
-      return columnLabels
+    // Column labels from the response are already OK if rows were not transformed.
+    if (!rowModel || !columnLabels || !hasReportTransform(reportName)) {
+      return { ...report, columnLabels }
     }
 
+    // Add the transformed row keys to the column labels in order to actually show them.
     for (let colName of Object.keys(rowModel)) {
       // Skip id col
       if (colName === 'id') {
@@ -91,11 +88,15 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
       }
     }
 
-    return columnLabels
-  }, [transformedReport, reportName])
+    // Return amended report object with transformed rows and column labels.
+    return { ...report, rows: transformedRows, columnLabels }
+  }, [report, reportName])
 
-  let reportDataItems = useMemo(() => transformedReport?.rows || [], [transformedReport])
+  let columnLabels = preparedReport?.columnLabels
+  let reportDataItems = preparedReport?.rows || []
 
+  // Determine if the report is about some form of execution requirement.
+  // These have their own report components.
   let isExecutionRequirementReport = reportDataItems.some((dataItem) =>
     ['ObservedExecutionRequirementsReportData', 'ExecutionRequirementsReportData'].includes(
       dataItem.__typename
@@ -133,7 +134,7 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
         <ObservedExecutionRequirementsReport items={reportDataItems} />
       ) : (
         <FilteredResponseTable
-          data={transformedReport}
+          data={preparedReport}
           tableState={tableState}
           columnLabels={columnLabels}
           keyFromItem={reportKeyFromItem}
