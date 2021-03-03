@@ -91,12 +91,7 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
-  renderValue?: (
-    key: unknown,
-    val: any,
-    isHeader?: boolean,
-    item?: ItemType
-  ) => React.ReactNode
+  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
@@ -307,7 +302,7 @@ const Table = observer(
 
         for (let row of rows) {
           let [colKey, colValue] = row.itemEntries[colIdx]
-          let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
+          let strVal = toString(renderValue(colKey, colValue))
           let valLength = Math.max(strVal.length, 5)
           colWidth = Math.max(valLength * 10, colWidth)
         }
@@ -435,7 +430,7 @@ const Table = observer(
                     key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
-                      {renderValue('' as unknown, colName, true)}
+                      {renderValue('', colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
                           {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}

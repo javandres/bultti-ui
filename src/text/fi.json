@@ -185,7 +185,7 @@
   "postInspection_sanctionReason_TIMING_STOP_VIOLATION": "Ajantasauspysäkin laiminlyönti",
   "postInspection_sanctionReason_LATE_DEPARTURE": "Myöhäinen lähtö",
   "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen maksimi-iän ylitys",
-  "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Päästöluokka",
+  "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Suoritevaatimuksen alitus",
 
   "report_filtering_addField": "Lisää kenttä",
   "report_filtering_title": "Suodatus",

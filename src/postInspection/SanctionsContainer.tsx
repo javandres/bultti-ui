@@ -2,7 +2,13 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection, Sanction, SanctionsResponse, SanctionUpdate } from '../schema-types'
+import {
+  Inspection,
+  Sanction,
+  SanctionableEntity,
+  SanctionsResponse,
+  SanctionUpdate,
+} from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { text, Text } from '../util/translate'
@@ -247,6 +253,28 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     []
   )
 
+  let renderValue = useCallback(
+    (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+      if (key !== 'entityIdentifier' || isHeader || !item) {
+        return val
+      }
+
+      let idParts = (val as string).split('_')
+
+      switch (item.sanctionableType) {
+        case SanctionableEntity.Departure:
+          return `${idParts[0]} / ${idParts[1]} / ${idParts[2]} / ${idParts[3]}`
+        case SanctionableEntity.EmissionClass:
+          return `Alue: ${idParts[0]} Päästöluokka: ${idParts[1]}`
+        case SanctionableEntity.Equipment:
+          return `Kohde: ${idParts[0]} Ajoneuvon ikä: ${idParts[1]}`
+        default:
+          return val
+      }
+    },
+    []
+  )
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -288,6 +316,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onCancelEdit={onCancelEdit}
           isAlwaysEditable={true}
           groupBy={groupByFn}
+          renderValue={renderValue}
         />
       </PageSection>
     </PostInspectionSanctionsView>
