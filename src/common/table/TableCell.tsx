@@ -180,7 +180,7 @@ export const TableCell = observer(
               onCancelEdit,
               tabIndex
             )
-          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
+          : renderCell(valueKey, renderValue(valueKey as string, val, false, item), item)}
       </TableCellElement>
     )
   }

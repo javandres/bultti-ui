@@ -91,13 +91,8 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
   renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
-  renderValue?: (
-    key: unknown,
-    val: any,
-    isHeader?: boolean,
-    item?: ItemType
-  ) => React.ReactNode
-  getColumnTotal?: (key: keyof ItemType) => React.ReactChild
+  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
+  getColumnTotal?: (key: string) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
   maxHeight?: number
@@ -307,7 +302,7 @@ const Table = observer(
 
         for (let row of rows) {
           let [colKey, colValue] = row.itemEntries[colIdx]
-          let strVal = toString(renderValue(colKey as keyof ItemType, colValue))
+          let strVal = toString(renderValue(colKey, colValue))
           let valLength = Math.max(strVal.length, 5)
           colWidth = Math.max(valLength * 10, colWidth)
         }
@@ -435,7 +430,7 @@ const Table = observer(
                     key={colKey}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
-                      {renderValue('' as unknown, colName, true)}
+                      {renderValue('', colName, true)}
                       {sortIndex !== -1 && (
                         <ColumnSortIndicator>
                           {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
@@ -460,8 +455,7 @@ const Table = observer(
             {typeof getColumnTotal === 'function' && (
               <TableRowElement key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
-                  const total =
-                    getColumnTotal(col as keyof ItemType) || (colIdx === 0 ? 'Yhteensä' : '')
+                  const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
 
                   let columnWidth = fluid ? undefined : columnWidths[colIdx]
 

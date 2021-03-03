@@ -2,7 +2,13 @@ import React, { useCallback, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
-import { Inspection, Sanction, SanctionsResponse, SanctionUpdate } from '../schema-types'
+import {
+  Inspection,
+  Sanction,
+  SanctionableEntity,
+  SanctionsResponse,
+  SanctionUpdate,
+} from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
 import { text, Text } from '../util/translate'
@@ -13,6 +19,8 @@ import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
+import { useLazyQueryData } from '../util/useLazyQueryData'
+import { DEBUG } from '../constants'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -90,6 +98,7 @@ let sanctionsQuery = gql`
         sanctionableKilometers
         sanctionableType
         appliedSanctionAmount
+        sanctionResultKilometers
       }
     }
   }
@@ -100,6 +109,15 @@ let setSanctionMutation = gql`
     updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
       appliedSanctionAmount
+      sanctionResultKilometers
+    }
+  }
+`
+
+let devLoadSanctions = gql`
+  query runSanctioning($inspectionId: String!) {
+    runSanctioning(inspectionId: $inspectionId) {
+      id
     }
   }
 `
@@ -149,10 +167,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
             id: cacheId,
             data: {
               appliedSanctionAmount: update.appliedSanctionAmount,
+              sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
               fragment SanctionFragment on Sanction {
                 appliedSanctionAmount
+                sanctionResultKilometers
               }
             `,
           })
@@ -224,6 +244,37 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   }, [execAbandonSanctions, inspection])
 
+  let [loadSanctions, { loading: devLoadingSanctions }] = useLazyQueryData(devLoadSanctions, {
+    variables: { inspectionId: inspection?.id },
+  })
+
+  let groupByFn = useCallback(
+    (item) => text('postInspection_sanctionReason_' + item.sanctionReason),
+    []
+  )
+
+  let renderValue = useCallback(
+    (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+      if (key !== 'entityIdentifier' || isHeader || !item) {
+        return val
+      }
+
+      let idParts = (val as string).split('_')
+
+      switch (item.sanctionableType) {
+        case SanctionableEntity.Departure:
+          return `${idParts[0]} / ${idParts[1]} / ${idParts[2]} / ${idParts[3]}`
+        case SanctionableEntity.EmissionClass:
+          return `Alue: ${idParts[0]} Päästöluokka: ${idParts[1]}`
+        case SanctionableEntity.Equipment:
+          return `Kohde: ${idParts[0]} Ajoneuvon ikä: ${idParts[1]}`
+        default:
+          return val
+      }
+    },
+    []
+  )
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -234,6 +285,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onClick={onAbandonSanctions}>
           <Text>inspection_actions_abandonSanctions</Text>
         </Button>
+        {DEBUG && (
+          <Button
+            loading={devLoadingSanctions}
+            size={ButtonSize.SMALL}
+            onClick={() => loadSanctions()}>
+            DEV Load sanctions
+          </Button>
+        )}
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
@@ -256,6 +315,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
           isAlwaysEditable={true}
+          groupBy={groupByFn}
+          renderValue={renderValue}
         />
       </PageSection>
     </PostInspectionSanctionsView>

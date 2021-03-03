@@ -73,6 +73,7 @@ export type Query = {
   observedOverageDeparturesReport: ObservedOverAgeDeparturesReport;
   observedUnitExecutionReport: ObservedUnitExecutionReport;
   unobservedDeparturesReport: UnobservedDeparturesReport;
+  sanctionSummaryReport: SanctionSummaryReport;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -82,6 +83,7 @@ export type Query = {
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
+  runSanctioning: Array<Sanction>;
 };
 
 
@@ -392,6 +394,13 @@ export type QueryUnobservedDeparturesReportArgs = {
 };
 
 
+export type QuerySanctionSummaryReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>;
+  sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
+};
+
+
 export type QueryContractsArgs = {
   date?: Maybe<Scalars['BulttiDate']>;
   operatorId?: Maybe<Scalars['Int']>;
@@ -433,6 +442,11 @@ export type QueryPreviewObservedRequirementArgs = {
 export type QueryInspectionSanctionsArgs = {
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryRunSanctioningArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -1411,6 +1425,8 @@ export type EarlyTimingStopDeparturesReportData = {
   observedDepartureTime: Scalars['String'];
   observedDepartureDifferenceSeconds: Scalars['Int'];
   journeyKilometers: Scalars['Float'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type LateDeparturesReport = {
@@ -1446,6 +1462,8 @@ export type LateDeparturesReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   journeyKilometers: Scalars['Float'];
@@ -1523,6 +1541,8 @@ export type ObservedEquipmentColorReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   observedExteriorColor: Scalars['String'];
@@ -1562,6 +1582,8 @@ export type ObservedEquipmentTypeReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   registryNr: Scalars['String'];
   plannedEquipmentType: Scalars['String'];
   equipmentTypeRequired: Scalars['Boolean'];
@@ -1636,6 +1658,8 @@ export type ObservedOverAgeDeparturesReportData = {
   date: Scalars['String'];
   observedDepartureTime: Scalars['DateTime'];
   observedArrivalTime: Scalars['DateTime'];
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
   procurementUnitId: Scalars['String'];
   registryNr: Scalars['String'];
   observedEquipmentAge: Scalars['Float'];
@@ -1667,10 +1691,15 @@ export type ObservedUnitExecutionReport = {
 export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution';
   id: Scalars['ID'];
-  procurementUnitId?: Maybe<Scalars['String']>;
-  totalUnitKilometers?: Maybe<Scalars['Float']>;
+  procurementUnitId: Scalars['String'];
+  area?: Maybe<OperatingAreaName>;
+  totalUnitKilometers: Scalars['Float'];
   totalKilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeMax?: Maybe<Scalars['Float']>;
+  averageAgeRequired?: Maybe<Scalars['Float']>;
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>;
+  sanctionedKilometers?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type UnobservedDeparturesReport = {
@@ -1708,6 +1737,51 @@ export type UnobservedDeparturesReportData = {
   blockNumber?: Maybe<Scalars['String']>;
 };
 
+export type SanctionSummaryReport = {
+  __typename?: 'SanctionSummaryReport';
+  filteredCount: Scalars['Int'];
+  totalCount: Scalars['Int'];
+  filters?: Maybe<Array<FilterConfig>>;
+  sort?: Maybe<Array<SortConfig>>;
+  responseId: Scalars['String'];
+  id: Scalars['String'];
+  name: Scalars['String'];
+  title: Scalars['String'];
+  description: Scalars['String'];
+  inspectionType: InspectionType;
+  columnLabels: Scalars['String'];
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  showSanctioned?: Maybe<Scalars['Boolean']>;
+  showUnsanctioned?: Maybe<Scalars['Boolean']>;
+  rows: Array<SanctionSummaryReportData>;
+};
+
+export type SanctionSummaryReportData = {
+  __typename?: 'SanctionSummaryReportData';
+  id: Scalars['ID'];
+  procurementUnitId: Scalars['String'];
+  areaName: Scalars['String'];
+  sanctionAmount: Scalars['Float'];
+  sanctionAmountRatio: Scalars['Float'];
+  sanctionedKilometers: Scalars['Float'];
+  averageAgeWeightedObserved: Scalars['Float'];
+  sanctionReason: SanctionReason;
+};
+
+export enum SanctionReason {
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
+  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION',
+  LateDeparture = 'LATE_DEPARTURE',
+  UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
+}
+
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption';
   id: Scalars['String'];
@@ -1743,28 +1817,21 @@ export type Sanction = {
   id: Scalars['ID'];
   inspection: Inspection;
   inspectionId: Scalars['String'];
+  procurementUnitId?: Maybe<Scalars['String']>;
+  area?: Maybe<OperatingAreaName>;
   sanctionableType: SanctionableEntity;
   sanctionReason: SanctionReason;
   entityIdentifier: Scalars['String'];
   sanctionAmount: Scalars['Float'];
   appliedSanctionAmount: Scalars['Float'];
   sanctionableKilometers: Scalars['Float'];
+  sanctionResultKilometers?: Maybe<Scalars['Float']>;
 };
 
 export enum SanctionableEntity {
   Departure = 'DEPARTURE',
   EmissionClass = 'EMISSION_CLASS',
   Equipment = 'EQUIPMENT'
-}
-
-export enum SanctionReason {
-  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
-  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
-  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
-  TimingStopViolation = 'TIMING_STOP_VIOLATION',
-  LateDeparture = 'LATE_DEPARTURE',
-  UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
-  EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
 }
 
 export type Mutation = {

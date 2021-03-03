@@ -81,7 +81,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
           : ''
 
         if (useSearchTerm) {
-          await searchEquipment({
+          searchEquipment({
             variables: {
               operatorId,
               [useSearchTerm]: useSearchValue,
@@ -94,7 +94,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     }, [searchEquipment, searchVehicleId, searchRegistryNr, operatorId])
 
     let findRandomEquipment = useCallback(async () => {
-      await searchEquipment({
+      searchEquipment({
         variables: {
           operatorId,
         },
