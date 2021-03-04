@@ -25,6 +25,7 @@ export type PropTypes<ItemType extends {}, EditValueType = CellValType> = {
   data?: IFilteredSortedResponse<ItemType>
   loading?: boolean
   groupBy?: (item: ItemType) => string
+  transformItems?: (items: ItemType[]) => ItemType[]
 } & Omit<TablePropTypes<ItemType, EditValueType>, 'items'>
 
 const FilteredResponseTable = observer(
@@ -34,6 +35,7 @@ const FilteredResponseTable = observer(
     loading = false,
     tableState,
     groupBy: groupByFn,
+    transformItems = (items) => items,
     ...tableProps
   }: PropTypes<ItemType, EditValueType>) => {
     let { filters = [], sort = [], setFilters = () => {}, setSort = () => {} } = tableState
@@ -80,7 +82,7 @@ const FilteredResponseTable = observer(
             {groupName && groupName !== 'default' && <SubHeading>{groupName}</SubHeading>}
             <PagedTable<ItemType, EditValueType>
               {...tableProps}
-              items={items}
+              items={transformItems(items)}
               totalCount={items.length}
               hideKeys={tableProps.hideKeys || (!columnLabels ? ['id'] : undefined)}
               renderValue={tableProps.renderValue || renderCellValue}
