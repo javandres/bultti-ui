@@ -2,8 +2,8 @@ import { gql } from '@apollo/client'
 import { reportQueryFragments } from './reportQueryFragments'
 
 export const reportsQuery = gql`
-  query inspectionReports($inspectionType: InspectionType!) {
-    reports(inspectionType: $inspectionType) {
+  query inspectionReports($inspectionType: InspectionType!, $inspectionId: String) {
+    reports(inspectionType: $inspectionType, inspectionId: $inspectionId) {
       name
       title
       description

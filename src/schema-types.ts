@@ -222,6 +222,7 @@ export type QueryAvailableDayTypesArgs = {
 
 
 export type QueryReportsArgs = {
+  inspectionId?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
 };
 

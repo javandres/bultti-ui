@@ -1120,7 +1120,7 @@ type Query {
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
-  reports(inspectionType: InspectionType!): [ReportListItem!]!
+  reports(inspectionId: String, inspectionType: InspectionType!): [ReportListItem!]!
   runSanctioning(inspectionId: String!): [Sanction!]!
   sanctionSummaryReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionSummaryReport
   season(seasonId: String!): [Season!]
