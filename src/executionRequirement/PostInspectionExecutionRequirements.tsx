@@ -222,7 +222,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
     let updateQueries: Promise<unknown>[] = []
     let requirementGroups = Object.entries<EditRequirementValue[]>(
-      groupBy<EditRequirementValue>(pendingValues, 'requirementId')
+      groupBy<EditRequirementValue>(pendingValues, 'itemId')
     )
 
     for (let [requirementId, reqPendingValues] of requirementGroups) {
@@ -244,7 +244,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
       let updatePromise = updateRequirements({
         variables: {
-          requirementId,
+          requirementId: requirementId,
           updateValues: Array.from(updateValues.values()),
         },
       })
