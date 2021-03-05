@@ -1218,13 +1218,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "BlockDeviationsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "BlockDeviationsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1285,13 +1281,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "DeadrunsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "DeadrunsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1352,13 +1344,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "DepartureBlocksReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "DepartureBlocksReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1419,13 +1407,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "DeviationsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "DeviationsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1486,13 +1470,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "EmissionClassExecutionReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "EmissionClassExecutionReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1553,13 +1533,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "EquipmentColorReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "EquipmentColorReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1620,13 +1596,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "EquipmentTypeReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "EquipmentTypeReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1687,13 +1659,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ExecutionRequirementsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ExecutionRequirementsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1754,13 +1722,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ExtraBlockDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ExtraBlockDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1821,13 +1785,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "MissingBlockDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "MissingBlockDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1888,13 +1848,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "MissingEquipmentReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "MissingEquipmentReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -1955,13 +1911,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "OperatorDeadrunsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "OperatorDeadrunsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2022,13 +1974,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "OverAgeDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "OverAgeDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2089,13 +2037,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "TrackedDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "TrackedDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2156,13 +2100,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "UnitExecutionReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "UnitExecutionReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2223,13 +2163,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "EarlyTimingStopDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "EarlyTimingStopDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2290,13 +2226,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "LateDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "LateDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2357,13 +2289,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedEmissionClassExecutionReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedEmissionClassExecutionReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2424,13 +2352,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedEquipmentColorReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedEquipmentColorReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2491,13 +2415,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedEquipmentTypeReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedEquipmentTypeReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2558,13 +2478,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedExecutionRequirementsReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedExecutionRequirementsReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2625,13 +2541,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedOverAgeDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedOverAgeDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2692,13 +2604,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "ObservedUnitExecutionReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "ObservedUnitExecutionReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2759,13 +2667,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "UnobservedDeparturesReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "UnobservedDeparturesReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -2826,13 +2730,9 @@
               }
             ],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "SanctionSummaryReport",
-                "ofType": null
-              }
+              "kind": "OBJECT",
+              "name": "SanctionSummaryReport",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
