@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, parseISO, startOfWeek, subMonths, isBefore } from 'date-fns'
-import { InspectionDate, InspectionInput, InspectionType } from '../schema-types'
+import { eachWeekOfInterval, parseISO, startOfWeek, endOfWeek, subMonths, isBefore } from 'date-fns'
+import { InspectionDate, InspectionInput, InspectionType, Season } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getReadableDateRange } from '../util/formatDate'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
@@ -10,6 +10,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
 import { addDays } from 'date-fns/esm'
 import { useQueryData } from '../util/useQueryData'
+import { useStateValue } from '../state/useAppState'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -39,10 +40,11 @@ const InspectionSelectDates = observer(
     } = useQueryData<InspectionDate[]>(allInspectionDatesQuery, {
       skip: inspectionType === InspectionType.Pre,
     })
+    let [season] = useStateValue<Season>('globalSeason')
 
     let dateOptions: DateOption[] = useMemo(() => {
       if (inspectionType === InspectionType.Pre) {
-        return getPreInspectionDateOptions()
+        return getPreInspectionDateOptions(season)
       }
       return inspectionDatesQueryResult
         ? getPostInspectionDateOptions(inspectionDatesQueryResult)
@@ -92,16 +94,14 @@ const InspectionSelectDates = observer(
   }
 )
 
-function getPreInspectionDateOptions(): DateOption[] {
-  let startDate = new Date()
-  let endDate = addDays(startDate, 90)
-  let dateOptionsEndDates = eachWeekOfInterval({
-    start: startDate,
-    end: endDate,
-  })
+function getPreInspectionDateOptions(season: Season): DateOption[] {
+  let seasonStartDates = eachWeekOfInterval({
+    start: getDateObject(season.startDate),
+    end: getDateObject(season.endDate)
+  }, { weekStartsOn: 1})
 
-  let dateOptions: DateOption[] = dateOptionsEndDates.map((endDate) => {
-    let startDate = startOfWeek(endDate, { weekStartsOn: 1 })
+  return seasonStartDates.map((startDate) => {
+    let endDate = endOfWeek(startDate, { weekStartsOn: 1 })
     let value = {
       startDate,
       endDate,
@@ -112,7 +112,6 @@ function getPreInspectionDateOptions(): DateOption[] {
       value,
     }
   })
-  return dateOptions
 }
 
 function getPostInspectionDateOptions(
