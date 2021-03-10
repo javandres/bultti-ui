@@ -82,6 +82,7 @@ export type Query = {
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
+  getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
 };
@@ -436,6 +437,11 @@ export type QueryObservedExecutionRequirementsArgs = {
 
 export type QueryPreviewObservedRequirementArgs = {
   requirementId: Scalars['String'];
+};
+
+
+export type QueryGetObservedInspectionDatesArgs = {
+  seasonId: Scalars['String'];
 };
 
 
