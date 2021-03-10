@@ -149,11 +149,12 @@ const EditEquipmentCatalogue = observer(
       )
     }, [])
 
-    let isDirty = !isEqual(
-      { startDate: catalogue?.startDate, endDate: catalogue?.endDate },
-      pendingCatalogue
-    )
-
+    let isDirty =
+      !!pendingCatalogue &&
+      !isEqual(
+        { startDate: catalogue?.startDate, endDate: catalogue?.endDate },
+        pendingCatalogue
+      )
     return (
       <EditEquipmentCatalogueView>
         <>
