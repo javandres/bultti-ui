@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { isEqual, pick } from 'lodash'
+import { isEqual, pick, uniqueId } from 'lodash'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -13,6 +13,7 @@ import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
 import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
+import { usePromptUnsavedChanges } from '../util/promptUnsavedChanges'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -61,6 +62,9 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
       ),
     [pendingInspectionInputValues, inspection]
   )
+
+  const formId = useMemo(() => uniqueId(), [])
+  usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: isDirty })
 
   return (
     <InspectionConfigView>
