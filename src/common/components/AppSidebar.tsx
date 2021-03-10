@@ -24,6 +24,7 @@ import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChange
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { User } from '../../schema-types'
+import { gql, useMutation } from '@apollo/client'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -125,6 +126,12 @@ export const SidebarStyledSelect = styled(Dropdown)`
   }
 `
 
+const clearCacheMutation = gql`
+  mutation clearCache {
+    clearCache
+  }
+`
+
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
@@ -162,6 +169,8 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       setUser(null)
     }
   }, [])
+
+  const [clearCache] = useMutation(clearCacheMutation)
 
   return (
     <AppSidebarView>
@@ -253,6 +262,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Text>logout</Text>
           </Button>
         </NavCategory>
+        {DEBUG && (
+          <Button
+            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+            onClick={() => clearCache()}
+            size={ButtonSize.MEDIUM}>
+            <Text>Clear cache</Text>
+          </Button>
+        )}
       </AppNav>
     </AppSidebarView>
   )
