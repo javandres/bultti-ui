@@ -30,3 +30,6 @@ src/data
 
 # Visual Studio Code
 .vscode
+
+# Webstorm
+.idea
