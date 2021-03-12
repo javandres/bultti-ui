@@ -1147,12 +1147,20 @@ type Sanction {
   id: ID!
   inspection: Inspection!
   inspectionId: String!
+  matchesException: SanctionException
   procurementUnitId: String
   sanctionAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+}
+
+type SanctionException {
+  departureProperty: String!
+  exceptionAppliesToReason: SanctionExceptionReason!
+  exceptionValue: String!
+  id: ID!
 }
 
 type SanctionSummaryReport {
@@ -1386,6 +1394,17 @@ enum OperatingAreaName {
   CENTER
   OTHER
   UNKNOWN
+}
+
+enum SanctionExceptionReason {
+  ALL
+  EQUIPMENT_AGE_VIOLATION
+  EQUIPMENT_APPROVED_AGE_VIOLATION
+  EQUIPMENT_OPTION_AGE_VIOLATION
+  EQUIPMENT_TYPE_VIOLATION
+  EXTERIOR_COLOR_VIOLATION
+  LATE_DEPARTURE
+  TIMING_STOP_VIOLATION
 }
 
 enum SanctionReason {

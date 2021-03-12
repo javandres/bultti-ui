@@ -82,6 +82,7 @@ export type Query = {
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
+  getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
 };
@@ -437,6 +438,11 @@ export type QueryObservedExecutionRequirementsArgs = {
 
 export type QueryPreviewObservedRequirementArgs = {
   requirementId: Scalars['String'];
+};
+
+
+export type QueryGetObservedInspectionDatesArgs = {
+  seasonId: Scalars['String'];
 };
 
 
@@ -1827,12 +1833,32 @@ export type Sanction = {
   appliedSanctionAmount: Scalars['Float'];
   sanctionableKilometers: Scalars['Float'];
   sanctionResultKilometers?: Maybe<Scalars['Float']>;
+  matchesException?: Maybe<SanctionException>;
 };
 
 export enum SanctionableEntity {
   Departure = 'DEPARTURE',
   EmissionClass = 'EMISSION_CLASS',
   Equipment = 'EQUIPMENT'
+}
+
+export type SanctionException = {
+  __typename?: 'SanctionException';
+  id: Scalars['ID'];
+  exceptionAppliesToReason: SanctionExceptionReason;
+  exceptionValue: Scalars['String'];
+  departureProperty: Scalars['String'];
+};
+
+export enum SanctionExceptionReason {
+  All = 'ALL',
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
+  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION',
+  LateDeparture = 'LATE_DEPARTURE'
 }
 
 export type Mutation = {
