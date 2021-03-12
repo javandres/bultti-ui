@@ -23,8 +23,8 @@ import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useHasInspectionError } from '../util/hasInspectionError'
-import { getReadableDate } from '../util/formatDate'
-import { getDateString } from '../util/formatDate'
+import { getDateString, getReadableDate } from '../util/formatDate'
+import { DateStatus } from '../common/components/HfpStatus'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -64,21 +64,6 @@ const DateStatusDisplay = styled.div`
 const DateProgressValue = styled.span``
 
 const LoadedDateRange = styled(DateRangeDisplay)``
-
-const DateStatus = styled.div<{ color: string }>`
-  display: flex;
-  align-items: center;
-
-  &:after {
-    content: '';
-    display: block;
-    width: 1rem;
-    height: 1rem;
-    background-color: ${(p) => p.color};
-    border-radius: 0.5rem;
-    margin-left: 0.5rem;
-  }
-`
 
 const currentlyLoadingRangesQuery = gql`
   query currentlyLoadingHfpRanges {

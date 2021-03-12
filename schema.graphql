@@ -507,6 +507,7 @@ type Inspection {
   endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
+  inspectionDate: InspectionDate
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
@@ -515,7 +516,7 @@ type Inspection {
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
-  operatorId: Int
+  operatorId: Int!
   postInspection: Inspection
   preInspection: Inspection
   season: Season!
@@ -530,7 +531,9 @@ type Inspection {
 
 type InspectionDate {
   endDate: BulttiDate!
+  hfpDataStatus: InspectionDateHfpStatus!
   id: ID!
+  inspections: [Inspection!]
   startDate: BulttiDate!
 }
 
@@ -1077,7 +1080,6 @@ type Query {
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
-  currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
@@ -1097,6 +1099,7 @@ type Query {
   executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExecutionRequirementsReport
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
+  getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
@@ -1148,12 +1151,20 @@ type Sanction {
   id: ID!
   inspection: Inspection!
   inspectionId: String!
+  matchesException: SanctionException
   procurementUnitId: String
   sanctionAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+}
+
+type SanctionException {
+  departureProperty: String!
+  exceptionAppliesToReason: SanctionExceptionReason!
+  exceptionValue: String!
+  id: ID!
 }
 
 type SanctionSummaryReport {
@@ -1343,6 +1354,12 @@ enum HfpStatus {
   READY
 }
 
+enum InspectionDateHfpStatus {
+  AVAILABLE
+  LOADING
+  UNAVAILABLE
+}
+
 enum InspectionStatus {
   Draft
   InProduction
@@ -1387,6 +1404,17 @@ enum OperatingAreaName {
   CENTER
   OTHER
   UNKNOWN
+}
+
+enum SanctionExceptionReason {
+  ALL
+  EQUIPMENT_AGE_VIOLATION
+  EQUIPMENT_APPROVED_AGE_VIOLATION
+  EQUIPMENT_OPTION_AGE_VIOLATION
+  EQUIPMENT_TYPE_VIOLATION
+  EXTERIOR_COLOR_VIOLATION
+  LATE_DEPARTURE
+  TIMING_STOP_VIOLATION
 }
 
 enum SanctionReason {

@@ -24,7 +24,6 @@ export type Query = {
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
-  currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
@@ -82,6 +81,7 @@ export type Query = {
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
   allInspectionDates: Array<InspectionDate>;
+  getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
 };
@@ -106,13 +106,6 @@ export type QueryInspectionsByOperatorArgs = {
 
 export type QueryInspectionsTimelineArgs = {
   inspectionType: InspectionType;
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
-  inspectionType: InspectionType;
-  seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };
 
@@ -440,6 +433,11 @@ export type QueryPreviewObservedRequirementArgs = {
 };
 
 
+export type QueryGetObservedInspectionDatesArgs = {
+  seasonId: Scalars['String'];
+};
+
+
 export type QueryInspectionSanctionsArgs = {
   filters?: Maybe<Array<InputFilterConfig>>;
   sort?: Maybe<Array<InputSortConfig>>;
@@ -472,7 +470,7 @@ export type Inspection = {
   preInspection?: Maybe<Inspection>;
   postInspection?: Maybe<Inspection>;
   defectInspection?: Maybe<Inspection>;
-  operatorId?: Maybe<Scalars['Int']>;
+  operatorId: Scalars['Int'];
   operator: Operator;
   seasonId: Scalars['String'];
   season: Season;
@@ -483,6 +481,7 @@ export type Inspection = {
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
+  inspectionDate?: Maybe<InspectionDate>;
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   startDate?: Maybe<Scalars['BulttiDate']>;
@@ -784,6 +783,21 @@ export enum InspectionStatus {
   InProduction = 'InProduction',
   Processing = 'Processing',
   Sanctionable = 'Sanctionable'
+}
+
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  hfpDataStatus: InspectionDateHfpStatus;
+  inspections?: Maybe<Array<Inspection>>;
+};
+
+export enum InspectionDateHfpStatus {
+  Unavailable = 'UNAVAILABLE',
+  Loading = 'LOADING',
+  Available = 'AVAILABLE'
 }
 
 export type ValidationErrorData = {
@@ -1794,13 +1808,6 @@ export type ProcurementUnitOption = {
   currentContracts?: Maybe<Array<Contract>>;
 };
 
-export type InspectionDate = {
-  __typename?: 'InspectionDate';
-  id: Scalars['ID'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-};
-
 export type SanctionsResponse = {
   __typename?: 'SanctionsResponse';
   filteredCount: Scalars['Int'];
@@ -1827,12 +1834,32 @@ export type Sanction = {
   appliedSanctionAmount: Scalars['Float'];
   sanctionableKilometers: Scalars['Float'];
   sanctionResultKilometers?: Maybe<Scalars['Float']>;
+  matchesException?: Maybe<SanctionException>;
 };
 
 export enum SanctionableEntity {
   Departure = 'DEPARTURE',
   EmissionClass = 'EMISSION_CLASS',
   Equipment = 'EQUIPMENT'
+}
+
+export type SanctionException = {
+  __typename?: 'SanctionException';
+  id: Scalars['ID'];
+  exceptionAppliesToReason: SanctionExceptionReason;
+  exceptionValue: Scalars['String'];
+  departureProperty: Scalars['String'];
+};
+
+export enum SanctionExceptionReason {
+  All = 'ALL',
+  EquipmentTypeViolation = 'EQUIPMENT_TYPE_VIOLATION',
+  EquipmentAgeViolation = 'EQUIPMENT_AGE_VIOLATION',
+  EquipmentOptionAgeViolation = 'EQUIPMENT_OPTION_AGE_VIOLATION',
+  EquipmentApprovedAgeViolation = 'EQUIPMENT_APPROVED_AGE_VIOLATION',
+  ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
+  TimingStopViolation = 'TIMING_STOP_VIOLATION',
+  LateDeparture = 'LATE_DEPARTURE'
 }
 
 export type Mutation = {
@@ -1883,6 +1910,7 @@ export type Mutation = {
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
+  clearCache: Scalars['Boolean'];
 };
 
 
