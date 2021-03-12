@@ -172,6 +172,9 @@
   "inspectionDateList_noResults": "Tarkastusjaksoja ei löytynyt",
   "inspectionDateForm_header": "Lisää uusi tarkastusjakso",
   "inspection_date_postInspectionDateSelectionHint": "Valittu tarkastusjakso replikoidaan koko viikon ajalle. Valitse aika, jolloin oletat olevan vähiten erikoispäivätyypin liikennettä.",
+  "inspectionDate_hfp_available": "HFP tiedot ladattu jaksolle",
+  "inspectionDate_hfp_loading": "HFP tiedot lataamassa jaksolle",
+  "inspectionDate_hfp_unavailable": "HFP tiedot ei löydetty jaksolle",
 
   "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
   "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",

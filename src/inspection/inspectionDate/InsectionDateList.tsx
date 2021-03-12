@@ -2,13 +2,15 @@ import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InspectionDate } from '../../schema-types'
-import { Text } from '../../util/translate'
+import { text, Text } from '../../util/translate'
 import { RemoveButton } from '../../common/components/Button'
 import { LoadingDisplay } from '../../common/components/Loading'
 import { useMutationData } from '../../util/useMutationData'
 import { removeInspectionDateMutation } from './inspectionDateQuery'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { MessageView } from '../../common/components/Messages'
+import { getHfpStatusColor, HfpStatusIndicator } from '../../common/components/HfpStatus'
+import { lowerCase } from 'lodash'
 
 const Header = styled.div`
   font-size: 1.2rem;
@@ -30,6 +32,11 @@ const ListItem = styled.div`
   &:nth-child(even) {
     background: var(--white-grey);
   }
+`
+
+const DateHfpStatus = styled(HfpStatusIndicator)`
+  margin-left: auto;
+  margin-right: 2rem;
 `
 
 interface PropTypes {
@@ -80,6 +87,11 @@ const InspectionDateList: React.FC<PropTypes> = observer(
                     startDate={inspectionDate.startDate}
                     endDate={inspectionDate.endDate}
                   />
+                  {inspectionDate.hfpDataStatus && (
+                    <DateHfpStatus color={getHfpStatusColor(inspectionDate.hfpDataStatus)}>
+                      {text(`inspectionDate_hfp_${lowerCase(inspectionDate.hfpDataStatus)}`)}
+                    </DateHfpStatus>
+                  )}
                   <RemoveButton onClick={() => removeItem(inspectionDate)} />
                 </ListItem>
               )

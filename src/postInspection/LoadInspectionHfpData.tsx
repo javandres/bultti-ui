@@ -24,7 +24,7 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { getDateString, getReadableDate } from '../util/formatDate'
-import { DateStatus } from '../common/components/HfpStatus'
+import { HfpStatusIndicator } from '../common/components/HfpStatus'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -346,7 +346,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
                   startDate={dateStatusRange[0].date}
                   endDate={dateStatusRange[dateStatusRange.length - 1].date}
                 />
-                <DateStatus
+                <HfpStatusIndicator
                   color={
                     status === HfpStatus.Ready
                       ? 'var(--green)'
@@ -355,7 +355,7 @@ const LoadInspectionHfpData = observer(({ setHfpLoaded }: PropTypes) => {
                       : 'var(--red)'
                   }>
                   {status}
-                </DateStatus>
+                </HfpStatusIndicator>
               </DateStatusDisplay>
             )
           })}

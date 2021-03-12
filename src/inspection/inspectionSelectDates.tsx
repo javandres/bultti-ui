@@ -15,7 +15,8 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
 import { addDays } from 'date-fns/esm'
 import { useQueryData } from '../util/useQueryData'
-import { DateStatus } from '../common/components/HfpStatus'
+import { HfpStatusIndicator, getHfpStatusColor } from '../common/components/HfpStatus'
+import { lowerCase } from 'lodash'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -36,7 +37,7 @@ interface DateOption {
     startDate: Date
     endDate: Date
   }
-  hfpDataStatusColor?: string
+  hfpDataStatus?: InspectionDateHfpStatus
 }
 
 export type PropTypes = {
@@ -98,7 +99,7 @@ const InspectionSelectDates = observer(
         )
 
         if (inspectionDateOption) {
-          selectedDateOption.hfpDataStatusColor = inspectionDateOption.hfpDataStatusColor
+          selectedDateOption.hfpDataStatus = inspectionDateOption.hfpDataStatus
         }
       }
 
@@ -119,8 +120,11 @@ const InspectionSelectDates = observer(
             itemToLabel={(item: DateOption) => (
               <InspectionDateLabel>
                 <span>{item.label}</span>
-                {item.hfpDataStatusColor && (
-                  <DateStatus color={item.hfpDataStatusColor}>{status}</DateStatus>
+                {item.hfpDataStatus && (
+                  <HfpStatusIndicator
+                    title={text(`inspectionDate_hfp_${lowerCase(item.hfpDataStatus)}`)}
+                    color={getHfpStatusColor(item.hfpDataStatus)}
+                  />
                 )}
               </InspectionDateLabel>
             )}
@@ -175,16 +179,9 @@ function getPostInspectionDateOptions(
       let { startDate, endDate, hfpDataStatus } = inspectionDate
       let label = getReadableDateRange({ start: startDate, end: endDate })
 
-      let statusColor =
-        hfpDataStatus === InspectionDateHfpStatus.Available
-          ? 'var(--green)'
-          : hfpDataStatus === InspectionDateHfpStatus.Loading
-          ? 'var(--yellow)'
-          : 'var(--red)'
-
       return {
         label,
-        hfpDataStatusColor: statusColor,
+        hfpDataStatus,
         value: {
           startDate: parseISO(startDate),
           endDate: parseISO(endDate),
