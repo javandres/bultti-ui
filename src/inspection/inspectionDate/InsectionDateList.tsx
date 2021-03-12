@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InspectionDate } from '../../schema-types'
@@ -11,6 +11,7 @@ import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { MessageView } from '../../common/components/Messages'
 import { getHfpStatusColor, HfpStatusIndicator } from '../../common/components/HfpStatus'
 import { lowerCase } from 'lodash'
+import InspectionDateHfpControl from './InspectionDateHfpControl'
 
 const Header = styled.div`
   font-size: 1.2rem;
@@ -22,22 +23,68 @@ const ListWrapper = styled.div`
 `
 
 const ListItem = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
   margin: 0 -1rem;
-  padding: 0.5rem 1rem;
 
   &:nth-child(even) {
     background: var(--white-grey);
   }
 `
 
+const ListItemHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+`
+
 const DateHfpStatus = styled(HfpStatusIndicator)`
   margin-left: auto;
   margin-right: 2rem;
+  background: transparent;
+  border: 0;
+  color: var(--grey);
+  font-family: inherit;
+  padding: 0.5rem 0.5rem;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.1s ease-out;
+  outline: none;
+
+  &:hover {
+    background: var(--lightest-grey);
+  }
 `
+
+type ListItemProps = {
+  inspectionDate: InspectionDate
+  removeItem: (inspectionDate: InspectionDate) => unknown
+}
+
+const InspectionDateListItem: React.FC<ListItemProps> = ({ inspectionDate, removeItem }) => {
+  let [hfpPanelIsOpen, setHfpPanelIsOpen] = useState(false)
+
+  return (
+    <ListItem>
+      <ListItemHeader>
+        <DateRangeDisplay
+          startDate={inspectionDate.startDate}
+          endDate={inspectionDate.endDate}
+        />
+        {inspectionDate.hfpDataStatus && (
+          <DateHfpStatus
+            onClick={() => setHfpPanelIsOpen((isOpen) => !isOpen)}
+            as={'button'}
+            color={getHfpStatusColor(inspectionDate.hfpDataStatus)}>
+            {text(`inspectionDate_hfp_${lowerCase(inspectionDate.hfpDataStatus)}`)}
+          </DateHfpStatus>
+        )}
+        <RemoveButton onClick={() => removeItem(inspectionDate)} />
+      </ListItemHeader>
+      {hfpPanelIsOpen && <InspectionDateHfpControl inspectionDate={inspectionDate} />}
+    </ListItem>
+  )
+}
 
 interface PropTypes {
   inspectionDates: InspectionDate[]
@@ -66,6 +113,7 @@ const InspectionDateList: React.FC<PropTypes> = observer(
         refetchInspectionDateList()
       }
     }
+
     return (
       <ListWrapper>
         <Header>
@@ -80,22 +128,13 @@ const InspectionDateList: React.FC<PropTypes> = observer(
                 <Text>inspectionDateList_noResults</Text>
               </MessageView>
             )}
-            {inspectionDates.map((inspectionDate: InspectionDate, index: number) => {
-              return (
-                <ListItem key={index}>
-                  <DateRangeDisplay
-                    startDate={inspectionDate.startDate}
-                    endDate={inspectionDate.endDate}
-                  />
-                  {inspectionDate.hfpDataStatus && (
-                    <DateHfpStatus color={getHfpStatusColor(inspectionDate.hfpDataStatus)}>
-                      {text(`inspectionDate_hfp_${lowerCase(inspectionDate.hfpDataStatus)}`)}
-                    </DateHfpStatus>
-                  )}
-                  <RemoveButton onClick={() => removeItem(inspectionDate)} />
-                </ListItem>
-              )
-            })}
+            {inspectionDates.map((inspectionDate: InspectionDate) => (
+              <InspectionDateListItem
+                key={inspectionDate.id}
+                removeItem={removeItem}
+                inspectionDate={inspectionDate}
+              />
+            ))}
           </>
         )}
       </ListWrapper>
