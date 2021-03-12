@@ -30,7 +30,7 @@ import { getDateString, getReadableDate } from '../../util/formatDate'
 import { HfpStatusIndicator } from '../../common/components/HfpStatus'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
-  margin: 1rem 1rem 0;
+  margin: 1rem;
   padding: 1rem;
   width: auto;
 `

@@ -24,6 +24,7 @@ const ListWrapper = styled.div`
 
 const ListItem = styled.div`
   margin: 0 -1rem;
+  overflow: auto;
 
   &:nth-child(even) {
     background: var(--white-grey);
