@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
+  Contract,
   EquipmentCatalogue as EquipmentCatalogueType,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
@@ -180,6 +181,18 @@ const ProcurementUnitItemContent = observer(
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
         <div style={{ marginBottom: '1rem' }}>
+          {procurementUnit && (
+            <>
+              <div>Sopimukset</div>)
+              {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
+                return (
+                  <div key={`contract-${index}`}>
+                    Sopimus {contract.startDate} - {contract.endDate}
+                  </div>
+                )
+              })}
+            </>
+          )}
           {!unitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}

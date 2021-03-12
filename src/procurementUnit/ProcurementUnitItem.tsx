@@ -123,7 +123,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>
-                    <Text>contracts</Text>
+                    <Text>contracts</Text> ({(currentContracts || []).length})
                   </HeaderHeading>
                   {(currentContracts || []).length !== 0 ? (
                     <>
