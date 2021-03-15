@@ -33,7 +33,7 @@ const MenuButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   disabled?: boolean
 }>`
   background: ${(p) => (p.disabled ? 'transparent' : 'var(--white-grey)')};
-  color: ${(p) => (p.disabled ? 'white' : 'var(--dark-grey)')};
+  color: ${(p) => (p.disabled ? 'var(--dark-grey)' : 'white')};
   padding: 0.75rem 1rem;
   border-radius: 0 0.5rem 0.5rem 0;
   border-color: var(--lighter-grey);
