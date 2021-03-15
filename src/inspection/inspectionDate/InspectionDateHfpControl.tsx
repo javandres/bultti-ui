@@ -17,17 +17,13 @@ import {
   parseISO,
   subDays,
 } from 'date-fns'
-import {
-  HfpDateStatus,
-  HfpStatus,
-  InspectionDate,
-  InspectionDateHfpStatus,
-} from '../../schema-types'
+import { HfpDateStatus, HfpStatus, InspectionDate } from '../../schema-types'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { LoadingDisplay } from '../../common/components/Loading'
 import { getDateString, getReadableDate } from '../../util/formatDate'
 import { HfpStatusIndicator } from '../../common/components/HfpStatus'
+import { text, Text } from '../../util/translate'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem;
@@ -80,8 +76,8 @@ const loadedRangesQuery = gql`
 `
 
 const loadHfpDataMutation = gql`
-  mutation loadHfpDataForInspectionPeriod($inspectionId: String!) {
-    loadHfpDataForInspectionPeriod(inspectionId: $inspectionId) {
+  mutation loadHfpDataForInspectionPeriod($inspectionDateId: String!) {
+    loadHfpDataForInspectionPeriod(inspectionDateId: $inspectionDateId) {
       status
       date
     }
@@ -111,7 +107,7 @@ type PropTypes = {
 }
 
 const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
-  let hfpMissing = inspectionDate.hfpDataStatus !== InspectionDateHfpStatus.Available
+  let hfpMissing = inspectionDate.hfpDataStatus !== HfpStatus.Ready
 
   let [dateProgress, setDateProgress] = useState<Map<string, number>>(
     new Map<string, number>()
@@ -273,7 +269,9 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
 
   return (
     <LoadInspectionHfpDataView error={hfpMissing}>
-      <InputLabel>Tarkastusjakson HFP ohjauspaneeli</InputLabel>
+      <InputLabel>
+        <Text>inspectionDate_hfpPanel_title</Text>
+      </InputLabel>
       <LoadButton
         loading={hfpDataLoading}
         size={ButtonSize.LARGE}
@@ -284,12 +282,12 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
           inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
         }>
         {loadedRangesLoading
-          ? 'Tarkistetaan tilannetta...'
+          ? text('inspectionDate_hfpPanel_checkingStatus')
           : inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
-          ? 'Tarkastusjakson päivämäärät ladataan'
+          ? text('inspectionDate_hfpPanel_loadingDates')
           : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
-          ? 'Tarkastusjaksolle löytyy kaikki HFP tiedot'
-          : 'Lataa tarkastukseen tarvittava HFP'}
+          ? text('inspectionDate_hfpPanel_datesLoaded')
+          : text('inspectionDate_hfpPanel_loadHfpForDates')}
       </LoadButton>
       <div
         style={{
@@ -301,7 +299,9 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
       </div>
       {!loadedRangesLoading && (
         <LoadedRangesDisplay>
-          <InputLabel style={{ marginLeft: '1rem' }}>HFP tietojen tilanne</InputLabel>
+          <InputLabel style={{ marginLeft: '1rem' }}>
+            <Text>inspectionDate_hfpPanel_hfpStatus</Text>
+          </InputLabel>
           {dateStatusByRanges.map((dateStatusRange) => {
             let status = dateStatusRange[0].status
 
@@ -319,7 +319,7 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
                       ? 'var(--yellow)'
                       : 'var(--red)'
                   }>
-                  {status}
+                  {text(`inspectionDate_hfp_${status.toLowerCase()}`)}
                 </HfpStatusIndicator>
               </DateStatusDisplay>
             )
@@ -327,7 +327,7 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
           {dateProgress.size !== 0 && (
             <>
               <InputLabel style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
-                Nyt lataamassa
+                <Text>inspectionDate_hfpPanel_nowLoading</Text>
               </InputLabel>
               {inspectionDates.map((date) => {
                 let dateStr = getDateString(date)

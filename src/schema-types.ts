@@ -790,15 +790,9 @@ export type InspectionDate = {
   id: Scalars['ID'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
-  hfpDataStatus: InspectionDateHfpStatus;
+  hfpDataStatus: HfpStatus;
   inspections?: Maybe<Array<Inspection>>;
 };
-
-export enum InspectionDateHfpStatus {
-  Unavailable = 'UNAVAILABLE',
-  Loading = 'LOADING',
-  Available = 'AVAILABLE'
-}
 
 export type ValidationErrorData = {
   __typename?: 'ValidationErrorData';
@@ -1915,7 +1909,7 @@ export type Mutation = {
 
 
 export type MutationLoadHfpDataForInspectionPeriodArgs = {
-  inspectionId: Scalars['String'];
+  inspectionDateId: Scalars['String'];
 };
 
 

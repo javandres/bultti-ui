@@ -2,12 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { eachWeekOfInterval, isBefore, parseISO, startOfWeek, subMonths } from 'date-fns'
-import {
-  InspectionDate,
-  InspectionDateHfpStatus,
-  InspectionInput,
-  InspectionType,
-} from '../schema-types'
+import { HfpStatus, InspectionDate, InspectionInput, InspectionType } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString, getReadableDateRange } from '../util/formatDate'
 import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
@@ -15,7 +10,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
 import { addDays } from 'date-fns/esm'
 import { useQueryData } from '../util/useQueryData'
-import { HfpStatusIndicator, getHfpStatusColor } from '../common/components/HfpStatus'
+import { getHfpStatusColor, HfpStatusIndicator } from '../common/components/HfpStatus'
 import { lowerCase } from 'lodash'
 
 const InspectionSelectDatesView = styled.div`
@@ -37,7 +32,7 @@ interface DateOption {
     startDate: Date
     endDate: Date
   }
-  hfpDataStatus?: InspectionDateHfpStatus
+  hfpDataStatus?: HfpStatus
 }
 
 export type PropTypes = {

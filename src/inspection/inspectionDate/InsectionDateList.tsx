@@ -77,7 +77,7 @@ const InspectionDateListItem: React.FC<ListItemProps> = ({ inspectionDate, remov
             onClick={() => setHfpPanelIsOpen((isOpen) => !isOpen)}
             as={'button'}
             color={getHfpStatusColor(inspectionDate.hfpDataStatus)}>
-            {text(`inspectionDate_hfp_${lowerCase(inspectionDate.hfpDataStatus)}`)}
+            {text(`inspectionDate_hfp_${inspectionDate.hfpDataStatus.toLowerCase()}`)}
           </DateHfpStatus>
         )}
         <RemoveButton onClick={() => removeItem(inspectionDate)} />

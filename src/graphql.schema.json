@@ -7005,7 +7005,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "InspectionDateHfpStatus",
+                "name": "HfpStatus",
                 "ofType": null
               }
             },
@@ -7036,35 +7036,6 @@
         "inputFields": null,
         "interfaces": [],
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "InspectionDateHfpStatus",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "UNAVAILABLE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "LOADING",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "AVAILABLE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {
@@ -20147,7 +20118,7 @@
             "description": null,
             "args": [
               {
-                "name": "inspectionId",
+                "name": "inspectionDateId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",

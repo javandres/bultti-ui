@@ -1,5 +1,5 @@
 import styled from 'styled-components/macro'
-import { InspectionDateHfpStatus } from '../../schema-types'
+import { HfpStatus } from '../../schema-types'
 
 export const HfpStatusIndicator = styled.div<{ color: string }>`
   display: flex;
@@ -17,9 +17,9 @@ export const HfpStatusIndicator = styled.div<{ color: string }>`
   }
 `
 
-export const getHfpStatusColor = (hfpDataStatus: InspectionDateHfpStatus) =>
-  hfpDataStatus === InspectionDateHfpStatus.Available
+export const getHfpStatusColor = (hfpDataStatus: HfpStatus) =>
+  hfpDataStatus === HfpStatus.Ready
     ? 'var(--green)'
-    : hfpDataStatus === InspectionDateHfpStatus.Loading
+    : hfpDataStatus === HfpStatus.Loading
     ? 'var(--yellow)'
     : 'var(--red)'

@@ -531,7 +531,7 @@ type Inspection {
 
 type InspectionDate {
   endDate: BulttiDate!
-  hfpDataStatus: InspectionDateHfpStatus!
+  hfpDataStatus: HfpStatus!
   id: ID!
   inspections: [Inspection!]
   startDate: BulttiDate!
@@ -675,7 +675,7 @@ type Mutation {
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
-  loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
+  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
@@ -1352,12 +1352,6 @@ enum HfpStatus {
   LOADING
   NOT_LOADED
   READY
-}
-
-enum InspectionDateHfpStatus {
-  AVAILABLE
-  LOADING
-  UNAVAILABLE
 }
 
 enum InspectionStatus {
