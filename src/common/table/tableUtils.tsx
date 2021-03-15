@@ -112,7 +112,6 @@ export const defaultRenderInput = <ItemType extends {}>(
   <TableInput
     autoFocus
     tabIndex={tabIndex}
-    theme="light"
     value={val}
     onChange={(value) => onChange(value)}
     name={key as string}

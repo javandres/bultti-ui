@@ -25,7 +25,6 @@ const GlobalOperatorFilter: React.FC = observer(() => {
       onSelect={setOperatorFilter}
       value={operator}
       label={userIsOperator ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
-      theme="dark"
       selectInitialId={initialOperatorId}
     />
   )

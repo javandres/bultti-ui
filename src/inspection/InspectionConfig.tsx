@@ -100,7 +100,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           <FlexRow>
             {inspection.status !== InspectionStatus.Draft && (
               <FormColumn>
-                <InputLabel theme="light">{text('inspection_inspectionSeason')}</InputLabel>
+                <InputLabel>{text('inspection_inspectionSeason')}</InputLabel>
                 <ControlGroup>
                   <Input
                     type="date"
