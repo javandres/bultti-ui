@@ -90,18 +90,12 @@ const KeyValueInput = observer(
           return (
             <KeyValueRow key={`kv_${index}`}>
               <InputWrapper>
-                <KeyInput
-                  disabled={isReadOnlyKey}
-                  value={key}
-                  theme="light"
-                  onChange={onKeyChange(key)}
-                />
+                <KeyInput disabled={isReadOnlyKey} value={key} onChange={onKeyChange(key)} />
               </InputWrapper>
               <InputWrapper>
                 <ValueInput
                   disabled={isReadOnlyValue}
                   value={value}
-                  theme="light"
                   onChange={onValueChange(key)}
                 />
               </InputWrapper>

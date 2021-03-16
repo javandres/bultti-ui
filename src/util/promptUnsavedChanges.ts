@@ -21,8 +21,12 @@ export const usePromptUnsavedChanges = ({
     } else {
       nextUnsavedIds = nextUnsavedIds.filter((id) => id !== uniqueComponentId)
     }
-
     setUnsavedFormIds(nextUnsavedIds)
+
+    return () => {
+      nextUnsavedIds = nextUnsavedIds.filter((id) => id !== uniqueComponentId)
+      setUnsavedFormIds(nextUnsavedIds)
+    }
   }, [shouldShowPrompt])
 }
 
@@ -30,7 +34,6 @@ export const promptUnsavedChangesOnClickEvent = (unsavedFormIdsState) => (
   clickEvent: React.MouseEvent
 ) => {
   let [unsavedFormIds, setUnsavedFormIds] = unsavedFormIdsState
-
   if (unsavedFormIds.length > 0) {
     if (window.confirm(DEFAULT_MESSAGE)) {
       setUnsavedFormIds([])

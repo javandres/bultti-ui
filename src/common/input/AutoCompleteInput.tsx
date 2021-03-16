@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components/macro'
 import { useCombobox } from 'downshift'
 import { Button, ButtonSize } from '../components/Button'
 import { ArrowDown } from '../icon/ArrowDown'
-import { ThemeTypes } from '../../type/common'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/form'
 import { TextInput } from './Input'
@@ -31,12 +30,10 @@ const AutoCompleteWrapper = styled.div`
 `
 
 const MenuButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
-  theme: ThemeTypes
   disabled?: boolean
 }>`
   background: ${(p) => (p.disabled ? 'transparent' : 'var(--white-grey)')};
-  color: ${(p) =>
-    p.disabled ? (p.theme === 'light' ? 'var(--dark-grey)' : 'white') : 'var(--dark-grey)'};
+  color: ${(p) => (p.disabled ? 'var(--dark-grey)' : 'white')};
   padding: 0.75rem 1rem;
   border-radius: 0 0.5rem 0.5rem 0;
   border-color: var(--lighter-grey);
@@ -56,22 +53,22 @@ const MenuButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
       ? css`
           &:hover {
             transform: none;
-            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--lighter-grey)')};
+            background: var(--lighter-grey);
             border-color: var(--lighter-grey);
 
             svg * {
-              fill: ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-grey)')};
+              fill: var(--dark-grey);
             }
           }
         `
       : ''}
 `
 
-const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
+const SuggestionsList = styled.ul<{ isOpen: boolean }>`
   list-style: none;
   width: 100%;
   border-radius: 0 0 0.5rem 0.5rem;
-  background: ${(p) => (p.theme === 'light' ? 'white' : 'var(--dark-grey)')};
+  background: var(--dark-grey);
   max-height: 265px;
   overflow-y: auto;
   position: absolute;
@@ -81,14 +78,13 @@ const SuggestionsList = styled.ul<{ isOpen: boolean; inverted: ThemeTypes }>`
   left: 0;
   padding: 0.5rem 0 0;
   margin: 0;
-  border: 1px solid ${(p) => (p.theme === 'light' ? 'var(--blue)' : 'var(--dark-blue)')};
+  border: 1px solid var(--dark-blue);
   border-top: 0;
   opacity: ${(p) => (p.isOpen ? 1 : 0)};
 `
 
 const SuggestionItem = styled.li<{ highlighted: boolean }>`
-  color: ${(p) =>
-    p.highlighted ? 'white' : p.theme === 'light' ? 'var(--dark-grey)' : 'white'};
+  color: white;
   cursor: pointer;
   padding: 0.75rem 1rem;
   background: ${(p) => (p.highlighted ? 'var(--dark-blue)' : 'transparent')};
@@ -108,7 +104,6 @@ export type AutoCompleteProps = {
   selectedItem?: any
   className?: string
   style?: CSSProperties
-  theme?: ThemeTypes
 }
 
 function toString(item, converter?: string | ((item) => string)) {
@@ -138,7 +133,6 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
     selectedItem,
     itemToString = 'id',
     itemToLabel = 'label',
-    theme = 'light',
   }) => {
     const [currentValue, setCurrentValue] = useState(
       toString(selectedItem, itemToString) || ''
@@ -180,36 +174,25 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
     })
 
     return (
-      <AutoCompleteView className={className} style={style} theme={theme}>
+      <AutoCompleteView className={className} style={style}>
         {!!label && (
-          <InputLabel {...getLabelProps()} htmlFor="null" theme={theme}>
+          <InputLabel {...getLabelProps()} htmlFor="null">
             {label}
           </InputLabel>
         )}
         <AutoCompleteWrapper {...getComboboxProps()}>
-          <AutoCompleteInput
-            theme="light"
-            {...getInputProps()}
-            disabled={disabled}
-            onBlur={onBlur}
-          />
+          <AutoCompleteInput {...getInputProps()} disabled={disabled} onBlur={onBlur} />
           {!disabled && (
             <MenuButton
               {...getToggleButtonProps({
                 disabled,
-              })}
-              theme={theme}>
+              })}>
               <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
             </MenuButton>
           )}
-          <SuggestionsList
-            {...getMenuProps({ disabled })}
-            disabled={disabled}
-            theme={theme}
-            isOpen={isOpen}>
+          <SuggestionsList {...getMenuProps({ disabled })} disabled={disabled} isOpen={isOpen}>
             {currentItems.map((item, index) => (
               <SuggestionItem
-                theme={theme}
                 highlighted={highlightedIndex === index}
                 {...getItemProps({
                   key: toString(item, itemToString),

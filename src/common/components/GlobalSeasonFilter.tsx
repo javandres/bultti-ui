@@ -19,7 +19,6 @@ const GlobalSeasonFilter: React.FC = observer(() => {
       onSelect={setSeasonFilter}
       value={season}
       label="Valitse kausi"
-      theme="dark"
       selectInitialId={initialSeasonId}
     />
   )

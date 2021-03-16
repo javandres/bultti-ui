@@ -43,7 +43,6 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
   let { filters = [], sort = [] } = tableState
 
   type ReportDataType = ReportTypeByName[typeof reportName]
-  type ReportRowsType = ReportDataType['rows']
 
   let { data: report, loading: reportLoading, refetch } = useQueryData<
     BaseReport<ReportDataType>

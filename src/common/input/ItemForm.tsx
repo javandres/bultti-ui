@@ -124,13 +124,7 @@ const defaultRenderInput = (key, val, onChange, readOnly = false) =>
   readOnly ? (
     renderReadOnlyField(val)
   ) : (
-    <TextInput
-      type="text"
-      theme="light"
-      value={val}
-      onChange={(e) => onChange(e.target.value)}
-      name={key}
-    />
+    <TextInput type="text" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
   )
 
 const defaultRenderLabel = (key, val, labels, hints) => (

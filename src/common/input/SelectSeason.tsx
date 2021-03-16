@@ -9,7 +9,6 @@ import { useSeasons } from '../../util/useSeasons'
 export type PropTypes = {
   label?: string | null
   className?: string
-  theme?: 'light' | 'dark'
   value: null | Season | string
   onSelect: (season: null | Season) => void
   selectInitialId?: string
@@ -20,15 +19,7 @@ const valueIsSeason = (value: null | Season | string): value is Season =>
   !!value && typeof value !== 'string' && typeof value?.id !== 'undefined'
 
 const SelectSeason: React.FC<PropTypes> = observer(
-  ({
-    enableAll = false,
-    onSelect,
-    value = null,
-    label,
-    className,
-    theme = 'light',
-    selectInitialId,
-  }) => {
+  ({ enableAll = false, onSelect, value = null, label, className, selectInitialId }) => {
     let unselectedVal = enableAll ? 'Kaikki' : '...'
     let seasonsData = useSeasons()
 
@@ -98,7 +89,6 @@ const SelectSeason: React.FC<PropTypes> = observer(
     return (
       <Dropdown
         className={className}
-        theme={theme}
         label={!label ? '' : label || 'Aikataulukausi'}
         items={seasons}
         onSelect={onSelectSeason}
