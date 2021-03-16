@@ -24,7 +24,7 @@ export const useAuth = (): [AuthState, boolean] => {
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
   const [login, { loading: isLogingLoading }] = useMutationData<User>(loginMutation)
-  const [isLoggingIn, setIsLoggingIn] = useState<boolean>(false)
+  const [isLoginFailed, setIsLoginFailed] = useState<boolean>(false)
   const {
     data: fetchedUser,
     refetch: refetchUserCb,
@@ -48,11 +48,11 @@ export const useAuth = (): [AuthState, boolean] => {
     if (fetchedUser) {
       setCurrentUser(fetchedUser)
     } else {
-      if (!isLoggingIn) {
+      if (isLoginFailed) {
         setErrorMessage(text('login_failed'))
       }
     }
-  }, [fetchedUser, isCurrentUserLoading, currentUser, isLoggingIn])
+  }, [fetchedUser, isCurrentUserLoading, currentUser, isLoginFailed])
 
   useEffect(() => {
     if (getAuthToken() && !currentUser && !fetchedUser && !isCurrentUserLoading) {
@@ -100,7 +100,6 @@ export const useAuth = (): [AuthState, boolean] => {
     }
 
     if (codeUrlParam && authState === AuthState.UNAUTHENTICATED) {
-      setIsLoggingIn(true)
       setAuthState(AuthState.PENDING)
       setUrlValue('code', null)
       setUrlValue('isTest', null)
@@ -121,8 +120,8 @@ export const useAuth = (): [AuthState, boolean] => {
           refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
+          setIsLoginFailed(true)
         }
-        setIsLoggingIn(false)
       })
     }
   }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
