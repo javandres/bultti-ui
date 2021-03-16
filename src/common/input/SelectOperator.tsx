@@ -23,7 +23,6 @@ export type PropTypes = {
   label?: string | null
   className?: string
   style?: CSSProperties
-  theme?: 'light' | 'dark'
   value: null | Operator | number
   onSelect: (operator: null | Operator) => void
   selectInitialId?: number
@@ -54,7 +53,6 @@ const SelectOperator: React.FC<PropTypes> = observer(
     label,
     className,
     style,
-    theme = 'light',
     disabled = false,
     selectInitialId,
     useUnselected = true,
@@ -130,7 +128,6 @@ const SelectOperator: React.FC<PropTypes> = observer(
         disabled={disabled || operators.length < 2}
         className={className}
         style={style}
-        theme={theme}
         label={label || undefined}
         items={operators}
         onSelect={onSelectOperator}

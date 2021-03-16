@@ -134,7 +134,6 @@ const TablePagingControl = observer(
                     justifyContent: 'center',
                   }}>
                   <PageSelectDropdown
-                    theme="light"
                     selectedItem={pageState.currentPage || 1}
                     items={pageOptions}
                     onSelect={(selectedPage) => pageState.setCurrentPage(selectedPage)}

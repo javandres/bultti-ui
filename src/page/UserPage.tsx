@@ -82,7 +82,6 @@ const UserPage: React.FC<PropTypes> = observer(() => {
       return (
         <TextInput
           type="text"
-          theme="light"
           value={val}
           onChange={(e) => onChange(e.target.value)}
           name={key}

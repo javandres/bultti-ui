@@ -167,7 +167,6 @@ const TableFiltersControl = observer(
                       onChange={(nextVal) => onChangeFilter(index, nextVal)}
                       name="filter"
                       type="text"
-                      theme="light"
                       label={`${text('report_filtering_filter_on')} ${
                         selectedFilterOption?.label || text('all')
                       }`}

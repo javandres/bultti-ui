@@ -1,6 +1,5 @@
 import {
   ApolloError,
-  ApolloQueryResult,
   LazyQueryHookOptions,
   OperationVariables,
   QueryHookOptions,

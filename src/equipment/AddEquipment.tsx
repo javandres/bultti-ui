@@ -192,7 +192,6 @@ const AddEquipment: React.FC<PropTypes> = observer(
             </SubHeading>
             <Text>equipment_batchAddEquipment</Text>
             <TextArea
-              theme="light"
               value={batchInput}
               onChange={(e) => setBatchInput(e.target.value)}
               style={{ width: '100%' }}

@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import { Column } from './common'
-import { ThemeTypes } from '../../type/common'
 import { observer } from 'mobx-react-lite'
 import UserHint from './UserHint'
 import { CSSProperties } from 'react'
@@ -34,7 +33,6 @@ export const ControlGroup = styled.div`
 `
 
 const InputLabelWrapper = styled.label<{
-  theme?: ThemeTypes
   subLabel?: boolean
   hintText?: string
 }>`
@@ -43,13 +41,12 @@ const InputLabelWrapper = styled.label<{
   font-size: ${(p) => (p.subLabel ? '0.65rem' : '0.875rem')};
   font-weight: bold;
   text-transform: uppercase;
-  color: ${({ theme = 'light' }) => (theme === 'light' ? 'var(--dark-grey)' : '#eeeeee')};
+  color: var(--dark-grey);
   margin: 0;
   padding-bottom: 0.5rem;
 `
 
 type PropTypes = {
-  theme?: ThemeTypes
   subLabel?: boolean
   hintText?: string
   style?: CSSProperties
@@ -57,9 +54,9 @@ type PropTypes = {
 }
 
 export const InputLabel: React.FC<PropTypes> = observer(
-  ({ theme = 'light', subLabel, hintText, children, style = {}, className }) => {
+  ({ subLabel, hintText, children, style = {}, className }) => {
     return (
-      <InputLabelWrapper theme={theme} subLabel={subLabel} style={style} className={className}>
+      <InputLabelWrapper subLabel={subLabel} style={style} className={className}>
         {children}
         {hintText && <UserHint hintText={hintText} />}
       </InputLabelWrapper>

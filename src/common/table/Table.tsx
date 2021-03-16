@@ -46,11 +46,11 @@ const TableView = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
 `
 
-export const TableInput = styled(Input).attrs(() => ({ theme: 'light' }))`
+export const TableInput = styled(Input)`
   width: 100%;
 `
 
-export const TableTextInput = styled(TextInput).attrs(() => ({ theme: 'light' }))`
+export const TableTextInput = styled(TextInput)`
   font-family: var(--font-family);
   font-size: 0.75rem;
   padding: 0.25rem;
