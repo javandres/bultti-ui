@@ -178,7 +178,6 @@ const renderInput = ({
     return (
       <TextArea
         value={val || ''}
-        theme="light"
         onChange={(e) => onChange(e.target.value)}
         name={key}
         style={{ width: '100%' }}
@@ -191,13 +190,7 @@ const renderInput = ({
   }
 
   return (
-    <TextInput
-      type="text"
-      theme="light"
-      value={val}
-      onChange={(e) => onChange(e.target.value)}
-      name={key}
-    />
+    <TextInput type="text" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
   )
 }
 

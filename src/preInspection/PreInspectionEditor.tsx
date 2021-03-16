@@ -50,7 +50,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
           isValid={!departureBlocksInvalid}
         />
         <PreInspectionExecutionRequirements isValid={!executionRequirementsInvalid} />
-        <SectionHeading theme="light">
+        <SectionHeading>
           <Text>procurementUnits</Text>
         </SectionHeading>
         {inspection && (

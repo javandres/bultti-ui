@@ -132,7 +132,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
 
   return (
     <InspectionTimelineView>
-      <InputLabel theme="light">Edelliset tarkastusjaksot</InputLabel>
+      <InputLabel>Edelliset tarkastusjaksot</InputLabel>
       <TimelineWrapper>
         {previousProdInspections.length === 0 && renderSeasonStartOnce()}
         {previousProdInspections.length !== 0 &&

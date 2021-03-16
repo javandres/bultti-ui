@@ -118,11 +118,28 @@ export const SidebarStyledSelect = styled(Dropdown)`
 
   > div {
     padding: 0 1rem 1rem;
+
+    > button {
+      border: 1px solid var(--dark-blue);
+      &:hover {
+        background: var(--lighter-grey);
+        transition: 0s;
+        > svg * {
+          fill: var(--dark-grey);
+        }
+      }
+    }
   }
 
   ul {
     left: 1rem;
     width: calc(100% - 2rem);
+    background: var(--dark-grey);
+    border: 1px solid var(--dark-blue);
+    > li {
+      color: white;
+      font-size: 1rem;
+    }
   }
 `
 

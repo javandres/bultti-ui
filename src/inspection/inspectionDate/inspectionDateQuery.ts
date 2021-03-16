@@ -21,6 +21,15 @@ export const allInspectionDatesQuery = gql`
   ${InspectionDateFragment}
 `
 
+export const getObservedInspectionDatesQuery = gql`
+  query getObservedInspectionDates($seasonId: String!) {
+    getObservedInspectionDates(seasonId: $seasonId) {
+      ...InspectionDateFragment
+    }
+  }
+  ${InspectionDateFragment}
+`
+
 export const createInspectionDateMutation = gql`
   mutation createInspectionDate($inspectionDateInput: InspectionDateInput!) {
     createInspectionDate(inspectionDate: $inspectionDateInput) {

@@ -82,7 +82,7 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={loading} />
         <FlexRow>
           <FormColumn>
-            <InputLabel theme="light">Tuotantojakso</InputLabel>
+            <InputLabel>Tuotantojakso</InputLabel>
             <ControlGroup>
               <SelectDate
                 name="production_start"

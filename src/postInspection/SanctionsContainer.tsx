@@ -6,6 +6,7 @@ import {
   Inspection,
   Sanction,
   SanctionableEntity,
+  SanctionException,
   SanctionsResponse,
   SanctionUpdate,
 } from '../schema-types'
@@ -54,6 +55,7 @@ let sanctionColumnLabels = {
   sanctionableKilometers: 'Kilometrisuorite',
   appliedSanctionAmount: 'Sanktioidaan',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
+  matchesException: 'Sanktiopoikkeus',
 }
 
 let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, onChange) => {
@@ -99,6 +101,12 @@ let sanctionsQuery = gql`
         sanctionableType
         appliedSanctionAmount
         sanctionResultKilometers
+        matchesException {
+          id
+          departureProperty
+          exceptionAppliesToReason
+          exceptionValue
+        }
       }
     }
   }
@@ -275,6 +283,20 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     []
   )
 
+  let transformItems = useCallback((items) => {
+    return items.map((item) => {
+      if (item.matchesException) {
+        let exception: SanctionException = item.matchesException
+        return {
+          ...item,
+          matchesException: `${exception.exceptionAppliesToReason}:${exception.departureProperty}:${exception.exceptionValue}`,
+        }
+      }
+
+      return item
+    })
+  }, [])
+
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
@@ -317,6 +339,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           isAlwaysEditable={true}
           groupBy={groupByFn}
           renderValue={renderValue}
+          transformItems={transformItems}
         />
       </PageSection>
     </PostInspectionSanctionsView>

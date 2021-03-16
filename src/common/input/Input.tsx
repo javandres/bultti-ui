@@ -1,33 +1,21 @@
 import React, { InputHTMLAttributes, useCallback } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { ThemeTypes } from '../../type/common'
 import { InputLabel } from '../components/form'
 
 const InputView = styled.div``
 
 export const TextInput = styled.input<{
-  theme: ThemeTypes
   readOnly?: boolean
   disabled?: boolean
 }>`
   font-family: var(--font-family);
-  background: ${(p) =>
-    p.theme === 'light'
-      ? p.readOnly || p.disabled
-        ? 'var(--disabled-grey)'
-        : 'white'
-      : 'white'};
+  background: ${(p) => (p.readOnly || p.disabled ? 'var(--disabled-grey)' : 'white')};
   color: var(--dark-grey);
   width: 100%;
   padding: 0.75rem;
   border-radius: 8px;
-  border: ${(p) =>
-    p.readOnly || p.disabled
-      ? '1px solid #ededed'
-      : p.theme === 'light'
-      ? '1px solid #dadada'
-      : '1px solid var(--dark-blue)'};
+  border: ${(p) => (p.readOnly || p.disabled ? '1px solid #ededed' : '1px solid #dadada')};
   font-size: 1rem;
   line-height: 1.3;
   height: 40px;
@@ -40,7 +28,7 @@ export const TextInput = styled.input<{
     !p.readOnly
       ? css`
           &:focus {
-            background: ${(p) => (p.theme === 'light' ? '#fafafa' : 'var(--white-grey)')};
+            background: #fafafa;
             transform: scale(1.01);
             border-color: var(--blue);
             color: var(--dark-grey);
@@ -61,7 +49,6 @@ export type PropTypes = {
   label?: string
   subLabel?: boolean
   type?: InputType
-  theme?: ThemeTypes
   hintText?: string
   inputComponent?: React.ComponentType
   tabIndex?: number
@@ -77,7 +64,6 @@ const Input: React.FC<PropTypes> = observer(
     label,
     subLabel,
     type = 'text',
-    theme = 'light',
     hintText,
     inputComponent = TextInput,
     tabIndex,
@@ -115,14 +101,13 @@ const Input: React.FC<PropTypes> = observer(
     return (
       <InputView className={className}>
         {!!label && (
-          <InputLabel subLabel={subLabel} theme={theme} hintText={hintText}>
+          <InputLabel subLabel={subLabel} hintText={hintText}>
             {label}
           </InputLabel>
         )}
         <InputComponent
           {...inputProps}
           type={type}
-          theme={theme}
           value={value}
           tabIndex={tabIndex}
           onChange={onValueChange}

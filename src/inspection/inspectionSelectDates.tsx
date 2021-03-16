@@ -1,17 +1,17 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, isBefore, parseISO, startOfWeek, subMonths } from 'date-fns'
-import { HfpStatus, InspectionDate, InspectionInput, InspectionType } from '../schema-types'
+import { eachWeekOfInterval, isBefore, parseISO, startOfWeek, endOfWeek, subMonths } from 'date-fns'
+import { HfpStatus, InspectionDate, InspectionInput, InspectionType, Season } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString, getReadableDateRange } from '../util/formatDate'
-import { allInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
+import { getObservedInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
-import { addDays } from 'date-fns/esm'
 import { useQueryData } from '../util/useQueryData'
 import { getHfpStatusColor, HfpStatusIndicator } from '../common/components/HfpStatus'
 import { lowerCase } from 'lodash'
+import { useStateValue } from '../state/useAppState'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -44,16 +44,21 @@ export type PropTypes = {
 
 const InspectionSelectDates = observer(
   ({ isEditingDisabled, inspectionType, inspectionInput, onChange }: PropTypes) => {
+    let [season] = useStateValue<Season>('globalSeason')
+
     let {
       data: inspectionDatesQueryResult,
       loading: areInspectionDatesLoading,
-    } = useQueryData<InspectionDate[]>(allInspectionDatesQuery, {
+    } = useQueryData<InspectionDate[]>(getObservedInspectionDatesQuery, {
+      variables: {
+        seasonId: season.id,
+      },
       skip: inspectionType === InspectionType.Pre,
     })
 
     let dateOptions: DateOption[] = useMemo(() => {
       if (inspectionType === InspectionType.Pre) {
-        return getPreInspectionDateOptions()
+        return getPreInspectionDateOptions(season)
       }
       return inspectionDatesQueryResult
         ? getPostInspectionDateOptions(inspectionDatesQueryResult)
@@ -135,17 +140,17 @@ const InspectionSelectDates = observer(
   }
 )
 
-function getPreInspectionDateOptions(): DateOption[] {
-  let startDate = new Date()
-  let endDate = addDays(startDate, 90)
+function getPreInspectionDateOptions(season: Season): DateOption[] {
+  let seasonStartDates = eachWeekOfInterval(
+    {
+      start: getDateObject(season.startDate),
+      end: getDateObject(season.endDate),
+    },
+    { weekStartsOn: 1 }
+  )
 
-  let dateOptionsEndDates = eachWeekOfInterval({
-    start: startDate,
-    end: endDate,
-  })
-
-  return dateOptionsEndDates.map((endDate) => {
-    let startDate = startOfWeek(endDate, { weekStartsOn: 1 })
+  return seasonStartDates.map((startDate) => {
+    let endDate = endOfWeek(startDate, { weekStartsOn: 1 })
     let value = {
       startDate,
       endDate,
@@ -163,25 +168,18 @@ function getPreInspectionDateOptions(): DateOption[] {
 function getPostInspectionDateOptions(
   inspectionDatesQueryResult: InspectionDate[]
 ): DateOption[] {
-  let dateOneMonthAgo = subMonths(new Date(), 1)
-  const isInspectionDateValid = (inspectionDate: InspectionDate) => {
-    // Only dates that are older than 1 month are valid
-    return isBefore(getDateObject(inspectionDate.endDate), dateOneMonthAgo)
-  }
+  return inspectionDatesQueryResult.map((inspectionDate: InspectionDate) => {
+    let { startDate, endDate, hfpDataStatus } = inspectionDate
+    let label = getReadableDateRange({ start: startDate, end: endDate })
 
-  return inspectionDatesQueryResult.filter(isInspectionDateValid).map(
-    (inspectionDate: InspectionDate): DateOption => {
-      let { startDate, endDate, hfpDataStatus } = inspectionDate
-      let label = getReadableDateRange({ start: startDate, end: endDate })
-
-      return {
-        label,
-        hfpDataStatus,
-        value: {
-          startDate: parseISO(startDate),
-          endDate: parseISO(endDate),
-        },
-      }
+    return {
+      label,
+      hfpDataStatus,
+      value: {
+        startDate: parseISO(startDate),
+        endDate: parseISO(endDate),
+      },
+    }
     }
   )
 }

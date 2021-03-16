@@ -111,7 +111,6 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
 
     const dropdownProps = useMemo(
       () => ({
-        theme: 'light',
         onSelect: onSelectValue,
         itemToString: 'name',
         itemToLabel: 'label',
@@ -161,7 +160,6 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
 
     return (
       <FieldComponent
-        theme="light"
         type={valueIsNumeric ? 'number' : 'text'}
         step={valueIsNumeric ? 0.01 : 1}
         value={value}
