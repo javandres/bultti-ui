@@ -80,22 +80,21 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     // The logic behind finding displayed contractUnit: selecting the latest contract that is currently valid
     // meaning if there are multiple contracts being valid, we select the one with the latest startDate
-    let displayedContractUnit: Contract | null = null
-    if (currentContracts && currentContracts.length > 0) {
-      displayedContractUnit = currentContracts
-        .slice()
-        .filter((contract: Contract) => {
-          return isWithinInterval(new Date(), {
-            start: getDateObject(contract.startDate),
-            end: getDateObject(contract.endDate),
+    let displayedContractUnit = currentContracts
+      ? currentContracts
+          .slice()
+          .filter((contract: Contract) => {
+            return isWithinInterval(new Date(), {
+              start: getDateObject(contract.startDate),
+              end: getDateObject(contract.endDate),
+            })
           })
-        })
-        .sort((a: Contract, b: Contract) => {
-          return getDateObject(a.startDate).getTime() < getDateObject(b.startDate).getTime()
-            ? 1
-            : -1
-        })[0]
-    }
+          .sort((a: Contract, b: Contract) => {
+            return getDateObject(a.startDate).getTime() < getDateObject(b.startDate).getTime()
+              ? 1
+              : -1
+          })[0]
+      : undefined
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
