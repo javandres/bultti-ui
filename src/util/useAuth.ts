@@ -23,7 +23,7 @@ export const useAuth = (): [AuthState, boolean] => {
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
-  const [login, { loading: isLoggingLoading }] = useMutationData<User>(loginMutation)
+  const [login, { loading: isLoginLoading }] = useMutationData<User>(loginMutation)
   const {
     data: fetchedUser,
     refetch: refetchUserCb,
