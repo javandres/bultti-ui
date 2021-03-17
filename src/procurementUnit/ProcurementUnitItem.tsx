@@ -37,6 +37,7 @@ export type PropTypes = {
   showExecutionRequirements: boolean
   className?: string
   validationErrors: ValidationErrorData[]
+  contractSelectionDate: Date
 }
 
 const operatingAreaNameLocalizationObj = {
@@ -56,6 +57,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     expanded = true,
     className,
     validationErrors = [],
+    contractSelectionDate,
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
 
@@ -84,7 +86,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       ? currentContracts
           .slice()
           .filter((contract: Contract) => {
-            return isWithinInterval(new Date(), {
+            return isWithinInterval(contractSelectionDate, {
               start: getDateObject(contract.startDate),
               end: getDateObject(contract.endDate),
             })
