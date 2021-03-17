@@ -18,11 +18,8 @@ import {
   subDays,
 } from 'date-fns'
 import { HfpDateStatus, HfpStatus, InspectionDate } from '../../schema-types'
-import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
-import { LoadingDisplay } from '../../common/components/Loading'
 import { getDateString, getReadableDate } from '../../util/formatDate'
-import { HfpStatusIndicator } from '../../common/components/HfpStatus'
 import { text, Text } from '../../util/translate'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 
@@ -38,7 +35,6 @@ const LoadButton = styled(Button)`
 `
 
 const LoadedRangesDisplay = styled.div`
-  margin-top: 1.5rem;
   margin-left: -1rem;
   margin-right: -1rem;
 `
@@ -56,20 +52,9 @@ const DateStatusDisplay = styled.div`
 
 const DateProgressValue = styled.span``
 
-const LoadedDateRange = styled(DateRangeDisplay)``
-
 const currentlyLoadingRangesQuery = gql`
   query currentlyLoadingHfpRanges {
     currentlyLoadingHfpRanges {
-      status
-      date
-    }
-  }
-`
-
-const loadedRangesQuery = gql`
-  query loadedHfpRanges($startDate: String!, $endDate: String!) {
-    loadedHfpRanges(startDate: $startDate, endDate: $endDate) {
       status
       date
     }
@@ -109,19 +94,13 @@ type PropTypes = {
 
 const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
   let hfpMissing = inspectionDate.hfpDataStatus !== HfpStatus.Ready
+  let hfpLoading = inspectionDate.hfpDataStatus === HfpStatus.Loading
 
   let [dateProgress, setDateProgress] = useState<Map<string, number>>(
     new Map<string, number>()
   )
 
   let { data: currentlyLoadingRanges } = useQueryData(currentlyLoadingRangesQuery)
-
-  let { data: loadedRanges, loading: loadedRangesLoading } = useQueryData(loadedRangesQuery, {
-    variables: {
-      startDate: inspectionDate.startDate,
-      endDate: inspectionDate.endDate,
-    },
-  })
 
   let [
     loadHfpData,
@@ -191,7 +170,6 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
       orderBy(
         [
           ...(currentlyLoadingRanges || []),
-          ...(loadedRanges || []),
           ...(requestedHfpDateRanges || []),
           ...updatedStatuses,
           ...inspectionStatusGroup,
@@ -208,57 +186,9 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
     inspectionStatusInterval,
     inspectionDates,
     currentlyLoadingRanges,
-    loadedRanges,
     requestedHfpDateRanges,
     hfpStatusData,
   ])
-
-  // Group each date status into continuous date ranges/intervals.
-  let dateStatusByRanges: HfpDateStatus[][] = useMemo(
-    () =>
-      dateStatuses.reduce((statusRanges: HfpDateStatus[][], dateStatus: HfpDateStatus) => {
-        let rangeIndex = statusRanges.length === 0 ? 0 : statusRanges.length - 1
-        let currentRange = statusRanges[rangeIndex] || ([] as string[])
-        let prevStatus = currentRange[currentRange.length - 1]
-
-        // First status in the range
-        if (!prevStatus) {
-          currentRange.push(dateStatus)
-        } else {
-          let dateObj = parseISO(dateStatus.date)
-          let prevDateObj = parseISO(prevStatus.date)
-
-          if (
-            prevStatus.status === dateStatus.status &&
-            isSameDay(subDays(dateObj, 1), prevDateObj)
-          ) {
-            // Dates are consecutive and have the same status, push the date to the current range.
-            currentRange.push(dateStatus)
-          } else {
-            // Dates are not consecutive or have different status, so we create a new range.
-            currentRange = [dateStatus]
-            rangeIndex++
-          }
-        }
-
-        statusRanges.splice(rangeIndex, 1, currentRange)
-        return statusRanges
-      }, []),
-    [dateStatuses]
-  )
-
-  // Check if all dates in the inspection period are loaded.
-  let inspectionPeriodLoadingStatuses = useMemo(
-    () =>
-      uniq(
-        inspectionDates
-          .map((date) => {
-            return flatten(dateStatusByRanges).find((s) => s.date === getDateString(date))
-          })
-          .map((dateStatus) => dateStatus?.status || HfpStatus.NotLoaded)
-      ),
-    [dateStatusByRanges, inspectionDates]
-  )
 
   let onClickLoad = useCallback(() => {
     loadHfpData({
@@ -271,7 +201,7 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
   let canLoadHfpManually = useHasAdminAccessRights()
 
   return (
-    <LoadInspectionHfpDataView error={hfpMissing}>
+    <LoadInspectionHfpDataView>
       <InputLabel>
         <Text>inspectionDate_hfpPanel_title</Text>
       </InputLabel>
@@ -280,89 +210,47 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
           loading={hfpDataLoading}
           size={ButtonSize.LARGE}
           onClick={onClickLoad}
-          disabled={
-            loadedRangesLoading ||
-            inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
-            inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
-          }>
-          {loadedRangesLoading
-            ? text('inspectionDate_hfpPanel_checkingStatus')
-            : inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
+          disabled={hfpLoading}>
+          {hfpLoading
             ? text('inspectionDate_hfpPanel_loadingDates')
-            : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
+            : !hfpMissing
             ? text('inspectionDate_hfpPanel_datesLoaded')
             : text('inspectionDate_hfpPanel_loadHfpForDates')}
         </LoadButton>
       )}
-      <div
-        style={{
-          position: 'relative',
-          height: loadedRangesLoading ? '70px' : 0,
-          top: loadedRangesLoading ? '-12px' : 0,
-        }}>
-        <LoadingDisplay loading={loadedRangesLoading} />
-      </div>
-      {!loadedRangesLoading && (
-        <LoadedRangesDisplay>
-          <InputLabel style={{ marginLeft: '1rem' }}>
-            <Text>inspectionDate_hfpPanel_hfpStatus</Text>
-          </InputLabel>
-          {dateStatusByRanges.map((dateStatusRange) => {
-            let status = dateStatusRange[0].status
+      <LoadedRangesDisplay>
+        {dateProgress.size !== 0 && (
+          <>
+            <InputLabel style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
+              <Text>inspectionDate_hfpPanel_nowLoading</Text>
+            </InputLabel>
+            {inspectionDates.map((date) => {
+              let dateStr = getDateString(date)
+              let currentProgress = dateProgress.get(dateStr)
+              let loadedStatus = dateStatuses.find((status) => status.date === dateStr)?.status
+              let loadedProgress =
+                // Show the current progress if we have one and it is loading
+                !!currentProgress || loadedStatus === HfpStatus.Loading
+                  ? currentProgress || 0
+                  : // Do not show in loading list if ready
+                  loadedStatus === HfpStatus.Ready
+                  ? undefined
+                  : 0
 
-            return (
-              <DateStatusDisplay key={dateStatusRange[0].date}>
-                <LoadedDateRange
-                  startDate={dateStatusRange[0].date}
-                  endDate={dateStatusRange[dateStatusRange.length - 1].date}
-                />
-                <HfpStatusIndicator
-                  color={
-                    status === HfpStatus.Ready
-                      ? 'var(--green)'
-                      : status === HfpStatus.Loading
-                      ? 'var(--yellow)'
-                      : 'var(--red)'
-                  }>
-                  {text(`inspectionDate_hfp_${status.toLowerCase()}`)}
-                </HfpStatusIndicator>
-              </DateStatusDisplay>
-            )
-          })}
-          {dateProgress.size !== 0 && (
-            <>
-              <InputLabel style={{ marginLeft: '1rem', marginTop: '1.5rem' }}>
-                <Text>inspectionDate_hfpPanel_nowLoading</Text>
-              </InputLabel>
-              {inspectionDates.map((date) => {
-                let dateStr = getDateString(date)
-                let currentProgress = dateProgress.get(dateStr)
-                let loadedStatus = dateStatuses.find((status) => status.date === dateStr)
-                  ?.status
-                let loadedProgress =
-                  // Show the current progress if we have one and it is loading
-                  !!currentProgress || loadedStatus === HfpStatus.Loading
-                    ? currentProgress || 0
-                    : // Do not show in loading list if ready
-                    loadedStatus === HfpStatus.Ready
-                    ? undefined
-                    : 0
+              if (!loadedProgress) {
+                return null
+              }
 
-                if (!loadedProgress) {
-                  return null
-                }
-
-                return (
-                  <DateStatusDisplay key={`date progress ${dateStr}`}>
-                    <span>{getReadableDate(date)}</span>
-                    <DateProgressValue>{loadedProgress}%</DateProgressValue>
-                  </DateStatusDisplay>
-                )
-              })}
-            </>
-          )}
-        </LoadedRangesDisplay>
-      )}
+              return (
+                <DateStatusDisplay key={`date progress ${dateStr}`}>
+                  <span>{getReadableDate(date)}</span>
+                  <DateProgressValue>{loadedProgress}%</DateProgressValue>
+                </DateStatusDisplay>
+              )
+            })}
+          </>
+        )}
+      </LoadedRangesDisplay>
     </LoadInspectionHfpDataView>
   )
 })
