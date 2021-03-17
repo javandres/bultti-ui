@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
+  Contract,
   InspectionValidationError,
   OperatingAreaName,
   ProcurementUnit as ProcurementUnitType,
@@ -14,6 +15,8 @@ import ExpandableSection, {
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import ProcurementUnitItemContent from './ProcurementUnitItemContent'
 import { text, Text } from '../util/translate'
+import { getDateObject } from '../util/formatDate'
+import { isWithinInterval } from 'date-fns'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -75,6 +78,24 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       ? procurementUnit?.area?.name
       : OperatingAreaName.Unknown
 
+    // The logic behind finding displayed contractUnit: selecting the latest contract that is currently valid
+    // meaning if there are multiple contracts being valid, we select the one with the latest startDate
+    let displayedContractUnit: Contract | null = null
+    if (currentContracts && currentContracts.length > 0) {
+      displayedContractUnit = currentContracts
+        .slice()
+        .filter((contract: Contract) => {
+          return isWithinInterval(new Date(), {
+            start: getDateObject(contract.startDate),
+            end: getDateObject(contract.endDate),
+          })
+        })
+        .sort((a: Contract, b: Contract) => {
+          return getDateObject(a.startDate).getTime() < getDateObject(b.startDate).getTime()
+            ? 1
+            : -1
+        })[0]
+    }
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -125,14 +146,14 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>
                     <Text>contracts</Text> ({(currentContracts || []).length})
                   </HeaderHeading>
-                  {(currentContracts || []).length !== 0 ? (
+                  {displayedContractUnit ? (
                     <>
                       <DateRangeDisplay
-                        startDate={currentContracts![0].startDate}
-                        endDate={currentContracts![currentContracts!.length - 1].endDate}
+                        startDate={displayedContractUnit.startDate}
+                        endDate={displayedContractUnit.endDate}
                       />
                       <ContractDescription>
-                        {currentContracts![0].description}
+                        {displayedContractUnit.description}
                       </ContractDescription>
                     </>
                   ) : (
@@ -148,6 +169,9 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 startDate={startDate}
                 endDate={endDate}
                 procurementUnitId={procurementUnit.id}
+                displayedContractUnitId={
+                  displayedContractUnit ? displayedContractUnit.id : undefined
+                }
                 requirementsEditable={requirementsEditable}
                 catalogueEditable={catalogueEditable}
                 catalogueInvalid={catalogueInvalid}

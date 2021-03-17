@@ -60,6 +60,7 @@ type ContentPropTypes = {
   endDate: string
   procurementUnitId: string
   catalogueEditable: boolean
+  displayedContractUnitId?: string
   requirementsEditable: boolean
   isVisible: boolean
   catalogueInvalid: boolean
@@ -73,6 +74,7 @@ const ProcurementUnitItemContent = observer(
     endDate,
     procurementUnitId,
     catalogueEditable,
+    displayedContractUnitId,
     requirementsEditable,
     isVisible,
     catalogueInvalid,
@@ -189,13 +191,18 @@ const ProcurementUnitItemContent = observer(
         <div style={{ marginBottom: '1rem' }}>
           {procurementUnit && (
             <>
-              <SubHeading>Sopimukset</SubHeading>
+              <SubHeading>
+                <Text>contracts</Text>
+              </SubHeading>
               {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
                 return (
                   <LinkButton
                     key={`contract-${index}`}
-                    onClick={() => onOpenContract(contract.id)}>
-                    Sopimus {contract.startDate} - {contract.endDate}
+                    onClick={() => onOpenContract(contract.id)}
+                    style={{
+                      fontWeight: displayedContractUnitId === contract.id ? 'bold' : 'unset',
+                    }}>
+                    {contract.startDate} - {contract.endDate}
                   </LinkButton>
                 )
               })}
