@@ -121,5 +121,5 @@ export const useAuth = (): [AuthState, boolean] => {
     }
   }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
 
-  return [authState, isLoggingLoading]
+  return [authState, isLoginLoading]
 }
