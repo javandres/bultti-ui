@@ -24,6 +24,7 @@ import { LoadingDisplay } from '../../common/components/Loading'
 import { getDateString, getReadableDate } from '../../util/formatDate'
 import { HfpStatusIndicator } from '../../common/components/HfpStatus'
 import { text, Text } from '../../util/translate'
+import { useHasAdminAccessRights } from '../../util/userRoles'
 
 const LoadInspectionHfpDataView = styled(PageSection)`
   margin: 1rem;
@@ -267,28 +268,32 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
     })
   }, [inspectionDate])
 
+  let canLoadHfpManually = useHasAdminAccessRights()
+
   return (
     <LoadInspectionHfpDataView error={hfpMissing}>
       <InputLabel>
         <Text>inspectionDate_hfpPanel_title</Text>
       </InputLabel>
-      <LoadButton
-        loading={hfpDataLoading}
-        size={ButtonSize.LARGE}
-        onClick={onClickLoad}
-        disabled={
-          loadedRangesLoading ||
-          inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
-          inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
-        }>
-        {loadedRangesLoading
-          ? text('inspectionDate_hfpPanel_checkingStatus')
-          : inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
-          ? text('inspectionDate_hfpPanel_loadingDates')
-          : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
-          ? text('inspectionDate_hfpPanel_datesLoaded')
-          : text('inspectionDate_hfpPanel_loadHfpForDates')}
-      </LoadButton>
+      {canLoadHfpManually && (
+        <LoadButton
+          loading={hfpDataLoading}
+          size={ButtonSize.LARGE}
+          onClick={onClickLoad}
+          disabled={
+            loadedRangesLoading ||
+            inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading) ||
+            inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
+          }>
+          {loadedRangesLoading
+            ? text('inspectionDate_hfpPanel_checkingStatus')
+            : inspectionPeriodLoadingStatuses.includes(HfpStatus.Loading)
+            ? text('inspectionDate_hfpPanel_loadingDates')
+            : inspectionPeriodLoadingStatuses.every((s) => s === HfpStatus.Ready)
+            ? text('inspectionDate_hfpPanel_datesLoaded')
+            : text('inspectionDate_hfpPanel_loadHfpForDates')}
+        </LoadButton>
+      )}
       <div
         style={{
           position: 'relative',
