@@ -26,7 +26,7 @@ import { numval } from '../util/numval'
 import ItemForm from '../common/input/ItemForm'
 import { TextInput } from '../common/input/Input'
 import ValueDisplay from '../common/components/ValueDisplay'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
 import { navigateWithQueryString } from '../util/urlValue'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 

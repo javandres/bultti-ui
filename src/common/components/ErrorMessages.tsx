@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components/macro'
-import { Button, ButtonSize, ButtonStyle } from './Button'
+import { Button, ButtonSize, ButtonStyle } from './buttons/Button'
 import { useStateValue } from '../../state/useAppState'
 
 const ErrorsWrapper = styled.div`

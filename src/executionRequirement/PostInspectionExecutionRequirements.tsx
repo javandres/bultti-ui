@@ -5,7 +5,7 @@ import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
 import {
   InspectionValidationError,

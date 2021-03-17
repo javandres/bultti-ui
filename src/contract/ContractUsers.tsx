@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { useStateValue } from '../state/useAppState'
 import ExpandableSection, {
   HeaderMainHeading,

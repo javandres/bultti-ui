@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow } from '../common/components/common'
-import { Button, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonStyle } from '../common/components/buttons/Button'
 import { ActionsWrapper } from '../common/input/ItemForm'
 import InputForm from '../common/input/InputForm'
 import Input, { TextArea } from '../common/input/Input'

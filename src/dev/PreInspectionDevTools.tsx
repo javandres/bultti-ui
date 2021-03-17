@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
 import { gql } from '@apollo/client'
 import { useMutationData } from '../util/useMutationData'
 import { Inspection } from '../schema-types'

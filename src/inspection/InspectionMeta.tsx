@@ -8,7 +8,7 @@ import { InputLabel } from '../common/components/form'
 import { getAllUpdatedByUsers, getCreatedByUser } from './inspectionUtils'
 import { Inspection } from '../schema-types'
 import { text } from '../util/translate'
-import { TextButton } from '../common/components/Button'
+import { TextButton } from '../common/components/buttons/Button'
 
 const InspectionMetaView = styled.div`
   border: 1px solid var(--light-grey);
