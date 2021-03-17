@@ -27,6 +27,8 @@ import ItemForm from '../common/input/ItemForm'
 import { TextInput } from '../common/input/Input'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/Button'
+import { navigateWithQueryString } from '../util/urlValue'
+import { LinkButton } from '../common/components/buttons/LinkButton'
 
 const procurementUnitLabels = {
   medianAgeRequirement: text('procurementUnit_ageRequirement'),
@@ -177,18 +179,24 @@ const ProcurementUnitItemContent = observer(
       return medianAgeRequirement + 0.5 * optionsUsed
     }, [procurementUnit])
 
+    const onOpenContract = useCallback((contractId) => {
+      return navigateWithQueryString(`/contract/${contractId}`)
+    }, [])
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
         <div style={{ marginBottom: '1rem' }}>
           {procurementUnit && (
             <>
-              <div>Sopimukset</div>)
+              <SubHeading>Sopimukset</SubHeading>
               {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
                 return (
-                  <div key={`contract-${index}`}>
+                  <LinkButton
+                    key={`contract-${index}`}
+                    onClick={() => onOpenContract(contract.id)}>
                     Sopimus {contract.startDate} - {contract.endDate}
-                  </div>
+                  </LinkButton>
                 )
               })}
             </>
