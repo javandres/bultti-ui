@@ -8,6 +8,7 @@ import { useQueryData } from './useQueryData'
 import { useRefetch } from './useRefetch'
 import { getAuthToken, saveAuthToken } from './authToken'
 import { pickGraphqlData } from './pickGraphqlData'
+import { text } from './translate'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -18,17 +19,16 @@ export enum AuthState {
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [currentUser, setCurrentUser] = useStateValue('user')
+  let [, setErrorMessage] = useStateValue('errorMessage')
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
-
-  const [login, { loading: loginLoading }] = useMutationData<User>(loginMutation)
+  const [login, { loading: isLoginLoading }] = useMutationData<User>(loginMutation)
   const {
     data: fetchedUser,
     refetch: refetchUserCb,
-    loading: currentUserLoading,
+    loading: isCurrentUserLoading,
   } = useQueryData<User>(currentUserQuery)
-
   let refetchUser = useRefetch(refetchUserCb)
 
   let navigateNext = useCallback(() => {
@@ -41,13 +41,16 @@ export const useAuth = (): [AuthState, boolean] => {
   }, [navigate, shouldNavigate.current])
 
   useEffect(() => {
-    if (fetchedUser && !currentUser) {
+    if (currentUser || isCurrentUserLoading) {
+      return
+    }
+    if (fetchedUser) {
       setCurrentUser(fetchedUser)
     }
-  }, [fetchedUser, currentUser])
+  }, [fetchedUser, isCurrentUserLoading, currentUser])
 
   useEffect(() => {
-    if (getAuthToken() && !currentUser && !fetchedUser && !currentUserLoading) {
+    if (getAuthToken() && !currentUser && !fetchedUser && !isCurrentUserLoading) {
       refetchUser()
     }
   }, [fetchedUser, refetchUser, currentUser])
@@ -71,7 +74,6 @@ export const useAuth = (): [AuthState, boolean] => {
 
   useEffect(() => {
     let currentAuthToken = getAuthToken()
-
     if (!codeUrlParam && currentAuthToken) {
       if (currentUser && authState === AuthState.AUTHENTICATED) {
         navigateNext()
@@ -97,7 +99,6 @@ export const useAuth = (): [AuthState, boolean] => {
       setUrlValue('code', null)
       setUrlValue('isTest', null)
       setUrlValue('role', null)
-      console.log('roleUrlParam ', roleUrlParam)
       login({
         variables: {
           authorizationCode: codeUrlParam,
@@ -106,7 +107,6 @@ export const useAuth = (): [AuthState, boolean] => {
         },
       }).then(({ data }) => {
         let token = pickGraphqlData(data)
-
         if (token) {
           saveAuthToken(token)
           setAuthState(AuthState.AUTHENTICATED)
@@ -115,10 +115,11 @@ export const useAuth = (): [AuthState, boolean] => {
           refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
+          setErrorMessage(text('login_failed'))
         }
       })
     }
   }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
 
-  return [authState, loginLoading]
+  return [authState, isLoginLoading]
 }
