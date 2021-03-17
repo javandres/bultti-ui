@@ -5,6 +5,7 @@
   "validityPeriod": "Voimassaoloaika",
   "login": "Kirjaudu sisään",
   "logout": "Kirjaudu ulos",
+  "login_failed": "Kirjautuminen epäonnistui. Ole yhteydessä HSL:n suuntaan ongelman jatkuessa.",
   "update": "Päivitä",
   "edit": "Muokkaa",
   "preview": "Esikatsele",
