@@ -19,7 +19,7 @@ type Uploader<TData, TVariables> = [
   {
     data: null | TData
     loading: boolean
-    error?: ApolloError
+    uploadError?: ApolloError
     called: boolean
     mutationFn: MutationFnType<TData, TVariables>
   }
@@ -38,7 +38,12 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
     return { data: null, error: err }
   }, [])
 
-  const [mutationFn, { data, error, called }] = useMutation<TData, TVariables>(mutation, {
+  // To catch mutationFnError, use .catch() where mutationFn is called.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [mutationFn, { data, error: mutationFnError, called }] = useMutation<
+    TData,
+    TVariables
+  >(mutation, {
     notifyOnNetworkStatusChange: true,
     ...options,
   })
@@ -67,7 +72,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
             onUploadFinished(uploadedData, result.errors)
           }
 
-          return { data: uploadedData, error: (result?.errors || [])[0] }
+          return { data: uploadedData, mutationFnError: (result?.errors || [])[0] }
         })
         .catch(errorHandler)
         .finally(() => {
@@ -84,7 +89,7 @@ export const useUploader = <TData = any, TVariables = OperationVariables>(
     {
       data: pickedData,
       loading: uploadLoading,
-      error: error || uploadError,
+      uploadError,
       called,
       mutationFn,
     },

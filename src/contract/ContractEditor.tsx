@@ -34,6 +34,7 @@ import { text, Text } from '../util/translate'
 import { navigateWithQueryString } from '../util/urlValue'
 import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
+import { ApolloError } from '@apollo/client'
 
 const ContractEditorView = styled.div``
 
@@ -214,6 +215,7 @@ const renderLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
     let [globalOperator] = useStateValue<Operator>('globalOperator')
+    let [, setErrorMessage] = useStateValue('errorMessage')
     let initialContract: ContractInput = useMemo(() => {
       if (isNew) {
         let newContract: Partial<Contract> = {
@@ -301,7 +303,7 @@ const ContractEditor = observer(
 
     let [
       modifyContract,
-      { loading: modifyLoading, mutationFn: updateMutationFn, error: modifyError },
+      { loading: modifyLoading, mutationFn: updateMutationFn, uploadError: modifyError },
     ] = useUploader(modifyContractMutation, {
       onCompleted: (data) => {
         let mutationResult = pickGraphqlData(data)
@@ -327,7 +329,7 @@ const ContractEditor = observer(
       },
     })
 
-    let [createContract, { loading: createLoading, error: createError }] = useUploader(
+    let [createContract, { loading: createLoading, uploadError: createError }] = useUploader(
       createContractMutation,
       {
         refetchQueries: [
@@ -335,7 +337,6 @@ const ContractEditor = observer(
         ],
       }
     )
-
     let contractFileReadError = useMemo(() => (createError || modifyError)?.message, [
       modifyError,
       createError,
@@ -366,6 +367,8 @@ const ContractEditor = observer(
             variables: {
               contractInput: pendingContract,
             },
+          }).catch((error: ApolloError) => {
+            setErrorMessage(error.message)
           })
         }
 

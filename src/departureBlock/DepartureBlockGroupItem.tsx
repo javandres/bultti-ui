@@ -91,7 +91,10 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [, { data: uploadedData, loading: uploadLoading, error: uploadFileError }] = uploader
+    const [
+      ,
+      { data: uploadedData, loading: uploadLoading, uploadError: uploadFileError },
+    ] = uploader
 
     useEffect(() => {
       if (uploadedData && !uploadLoading) {
