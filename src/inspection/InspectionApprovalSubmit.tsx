@@ -10,6 +10,7 @@ import styled from 'styled-components/macro'
 import { addDays, max, parseISO } from 'date-fns'
 import { getDateString } from '../util/formatDate'
 import { LoadingDisplay } from '../common/components/Loading'
+import { text, Text } from '../util/translate'
 
 const InspectionConfigView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -82,26 +83,28 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={loading} />
         <FlexRow>
           <FormColumn>
-            <InputLabel>Tuotantojakso</InputLabel>
+            <InputLabel>
+              <Text>inspection_inspectionSeason</Text>
+            </InputLabel>
             <ControlGroup>
               <SelectDate
-                name="production_start"
+                name="production_startDate"
                 value={inspectionValues.startDate}
                 minDate={inspection.minStartDate}
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('startDate', val)}
-                label="Alku"
+                label={text('startDate')}
                 alignDatepicker="left"
               />
               <SelectDate
-                name="production_start"
+                name="production_endDate"
                 value={inspectionValues.endDate}
                 minDate={getDateString(
-                  addDays(parseISO(inspection.startDate || inspection.minStartDate), 1)
+                  addDays(parseISO(inspectionValues.startDate || inspection.minStartDate), 1)
                 )}
                 maxDate={inspection.season.endDate}
-                onChange={(val) => onUpdateValue('startDate', val)}
-                label="Loppu"
+                onChange={(val) => onUpdateValue('endDate', val)}
+                label={text('endDate')}
               />
             </ControlGroup>
           </FormColumn>
