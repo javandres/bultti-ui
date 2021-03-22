@@ -78,6 +78,7 @@ const ContractProcurementUnitsEditor = observer(
           operatorId: contract?.operatorId,
           startDate: contract?.startDate,
           endDate: contract?.endDate,
+          contractId: contract?.id,
         },
       }
     )
@@ -123,7 +124,10 @@ const ContractProcurementUnitsEditor = observer(
         let allSelectedArr = unitOptions.map((unit) => unit.id)
         onChange(allSelectedArr)
       } else {
-        onChange([])
+        let unselectableUnitOptionIds = unitOptions
+          .filter((unit) => unit.isUnselectingDisabled)
+          .map((unit) => unit.id)
+        onChange(unselectableUnitOptionIds)
       }
     }, [allSelected, unitOptions])
 
@@ -216,7 +220,12 @@ const ContractProcurementUnitsEditor = observer(
                 <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
                   {canSelectUnit && (
                     <Checkbox
-                      disabled={readOnly}
+                      disabled={readOnly || unitOption.isUnselectingDisabled}
+                      disabledMessage={
+                        unitOption.isUnselectingDisabled
+                          ? `Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.`
+                          : undefined
+                      }
                       value="unit_included"
                       name="unit_included"
                       label="Sopimuksessa mukana"

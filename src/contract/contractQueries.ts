@@ -84,11 +84,13 @@ export const procurementUnitOptionsQuery = gql`
     $operatorId: Int!
     $startDate: BulttiDate!
     $endDate: BulttiDate!
+    $contractId: String!
   ) {
     contractProcurementUnitOptions(
       operatorId: $operatorId
       startDate: $startDate
       endDate: $endDate
+      contractId: $contractId
     ) {
       id
       name
@@ -96,6 +98,7 @@ export const procurementUnitOptionsQuery = gql`
       endDate
       routes
       areaName
+      isUnselectingDisabled
       currentContracts {
         id
         startDate

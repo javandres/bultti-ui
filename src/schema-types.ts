@@ -412,6 +412,7 @@ export type QueryContractArgs = {
 
 
 export type QueryContractProcurementUnitOptionsArgs = {
+  contractId: Scalars['String'];
   endDate: Scalars['BulttiDate'];
   startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
@@ -1790,6 +1791,7 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   areaName?: Maybe<Scalars['String']>;
   currentContracts?: Maybe<Array<Contract>>;
+  isUnselectingDisabled: Scalars['Boolean'];
 };
 
 export type InspectionDate = {

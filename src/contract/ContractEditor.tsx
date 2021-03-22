@@ -323,6 +323,7 @@ const ContractEditor = observer(
               operatorId: mutationResult?.operatorId,
               startDate: mutationResult?.startDate,
               endDate: mutationResult?.endDate,
+              contractId: pendingContract.id,
             },
           },
         ]
