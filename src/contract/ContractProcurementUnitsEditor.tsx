@@ -16,12 +16,11 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { addDays, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
 import { FlexRow } from '../common/components/common'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -106,14 +105,6 @@ const ContractProcurementUnitsEditor = observer(
 
     let editContract = useContractPage()
 
-    let startDate = parseISO(contract.startDate)
-    let endDate = parseISO(contract.endDate)
-
-    let contractInterval = {
-      start: min([startDate, endDate]),
-      end: max([endDate, addDays(startDate, 1)]),
-    }
-
     let allSelected = useMemo(
       () => !unitOptions.some((unit) => !includedUnitIds.includes(unit.id)),
       [unitOptions, includedUnitIds]
@@ -137,7 +128,9 @@ const ContractProcurementUnitsEditor = observer(
           <LoadingDisplay loading={unitsLoading} />
           {unitOptions.length === 0 && !unitsLoading && (
             <EmptyView>
-              <MessageView>Ei kilpailukohteita</MessageView>
+              <MessageView>
+                <Text>contract_procurementUnitsEditor_noProcurementUnits</Text>
+              </MessageView>
             </EmptyView>
           )}
           <FlexRow
@@ -150,7 +143,7 @@ const ContractProcurementUnitsEditor = observer(
               disabled={readOnly}
               value="select_all"
               name="select_all"
-              label={allSelected ? 'Kaikki valittu' : 'Valitse kaikki'}
+              label={allSelected ? text('allSelected') : text('selectAll')}
               checked={allSelected}
               onChange={onSelectAll}
             />
@@ -180,7 +173,7 @@ const ContractProcurementUnitsEditor = observer(
                 </HeaderBoldHeading>
                 <HeaderSection title={fullRoutesString}>
                   <HeaderHeading>
-                    <Text>contract_procurementUnitsEditorRoutes</Text>
+                    <Text>contract_procurementUnitsEditor_routes</Text>
                   </HeaderHeading>
                   {shortRoutesString}
                 </HeaderSection>
@@ -201,18 +194,18 @@ const ContractProcurementUnitsEditor = observer(
                     disabled={readOnly || unitOption.isUnselectingDisabled}
                     disabledMessage={
                       unitOption.isUnselectingDisabled
-                        ? `Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.`
+                        ? text('contract_procurementUnitsEditor_unselectingDisabled')
                         : undefined
                     }
                     value="unit_included"
                     name="unit_included"
-                    label="Sopimuksessa mukana"
+                    label={text('contract_procurementUnitsEditor_unitIncluded')}
                     checked={isSelected}
                     onChange={() => onToggleUnitInclusion(unitOption.id)}
                   />
                   {currentContracts.length !== 0 && !isCurrentContract && (
                     <CurrentContractDisplay>
-                      Nykyiset sopimukset:
+                      <Text>contract_procurementUnitsEditor_currentContracts</Text>
                       <div>
                         {currentContracts.map((currentContract: Contract) => (
                           <TextButton
