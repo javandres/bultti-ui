@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import ProcurementUnitItem from './ProcurementUnitItem'
-import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle, TextButton } from '../common/components/buttons/Button'
 import { FlexRow, TransparentPageSection } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitsQuery } from './procurementUnitsQuery'
@@ -20,10 +20,18 @@ export type PropTypes = {
   endDate: string
   requirementsEditable: boolean
   getErrorsById?: (objectId: string) => ValidationErrorData[]
+  contractSelectionDate: Date
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(
-  ({ getErrorsById, requirementsEditable = true, operatorId, startDate, endDate }) => {
+  ({
+    getErrorsById,
+    requirementsEditable = true,
+    operatorId,
+    startDate,
+    endDate,
+    contractSelectionDate,
+  }) => {
     const inspection = useContext(InspectionContext)
 
     let catalogueEditable = !inspection
@@ -93,6 +101,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   endDate={endDate}
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
+                  contractSelectionDate={contractSelectionDate}
                 />
               )
             })}

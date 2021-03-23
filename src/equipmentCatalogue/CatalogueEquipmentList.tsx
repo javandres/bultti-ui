@@ -10,7 +10,7 @@ import { EquipmentWithQuota } from '../equipment/equipmentUtils'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 import { MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 
 export type PropTypes = {

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { uniqueId } from 'lodash'
 import { ActionsWrapper, ControlledFormView, FieldLabel, FieldWrapper } from './ItemForm'
-import { Button, ButtonStyle } from '../components/Button'
+import { Button, ButtonStyle } from '../components/buttons/Button'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 export interface FieldConfigType {

@@ -1,10 +1,10 @@
 import React from 'react'
 import styled from 'styled-components/macro'
-import { useTooltip } from '../../util/useTooltip'
-import { LoadingDisplay } from './Loading'
+import { useTooltip } from '../../../util/useTooltip'
+import { LoadingDisplay } from '../Loading'
 import { observer } from 'mobx-react-lite'
 import { last } from 'lodash'
-import { Trash } from '../icon/Trash'
+import { Trash } from '../../icon/Trash'
 
 export enum ButtonSize {
   SMALL,

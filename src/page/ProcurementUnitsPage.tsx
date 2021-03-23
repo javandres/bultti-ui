@@ -8,7 +8,7 @@ import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
 import { addDays, parseISO } from 'date-fns'
-import { getDateString } from '../util/formatDate'
+import { getDateObject, getDateString } from '../util/formatDate'
 import { Text } from '../util/translate'
 
 const ProcurementUnitsView = styled(Page)``
@@ -40,6 +40,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
                 ? getDateString(addDays(parseISO(globalSeason.startDate), 7))
                 : ''
             }
+            contractSelectionDate={getDateObject(globalSeason.startDate)}
           />
         )}
       </PageContainer>

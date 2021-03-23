@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
 import RequirementsTable from './RequirementsTable'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'

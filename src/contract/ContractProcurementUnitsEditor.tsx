@@ -19,7 +19,7 @@ import { LoadingDisplay } from '../common/components/Loading'
 import { addDays, areIntervalsOverlapping, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
-import { TextButton } from '../common/components/Button'
+import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { Text } from '../util/translate'
 
