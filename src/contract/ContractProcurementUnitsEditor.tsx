@@ -16,7 +16,7 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { addDays, areIntervalsOverlapping, max, min, parseISO } from 'date-fns'
+import { addDays, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/Button'
@@ -173,27 +173,6 @@ const ContractProcurementUnitsEditor = observer(
 
             let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
 
-            let hasFullyOverlappingContract = currentContracts.some((c) => {
-              let checkStart = parseISO(c.startDate)
-              let checkEnd = parseISO(c.endDate)
-
-              return (
-                c.id !== contract.id &&
-                !areIntervalsOverlapping(
-                  {
-                    start: min([checkStart, checkEnd]),
-                    end: max([checkEnd, addDays(checkStart, 1)]),
-                  },
-                  contractInterval
-                )
-              )
-            })
-
-            let canSelectUnit =
-              currentContracts.length === 0 ||
-              !hasFullyOverlappingContract ||
-              isCurrentContract
-
             return (
               <ProcurementUnitOption key={unitOption.id}>
                 <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
@@ -218,21 +197,19 @@ const ContractProcurementUnitsEditor = observer(
                   {unitOption?.areaName || 'OTHER'}
                 </HeaderSection>
                 <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-                  {canSelectUnit && (
-                    <Checkbox
-                      disabled={readOnly || unitOption.isUnselectingDisabled}
-                      disabledMessage={
-                        unitOption.isUnselectingDisabled
-                          ? `Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.`
-                          : undefined
-                      }
-                      value="unit_included"
-                      name="unit_included"
-                      label="Sopimuksessa mukana"
-                      checked={isSelected}
-                      onChange={() => onToggleUnitInclusion(unitOption.id)}
-                    />
-                  )}
+                  <Checkbox
+                    disabled={readOnly || unitOption.isUnselectingDisabled}
+                    disabledMessage={
+                      unitOption.isUnselectingDisabled
+                        ? `Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.`
+                        : undefined
+                    }
+                    value="unit_included"
+                    name="unit_included"
+                    label="Sopimuksessa mukana"
+                    checked={isSelected}
+                    onChange={() => onToggleUnitInclusion(unitOption.id)}
+                  />
                   {currentContracts.length !== 0 && !isCurrentContract && (
                     <CurrentContractDisplay>
                       Nykyiset sopimukset:

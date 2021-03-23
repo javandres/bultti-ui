@@ -81,10 +81,12 @@ const renderInput = ({
   contract,
   operatorName,
   contractFileReadError,
+  isNew,
 }: {
   contract: ContractInput
   operatorName: string
   contractFileReadError?: string
+  isNew: boolean
 }) => (
   key: string,
   val: any,
@@ -150,7 +152,11 @@ const renderInput = ({
     )
   }
 
-  if (key === 'procurementUnitIds' && contract.id && contract.startDate && contract.endDate) {
+  if (key === 'procurementUnitIds') {
+    if (isNew) {
+      return <div />
+    }
+
     return (
       <ExpandableFormSection
         headerContent={
@@ -465,6 +471,7 @@ const ContractEditor = observer(
           renderLabel={renderLabel}
           renderInput={renderInput({
             contractFileReadError,
+            isNew,
             contract: pendingContract,
             operatorName: contract
               ? contract.operator.operatorName
