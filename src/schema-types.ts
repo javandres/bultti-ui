@@ -2120,12 +2120,14 @@ export type MutationCreateContractArgs = {
 
 
 export type MutationModifyContractArgs = {
+  operatorId: Scalars['Int'];
   contractInput: ContractInput;
   file?: Maybe<Scalars['Upload']>;
 };
 
 
 export type MutationRemoveContractArgs = {
+  operatorId: Scalars['Int'];
   contractId: Scalars['String'];
 };
 

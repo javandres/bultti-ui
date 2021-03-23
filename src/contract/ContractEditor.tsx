@@ -361,18 +361,26 @@ const ContractEditor = observer(
         let result
 
         if (rulesFiles.length !== 0) {
-          let mutationFn = isNew ? createContract : modifyContract
           let rulesFile = rulesFiles[0]
-
-          result = await mutationFn(rulesFile, {
-            variables: {
-              contractInput: pendingContract,
-            },
-          })
+          if (isNew) {
+            result = await createContract(rulesFile, {
+              variables: {
+                contractInput: pendingContract,
+              },
+            })
+          } else {
+            result = await modifyContract(rulesFile, {
+              variables: {
+                contractInput: pendingContract,
+                operatorId: globalOperator.operatorId,
+              },
+            })
+          }
         } else {
           result = await updateMutationFn({
             variables: {
               contractInput: pendingContract,
+              operatorId: globalOperator.operatorId,
             },
           }).catch((error: ApolloError) => {
             setErrorMessage(error.message)
@@ -425,6 +433,7 @@ const ContractEditor = observer(
         let result = await removeContract({
           variables: {
             contractId: contract!.id,
+            operatorId: globalOperator.operatorId,
           },
         })
 

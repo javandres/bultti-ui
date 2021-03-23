@@ -109,8 +109,8 @@ export const procurementUnitOptionsQuery = gql`
 `
 
 export const modifyContractMutation = gql`
-  mutation modifyContract($file: Upload, $contractInput: ContractInput!) {
-    modifyContract(file: $file, contractInput: $contractInput) {
+  mutation modifyContract($file: Upload, $contractInput: ContractInput!, $operatorId: Int!) {
+    modifyContract(file: $file, contractInput: $contractInput, operatorId: $operatorId) {
       ...ContractFragment
     }
   }
@@ -145,7 +145,7 @@ export const toggleContractUserSubscription = gql`
 `
 
 export const removeContractMutation = gql`
-  mutation removeContract($contractId: String!) {
-    removeContract(contractId: $contractId)
+  mutation removeContract($contractId: String!, $operatorId: Int!) {
+    removeContract(contractId: $contractId, operatorId: $operatorId)
   }
 `

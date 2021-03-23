@@ -21603,6 +21603,20 @@
             "description": null,
             "args": [
               {
+                "name": "operatorId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
+              {
                 "name": "contractInput",
                 "description": null,
                 "type": {
@@ -21643,6 +21657,20 @@
             "name": "removeContract",
             "description": null,
             "args": [
+              {
+                "name": "operatorId",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              },
               {
                 "name": "contractId",
                 "description": null,
