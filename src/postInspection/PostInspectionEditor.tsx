@@ -1,11 +1,14 @@
 import React, { useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionType } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
-import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
+import {
+  inspectionQuery,
+  updateLinkedInspectionsMutation,
+} from '../inspection/inspectionQueries'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
 import LoadInspectionHfpData from './LoadInspectionHfpData'
@@ -27,22 +30,18 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
   ({ refetchData, isEditable, inspection }) => {
     let [hfpLoaded, setHfpLoaded] = useState(false)
 
-    var connectedPreInspection = inspection.preInspection
+    var connectedPreInspections = inspection.inspectionMappings || []
     let goToPreInspectionReports = useInspectionReports()
 
-    let onClickConnectedInspection = useCallback(() => {
-      if (!connectedPreInspection) {
-        return
-      }
+    let onClickConnectedInspection = useCallback(
+      (inspectionId) => {
+        goToPreInspectionReports(inspectionId, InspectionType.Pre)
+      },
+      [goToPreInspectionReports]
+    )
 
-      goToPreInspectionReports(
-        connectedPreInspection.id,
-        connectedPreInspection.inspectionType
-      )
-    }, [connectedPreInspection, goToPreInspectionReports])
-
-    let [updateConnectedInspection, { loading: updateLoading }] = useMutationData(
-      updateBaseInspectionMutation,
+    let [updateConnectedInspections, { loading: updateLoading }] = useMutationData(
+      updateLinkedInspectionsMutation,
       {
         variables: {
           inspectionId: inspection.id,
@@ -55,41 +54,44 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     let onUpdateConnectedInspection = useCallback(() => {
       if (isEditable) {
-        updateConnectedInspection()
+        updateConnectedInspections()
       }
-    }, [updateConnectedInspection, isEditable])
+    }, [updateConnectedInspections, isEditable])
 
     return (
       <PostInspectionEditorView>
         <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
-        {hfpLoaded ? (
+        {connectedPreInspections.length !== 0 && (
           <>
-            {connectedPreInspection && (
-              <>
-                <Heading>
-                  Ennakkotarkastus{' '}
-                  {isEditable && (
-                    <Button
-                      style={{ marginLeft: 'auto' }}
-                      loading={updateLoading}
-                      onClick={onUpdateConnectedInspection}
-                      buttonStyle={ButtonStyle.SECONDARY}
-                      size={ButtonSize.SMALL}>
-                      <Text>update</Text>
-                    </Button>
-                  )}
-                </Heading>
-                <InspectionIndexItem
-                  onClick={onClickConnectedInspection}
-                  inspection={connectedPreInspection}
-                />
-              </>
-            )}
-            <PostInspectionExecutionRequirements isEditable={isEditable} />
+            <Heading>
+              <Text>inspection_editor_linkedInspections</Text>
+              {isEditable && (
+                <Button
+                  style={{ marginLeft: 'auto' }}
+                  loading={updateLoading}
+                  onClick={onUpdateConnectedInspection}
+                  buttonStyle={ButtonStyle.SECONDARY}
+                  size={ButtonSize.SMALL}>
+                  <Text>update</Text>
+                </Button>
+              )}
+            </Heading>
+            {connectedPreInspections.map((inspectionMapping) => (
+              <InspectionIndexItem
+                key={inspectionMapping.id}
+                onClick={() => onClickConnectedInspection(inspectionMapping.inspection.id)}
+                inspection={inspectionMapping.inspection}
+              />
+            ))}
           </>
+        )}
+        {hfpLoaded ? (
+          <PostInspectionExecutionRequirements isEditable={isEditable} />
         ) : (
           <MessageContainer style={{ margin: '1rem 0 0', padding: '0' }}>
-            <MessageView>Lataa tarkastusjakson HFP-tiedot ennen jatkamista.</MessageView>
+            <MessageView>
+              <Text>inspection_editor_hfp_unavailable</Text>
+            </MessageView>
           </MessageContainer>
         )}
       </PostInspectionEditorView>

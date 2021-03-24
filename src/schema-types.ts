@@ -497,6 +497,7 @@ export enum InspectionType {
 
 export type InspectionMapping = {
   __typename?: 'InspectionMapping';
+  id: Scalars['String'];
   startOfWeek: Scalars['String'];
   inspection: Inspection;
 };

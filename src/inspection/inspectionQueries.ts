@@ -87,11 +87,12 @@ export const inspectionQuery = gql`
   query inspectionById($inspectionId: String!) {
     inspection(inspectionId: $inspectionId) {
       ...InspectionFragment
-      preInspection {
-        ...LinkedInspectionFragment
-      }
-      postInspection {
-        ...LinkedInspectionFragment
+      inspectionMappings {
+        id
+        startOfWeek
+        inspection {
+          ...LinkedInspectionFragment
+        }
       }
     }
   }
@@ -156,9 +157,9 @@ export const updateInspectionMutation = gql`
   ${inspectionFragment}
 `
 
-export const updateBaseInspectionMutation = gql`
+export const updateLinkedInspectionsMutation = gql`
   mutation updateBaseInspection($inspectionId: String!) {
-    updateBaseInspection(inspectionId: $inspectionId) {
+    updateLinkedInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }
   }

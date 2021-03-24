@@ -541,6 +541,7 @@ type InspectionErrorUpdate {
 }
 
 type InspectionMapping {
+  id: String!
   inspection: Inspection!
   startOfWeek: String!
 }
