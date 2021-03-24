@@ -24,7 +24,6 @@ export type Query = {
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
-  currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
@@ -107,13 +106,6 @@ export type QueryInspectionsByOperatorArgs = {
 
 export type QueryInspectionsTimelineArgs = {
   inspectionType: InspectionType;
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
-  inspectionType: InspectionType;
-  seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };
 
@@ -475,10 +467,9 @@ export type Inspection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
-  preInspection?: Maybe<Inspection>;
-  postInspection?: Maybe<Inspection>;
+  inspectionMappings?: Maybe<Array<InspectionMapping>>;
   defectInspection?: Maybe<Inspection>;
-  operatorId?: Maybe<Scalars['Int']>;
+  operatorId: Scalars['Int'];
   operator: Operator;
   seasonId: Scalars['String'];
   season: Season;
@@ -503,6 +494,12 @@ export enum InspectionType {
   Post = 'POST',
   EquipmentDefect = 'EQUIPMENT_DEFECT'
 }
+
+export type InspectionMapping = {
+  __typename?: 'InspectionMapping';
+  startOfWeek: Scalars['String'];
+  inspection: Inspection;
+};
 
 export type Operator = {
   __typename?: 'Operator';
@@ -1865,7 +1862,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   loadHfpDataForInspectionPeriod: Array<HfpDateStatus>;
   createInspection: Inspection;
-  updateBaseInspection: Inspection;
+  updateLinkedInspection: Inspection;
   updateInspection: Inspection;
   inspectionSanctionable: Inspection;
   abandonSanctions: Inspection;
@@ -1922,7 +1919,7 @@ export type MutationCreateInspectionArgs = {
 };
 
 
-export type MutationUpdateBaseInspectionArgs = {
+export type MutationUpdateLinkedInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
