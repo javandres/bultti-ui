@@ -256,11 +256,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     variables: { inspectionId: inspection?.id },
   })
 
-  let groupByFn = useCallback(
-    (item) => text('postInspection_sanctionReason_' + item.sanctionReason),
-    []
-  )
-
   let renderValue = useCallback(
     (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
       if (key !== 'entityIdentifier' || isHeader || !item) {
@@ -337,7 +332,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
           isAlwaysEditable={true}
-          groupBy={groupByFn}
           renderValue={renderValue}
           transformItems={transformItems}
         />
