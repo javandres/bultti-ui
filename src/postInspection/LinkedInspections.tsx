@@ -5,7 +5,7 @@ import { Heading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
-import { Inspection, InspectionType } from '../schema-types'
+import { Inspection, InspectionType, InspectionValidationError } from '../schema-types'
 import { useInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -14,8 +14,15 @@ import {
 } from '../inspection/inspectionQueries'
 import { MessageView } from '../common/components/Messages'
 import { observedExecutionRequirementsQuery } from '../executionRequirement/executionRequirementsQueries'
+import { useHasInspectionError } from '../util/hasInspectionError'
 
-const LinkedInspectionsView = styled.div``
+const LinkedInspectionsView = styled.div<{ error?: boolean }>`
+  border: 1px solid ${(p) => (p.error ? 'var(--red)' : 'transparent')};
+  border-radius: 0.5rem;
+  margin-top: 2rem;
+  padding: ${(p) => (p.error ? '1rem 1rem 0rem' : '0')};
+  transition: all 0.2s ease-out;
+`
 
 const LinkedStatusText = styled.span<{ updateIsAvailable?: boolean }>`
   display: block;
@@ -32,6 +39,11 @@ export type PropTypes = {
 const LinkedInspections = observer(({ inspection, isEditable = false }: PropTypes) => {
   let goToPreInspectionReports = useInspectionReports()
   let connectedPreInspections = inspection.inspectionMappings || []
+
+  let hasLinkedInspectionsError = useHasInspectionError(
+    inspection,
+    InspectionValidationError.PostInspectionMissingLinkedPreInspections
+  )
 
   let onClickConnectedInspection = useCallback(
     (inspectionId) => {
@@ -63,8 +75,8 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
   }, [updateConnectedInspections, isEditable])
 
   return (
-    <LinkedInspectionsView>
-      <Heading>
+    <LinkedInspectionsView error={hasLinkedInspectionsError}>
+      <Heading style={{ marginTop: 0 }}>
         <Text>inspection_editor_linkedInspections</Text>
         <div style={{ marginLeft: 'auto', display: 'flex', alignSelf: 'stretch' }}>
           <LinkedStatusText updateIsAvailable={!!inspection.linkedInspectionUpdateAvailable}>
