@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
 import InspectionPreview from '../inspection/InspectionPreview'
 import { InspectionContext } from '../inspection/InspectionContext'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionStatusColor,

@@ -11,7 +11,7 @@ import {
   SanctionUpdate,
 } from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { text, Text } from '../util/translate'
 import { FlexRow, PageSection } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'

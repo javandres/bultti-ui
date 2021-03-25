@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Button, ButtonSize, ButtonStyle } from '../components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../components/buttons/Button'
 import Dropdown from '../input/Dropdown'
 import { FlexRow } from '../components/common'
 import { Text } from '../../util/translate'

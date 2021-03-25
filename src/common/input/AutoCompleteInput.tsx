@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { useCombobox } from 'downshift'
-import { Button, ButtonSize } from '../components/Button'
+import { Button, ButtonSize } from '../components/buttons/Button'
 import { ArrowDown } from '../icon/ArrowDown'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/form'

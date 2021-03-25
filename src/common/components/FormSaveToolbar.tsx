@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Info } from '../icon/Info'
-import { Button, ButtonSize, ButtonStyle } from './Button'
+import { Button, ButtonSize, ButtonStyle } from './buttons/Button'
 import { Checkmark2 } from '../icon/Checkmark2'
 import { CrossThick } from '../icon/CrossThick'
 
