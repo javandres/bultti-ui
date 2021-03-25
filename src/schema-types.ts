@@ -468,6 +468,7 @@ export type Inspection = {
   name?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
   inspectionMappings?: Maybe<Array<InspectionMapping>>;
+  linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
   defectInspection?: Maybe<Inspection>;
   operatorId: Scalars['Int'];
   operator: Operator;

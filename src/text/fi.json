@@ -151,7 +151,10 @@
   "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_editor_hfp_unavailable": "Tarkastusjaksolle ei ole ladattu HFP-tiedot.",
-  "inspection_editor_linkedInspections": "Liitetyt tarkastukset",
+  "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
+  "inspection_editor_linkedInspectionsUpToDate": "Linkitetyt tarkastukset ajan tasalla.",
+  "inspection_editor_linkedInspectionsUpdateAvailable": "Päivitä linkitetyt tarkastukset",
+  "inspection_editor_linkedInspectionsUpdateConfirm": "Oletko varma että haluat päivittää linkitetyt tarkastukset? Tämä resetoi mm. tämän jälkitarkastuksen suoritevaatimukset mahdollisine muutoksineen.",
 
   "inspection_state_Draft": "Muokattavissa",
   "inspection_state_Processing": "Käsittelee tietoja",

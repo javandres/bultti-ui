@@ -47,6 +47,7 @@ export const inspectionFragment = gql`
     seasonId
     status
     inspectionType
+    linkedInspectionUpdateAvailable
     inspectionErrors {
       keys
       objectId

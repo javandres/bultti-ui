@@ -512,6 +512,7 @@ type Inspection {
   inspectionMappings: [InspectionMapping!]
   inspectionStartDate: BulttiDate!
   inspectionType: InspectionType!
+  linkedInspectionUpdateAvailable: Boolean
   minStartDate: BulttiDate!
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
