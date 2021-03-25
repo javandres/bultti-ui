@@ -13,14 +13,15 @@ import {
   updateLinkedInspectionsMutation,
 } from '../inspection/inspectionQueries'
 import { MessageView } from '../common/components/Messages'
+import { observedExecutionRequirementsQuery } from '../executionRequirement/executionRequirementsQueries'
 
 const LinkedInspectionsView = styled.div``
 
-const LinkedStatusText = styled.span`
+const LinkedStatusText = styled.span<{ updateIsAvailable?: boolean }>`
   display: block;
   font-size: 0.875rem;
-  align-self: flex-end;
-  color: var(--light-grey);
+  align-self: center;
+  color: ${(p) => (p.updateIsAvailable ? 'var(--red)' : 'var(--light-grey)')};
 `
 
 export type PropTypes = {
@@ -47,6 +48,10 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
       },
       refetchQueries: [
         { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: observedExecutionRequirementsQuery,
+          variables: { postInspectionId: inspection?.id || '' },
+        },
       ],
     }
   )
@@ -62,16 +67,16 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
       <Heading>
         <Text>inspection_editor_linkedInspections</Text>
         <div style={{ marginLeft: 'auto', display: 'flex', alignSelf: 'stretch' }}>
-          <LinkedStatusText>
+          <LinkedStatusText updateIsAvailable={!!inspection.linkedInspectionUpdateAvailable}>
             {!inspection.linkedInspectionUpdateAvailable ? (
               <Text>inspection_editor_linkedInspectionsUpToDate</Text>
             ) : (
-              <Text>inspection_editor_linkedInspectionsUpToDate</Text>
+              <Text>inspection_editor_linkedInspectionsUpdateAvailable</Text>
             )}
           </LinkedStatusText>
           {isEditable && inspection.linkedInspectionUpdateAvailable && (
             <Button
-              style={{ marginLeft: '1rem' }}
+              style={{ marginLeft: '1rem', alignSelf: 'center' }}
               loading={updateLoading}
               onClick={onUpdateConnectedInspection}
               buttonStyle={ButtonStyle.SECONDARY}
