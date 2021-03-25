@@ -154,7 +154,7 @@ const renderInput = ({
 
   if (key === 'procurementUnitIds') {
     if (isNew) {
-      return <div />
+      return <React.Fragment />
     }
 
     return (
@@ -192,8 +192,14 @@ const renderInput = ({
     )
   }
 
-  if (['startDate', 'endDate'].includes(key)) {
-    return <SelectDate name={key} value={val} onChange={onChange} />
+  if (key === 'startDate') {
+    return <SelectDate name={key} value={val} onChange={onChange} maxDate={contract.endDate} />
+  }
+
+  if (key === 'endDate') {
+    return (
+      <SelectDate name={key} value={val} onChange={onChange} minDate={contract.startDate} />
+    )
   }
 
   return (
