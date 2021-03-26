@@ -21,6 +21,7 @@ import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { text, Text } from '../util/translate'
+import { areIntervalsOverlapping, parseISO } from 'date-fns'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -161,10 +162,24 @@ const ContractProcurementUnitsEditor = observer(
             let shortRoutesString = shortRoutes.join(', ')
             let isSelected = includedUnitIds.includes(unitOption.id)
 
-            let { currentContracts = [] } = unitOption
-            currentContracts = currentContracts || []
+            let currentContracts = unitOption.currentContracts || []
 
             let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
+            let overlappingWithExistingContract: Contract | undefined = undefined
+            if (!isCurrentContract) {
+              overlappingWithExistingContract = currentContracts.find((c) =>
+                areIntervalsOverlapping(
+                  {
+                    start: parseISO(c.startDate),
+                    end: parseISO(c.endDate),
+                  },
+                  {
+                    start: parseISO(contract.startDate),
+                    end: parseISO(contract.endDate),
+                  }
+                )
+              )
+            }
 
             return (
               <ProcurementUnitOption key={unitOption.id}>
@@ -191,10 +206,16 @@ const ContractProcurementUnitsEditor = observer(
                 </HeaderSection>
                 <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
                   <Checkbox
-                    disabled={readOnly || unitOption.isUnselectingDisabled}
+                    disabled={
+                      readOnly ||
+                      unitOption.isUnselectingDisabled ||
+                      !!overlappingWithExistingContract
+                    }
                     disabledMessage={
                       unitOption.isUnselectingDisabled
                         ? text('contract_procurementUnitsEditor_unselectingDisabled')
+                        : !!overlappingWithExistingContract
+                        ? `Nyt auki olevan sopimusehdon päivämäärät menevät päällekkäin kohteeseen jo liitettyjen sopimusehtojen ${overlappingWithExistingContract.startDate} - ${overlappingWithExistingContract.endDate} kanssa, joten sopimusehtoja ei voi liittää tähän kohteeseen.`
                         : undefined
                     }
                     value="unit_included"
