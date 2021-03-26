@@ -24,7 +24,6 @@ export type Query = {
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
-  currentInspectionByOperatorAndSeason?: Maybe<Inspection>;
   currentInspectionsByOperatorAndSeason: Array<Inspection>;
   allInspections: Array<Inspection>;
   inspectionUserRelations: Array<InspectionUserRelation>;
@@ -107,13 +106,6 @@ export type QueryInspectionsByOperatorArgs = {
 
 export type QueryInspectionsTimelineArgs = {
   inspectionType: InspectionType;
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentInspectionByOperatorAndSeasonArgs = {
-  inspectionType: InspectionType;
-  seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
 };
 
@@ -478,7 +470,7 @@ export type Inspection = {
   preInspection?: Maybe<Inspection>;
   postInspection?: Maybe<Inspection>;
   defectInspection?: Maybe<Inspection>;
-  operatorId?: Maybe<Scalars['Int']>;
+  operatorId: Scalars['Int'];
   operator: Operator;
   seasonId: Scalars['String'];
   season: Season;
@@ -489,6 +481,7 @@ export type Inspection = {
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
+  inspectionDate?: Maybe<InspectionDate>;
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   startDate?: Maybe<Scalars['BulttiDate']>;
@@ -791,6 +784,15 @@ export enum InspectionStatus {
   Processing = 'Processing',
   Sanctionable = 'Sanctionable'
 }
+
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  hfpDataStatus: HfpStatus;
+  inspections?: Maybe<Array<Inspection>>;
+};
 
 export type ValidationErrorData = {
   __typename?: 'ValidationErrorData';
@@ -1800,13 +1802,6 @@ export type ProcurementUnitOption = {
   currentContracts?: Maybe<Array<Contract>>;
 };
 
-export type InspectionDate = {
-  __typename?: 'InspectionDate';
-  id: Scalars['ID'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-};
-
 export type SanctionsResponse = {
   __typename?: 'SanctionsResponse';
   filteredCount: Scalars['Int'];
@@ -1909,11 +1904,12 @@ export type Mutation = {
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
+  clearCache: Scalars['Boolean'];
 };
 
 
 export type MutationLoadHfpDataForInspectionPeriodArgs = {
-  inspectionId: Scalars['String'];
+  inspectionDateId: Scalars['String'];
 };
 
 
