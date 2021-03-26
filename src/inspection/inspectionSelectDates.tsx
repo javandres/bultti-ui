@@ -1,19 +1,29 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, endOfWeek, parseISO } from 'date-fns'
-import { InspectionDate, InspectionInput, InspectionType, Season } from '../schema-types'
+import { eachWeekOfInterval, isBefore, parseISO, startOfWeek, endOfWeek, subMonths } from 'date-fns'
+import { HfpStatus, InspectionDate, InspectionInput, InspectionType, Season } from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
-import { getDateObject, getReadableDateRange } from '../util/formatDate'
+import { getDateObject, getDateString, getReadableDateRange } from '../util/formatDate'
 import { getObservedInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
+import { getHfpStatusColor, HfpStatusIndicator } from '../common/components/HfpStatus'
+import { lowerCase } from 'lodash'
 import { useStateValue } from '../state/useAppState'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
   width: 50%;
+`
+
+const InspectionDateLabel = styled.div`
+  width: 100%;
+  padding-right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 `
 
 interface DateOption {
@@ -22,6 +32,7 @@ interface DateOption {
     startDate: Date
     endDate: Date
   }
+  hfpDataStatus?: HfpStatus
 }
 
 export type PropTypes = {
@@ -61,19 +72,40 @@ const InspectionSelectDates = observer(
     let onSelectDates = (dateOption: DateOption) => {
       onChange(dateOption.value.startDate, dateOption.value.endDate)
     }
-    let selectedItem: DateOption | null =
-      inspectionInput.inspectionStartDate && inspectionInput.inspectionEndDate
-        ? {
-            label: getReadableDateRange({
-              start: inspectionInput.inspectionStartDate,
-              end: inspectionInput.inspectionEndDate,
-            }),
-            value: {
-              startDate: inspectionInput.inspectionStartDate,
-              endDate: inspectionInput.inspectionEndDate!,
-            },
-          }
-        : null
+
+    let selectedItem: DateOption | null = useMemo(() => {
+      let { inspectionEndDate, inspectionStartDate } = inspectionInput
+
+      if (!(inspectionStartDate && inspectionEndDate)) {
+        return null
+      }
+
+      let selectedDateOption: DateOption = {
+        label: getReadableDateRange({
+          start: inspectionStartDate,
+          end: inspectionEndDate,
+        }),
+        value: {
+          startDate: inspectionStartDate,
+          endDate: inspectionEndDate,
+        },
+      }
+
+      if (inspectionType === InspectionType.Post) {
+        let inspectionDateOption = dateOptions.find(
+          (dateOption) =>
+            getDateString(dateOption.value.startDate) === inspectionStartDate &&
+            getDateString(dateOption.value.endDate) === inspectionEndDate
+        )
+
+        if (inspectionDateOption) {
+          selectedDateOption.hfpDataStatus = inspectionDateOption.hfpDataStatus
+        }
+      }
+
+      return selectedDateOption
+    }, [inspectionInput, inspectionType, dateOptions])
+
     return (
       <InspectionSelectDatesView>
         {areInspectionDatesLoading ? (
@@ -85,6 +117,17 @@ const InspectionSelectDates = observer(
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}
+            itemToLabel={(item: DateOption) => (
+              <InspectionDateLabel>
+                <span>{item.label}</span>
+                {item.hfpDataStatus && (
+                  <HfpStatusIndicator
+                    title={text(`inspectionDate_hfp_${lowerCase(item.hfpDataStatus)}`)}
+                    color={getHfpStatusColor(item.hfpDataStatus)}
+                  />
+                )}
+              </InspectionDateLabel>
+            )}
             hintText={
               inspectionType === InspectionType.Post
                 ? text('inspection_date_postInspectionDateSelectionHint')
@@ -112,7 +155,9 @@ function getPreInspectionDateOptions(season: Season): DateOption[] {
       startDate,
       endDate,
     }
+
     let label = getReadableDateRange({ start: startDate, end: endDate })
+
     return {
       label,
       value,
@@ -124,16 +169,19 @@ function getPostInspectionDateOptions(
   inspectionDatesQueryResult: InspectionDate[]
 ): DateOption[] {
   return inspectionDatesQueryResult.map((inspectionDate: InspectionDate) => {
-    let { startDate, endDate } = inspectionDate
+    let { startDate, endDate, hfpDataStatus } = inspectionDate
     let label = getReadableDateRange({ start: startDate, end: endDate })
+
     return {
       label,
+      hfpDataStatus,
       value: {
         startDate: parseISO(startDate),
         endDate: parseISO(endDate),
       },
     }
-  })
+    }
+  )
 }
 
 export default InspectionSelectDates

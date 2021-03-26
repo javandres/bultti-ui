@@ -507,6 +507,7 @@ type Inspection {
   endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
+  inspectionDate: InspectionDate
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionMappings: [InspectionMapping!]
@@ -530,7 +531,9 @@ type Inspection {
 
 type InspectionDate {
   endDate: BulttiDate!
+  hfpDataStatus: HfpStatus!
   id: ID!
+  inspections: [Inspection!]
   startDate: BulttiDate!
 }
 
@@ -668,6 +671,7 @@ type Mutation {
   addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
   addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
+  clearCache: Boolean!
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
@@ -677,7 +681,7 @@ type Mutation {
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
-  loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
+  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
@@ -1107,7 +1111,6 @@ type Query {
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
-  loadedHfpRanges(endDate: String!, startDate: String!): [HfpDateStatus!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport
