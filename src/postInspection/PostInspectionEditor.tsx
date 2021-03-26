@@ -1,17 +1,17 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection } from '../schema-types'
+import { Inspection, InspectionValidationError } from '../schema-types'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Heading } from '../common/components/Typography'
 import { useInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery, updateBaseInspectionMutation } from '../inspection/inspectionQueries'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
-import LoadInspectionHfpData from './LoadInspectionHfpData'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
 import styled from 'styled-components/macro'
+import { useHasInspectionError } from '../util/hasInspectionError'
 
 const PostInspectionEditorView = styled.div`
   margin-top: 1rem;
@@ -25,7 +25,10 @@ type PostInspectionProps = {
 
 const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
   ({ refetchData, isEditable, inspection }) => {
-    let [hfpLoaded, setHfpLoaded] = useState(false)
+    let hfpLoaded = !useHasInspectionError(
+      inspection,
+      InspectionValidationError.HfpUnavailableForInspectionDates
+    )
 
     var connectedPreInspection = inspection.preInspection
     let goToPreInspectionReports = useInspectionReports()
@@ -61,7 +64,6 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     return (
       <PostInspectionEditorView>
-        <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
         {hfpLoaded ? (
           <>
             {connectedPreInspection && (

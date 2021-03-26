@@ -482,6 +482,7 @@ export type Inspection = {
   updatedAt: Scalars['DateTime'];
   userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
+  inspectionDate?: Maybe<InspectionDate>;
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   startDate?: Maybe<Scalars['BulttiDate']>;
@@ -784,6 +785,15 @@ export enum InspectionStatus {
   Processing = 'Processing',
   Sanctionable = 'Sanctionable'
 }
+
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  hfpDataStatus: HfpStatus;
+  inspections?: Maybe<Array<Inspection>>;
+};
 
 export type ValidationErrorData = {
   __typename?: 'ValidationErrorData';
@@ -1794,13 +1804,6 @@ export type ProcurementUnitOption = {
   isUnselectingDisabled: Scalars['Boolean'];
 };
 
-export type InspectionDate = {
-  __typename?: 'InspectionDate';
-  id: Scalars['ID'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-};
-
 export type SanctionsResponse = {
   __typename?: 'SanctionsResponse';
   filteredCount: Scalars['Int'];
@@ -1903,11 +1906,12 @@ export type Mutation = {
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
+  clearCache: Scalars['Boolean'];
 };
 
 
 export type MutationLoadHfpDataForInspectionPeriodArgs = {
-  inspectionId: Scalars['String'];
+  inspectionDateId: Scalars['String'];
 };
 
 

@@ -5,6 +5,10 @@ export const InspectionDateFragment = gql`
     id
     startDate
     endDate
+    hfpDataStatus
+    inspections {
+      id
+    }
   }
 `
 

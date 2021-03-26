@@ -11,6 +11,7 @@ import { useInspectionErrors } from '../util/useInspectionErrors'
 import { DEBUG } from '../constants'
 import { Text } from '../util/translate'
 import styled from 'styled-components/macro'
+import { getDateObject } from '../util/formatDate'
 
 const PreInspectionEditorView = styled.div`
   margin-top: 1rem;
@@ -60,6 +61,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             operatorId={inspection.operatorId!}
             startDate={inspection.inspectionStartDate}
             endDate={inspection.inspectionEndDate}
+            contractSelectionDate={getDateObject(inspection.startDate)}
           />
         )}
         {DEBUG && (

@@ -2,7 +2,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { CellValType, TableRowWithDataAndFunctions } from './tableUtils'
 import React, { CSSProperties } from 'react'
-import { RemoveButton } from '../components/Button'
+import { RemoveButton } from '../components/buttons/Button'
 import { TableCell } from './TableCell'
 
 export const RowRemoveButton = styled(RemoveButton)`

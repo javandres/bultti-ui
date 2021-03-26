@@ -18,7 +18,7 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
-import { TextButton } from '../common/components/Button'
+import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { text, Text } from '../util/translate'
 

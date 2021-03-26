@@ -7,15 +7,15 @@ import { useQueryData } from '../util/useQueryData'
 import { Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { useStateValue } from '../state/useAppState'
 import { useHasAdminAccessRights } from '../util/userRoles'
-import { ArrowRight } from '../common/icon/ArrowRight'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { navigateWithQueryString } from '../util/urlValue'
 import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import { useRefetch } from '../util/useRefetch'
+import { LinkButton } from '../common/components/buttons/LinkButton'
 
 const ContractPageView = styled(Page)``
 
@@ -42,42 +42,6 @@ const ContractDates = styled(DateRangeDisplay)`
   margin-left: auto;
   flex: 0;
   align-self: flex-start;
-`
-
-const ContractListItem = styled.button`
-  font-family: inherit;
-  background: white;
-  border-radius: 0.5rem;
-  border: 1px solid var(--lighter-grey);
-  padding: 1rem 0.5rem 1rem 1rem;
-  margin-bottom: 1rem;
-  text-align: left;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  font-size: 1.1rem;
-  cursor: pointer;
-  color: var(--dark-grey);
-  transform: scale(1);
-  transition: all 0.1s ease-out;
-
-  &:hover {
-    background-color: #fafafa;
-    transform: ${({ disabled = false }) => (!disabled ? 'scale(1.01)' : 'scale(1)')};
-  }
-`
-
-const GoToContractButton = styled.div`
-  background: transparent;
-  border: 0;
-  flex: 0;
-  padding: 0.5rem 0.75rem;
-  display: flex;
-  align-items: center;
-  border-top-right-radius: 0.5rem;
-  margin-left: auto;
-  margin-top: -0.5rem;
-  margin-bottom: -0.5rem;
 `
 
 export type PropTypes = RouteComponentProps
@@ -141,9 +105,10 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
         )}
         <ContractContentView>
           {contracts.map((contractItem) => (
-            <ContractListItem
+            <LinkButton
               key={contractItem.id}
-              onClick={() => onOpenContract(contractItem.id)}>
+              onClick={() => onOpenContract(contractItem.id)}
+              style={{ padding: '1rem 1rem 1rem 1.5rem' }}>
               <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
               {contractItem?.description && (
                 <ContractDescription>{contractItem?.description}</ContractDescription>
@@ -153,10 +118,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
                 startDate={contractItem.startDate}
                 endDate={contractItem.endDate}
               />
-              <GoToContractButton>
-                <ArrowRight fill="var(--blue)" width="1.5rem" height="1.5rem" />
-              </GoToContractButton>
-            </ContractListItem>
+            </LinkButton>
           ))}
         </ContractContentView>
       </PageContainer>

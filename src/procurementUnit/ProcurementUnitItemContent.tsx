@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
+  Contract,
   EquipmentCatalogue as EquipmentCatalogueType,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
@@ -25,7 +26,9 @@ import { numval } from '../util/numval'
 import ItemForm from '../common/input/ItemForm'
 import { TextInput } from '../common/input/Input'
 import ValueDisplay from '../common/components/ValueDisplay'
-import { Button } from '../common/components/Button'
+import { Button } from '../common/components/buttons/Button'
+import { navigateWithQueryString } from '../util/urlValue'
+import { LinkButton } from '../common/components/buttons/LinkButton'
 
 const procurementUnitLabels = {
   medianAgeRequirement: text('procurementUnit_ageRequirement'),
@@ -57,6 +60,7 @@ type ContentPropTypes = {
   endDate: string
   procurementUnitId: string
   catalogueEditable: boolean
+  displayedContractUnitId?: string
   requirementsEditable: boolean
   isVisible: boolean
   catalogueInvalid: boolean
@@ -70,6 +74,7 @@ const ProcurementUnitItemContent = observer(
     endDate,
     procurementUnitId,
     catalogueEditable,
+    displayedContractUnitId,
     requirementsEditable,
     isVisible,
     catalogueInvalid,
@@ -176,10 +181,33 @@ const ProcurementUnitItemContent = observer(
       return medianAgeRequirement + 0.5 * optionsUsed
     }, [procurementUnit])
 
+    const onOpenContract = useCallback((contractId) => {
+      return navigateWithQueryString(`/contract/${contractId}`)
+    }, [])
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
         <div style={{ marginBottom: '1rem' }}>
+          {procurementUnit && (
+            <>
+              <SubHeading>
+                <Text>contracts</Text>
+              </SubHeading>
+              {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
+                return (
+                  <LinkButton
+                    key={`contract-${index}`}
+                    onClick={() => onOpenContract(contract.id)}
+                    style={{
+                      fontWeight: displayedContractUnitId === contract.id ? 'bold' : 'unset',
+                    }}>
+                    {contract.startDate} - {contract.endDate}
+                  </LinkButton>
+                )
+              })}
+            </>
+          )}
           {!unitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}

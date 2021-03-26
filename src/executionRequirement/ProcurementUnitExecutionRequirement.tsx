@@ -11,7 +11,7 @@ import {
   weeklyMetersFromJoreMutation,
 } from './executionRequirementsQueries'
 import { FlexRow } from '../common/components/common'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/Button'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { useMutationData } from '../util/useMutationData'
 import { InspectionContext } from '../inspection/InspectionContext'
 import RequirementEquipmentList, { equipmentColumnLabels } from './RequirementEquipmentList'

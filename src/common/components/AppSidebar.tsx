@@ -13,7 +13,7 @@ import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
 import NavLink from './NavLink'
 import { logoutMutation } from '../query/authQueries'
-import { Button, ButtonSize } from './Button'
+import { Button, ButtonSize } from './buttons/Button'
 import { Text } from '../../util/translate'
 import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
@@ -24,6 +24,7 @@ import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChange
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { User } from '../../schema-types'
+import { gql, useMutation } from '@apollo/client'
 
 const AppSidebarView = styled.div`
   overflow-y: auto;
@@ -142,6 +143,12 @@ export const SidebarStyledSelect = styled(Dropdown)`
   }
 `
 
+const clearCacheMutation = gql`
+  mutation clearCache {
+    clearCache
+  }
+`
+
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
@@ -179,6 +186,8 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       setUser(null)
     }
   }, [])
+
+  const [clearCache] = useMutation(clearCacheMutation)
 
   return (
     <AppSidebarView>
@@ -270,6 +279,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Text>logout</Text>
           </Button>
         </NavCategory>
+        {DEBUG && (
+          <Button
+            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+            onClick={() => clearCache()}
+            size={ButtonSize.MEDIUM}>
+            <Text>Clear cache</Text>
+          </Button>
+        )}
       </AppNav>
     </AppSidebarView>
   )

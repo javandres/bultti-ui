@@ -2,7 +2,7 @@ import React, { CSSProperties, useCallback } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { useSelect } from 'downshift'
 import { text } from '../../util/translate'
-import { Button, ButtonSize } from '../components/Button'
+import { Button, ButtonSize } from '../components/buttons/Button'
 import { ArrowDown } from '../icon/ArrowDown'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/form'
@@ -26,11 +26,13 @@ const SelectButton = styled(Button).attrs({ size: ButtonSize.MEDIUM })<{
   font-size: 1rem;
   justify-content: flex-start;
   display: flex;
+
   svg {
     display: ${(p) => (p.disabled ? 'none' : 'block')};
     margin-left: auto;
     margin-right: 0;
   }
+
   ${(p) =>
     !p.disabled
       ? css`
@@ -79,14 +81,14 @@ export type DropdownProps = {
   items: any[] // any object (remember to pass itemToString, itemToLabel), array, { field, value } object.
   onSelect: (selectedItem: any | null) => unknown
   itemToString?: string | ((item: any | null) => string) // property of given object to get value from or a function that returns the value.
-  itemToLabel?: string | ((item: any | null) => string) // property of given object to get label from or a function that returns the label.
+  itemToLabel?: string | ((item: any | null) => string | JSX.Element) // property of given object to get label from or a function that returns the label.
   selectedItem?: any // TODO: add documentation of this property or change any
   className?: string
   hintText?: string
   style?: CSSProperties
 }
 
-function toString(item, converter?: string | ((item) => string)) {
+function toString(item, converter?: string | ((item) => string | JSX.Element)) {
   if (typeof item === 'string') {
     return item
   }
@@ -138,6 +140,8 @@ const Dropdown: React.FC<DropdownProps> = observer(
       itemToString: (item: any) => toString(item, itemToString),
     })
 
+    let buttonLabel = toString(currentlySelected, itemToLabel) || text('all')
+
     return (
       <DropdownView className={className} style={style}>
         {!!label && (
@@ -150,7 +154,7 @@ const Dropdown: React.FC<DropdownProps> = observer(
             {...getToggleButtonProps({
               disabled,
             })}>
-            <span>{toString(currentlySelected, itemToLabel) || text('all')}</span>
+            {typeof buttonLabel === 'string' ? <span>{buttonLabel}</span> : buttonLabel}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 
