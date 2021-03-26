@@ -507,6 +507,7 @@ type Inspection {
   endDate: BulttiDate
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
+  inspectionDate: InspectionDate
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
@@ -515,7 +516,7 @@ type Inspection {
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
-  operatorId: Int
+  operatorId: Int!
   postInspection: Inspection
   preInspection: Inspection
   season: Season!
@@ -530,7 +531,9 @@ type Inspection {
 
 type InspectionDate {
   endDate: BulttiDate!
+  hfpDataStatus: HfpStatus!
   id: ID!
+  inspections: [Inspection!]
   startDate: BulttiDate!
 }
 
@@ -662,6 +665,7 @@ type Mutation {
   addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
   addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
+  clearCache: Boolean!
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
@@ -671,7 +675,7 @@ type Mutation {
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
-  loadHfpDataForInspectionPeriod(inspectionId: String!): [HfpDateStatus!]!
+  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!
@@ -1076,7 +1080,6 @@ type Query {
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
-  currentInspectionByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): Inspection
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
@@ -1096,12 +1099,12 @@ type Query {
   executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExecutionRequirementsReport
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
+  getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
-  loadedHfpRanges(endDate: String!, startDate: String!): [HfpDateStatus!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport
