@@ -10,7 +10,6 @@ import { removeInspectionDateMutation } from './inspectionDateQuery'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { MessageView } from '../../common/components/Messages'
 import { getHfpStatusColor, HfpStatusIndicator } from '../../common/components/HfpStatus'
-import { lowerCase } from 'lodash'
 import InspectionDateHfpControl from './InspectionDateHfpControl'
 
 const Header = styled.div`
@@ -26,7 +25,7 @@ const ListItem = styled.div`
   margin: 0 -1rem;
   overflow: auto;
 
-  &:nth-child(even) {
+  &:nth-child(odd) {
     background: var(--white-grey);
   }
 `
@@ -120,24 +119,21 @@ const InspectionDateList: React.FC<PropTypes> = observer(
         <Header>
           <Text>inspectionDateList_header</Text>
         </Header>
-        {isLoading ? (
-          <LoadingDisplay />
-        ) : (
-          <>
-            {inspectionDates.length === 0 && (
-              <MessageView>
-                <Text>inspectionDateList_noResults</Text>
-              </MessageView>
-            )}
-            {inspectionDates.map((inspectionDate: InspectionDate) => (
-              <InspectionDateListItem
-                key={inspectionDate.id}
-                removeItem={removeItem}
-                inspectionDate={inspectionDate}
-              />
-            ))}
-          </>
+        <LoadingDisplay loading={isLoading} />
+        {inspectionDates.length === 0 && (
+          <MessageView>
+            <Text>inspectionDateList_noResults</Text>
+          </MessageView>
         )}
+        <div>
+          {inspectionDates.map((inspectionDate: InspectionDate) => (
+            <InspectionDateListItem
+              key={inspectionDate.id}
+              removeItem={removeItem}
+              inspectionDate={inspectionDate}
+            />
+          ))}
+        </div>
       </ListWrapper>
     )
   }

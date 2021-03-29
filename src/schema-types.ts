@@ -1851,7 +1851,7 @@ export enum SanctionExceptionReason {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  loadHfpDataForInspectionPeriod: Array<HfpDateStatus>;
+  loadHfpDataForInspectionPeriod: Array<InspectionDate>;
   createInspection: Inspection;
   updateBaseInspection: Inspection;
   updateInspection: Inspection;

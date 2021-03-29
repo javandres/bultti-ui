@@ -675,7 +675,7 @@ type Mutation {
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
-  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
+  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [InspectionDate!]!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload): Contract!

@@ -20090,7 +20090,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "OBJECT",
-                    "name": "HfpDateStatus",
+                    "name": "InspectionDate",
                     "ofType": null
                   }
                 }
