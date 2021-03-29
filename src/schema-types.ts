@@ -20,7 +20,6 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   currentlyLoadingHfpRanges: Array<HfpDateStatus>;
-  loadedHfpRanges: Array<HfpDateStatus>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
@@ -84,12 +83,6 @@ export type Query = {
   getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
-};
-
-
-export type QueryLoadedHfpRangesArgs = {
-  endDate: Scalars['String'];
-  startDate: Scalars['String'];
 };
 
 
@@ -1871,6 +1864,7 @@ export type Mutation = {
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
+  initInspectionContractUnitMap: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
   updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
@@ -1965,6 +1959,11 @@ export type MutationRemoveInspectionArgs = {
 
 export type MutationToggleInspectionUserSubscribedArgs = {
   userId: Scalars['String'];
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInitInspectionContractUnitMapArgs = {
   inspectionId: Scalars['String'];
 };
 

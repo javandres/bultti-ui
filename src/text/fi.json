@@ -216,7 +216,7 @@
   "INVALID_INSPECTION_TIME": "Tarkastusaika väärä",
   "MISSING_BLOCK_DEPARTURES": "Lähtöketjut puuttuu",
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
-  "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaolevaa sopimusta.",
+  "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaoleva sopimus.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
 }
