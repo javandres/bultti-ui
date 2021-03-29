@@ -43,8 +43,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
   ] = useState<InspectionInput>(initialInspectionInputValues)
 
   let onUpdateValue = useCallback((name: string, value: any) => {
-    console.log(name, value)
-
     setPendingInspectionInputValues((currentValues) => {
       let nextValues: InspectionInput = { ...currentValues }
       nextValues[name] = value
