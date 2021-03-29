@@ -26,15 +26,16 @@ export type PropTypes = {
 }
 
 const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection }) => {
-  let getInspectionInputValues = (setFromInspection: Inspection) => {
+  let inspectionInputValues = useMemo(() => {
     return {
-      name: setFromInspection.name || '',
-      inspectionStartDate: setFromInspection.inspectionStartDate || '',
-      inspectionEndDate: setFromInspection.inspectionEndDate || '',
+      name: inspection.name || '',
+      inspectionDateId: inspection.inspectionDateId,
+      inspectionStartDate: inspection.inspectionStartDate || '',
+      inspectionEndDate: inspection.inspectionEndDate || '',
     }
-  }
+  }, [inspection])
 
-  let initialInspectionInputValues = getInspectionInputValues(inspection)
+  let initialInspectionInputValues = { ...inspectionInputValues }
 
   let [
     pendingInspectionInputValues,
@@ -42,6 +43,8 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
   ] = useState<InspectionInput>(initialInspectionInputValues)
 
   let onUpdateValue = useCallback((name: string, value: any) => {
+    console.log(name, value)
+
     setPendingInspectionInputValues((currentValues) => {
       let nextValues: InspectionInput = { ...currentValues }
       nextValues[name] = value
@@ -95,9 +98,13 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               inspectionType={inspection.inspectionType}
               isEditingDisabled={inspection.status !== InspectionStatus.Draft}
               inspectionInput={pendingInspectionInputValues}
-              onChange={(startDate: Date, endDate: Date) => {
-                onUpdateValue('inspectionStartDate', getDateString(startDate))
-                onUpdateValue('inspectionEndDate', getDateString(endDate))
+              onChange={(startDate: Date, endDate: Date, id?: string) => {
+                if (id) {
+                  onUpdateValue('inspectionDateId', id)
+                } else {
+                  onUpdateValue('inspectionStartDate', getDateString(startDate))
+                  onUpdateValue('inspectionEndDate', getDateString(endDate))
+                }
               }}
             />
           </FlexRow>
@@ -131,9 +138,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               </Button>
               <Button
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={() =>
-                  setPendingInspectionInputValues(getInspectionInputValues(inspection))
-                }>
+                onClick={() => setPendingInspectionInputValues(inspectionInputValues)}>
                 <Text>cancel</Text>
               </Button>
             </ActionsWrapper>
