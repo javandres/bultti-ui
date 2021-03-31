@@ -3,7 +3,11 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionInput, InspectionStatus, InspectionType } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
-import { inspectionQuery, updateInspectionMutation } from './inspectionQueries'
+import {
+  initInspectionContractUnitMap,
+  inspectionQuery,
+  updateInspectionMutation,
+} from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import InspectionMeta from './InspectionMeta'
 import InspectionConfig from './InspectionConfig'
@@ -14,6 +18,7 @@ import InspectionUsers from './InspectionUsers'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import InspectionValidationErrors from './InspectionValidationErrors'
+import { Button } from '../common/components/buttons/Button'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -36,6 +41,12 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     var [operator] = useStateValue('globalOperator')
 
     let isUpdating = useRef(false)
+
+    let [initInspectionContractUnitMapQuery] = useMutationData(initInspectionContractUnitMap, {
+      variables: {
+        inspectionId: inspection.id,
+      },
+    })
 
     let [updatePreInspection, { loading: updateLoading }] = useMutationData(
       updateInspectionMutation,
@@ -95,6 +106,14 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         {hasErrors && <InspectionValidationErrors inspection={inspection} />}
         {!!inspection && (
           <>
+            {inspection.inspectionType === InspectionType.Pre && (
+              <Button
+                style={{ margin: '10px' }}
+                onClick={() => initInspectionContractUnitMapQuery()}>
+                Lukitse liitetyt sopimukset - Väliaikainen nappi (toimiakseen kaikilta
+                kohteilta täytyy löytyä sopimus)
+              </Button>
+            )}
             <InspectionMeta inspection={inspection} />
             <InspectionUsers inspection={inspection} />
             <InspectionConfig inspection={inspection} saveValues={updatePreInspectionCb} />

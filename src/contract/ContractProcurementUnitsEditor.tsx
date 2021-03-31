@@ -16,12 +16,12 @@ import {
 import Checkbox from '../common/input/Checkbox'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { LoadingDisplay } from '../common/components/Loading'
-import { addDays, areIntervalsOverlapping, max, min, parseISO } from 'date-fns'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
+import { areIntervalsOverlapping, parseISO } from 'date-fns'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -78,6 +78,7 @@ const ContractProcurementUnitsEditor = observer(
           operatorId: contract?.operatorId,
           startDate: contract?.startDate,
           endDate: contract?.endDate,
+          contractId: contract?.id,
         },
       }
     )
@@ -105,14 +106,6 @@ const ContractProcurementUnitsEditor = observer(
 
     let editContract = useContractPage()
 
-    let startDate = parseISO(contract.startDate)
-    let endDate = parseISO(contract.endDate)
-
-    let contractInterval = {
-      start: min([startDate, endDate]),
-      end: max([endDate, addDays(startDate, 1)]),
-    }
-
     let allSelected = useMemo(
       () => !unitOptions.some((unit) => !includedUnitIds.includes(unit.id)),
       [unitOptions, includedUnitIds]
@@ -123,7 +116,10 @@ const ContractProcurementUnitsEditor = observer(
         let allSelectedArr = unitOptions.map((unit) => unit.id)
         onChange(allSelectedArr)
       } else {
-        onChange([])
+        let unselectableUnitOptionIds = unitOptions
+          .filter((unit) => unit.isUnselectingDisabled)
+          .map((unit) => unit.id)
+        onChange(unselectableUnitOptionIds)
       }
     }, [allSelected, unitOptions])
 
@@ -133,7 +129,9 @@ const ContractProcurementUnitsEditor = observer(
           <LoadingDisplay loading={unitsLoading} />
           {unitOptions.length === 0 && !unitsLoading && (
             <EmptyView>
-              <MessageView>Ei kilpailukohteita</MessageView>
+              <MessageView>
+                <Text>contract_procurementUnitsEditor_noProcurementUnits</Text>
+              </MessageView>
             </EmptyView>
           )}
           <FlexRow
@@ -146,7 +144,7 @@ const ContractProcurementUnitsEditor = observer(
               disabled={readOnly}
               value="select_all"
               name="select_all"
-              label={allSelected ? 'Kaikki valittu' : 'Valitse kaikki'}
+              label={allSelected ? text('allSelected') : text('selectAll')}
               checked={allSelected}
               onChange={onSelectAll}
             />
@@ -164,31 +162,24 @@ const ContractProcurementUnitsEditor = observer(
             let shortRoutesString = shortRoutes.join(', ')
             let isSelected = includedUnitIds.includes(unitOption.id)
 
-            let { currentContracts = [] } = unitOption
-            currentContracts = currentContracts || []
+            let currentContracts = unitOption.currentContracts || []
 
             let isCurrentContract = currentContracts.some((c) => c.id === contract.id)
-
-            let hasFullyOverlappingContract = currentContracts.some((c) => {
-              let checkStart = parseISO(c.startDate)
-              let checkEnd = parseISO(c.endDate)
-
-              return (
-                c.id !== contract.id &&
-                !areIntervalsOverlapping(
+            let overlappingWithExistingContract: Contract | undefined = undefined
+            if (!isCurrentContract) {
+              overlappingWithExistingContract = currentContracts.find((c) =>
+                areIntervalsOverlapping(
                   {
-                    start: min([checkStart, checkEnd]),
-                    end: max([checkEnd, addDays(checkStart, 1)]),
+                    start: parseISO(c.startDate),
+                    end: parseISO(c.endDate),
                   },
-                  contractInterval
+                  {
+                    start: parseISO(contract.startDate),
+                    end: parseISO(contract.endDate),
+                  }
                 )
               )
-            })
-
-            let canSelectUnit =
-              currentContracts.length === 0 ||
-              !hasFullyOverlappingContract ||
-              isCurrentContract
+            }
 
             return (
               <ProcurementUnitOption key={unitOption.id}>
@@ -197,7 +188,7 @@ const ContractProcurementUnitsEditor = observer(
                 </HeaderBoldHeading>
                 <HeaderSection title={fullRoutesString}>
                   <HeaderHeading>
-                    <Text>contract_procurementUnitsEditorRoutes</Text>
+                    <Text>contract_procurementUnitsEditor_routes</Text>
                   </HeaderHeading>
                   {shortRoutesString}
                 </HeaderSection>
@@ -214,19 +205,28 @@ const ContractProcurementUnitsEditor = observer(
                   {unitOption?.areaName || 'OTHER'}
                 </HeaderSection>
                 <HeaderSection style={{ alignItems: 'center', justifyContent: 'center' }}>
-                  {canSelectUnit && (
-                    <Checkbox
-                      disabled={readOnly}
-                      value="unit_included"
-                      name="unit_included"
-                      label="Sopimuksessa mukana"
-                      checked={isSelected}
-                      onChange={() => onToggleUnitInclusion(unitOption.id)}
-                    />
-                  )}
+                  <Checkbox
+                    disabled={
+                      readOnly ||
+                      unitOption.isUnselectingDisabled ||
+                      !!overlappingWithExistingContract
+                    }
+                    disabledMessage={
+                      unitOption.isUnselectingDisabled
+                        ? text('contract_procurementUnitsEditor_unselectingDisabled')
+                        : !!overlappingWithExistingContract
+                        ? `Nyt auki olevan sopimusehdon päivämäärät menevät päällekkäin kohteeseen jo liitettyjen sopimusehtojen ${overlappingWithExistingContract.startDate} - ${overlappingWithExistingContract.endDate} kanssa, joten sopimusehtoja ei voi liittää tähän kohteeseen.`
+                        : undefined
+                    }
+                    value="unit_included"
+                    name="unit_included"
+                    label={text('contract_procurementUnitsEditor_unitIncluded')}
+                    checked={isSelected}
+                    onChange={() => onToggleUnitInclusion(unitOption.id)}
+                  />
                   {currentContracts.length !== 0 && !isCurrentContract && (
                     <CurrentContractDisplay>
-                      Nykyiset sopimukset:
+                      <Text>contract_procurementUnitsEditor_currentContracts</Text>
                       <div>
                         {currentContracts.map((currentContract: Contract) => (
                           <TextButton
