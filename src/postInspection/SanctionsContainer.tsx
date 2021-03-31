@@ -52,6 +52,7 @@ let sanctionColumnLabels = {
   entityIdentifier: 'Tunnus',
   sanctionAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
+  sanctionableValue: 'Sanktioon johtava arvo',
   sanctionableKilometers: 'Kilometrisuorite',
   appliedSanctionAmount: 'Sanktioidaan',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
@@ -101,6 +102,7 @@ let sanctionsQuery = gql`
         sanctionableType
         appliedSanctionAmount
         sanctionResultKilometers
+        sanctionableValue
         matchesException {
           id
           departureProperty

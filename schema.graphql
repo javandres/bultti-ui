@@ -674,18 +674,19 @@ type Mutation {
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
+  initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
-  modifyContract(contractInput: ContractInput!, file: Upload): Contract!
+  modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
   rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
-  removeContract(contractId: String!): Boolean!
+  removeContract(contractId: String!, operatorId: Int!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
@@ -1060,6 +1061,7 @@ type ProcurementUnitOption {
   currentContracts: [Contract!]
   endDate: BulttiDate!
   id: String!
+  isUnselectingDisabled: Boolean!
   name: String!
   routes: [String!]!
   startDate: BulttiDate!
@@ -1076,7 +1078,7 @@ type Query {
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
-  contractProcurementUnitOptions(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
+  contractProcurementUnitOptions(contractId: String!, endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
@@ -1157,6 +1159,7 @@ type Sanction {
   sanctionResultKilometers: Float
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+  sanctionableValue: String
 }
 
 type SanctionException {
