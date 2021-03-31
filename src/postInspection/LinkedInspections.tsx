@@ -6,7 +6,7 @@ import { text, Text } from '../util/translate'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { Inspection, InspectionType, InspectionValidationError } from '../schema-types'
-import { useInspectionReports } from '../inspection/inspectionUtils'
+import { useNavigateToInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
   inspectionQuery,
@@ -37,7 +37,7 @@ export type PropTypes = {
 }
 
 const LinkedInspections = observer(({ inspection, isEditable = false }: PropTypes) => {
-  let goToPreInspectionReports = useInspectionReports()
+  let navigateToInspectionReports = useNavigateToInspectionReports()
   let connectedPreInspections = inspection.inspectionMappings || []
 
   let hasLinkedInspectionsError = useHasInspectionError(
@@ -46,10 +46,10 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
   )
 
   let onClickConnectedInspection = useCallback(
-    (inspectionId) => {
-      goToPreInspectionReports(inspectionId, InspectionType.Pre)
+    (preInspectionId) => {
+      navigateToInspectionReports(preInspectionId, InspectionType.Pre)
     },
-    [goToPreInspectionReports]
+    [navigateToInspectionReports]
   )
 
   let [updateConnectedInspections, { loading: updateLoading }] = useMutationData(
@@ -107,7 +107,7 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
       ))}
       {connectedPreInspections.length === 0 && (
         <MessageView>
-          Ei linkattuja ennakkotarkastuksia. Julkaise ennakkotarkastus ja päivitä!
+          <Text>inspection_editor_noLinkedInspections</Text>
         </MessageView>
       )}
     </LinkedInspectionsView>
