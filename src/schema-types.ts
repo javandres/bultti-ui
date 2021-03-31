@@ -405,6 +405,7 @@ export type QueryContractArgs = {
 
 
 export type QueryContractProcurementUnitOptionsArgs = {
+  contractId: Scalars['String'];
   endDate: Scalars['BulttiDate'];
   startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
@@ -1801,6 +1802,7 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   areaName?: Maybe<Scalars['String']>;
   currentContracts?: Maybe<Array<Contract>>;
+  isUnselectingDisabled: Scalars['Boolean'];
 };
 
 export type SanctionsResponse = {
@@ -1870,6 +1872,7 @@ export type Mutation = {
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
+  initInspectionContractUnitMap: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
   updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
@@ -1964,6 +1967,11 @@ export type MutationRemoveInspectionArgs = {
 
 export type MutationToggleInspectionUserSubscribedArgs = {
   userId: Scalars['String'];
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInitInspectionContractUnitMapArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -2123,12 +2131,14 @@ export type MutationCreateContractArgs = {
 
 
 export type MutationModifyContractArgs = {
+  operatorId: Scalars['Int'];
   contractInput: ContractInput;
   file?: Maybe<Scalars['Upload']>;
 };
 
 
 export type MutationRemoveContractArgs = {
+  operatorId: Scalars['Int'];
   contractId: Scalars['String'];
 };
 

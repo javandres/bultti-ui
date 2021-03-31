@@ -4,6 +4,7 @@
 - Use `{}` for empty objects
 - Use `''` for empty strings
 - Avoid using `any` type as much as you can. Only use it if you have to. For example when using useQueryData hook, give it a return type
+- Use `ordinary function declaration` with stand alone functions. Use `arrow functions` for inline functions
 
 ### Typescript
 

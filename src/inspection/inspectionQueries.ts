@@ -140,6 +140,12 @@ export const inspectionsTimelineByOperatorQuery = gql`
   }
 `
 
+export const initInspectionContractUnitMap = gql`
+  mutation initInspectionContractUnitMap($inspectionId: String!) {
+    initInspectionContractUnitMap(inspectionId: $inspectionId)
+  }
+`
+
 export const createInspectionMutation = gql`
   mutation createInspection($inspectionInput: InitialInspectionInput!) {
     createInspection(inspection: $inspectionInput) {
