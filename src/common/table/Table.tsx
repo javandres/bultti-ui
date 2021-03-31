@@ -287,7 +287,7 @@ const Table = observer(
       ]
     )
 
-    let columnWidths: Array<string | number> = useMemo(() => {
+    let defaultColumnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
         let percentageWidth = columnNames.length / 100 + '%'
         return columnNames.map(() => percentageWidth)
@@ -313,6 +313,34 @@ const Table = observer(
 
       return widths
     }, [columnNames, rows, fluid])
+
+    let [columnWidths, setColumnWidths] = useState(defaultColumnWidths)
+
+    let columnDragTarget = useRef<number | undefined>(undefined)
+    let columnDragStart = useRef<number>(0)
+
+    let onDragColumn = useCallback(
+      (colIdx) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+        if (columnDragTarget.current === colIdx) {
+          let movementDir = e.movementX
+          let movementPx = movementDir * Math.abs(columnDragStart.current - e.clientX)
+        }
+      },
+      [columnDragTarget.current, columnDragStart.current]
+    )
+
+    let onColumnDragStart = useCallback(
+      (colIdx) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+        columnDragTarget.current = colIdx
+        columnDragStart.current = e.clientX
+      },
+      []
+    )
+
+    let onColumnDragEnd = useCallback((e) => {
+      columnDragTarget.current = undefined
+      columnDragStart.current = 0
+    }, [])
 
     // The table is empty if we don't have any items,
     // OR
@@ -413,6 +441,9 @@ const Table = observer(
                 let sortConfig = sort[sortIndex]
                 let columnWidth = columnWidths[colIdx]
 
+                let onDragHandler = onDragColumn(colIdx)
+                let onMouseDownHandler = onColumnDragStart(colIdx)
+
                 return (
                   <ColumnHeaderCell
                     as="button"
@@ -428,6 +459,9 @@ const Table = observer(
                     }
                     isEditing={isEditingColumn}
                     key={colKey}
+                    onMouseDown={onMouseDownHandler}
+                    onMouseUp={onColumnDragEnd}
+                    onMouseMove={onDragHandler}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
