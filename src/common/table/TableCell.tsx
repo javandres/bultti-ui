@@ -31,6 +31,7 @@ export const TableCellElement = styled.div<{
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   box-sizing: border-box !important;
+  overflow: hidden;
 
   &:nth-child(odd) {
     background: ${(p) =>

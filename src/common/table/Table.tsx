@@ -314,16 +314,30 @@ const Table = observer(
       return widths
     }, [columnNames, rows, fluid])
 
-    let [columnWidths, setColumnWidths] = useState(defaultColumnWidths)
+    let [columnWidths, setColumnWidths] = useState<Array<string | number>>(defaultColumnWidths)
 
     let columnDragTarget = useRef<number | undefined>(undefined)
     let columnDragStart = useRef<number>(0)
 
     let onDragColumn = useCallback(
-      (colIdx) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
-        if (columnDragTarget.current === colIdx) {
-          let movementDir = e.movementX
-          let movementPx = movementDir * Math.abs(columnDragStart.current - e.clientX)
+      (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+        let colIdx = columnDragTarget.current
+
+        if (typeof colIdx === 'undefined') {
+          return
+        }
+
+        let nextWidths = [...columnWidths]
+        let currentWidth = nextWidths[colIdx] || 0
+
+        if (typeof currentWidth === 'number') {
+          let movementPx = -1 * (columnDragStart.current - Math.abs(e.nativeEvent.pageX))
+          let nextWidthPx = currentWidth + movementPx
+
+          let nextWidth = Math.min(Math.max(10, nextWidthPx), 1000)
+
+          nextWidths.splice(colIdx, 1, nextWidth)
+          setColumnWidths(nextWidths)
         }
       },
       [columnDragTarget.current, columnDragStart.current]
@@ -332,7 +346,7 @@ const Table = observer(
     let onColumnDragStart = useCallback(
       (colIdx) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
         columnDragTarget.current = colIdx
-        columnDragStart.current = e.clientX
+        columnDragStart.current = Math.abs(e.nativeEvent.pageX)
       },
       []
     )
@@ -426,7 +440,11 @@ const Table = observer(
           style={{ overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
           <TableView style={{ minWidth: tableViewWidth + 'px' }}>
-            <TableHeader>
+            <TableHeader
+              onDrag={() => false}
+              onDragStart={() => false}
+              onDragEnd={() => false}
+              onMouseMove={onDragColumn}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -440,28 +458,20 @@ const Table = observer(
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
                 let columnWidth = columnWidths[colIdx]
-
-                let onDragHandler = onDragColumn(colIdx)
                 let onMouseDownHandler = onColumnDragStart(colIdx)
 
                 return (
                   <ColumnHeaderCell
                     as="button"
-                    style={
-                      !fluid && !!columnWidth
-                        ? {
-                            minWidth:
-                              typeof columnWidth === 'string'
-                                ? columnWidth
-                                : Math.min(columnWidth, 300) + 'px',
-                          }
-                        : undefined
-                    }
+                    style={{
+                      userSelect:
+                        typeof columnDragTarget.current !== 'undefined' ? 'none' : 'all',
+                      width: !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 0,
+                    }}
                     isEditing={isEditingColumn}
                     key={colKey}
                     onMouseDown={onMouseDownHandler}
                     onMouseUp={onColumnDragEnd}
-                    onMouseMove={onDragHandler}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
@@ -497,12 +507,9 @@ const Table = observer(
                     <TableCellElement
                       key={`footer_${col}`}
                       style={
-                        !fluid && !!columnWidth
+                        !fluid && typeof columnWidth !== 'undefined'
                           ? {
-                              minWidth:
-                                typeof columnWidth === 'string'
-                                  ? columnWidth
-                                  : Math.min(columnWidth, 300) + 'px',
+                              width: columnWidth,
                             }
                           : undefined
                       }>
