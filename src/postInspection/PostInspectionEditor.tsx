@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionValidationError } from '../schema-types'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
@@ -27,7 +27,6 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     return (
       <PostInspectionEditorView>
-        <LoadInspectionHfpData setHfpLoaded={setHfpLoaded} />
         <LinkedInspections inspection={inspection} isEditable={isEditable} />
         {hfpLoaded ? (
           <PostInspectionExecutionRequirements isEditable={isEditable} />
