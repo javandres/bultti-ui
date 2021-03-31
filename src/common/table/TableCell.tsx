@@ -20,7 +20,6 @@ export const TableCellElement = styled.div<{
   isEditingRow?: boolean
   highlightColor?: string
 }>`
-  flex: 1 0;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;
@@ -150,15 +149,10 @@ export const TableCell = observer(
         ? '--lightest-blue'
         : undefined
 
-    let cellWidthStyle =
-      !fluid && !!columnWidth
-        ? {
-            minWidth:
-              typeof columnWidth === 'string'
-                ? columnWidth
-                : Math.min(columnWidth, 300) + 'px',
-          }
-        : {}
+    let cellWidthStyle = {
+      width: !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
+      flex: !fluid && typeof columnWidth !== 'undefined' ? '0 0 auto' : '1 0 auto',
+    }
 
     return (
       <TableCellElement

@@ -332,11 +332,21 @@ const Table = observer(
 
         if (typeof currentWidth === 'number') {
           let movementPx = -1 * (columnDragStart.current - Math.abs(e.nativeEvent.pageX))
-          let nextWidthPx = currentWidth + movementPx
 
-          let nextWidth = Math.min(Math.max(10, nextWidthPx), 1000)
+          let nextWidthPx = currentWidth + movementPx
+          let nextWidth = Math.min(Math.max(50, nextWidthPx), 1000)
+
+          let neighbourWidth = (nextWidths[colIdx + 1] || 0) as number
+          let nextNeighbourWidth = neighbourWidth
+            ? Math.min(Math.max(50, neighbourWidth - movementPx), 1000)
+            : 0
 
           nextWidths.splice(colIdx, 1, nextWidth)
+
+          if (nextNeighbourWidth) {
+            nextWidths.splice(colIdx + 1, 1, nextNeighbourWidth)
+          }
+
           setColumnWidths(nextWidths)
         }
       },
@@ -436,6 +446,7 @@ const Table = observer(
     return (
       <TableContext.Provider value={contextValue}>
         <TableWrapper
+          onMouseUp={onColumnDragEnd}
           className={className}
           style={{ overflowX: fluid ? 'auto' : 'scroll' }}
           ref={tableViewRef}>
@@ -466,12 +477,14 @@ const Table = observer(
                     style={{
                       userSelect:
                         typeof columnDragTarget.current !== 'undefined' ? 'none' : 'all',
-                      width: !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 0,
+                      width:
+                        !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
+                      flex:
+                        !fluid && typeof columnWidth !== 'undefined' ? '0 0 auto' : '1 0 auto',
                     }}
                     isEditing={isEditingColumn}
                     key={colKey}
                     onMouseDown={onMouseDownHandler}
-                    onMouseUp={onColumnDragEnd}
                     onClick={() => sortByColumn(colKey)}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
@@ -500,19 +513,19 @@ const Table = observer(
               <TableRowElement key="totals" footer={true}>
                 {columns.map((col, colIdx) => {
                   const total = getColumnTotal(col) || (colIdx === 0 ? 'Yhteensä' : '')
-
                   let columnWidth = fluid ? undefined : columnWidths[colIdx]
 
                   return (
                     <TableCellElement
                       key={`footer_${col}`}
-                      style={
-                        !fluid && typeof columnWidth !== 'undefined'
-                          ? {
-                              width: columnWidth,
-                            }
-                          : undefined
-                      }>
+                      style={{
+                        width:
+                          !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
+                        flex:
+                          !fluid && typeof columnWidth !== 'undefined'
+                            ? '0 0 auto'
+                            : '1 0 auto',
+                      }}>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCellElement>
                   )
