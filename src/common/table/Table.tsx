@@ -314,7 +314,22 @@ const Table = observer(
       return widths
     }, [columnNames, rows, fluid])
 
+    let tableBox: DOMRect | undefined = tableViewRef.current?.getBoundingClientRect()
+
     let [columnWidths, setColumnWidths] = useState<Array<string | number>>(defaultColumnWidths)
+
+    let combinedColumnsWidth = Math.ceil(
+      columnWidths.reduce((total: number, col) => {
+        if (typeof col !== 'number') {
+          return total
+        }
+
+        return total + col
+      }, 0)
+    )
+
+    let width =
+      fluid || columnWidths.some((w) => typeof w === 'string') ? '100%' : combinedColumnsWidth
 
     let columnDragTarget = useRef<number | undefined>(undefined)
     let columnDragStart = useRef<number>(0)
@@ -331,20 +346,34 @@ const Table = observer(
         let currentWidth = nextWidths[colIdx] || 0
 
         if (typeof currentWidth === 'number') {
+          let tableWidth = tableBox?.width || 0
+          let useNeighbours = tableWidth < combinedColumnsWidth
+
           let movementPx = -1 * (columnDragStart.current - Math.abs(e.nativeEvent.pageX))
 
           let nextWidthPx = currentWidth + movementPx
           let nextWidth = Math.min(Math.max(50, nextWidthPx), 1000)
-
-          let neighbourWidth = (nextWidths[colIdx + 1] || 0) as number
-          let nextNeighbourWidth = neighbourWidth
-            ? Math.min(Math.max(50, neighbourWidth - movementPx), 1000)
-            : 0
-
           nextWidths.splice(colIdx, 1, nextWidth)
 
-          if (nextNeighbourWidth) {
-            nextWidths.splice(colIdx + 1, 1, nextNeighbourWidth)
+          if (useNeighbours) {
+            let neighbours = nextWidths.slice(colIdx + 1)
+            let neighbourWidthModifier = movementPx / Math.max(1, neighbours.length)
+
+            let neighbourIdx = colIdx + 1
+            for (let neighbourWidth of neighbours) {
+              let nextNeighbourWidth = neighbourWidth
+                ? Math.min(
+                    Math.max(50, ((neighbourWidth || 0) as number) - neighbourWidthModifier),
+                    1000
+                  )
+                : 0
+
+              if (nextNeighbourWidth) {
+                nextWidths.splice(neighbourIdx, 1, nextNeighbourWidth)
+              }
+
+              neighbourIdx++
+            }
           }
 
           setColumnWidths(nextWidths)
@@ -373,19 +402,6 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let width =
-      fluid || columnWidths.some((w) => typeof w === 'string')
-        ? '100%'
-        : Math.ceil(
-            columnWidths.reduce((total: number, col) => {
-              if (typeof col !== 'number') {
-                return total
-              }
-
-              return total + col
-            }, 0)
-          )
-
     // Scroll listeners for the floating toolbar.
     let [currentScroll, setCurrentScroll] = useState({ scrollTop: 0, viewportHeight: 0 })
     let subscribeToScroll = useContext(ScrollContext)
@@ -411,9 +427,8 @@ const Table = observer(
 
       let { scrollTop, viewportHeight } = currentScroll
 
-      let tableBox: DOMRect = tableViewRef.current?.getBoundingClientRect()
-      let tableTop = scrollTop + tableBox.top
-      let tableBottom = tableTop + tableBox.height
+      let tableTop = scrollTop + (tableBox?.top || 0)
+      let tableBottom = tableTop + (tableBox?.height || 0)
       let scrollBottom = scrollTop + viewportHeight
 
       return scrollBottom < tableBottom + 58 && scrollBottom > tableTop + 58
