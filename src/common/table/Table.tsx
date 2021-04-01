@@ -319,11 +319,12 @@ const Table = observer(
         // CurrentWidth can also be a percentage string if fluid=true
         if (currentWidth) {
           let eventX = Math.abs(e.nativeEvent.pageX)
+          let windowWidth = window.innerWidth
 
           // The pixels that the mouse moved, ie how much to grow or shrink the column.
           let movementPx = columnDragStart.current - eventX
           let movementDir = movementPx > 0 ? 'left' : 'right'
-          let movementPercent = (Math.abs(movementPx) / eventX) * 100
+          let movementPercent = (Math.abs(movementPx) / windowWidth) * 100
 
           let isLast = resizeColIdx === nextWidths.length - 1
           let resizeColumns = isLast ? nextWidths : nextWidths.slice(resizeColIdx)
