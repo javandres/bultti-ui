@@ -20,7 +20,7 @@ import {
 } from './tableUtils'
 import { TableHeader, TableRow, TableRowElement } from './TableRow'
 import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
-import { useResize } from './useResize'
+import { useColumnResize } from './useColumnResize'
 import { useTableSorting } from './useTableSorting'
 import { useFloatingToolbar } from './useFloatingToolbar'
 import { useTableRows } from './useTableRows'
@@ -168,7 +168,7 @@ const Table = observer(
       items.length === 0 ||
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
-    let { onDragColumn, onColumnDragEnd, onColumnDragStart, columnWidths } = useResize(
+    let { onDragColumn, onColumnDragEnd, onColumnDragStart, columnWidths } = useColumnResize(
       columnNames,
       isResizeEnabled
     )

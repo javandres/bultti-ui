@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { getTotalNumbers } from '../../util/getTotal'
 
-export function useResize(columns: any[], isResizeEnabled = true) {
+export function useColumnResize(columns: any[], isResizeEnabled = true) {
   let defaultColumnWidths = useMemo(() => {
     let columnWidth = 100 / Math.max(1, columns.length)
     return columns.map(() => columnWidth)
@@ -12,7 +12,7 @@ export function useResize(columns: any[], isResizeEnabled = true) {
   let columnDragTarget = useRef<number | undefined>(undefined)
   let columnDragStart = useRef<number>(0)
 
-  const minWidth = 10
+  const minWidth = 5
 
   let onDragColumn = useCallback(
     (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -65,8 +65,10 @@ export function useResize(columns: any[], isResizeEnabled = true) {
             }
           }
 
+          let maxWidth = 100 - minWidth * (resizeColumns.length - 1)
+
           let nextColWidth = nextColumnWidth
-            ? Math.min(Math.max(minWidth, nextColumnWidth), 100 - minWidth * nextWidths.length)
+            ? Math.min(Math.max(minWidth, nextColumnWidth), maxWidth)
             : 0
 
           if (nextColWidth) {
