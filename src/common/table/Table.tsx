@@ -23,6 +23,7 @@ import {
 } from './tableUtils'
 import { TableHeader, TableRow, TableRowElement } from './TableRow'
 import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
+import { getTotalNumbers } from '../../util/getTotal'
 
 const TableWrapper = styled.div`
   position: relative;
@@ -30,7 +31,6 @@ const TableWrapper = styled.div`
   max-width: calc(100% + 2rem);
   border-radius: 0;
   margin: 0 -1rem 0rem -1rem;
-  overflow-x: auto;
 
   &:last-child {
     margin-bottom: 0;
@@ -41,7 +41,6 @@ const TableView = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  overflow-x: hidden;
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
 `
@@ -78,6 +77,10 @@ const ColumnSortIndicator = styled.div`
   bottom: 0;
   display: flex;
   align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 1.75rem;
+  background: var(--lightest-grey);
 `
 
 export type TablePropTypes<ItemType, EditValueType = CellValType> = {
@@ -130,6 +133,8 @@ const Table = observer(
     sort: propSort,
     setSort: propSetSort,
   }: TablePropTypes<ItemType, EditValueType>) => {
+    const formId = useMemo(() => uniqueId(), [])
+
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
 
@@ -287,6 +292,11 @@ const Table = observer(
       ]
     )
 
+    let tableBox: DOMRect | undefined = useMemo(
+      () => tableViewRef.current?.getBoundingClientRect(),
+      [tableViewRef.current]
+    )
+
     let defaultColumnWidths: Array<string | number> = useMemo(() => {
       if (fluid) {
         let percentageWidth = columnNames.length / 100 + '%'
@@ -312,71 +322,48 @@ const Table = observer(
       }
 
       return widths
-    }, [columnNames, rows, fluid])
-
-    let tableBox: DOMRect | undefined = tableViewRef.current?.getBoundingClientRect()
+    }, [columnNames, rows, fluid, tableBox])
 
     let [columnWidths, setColumnWidths] = useState<Array<string | number>>(defaultColumnWidths)
 
-    let combinedColumnsWidth = Math.ceil(
-      columnWidths.reduce((total: number, col) => {
-        if (typeof col !== 'number') {
-          return total
-        }
-
-        return total + col
-      }, 0)
-    )
-
-    let width =
-      fluid || columnWidths.some((w) => typeof w === 'string') ? '100%' : combinedColumnsWidth
-
     let columnDragTarget = useRef<number | undefined>(undefined)
     let columnDragStart = useRef<number>(0)
+
+    const minWidth = 100
 
     let onDragColumn = useCallback(
       (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
         let colIdx = columnDragTarget.current
 
+        // Bail if we are not resizing a column
         if (typeof colIdx === 'undefined') {
           return
         }
 
-        let nextWidths = [...columnWidths]
-        let currentWidth = nextWidths[colIdx] || 0
+        let currentWidth = columnWidths[colIdx] || 0
 
+        // CurrentWidth can also be a percentage string if fluid=true
         if (typeof currentWidth === 'number') {
-          let tableWidth = tableBox?.width || 0
-          let useNeighbours = tableWidth < combinedColumnsWidth
+          // Clone the widths to trigger the state update
+          let nextWidths = [...columnWidths]
 
+          // The full width of the table container
+          let tableWidth = tableBox?.width || 0
+          // The pixels that the mouse moved, ie how much to grow or shrink the column.
           let movementPx = -1 * (columnDragStart.current - Math.abs(e.nativeEvent.pageX))
 
           let nextWidthPx = currentWidth + movementPx
-          let nextWidth = Math.min(Math.max(50, nextWidthPx), 1000)
-          nextWidths.splice(colIdx, 1, nextWidth)
+          // Next column width with limits
+          let nextWidth = Math.min(Math.max(minWidth, nextWidthPx), 1000)
 
-          if (useNeighbours) {
-            let neighbours = nextWidths.slice(colIdx + 1)
-            let neighbourWidthModifier = movementPx / Math.max(1, neighbours.length)
+          let combinedWidth = getTotalNumbers(nextWidths)
+          // See how wide the table would be with the newly resized column
+          let nextCombinedWidth = combinedWidth + movementPx
 
-            let neighbourIdx = colIdx + 1
-            for (let neighbourWidth of neighbours) {
-              let nextNeighbourWidth = neighbourWidth
-                ? Math.min(
-                    Math.max(50, ((neighbourWidth || 0) as number) - neighbourWidthModifier),
-                    1000
-                  )
-                : 0
-
-              if (nextNeighbourWidth) {
-                nextWidths.splice(neighbourIdx, 1, nextNeighbourWidth)
-              }
-
-              neighbourIdx++
-            }
+          if (nextCombinedWidth <= tableWidth) {
+            nextWidths.splice(colIdx, 1, nextWidth)
+            setColumnWidths(nextWidths)
           }
-
-          setColumnWidths(nextWidths)
         }
       },
       [columnDragTarget.current, columnDragStart.current]
@@ -450,9 +437,6 @@ const Table = observer(
       isAlwaysEditable,
     }
 
-    let tableViewWidth = fluid ? '100%' : width
-    const formId = useMemo(() => uniqueId(), [])
-
     usePromptUnsavedChanges({
       uniqueComponentId: formId,
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
@@ -460,17 +444,12 @@ const Table = observer(
 
     return (
       <TableContext.Provider value={contextValue}>
-        <TableWrapper
-          onMouseUp={onColumnDragEnd}
-          className={className}
-          style={{ overflowX: fluid ? 'auto' : 'scroll' }}
-          ref={tableViewRef}>
-          <TableView style={{ minWidth: tableViewWidth + 'px' }}>
+        <TableWrapper className={className} ref={tableViewRef}>
+          <TableView>
             <TableHeader
-              onDrag={() => false}
-              onDragStart={() => false}
-              onDragEnd={() => false}
-              onMouseMove={onDragColumn}>
+              onMouseMove={onDragColumn}
+              onMouseLeave={onColumnDragEnd}
+              onMouseUp={onColumnDragEnd}>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -490,8 +469,7 @@ const Table = observer(
                   <ColumnHeaderCell
                     as="button"
                     style={{
-                      userSelect:
-                        typeof columnDragTarget.current !== 'undefined' ? 'none' : 'all',
+                      userSelect: 'none',
                       width:
                         !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
                       flex:
@@ -499,15 +477,18 @@ const Table = observer(
                     }}
                     isEditing={isEditingColumn}
                     key={colKey}
-                    onMouseDown={onMouseDownHandler}
-                    onClick={() => sortByColumn(colKey)}>
+                    onMouseDown={onMouseDownHandler}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
-                      {sortIndex !== -1 && (
-                        <ColumnSortIndicator>
-                          {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
-                        </ColumnSortIndicator>
-                      )}
+                      <ColumnSortIndicator onClick={() => sortByColumn(colKey)}>
+                        {sortIndex !== -1 ? (
+                          <>
+                            {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
+                          </>
+                        ) : (
+                          <span>⇵</span>
+                        )}
+                      </ColumnSortIndicator>
                     </HeaderCellContent>
                   </ColumnHeaderCell>
                 )
