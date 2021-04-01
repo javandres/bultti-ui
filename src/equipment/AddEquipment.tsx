@@ -130,7 +130,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
 
     return (
       <>
-        <FlexRow>
+        <FlexRow style={{ marginTop: '1rem' }}>
           {addBatchEquipment && (
             <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
               <Text>catalogue_batchAddEquipment</Text>
