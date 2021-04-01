@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { getTotalNumbers } from '../../util/getTotal'
 
-export function useResize(columns: any[]) {
+export function useResize(columns: any[], isResizeEnabled = true) {
   let defaultColumnWidths = useMemo(() => {
     let columnWidth = 100 / Math.max(1, columns.length)
     return columns.map(() => columnWidth)
@@ -101,6 +101,15 @@ export function useResize(columns: any[]) {
     columnDragTarget.current = undefined
     columnDragStart.current = 0
   }, [])
+
+  if (!isResizeEnabled) {
+    return {
+      columnWidths,
+      onColumnDragStart: (colIdx) => (e) => {},
+      onColumnDragEnd: (e) => {},
+      onDragColumn: (e) => {},
+    }
+  }
 
   return {
     onColumnDragStart,

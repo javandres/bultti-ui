@@ -149,7 +149,7 @@ export const TableCell = observer(
 
     let cellWidthStyle = {
       width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
-      flex: typeof columnWidth !== 'undefined' ? 'none' : '1 0 auto',
+      flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
     }
 
     return (

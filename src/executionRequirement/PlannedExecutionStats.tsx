@@ -76,6 +76,7 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
             <Text>executionRequirement_headingDayTypeStats</Text>
           </SmallHeading>
           <StatsTable<FC<TablePropTypes<DayTypeEquipmentStat>>>
+            isResizeEnabled={false}
             items={dayTypeStats}
             columnLabels={statsTableLabels}
             highlightRow={(row) =>
@@ -88,6 +89,7 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
             <Text>executionRequirement_headingEquipmentTypeStats</Text>
           </SmallHeading>
           <StatsTable<FC<TablePropTypes<EquipmentTypeStat>>>
+            isResizeEnabled={false}
             columnLabels={statsTableLabels}
             items={equipmentTypeStats}
           />

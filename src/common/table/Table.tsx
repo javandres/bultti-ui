@@ -78,8 +78,7 @@ const ColumnSortIndicator = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
-  width: 1.75rem;
-  background: var(--lightest-grey);
+  padding: 0 0.25rem 0 0.75rem;
 `
 
 export type TablePropTypes<ItemType, EditValueType = CellValType> = {
@@ -102,6 +101,7 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
+  isResizeEnabled?: boolean
 } & TableEditProps<ItemType, EditValueType>
 
 const Table = observer(
@@ -129,6 +129,7 @@ const Table = observer(
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
+    isResizeEnabled = true,
   }: TablePropTypes<ItemType, EditValueType>) => {
     const formId = useMemo(() => uniqueId(), [])
 
@@ -168,7 +169,8 @@ const Table = observer(
       (items.length === 1 && Object.values(items[0]).every((val) => !val))
 
     let { onDragColumn, onColumnDragEnd, onColumnDragStart, columnWidths } = useResize(
-      columnNames
+      columnNames,
+      isResizeEnabled
     )
 
     let contextValue: ContextTypes<ItemType, EditValueType> = {
