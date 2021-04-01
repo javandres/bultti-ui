@@ -29,7 +29,6 @@ export const TableCellElement = styled.div<{
     p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.005)'};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
-  box-sizing: border-box !important;
   overflow: hidden;
 
   &:nth-child(odd) {
@@ -150,8 +149,8 @@ export const TableCell = observer(
         : undefined
 
     let cellWidthStyle = {
-      width: !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
-      flex: !fluid && typeof columnWidth !== 'undefined' ? '0 0 auto' : '1 0 auto',
+      width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
+      flex: typeof columnWidth !== 'undefined' ? 'none' : '1 0 auto',
     }
 
     return (

@@ -1,7 +1,7 @@
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Dictionary, difference, get, omitBy, orderBy, toString, uniqueId } from 'lodash'
+import { Dictionary, difference, get, omitBy, orderBy, uniqueId } from 'lodash'
 import { ScrollContext } from '../components/AppFrame'
 import Input, { TextInput } from '../input/Input'
 import { useDebouncedCallback } from 'use-debounce'
@@ -28,7 +28,6 @@ import { getTotalNumbers } from '../../util/getTotal'
 const TableWrapper = styled.div`
   position: relative;
   width: calc(100% + 2rem);
-  max-width: calc(100% + 2rem);
   border-radius: 0;
   margin: 0 -1rem 0rem -1rem;
 
@@ -292,81 +291,93 @@ const Table = observer(
       ]
     )
 
-    let tableBox: DOMRect | undefined = useMemo(
-      () => tableViewRef.current?.getBoundingClientRect(),
-      [tableViewRef.current]
-    )
+    let defaultColumnWidths = useMemo(() => {
+      let columnWidth = 100 / Math.max(1, columnNames.length)
+      return columnNames.map(() => columnWidth)
+    }, [columnNames])
 
-    let defaultColumnWidths: Array<string | number> = useMemo(() => {
-      if (fluid) {
-        let percentageWidth = columnNames.length / 100 + '%'
-        return columnNames.map(() => percentageWidth)
-      }
-
-      let widths: number[] = []
-      let colIdx = 0
-
-      for (let colName of columnNames) {
-        let nameLength = Math.max(colName[1].length, 8)
-        let colWidth = nameLength * 10
-
-        for (let row of rows) {
-          let [colKey, colValue] = row.itemEntries[colIdx]
-          let strVal = toString(renderValue(colKey, colValue))
-          let valLength = Math.max(strVal.length, 5)
-          colWidth = Math.max(valLength * 10, colWidth)
-        }
-
-        widths.push(Math.ceil(colWidth))
-        colIdx++
-      }
-
-      return widths
-    }, [columnNames, rows, fluid, tableBox])
-
-    let [columnWidths, setColumnWidths] = useState<Array<string | number>>(defaultColumnWidths)
+    let [columnWidths, setColumnWidths] = useState<number[]>(defaultColumnWidths)
 
     let columnDragTarget = useRef<number | undefined>(undefined)
     let columnDragStart = useRef<number>(0)
 
-    const minWidth = 100
+    const minWidth = 10
 
     let onDragColumn = useCallback(
       (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-        let colIdx = columnDragTarget.current
+        let resizeColIdx = columnDragTarget.current
 
         // Bail if we are not resizing a column
-        if (typeof colIdx === 'undefined') {
+        if (typeof resizeColIdx === 'undefined') {
           return
         }
 
-        let currentWidth = columnWidths[colIdx] || 0
+        // Clone the widths to trigger the state update
+        let nextWidths = [...columnWidths]
+        let currentWidth = nextWidths[resizeColIdx] || 0
 
         // CurrentWidth can also be a percentage string if fluid=true
-        if (typeof currentWidth === 'number') {
-          // Clone the widths to trigger the state update
-          let nextWidths = [...columnWidths]
+        if (currentWidth) {
+          let eventX = Math.abs(e.nativeEvent.pageX)
 
-          // The full width of the table container
-          let tableWidth = tableBox?.width || 0
           // The pixels that the mouse moved, ie how much to grow or shrink the column.
-          let movementPx = -1 * (columnDragStart.current - Math.abs(e.nativeEvent.pageX))
+          let movementPx = columnDragStart.current - eventX
+          let movementDir = movementPx > 0 ? 'left' : 'right'
+          let movementPercent = (Math.abs(movementPx) / eventX) * 100
 
-          let nextWidthPx = currentWidth + movementPx
-          // Next column width with limits
-          let nextWidth = Math.min(Math.max(minWidth, nextWidthPx), 1000)
+          let isLast = resizeColIdx === nextWidths.length - 1
+          let resizeColumns = isLast ? nextWidths : nextWidths.slice(resizeColIdx)
 
-          let combinedWidth = getTotalNumbers(nextWidths)
-          // See how wide the table would be with the newly resized column
-          let nextCombinedWidth = combinedWidth + movementPx
+          let columnWidthModifier = movementPercent / Math.max(1, resizeColumns.length - 1)
+          let colIdx = isLast ? 0 : resizeColIdx
 
-          if (nextCombinedWidth <= tableWidth) {
-            nextWidths.splice(colIdx, 1, nextWidth)
+          if (isLast) {
+            movementDir = movementDir === 'left' ? 'right' : 'left'
+          }
+
+          for (let colWidth of resizeColumns) {
+            let nextColumnWidth = 0
+            let columnWidth = (colWidth || 0) as number
+
+            if (colIdx !== resizeColIdx) {
+              if (movementDir === 'left') {
+                nextColumnWidth = columnWidth + columnWidthModifier
+              } else {
+                nextColumnWidth = columnWidth - columnWidthModifier
+              }
+            } else {
+              if (movementDir === 'left') {
+                nextColumnWidth = columnWidth - movementPercent
+              } else {
+                nextColumnWidth = columnWidth + movementPercent
+              }
+            }
+
+            let nextColWidth = nextColumnWidth
+              ? Math.min(
+                  Math.max(minWidth, nextColumnWidth),
+                  100 - minWidth * nextWidths.length
+                )
+              : 0
+
+            if (nextColWidth) {
+              nextWidths.splice(colIdx, 1, nextColWidth)
+            }
+
+            colIdx++
+          }
+
+          let updatedWidth = getTotalNumbers(nextWidths)
+
+          if (updatedWidth <= 100) {
             setColumnWidths(nextWidths)
           }
+
+          // Reset the movement origin
+          columnDragStart.current = eventX
         }
       },
-      [columnDragTarget.current, columnDragStart.current]
+      [columnWidths, columnDragTarget.current, columnDragStart.current]
     )
 
     let onColumnDragStart = useCallback(
@@ -413,6 +424,7 @@ const Table = observer(
       }
 
       let { scrollTop, viewportHeight } = currentScroll
+      let tableBox = tableViewRef.current?.getBoundingClientRect()
 
       let tableTop = scrollTop + (tableBox?.top || 0)
       let tableBottom = tableTop + (tableBox?.height || 0)
@@ -462,7 +474,7 @@ const Table = observer(
 
                 let sortIndex = sort.findIndex((s) => s.column === colKey)
                 let sortConfig = sort[sortIndex]
-                let columnWidth = columnWidths[colIdx]
+                let columnWidth = fluid ? undefined : columnWidths[colIdx]
                 let onMouseDownHandler = onColumnDragStart(colIdx)
 
                 return (
@@ -470,10 +482,8 @@ const Table = observer(
                     as="button"
                     style={{
                       userSelect: 'none',
-                      width:
-                        !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
-                      flex:
-                        !fluid && typeof columnWidth !== 'undefined' ? '0 0 auto' : '1 0 auto',
+                      width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
+                      flex: !fluid && typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
                     }}
                     isEditing={isEditingColumn}
                     key={colKey}
@@ -515,12 +525,9 @@ const Table = observer(
                     <TableCellElement
                       key={`footer_${col}`}
                       style={{
-                        width:
-                          !fluid && typeof columnWidth !== 'undefined' ? columnWidth : 'auto',
+                        width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
                         flex:
-                          !fluid && typeof columnWidth !== 'undefined'
-                            ? '0 0 auto'
-                            : '1 0 auto',
+                          !fluid && typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
                       }}>
                       <CellContent footerCell={true}>{total}</CellContent>
                     </TableCellElement>
