@@ -35,6 +35,7 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 import { ApolloError } from '@apollo/client'
+import DatePicker from '../common/input/DatePicker'
 
 const ContractEditorView = styled.div``
 
@@ -193,7 +194,14 @@ const renderInput = ({
   }
 
   if (key === 'startDate') {
-    return <SelectDate name={key} value={val} onChange={onChange} maxDate={contract.endDate} />
+    return (
+      <DatePicker
+        value={val}
+        onChange={onChange}
+        maxDate={contract.endDate}
+        acceptableDayTypes={['mo']}
+      />
+    )
   }
 
   if (key === 'endDate') {
