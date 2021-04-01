@@ -1,0 +1,61 @@
+import { Dictionary, difference, get, omitBy, orderBy } from 'lodash'
+
+export function useTableColumns<ItemType extends {}>({
+  items,
+  columnLabels = {},
+  columnOrder = [],
+  hideKeys,
+}: {
+  items: ItemType[]
+  columnLabels?: { [key in keyof ItemType]?: string }
+  columnOrder?: string[]
+  hideKeys?: string[]
+}) {
+  // Order the keys and get cleartext labels for the columns
+  // Omit keys that start with an underscore.
+  let columns = Object.keys(
+    omitBy((items[0] || columnLabels) as Dictionary<ItemType>, (val, key) =>
+      key.startsWith('_')
+    )
+  )
+
+  const columnLabelKeys = Object.keys(columnLabels)
+
+  const columnKeysOrdering =
+    columnOrder && columnOrder.length !== 0 ? columnOrder : columnLabelKeys
+
+  let keysToHide: string[] = []
+
+  // Hide keys listed in hideKeys if hideKeys is a non-zero array.
+  // Hide keys NOT listed in columnLabels if hideKeys is undefined.
+  // If hideKeys is a zero-length array no keys will be hidden.
+
+  if (hideKeys && hideKeys.length !== 0) {
+    keysToHide = hideKeys
+  } else if (!hideKeys && columnLabelKeys.length !== 0) {
+    keysToHide = difference(columns, columnLabelKeys)
+  }
+
+  // Order the columns by the provided columnOrder
+  if (columnKeysOrdering.length !== 0) {
+    columns = orderBy(columns, (key) => {
+      const labelIndex = columnKeysOrdering.indexOf(key)
+      return labelIndex === -1 ? 999 : labelIndex
+    }).filter((c) => !keysToHide.includes(c))
+  }
+
+  // Column name array for the header row
+  let columnNames = columns.map((key) => [key, key])
+
+  // Get user-facing names for the columns
+  if (columnLabelKeys.length !== 0) {
+    columnNames = columns.map((key) => [key, get(columnLabels, key, key)])
+  }
+
+  return {
+    keysToHide,
+    columnNames,
+    columnKeysOrdering,
+    columns,
+  }
+}

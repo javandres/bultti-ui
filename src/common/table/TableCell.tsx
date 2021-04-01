@@ -101,7 +101,6 @@ export const TableCell = observer(
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
-      fluid,
       highlightRow = defaultHighlightRow,
       isAlwaysEditable,
     }: ContextTypes<ItemType, EditValueType> = useContext(TableContext)

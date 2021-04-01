@@ -78,7 +78,6 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
           <StatsTable<FC<TablePropTypes<DayTypeEquipmentStat>>>
             items={dayTypeStats}
             columnLabels={statsTableLabels}
-            fluid={true}
             highlightRow={(row) =>
               row.equipmentCount > requirementEquipmentCount ? 'var(--lighter-red)' : false
             }
@@ -91,7 +90,6 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
           <StatsTable<FC<TablePropTypes<EquipmentTypeStat>>>
             columnLabels={statsTableLabels}
             items={equipmentTypeStats}
-            fluid={true}
           />
         </TableWrapper>
       </FlexRow>

@@ -142,7 +142,6 @@ export type ContextTypes<ItemType, EditValueType = CellValType> = {
   renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
   renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
   keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
-  fluid?: boolean
   highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
   isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
 }
