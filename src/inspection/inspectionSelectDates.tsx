@@ -1,8 +1,14 @@
 import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { eachWeekOfInterval, isBefore, parseISO, startOfWeek, endOfWeek, subMonths } from 'date-fns'
-import { HfpStatus, InspectionDate, InspectionInput, InspectionType, Season } from '../schema-types'
+import { eachWeekOfInterval, endOfWeek, parseISO } from 'date-fns'
+import {
+  HfpStatus,
+  InspectionDate,
+  InspectionInput,
+  InspectionType,
+  Season,
+} from '../schema-types'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString, getReadableDateRange } from '../util/formatDate'
 import { getObservedInspectionDatesQuery } from './inspectionDate/inspectionDateQuery'
@@ -180,8 +186,7 @@ function getPostInspectionDateOptions(
         endDate: parseISO(endDate),
       },
     }
-    }
-  )
+  })
 }
 
 export default InspectionSelectDates
