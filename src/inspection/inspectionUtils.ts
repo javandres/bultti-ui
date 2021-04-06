@@ -136,7 +136,7 @@ export function useEditInspection(inspectionType: InspectionType = InspectionTyp
   )
 }
 
-export function useInspectionReports() {
+export function useNavigateToInspectionReports() {
   return useCallback(
     (inspectionId: string = '', inspectionType: InspectionType = InspectionType.Pre) => {
       let inspectionPath = inspectionType === InspectionType.Pre ? 'pre' : 'post'

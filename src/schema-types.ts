@@ -461,8 +461,8 @@ export type Inspection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
-  preInspection?: Maybe<Inspection>;
-  postInspection?: Maybe<Inspection>;
+  linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>;
+  linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
   defectInspection?: Maybe<Inspection>;
   operatorId: Scalars['Int'];
   operator: Operator;
@@ -490,6 +490,13 @@ export enum InspectionType {
   Post = 'POST',
   EquipmentDefect = 'EQUIPMENT_DEFECT'
 }
+
+export type LinkedInspectionForWeek = {
+  __typename?: 'LinkedInspectionForWeek';
+  id: Scalars['String'];
+  startOfWeek: Scalars['String'];
+  inspection: Inspection;
+};
 
 export type Operator = {
   __typename?: 'Operator';
@@ -808,7 +815,8 @@ export enum InspectionValidationError {
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
   HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
-  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST'
+  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST',
+  PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS'
 }
 
 export type InspectionTimelineItem = {
@@ -1855,7 +1863,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   loadHfpDataForInspectionPeriod: Array<HfpDateStatus>;
   createInspection: Inspection;
-  updateBaseInspection: Inspection;
+  updateLinkedInspection: Inspection;
   updateInspection: Inspection;
   inspectionSanctionable: Inspection;
   abandonSanctions: Inspection;
@@ -1914,7 +1922,7 @@ export type MutationCreateInspectionArgs = {
 };
 
 
-export type MutationUpdateBaseInspectionArgs = {
+export type MutationUpdateLinkedInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
