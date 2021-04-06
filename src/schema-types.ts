@@ -461,7 +461,7 @@ export type Inspection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
-  inspectionMappings?: Maybe<Array<InspectionMapping>>;
+  linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>;
   linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
   defectInspection?: Maybe<Inspection>;
   operatorId: Scalars['Int'];
@@ -491,8 +491,8 @@ export enum InspectionType {
   EquipmentDefect = 'EQUIPMENT_DEFECT'
 }
 
-export type InspectionMapping = {
-  __typename?: 'InspectionMapping';
+export type LinkedInspectionForWeek = {
+  __typename?: 'LinkedInspectionForWeek';
   id: Scalars['String'];
   startOfWeek: Scalars['String'];
   inspection: Inspection;

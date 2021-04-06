@@ -510,10 +510,10 @@ type Inspection {
   inspectionDate: InspectionDate
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
-  inspectionMappings: [InspectionMapping!]
   inspectionStartDate: BulttiDate!
   inspectionType: InspectionType!
   linkedInspectionUpdateAvailable: Boolean
+  linkedInspections: [LinkedInspectionForWeek!]
   minStartDate: BulttiDate!
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
@@ -542,12 +542,6 @@ type InspectionErrorUpdate {
   id: ID!
   message: String!
   status: InspectionStatus!
-}
-
-type InspectionMapping {
-  id: String!
-  inspection: Inspection!
-  startOfWeek: String!
 }
 
 type InspectionTimelineItem {
@@ -607,6 +601,12 @@ type LateDeparturesReportData {
   sanctionAmount: Float
   sanctionedKilometers: Float
   trackReason: TrackReason!
+}
+
+type LinkedInspectionForWeek {
+  id: String!
+  inspection: Inspection!
+  startOfWeek: String!
 }
 
 type MissingBlockDeparturesReport {

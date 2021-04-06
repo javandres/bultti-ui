@@ -3263,7 +3263,7 @@
             "deprecationReason": null
           },
           {
-            "name": "inspectionMappings",
+            "name": "linkedInspections",
             "description": null,
             "args": [],
             "type": {
@@ -3274,7 +3274,7 @@
                 "name": null,
                 "ofType": {
                   "kind": "OBJECT",
-                  "name": "InspectionMapping",
+                  "name": "LinkedInspectionForWeek",
                   "ofType": null
                 }
               }
@@ -3679,7 +3679,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "InspectionMapping",
+        "name": "LinkedInspectionForWeek",
         "description": null,
         "fields": [
           {
