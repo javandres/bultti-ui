@@ -10,6 +10,7 @@ import { InspectionContext } from '../inspection/InspectionContext'
 import {
   InspectionValidationError,
   ObservedExecutionRequirement,
+  ObservedExecutionValue,
   ObservedRequirementValueInput,
 } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
@@ -29,8 +30,11 @@ import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { inspectionQuery } from '../inspection/inspectionQueries'
-import ObservedRequirementsTable, { EditRequirementValue } from './ObservedRequirementsTable'
+import ObservedRequirementsTable, {
+  EditObservedRequirementValue,
+} from './ObservedRequirementsTable'
 import { Text } from '../util/translate'
+import { EditValue } from '../common/table/tableUtils'
 
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
@@ -185,7 +189,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     [observedRequirements]
   )
 
-  let [pendingValues, setPendingValues] = useState<EditRequirementValue[]>([])
+  let [pendingValues, setPendingValues] = useState<EditObservedRequirementValue[]>([])
 
   let createValueEdit = useCallback(
     (requirement) => (key, value, item) => {
@@ -193,7 +197,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         return
       }
 
-      let editValue: EditRequirementValue = {
+      let editValue: EditObservedRequirementValue = {
         key,
         value,
         item,
@@ -221,12 +225,12 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     }
 
     let updateQueries: Promise<unknown>[] = []
-    let requirementGroups = Object.entries<EditRequirementValue[]>(
-      groupBy<EditRequirementValue>(pendingValues, 'itemId')
+    let requirementGroups = Object.entries<EditObservedRequirementValue[]>(
+      groupBy<EditObservedRequirementValue>(pendingValues, 'itemId')
     )
 
     for (let [requirementId, reqPendingValues] of requirementGroups) {
-      let updateValues = new Map<string, ObservedRequirementValueInput>()
+      let updateValues = new Map<string, EditObservedRequirementValue>()
 
       for (let value of reqPendingValues) {
         if (!value.item?.id) {
@@ -234,12 +238,17 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         }
 
         let updateItem = updateValues.get(value.item.id) || {
-          id: value.item.id,
-          emissionClass: value.item.emissionClass,
+          key: 'emissionClass',
+          value: value.item.emissionClass,
+          item: {
+            id: value.item.id,
+            emissionClass: value.item.emissionClass,
+          },
+          itemId: value.item.id,
         }
 
         updateItem[value.key] = parseFloat(toString(value.value || '0'))
-        updateValues.set(value.item.id, updateItem)
+        updateValues.set(value.item.id, updateItem as EditObservedRequirementValue)
       }
 
       let updatePromise = updateRequirements({
