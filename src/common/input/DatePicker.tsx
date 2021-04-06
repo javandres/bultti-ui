@@ -7,9 +7,10 @@ import 'react-datepicker/dist/react-datepicker.css'
 import { observer } from 'mobx-react-lite'
 import { getDateObject, getDateString } from '../../util/formatDate'
 import { DATE_FORMAT } from '../../constants'
-import styled from 'styled-components/macro'
+import styled, { createGlobalStyle } from 'styled-components/macro'
 import Input from './Input'
 import { Calendar } from '../icon/Calendar'
+import { text } from '../../util/translate'
 
 /**
  * Date Picker using react-datepicker: https://www.npmjs.com/package/react-datepicker
@@ -34,6 +35,29 @@ export type PropTypes = {
   maxDate?: string
   acceptableDayTypes?: AcceptableDayType[]
 }
+
+const DatePickerWrapperStyles = createGlobalStyle`
+  
+    .react-datepicker__day-name {
+      font-size: 0.9rem;
+      width: 2rem;
+      line-height: 1.5rem;
+    }
+    .react-datepicker__header__dropdown {
+      & select {
+        margin-top: 5px;
+        padding: 5px;
+        background-color: white;
+        border: 1px solid var(--light-grey);
+        border-radius: 5px;
+      }
+    }
+    .react-datepicker__day {
+      font-size: 0.9rem;
+      width: 2rem;
+      line-height: 2rem;
+    }
+`
 
 const DatePickerWrapper = styled.div``
 
@@ -88,7 +112,6 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         newDate = maxEndDate
       }
     }
-
     setCurrentValue(newDate ? getDateString(newDate) : '')
     if (!isEmptyValueAllowed && !newDate) return
 
@@ -98,11 +121,9 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
   let onInputChange = (inputValue: string) => {
     setIsOpen(false)
 
-    let dateObject = getDateObject(inputValue)
     // Allow input date that is in the correct format
-    // TODO: make a proper isValid check
-    if (dateObject) {
-      onChangeDate(dateObject)
+    if (isValidDate(inputValue)) {
+      onChangeDate(getDateObject(inputValue))
     } else if (_.isEmpty(inputValue)) {
       onChangeDate(null)
     } else {
@@ -111,15 +132,15 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     }
   }
 
-  let onCalendarDateSelect = (date: Date) => {
+  let onCalendarDateSelect = (date: Date | null) => {
     // Have to set 1 ms timeout because state.isOpen might have not been updated
     setTimeout(() => {
       selectDateIfCalendarIsOpen(date)
     }, 1)
   }
 
-  let selectDateIfCalendarIsOpen = (date: Date) => {
-    if (isOpen) {
+  let selectDateIfCalendarIsOpen = (date: Date | null) => {
+    if (isOpen && date) {
       onInputChange(getDateString(date))
     }
   }
@@ -130,10 +151,8 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     const day = `0${dateObjectToTrim.getDate()}`.slice(-2)
     const month = `0${dateObjectToTrim.getMonth() + 1}`.slice(-2)
     const trimmedDateString = `${dateObjectToTrim.getFullYear()}-${month}-${day}`
-
-    let trimmedDateObject = getDateObject(trimmedDateString)
-    // TODO: make a proper isValid check
-    if (trimmedDateObject) {
+    if (isValidDate(trimmedDateString)) {
+      let trimmedDateObject = getDateObject(trimmedDateString)
       if (currentValue !== trimmedDateString) {
         onChangeDate(trimmedDateObject)
       }
@@ -151,7 +170,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
           disabled,
           onInputBlur: trimInputString,
           openCalendar: () => setIsOpen(true),
-          placeholder: 'Syötä päivä', // TODO: fi.json
+          placeholder: text('datePicker_insertDate'),
         })}
         selected={value ? getDateObject(value) : undefined}
         open={isOpen}
@@ -164,16 +183,17 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         showMonthDropdown={true}
         peekNextMonth={true}
         showYearDropdown={true}
-        dropdownMode="select"
+        dropdownMode={'select'}
         startDate={value ? getDateObject(value) : null}
         scrollableYearDropdown={true}
         yearDropdownItemNumber={100}
         minDate={getMinDate()}
         maxDate={getMaxDate()}
-        dateFormatCalendar={DATE_FORMAT}
+        dateFormatCalendar={'dd.MM.yyyy'}
         popperContainer={renderCalendarContainer}
         fixedHeight={true}
       />
+      <DatePickerWrapperStyles />
     </DatePickerWrapper>
   )
 })
@@ -212,19 +232,13 @@ const renderDatePickerInput = ({
     onInputChange(value)
   }
 
-  let isInputValid = true
-  // TODO, validate input
-  // const isInputValid = !_.isEmpty(value)
-  //   ? Moment(value, 'DD.MM.YYYY', true).isValid()
-  //   : !!isEmptyValueAllowed
-  // console.log('isInputValid ', isInputValid)
+  let isInputValid = _.isEmpty(value) ? !!isEmptyValueAllowed : isValidDate(value!)
 
   return (
     <InputContainer>
       <Input
         style={isInputValid ? undefined : { backgroundColor: 'var(--light-red)' }}
         type="text"
-        subLabel={true}
         label={label}
         value={value ? value : ''}
         placeholder={placeholder}
@@ -239,6 +253,15 @@ const renderDatePickerInput = ({
       </CalendarIconWrapper>
     </InputContainer>
   )
+}
+
+function isValidDate(dateString: string) {
+  let regEx = /^\d{4}-\d{2}-\d{2}$/
+  if (!dateString.match(regEx)) return false // Invalid format
+  let d = new Date(dateString)
+  let dNum = d.getTime()
+  if (!dNum && dNum !== 0) return false // NaN value, Invalid date
+  return d.toISOString().slice(0, 10) === dateString
 }
 
 export default DatePicker

@@ -1,7 +1,7 @@
 import { format, fromUnixTime, Interval, isSameYear, parseISO } from 'date-fns'
 import { DATE_FORMAT, READABLE_DATE_FORMAT } from '../constants'
 
-type AcceptedDateFormat = Date | string | number
+type AcceptedDateFormat = Date | string | number // string has to in format of DATE_FORMAT
 
 export function getDateObject(date: AcceptedDateFormat): Date {
   if (date instanceof Date) {
