@@ -18,28 +18,37 @@ import {
   TableContext,
   TableEditProps,
 } from './tableUtils'
-import { TableHeader, TableRow, TableRowElement } from './TableRow'
+import { ROW_HEIGHT, TableHeader, TableRow, TableRowElement } from './TableRow'
 import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
 import { useColumnResize } from './useColumnResize'
 import { useTableSorting } from './useTableSorting'
 import { useFloatingToolbar } from './useFloatingToolbar'
 import { useTableRows } from './useTableRows'
+import { SCROLLBAR_WIDTH } from '../../constants'
+import { getTotalNumbers } from '../../util/getTotal'
 
-const TableWrapper = styled.div`
+const TableWrapper = styled.div<{ height: number }>`
   position: relative;
   width: calc(100% + 2rem);
   border-radius: 0;
+  overflow: hidden;
+  overflow-x: scroll;
   margin: 0 -1rem 0rem -1rem;
+  height: ${(p) => p.height || 60}px;
 
   &:last-child {
     margin-bottom: 0;
   }
 `
 
-const TableView = styled.div`
+const TableView = styled.div<{ width: number }>`
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  min-width: ${(p) => p.width}%;
   display: flex;
   flex-direction: column;
-  width: 100%;
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
 `
@@ -193,10 +202,27 @@ const Table = observer(
       shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
     })
 
+    let showFooterRow = typeof getColumnTotal === 'function'
+
+    // Table content is floating inside the TableWrapper in position:absolute to facilitate
+    // horizontal scrolling. Table height thus needs to be calculated for the wrapper to show
+    // the whole table.
+    // Row height is always a static value, so the table height can be calculated by summing
+    // rows length plus one for the header row, and multiplying that by the ROW_HEIGHT.
+    // Then add scrollbar width to prevent the scrollbar from blocking anything.
+    let tableHeight = (items.length + 1) * ROW_HEIGHT + SCROLLBAR_WIDTH
+
+    if (showFooterRow) {
+      // If the footer is visible, add one more row height for that.
+      tableHeight += ROW_HEIGHT
+    }
+
+    let tableWidth = getTotalNumbers(columnWidths)
+
     return (
       <TableContext.Provider value={contextValue}>
-        <TableWrapper className={className} ref={tableViewRef}>
-          <TableView>
+        <TableWrapper className={className} ref={tableViewRef} height={tableHeight}>
+          <TableView width={Math.max(100, tableWidth)}>
             <TableHeader
               onMouseMove={onDragColumn}
               onMouseLeave={onColumnDragEnd}

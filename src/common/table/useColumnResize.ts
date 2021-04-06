@@ -1,18 +1,25 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { getTotalNumbers } from '../../util/getTotal'
 
 export function useColumnResize(columns: any[], isResizeEnabled = true) {
+  let columnWidth = 100 / Math.max(1, columns.length)
+
   let defaultColumnWidths = useMemo(() => {
-    let columnWidth = 100 / Math.max(1, columns.length)
     return columns.map(() => columnWidth)
-  }, [columns])
+  }, [columns, columnWidth])
 
   let [columnWidths, setColumnWidths] = useState<number[]>(defaultColumnWidths)
+
+  useEffect(() => {
+    if (columns.length !== columnWidths.length) {
+      setColumnWidths(defaultColumnWidths)
+    }
+  }, [columns.length, columnWidths.length, defaultColumnWidths])
 
   let columnDragTarget = useRef<number | undefined>(undefined)
   let columnDragStart = useRef<number>(0)
 
-  const minWidth = 5
+  const minWidth = 10
 
   let onDragColumn = useCallback(
     (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
@@ -65,14 +72,12 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
             }
           }
 
-          let maxWidth = 100 - minWidth * (resizeColumns.length - 1)
-
-          let nextColWidth = nextColumnWidth
-            ? Math.min(Math.max(minWidth, nextColumnWidth), maxWidth)
+          nextColumnWidth = nextColumnWidth
+            ? Math.min(Math.max(minWidth, nextColumnWidth), 100)
             : 0
 
-          if (nextColWidth) {
-            nextWidths.splice(colIdx, 1, nextColWidth)
+          if (nextColumnWidth) {
+            nextWidths.splice(colIdx, 1, nextColumnWidth)
           }
 
           colIdx++

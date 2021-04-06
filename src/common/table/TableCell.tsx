@@ -12,7 +12,7 @@ import {
   TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 
 export const TableCellElement = styled.div<{
   editable?: boolean
@@ -30,6 +30,7 @@ export const TableCellElement = styled.div<{
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   overflow: hidden;
+  min-width: 75px;
 
   &:nth-child(odd) {
     background: ${(p) =>
@@ -52,6 +53,7 @@ export const ColumnHeaderCell = styled(TableCellElement)<{ isEditing?: boolean }
   cursor: pointer;
   text-align: left;
   justify-content: flex-start;
+  align-items: center;
   white-space: nowrap;
   position: relative;
   display: flex;
