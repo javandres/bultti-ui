@@ -10,7 +10,6 @@ import { InspectionContext } from '../inspection/InspectionContext'
 import {
   InspectionValidationError,
   ObservedExecutionRequirement,
-  ObservedExecutionValue,
   ObservedRequirementValueInput,
 } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
@@ -34,7 +33,6 @@ import ObservedRequirementsTable, {
   EditObservedRequirementValue,
 } from './ObservedRequirementsTable'
 import { Text } from '../util/translate'
-import { EditValue } from '../common/table/tableUtils'
 
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
@@ -193,7 +191,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
 
   let createValueEdit = useCallback(
     (requirement) => (key, value, item) => {
-      if (!isEditable) {
+      if (!isEditable || key !== 'quotaRequired') {
         return
       }
 
@@ -230,7 +228,7 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     )
 
     for (let [requirementId, reqPendingValues] of requirementGroups) {
-      let updateValues = new Map<string, EditObservedRequirementValue>()
+      let updateValues = new Map<string, ObservedRequirementValueInput>()
 
       for (let value of reqPendingValues) {
         if (!value.item?.id) {
@@ -238,17 +236,12 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         }
 
         let updateItem = updateValues.get(value.item.id) || {
-          key: 'emissionClass',
-          value: value.item.emissionClass,
-          item: {
-            id: value.item.id,
-            emissionClass: value.item.emissionClass,
-          },
-          itemId: value.item.id,
+          id: value.item.id,
+          emissionClass: value.item.emissionClass,
         }
 
         updateItem[value.key] = parseFloat(toString(value.value || '0'))
-        updateValues.set(value.item.id, updateItem as EditObservedRequirementValue)
+        updateValues.set(value.item.id, updateItem)
       }
 
       let updatePromise = updateRequirements({
