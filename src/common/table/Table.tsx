@@ -210,14 +210,18 @@ const Table = observer(
     // Row height is always a static value, so the table height can be calculated by summing
     // rows length plus one for the header row, and multiplying that by the ROW_HEIGHT.
     // Then add scrollbar width to prevent the scrollbar from blocking anything.
-    let tableHeight = (items.length + 1) * ROW_HEIGHT + SCROLLBAR_WIDTH
+    let tableHeight = useMemo(() => {
+      let rowsHeight = (items.length + 1) * ROW_HEIGHT + SCROLLBAR_WIDTH
 
-    if (showFooterRow) {
-      // If the footer is visible, add one more row height for that.
-      tableHeight += ROW_HEIGHT
-    }
+      if (showFooterRow) {
+        // If the footer is visible, add one more row height for that.
+        rowsHeight += ROW_HEIGHT
+      }
 
-    let tableWidth = getTotalNumbers(columnWidths)
+      return rowsHeight
+    }, [items])
+
+    let tableWidth = useMemo(() => getTotalNumbers(columnWidths), [columnWidths])
 
     return (
       <TableContext.Provider value={contextValue}>
