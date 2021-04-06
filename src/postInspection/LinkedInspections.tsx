@@ -38,7 +38,7 @@ export type PropTypes = {
 
 const LinkedInspections = observer(({ inspection, isEditable = false }: PropTypes) => {
   let navigateToInspectionReports = useNavigateToInspectionReports()
-  let connectedPreInspections = inspection.inspectionMappings || []
+  let connectedPreInspections = inspection.linkedInspections || []
 
   let hasLinkedInspectionsError = useHasInspectionError(
     inspection,
