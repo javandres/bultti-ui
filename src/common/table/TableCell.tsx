@@ -57,6 +57,7 @@ export const ColumnHeaderCell = styled(TableCellElement)<{ isEditing?: boolean }
   white-space: nowrap;
   position: relative;
   display: flex;
+  user-select: none;
 
   &:last-child {
     border-right: 1px solid transparent;

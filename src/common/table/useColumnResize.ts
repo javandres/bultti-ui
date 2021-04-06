@@ -5,14 +5,16 @@ const minWidth = 10
 const maxWidth = 50
 
 export function useColumnResize(columns: any[], isResizeEnabled = true) {
+  // The widths are in percentages. The default widths for each column is 100 divided by the number of columns.
   let columnWidth = 100 / Math.max(1, columns.length)
-
-  let defaultColumnWidths = useMemo(() => {
-    return columns.map(() => columnWidth)
-  }, [columns, columnWidth])
+  let defaultColumnWidths = useMemo(() => columns.map(() => columnWidth), [
+    columns,
+    columnWidth,
+  ])
 
   let [columnWidths, setColumnWidths] = useState<number[]>(defaultColumnWidths)
 
+  // Reset the widths if the number of columns changes.
   useEffect(() => {
     if (columns.length !== columnWidths.length) {
       setColumnWidths(defaultColumnWidths)
@@ -22,8 +24,10 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
   let columnDragTarget = useRef<number | undefined>(undefined)
   let columnDragStart = useRef<number>(0)
 
+  // Called on each mouse move event.
   let onDragColumn = useCallback(
     (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+      // The index of the currently dragged column.
       let resizeColIdx = columnDragTarget.current
 
       // Bail if we are not resizing a column
@@ -72,6 +76,7 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
           if (colIdx !== resizeColIdx) {
             let currentlyDraggingWidth = roundNumber(nextWidths[resizeColIdx] || 0)
 
+            // Prevent other columns from being resized if the current column is at min/max limit.
             if (currentlyDraggingWidth <= minWidth || currentlyDraggingWidth > maxWidth) {
               break
             }
@@ -84,7 +89,7 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
             }
             // Case for when the col to resize IS the currently dragged one.
           } else {
-            // Add or remove the actual movement percentage directly.
+            // Add or remove the actual movement percentage directly to the current column.
             if (movementDir === 'left') {
               nextColumnWidth = columnWidth - movementPercent
             } else {
@@ -97,6 +102,7 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
             ? Math.min(Math.max(minWidth, nextColumnWidth), maxWidth)
             : 0
 
+          // Only positive values allowed
           if (nextColumnWidth > 0) {
             nextWidths.splice(colIdx, 1, nextColumnWidth)
           }
@@ -115,17 +121,21 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
 
   let onColumnDragStart = useCallback(
     (colIdx) => (e: React.MouseEvent<HTMLButtonElement, globalThis.MouseEvent>) => {
+      // Set the drag target
       columnDragTarget.current = colIdx
+      // Set the movement origin, used to calculate how far the mouse moves
       columnDragStart.current = Math.abs(e.nativeEvent.pageX)
     },
     []
   )
 
+  // When the dragging ends, set the target and movement origin to empty values.
   let onColumnDragEnd = useCallback((e) => {
     columnDragTarget.current = undefined
     columnDragStart.current = 0
   }, [])
 
+  // Return only the default widths if resize is not enabled.
   if (!isResizeEnabled) {
     return {
       columnWidths,

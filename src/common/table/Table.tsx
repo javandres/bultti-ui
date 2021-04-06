@@ -227,6 +227,7 @@ const Table = observer(
       <TableContext.Provider value={contextValue}>
         <TableWrapper className={className} ref={tableViewRef} height={tableHeight}>
           <TableView width={Math.max(100, tableWidth)}>
+            {/* Attach drag event handlers here. Only dragging within the TableHeader is registered. */}
             <TableHeader
               onMouseMove={onDragColumn}
               onMouseLeave={onColumnDragEnd}
@@ -250,7 +251,6 @@ const Table = observer(
                   <ColumnHeaderCell
                     as="button"
                     style={{
-                      userSelect: 'none',
                       width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
                       flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
                     }}
