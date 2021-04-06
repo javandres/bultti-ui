@@ -5,7 +5,7 @@ import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useEditInspection,
-  useInspectionReports,
+  useNavigateToInspectionReports,
   useRemoveInspection,
 } from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
@@ -62,7 +62,7 @@ const InspectionActions = observer(
     var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
     var goToInspectionEdit = useEditInspection(inspection.inspectionType)
-    var goToInspectionReports = useInspectionReports()
+    var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
 

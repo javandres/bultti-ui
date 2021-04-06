@@ -512,13 +512,13 @@ type Inspection {
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
   inspectionType: InspectionType!
+  linkedInspectionUpdateAvailable: Boolean
+  linkedInspections: [LinkedInspectionForWeek!]
   minStartDate: BulttiDate!
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
   operatorId: Int!
-  postInspection: Inspection
-  preInspection: Inspection
   season: Season!
   seasonId: String!
   startDate: BulttiDate
@@ -601,6 +601,12 @@ type LateDeparturesReportData {
   sanctionAmount: Float
   sanctionedKilometers: Float
   trackReason: TrackReason!
+}
+
+type LinkedInspectionForWeek {
+  id: String!
+  inspection: Inspection!
+  startOfWeek: String!
 }
 
 type MissingBlockDeparturesReport {
@@ -698,13 +704,13 @@ type Mutation {
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
-  updateBaseInspection(inspectionId: String!): Inspection!
   updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
+  updateLinkedInspection(inspectionId: String!): Inspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
@@ -1394,6 +1400,7 @@ enum InspectionValidationError {
   NOT_POST
   NOT_PRE
   POST_INSPECTION_END_DATE_NOT_IN_THE_PAST
+  POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS
 }
 
 enum OperatingAreaName {

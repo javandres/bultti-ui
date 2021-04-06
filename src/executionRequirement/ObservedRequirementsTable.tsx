@@ -3,7 +3,11 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ObservedExecutionValue } from '../schema-types'
+import {
+  ExecutionRequirementValue,
+  ObservedExecutionValue,
+  ObservedRequirementValueInput,
+} from '../schema-types'
 import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
@@ -24,7 +28,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type EditRequirementValue = EditValue<ObservedExecutionValue>
+export type EditObservedRequirementValue = EditValue<ObservedExecutionValue>
 
 export interface IObservedExecutionRequirement {
   observedRequirements: ObservedExecutionValue[]
@@ -61,7 +65,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     pendingValues,
     isEditable = false,
   }) => {
-    let requirementRows = useMemo(() => {
+    let requirementRows: ObservedExecutionValue[] = useMemo(() => {
       let requirementValues = executionRequirement.observedRequirements
       return orderBy(requirementValues, 'emissionClass', 'desc')
     }, [executionRequirement])
