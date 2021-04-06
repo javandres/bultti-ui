@@ -39,7 +39,7 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
       let nextWidths = [...columnWidths]
       let currentWidth = nextWidths[resizeColIdx] || 0
 
-      // CurrentWidth can also be a percentage string if fluid=true
+      // Sometimes e.movementX is 0, we can filter out these events.
       if (currentWidth && e.movementX !== 0) {
         let eventX = Math.abs(e.nativeEvent.pageX)
         let windowWidth = window.innerWidth
