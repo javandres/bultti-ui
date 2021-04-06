@@ -160,7 +160,7 @@
   "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
   "inspection_editor_linkedInspectionsUpToDate": "Linkitetyt tarkastukset ajan tasalla.",
   "inspection_editor_linkedInspectionsUpdateAvailable": "Päivitä linkitetyt tarkastukset",
-  "inspection_editor_linkedInspectionsUpdateConfirm": "Oletko varma että haluat päivittää linkitetyt tarkastukset? Tämä resetoi mm. tämän jälkitarkastuksen suoritevaatimukset mahdollisine muutoksineen.",
+  "inspection_editor_linkedInspectionsUpdateConfirm": "Oletko varma että haluat päivittää linkitetyt tarkastukset? Tämän jälkitarkastuksen suoritevaatimukset luodaan uudelleen, jolloin mahdolliset muutokset resetoituu.",
   "inspection_editor_noLinkedInspections": "Ei linkattuja ennakkotarkastuksia. Julkaise ennakkotarkastus ja päivitä!",
 
   "inspection_state_Draft": "Muokattavissa",
