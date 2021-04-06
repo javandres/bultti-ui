@@ -165,7 +165,7 @@ export const updateInspectionMutation = gql`
 `
 
 export const updateLinkedInspectionsMutation = gql`
-  mutation updateBaseInspection($inspectionId: String!) {
+  mutation updateLinkedInspections($inspectionId: String!) {
     updateLinkedInspection(inspectionId: $inspectionId) {
       ...InspectionFragment
     }

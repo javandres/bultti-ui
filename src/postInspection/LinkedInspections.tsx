@@ -74,28 +74,26 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
     }
   }, [updateConnectedInspections, isEditable])
 
+  let linkedInspectionsCanUpdate = isEditable && inspection.linkedInspectionUpdateAvailable
+
   return (
     <LinkedInspectionsView error={hasLinkedInspectionsError}>
       <Heading style={{ marginTop: 0 }}>
         <Text>inspection_editor_linkedInspections</Text>
         <div style={{ marginLeft: 'auto', display: 'flex', alignSelf: 'stretch' }}>
-          <LinkedStatusText updateIsAvailable={!!inspection.linkedInspectionUpdateAvailable}>
+          <Button
+            disabled={!linkedInspectionsCanUpdate}
+            style={{ marginLeft: '1rem', alignSelf: 'center' }}
+            loading={updateLoading}
+            onClick={onUpdateConnectedInspection}
+            buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+            size={ButtonSize.MEDIUM}>
             {!inspection.linkedInspectionUpdateAvailable ? (
               <Text>inspection_editor_linkedInspectionsUpToDate</Text>
             ) : (
               <Text>inspection_editor_linkedInspectionsUpdateAvailable</Text>
             )}
-          </LinkedStatusText>
-          {isEditable && inspection.linkedInspectionUpdateAvailable && (
-            <Button
-              style={{ marginLeft: '1rem', alignSelf: 'center' }}
-              loading={updateLoading}
-              onClick={onUpdateConnectedInspection}
-              buttonStyle={ButtonStyle.SECONDARY}
-              size={ButtonSize.SMALL}>
-              <Text>update</Text>
-            </Button>
-          )}
+          </Button>
         </div>
       </Heading>
       {connectedPreInspections.map((inspectionMapping) => (
