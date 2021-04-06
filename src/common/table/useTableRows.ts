@@ -57,8 +57,8 @@ export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
           (!!pendingValues &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey))
 
-        const onMakeEditable = (key: keyof ItemType, val: EditValueType) => () => {
-          if (!isEditingRow && onEditValue) {
+        const onMakeEditable = (key: keyof ItemType, val: EditValueType) => {
+          if (!isEditingRow && onEditValue && (editableValues || []).includes(key as string)) {
             onEditValue(key, val, item)
           }
         }

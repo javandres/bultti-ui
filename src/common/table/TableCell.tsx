@@ -128,7 +128,12 @@ export const TableCell = observer(
     }) as EditValue<ItemType, EditValueType>
 
     let columnWidth = columnWidths[colIndex]
-    let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
+
+    let makeCellEditable = useCallback(() => {
+      if (canEditCell) {
+        onMakeEditable(valueKey, val)
+      }
+    }, [valueKey, val, canEditCell])
 
     let onKeyUp = useCallback(
       (e) => {

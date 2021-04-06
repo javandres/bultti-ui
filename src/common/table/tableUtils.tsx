@@ -125,7 +125,7 @@ export type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellVal
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: keyof ItemType, value: EditValueType) => () => unknown
+  onMakeEditable: (key: keyof ItemType, value: EditValueType) => unknown
   onValueChange: (key: string) => (value: EditValueType) => unknown
   itemEntries: [string, EditValueType][]
   item: ItemType
