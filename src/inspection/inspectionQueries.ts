@@ -88,7 +88,7 @@ export const inspectionQuery = gql`
   query inspectionById($inspectionId: String!) {
     inspection(inspectionId: $inspectionId) {
       ...InspectionFragment
-      inspectionMappings {
+      linkedInspections {
         id
         startOfWeek
         inspection {
