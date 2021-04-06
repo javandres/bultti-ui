@@ -49,7 +49,7 @@ const InspectionReports = observer(
       }
     )
 
-    let reports = useMemo(() => reportsData || [], [reportsData])
+    let reports: ReportListItemType[] = useMemo(() => reportsData || [], [reportsData])
     let typeStrings = getInspectionTypeStrings(inspection.inspectionType)
 
     return (

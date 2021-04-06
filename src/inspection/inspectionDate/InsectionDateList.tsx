@@ -10,7 +10,6 @@ import { removeInspectionDateMutation } from './inspectionDateQuery'
 import DateRangeDisplay from '../../common/components/DateRangeDisplay'
 import { MessageView } from '../../common/components/Messages'
 import { getHfpStatusColor, HfpStatusIndicator } from '../../common/components/HfpStatus'
-import { lowerCase } from 'lodash'
 import InspectionDateHfpControl from './InspectionDateHfpControl'
 
 const Header = styled.div`
