@@ -25,14 +25,12 @@ import { useTableSorting } from './useTableSorting'
 import { useFloatingToolbar } from './useFloatingToolbar'
 import { useTableRows } from './useTableRows'
 import { SCROLLBAR_WIDTH } from '../../constants'
-import { getTotalNumbers } from '../../util/getTotal'
 
 const TableWrapper = styled.div<{ height: number }>`
   position: relative;
   width: calc(100% + 2rem);
   border-radius: 0;
   overflow: hidden;
-  overflow-x: scroll;
   margin: 0 -1rem 0rem -1rem;
   height: ${(p) => p.height || 60}px;
 
@@ -41,16 +39,16 @@ const TableWrapper = styled.div<{ height: number }>`
   }
 `
 
-const TableView = styled.div<{ width: number }>`
+const TableView = styled.div`
   position: absolute;
+  width: 100%;
   top: 0;
   left: 0;
-  bottom: 0;
-  min-width: ${(p) => p.width}%;
   display: flex;
   flex-direction: column;
   border-top: 1px solid var(--lighter-grey);
   border-bottom: 1px solid var(--lighter-grey);
+  overflow-x: scroll;
 `
 
 export const TableInput = styled(Input)`
@@ -73,8 +71,8 @@ const HeaderCellContent = styled.div`
 `
 
 const TableBodyWrapper = styled.div`
-  width: 100%;
   position: relative;
+  width: 100%;
 `
 
 const ColumnSortIndicator = styled.div`
@@ -211,7 +209,7 @@ const Table = observer(
     // rows length plus one for the header row, and multiplying that by the ROW_HEIGHT.
     // Then add scrollbar width to prevent the scrollbar from blocking anything.
     let tableHeight = useMemo(() => {
-      let rowsHeight = (items.length + 1) * ROW_HEIGHT + SCROLLBAR_WIDTH
+      let rowsHeight = (items.length + 1) * ROW_HEIGHT + SCROLLBAR_WIDTH + 1
 
       if (showFooterRow) {
         // If the footer is visible, add one more row height for that.
@@ -221,17 +219,17 @@ const Table = observer(
       return rowsHeight
     }, [items])
 
-    let tableWidth = useMemo(() => getTotalNumbers(columnWidths), [columnWidths])
-
     return (
       <TableContext.Provider value={contextValue}>
-        <TableWrapper className={className} ref={tableViewRef} height={tableHeight}>
-          <TableView width={Math.max(100, tableWidth)}>
-            {/* Attach drag event handlers here. Only dragging within the TableHeader is registered. */}
-            <TableHeader
-              onMouseMove={onDragColumn}
-              onMouseLeave={onColumnDragEnd}
-              onMouseUp={onColumnDragEnd}>
+        <TableWrapper
+          onMouseLeave={onColumnDragEnd}
+          onMouseUp={onColumnDragEnd}
+          onMouseMove={onDragColumn}
+          className={className}
+          ref={tableViewRef}
+          height={tableHeight}>
+          <TableView>
+            <TableHeader>
               {indexCell && (
                 <ColumnHeaderCell style={{ fontSize: '0.6rem', fontWeight: 'normal' }}>
                   {indexCell}
@@ -273,17 +271,15 @@ const Table = observer(
                 )
               })}
             </TableHeader>
-            <TableBodyWrapper>
-              {tableIsEmpty
-                ? emptyContent
-                : rows.map((row, rowIndex) => (
-                    <TableRow<ItemType, EditValueType>
-                      key={row.key || rowIndex}
-                      row={row}
-                      index={rowIndex}
-                    />
-                  ))}
-            </TableBodyWrapper>
+            {tableIsEmpty
+              ? emptyContent
+              : rows.map((row, rowIndex) => (
+                  <TableRow<ItemType, EditValueType>
+                    key={row.key || rowIndex}
+                    row={row}
+                    index={rowIndex}
+                  />
+                ))}
             {typeof getColumnTotal === 'function' && (
               <TableRowElement key="totals" footer={true}>
                 {columns.map((col, colIdx) => {

@@ -30,7 +30,8 @@ export const TableCellElement = styled.div<{
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   overflow: hidden;
-  min-width: 75px;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--lighter-grey);
 
   &:nth-child(odd) {
     background: ${(p) =>
@@ -48,6 +49,7 @@ export const ColumnHeaderCell = styled(TableCellElement)<{ isEditing?: boolean }
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
   border-right: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
   font-family: inherit;
   color: var(--darker-grey);
   cursor: pointer;

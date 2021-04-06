@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { roundNumber } from '../../util/round'
 
-const minWidth = 10
-const maxWidth = 50
+const minWidth = 75
 
 export function useColumnResize(columns: any[], isResizeEnabled = true) {
   // The widths are in percentages. The default widths for each column is 100 divided by the number of columns.
-  let columnWidth = 100 / Math.max(1, columns.length)
+  let columnWidth = Math.max(10, 100 / Math.max(1, columns.length))
+
   let defaultColumnWidths = useMemo(() => columns.map(() => columnWidth), [
     columns,
     columnWidth,
@@ -43,6 +43,9 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
       if (currentWidth && e.movementX !== 0) {
         let eventX = Math.abs(e.nativeEvent.pageX)
         let windowWidth = window.innerWidth
+        let parentWidth = e.currentTarget.getBoundingClientRect().width
+
+        const maxWidth = parentWidth / 1.5
 
         // The pixels that the mouse moved, ie how much to grow or shrink the column.
         let movementPx = columnDragStart.current - eventX
@@ -60,12 +63,17 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
         let columnWidthModifier = roundNumber(
           movementPercent / Math.max(1, resizeColumns.length - 1)
         )
-        let colIdx = isLast ? 0 : resizeColIdx // Start at the end if dragging the last one
+        // Start at the end if dragging the last one
+        let colIdx = isLast ? 0 : resizeColIdx
 
         if (isLast) {
           // Reverse movement direction if dragging the last column.
           movementDir = movementDir === 'left' ? 'right' : 'left'
         }
+
+        // Get the width of the current column
+        let currentlyDraggingWidth = nextWidths[resizeColIdx] || 0
+        let currentPxWidth = Math.round((parentWidth * currentlyDraggingWidth) / 100)
 
         // Loop through and resize all columns.
         for (let colWidth of resizeColumns) {
@@ -74,10 +82,8 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
 
           // Case for when the col to resize is not the currently dragged one.
           if (colIdx !== resizeColIdx) {
-            let currentlyDraggingWidth = roundNumber(nextWidths[resizeColIdx] || 0)
-
             // Prevent other columns from being resized if the current column is at min/max limit.
-            if (currentlyDraggingWidth <= minWidth || currentlyDraggingWidth > maxWidth) {
+            if (currentPxWidth <= minWidth || currentPxWidth > maxWidth) {
               break
             }
 
@@ -97,13 +103,10 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
             }
           }
 
-          // Clamp the width to max and min values
-          nextColumnWidth = nextColumnWidth
-            ? Math.min(Math.max(minWidth, nextColumnWidth), maxWidth)
-            : 0
+          let pxWidth = (parentWidth * nextColumnWidth) / 100
 
           // Only positive values allowed
-          if (nextColumnWidth > 0) {
+          if (pxWidth >= minWidth && pxWidth <= maxWidth) {
             nextWidths.splice(colIdx, 1, nextColumnWidth)
           }
 
