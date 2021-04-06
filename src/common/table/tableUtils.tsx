@@ -72,7 +72,7 @@ export type EditValue<ItemType = any, ValueType = CellValType> = {
 }
 
 export type TableEditProps<ItemType, EditValueType = CellValType> = {
-  onEditValue?: (key: keyof ItemType, value: EditValueType, item: ItemType) => unknown
+  onEditValue?: (key: keyof Partial<ItemType>, value: EditValueType, item: ItemType) => unknown
   pendingValues?: EditValue<ItemType, EditValueType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown

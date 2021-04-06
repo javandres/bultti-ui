@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import {
   getInspectionTypeStrings,
   useFetchInspections,
-  useInspectionReports,
+  useNavigateToInspectionReports,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page, PageContainer } from '../common/components/common'
@@ -65,7 +65,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
     setSelectedSeason(globalSeason)
   }, [globalSeason])
 
-  let openReports = useInspectionReports()
+  let openReports = useNavigateToInspectionReports()
 
   let inspectionsList = useMemo(() => {
     let filteredList = inspections.filter((p) => {

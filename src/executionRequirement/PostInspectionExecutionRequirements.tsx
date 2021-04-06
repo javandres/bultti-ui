@@ -29,7 +29,9 @@ import FormSaveToolbar from '../common/components/FormSaveToolbar'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { useHasInspectionError } from '../util/hasInspectionError'
 import { inspectionQuery } from '../inspection/inspectionQueries'
-import ObservedRequirementsTable, { EditRequirementValue } from './ObservedRequirementsTable'
+import ObservedRequirementsTable, {
+  EditObservedRequirementValue,
+} from './ObservedRequirementsTable'
 import { Text } from '../util/translate'
 
 const PostInspectionExecutionRequirementsView = styled.div`
@@ -185,15 +187,15 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     [observedRequirements]
   )
 
-  let [pendingValues, setPendingValues] = useState<EditRequirementValue[]>([])
+  let [pendingValues, setPendingValues] = useState<EditObservedRequirementValue[]>([])
 
   let createValueEdit = useCallback(
     (requirement) => (key, value, item) => {
-      if (!isEditable) {
+      if (!isEditable || key !== 'quotaRequired') {
         return
       }
 
-      let editValue: EditRequirementValue = {
+      let editValue: EditObservedRequirementValue = {
         key,
         value,
         item,
@@ -221,8 +223,8 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
     }
 
     let updateQueries: Promise<unknown>[] = []
-    let requirementGroups = Object.entries<EditRequirementValue[]>(
-      groupBy<EditRequirementValue>(pendingValues, 'itemId')
+    let requirementGroups = Object.entries<EditObservedRequirementValue[]>(
+      groupBy<EditObservedRequirementValue>(pendingValues, 'itemId')
     )
 
     for (let [requirementId, reqPendingValues] of requirementGroups) {
