@@ -133,7 +133,7 @@ export const TableCell = observer(
 
     let makeCellEditable = useCallback(() => {
       if (canEditCell) {
-        onMakeEditable(valueKey, val)
+        onMakeEditable(valueKey, val)()
       }
     }, [valueKey, val, canEditCell])
 
