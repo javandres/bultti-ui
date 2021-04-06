@@ -1,5 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { getTotalNumbers } from '../../util/getTotal'
+import { roundNumber } from '../../util/round'
+
+const minWidth = 10
+const maxWidth = 50
 
 export function useColumnResize(columns: any[], isResizeEnabled = true) {
   let columnWidth = 100 / Math.max(1, columns.length)
@@ -19,8 +22,6 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
   let columnDragTarget = useRef<number | undefined>(undefined)
   let columnDragStart = useRef<number>(0)
 
-  const minWidth = 10
-
   let onDragColumn = useCallback(
     (e: React.MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
       let resizeColIdx = columnDragTarget.current
@@ -35,36 +36,55 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
       let currentWidth = nextWidths[resizeColIdx] || 0
 
       // CurrentWidth can also be a percentage string if fluid=true
-      if (currentWidth) {
+      if (currentWidth && e.movementX !== 0) {
         let eventX = Math.abs(e.nativeEvent.pageX)
         let windowWidth = window.innerWidth
 
         // The pixels that the mouse moved, ie how much to grow or shrink the column.
         let movementPx = columnDragStart.current - eventX
         let movementDir = movementPx > 0 ? 'left' : 'right'
-        let movementPercent = (Math.abs(movementPx) / windowWidth) * 100
+        // Convert the px movement to percentages, which is how the table columns are sized.
+        let movementPercent = roundNumber((Math.abs(movementPx) / windowWidth) * 100)
 
+        // If dragging the last column, special considerations need to be made.
         let isLast = resizeColIdx === nextWidths.length - 1
+        // If dragging the last column, resize all columns in the table.
+        // If dragging any other column, resize only columns after the current one.
         let resizeColumns = isLast ? nextWidths : nextWidths.slice(resizeColIdx)
 
-        let columnWidthModifier = movementPercent / Math.max(1, resizeColumns.length - 1)
-        let colIdx = isLast ? 0 : resizeColIdx
+        // The width modifier for all columns except the current one.
+        let columnWidthModifier = roundNumber(
+          movementPercent / Math.max(1, resizeColumns.length - 1)
+        )
+        let colIdx = isLast ? 0 : resizeColIdx // Start at the end if dragging the last one
 
         if (isLast) {
+          // Reverse movement direction if dragging the last column.
           movementDir = movementDir === 'left' ? 'right' : 'left'
         }
 
+        // Loop through and resize all columns.
         for (let colWidth of resizeColumns) {
           let nextColumnWidth = 0
           let columnWidth = (colWidth || 0) as number
 
+          // Case for when the col to resize is not the currently dragged one.
           if (colIdx !== resizeColIdx) {
+            let currentlyDraggingWidth = roundNumber(nextWidths[resizeColIdx] || 0)
+
+            if (currentlyDraggingWidth <= minWidth || currentlyDraggingWidth > maxWidth) {
+              break
+            }
+
+            // Add or remove the width modifier from the current width based on movement direction.
             if (movementDir === 'left') {
               nextColumnWidth = columnWidth + columnWidthModifier
             } else {
               nextColumnWidth = columnWidth - columnWidthModifier
             }
+            // Case for when the col to resize IS the currently dragged one.
           } else {
+            // Add or remove the actual movement percentage directly.
             if (movementDir === 'left') {
               nextColumnWidth = columnWidth - movementPercent
             } else {
@@ -72,22 +92,19 @@ export function useColumnResize(columns: any[], isResizeEnabled = true) {
             }
           }
 
+          // Clamp the width to max and min values
           nextColumnWidth = nextColumnWidth
-            ? Math.min(Math.max(minWidth, nextColumnWidth), 100)
+            ? Math.min(Math.max(minWidth, nextColumnWidth), maxWidth)
             : 0
 
-          if (nextColumnWidth) {
+          if (nextColumnWidth > 0) {
             nextWidths.splice(colIdx, 1, nextColumnWidth)
           }
 
           colIdx++
         }
 
-        let updatedWidth = getTotalNumbers(nextWidths)
-
-        if (updatedWidth <= 100) {
-          setColumnWidths(nextWidths)
-        }
+        setColumnWidths(nextWidths)
 
         // Reset the movement origin
         columnDragStart.current = eventX
