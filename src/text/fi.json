@@ -27,6 +27,8 @@
   "back": "Takaisin",
   "show": "Näytä",
   "hide": "Piilota",
+  "selectAll": "Valitse kaikki",
+  "allSelected": "Kaikki valittu",
   "procurementUnits": "Kilpailukohteet",
   "contracts": "Sopimusehdot",
   "preInspection": "Ennakkotarkastus",
@@ -75,7 +77,11 @@
   "contractForm_code": "Koodi",
   "contractForm_removeConfirm": "Haluatko varmasti poistaa sopimuksen?",
 
-  "contract_procurementUnitsEditorRoutes": "Reitit",
+  "contract_procurementUnitsEditor_routes": "Reitit",
+  "contract_procurementUnitsEditor_unselectingDisabled": "Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.",
+  "contract_procurementUnitsEditor_unitIncluded": "Sopimuksessa mukana",
+  "contract_procurementUnitsEditor_currentContracts": "Nykyiset sopimukset:",
+  "contract_procurementUnitsEditor_noProcurementUnits": "Ei kilpailukohteita",
 
   "procurementUnit_noCatalogueForUnit": "Kilpailukohteella ei ole kalustoluetteloa.",
   "procurementUnit_hideAllProcurementUnits": "Piilota kaikki kilpailukohteet",
@@ -150,6 +156,12 @@
   "inspection_inspectionName": "Tarkastuksen nimi",
   "inspection_selectInspection": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
+  "inspection_editor_hfp_unavailable": "Tarkastusjaksolle ei ole ladattu HFP-tiedot.",
+  "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
+  "inspection_editor_linkedInspectionsUpToDate": "Linkitetyt tarkastukset ovat ajantasalla",
+  "inspection_editor_linkedInspectionsUpdateAvailable": "Päivitä linkitetyt tarkastukset",
+  "inspection_editor_linkedInspectionsUpdateConfirm": "Oletko varma että haluat päivittää linkitetyt tarkastukset? Tämän jälkitarkastuksen suoritevaatimukset luodaan uudelleen, jolloin mahdolliset muutokset resetoituu.",
+  "inspection_editor_noLinkedInspections": "Ei linkattuja ennakkotarkastuksia. Julkaise ennakkotarkastus ja päivitä!",
 
   "inspection_state_Draft": "Muokattavissa",
   "inspection_state_Processing": "Käsittelee tietoja",
@@ -210,7 +222,7 @@
   "INVALID_INSPECTION_TIME": "Tarkastusaika väärä",
   "MISSING_BLOCK_DEPARTURES": "Lähtöketjut puuttuu",
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
-  "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaolevaa sopimusta.",
+  "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaoleva sopimus.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
 }

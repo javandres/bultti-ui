@@ -12,7 +12,7 @@ import {
   TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useContext, useMemo, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 
 export const TableCellElement = styled.div<{
   editable?: boolean
@@ -130,7 +130,12 @@ export const TableCell = observer(
     }) as EditValue<ItemType, EditValueType>
 
     let columnWidth = columnWidths[colIndex]
-    let makeCellEditable = useMemo(() => onMakeEditable(valueKey, val), [valueKey, val])
+
+    let makeCellEditable = useCallback(() => {
+      if (canEditCell) {
+        onMakeEditable(valueKey, val)()
+      }
+    }, [valueKey, val, canEditCell])
 
     let onKeyUp = useCallback(
       (e) => {

@@ -34,6 +34,7 @@ import { text, Text } from '../util/translate'
 import { navigateWithQueryString } from '../util/urlValue'
 import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
+import { ApolloError } from '@apollo/client'
 
 const ContractEditorView = styled.div``
 
@@ -80,10 +81,12 @@ const renderInput = ({
   contract,
   operatorName,
   contractFileReadError,
+  isNew,
 }: {
   contract: ContractInput
   operatorName: string
   contractFileReadError?: string
+  isNew: boolean
 }) => (
   key: string,
   val: any,
@@ -149,7 +152,11 @@ const renderInput = ({
     )
   }
 
-  if (key === 'procurementUnitIds' && contract.id && contract.startDate && contract.endDate) {
+  if (key === 'procurementUnitIds') {
+    if (isNew) {
+      return <React.Fragment />
+    }
+
     return (
       <ExpandableFormSection
         headerContent={
@@ -185,8 +192,14 @@ const renderInput = ({
     )
   }
 
-  if (['startDate', 'endDate'].includes(key)) {
-    return <SelectDate name={key} value={val} onChange={onChange} />
+  if (key === 'startDate') {
+    return <SelectDate name={key} value={val} onChange={onChange} maxDate={contract.endDate} />
+  }
+
+  if (key === 'endDate') {
+    return (
+      <SelectDate name={key} value={val} onChange={onChange} minDate={contract.startDate} />
+    )
   }
 
   return (
@@ -214,6 +227,7 @@ const renderLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
     let [globalOperator] = useStateValue<Operator>('globalOperator')
+    let [, setErrorMessage] = useStateValue('errorMessage')
     let initialContract: ContractInput = useMemo(() => {
       if (isNew) {
         let newContract: Partial<Contract> = {
@@ -301,7 +315,7 @@ const ContractEditor = observer(
 
     let [
       modifyContract,
-      { loading: modifyLoading, mutationFn: updateMutationFn, error: modifyError },
+      { loading: modifyLoading, mutationFn: updateMutationFn, uploadError: modifyError },
     ] = useUploader(modifyContractMutation, {
       onCompleted: (data) => {
         let mutationResult = pickGraphqlData(data)
@@ -321,13 +335,14 @@ const ContractEditor = observer(
               operatorId: mutationResult?.operatorId,
               startDate: mutationResult?.startDate,
               endDate: mutationResult?.endDate,
+              contractId: pendingContract.id,
             },
           },
         ]
       },
     })
 
-    let [createContract, { loading: createLoading, error: createError }] = useUploader(
+    let [createContract, { loading: createLoading, uploadError: createError }] = useUploader(
       createContractMutation,
       {
         refetchQueries: [
@@ -335,7 +350,6 @@ const ContractEditor = observer(
         ],
       }
     )
-
     let contractFileReadError = useMemo(() => (createError || modifyError)?.message, [
       modifyError,
       createError,
@@ -353,19 +367,29 @@ const ContractEditor = observer(
         let result
 
         if (rulesFiles.length !== 0) {
-          let mutationFn = isNew ? createContract : modifyContract
           let rulesFile = rulesFiles[0]
-
-          result = await mutationFn(rulesFile, {
-            variables: {
-              contractInput: pendingContract,
-            },
-          })
+          if (isNew) {
+            result = await createContract(rulesFile, {
+              variables: {
+                contractInput: pendingContract,
+              },
+            })
+          } else {
+            result = await modifyContract(rulesFile, {
+              variables: {
+                contractInput: pendingContract,
+                operatorId: globalOperator.operatorId,
+              },
+            })
+          }
         } else {
           result = await updateMutationFn({
             variables: {
               contractInput: pendingContract,
+              operatorId: globalOperator.operatorId,
             },
+          }).catch((error: ApolloError) => {
+            setErrorMessage(error.message)
           })
         }
 
@@ -415,6 +439,7 @@ const ContractEditor = observer(
         let result = await removeContract({
           variables: {
             contractId: contract!.id,
+            operatorId: globalOperator.operatorId,
           },
         })
 
@@ -461,6 +486,7 @@ const ContractEditor = observer(
           renderLabel={renderLabel}
           renderInput={renderInput({
             contractFileReadError,
+            isNew,
             contract: pendingContract,
             operatorName: contract
               ? contract.operator.operatorName

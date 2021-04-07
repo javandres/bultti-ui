@@ -405,6 +405,7 @@ export type QueryContractArgs = {
 
 
 export type QueryContractProcurementUnitOptionsArgs = {
+  contractId: Scalars['String'];
   endDate: Scalars['BulttiDate'];
   startDate: Scalars['BulttiDate'];
   operatorId: Scalars['Int'];
@@ -460,8 +461,8 @@ export type Inspection = {
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
   inspectionType: InspectionType;
-  preInspection?: Maybe<Inspection>;
-  postInspection?: Maybe<Inspection>;
+  linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>;
+  linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
   defectInspection?: Maybe<Inspection>;
   operatorId: Scalars['Int'];
   operator: Operator;
@@ -490,6 +491,13 @@ export enum InspectionType {
   Post = 'POST',
   EquipmentDefect = 'EQUIPMENT_DEFECT'
 }
+
+export type LinkedInspectionForWeek = {
+  __typename?: 'LinkedInspectionForWeek';
+  id: Scalars['String'];
+  startOfWeek: Scalars['String'];
+  inspection: Inspection;
+};
 
 export type Operator = {
   __typename?: 'Operator';
@@ -808,7 +816,8 @@ export enum InspectionValidationError {
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
   HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
-  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST'
+  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST',
+  PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS'
 }
 
 export type InspectionTimelineItem = {
@@ -1794,6 +1803,7 @@ export type ProcurementUnitOption = {
   routes: Array<Scalars['String']>;
   areaName?: Maybe<Scalars['String']>;
   currentContracts?: Maybe<Array<Contract>>;
+  isUnselectingDisabled: Scalars['Boolean'];
 };
 
 export type SanctionsResponse = {
@@ -1854,7 +1864,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   loadHfpDataForInspectionPeriod: Array<InspectionDate>;
   createInspection: Inspection;
-  updateBaseInspection: Inspection;
+  updateLinkedInspection: Inspection;
   updateInspection: Inspection;
   inspectionSanctionable: Inspection;
   abandonSanctions: Inspection;
@@ -1863,6 +1873,7 @@ export type Mutation = {
   rejectInspection: Inspection;
   removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
+  initInspectionContractUnitMap: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
   updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
@@ -1912,7 +1923,7 @@ export type MutationCreateInspectionArgs = {
 };
 
 
-export type MutationUpdateBaseInspectionArgs = {
+export type MutationUpdateLinkedInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -1957,6 +1968,11 @@ export type MutationRemoveInspectionArgs = {
 
 export type MutationToggleInspectionUserSubscribedArgs = {
   userId: Scalars['String'];
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInitInspectionContractUnitMapArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -2116,12 +2132,14 @@ export type MutationCreateContractArgs = {
 
 
 export type MutationModifyContractArgs = {
+  operatorId: Scalars['Int'];
   contractInput: ContractInput;
   file?: Maybe<Scalars['Upload']>;
 };
 
 
 export type MutationRemoveContractArgs = {
+  operatorId: Scalars['Int'];
   contractId: Scalars['String'];
 };
 

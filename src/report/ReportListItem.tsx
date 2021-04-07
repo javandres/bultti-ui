@@ -23,8 +23,6 @@ export type PropTypes = {
   isExpanded?: boolean
 }
 
-// TODO: Add report title and description
-
 const ReportListItem: React.FC<PropTypes> = observer(
   ({
     reportData,
