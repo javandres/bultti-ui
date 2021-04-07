@@ -15,7 +15,6 @@ import { addYears } from 'date-fns'
 import { useStateValue } from '../state/useAppState'
 import { ErrorView } from '../common/components/Messages'
 import Input, { TextArea, TextInput } from '../common/input/Input'
-import SelectDate from '../common/input/SelectDate'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
@@ -206,7 +205,12 @@ const renderInput = ({
 
   if (key === 'endDate') {
     return (
-      <SelectDate name={key} value={val} onChange={onChange} minDate={contract.startDate} />
+      <DatePicker
+        value={val}
+        onChange={onChange}
+        minDate={contract.startDate}
+        acceptableDayTypes={['su']}
+      />
     )
   }
 

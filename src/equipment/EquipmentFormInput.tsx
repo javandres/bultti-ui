@@ -2,10 +2,10 @@ import React, { useCallback, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components/macro'
 import Dropdown from '../common/input/Dropdown'
-import SelectDate from '../common/input/SelectDate'
 import { get } from 'lodash'
 import { TextInput } from '../common/input/Input'
 import { CellContent } from '../common/table/TableCell'
+import DatePicker from '../common/input/DatePicker'
 
 export const FormDropdown = styled(Dropdown)`
   width: 100%;
@@ -145,15 +145,9 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
       )
     }
 
+    // Is this ever being executed? If not, remove.
     if (dateValues.includes(valueName)) {
-      return (
-        <SelectDate
-          onChange={onSelectValue}
-          value={value as string}
-          label=""
-          name="registryDate"
-        />
-      )
+      return <DatePicker onChange={onSelectValue} value={value as string} label="" />
     }
 
     let FieldComponent = fieldComponent

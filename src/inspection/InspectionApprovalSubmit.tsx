@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import SelectDate from '../common/input/SelectDate'
 import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
 import { Inspection } from '../schema-types'
 import { FlexRow } from '../common/components/common'
@@ -11,6 +10,7 @@ import { addDays, max, parseISO } from 'date-fns'
 import { getDateString } from '../util/formatDate'
 import { LoadingDisplay } from '../common/components/Loading'
 import { text, Text } from '../util/translate'
+import DatePicker from '../common/input/DatePicker'
 
 const InspectionConfigView = styled.div`
   border: 1px solid var(--lighter-grey);
@@ -87,17 +87,15 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
               <Text>inspection_inspectionSeason</Text>
             </InputLabel>
             <ControlGroup>
-              <SelectDate
-                name="production_startDate"
+              <DatePicker
                 value={inspectionValues.startDate}
                 minDate={inspection.minStartDate}
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('startDate', val)}
                 label={text('startDate')}
-                alignDatepicker="left"
+                acceptableDayTypes={['mo']}
               />
-              <SelectDate
-                name="production_endDate"
+              <DatePicker
                 value={inspectionValues.endDate}
                 minDate={getDateString(
                   addDays(parseISO(inspectionValues.startDate || inspection.minStartDate), 1)
@@ -105,6 +103,7 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('endDate', val)}
                 label={text('endDate')}
+                acceptableDayTypes={['su']}
               />
             </ControlGroup>
           </FormColumn>

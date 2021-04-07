@@ -51,7 +51,9 @@ export type PropTypes = {
 }
 
 const DatePickerWrapperStyles = createGlobalStyle`
-  
+    .react-datepicker-wrapper {
+      width: 100%;
+    }
     .react-datepicker__day-name {
       font-size: 0.9rem;
       width: 2rem;
