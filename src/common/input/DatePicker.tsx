@@ -5,18 +5,22 @@ import ReactDatePicker, { registerLocale } from 'react-datepicker'
 import ReactDOM from 'react-dom'
 import 'react-datepicker/dist/react-datepicker.css'
 import { observer } from 'mobx-react-lite'
-import { getDateObject, getDateString } from '../../util/formatDate'
+import { getDateObject } from '../../util/formatDate'
 import { DATE_FORMAT } from '../../constants'
 import styled, { createGlobalStyle } from 'styled-components/macro'
 import Input from './Input'
 import { Calendar } from '../icon/Calendar'
 import { text } from '../../util/translate'
+import { format, parse } from 'date-fns'
 
 /**
  * Date Picker using react-datepicker: https://www.npmjs.com/package/react-datepicker
  * Calendar examples: https://reactdatepicker.com/
  */
 
+const INPUT_DATE_FORMAT = DATE_FORMAT // Format in which value is passed in and out of the component
+// TODO: add this to constants
+const DISPLAYED_FORMAT = 'dd.MM.yyyy' // Format used to handle current value within the component. This is the format also displayed in UI
 const MAX_YEAR = 2100
 const MIN_YEAR = 2000
 
@@ -26,7 +30,7 @@ registerLocale('fi', fi)
 type AcceptableDayType = 'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'
 
 export type PropTypes = {
-  value?: string // Format same as constants.DATE_FORMAT
+  value?: string // Format same as DATE_FORMAT_IN_AND_OUT
   label?: string
   disabled?: boolean
   isEmptyValueAllowed?: boolean
@@ -88,7 +92,9 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     ...attrs
   } = props
   let [isOpen, setIsOpen] = useState<boolean>(false)
-  let [currentValue, setCurrentValue] = useState<string>(value ? value : '')
+  let [currentValue, setCurrentValue] = useState<string>(
+    value ? getDatePickerDateString(value) : ''
+  )
 
   // TODO: add an event listener to trim input when enter is pressed
   //   EventListener.on('enter', this.trimInputString)
@@ -101,7 +107,6 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
   // Update props.value only through this method
   let onChangeDate = (date: Date | null) => {
     let newDate = date ? date : null
-
     const minStartDate = getMinDate()
     const maxEndDate = getMaxDate()
     if (newDate) {
@@ -112,18 +117,18 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         newDate = maxEndDate
       }
     }
-    setCurrentValue(newDate ? getDateString(newDate) : '')
+    setCurrentValue(newDate ? format(newDate, DISPLAYED_FORMAT) : '')
     if (!isEmptyValueAllowed && !newDate) return
 
-    onChange(newDate ? getDateString(newDate) : null)
+    // Component outputs dateString in format of INPUT_DATE_FORMAT
+    onChange(newDate ? format(newDate, INPUT_DATE_FORMAT) : null)
   }
 
   let onInputChange = (inputValue: string) => {
     setIsOpen(false)
-
     // Allow input date that is in the correct format
     if (isValidDate(inputValue)) {
-      onChangeDate(getDateObject(inputValue))
+      onChangeDate(parse(inputValue, DISPLAYED_FORMAT, new Date()))
     } else if (_.isEmpty(inputValue)) {
       onChangeDate(null)
     } else {
@@ -133,28 +138,19 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
   }
 
   let onCalendarDateSelect = (date: Date | null) => {
-    // Have to set 1 ms timeout because state.isOpen might have not been updated
-    setTimeout(() => {
-      selectDateIfCalendarIsOpen(date)
-    }, 1)
-  }
-
-  let selectDateIfCalendarIsOpen = (date: Date | null) => {
     if (isOpen && date) {
-      onInputChange(getDateString(date))
+      onInputChange(format(date, DISPLAYED_FORMAT))
     }
   }
 
   let trimInputString = () => {
-    let dateObjectToTrim = getDateObject(currentValue)
-    // Note: this needs to be in constants.DATE_FORMAT
+    let dateObjectToTrim = parse(currentValue, DISPLAYED_FORMAT, new Date())
     const day = `0${dateObjectToTrim.getDate()}`.slice(-2)
     const month = `0${dateObjectToTrim.getMonth() + 1}`.slice(-2)
-    const trimmedDateString = `${dateObjectToTrim.getFullYear()}-${month}-${day}`
+    const trimmedDateString = `${day}.${month}.${dateObjectToTrim.getFullYear()}`
     if (isValidDate(trimmedDateString)) {
-      let trimmedDateObject = getDateObject(trimmedDateString)
       if (currentValue !== trimmedDateString) {
-        onChangeDate(trimmedDateObject)
+        onChangeDate(parse(trimmedDateString, DISPLAYED_FORMAT, new Date()))
       }
     }
   }
@@ -179,7 +175,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         disabledKeyboardNavigation={true}
         onChange={onCalendarDateSelect}
         locale={fi}
-        dateFormat={DATE_FORMAT}
+        dateFormat={'dd.MM.yyyy'}
         showMonthDropdown={true}
         peekNextMonth={true}
         showYearDropdown={true}
@@ -189,7 +185,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         yearDropdownItemNumber={100}
         minDate={getMinDate()}
         maxDate={getMaxDate()}
-        dateFormatCalendar={'dd.MM.yyyy'}
+        dateFormatCalendar={DISPLAYED_FORMAT}
         popperContainer={renderCalendarContainer}
         fixedHeight={true}
       />
@@ -233,7 +229,6 @@ const renderDatePickerInput = ({
   }
 
   let isInputValid = _.isEmpty(value) ? !!isEmptyValueAllowed : isValidDate(value!)
-
   return (
     <InputContainer>
       <Input
@@ -255,13 +250,22 @@ const renderDatePickerInput = ({
   )
 }
 
+// Is given dateString in format of 'dd.MM.yyyy' (DISPLAYED_FORMAT)
 function isValidDate(dateString: string) {
-  let regEx = /^\d{4}-\d{2}-\d{2}$/
+  let regEx = /^\d{2}.\d{2}.\d{4}$/
   if (!dateString.match(regEx)) return false // Invalid format
-  let d = new Date(dateString)
+  let d = parse(dateString, DISPLAYED_FORMAT, new Date())
   let dNum = d.getTime()
   if (!dNum && dNum !== 0) return false // NaN value, Invalid date
-  return d.toISOString().slice(0, 10) === dateString
+  return format(d, DISPLAYED_FORMAT) === dateString
+}
+
+/**
+ * @param {string} dateString - format is in DATE_FORMAT
+ * @return dateString - format is in DISPLAYED_FORMAT
+ */
+function getDatePickerDateString(dateString: string): string {
+  return format(parse(dateString, INPUT_DATE_FORMAT, new Date()), DISPLAYED_FORMAT)
 }
 
 export default DatePicker
