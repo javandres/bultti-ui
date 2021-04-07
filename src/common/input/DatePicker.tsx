@@ -1,6 +1,6 @@
 import fi from 'date-fns/locale/fi'
 import _ from 'lodash'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDatePicker, { registerLocale } from 'react-datepicker'
 import ReactDOM from 'react-dom'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -14,7 +14,7 @@ import { text } from '../../util/translate'
 import { format, parse } from 'date-fns'
 
 /**
- * Date Picker using react-datepicker: https://www.npmjs.com/package/react-datepicker
+ * Calendar made with react-datepicker: https://www.npmjs.com/package/react-datepicker
  * Calendar examples: https://reactdatepicker.com/
  */
 
@@ -96,13 +96,22 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     value ? getDatePickerDateString(value) : ''
   )
 
-  // TODO: add an event listener to trim input when enter is pressed
-  //   EventListener.on('enter', this.trimInputString)
-
   let getMinDate = () =>
     minDate ? getDateObject(minDate) : getDateObject(`${MIN_YEAR}-01-01`)
   let getMaxDate = () =>
     maxDate ? getDateObject(maxDate) : getDateObject(`${MAX_YEAR}-01-01`)
+
+  useEffect(() => {
+    const execTrimInputString = (event: KeyboardEvent) => {
+      if (event.code === 'Enter') {
+        trimInputString()
+      }
+    }
+    window.addEventListener('keydown', execTrimInputString)
+    return () => {
+      window.removeEventListener('keydown', execTrimInputString)
+    }
+  }, [currentValue])
 
   // Update props.value only through this method
   let onChangeDate = (date: Date | null) => {
@@ -186,7 +195,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         minDate={getMinDate()}
         maxDate={getMaxDate()}
         dateFormatCalendar={DISPLAYED_FORMAT}
-        popperContainer={renderCalendarContainer}
+        popperContainer={renderCalendarContainer} // using popperContainer doesn't hurt. It might prevent some overflow issues (calendar not completely visible)
         fixedHeight={true}
       />
       <DatePickerWrapperStyles />
