@@ -20198,17 +20198,9 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "InspectionDate",
-                    "ofType": null
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "InspectionDate",
+                "ofType": null
               }
             },
             "isDeprecated": false,
