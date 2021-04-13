@@ -70,11 +70,6 @@ const HeaderCellContent = styled.div`
   width: 100%;
 `
 
-const TableBodyWrapper = styled.div`
-  position: relative;
-  width: 100%;
-`
-
 const ColumnSortIndicator = styled.div`
   position: absolute;
   font-weight: normal;

@@ -22,6 +22,7 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { DEBUG } from '../constants'
+import { round } from '../util/round'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -260,6 +261,17 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let renderValue = useCallback(
     (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+      if (
+        [
+          'sanctionAmount',
+          'sanctionableKilometers',
+          'appliedSanctionAmount',
+          'sanctionResultKilometers',
+        ].includes(key)
+      ) {
+        return round(val, 5)
+      }
+
       if (key !== 'entityIdentifier' || isHeader || !item) {
         return val
       }
