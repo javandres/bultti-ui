@@ -50,6 +50,15 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     })
   }, [])
 
+  let onChangeInspectionDate = useCallback((startDate: Date, endDate: Date, id?: string) => {
+    if (id) {
+      onUpdateValue('inspectionDateId', id)
+    }
+
+    onUpdateValue('inspectionStartDate', getDateString(startDate))
+    onUpdateValue('inspectionEndDate', getDateString(endDate))
+  }, [])
+
   let onSave = useCallback(async () => {
     await saveValues(pendingInspectionInputValues!)
   }, [pendingInspectionInputValues])
@@ -96,14 +105,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               inspectionType={inspection.inspectionType}
               isEditingDisabled={inspection.status !== InspectionStatus.Draft}
               inspectionInput={pendingInspectionInputValues}
-              onChange={(startDate: Date, endDate: Date, id?: string) => {
-                if (id) {
-                  onUpdateValue('inspectionDateId', id)
-                } else {
-                  onUpdateValue('inspectionStartDate', getDateString(startDate))
-                  onUpdateValue('inspectionEndDate', getDateString(endDate))
-                }
-              }}
+              onChange={onChangeInspectionDate}
             />
           </FlexRow>
           <FlexRow>
