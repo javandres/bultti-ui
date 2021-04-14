@@ -93,7 +93,7 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('startDate', val)}
                 label={text('startDate')}
-                acceptableDayTypes={['mo']}
+                acceptableDayTypes={['Ma']}
               />
               <DatePicker
                 value={inspectionValues.endDate}
@@ -103,7 +103,7 @@ const InspectionApprovalSubmit: React.FC<PropTypes> = observer(
                 maxDate={inspection.season.endDate}
                 onChange={(val) => onUpdateValue('endDate', val)}
                 label={text('endDate')}
-                acceptableDayTypes={['su']}
+                acceptableDayTypes={['Su']}
               />
             </ControlGroup>
           </FormColumn>

@@ -198,7 +198,7 @@ const renderInput = ({
         value={val}
         onChange={onChange}
         maxDate={contract.endDate}
-        acceptableDayTypes={['mo']}
+        acceptableDayTypes={['Ma']}
       />
     )
   }
@@ -209,7 +209,7 @@ const renderInput = ({
         value={val}
         onChange={onChange}
         minDate={contract.startDate}
-        acceptableDayTypes={['su']}
+        acceptableDayTypes={['Su']}
       />
     )
   }

@@ -36,8 +36,7 @@ const MIN_YEAR = 2000
 
 registerLocale('fi', fi)
 
-// TODO: support acceptable dayTypes
-type AcceptableDayType = 'mo' | 'tu' | 'we' | 'th' | 'fr' | 'sa' | 'su'
+type AcceptableDayType = 'Ma' | 'Ti' | 'Ke' | 'To' | 'Pe' | 'La' | 'Su'
 
 export type PropTypes = {
   value?: string // Format same as DATE_FORMAT_IN_AND_OUT
@@ -128,7 +127,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
 
   // Update props.value only through this method
   let onChangeDate = (date: Date | null) => {
-    let newDate = date ? date : null
+    let newDate = date || null
     const minStartDate = getMinDate()
     const maxEndDate = getMaxDate()
     if (newDate) {
@@ -140,37 +139,17 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
       }
     }
     setCurrentValue(newDate ? format(newDate, DISPLAYED_FORMAT) : '')
-    if (!isEmptyValueAllowed && !newDate) return
 
-    // Component outputs dateString in format of INPUT_DATE_FORMAT
-    onChange(newDate ? format(newDate, INPUT_DATE_FORMAT) : null)
-  }
-
-  // Is given dateString in format of 'dd.MM.yyyy' (DISPLAYED_FORMAT)
-  let isValidDate = (dateString: string) => {
-    let regEx = /^\d{2}.\d{2}.\d{4}$/
-    if (!dateString.match(regEx)) {
-      // Invalid format
-      return false
+    if (newDate || isEmptyValueAllowed) {
+      // Component outputs dateString in format of INPUT_DATE_FORMAT
+      onChange(newDate ? format(newDate, INPUT_DATE_FORMAT) : null)
     }
-    let d = parse(dateString, DISPLAYED_FORMAT, new Date())
-    let dNum = d.getTime()
-    if (!dNum && dNum !== 0) {
-      // NaN value, Invalid date
-      return false
-    }
-
-    if (!isDateTypeAllowed(d, acceptableDayTypes)) {
-      return false
-    }
-
-    return format(d, DISPLAYED_FORMAT) === dateString
   }
 
   let onInputChange = (inputValue: string) => {
     setIsOpen(false)
     // Allow input date that is in the correct format
-    if (isValidDate(inputValue)) {
+    if (isValidDate(inputValue, acceptableDayTypes)) {
       onChangeDate(parse(inputValue, DISPLAYED_FORMAT, new Date()))
     } else if (_.isEmpty(inputValue)) {
       onChangeDate(null)
@@ -191,7 +170,8 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     const day = `0${dateObjectToTrim.getDate()}`.slice(-2)
     const month = `0${dateObjectToTrim.getMonth() + 1}`.slice(-2)
     const trimmedDateString = `${day}.${month}.${dateObjectToTrim.getFullYear()}`
-    if (isValidDate(trimmedDateString)) {
+
+    if (isValidDate(trimmedDateString, acceptableDayTypes)) {
       if (currentValue !== trimmedDateString) {
         onChangeDate(parse(trimmedDateString, DISPLAYED_FORMAT, new Date()))
       }
@@ -209,8 +189,8 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
           attrs,
           isEmptyValueAllowed,
           onInputChange,
-          isValidDate,
           value: currentValue,
+          acceptableDayTypes,
           disabled,
           onInputBlur: trimInputString,
           openCalendar: () => setIsOpen(true),
@@ -254,23 +234,23 @@ const renderCalendarContainer = ({
 
 const renderDatePickerInput = ({
   onInputChange,
-  isValidDate,
   onInputBlur,
   placeholder,
   value,
   label,
   disabled,
+  acceptableDayTypes,
   isEmptyValueAllowed,
   openCalendar,
   attrs,
 }: {
   onInputChange: (value: any) => void
-  isValidDate: (dateString: string) => boolean
   onInputBlur: () => void
   placeholder: string
   value?: string
   label?: string
   disabled?: boolean
+  acceptableDayTypes?: AcceptableDayType[]
   isEmptyValueAllowed?: boolean
   openCalendar: Function
   attrs: any
@@ -279,14 +259,16 @@ const renderDatePickerInput = ({
     onInputChange(value)
   }
 
-  let isInputValid = _.isEmpty(value) ? isEmptyValueAllowed : isValidDate(value!)
+  let isInputValid = _.isEmpty(value)
+    ? isEmptyValueAllowed
+    : isValidDate(value!, acceptableDayTypes)
   return (
     <InputContainer>
       <Input
         style={isInputValid ? undefined : { backgroundColor: 'var(--light-red)' }}
         type="text"
         label={label}
-        value={value ? value : ''}
+        value={value || ''}
         placeholder={placeholder}
         onClick={() => openCalendar()}
         onChange={onChange}
@@ -301,25 +283,46 @@ const renderDatePickerInput = ({
   )
 }
 
+// Is given dateString in format of 'dd.MM.yyyy' (DISPLAYED_FORMAT)
+// and is the day type allowed
+function isValidDate(dateString: string, acceptableDayTypes?: AcceptableDayType[]) {
+  let regEx = /^\d{2}.\d{2}.\d{4}$/
+  if (!dateString.match(regEx)) {
+    // Invalid format
+    return false
+  }
+  let d = parse(dateString, DISPLAYED_FORMAT, new Date())
+  let dNum = d.getTime()
+  if (isNaN(dNum)) {
+    return false
+  }
+
+  if (!isDateTypeAllowed(d, acceptableDayTypes)) {
+    return false
+  }
+
+  return format(d, DISPLAYED_FORMAT) === dateString
+}
+
 function isDateTypeAllowed(date: Date, acceptableDayTypes?: AcceptableDayType[]) {
   if (!acceptableDayTypes || acceptableDayTypes.length === 0) {
     return true
   }
 
   return acceptableDayTypes.some((acceptableDayType: AcceptableDayType) => {
-    if (acceptableDayType === 'mo' && isMonday(date)) {
+    if (acceptableDayType === 'Ma' && isMonday(date)) {
       return true
-    } else if (acceptableDayType === 'tu' && isTuesday(date)) {
+    } else if (acceptableDayType === 'Ti' && isTuesday(date)) {
       return true
-    } else if (acceptableDayType === 'we' && isWednesday(date)) {
+    } else if (acceptableDayType === 'Ke' && isWednesday(date)) {
       return true
-    } else if (acceptableDayType === 'th' && isThursday(date)) {
+    } else if (acceptableDayType === 'To' && isThursday(date)) {
       return true
-    } else if (acceptableDayType === 'fr' && isFriday(date)) {
+    } else if (acceptableDayType === 'Pe' && isFriday(date)) {
       return true
-    } else if (acceptableDayType === 'sa' && isSaturday(date)) {
+    } else if (acceptableDayType === 'La' && isSaturday(date)) {
       return true
-    } else if (acceptableDayType === 'su' && isSunday(date)) {
+    } else if (acceptableDayType === 'Su' && isSunday(date)) {
       return true
     }
     return false

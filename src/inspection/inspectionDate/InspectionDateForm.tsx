@@ -69,7 +69,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
             onChange={onChange}
             value={val as string}
             label=""
-            acceptableDayTypes={['mo']}
+            acceptableDayTypes={['Ma']}
             maxDate={pendingInspectionDate.endDate}
           />
         )
@@ -80,7 +80,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
             onChange={onChange}
             value={val as string}
             label=""
-            acceptableDayTypes={['su']}
+            acceptableDayTypes={['Su']}
             minDate={pendingInspectionDate.startDate}
           />
         )
