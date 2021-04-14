@@ -22,6 +22,7 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { DEBUG } from '../constants'
+import { round } from '../util/round'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -52,6 +53,7 @@ let sanctionColumnLabels = {
   entityIdentifier: 'Tunnus',
   sanctionAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
+  sanctionableValue: 'Sanktioon johtava arvo',
   sanctionableKilometers: 'Kilometrisuorite',
   appliedSanctionAmount: 'Sanktioidaan',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
@@ -101,6 +103,7 @@ let sanctionsQuery = gql`
         sanctionableType
         appliedSanctionAmount
         sanctionResultKilometers
+        sanctionableValue
         matchesException {
           id
           departureProperty
@@ -256,13 +259,19 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     variables: { inspectionId: inspection?.id },
   })
 
-  let groupByFn = useCallback(
-    (item) => text('postInspection_sanctionReason_' + item.sanctionReason),
-    []
-  )
-
   let renderValue = useCallback(
     (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+      if (
+        [
+          'sanctionAmount',
+          'sanctionableKilometers',
+          'appliedSanctionAmount',
+          'sanctionResultKilometers',
+        ].includes(key)
+      ) {
+        return round(val, 5)
+      }
+
       if (key !== 'entityIdentifier' || isHeader || !item) {
         return val
       }
@@ -337,7 +346,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
           isAlwaysEditable={true}
-          groupBy={groupByFn}
           renderValue={renderValue}
           transformItems={transformItems}
         />

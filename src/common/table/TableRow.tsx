@@ -5,11 +5,14 @@ import React, { CSSProperties } from 'react'
 import { RemoveButton } from '../components/buttons/Button'
 import { TableCell } from './TableCell'
 
+export const ROW_HEIGHT = 30
+
 export const RowRemoveButton = styled(RemoveButton)`
   transition: opacity 0.05s ease-out, right 0.1s ease-out;
-  right: -2rem;
+  right: 1px;
   opacity: 0;
   position: absolute;
+  pointer-events: none;
 `
 
 export const TableRowElement = styled.div<{ isEditing?: boolean; footer?: boolean }>`
@@ -17,20 +20,14 @@ export const TableRowElement = styled.div<{ isEditing?: boolean; footer?: boolea
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  height: 27px;
+  height: ${ROW_HEIGHT}px;
   flex-wrap: nowrap;
-  border-bottom: 1px solid ${(p) => (p.isEditing ? 'transparent' : 'var(--lighter-grey)')};
-  border-top: ${(p) => (p.footer ? '1px solid var(--lighter-grey)' : '0')};
   position: relative;
   transition: outline 0.1s ease-out;
   outline: ${(p) =>
     !p.footer ? `1px solid ${p.isEditing ? 'var(--light-blue)' : 'transparent'}` : 'none'};
   z-index: ${(p) => (p.isEditing ? 101 : 'auto')};
   user-select: ${(p) => (p.isEditing ? 'none' : 'text')};
-
-  &:last-child {
-    border-bottom: 0;
-  }
 
   &:hover {
     outline: ${(p) =>
@@ -39,11 +36,10 @@ export const TableRowElement = styled.div<{ isEditing?: boolean; footer?: boolea
           ? '1px solid var(--light-blue)'
           : `1px solid var(--lighter-blue)`
         : 'none'};
-    border-bottom-color: transparent;
     z-index: 100;
 
     ${RowRemoveButton} {
-      right: 1px;
+      pointer-events: all;
       opacity: 1;
     }
   }

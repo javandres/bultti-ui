@@ -1166,6 +1166,7 @@ type Sanction {
   sanctionResultKilometers: Float
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
+  sanctionableValue: String
 }
 
 type SanctionException {
