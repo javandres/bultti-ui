@@ -1,6 +1,6 @@
 import fi from 'date-fns/locale/fi'
 import _ from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactDatePicker, { registerLocale } from 'react-datepicker'
 import ReactDOM from 'react-dom'
 import 'react-datepicker/dist/react-datepicker.css'
@@ -98,10 +98,14 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     value ? getDatePickerDateString(value) : ''
   )
 
-  let getMinDate = () =>
-    minDate ? getDateObject(minDate) : getDateObject(`${MIN_YEAR}-01-01`)
-  let getMaxDate = () =>
-    maxDate ? getDateObject(maxDate) : getDateObject(`${MAX_YEAR}-01-01`)
+  let getMinDate = useCallback(
+    () => (minDate ? getDateObject(minDate) : getDateObject(`${MIN_YEAR}-01-01`)),
+    [minDate]
+  )
+  let getMaxDate = useCallback(
+    () => (maxDate ? getDateObject(maxDate) : getDateObject(`${MAX_YEAR}-01-01`)),
+    [maxDate]
+  )
 
   useEffect(() => {
     const execTrimInputString = (event: KeyboardEvent) => {
@@ -116,46 +120,55 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
   }, [currentValue])
 
   // Update props.value only through this method
-  let onChangeDate = (date: Date | null) => {
-    let newDate = date || null
-    const minStartDate = getMinDate()
-    const maxEndDate = getMaxDate()
-    if (newDate) {
-      // Adjust date to minDate or maxDate if date exceeds the limit
-      if (newDate.getTime() < minStartDate.getTime()) {
-        newDate = minStartDate
-      } else if (newDate.getTime() > maxEndDate.getTime()) {
-        newDate = maxEndDate
+  let onChangeDate = useCallback(
+    (date: Date | null) => {
+      let newDate = date || null
+      const minStartDate = getMinDate()
+      const maxEndDate = getMaxDate()
+      if (newDate) {
+        // Adjust date to minDate or maxDate if date exceeds the limit
+        if (newDate.getTime() < minStartDate.getTime()) {
+          newDate = minStartDate
+        } else if (newDate.getTime() > maxEndDate.getTime()) {
+          newDate = maxEndDate
+        }
       }
-    }
-    setCurrentValue(newDate ? format(newDate, DISPLAYED_FORMAT) : '')
+      setCurrentValue(newDate ? format(newDate, DISPLAYED_FORMAT) : '')
 
-    if (newDate || isEmptyValueAllowed) {
-      // Component outputs dateString in format of INPUT_DATE_FORMAT
-      onChange(newDate ? format(newDate, INPUT_DATE_FORMAT) : null)
-    }
-  }
+      if (newDate || isEmptyValueAllowed) {
+        // Component outputs dateString in format of INPUT_DATE_FORMAT
+        onChange(newDate ? format(newDate, INPUT_DATE_FORMAT) : null)
+      }
+    },
+    [minDate, maxDate]
+  )
 
-  let onInputChange = (inputValue: string) => {
-    setIsOpen(false)
-    // Allow input date that is in the correct format
-    if (isValidDate(inputValue, acceptableDayTypes)) {
-      onChangeDate(parse(inputValue, DISPLAYED_FORMAT, new Date()))
-    } else if (_.isEmpty(inputValue)) {
-      onChangeDate(null)
-    } else {
-      // Change input field as invalid date which is not null
-      setCurrentValue(inputValue)
-    }
-  }
+  let onInputChange = useCallback(
+    (inputValue: string) => {
+      setIsOpen(false)
+      // Allow input date that is in the correct format
+      if (isValidDate(inputValue, acceptableDayTypes)) {
+        onChangeDate(parse(inputValue, DISPLAYED_FORMAT, new Date()))
+      } else if (_.isEmpty(inputValue)) {
+        onChangeDate(null)
+      } else {
+        // Change input field as invalid date which is not null
+        setCurrentValue(inputValue)
+      }
+    },
+    [acceptableDayTypes]
+  )
 
-  let onCalendarDateSelect = (date: Date | null) => {
-    if (isOpen && date) {
-      onInputChange(format(date, DISPLAYED_FORMAT))
-    }
-  }
+  let onCalendarDateSelect = useCallback(
+    (date: Date | null) => {
+      if (isOpen && date) {
+        onInputChange(format(date, DISPLAYED_FORMAT))
+      }
+    },
+    [isOpen]
+  )
 
-  let trimInputString = () => {
+  let trimInputString = useCallback(() => {
     let dateObjectToTrim = parse(currentValue, DISPLAYED_FORMAT, new Date())
     const day = `0${dateObjectToTrim.getDate()}`.slice(-2)
     const month = `0${dateObjectToTrim.getMonth() + 1}`.slice(-2)
@@ -166,11 +179,14 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
         onChangeDate(parse(trimmedDateString, DISPLAYED_FORMAT, new Date()))
       }
     }
-  }
+  }, [currentValue, acceptableDayTypes, onChangeDate])
 
-  let filterDate = (date: Date) => {
-    return isDateTypeAllowed(date, acceptableDayTypes)
-  }
+  let filterDate = useCallback(
+    (date: Date) => {
+      return isDateTypeAllowed(date, acceptableDayTypes)
+    },
+    [acceptableDayTypes]
+  )
 
   return (
     <DatePickerWrapper>
