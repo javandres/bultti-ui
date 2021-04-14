@@ -6,22 +6,12 @@ import ReactDOM from 'react-dom'
 import 'react-datepicker/dist/react-datepicker.css'
 import { observer } from 'mobx-react-lite'
 import { getDateObject } from '../../util/formatDate'
-import { DATE_FORMAT } from '../../constants'
+import { DATE_FORMAT, normalDayTypes } from '../../constants'
 import styled, { createGlobalStyle } from 'styled-components/macro'
 import Input from './Input'
 import { Calendar } from '../icon/Calendar'
 import { text } from '../../util/translate'
-import {
-  format,
-  isFriday,
-  isMonday,
-  isSaturday,
-  isSunday,
-  isThursday,
-  isTuesday,
-  isWednesday,
-  parse,
-} from 'date-fns'
+import { format, getISODay, parse } from 'date-fns'
 
 /**
  * Calendar made with react-datepicker: https://www.npmjs.com/package/react-datepicker
@@ -244,15 +234,15 @@ const renderDatePickerInput = ({
   openCalendar,
   attrs,
 }: {
-  onInputChange: (value: any) => void
-  onInputBlur: () => void
+  onInputChange: (value: any) => unknown
+  onInputBlur: () => unknown
   placeholder: string
   value?: string
   label?: string
   disabled?: boolean
   acceptableDayTypes?: AcceptableDayType[]
   isEmptyValueAllowed?: boolean
-  openCalendar: Function
+  openCalendar: () => unknown
   attrs: any
 }) => {
   const onChange = (value: string) => {
@@ -309,24 +299,9 @@ function isDateTypeAllowed(date: Date, acceptableDayTypes?: AcceptableDayType[])
     return true
   }
 
-  return acceptableDayTypes.some((acceptableDayType: AcceptableDayType) => {
-    if (acceptableDayType === 'Ma' && isMonday(date)) {
-      return true
-    } else if (acceptableDayType === 'Ti' && isTuesday(date)) {
-      return true
-    } else if (acceptableDayType === 'Ke' && isWednesday(date)) {
-      return true
-    } else if (acceptableDayType === 'To' && isThursday(date)) {
-      return true
-    } else if (acceptableDayType === 'Pe' && isFriday(date)) {
-      return true
-    } else if (acceptableDayType === 'La' && isSaturday(date)) {
-      return true
-    } else if (acceptableDayType === 'Su' && isSunday(date)) {
-      return true
-    }
-    return false
-  })
+  let dayTypeIndex = getISODay(getDateObject(date)) - 1
+  let dayType = normalDayTypes[dayTypeIndex] as AcceptableDayType
+  return acceptableDayTypes.includes(dayType)
 }
 
 /**
