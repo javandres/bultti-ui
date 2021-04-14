@@ -125,7 +125,7 @@ export type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellVal
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: keyof ItemType, value: EditValueType) => () => unknown
+  onMakeEditable: (key: keyof ItemType, value: EditValueType) => unknown
   onValueChange: (key: string) => (value: EditValueType) => unknown
   itemEntries: [string, EditValueType][]
   item: ItemType
@@ -142,7 +142,6 @@ export type ContextTypes<ItemType, EditValueType = CellValType> = {
   renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
   renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
   keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
-  fluid?: boolean
   highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
   isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
 }

@@ -1825,6 +1825,7 @@ export type Sanction = {
   procurementUnitId?: Maybe<Scalars['String']>;
   area?: Maybe<OperatingAreaName>;
   sanctionableType: SanctionableEntity;
+  sanctionableValue?: Maybe<Scalars['String']>;
   sanctionReason: SanctionReason;
   entityIdentifier: Scalars['String'];
   sanctionAmount: Scalars['Float'];

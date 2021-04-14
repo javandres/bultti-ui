@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components/macro'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
@@ -32,12 +32,11 @@ export type AppFrameProps = {
   isAuthenticated?: boolean
 }
 
-export type ScrollSubscriber = (scrollVal: number, frameHeight: number) => void
-
+export type ScrollSubscriber = (scrollVal: number, frameHeight: number) => unknown
 export const ScrollContext = React.createContext<(sub: ScrollSubscriber) => void>((sub) => {})
 
 const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps) => {
-  let mainViewRef = useRef<any>(null)
+  let mainViewRef = useRef<HTMLDivElement | null>(null)
   const scrollSubscribers = useRef<ScrollSubscriber[]>([])
 
   const scrollHandler = useCallback(
@@ -58,18 +57,6 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
     [scrollSubscribers.current]
   )
 
-  useEffect(() => {
-    if (mainViewRef.current) {
-      mainViewRef.current?.addEventListener('scroll', scrollHandler, { passive: true })
-    }
-
-    return () => {
-      if (mainViewRef.current) {
-        mainViewRef.current?.removeEventListener('scroll', scrollHandler)
-      }
-    }
-  }, [mainViewRef.current])
-
   return (
     <AppFrameView>
       {isAuthenticated && (
@@ -78,7 +65,9 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
             <AppSidebar />
           </Sidebar>
           <ScrollContext.Provider value={subscribe}>
-            <Main ref={mainViewRef}>{children}</Main>
+            <Main onScroll={scrollHandler} ref={mainViewRef}>
+              {children}
+            </Main>
           </ScrollContext.Provider>
         </>
       )}

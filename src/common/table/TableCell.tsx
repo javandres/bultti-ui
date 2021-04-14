@@ -20,7 +20,6 @@ export const TableCellElement = styled.div<{
   isEditingRow?: boolean
   highlightColor?: string
 }>`
-  flex: 1 0;
   border-right: 1px solid var(--lighter-grey);
   display: flex;
   align-items: stretch;
@@ -30,7 +29,9 @@ export const TableCellElement = styled.div<{
     p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.005)'};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
-  box-sizing: border-box !important;
+  overflow: hidden;
+  box-sizing: border-box;
+  border-bottom: 1px solid var(--lighter-grey);
 
   &:nth-child(odd) {
     background: ${(p) =>
@@ -48,14 +49,17 @@ export const ColumnHeaderCell = styled(TableCellElement)<{ isEditing?: boolean }
   background: ${(p) => (p.isEditing ? 'var(--lightest-blue)' : 'transparent')};
   border: 0;
   border-right: 1px solid var(--lighter-grey);
+  border-bottom: 1px solid var(--lighter-grey);
   font-family: inherit;
   color: var(--darker-grey);
   cursor: pointer;
   text-align: left;
   justify-content: flex-start;
+  align-items: center;
   white-space: nowrap;
   position: relative;
   display: flex;
+  user-select: none;
 
   &:last-child {
     border-right: 1px solid transparent;
@@ -102,7 +106,6 @@ export const TableCell = observer(
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
-      fluid,
       highlightRow = defaultHighlightRow,
       isAlwaysEditable,
     }: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
@@ -133,7 +136,7 @@ export const TableCell = observer(
 
     let makeCellEditable = useCallback(() => {
       if (canEditCell) {
-        onMakeEditable(valueKey, val)()
+        onMakeEditable(valueKey, val)
       }
     }, [valueKey, val, canEditCell])
 
@@ -154,15 +157,10 @@ export const TableCell = observer(
         ? '--lightest-blue'
         : undefined
 
-    let cellWidthStyle =
-      !fluid && !!columnWidth
-        ? {
-            minWidth:
-              typeof columnWidth === 'string'
-                ? columnWidth
-                : Math.min(columnWidth, 300) + 'px',
-          }
-        : {}
+    let cellWidthStyle = {
+      width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
+      flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
+    }
 
     return (
       <TableCellElement
