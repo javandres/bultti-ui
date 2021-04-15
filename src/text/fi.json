@@ -43,6 +43,7 @@
   "tableEmpty": "Taulukko on tyhjä.",
   "selectOperator": "Valitse liikennöitsijä.",
 
+  "datePicker_insertDate": "Syötä päivä",
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",
   "table_totalRows": "Rivejä yhteensä",

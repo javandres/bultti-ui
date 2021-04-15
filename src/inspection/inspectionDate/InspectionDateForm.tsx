@@ -6,8 +6,8 @@ import ItemForm from '../../common/input/ItemForm'
 import { useMutationData } from '../../util/useMutationData'
 import { createInspectionDateMutation } from './inspectionDateQuery'
 import { Text, text } from '../../util/translate'
-import SelectDate from '../../common/input/SelectDate'
 import { PageSection } from '../../common/components/common'
+import DatePicker from '../../common/input/DatePicker'
 
 const InspectionDateFormContainer = styled(PageSection)``
 
@@ -63,7 +63,29 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
     }
 
     let renderInput = (key: string, val: any, onChange) => {
-      return <SelectDate onChange={onChange} value={val as string} label="" name={key} />
+      if (key === 'startDate') {
+        return (
+          <DatePicker
+            onChange={onChange}
+            value={val as string}
+            label=""
+            acceptableDayTypes={['Ma']}
+            maxDate={pendingInspectionDate.endDate}
+          />
+        )
+      }
+      if (key === 'endDate') {
+        return (
+          <DatePicker
+            onChange={onChange}
+            value={val as string}
+            label=""
+            acceptableDayTypes={['Su']}
+            minDate={pendingInspectionDate.startDate}
+          />
+        )
+      }
+      return <React.Fragment />
     }
 
     // TODO: implement better validation
