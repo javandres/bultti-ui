@@ -120,7 +120,7 @@ const InspectionDateList: React.FC<PropTypes> = observer(
           <Text>inspectionDateList_header</Text>
         </Header>
         <LoadingDisplay loading={isLoading} />
-        {inspectionDates.length === 0 && (
+        {!isLoading && inspectionDates.length === 0 && (
           <MessageView>
             <Text>inspectionDateList_noResults</Text>
           </MessageView>
