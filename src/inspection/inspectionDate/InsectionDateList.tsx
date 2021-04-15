@@ -25,7 +25,7 @@ const ListItem = styled.div`
   margin: 0 -1rem;
   overflow: auto;
 
-  &:nth-child(even) {
+  &:nth-child(odd) {
     background: var(--white-grey);
   }
 `
@@ -119,24 +119,21 @@ const InspectionDateList: React.FC<PropTypes> = observer(
         <Header>
           <Text>inspectionDateList_header</Text>
         </Header>
-        {isLoading ? (
-          <LoadingDisplay />
-        ) : (
-          <>
-            {inspectionDates.length === 0 && (
-              <MessageView>
-                <Text>inspectionDateList_noResults</Text>
-              </MessageView>
-            )}
-            {inspectionDates.map((inspectionDate: InspectionDate) => (
-              <InspectionDateListItem
-                key={inspectionDate.id}
-                removeItem={removeItem}
-                inspectionDate={inspectionDate}
-              />
-            ))}
-          </>
+        <LoadingDisplay loading={isLoading} />
+        {!isLoading && inspectionDates.length === 0 && (
+          <MessageView>
+            <Text>inspectionDateList_noResults</Text>
+          </MessageView>
         )}
+        <div>
+          {inspectionDates.map((inspectionDate: InspectionDate) => (
+            <InspectionDateListItem
+              key={inspectionDate.id}
+              removeItem={removeItem}
+              inspectionDate={inspectionDate}
+            />
+          ))}
+        </div>
       </ListWrapper>
     )
   }

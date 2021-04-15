@@ -8,6 +8,7 @@ export const linkedInspectionFragment = gql`
     createdAt
     startDate
     endDate
+    inspectionDateId
     inspectionStartDate
     inspectionEndDate
     minStartDate
@@ -39,6 +40,13 @@ export const inspectionFragment = gql`
     createdAt
     startDate
     endDate
+    inspectionDateId
+    inspectionDate {
+      id
+      startDate
+      endDate
+      hfpDataStatus
+    }
     inspectionStartDate
     inspectionEndDate
     minStartDate

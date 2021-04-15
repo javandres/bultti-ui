@@ -3519,6 +3519,18 @@
             "deprecationReason": null
           },
           {
+            "name": "inspectionDateId",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "inspectionStartDate",
             "description": null,
             "args": [],
@@ -20198,17 +20210,9 @@
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "LIST",
-                "name": null,
-                "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "HfpDateStatus",
-                    "ofType": null
-                  }
-                }
+                "kind": "OBJECT",
+                "name": "InspectionDate",
+                "ofType": null
               }
             },
             "isDeprecated": false,
@@ -22100,6 +22104,16 @@
             "defaultValue": null
           },
           {
+            "name": "inspectionDateId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "inspectionStartDate",
             "description": null,
             "type": {
@@ -22198,6 +22212,16 @@
             "type": {
               "kind": "SCALAR",
               "name": "BulttiDate",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "inspectionDateId",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null

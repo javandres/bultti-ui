@@ -508,6 +508,7 @@ type Inspection {
   executionRequirements: [ExecutionRequirement!]!
   id: ID!
   inspectionDate: InspectionDate
+  inspectionDateId: String
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
@@ -682,7 +683,7 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
-  loadHfpDataForInspectionPeriod(inspectionDateId: String!): [HfpDateStatus!]!
+  loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
@@ -1483,6 +1484,7 @@ input EquipmentCatalogueInput {
 
 input InitialInspectionInput {
   endDate: BulttiDate
+  inspectionDateId: String
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
   inspectionType: InspectionType!
@@ -1509,6 +1511,7 @@ input InspectionDateInput {
 
 input InspectionInput {
   endDate: BulttiDate
+  inspectionDateId: String
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
   name: String

@@ -24,8 +24,10 @@ const LoadButton = styled(Button)`
 const loadHfpDataMutation = gql`
   mutation loadHfpDataForInspectionPeriod($inspectionDateId: String!) {
     loadHfpDataForInspectionPeriod(inspectionDateId: $inspectionDateId) {
-      status
-      date
+      id
+      startDate
+      endDate
+      hfpDataStatus
     }
   }
 `
@@ -37,6 +39,7 @@ type PropTypes = {
 const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
   let hfpMissing = inspectionDate.hfpDataStatus !== HfpStatus.Ready
   let hfpLoading = inspectionDate.hfpDataStatus === HfpStatus.Loading
+  let hfpReady = inspectionDate.hfpDataStatus === HfpStatus.Ready
 
   let [loadHfpData, { loading: hfpDataLoading }] = useMutationData(loadHfpDataMutation)
 
@@ -60,7 +63,7 @@ const InspectionDateHfpControl = observer(({ inspectionDate }: PropTypes) => {
           loading={hfpDataLoading}
           size={ButtonSize.LARGE}
           onClick={onClickLoad}
-          disabled={hfpLoading}>
+          disabled={hfpLoading || hfpReady}>
           {hfpLoading
             ? text('inspectionDate_hfpPanel_loadingDates')
             : !hfpMissing
