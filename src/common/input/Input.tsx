@@ -97,7 +97,6 @@ const Input: React.FC<PropTypes> = observer(
     )
 
     let InputComponent = inputComponent
-
     return (
       <InputView className={className}>
         {!!label && (

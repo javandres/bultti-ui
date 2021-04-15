@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import SelectDate from '../common/input/SelectDate'
+import DatePicker from '../common/input/DatePicker'
 
 type ValueType = string | number
 
@@ -18,10 +18,7 @@ const EquipmentCatalogueFormInput: React.FC<PropTypes> = observer(
       },
       [onChange]
     )
-
-    return (
-      <SelectDate onChange={onSelectValue} value={value as string} label="" name={valueName} />
-    )
+    return <DatePicker onChange={onSelectValue} value={value as string} label="" />
   }
 )
 
