@@ -15,7 +15,6 @@ import { addYears } from 'date-fns'
 import { useStateValue } from '../state/useAppState'
 import { ErrorView } from '../common/components/Messages'
 import Input, { TextArea, TextInput } from '../common/input/Input'
-import SelectDate from '../common/input/SelectDate'
 import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
 import ExpandableSection, {
   ContentWrapper,
@@ -35,6 +34,7 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 import { ApolloError } from '@apollo/client'
+import DatePicker from '../common/input/DatePicker'
 
 const ContractEditorView = styled.div``
 
@@ -193,12 +193,24 @@ const renderInput = ({
   }
 
   if (key === 'startDate') {
-    return <SelectDate name={key} value={val} onChange={onChange} maxDate={contract.endDate} />
+    return (
+      <DatePicker
+        value={val}
+        onChange={onChange}
+        maxDate={contract.endDate}
+        acceptableDayTypes={['Ma']}
+      />
+    )
   }
 
   if (key === 'endDate') {
     return (
-      <SelectDate name={key} value={val} onChange={onChange} minDate={contract.startDate} />
+      <DatePicker
+        value={val}
+        onChange={onChange}
+        minDate={contract.startDate}
+        acceptableDayTypes={['Su']}
+      />
     )
   }
 
