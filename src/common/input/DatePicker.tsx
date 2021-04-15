@@ -174,10 +174,11 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
     const month = `0${dateObjectToTrim.getMonth() + 1}`.slice(-2)
     const trimmedDateString = `${day}.${month}.${dateObjectToTrim.getFullYear()}`
 
-    if (isValidDate(trimmedDateString, acceptableDayTypes)) {
-      if (currentValue !== trimmedDateString) {
-        onChangeDate(parse(trimmedDateString, DISPLAYED_FORMAT, new Date()))
-      }
+    if (
+      isValidDate(trimmedDateString, acceptableDayTypes) &&
+      currentValue !== trimmedDateString
+    ) {
+      onChangeDate(parse(trimmedDateString, DISPLAYED_FORMAT, new Date()))
     }
   }, [currentValue, acceptableDayTypes, onChangeDate])
 
