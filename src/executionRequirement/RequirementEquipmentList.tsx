@@ -10,6 +10,7 @@ import { ExecutionRequirement } from '../schema-types'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 import { MessageView } from '../common/components/Messages'
 import { getDateObject } from '../util/formatDate'
+import { text } from '../util/translate'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -20,26 +21,26 @@ export type PropTypes = {
 }
 
 export const equipmentColumnLabels = {
-  vehicleId: 'Kylkinumero',
-  model: 'Malli',
-  type: 'Tyyppi',
-  percentageQuota: 'Osuus',
-  meterRequirement: 'Metriosuus',
-  emissionClass: 'Euroluokka',
-  registryNr: 'Rek.numero',
-  registryDate: 'Rek.päivä',
-  age: 'Ikä',
+  vehicleId: text('executionRequirement_equipmentList_vehicleId'),
+  model: text('executionRequirement_equipmentList_model'),
+  type: text('executionRequirement_equipmentList_type'),
+  percentageQuota: text('executionRequirement_equipmentList_percentageQuota'),
+  meterRequirement: text('executionRequirement_equipmentList_meterRequirement'),
+  emissionClass: text('executionRequirement_equipmentList_emissionClass'),
+  registryNr: text('executionRequirement_equipmentList_registryNr'),
+  registryDate: text('executionRequirement_equipmentList_registryDate'),
+  age: text('executionRequirement_equipmentList_age'),
 }
 
 export const groupedEquipmentColumnLabels = {
-  model: 'Malli',
-  type: 'Tyyppi',
-  emissionClass: 'Euroluokka',
-  registryDate: 'Rek.päivä',
-  age: 'Ikä',
-  percentageQuota: 'Osuus',
-  kilometerRequirement: 'Kilometriosuus',
-  amount: 'Määrä',
+  model: text('executionRequirement_model'),
+  type: text('executionRequirement_type'),
+  emissionClass: text('executionRequirement_emissionClass'),
+  registryDate: text('executionRequirement_registryDate'),
+  age: text('executionRequirement_age'),
+  percentageQuota: text('executionRequirement_percentageQuota'),
+  kilometerRequirement: text('executionRequirement_kilometerRequirement'),
+  amount: text('executionRequirement_amount'),
 }
 
 const RequirementEquipmentList: React.FC<PropTypes> = observer(
