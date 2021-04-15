@@ -87,6 +87,10 @@ export function createRequirementEquipment(
   return compact(equipmentQuotas)
 }
 
+export function getEquipmentAge(equipmentRegistryDate: Date, compareDate: Date) {
+  return round(differenceInCalendarDays(compareDate, equipmentRegistryDate) / 365)
+}
+
 export function groupedEquipment(
   equipment: EquipmentWithQuota[],
   startDate: Date
@@ -102,10 +106,7 @@ export function groupedEquipment(
     let meterRequirement = getTotal(equipmentGroup, 'meterRequirement')
 
     let kilometerRequirement = Big(meterRequirement).div(1000).toString()
-
-    let age = round(
-      differenceInCalendarDays(startDate, parseISO(equipmentGroup[0].registryDate)) / 365
-    )
+    let age = getEquipmentAge(parseISO(equipmentGroup[0].registryDate), startDate)
 
     return {
       ...omit(equipmentGroup[0], 'vehicleId', 'registryNr'),

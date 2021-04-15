@@ -115,6 +115,18 @@
   "executionRequirement_refreshWarning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
   "executionRequirement_unitExecutionRequirements": "Kohteen suoritevaatimukset",
 
+  "executionRequirement_equipmentList_vehicleId": "Kylkinumero",
+  "executionRequirement_equipmentList_model": "Malli",
+  "executionRequirement_equipmentList_type": "Tyyppi",
+  "executionRequirement_equipmentList_percentageQuota": "Osuus",
+  "executionRequirement_equipmentList_meterRequirement": "Metriosuus",
+  "executionRequirement_equipmentList_emissionClass": "Euroluokka",
+  "executionRequirement_equipmentList_registryNr": "Rek.numero",
+  "executionRequirement_equipmentList_registryDate": "Rek.päivä",
+  "executionRequirement_equipmentList_age": "Ikä",
+  "executionRequirement_equipmentList_kilometerRequirement": "Kilometriosuus",
+  "executionRequirement_equipmentList_amount": "Määrä",
+
   "userRelations_createdBy": "Luotu",
   "userRelations_updatedBy": "Päivitetty",
   "userRelations_subscribedTo": "Tilattu",

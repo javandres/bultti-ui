@@ -7,7 +7,7 @@ import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { round } from '../util/round'
-import { getTotal } from '../util/getTotal'
+import { getTotal, getTotalBig } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
 import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
@@ -147,6 +147,12 @@ const EquipmentList: React.FC<PropTypes> = observer(
             return round(getTotal(equipment, 'kilometerRequirement'), 3) + ' km'
           case 'amount':
             return round(getTotal(equipmentGroups, 'amount'), 3) + ' kpl'
+          case 'age':
+            // Show the unweighted average in the total row
+            return (
+              round(getTotalBig(equipmentGroups, 'age').div(equipmentGroups.length || 1), 3) +
+              'v'
+            )
           default:
             return ''
         }
