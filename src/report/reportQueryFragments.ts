@@ -310,6 +310,7 @@ export const reportQueryFragments = {
       journeyKilometers
       procurementUnitId
       blockNumber
+      date
     }
   `,
   SanctionSummaryFragment: gql`

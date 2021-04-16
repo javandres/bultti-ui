@@ -9,17 +9,16 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki. */
-  BulttiDate: any;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki. */
+  BulttiDate: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
 export type Query = {
   __typename?: 'Query';
-  currentlyLoadingHfpRanges: Array<HfpDateStatus>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
@@ -79,6 +78,7 @@ export type Query = {
   contractUserRelations: Array<ContractUserRelation>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>;
+  currentlyLoadingHfpRanges: Array<HfpDateStatus>;
   allInspectionDates: Array<InspectionDate>;
   getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
@@ -443,19 +443,6 @@ export type QueryRunSanctioningArgs = {
   inspectionId: Scalars['String'];
 };
 
-export type HfpDateStatus = {
-  __typename?: 'HfpDateStatus';
-  date: Scalars['BulttiDate'];
-  status: HfpStatus;
-};
-
-
-export enum HfpStatus {
-  NotLoaded = 'NOT_LOADED',
-  Loading = 'LOADING',
-  Ready = 'READY'
-}
-
 export type Inspection = {
   __typename?: 'Inspection';
   id: Scalars['ID'];
@@ -587,6 +574,7 @@ export enum InspectionUserRelationType {
   MadeSanctionableBy = 'MADE_SANCTIONABLE_BY',
   SanctionsAbandonedBy = 'SANCTIONS_ABANDONED_BY'
 }
+
 
 export type ProcurementUnit = {
   __typename?: 'ProcurementUnit';
@@ -795,6 +783,12 @@ export type InspectionDate = {
   hfpDataStatus: HfpStatus;
   inspections?: Maybe<Array<Inspection>>;
 };
+
+export enum HfpStatus {
+  NotLoaded = 'NOT_LOADED',
+  Loading = 'LOADING',
+  Ready = 'READY'
+}
 
 export type ValidationErrorData = {
   __typename?: 'ValidationErrorData';
@@ -1747,6 +1741,7 @@ export type UnobservedDeparturesReportData = {
   procurementUnitId: Scalars['String'];
   journeyKilometers: Scalars['Float'];
   blockNumber?: Maybe<Scalars['String']>;
+  date: Scalars['String'];
 };
 
 export type SanctionSummaryReport = {
@@ -1806,6 +1801,12 @@ export type ProcurementUnitOption = {
   isUnselectingDisabled: Scalars['Boolean'];
 };
 
+export type HfpDateStatus = {
+  __typename?: 'HfpDateStatus';
+  date: Scalars['BulttiDate'];
+  status: HfpStatus;
+};
+
 export type SanctionsResponse = {
   __typename?: 'SanctionsResponse';
   filteredCount: Scalars['Int'];
@@ -1863,7 +1864,6 @@ export enum SanctionExceptionReason {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  loadHfpDataForInspectionPeriod: InspectionDate;
   createInspection: Inspection;
   updateLinkedInspection: Inspection;
   updateInspection: Inspection;
@@ -1907,15 +1907,11 @@ export type Mutation = {
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>;
   removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean'];
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement;
+  loadHfpDataForInspectionPeriod: InspectionDate;
   createInspectionDate: InspectionDate;
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
   clearCache: Scalars['Boolean'];
-};
-
-
-export type MutationLoadHfpDataForInspectionPeriodArgs = {
-  inspectionDateId: Scalars['String'];
 };
 
 
@@ -2161,6 +2157,11 @@ export type MutationUpdateObservedExecutionRequirementValuesArgs = {
 };
 
 
+export type MutationLoadHfpDataForInspectionPeriodArgs = {
+  inspectionDateId: Scalars['String'];
+};
+
+
 export type MutationCreateInspectionDateArgs = {
   inspectionDate: InspectionDateInput;
 };
@@ -2245,10 +2246,20 @@ export type SanctionUpdate = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  hfpPreloadStatus?: Maybe<Array<HfpDateStatus>>;
-  hfpLoadingProgress?: Maybe<HfpDateProgress>;
   inspectionStatus?: Maybe<Inspection>;
   inspectionError?: Maybe<InspectionErrorUpdate>;
+  hfpPreloadStatus?: Maybe<Array<HfpDateStatus>>;
+  hfpLoadingProgress?: Maybe<HfpDateProgress>;
+};
+
+
+export type SubscriptionInspectionStatusArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type SubscriptionInspectionErrorArgs = {
+  inspectionId: Scalars['String'];
 };
 
 
@@ -2263,26 +2274,16 @@ export type SubscriptionHfpLoadingProgressArgs = {
   rangeStart: Scalars['String'];
 };
 
-
-export type SubscriptionInspectionStatusArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type SubscriptionInspectionErrorArgs = {
-  inspectionId: Scalars['String'];
-};
-
-export type HfpDateProgress = {
-  __typename?: 'HfpDateProgress';
-  date: Scalars['BulttiDate'];
-  progress: Scalars['Int'];
-};
-
 export type InspectionErrorUpdate = {
   __typename?: 'InspectionErrorUpdate';
   id: Scalars['ID'];
   status: InspectionStatus;
   errorType: Scalars['String'];
   message: Scalars['String'];
+};
+
+export type HfpDateProgress = {
+  __typename?: 'HfpDateProgress';
+  date: Scalars['BulttiDate'];
+  progress: Scalars['Int'];
 };
