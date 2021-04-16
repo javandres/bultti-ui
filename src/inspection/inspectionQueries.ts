@@ -92,6 +92,29 @@ export const inspectionFragment = gql`
   }
 `
 
+export const lightInspectionFragment = gql`
+  fragment LightInspectionFragment on Inspection {
+    id
+    name
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    inspectionStartDate
+    inspectionEndDate
+    version
+    status
+    inspectionType
+    minStartDate
+    operatorId
+    seasonId
+    operator {
+      id
+      operatorName
+    }
+  }
+`
+
 export const inspectionQuery = gql`
   query inspectionById($inspectionId: String!) {
     inspection(inspectionId: $inspectionId) {
@@ -120,31 +143,19 @@ export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
       seasonId: $seasonId
       inspectionType: $inspectionType
     ) {
-      ...InspectionFragment
+      ...LightInspectionFragment
     }
   }
-  ${inspectionFragment}
+  ${lightInspectionFragment}
 `
 
 export const inspectionsByOperatorQuery = gql`
   query inspectionsByOperator($operatorId: Int!, $inspectionType: InspectionType!) {
     inspectionsByOperator(operatorId: $operatorId, inspectionType: $inspectionType) {
-      id
-      name
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      inspectionStartDate
-      inspectionEndDate
-      version
-      status
-      inspectionType
-      minStartDate
-      operatorId
-      seasonId
+      ...LightInspectionFragment
     }
   }
+  ${lightInspectionFragment}
 `
 
 export const inspectionsTimelineByOperatorQuery = gql`

@@ -13,7 +13,6 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
   createInspectionMutation,
-  currentPreInspectionsByOperatorAndSeasonQuery,
   inspectionQuery,
   inspectionsByOperatorQuery,
   inspectionStatusSubscription,
@@ -91,15 +90,14 @@ export function useRemoveInspection(
   inspection: Inspection,
   afterRemove: () => unknown = () => {}
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
-  let { operatorId, seasonId, inspectionType } = inspection
+  let { operatorId, inspectionType } = inspection
 
   let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
     refetchQueries: [
       {
-        query: currentPreInspectionsByOperatorAndSeasonQuery,
+        query: inspectionsByOperatorQuery,
         variables: {
           operatorId,
-          seasonId,
           inspectionType,
         },
       },

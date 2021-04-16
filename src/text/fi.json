@@ -42,6 +42,7 @@
   "registryNumber": "Rekisterinumero",
   "tableEmpty": "Taulukko on tyhjä.",
   "selectOperator": "Valitse liikennöitsijä.",
+  "selectSeason": "Valitse aikataulukausi",
 
   "datePicker_insertDate": "Syötä päivä",
   "table_rowsPerPage": "Rivejä per sivu",
@@ -174,6 +175,7 @@
   "inspectionList_youAreHere": "Olet tässä",
 
   "inspectionReports_heading": "${inspection}tarkastuksien raportit",
+  "inspectionReports_selectDate": "Valitse tuotantopäivämäärä",
 
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
   "inspection_actions_startSanctioning": "Aloita sanktiointi",

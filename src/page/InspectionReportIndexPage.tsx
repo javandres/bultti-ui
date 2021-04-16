@@ -19,7 +19,7 @@ import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -129,14 +129,14 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
               <FilterControlGroup>
                 <SelectSeason
                   enableAll={true}
-                  label="Valitse aikataulukausi"
+                  label={text('selectSeason')}
                   onSelect={setSelectedSeason}
                   value={selectedSeason}
                 />
               </FilterControlGroup>
               <FilterControlGroup>
                 <Dropdown
-                  label="Valitse tuotantopäivämäärä"
+                  label={text('inspectionReports_selectDate')}
                   selectedItem={selectedDate}
                   items={startDateOptions}
                   itemToLabel="label"
