@@ -173,6 +173,8 @@
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",
 
+  "inspectionReports_heading": "${inspection}tarkastuksien raportit",
+
   "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
   "inspection_actions_startSanctioning": "Aloita sanktiointi",
   "inspection_actions_remove": "Poista",

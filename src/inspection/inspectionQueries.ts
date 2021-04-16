@@ -129,10 +129,22 @@ export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
 export const inspectionsByOperatorQuery = gql`
   query inspectionsByOperator($operatorId: Int!, $inspectionType: InspectionType!) {
     inspectionsByOperator(operatorId: $operatorId, inspectionType: $inspectionType) {
-      ...InspectionFragment
+      id
+      name
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      inspectionStartDate
+      inspectionEndDate
+      version
+      status
+      inspectionType
+      minStartDate
+      operatorId
+      seasonId
     }
   }
-  ${inspectionFragment}
 `
 
 export const inspectionsTimelineByOperatorQuery = gql`

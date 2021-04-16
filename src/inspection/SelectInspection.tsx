@@ -224,12 +224,12 @@ const SelectInspection: React.FC<PropTypes> = observer(
                       <>
                         <InspectionTitle>{inspection.name}</InspectionTitle>
                         <InspectionSubtitle>
-                          {inspection.operator.operatorName}, {inspection.season.id}
+                          {inspection.operator.operatorName}, {inspection.seasonId}
                         </InspectionSubtitle>
                       </>
                     ) : (
                       <InspectionTitle>
-                        {inspection.operator.operatorName}, {inspection.season.id}
+                        {inspection.operator.operatorName}, {inspection.seasonId}
                       </InspectionTitle>
                     )}
                     <InspectionVersion>{inspection.version}</InspectionVersion>
