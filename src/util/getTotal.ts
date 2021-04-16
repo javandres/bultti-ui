@@ -1,17 +1,19 @@
 import Big from 'big.js'
 
-export function getTotal<T, Name extends keyof T>(collection: T[], propName: Name): string {
-  let reduced: Big = collection.reduce((total: Big, item: T) => {
+export function getTotalBig<T, Name extends keyof T>(collection: T[], propName: Name): Big {
+  return collection.reduce((total: Big, item: T) => {
     let propValue = item[propName]
 
-    if (typeof propValue !== 'number') {
+    if (typeof propValue !== 'number' && typeof propValue !== 'string') {
       return total
     }
 
     return total.plus(propValue)
   }, Big('0'))
+}
 
-  return reduced.toString()
+export function getTotal<T, Name extends keyof T>(collection: T[], propName: Name): string {
+  return getTotalBig(collection, propName).toString()
 }
 
 export function getTotalNumbers(numbers: Array<number | string>) {
