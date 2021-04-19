@@ -2,6 +2,7 @@ import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components/macro'
 import { useQueryData } from '../util/useQueryData'
+import { sortBy } from 'lodash'
 import { reportsQuery } from '../report/reportQueries'
 import { LoadingDisplay } from '../common/components/Loading'
 import ReportListItem from '../report/ReportListItem'
@@ -13,6 +14,37 @@ import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import ReportContainer from '../report/ReportContainer'
 import { ReportTypeByName } from '../report/reportTypes'
+
+type ReportTypeNames = keyof ReportTypeByName
+const preInspectionReportOrder: ReportTypeNames[] = [
+  'missingEquipmentReport',
+  'extraBlockDeparturesReport',
+  'missingBlockDeparturesReport',
+  'blockDeviationsReport',
+  'allDeviationsReport',
+  'equipmentTypeReport',
+  'equipmentColorReport',
+  'overageDeparturesReport',
+  'unitExecutionReport',
+  'executionRequirementsReport',
+  'emissionClassExecutionReport',
+  'operatorDeadrunsReport',
+  'deadrunsReport',
+  'trackedDeparturesReport',
+  'departureBlocksReport',
+]
+const postInspectionReportOrder: ReportTypeNames[] = [
+  'sanctionSummaryReport',
+  'observedEquipmentTypeReport',
+  'observedEquipmentColorReport',
+  'observedOverageDeparturesReport',
+  'observedUnitExecutionReport',
+  'observedExecutionRequirementsReport',
+  'observedEmissionClassExecutionReport',
+  'observedLateDeparturesReport',
+  'earlyTimingStopDeparturesReport',
+  'unobservedDeparturesReport',
+]
 
 const InspectionReportsView = styled.div`
   min-height: 100%;
@@ -49,7 +81,16 @@ const InspectionReports = observer(
       }
     )
 
-    let reports: ReportListItemType[] = useMemo(() => reportsData || [], [reportsData])
+    let reports: ReportListItemType[] = useMemo(
+      () =>
+        sortReportsBySpecificOrder(
+          reportsData,
+          inspection.inspectionType === 'PRE'
+            ? preInspectionReportOrder
+            : postInspectionReportOrder
+        ) || [],
+      [reportsData]
+    )
     let typeStrings = getInspectionTypeStrings(inspection.inspectionType)
 
     return (
@@ -85,3 +126,12 @@ const InspectionReports = observer(
 )
 
 export default InspectionReports
+
+function sortReportsBySpecificOrder(
+  reports: ReportListItemType[],
+  reportOrder: ReportTypeNames[]
+) {
+  return sortBy(reports, (report: ReportListItemType) => {
+    return reportOrder.indexOf(`${report.name}Report` as ReportTypeNames)
+  })
+}
