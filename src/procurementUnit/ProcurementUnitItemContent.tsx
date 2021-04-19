@@ -93,7 +93,7 @@ const ProcurementUnitItemContent = observer(
         variables: unitQueryVariables,
       }) || {}
 
-    let updateUnit = useCallback(() => {
+    let updateViewData = useCallback(() => {
       refetch()
     }, [refetch])
 
@@ -266,7 +266,7 @@ const ProcurementUnitItemContent = observer(
                       procurementUnit={procurementUnit}
                       catalogue={catalogue}
                       operatorId={procurementUnit.operatorId}
-                      onCatalogueChanged={updateUnit}
+                      onCatalogueChanged={updateViewData}
                       editable={catalogueEditable}
                     />
                   </ExpandableSection>
@@ -279,7 +279,7 @@ const ProcurementUnitItemContent = observer(
               )}
               {catalogueEditable && (
                 <EditEquipmentCatalogue
-                  onChange={updateUnit}
+                  onChange={updateViewData}
                   procurementUnit={procurementUnit}
                 />
               )}
