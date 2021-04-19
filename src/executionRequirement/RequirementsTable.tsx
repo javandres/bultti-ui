@@ -14,7 +14,7 @@ import {
 } from './executionRequirementUtils'
 import Big from 'big.js'
 import { text } from '../util/translate'
-import { EXECUTION_REQUIREMENT_TOTAL_DECIMALS } from '../report/constants'
+import { DEFAULT_DECIMALS } from '../constants'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1rem;
@@ -145,10 +145,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalVal = round(
-          getTotal<any, string>(requirementRows, key),
-          EXECUTION_REQUIREMENT_TOTAL_DECIMALS
-        )
+        let totalVal = round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
         switch (key) {
           case 'percentage':
           case 'quotaRequirement':

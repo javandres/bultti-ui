@@ -1,4 +1,4 @@
-import { merge, get } from 'lodash'
+import { get, merge } from 'lodash'
 
 const envObj = merge({}, process.env, get(window, '_ENV', {}))
 
@@ -46,3 +46,4 @@ function getScrollbarWidth() {
 }
 
 export const SCROLLBAR_WIDTH = getScrollbarWidth() + 1
+export const DEFAULT_DECIMALS = 3
