@@ -117,7 +117,7 @@ export const SidebarStyledSelect = styled(Dropdown)`
   }
 
   > div {
-    padding: 0 1rem 1rem;
+    padding: 0 1rem 0.5rem 1rem;
 
     > button {
       border: 1px solid var(--dark-blue);
@@ -140,6 +140,12 @@ export const SidebarStyledSelect = styled(Dropdown)`
       color: white;
       font-size: 1rem;
     }
+  }
+`
+
+export const SidebarSeasonFilter = styled(SidebarStyledSelect)`
+  > div {
+    padding-bottom: 0;
   }
 `
 

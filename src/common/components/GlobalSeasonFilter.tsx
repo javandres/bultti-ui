@@ -1,12 +1,21 @@
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import { SidebarStyledSelect } from './AppSidebar'
+import { SidebarSeasonFilter } from './AppSidebar'
 import SelectSeason from '../input/SelectSeason'
 import { getUrlValue } from '../../util/urlValue'
+import { getReadableDateRange } from '../../util/formatDate'
+import styled from 'styled-components/macro'
+import { text } from '../../util/translate'
+import { Season } from '../../schema-types'
+
+const SeasonTimeSpan = styled.div`
+  font-size: 0.8rem;
+  margin-left: 1rem;
+`
 
 const GlobalSeasonFilter: React.FC = observer(() => {
-  const [season, setSeasonFilter] = useStateValue('globalSeason')
+  const [season, setSeasonFilter] = useStateValue<Season>('globalSeason')
 
   let initialSeasonId: string | undefined = useMemo(() => {
     let initialVal = (getUrlValue('season') || '') + ''
@@ -14,13 +23,20 @@ const GlobalSeasonFilter: React.FC = observer(() => {
   }, [])
 
   return (
-    <SidebarStyledSelect
-      as={SelectSeason}
-      onSelect={setSeasonFilter}
-      value={season}
-      label="Valitse kausi"
-      selectInitialId={initialSeasonId}
-    />
+    <React.Fragment>
+      <SidebarSeasonFilter
+        as={SelectSeason}
+        onSelect={setSeasonFilter}
+        value={season}
+        label={text('selectSeason')}
+        selectInitialId={initialSeasonId}
+      />
+      {season && (
+        <SeasonTimeSpan>
+          {getReadableDateRange({ start: season.startDate, end: season.endDate })}
+        </SeasonTimeSpan>
+      )}
+    </React.Fragment>
   )
 })
 
