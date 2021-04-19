@@ -81,7 +81,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         return
       }
 
-      if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
+      if (inspection.operatorId !== operator.operatorId) {
         navigateWithQueryString(`/pre-inspection/edit`)
       }
     }, [inspection, operator, season])
