@@ -1,12 +1,15 @@
 import React from 'react'
-import { SanctionSummaryReportData } from '../schema-types'
+import { EmissionClassExecutionReportData, SanctionSummaryReportData } from '../schema-types'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 import Big from 'big.js'
+import { text } from '../util/translate'
 
 // Define column total functions here with the name of the report they apply to.
 const reportTotalFns = {
   sanctionSummary: createSanctionSummaryColumnTotals,
+  emissionClassExecution: createEmissionClassExecutionColumnTotals,
+  observedEmissionClassExecution: createEmissionClassExecutionColumnTotals,
 }
 
 // Return the applicable total function or undefined to signal that no totals should be shown.
@@ -23,19 +26,29 @@ export function createColumnTotalCallback(
   return reportTotalFn(rows)
 }
 
-// Column totals for the sanctionSummary report.
+// Column totals for the sanctionSummary report
 function createSanctionSummaryColumnTotals(rows: SanctionSummaryReportData[]) {
   return (key: keyof SanctionSummaryReportData) => {
-    // Show the total kilometers sanctioned by this sanction.
+    // Show the total kilometers sanctioned by this sanction
     if (key.endsWith('KM')) {
       return round(getTotal(rows, key), 6) + ' KM'
     }
 
-    // Show how many percentage of all sanctions this sanction column accounts for.
+    // Show how many percentage of all sanctions this sanction column accounts for
     if (key.endsWith('%')) {
       return Big(getTotal(rows, key)).div(Math.max(rows.length, 1)).round(6).mul(100) + '%'
     }
 
     return ''
+  }
+}
+
+function createEmissionClassExecutionColumnTotals(rows: EmissionClassExecutionReportData[]) {
+  return (key: keyof EmissionClassExecutionReportData) => {
+    if (key === 'procurementUnitId') {
+      return text('table_totalCount')
+    }
+    // Show the total kilometers of this emission class
+    return round(getTotal(rows, key), 0) + ' km'
   }
 }

@@ -27,6 +27,7 @@
   "back": "Takaisin",
   "show": "Näytä",
   "hide": "Piilota",
+  "average": "Keski-arvo",
   "selectAll": "Valitse kaikki",
   "allSelected": "Kaikki valittu",
   "procurementUnits": "Kilpailukohteet",
@@ -48,6 +49,7 @@
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",
   "table_totalRows": "Rivejä yhteensä",
+  "table_totalCount": "Yhteensä",
   "table_filteredRows": "Suodattuja rivejä",
 
   "role_admin": "Admin",

@@ -33,14 +33,14 @@ export const equipmentColumnLabels = {
 }
 
 export const groupedEquipmentColumnLabels = {
-  model: text('executionRequirement_model'),
-  type: text('executionRequirement_type'),
-  emissionClass: text('executionRequirement_emissionClass'),
-  registryDate: text('executionRequirement_registryDate'),
-  age: text('executionRequirement_age'),
-  percentageQuota: text('executionRequirement_percentageQuota'),
-  kilometerRequirement: text('executionRequirement_kilometerRequirement'),
-  amount: text('executionRequirement_amount'),
+  model: text('executionRequirement_equipmentList_model'),
+  type: text('executionRequirement_equipmentList_type'),
+  emissionClass: text('executionRequirement_equipmentList_emissionClass'),
+  registryDate: text('executionRequirement_equipmentList_registryDate'),
+  age: text('executionRequirement_equipmentList_age'),
+  percentageQuota: text('executionRequirement_equipmentList_percentageQuota'),
+  kilometerRequirement: text('executionRequirement_equipmentList_kilometerRequirement'),
+  amount: text('executionRequirement_equipmentList_amount'),
 }
 
 const RequirementEquipmentList: React.FC<PropTypes> = observer(

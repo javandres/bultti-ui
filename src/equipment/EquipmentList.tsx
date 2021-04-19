@@ -7,12 +7,14 @@ import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
 import { groupBy, orderBy, uniqBy } from 'lodash'
 import { round } from '../util/round'
-import { getTotal, getTotalBig } from '../util/getTotal'
+import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
 import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
 import PagedTable from '../common/table/PagedTable'
 import { CellValType, EditValue } from '../common/table/tableUtils'
+import { averageByProp } from '../util/averageByProp'
+import { DEFAULT_DECIMALS } from '../constants'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -124,11 +126,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
-          return round(val, 3) + '%'
+          return round(val, DEFAULT_DECIMALS) + '%'
         case 'meterRequirement':
-          return round(val, 3) + ' m'
+          return round(val, DEFAULT_DECIMALS) + ' m'
         case 'kilometerRequirement':
-          return round(val, 3) + ' km'
+          return round(val, DEFAULT_DECIMALS) + ' km'
         case 'emissionClass':
           return emissionClassNames[val + '']
         default:
@@ -140,19 +142,16 @@ const EquipmentList: React.FC<PropTypes> = observer(
       (col) => {
         switch (col) {
           case 'percentageQuota':
-            return round(getTotal(equipment, 'percentageQuota'), 3) + '%'
+            return round(getTotal(equipment, 'percentageQuota'), DEFAULT_DECIMALS) + '%'
           case 'meterRequirement':
-            return round(getTotal(equipment, 'meterRequirement'), 3) + ' m'
+            return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':
-            return round(getTotal(equipment, 'kilometerRequirement'), 3) + ' km'
+            return round(getTotal(equipment, 'kilometerRequirement'), DEFAULT_DECIMALS) + ' km'
           case 'amount':
-            return round(getTotal(equipmentGroups, 'amount'), 3) + ' kpl'
+            return round(getTotal(equipmentGroups, 'amount'), DEFAULT_DECIMALS) + ' kpl'
           case 'age':
             // Show the unweighted average in the total row
-            return (
-              round(getTotalBig(equipmentGroups, 'age').div(equipmentGroups.length || 1), 3) +
-              'v'
-            )
+            return `${text('average')} ${averageByProp(equipmentGroups, 'age')}v`
           default:
             return ''
         }

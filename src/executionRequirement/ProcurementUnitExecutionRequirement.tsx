@@ -188,6 +188,13 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             <Text>executionRequirement_unitExecutionRequirements</Text>
           </SectionHeading>
           <div style={{ display: 'flex', marginLeft: 'auto' }}>
+            <Button
+              buttonStyle={ButtonStyle.NORMAL}
+              size={ButtonSize.SMALL}
+              onClick={update}
+              loading={requirementsLoading}>
+              <Text>update</Text>
+            </Button>
             {isEditable && (
               <Button
                 loading={refreshLoading}
