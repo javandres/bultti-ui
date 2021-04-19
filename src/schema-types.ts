@@ -699,7 +699,6 @@ export type ExecutionRequirementValue = {
   cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
   equipmentCount?: Maybe<Scalars['Int']>;
   equipmentCountFulfilled?: Maybe<Scalars['Int']>;
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Int']>;
   sanctionThreshold?: Maybe<Scalars['Float']>;
   sanctionAmount?: Maybe<Scalars['Float']>;
   classSanctionAmount?: Maybe<Scalars['Float']>;

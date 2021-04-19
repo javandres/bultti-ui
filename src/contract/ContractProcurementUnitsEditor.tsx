@@ -22,6 +22,7 @@ import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { text, Text } from '../util/translate'
 import { areIntervalsOverlapping, parseISO } from 'date-fns'
+import { DEFAULT_DECIMALS } from '../constants'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -153,7 +154,7 @@ const ContractProcurementUnitsEditor = observer(
             let routes = (unitOption.routes || []).filter((routeId) => !!routeId)
 
             let fullRoutesString = routes.join(', ')
-            let shortRoutes = routes.slice(0, 3)
+            let shortRoutes = routes.slice(0, DEFAULT_DECIMALS)
 
             if (routes.length > shortRoutes.length) {
               shortRoutes.push('...')

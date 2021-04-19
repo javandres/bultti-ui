@@ -12,7 +12,7 @@ import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 import { EditValue, TableEditProps } from '../common/table/tableUtils'
-import { EXECUTION_REQUIREMENT_TOTAL_DECIMALS } from '../report/constants'
+import { DEFAULT_DECIMALS } from '../constants'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
@@ -116,10 +116,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalValue = round(
-          getTotal<any, string>(requirementRows, key),
-          EXECUTION_REQUIREMENT_TOTAL_DECIMALS
-        )
+        let totalValue = round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
         switch (key) {
           case 'quotaRequired':
           case 'quotaObserved':

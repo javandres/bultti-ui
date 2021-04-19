@@ -117,15 +117,6 @@ export const reportQueryFragments = {
       journeyKilometers
     }
   `,
-  ObservedDeviationsFragment: gql`
-    fragment ObservedDeviationsFragment on ObservedDeviationsReportData {
-      ${observedDepartureReportBaseFragment}
-      registryNr
-      terminalTime
-      recoveryTime
-      observedOverlapSeconds
-    }
-  `,
   ObservedEquipmentColorFragment: gql`
     fragment ObservedEquipmentColorFragment on ObservedEquipmentColorReportData {
       ${observedDepartureReportBaseFragment}
@@ -257,7 +248,6 @@ export const reportQueryFragments = {
         quotaFulfilled
         equipmentCount
         equipmentCountFulfilled
-        averageAgeWeightedFulfilled
         differencePercentage
         cumulativeDifferencePercentage
         sanctionAmount

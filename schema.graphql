@@ -401,7 +401,6 @@ type ExecutionRequirementQuota {
 }
 
 type ExecutionRequirementValue {
-  averageAgeWeightedFulfilled: Int
   classSanctionAmount: Float
   cumulativeDifferencePercentage: Float
   differencePercentage: Float
