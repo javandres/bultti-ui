@@ -11,7 +11,7 @@ import { Page, PageContainer } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
-import { InspectionStatus, InspectionType, Season } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import SelectSeason from '../common/input/SelectSeason'
 import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
@@ -19,6 +19,7 @@ import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
+import { text, Text } from '../util/translate'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -68,15 +69,15 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
   let openReports = useNavigateToInspectionReports()
 
   let inspectionsList = useMemo(() => {
-    let filteredList = inspections.filter((p) => {
-      if (p.status !== InspectionStatus.InProduction) {
+    let filteredList = inspections.filter((inspection) => {
+      if (inspection.status !== InspectionStatus.InProduction) {
         return false
       }
 
       if (
         selectedSeason &&
         selectedSeason.id !== 'Kaikki' &&
-        selectedSeason.id !== p.seasonId
+        selectedSeason.id !== inspection.seasonId
       ) {
         return false
       }
@@ -84,7 +85,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
       if (
         selectedDate &&
         selectedDate.value !== 'kaikki' &&
-        selectedDate.value !== p.startDate
+        selectedDate.value !== inspection.startDate
       ) {
         return false
       }
@@ -98,9 +99,9 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
   let startDateOptions = useMemo(
     () => [
       defaultSelectedDate,
-      ...inspectionsList.map((p) => ({
-        value: p.startDate,
-        label: getReadableDate(p.startDate),
+      ...inspectionsList.map((inspection: Inspection) => ({
+        value: inspection.startDate,
+        label: getReadableDate(inspection.startDate),
       })),
     ],
     [inspectionsList]
@@ -111,12 +112,14 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
   return (
     <InspectionReportIndexPageView>
       <PageTitle loading={loading} onRefresh={refetch}>
-        {typeStrings.prefix}tarkastuksien raportit
+        <Text keyValueMap={{ inspection: typeStrings.prefix }}>inspectionReports_heading</Text>
       </PageTitle>
       <PageContainer>
         {!operator && (
           <MessageContainer>
-            <MessageView>Valitse liikennöitsijä.</MessageView>
+            <MessageView>
+              <Text>selectOperator</Text>
+            </MessageView>
           </MessageContainer>
         )}
         <LoadingDisplay loading={loading} />
@@ -126,14 +129,14 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
               <FilterControlGroup>
                 <SelectSeason
                   enableAll={true}
-                  label="Valitse aikataulukausi"
+                  label={text('selectSeason')}
                   onSelect={setSelectedSeason}
                   value={selectedSeason}
                 />
               </FilterControlGroup>
               <FilterControlGroup>
                 <Dropdown
-                  label="Valitse tuotantopäivämäärä"
+                  label={text('inspectionReports_selectDate')}
                   selectedItem={selectedDate}
                   items={startDateOptions}
                   itemToLabel="label"

@@ -107,7 +107,7 @@ const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
             <InspectionTitle>{inspection.name}</InspectionTitle>
           ) : (
             <InspectionTitle>
-              {inspection.operator.operatorName} / {inspection.season.id}
+              {inspection.operator.operatorName} / {inspection.seasonId}
             </InspectionTitle>
           )}
           <InspectionDates startDate={inspection.startDate} endDate={inspection.endDate} />
@@ -115,7 +115,7 @@ const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
         {inspection.name && (
           <ContentRow>
             <InspectionSubtitle>
-              {inspection.operator.operatorName} / {inspection.season.id}
+              {inspection.operator.operatorName} / {inspection.seasonId}
             </InspectionSubtitle>
           </ContentRow>
         )}

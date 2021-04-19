@@ -136,7 +136,7 @@ const InspectionsList: React.FC<PropTypes> = ({
 
   const seasonGroups = groupBy(
     orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
-    'season.id'
+    'seasonId'
   )
 
   let currentSeason = useMemo(
@@ -148,7 +148,7 @@ const InspectionsList: React.FC<PropTypes> = ({
 
         return curSeason
       }, null),
-    [inspections]
+    [seasons]
   )
 
   let typeStrings = getInspectionTypeStrings(inspectionType)

@@ -43,6 +43,7 @@ const InspectionActionsRow = styled(InspectionActions)`
 `
 
 const itemTableHeadings = {
+  name: 'Nimi',
   createdAt: 'Luontiaika',
   updatedAt: 'Viimeksi päivitetty',
   startDate: 'Tuotantokausi alkaa',
@@ -51,8 +52,6 @@ const itemTableHeadings = {
   inspectionEndDate: 'Tarkastuskausi loppuu',
   version: 'Versio',
   status: 'Tila',
-  createdBy: 'Luonut käyttäjä',
-  season: 'Aiktaulukausi',
 }
 
 const itemObjectDisplayPaths = {
