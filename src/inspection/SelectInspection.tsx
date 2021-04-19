@@ -10,7 +10,7 @@ import {
   getInspectionStatusName,
   getInspectionTypeStrings,
   useCreateInspection,
-  useEditInspection,
+  useNavigateToInspection,
 } from './inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
@@ -177,7 +177,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
 
-    var editInspection = useEditInspection(inspectionType)
+    var navigateToInspection = useNavigateToInspection(inspectionType)
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
     let createInspection = useCreateInspection(operator, season, inspectionType)
@@ -186,11 +186,11 @@ const SelectInspection: React.FC<PropTypes> = observer(
       let createdInspection = await createInspection()
 
       if (createdInspection) {
-        editInspection(createdInspection)
+        navigateToInspection(createdInspection)
       }
 
       await refetchInspections()
-    }, [createInspection, refetchInspections, editInspection])
+    }, [createInspection, refetchInspections, navigateToInspection])
 
     let typeStrings = getInspectionTypeStrings(inspectionType)
 
