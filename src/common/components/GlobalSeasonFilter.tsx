@@ -10,6 +10,7 @@ import { text } from '../../util/translate'
 import { Season } from '../../schema-types'
 
 const SeasonTimeSpan = styled.div`
+  padding-top: 0.2rem;
   font-size: 0.8rem;
   margin-left: 1rem;
 `
