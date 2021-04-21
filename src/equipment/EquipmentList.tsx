@@ -43,7 +43,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     groupedColumnLabels,
     editableValues = [],
   }) => {
-    let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(true)
+    let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(false)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
     let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
