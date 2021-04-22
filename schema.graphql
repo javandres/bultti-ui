@@ -683,7 +683,7 @@ type Mutation {
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
-  login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
+  login(authorizationCode: String!, isTest: Boolean = false, role: String): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!

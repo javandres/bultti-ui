@@ -2076,7 +2076,7 @@ export type MutationRemoveExecutionRequirementArgs = {
 
 
 export type MutationLoginArgs = {
-  role: Scalars['String'];
+  role?: Maybe<Scalars['String']>;
   isTest?: Maybe<Scalars['Boolean']>;
   authorizationCode: Scalars['String'];
 };
