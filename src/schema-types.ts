@@ -1912,6 +1912,7 @@ export type Mutation = {
   updateSanctions: Array<Sanction>;
   clearCache: Scalars['Boolean'];
   createTestData: Scalars['Boolean'];
+  generateTestBlockDepartures: Scalars['Boolean'];
   removeTestData: Scalars['Boolean'];
   forceRemoveInspection: Scalars['Boolean'];
 };

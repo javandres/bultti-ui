@@ -21,6 +21,12 @@ const createTestDataMutation = gql`
   }
 `
 
+const generateTestBlockDeparturesMutation = gql`
+  mutation generateTestBlockDepartures {
+    generateTestBlockDepartures
+  }
+`
+
 const removeTestDataMutation = gql`
   mutation removeTestData {
     removeTestData
@@ -37,6 +43,9 @@ export type PropTypes = RouteComponentProps
 
 const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
+  let [generateTestBlocks, { loading: testBlocksLoading }] = useMutationData(
+    generateTestBlockDeparturesMutation
+  )
 
   let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
     removeTestDataMutation
@@ -96,6 +105,16 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
         <Button loading={testDataLoading} onClick={() => createTestData()}>
           Create test data
         </Button>
+
+        <h3>Generate test departure blocks</h3>
+        <p>
+          Generates test departure block CSV's that fit the test data. Check server console, it
+          will be printed there. Copy and paste into files.
+        </p>
+        <Button loading={testBlocksLoading} onClick={() => generateTestBlocks()}>
+          Generate test departure blocks
+        </Button>
+
         <h3>Remove test data</h3>
         <p>
           Remove test data created with th above function. Note that test inspections need to
@@ -104,6 +123,7 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
         <Button loading={testDataRemoveLoading} onClick={() => removeTestData()}>
           Remove test data
         </Button>
+
         <h3>Force remove inspections</h3>
         <p>
           Force removal of inspections belonging to the test season. Will also remove any
