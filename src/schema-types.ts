@@ -1912,7 +1912,7 @@ export type Mutation = {
   updateSanctions: Array<Sanction>;
   clearCache: Scalars['Boolean'];
   createTestData: Scalars['Boolean'];
-  generateTestBlockDepartures: Scalars['Boolean'];
+  generateTestBlockDepartures: Array<DepartureBlockFile>;
   removeTestData: Scalars['Boolean'];
   forceRemoveInspection: Scalars['Boolean'];
 };
@@ -2251,6 +2251,13 @@ export type InspectionDateInput = {
 export type SanctionUpdate = {
   sanctionId: Scalars['String'];
   appliedSanctionAmount: Scalars['Float'];
+};
+
+export type DepartureBlockFile = {
+  __typename?: 'DepartureBlockFile';
+  dayType: Scalars['String'];
+  operatorId: Scalars['Int'];
+  blockFile: Scalars['String'];
 };
 
 export type Subscription = {

@@ -112,6 +112,12 @@ type DeadrunsReportData {
   schemaId: String
 }
 
+type DepartureBlockFile {
+  blockFile: String!
+  dayType: String!
+  operatorId: Int!
+}
+
 type DepartureBlocksReport {
   columnLabels: String!
   description: String!
@@ -682,7 +688,7 @@ type Mutation {
   createTestData: Boolean!
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
-  generateTestBlockDepartures: Boolean!
+  generateTestBlockDepartures: [DepartureBlockFile!]!
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!

@@ -12,6 +12,9 @@ import Input from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import { inspectionQuery } from '../inspection/inspectionQueries'
 import InspectionCard from '../inspection/InspectionCard'
+import { pickGraphqlData } from '../util/pickGraphqlData'
+import { DepartureBlockFile } from '../schema-types'
+import { saveAs } from 'file-saver'
 
 const AdminPageView = styled.div``
 
@@ -23,7 +26,11 @@ const createTestDataMutation = gql`
 
 const generateTestBlockDeparturesMutation = gql`
   mutation generateTestBlockDepartures {
-    generateTestBlockDepartures
+    generateTestBlockDepartures {
+      blockFile
+      dayType
+      operatorId
+    }
   }
 `
 
@@ -38,6 +45,15 @@ const forceRemoveInspectionMutation = gql`
     forceRemoveInspection(inspectionId: $inspectionId)
   }
 `
+
+async function base64ToBlob(base64?: string) {
+  if (!base64) {
+    return
+  }
+
+  let response = await fetch('data:text/csv;base64,' + base64)
+  return response.blob()
+}
 
 export type PropTypes = RouteComponentProps
 
@@ -90,6 +106,17 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
     }
   }, [removeInspectionId, forceRemoveInspection])
 
+  let onGenerateTestBlocks = useCallback(async () => {
+    let response = await generateTestBlocks()
+    let departureBlockFiles: DepartureBlockFile[] = pickGraphqlData(response.data) || []
+
+    for (let blockFile of departureBlockFiles) {
+      let blob = await base64ToBlob(blockFile.blockFile)
+      let filename = `test_blocks_${blockFile.operatorId}_${blockFile.dayType}.csv`
+      saveAs(blob, filename)
+    }
+  }, [generateTestBlocks])
+
   return (
     <AdminPageView>
       <PageTitle>Admin</PageTitle>
@@ -111,7 +138,7 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
           Generates test departure block CSV's that fit the test data. Check server console, it
           will be printed there. Copy and paste into files.
         </p>
-        <Button loading={testBlocksLoading} onClick={() => generateTestBlocks()}>
+        <Button loading={testBlocksLoading} onClick={onGenerateTestBlocks}>
           Generate test departure blocks
         </Button>
 
