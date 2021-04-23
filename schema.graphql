@@ -679,6 +679,8 @@ type Mutation {
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  createTestData: Boolean!
+  forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
@@ -701,6 +703,7 @@ type Mutation {
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
+  removeTestData: Boolean!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation

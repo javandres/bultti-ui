@@ -1911,6 +1911,9 @@ export type Mutation = {
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
   clearCache: Scalars['Boolean'];
+  createTestData: Scalars['Boolean'];
+  removeTestData: Scalars['Boolean'];
+  forceRemoveInspection: Scalars['Boolean'];
 };
 
 
@@ -2173,6 +2176,12 @@ export type MutationRemoveInspectionDateArgs = {
 
 export type MutationUpdateSanctionsArgs = {
   sanctionUpdates: Array<SanctionUpdate>;
+};
+
+
+export type MutationForceRemoveInspectionArgs = {
+  testOnly?: Maybe<Scalars['Boolean']>;
+  inspectionId: Scalars['String'];
 };
 
 export type InitialInspectionInput = {

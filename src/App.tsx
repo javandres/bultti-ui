@@ -27,6 +27,7 @@ import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
+import AdminPage from './page/AdminPage'
 
 const Todo: React.FC<RouteComponentProps> = () => {
   return (
@@ -97,6 +98,8 @@ const App: React.FC = observer(() => {
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
       <Router style={{ height: '100%' }}>
         <Index path="/" />
+        <AdminPage path="admin" />
+
         <ProcurementUnitsPage path="procurement-units" />
 
         <InspectionsPage path="pre-inspection" inspectionType={InspectionType.Pre} />

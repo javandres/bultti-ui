@@ -162,6 +162,7 @@
   "equipment_batchAddEquipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.",
 
   "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
+  "inspectionPage_createNewInspection": "Luo uusi ${prefix}tarkastus",
   "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
   "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
   "inspectionPage_results": "Tulokset",
@@ -170,7 +171,7 @@
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
-  "inspection_selectInspection": "Tarkastusjakso",
+  "inspection_inspectionPeriod": "Tarkastusjakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_editor_hfp_unavailable": "Tarkastusjaksolle ei ole ladattu HFP-tiedot.",
   "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
