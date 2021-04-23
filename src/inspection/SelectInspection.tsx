@@ -139,7 +139,11 @@ const SelectInspection: React.FC<PropTypes> = observer(
                 </ItemContent>
               </NewInspection>
               {orderBy(inspections, 'version', 'desc').map((inspection) => (
-                <InspectionCard onRefresh={refetchInspections} inspection={inspection} />
+                <InspectionCard
+                  key={inspection.id}
+                  onRefresh={refetchInspections}
+                  inspection={inspection}
+                />
               ))}
             </InspectionItems>
           </>

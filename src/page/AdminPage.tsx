@@ -97,12 +97,18 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
           Create test data
         </Button>
         <h3>Remove test data</h3>
-        <p>Remove test data created with th above function.</p>
+        <p>
+          Remove test data created with th above function. Note that test inspections need to
+          be removed first.
+        </p>
         <Button loading={testDataRemoveLoading} onClick={() => removeTestData()}>
           Remove test data
         </Button>
         <h3>Force remove inspections</h3>
-        <p>Force removal of inspections belonging to the test season.</p>
+        <p>
+          Force removal of inspections belonging to the test season. Will also remove any
+          inspections where this is linked from.
+        </p>
         <Input
           style={{ marginBottom: '1rem' }}
           label="Inspection ID to remove"
@@ -110,7 +116,9 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
           onChange={(val) => setRemoveInspectionId(val)}
         />
 
-        {inspection && <InspectionCard onRefresh={() => {}} inspection={inspection} />}
+        {inspection && (
+          <InspectionCard key={inspection.id} onRefresh={() => {}} inspection={inspection} />
+        )}
 
         <Button loading={forceRemoveInspectionLoading} onClick={onRemoveInspection}>
           Force remove inspection
