@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { RouteComponentProps } from '@reach/router'
@@ -64,6 +64,23 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
     },
   })
 
+  let onRemoveInspection = useCallback(() => {
+    if (
+      confirm(
+        'Are you sure you want to remove this inspection? All inspections that are linked to it will also be removed.'
+      )
+    ) {
+      setRemoveInspectionId('')
+      forceRemoveInspection({
+        variables: {
+          inspectionId: removeInspectionId,
+          // Non-test inspections can also be removed by adding testOnly: false,
+          // but that is dangerous and not necessary for now.
+        },
+      })
+    }
+  }, [removeInspectionId, forceRemoveInspection])
+
   return (
     <AdminPageView>
       <PageTitle>Admin</PageTitle>
@@ -72,39 +89,30 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
         <p>
           Create test data for testing the application. Test data is deterministic and will not
           be "doubled".
+          <br />
+          Use season "TESTIKAUSI" and operator "Bultin testiliikennöitsijä" to create test
+          inspections.
         </p>
         <Button loading={testDataLoading} onClick={() => createTestData()}>
           Create test data
         </Button>
         <h3>Remove test data</h3>
         <p>Remove test data created with th above function.</p>
-        <Button loading={testDataLoading} onClick={() => createTestData()}>
+        <Button loading={testDataRemoveLoading} onClick={() => removeTestData()}>
           Remove test data
         </Button>
         <h3>Force remove inspections</h3>
         <p>Force removal of inspections belonging to the test season.</p>
-        <Input value={removeInspectionId} onChange={(val) => setRemoveInspectionId(val)} />
+        <Input
+          style={{ marginBottom: '1rem' }}
+          label="Inspection ID to remove"
+          value={removeInspectionId}
+          onChange={(val) => setRemoveInspectionId(val)}
+        />
 
         {inspection && <InspectionCard onRefresh={() => {}} inspection={inspection} />}
 
-        <Button
-          loading={forceRemoveInspectionLoading}
-          onClick={() => {
-            if (
-              confirm(
-                'Are you sure you want to remove this inspection? All inspections that are linked to it will also be removed.'
-              )
-            ) {
-              setRemoveInspectionId('')
-              forceRemoveInspection({
-                variables: {
-                  inspectionId: removeInspectionId,
-                  // Non-test inspections can also be removed by adding testOnly: false,
-                  // but that is dangerous and not necessary for now.
-                },
-              })
-            }
-          }}>
+        <Button loading={forceRemoveInspectionLoading} onClick={onRemoveInspection}>
           Force remove inspection
         </Button>
       </PageContainer>
