@@ -79,7 +79,7 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
         <h3>Remove test data</h3>
         <p>Remove test data created with th above function.</p>
         <Button loading={testDataLoading} onClick={() => createTestData()}>
-          Create test data
+          Remove test data
         </Button>
         <h3>Force remove inspections</h3>
         <p>Force removal of inspections belonging to the test season.</p>
