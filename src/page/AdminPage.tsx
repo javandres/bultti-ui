@@ -99,6 +99,8 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
               forceRemoveInspection({
                 variables: {
                   inspectionId: removeInspectionId,
+                  // Non-test inspections can also be removed by adding testOnly: false,
+                  // but that is dangerous and not necessary for now.
                 },
               })
             }
