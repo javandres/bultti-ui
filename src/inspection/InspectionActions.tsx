@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
-  useEditInspection,
+  useNavigateToInspection,
   useNavigateToInspectionReports,
   useRemoveInspection,
 } from './inspectionUtils'
@@ -61,21 +61,16 @@ const InspectionActions = observer(
 
     var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
-    var goToInspectionEdit = useEditInspection(inspection.inspectionType)
+    var navigateToInspection = useNavigateToInspection(inspection.inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
 
-    var onEditInspection = useCallback(
+    var onOpenInspection = useCallback(
       (inspection: Inspection) => {
-        // If the season of the inspection is not already selected, ensure it is selected.
-        if (inspection.seasonId !== season.id) {
-          setSeason(inspection.season)
-        }
-
-        goToInspectionEdit(inspection)
+        navigateToInspection(inspection)
       },
-      [goToInspectionEdit, setSeason, season]
+      [navigateToInspection, setSeason, season]
     )
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(
@@ -196,7 +191,7 @@ const InspectionActions = observer(
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
-              onClick={() => onEditInspection(inspection)}>
+              onClick={() => onOpenInspection(inspection)}>
               {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
             </Button>
           )}
