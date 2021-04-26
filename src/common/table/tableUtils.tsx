@@ -6,6 +6,7 @@ import { READABLE_TIME_FORMAT } from '../../constants'
 import { toString } from 'lodash'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
 import { CellContent } from './TableCell'
+import { getThousandSeparatedNumber } from '../../util/formatNumber'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
@@ -37,12 +38,11 @@ export function useRenderCellValue() {
     }
 
     if (typeof val === 'number') {
-      return round(val)
+      return getThousandSeparatedNumber(round(val))
     }
 
     if (val.length >= 20) {
       let date: Date | undefined
-
       try {
         let parsedDate = parseISO(val)
 
