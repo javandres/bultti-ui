@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import { SidebarSeasonFilter } from './AppSidebar'
 import SelectSeason from '../input/SelectSeason'
 import { getUrlValue } from '../../util/urlValue'
 import { getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
 import { text } from '../../util/translate'
 import { Season } from '../../schema-types'
+import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 
 const SeasonTimeSpan = styled.div`
   padding-top: 0.2rem;
@@ -25,7 +25,7 @@ const GlobalSeasonFilter: React.FC = observer(() => {
 
   return (
     <React.Fragment>
-      <SidebarSeasonFilter
+      <SidebarStyledDropdown
         as={SelectSeason}
         onSelect={setSeasonFilter}
         value={season}
