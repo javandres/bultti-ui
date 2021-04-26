@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components/macro'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
-import ErrorMessages from './ErrorMessages'
+import InfoMessages from './InfoMessages'
 
 const AppFrameView = styled.div`
   display: grid;
@@ -59,6 +59,7 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
 
   return (
     <AppFrameView>
+      <InfoMessages messageType="info" />
       {isAuthenticated && (
         <>
           <Sidebar>
@@ -71,7 +72,7 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
           </ScrollContext.Provider>
         </>
       )}
-      <ErrorMessages />
+      <InfoMessages messageType="error" />
     </AppFrameView>
   )
 })

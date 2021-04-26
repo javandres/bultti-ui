@@ -21,6 +21,7 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
 import { Text } from '../util/translate'
+import { useShowInfoMessage } from '../util/useShowInfoMessage'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -65,12 +66,19 @@ const InspectionActions = observer(
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
+    var setInfoMessage = useShowInfoMessage()
 
     var onOpenInspection = useCallback(
       (inspection: Inspection) => {
+        // If the season of the inspection is not already selected, ensure it is selected.
+        if (inspection.seasonId !== season.id) {
+          setInfoMessage(`The season changed to ${inspection.season}`)
+          setSeason(inspection.season)
+        }
+
         navigateToInspection(inspection)
       },
-      [navigateToInspection, setSeason, season]
+      [navigateToInspection, setSeason, season, setInfoMessage]
     )
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(

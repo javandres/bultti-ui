@@ -114,7 +114,7 @@ export type AppSidebarProps = {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user, setUser] = useStateValue<User>('user')
+  const [user, setUser] = useStateValue('user')
   let hasAdminAccess = useHasAdminAccessRights()
 
   let unsavedFormIdsState = useStateValue('unsavedFormIds')

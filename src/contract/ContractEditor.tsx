@@ -1,7 +1,7 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Contract, ContractInput, Operator } from '../schema-types'
+import { Contract, ContractInput } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -238,13 +238,14 @@ const renderLabel = (key, val, labels) => {
 
 const ContractEditor = observer(
   ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
-    let [globalOperator] = useStateValue<Operator>('globalOperator')
-    let [, setErrorMessage] = useStateValue('errorMessage')
+    let [globalOperator] = useStateValue('globalOperator')
+    let [, { add }] = useStateValue('errorMessages')
+
     let initialContract: ContractInput = useMemo(() => {
       if (isNew) {
         let newContract: Partial<Contract> = {
           operatorId: globalOperator?.id,
-          operator: globalOperator,
+          operator: globalOperator || undefined,
           startDate: getDateString(new Date()),
           endDate: getDateString(addYears(new Date(), 1)),
         }
@@ -260,10 +261,10 @@ const ContractEditor = observer(
     let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
 
     useEffect(() => {
-      if (isNew && pendingContract.operatorId !== globalOperator.operatorId) {
+      if (isNew && pendingContract.operatorId !== globalOperator?.operatorId) {
         setPendingContract({
           ...pendingContract,
-          operatorId: globalOperator.operatorId,
+          operatorId: globalOperator?.operatorId,
         })
       }
     }, [globalOperator && globalOperator.operatorId, isNew])
@@ -401,7 +402,7 @@ const ContractEditor = observer(
               operatorId: globalOperator.operatorId,
             },
           }).catch((error: ApolloError) => {
-            setErrorMessage(error.message)
+            add(error.message)
           })
         }
 
