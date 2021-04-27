@@ -159,7 +159,7 @@
   "equipmentCatalogue_startDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
   "equipmentCatalogue_endDateHint": "Ennakkotarkastukseen käytetään uusin tarkastusjakson aikana voimassa-oleva kalustoluettelo.",
 
-  "equipment_batchAddEquipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.",
+  "equipment_batchAddEquipment": "Liitä tekstikenttään lista ajoneuvojen kylkinumeroita, jotka haluat lisätä tähän kalustoluetteloon. Kylkinumerot tulee olla yksi per rivi.",
 
   "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
   "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
@@ -170,7 +170,8 @@
 
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
-  "inspection_selectInspection": "Tarkastusjakso",
+  "inspection_selectInspectionDate": "Tarkastusjakso",
+  "inspection_selectProductionDate": "Tuotantojakso",
   "inspection_inspectionSeason": "Tuotantojakso",
   "inspection_editor_hfp_unavailable": "Tarkastusjaksolle ei ole ladattu HFP-tiedot.",
   "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
@@ -189,9 +190,8 @@
   "inspectionList_youAreHere": "Olet tässä",
 
   "inspectionReports_heading": "${inspection}tarkastuksien raportit",
-  "inspectionReports_selectDate": "Valitse tuotantopäivämäärä",
 
-  "inspection_actions_openSubmitContainer": "Aseta tuotantojakso ja lähetä hyväksyttäväksi",
+  "inspection_actions_submit": "Lähetä hyväksyttäväksi",
   "inspection_actions_startSanctioning": "Aloita sanktiointi",
   "inspection_actions_remove": "Poista",
   "inspection_actions_publish": "Julkaise",

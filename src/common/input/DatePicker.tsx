@@ -197,6 +197,7 @@ const DatePicker: React.FC<PropTypes> = observer((props: PropTypes) => {
           isEmptyValueAllowed,
           onInputChange,
           value: currentValue,
+          label,
           acceptableDayTypes,
           disabled,
           onInputBlur: trimInputString,

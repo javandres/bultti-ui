@@ -2,22 +2,30 @@ import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
 import { isEqual, pick, uniqueId } from 'lodash'
-import { ControlGroup, FormColumn, InputLabel } from '../common/components/form'
+import { FormColumn } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/buttons/Button'
-import { ActionsWrapper } from '../common/input/ItemForm'
+import { ActionsWrapper, FieldLabel } from '../common/input/ItemForm'
 import styled from 'styled-components/macro'
 import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
 import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
 import { usePromptUnsavedChanges } from '../util/promptUnsavedChanges'
+import DatePicker from '../common/input/DatePicker'
+import { addDays, max, parseISO } from 'date-fns'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
   padding: 0 1rem 1rem;
+`
+
+const ProductionDatePickers = styled(FlexRow)`
+  div:first-of-type {
+    margin-right: 0.25rem;
+  }
 `
 
 export type PropTypes = {
@@ -26,16 +34,23 @@ export type PropTypes = {
 }
 
 const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection }) => {
-  let inspectionInputValues = useMemo(() => {
+  let initialInspectionInputValues = useMemo(() => {
+    let minStartDate = parseISO(inspection.minStartDate)
+    let startDate = inspection.startDate ? parseISO(inspection.startDate) : minStartDate
+    startDate = max([startDate, minStartDate])
+
+    let endDate = inspection.endDate ? parseISO(inspection.endDate) : addDays(startDate, 1)
+    endDate = max([addDays(startDate, 1), endDate])
+
     return {
+      startDate,
+      endDate,
       name: inspection.name || '',
       inspectionDateId: inspection.inspectionDateId,
       inspectionStartDate: inspection.inspectionStartDate || '',
       inspectionEndDate: inspection.inspectionEndDate || '',
     }
   }, [inspection])
-
-  let initialInspectionInputValues = { ...inspectionInputValues }
 
   let [
     pendingInspectionInputValues,
@@ -108,29 +123,30 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               onChange={onChangeInspectionDate}
             />
           </FlexRow>
-          <FlexRow>
-            {inspection.status !== InspectionStatus.Draft && (
-              <FormColumn>
-                <InputLabel>{text('inspection_inspectionSeason')}</InputLabel>
-                <ControlGroup>
-                  <Input
-                    type="date"
-                    value={inspection.startDate}
-                    label={text('startDate')}
-                    subLabel={true}
-                    disabled={true}
-                  />
-                  <Input
-                    type="date"
-                    value={inspection.endDate}
-                    label={text('endDate')}
-                    subLabel={true}
-                    disabled={true}
-                  />
-                </ControlGroup>
-              </FormColumn>
-            )}
-          </FlexRow>
+          <FieldLabel style={{ textTransform: 'uppercase' }}>
+            <Text>inspection_selectProductionDate</Text>
+          </FieldLabel>
+          <ProductionDatePickers>
+            <DatePicker
+              value={getDateString(pendingInspectionInputValues.startDate)}
+              minDate={inspection.minStartDate}
+              maxDate={inspection.season.endDate}
+              onChange={(dateString: string | null) => {
+                onUpdateValue('startDate', dateString)
+              }}
+              acceptableDayTypes={['Ma']}
+              disabled={inspection.status !== InspectionStatus.Draft}
+            />
+            <DatePicker
+              value={getDateString(pendingInspectionInputValues.endDate)}
+              maxDate={inspection.season.endDate}
+              onChange={(dateString: string | null) => {
+                onUpdateValue('endDate', dateString)
+              }}
+              acceptableDayTypes={['Su']}
+              disabled={inspection.status !== InspectionStatus.Draft}
+            />
+          </ProductionDatePickers>
           <FlexRow>
             <ActionsWrapper>
               <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
@@ -138,7 +154,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               </Button>
               <Button
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={() => setPendingInspectionInputValues(inspectionInputValues)}>
+                onClick={() => setPendingInspectionInputValues(initialInspectionInputValues)}>
                 <Text>cancel</Text>
               </Button>
             </ActionsWrapper>
