@@ -20,7 +20,10 @@ const main = async () => {
   let onAuthError = () => {
     removeAuthToken()
     state.actions.user(null)
-    state.actions.errorMessages.add('Authentication expired or invalid. Please log in again.')
+    state.actions.notifications.add({
+      message: 'Authentication expired or invalid. Please log in again.',
+      type: 'error',
+    })
   }
 
   const client = await createGraphqlClient(onAuthError)

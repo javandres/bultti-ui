@@ -1,10 +1,10 @@
 import { action, extendObservable } from 'mobx'
-import { UIActions } from '../type/state'
+import { UIActions, UINotification } from '../type/state'
 import { translate } from '../util/translate'
 import { Operator, Season } from '../schema-types'
 import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
 import { setUrlValue } from '../util/urlValue'
-import { uniq } from 'lodash'
+import { uniqBy } from 'lodash'
 import { languageState, setLanguage } from './languageState'
 
 export const unselectedOperator: Operator = {
@@ -36,8 +36,7 @@ export const UIStore = (state): UIActions => {
       // proxy separate language state through app state
       return languageState.language
     },
-    errorMessages: [],
-    infoMessages: [],
+    notifications: [],
     unsavedFormIds: [],
   }
 
@@ -63,25 +62,22 @@ export const UIStore = (state): UIActions => {
     setUrlValue('season', setValue?.id || '')
   })
 
-  type MessageFields = 'errorMessages' | 'infoMessages'
+  const addNotification = action((message: UINotification) => {
+    let nextMessages = [...state.notifications]
+    nextMessages.push(message)
+    state.notifications = uniqBy(nextMessages, (notif) => `${notif.message} ${notif.type}`)
+  })
 
-  const createMessageAdd = (stateVal: MessageFields) =>
-    action((message: string) => {
-      let nextMessages = [...state[stateVal]]
-      nextMessages.push(message)
-      state[stateVal] = uniq(nextMessages)
-    })
+  const removeNotification = action((message: UINotification | number) => {
+    let removeIdx =
+      typeof message === 'number' ? message : state.notifications.indexOf(message)
 
-  const createMessageRemove = (stateVal: MessageFields) =>
-    action((message: string | number) => {
-      let removeIdx = typeof message === 'number' ? message : state[stateVal].indexOf(message)
-
-      if (removeIdx !== -1 && state[stateVal][removeIdx]) {
-        let nextMessages = [...state[stateVal]]
-        nextMessages.splice(removeIdx, 1)
-        state[stateVal] = nextMessages
-      }
-    })
+    if (removeIdx !== -1 && state.notifications[removeIdx]) {
+      let nextMessages = [...state.notifications]
+      nextMessages.splice(removeIdx, 1)
+      state.notifications = nextMessages
+    }
+  })
 
   const onAppLoaded = action(() => {
     state.appLoaded = true
@@ -96,13 +92,9 @@ export const UIStore = (state): UIActions => {
     globalSeason: setSeasonFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
-    errorMessages: {
-      add: createMessageAdd('errorMessages'),
-      remove: createMessageRemove('errorMessages'),
-    },
-    infoMessages: {
-      add: createMessageAdd('infoMessages'),
-      remove: createMessageRemove('infoMessages'),
+    notifications: {
+      add: addNotification,
+      remove: removeNotification,
     },
     unsavedFormIds: setUnsavedFormIds,
   }

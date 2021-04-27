@@ -109,7 +109,7 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
           </ButtonWrapper>
         </>
       )}
-      <InfoMessages messageType="error" />
+      <InfoMessages />
     </LoadingScreen>
   )
 })

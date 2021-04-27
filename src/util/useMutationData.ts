@@ -9,7 +9,7 @@ import { DocumentNode, ExecutionResult } from 'graphql'
 import { useEffect, useMemo } from 'react'
 import { pickGraphqlData } from './pickGraphqlData'
 import { merge } from 'lodash'
-import { useStateValue } from '../state/useAppState'
+import { useShowErrorNotification } from './useShowNotification'
 
 export type MutationFnType<TData, TVariables> = (
   overrideOptions?: MutationFunctionOptions<TData, TVariables>
@@ -25,7 +25,7 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
 ): Mutator<TData, TVariables> => {
-  let [, { add: setErrorMessage }] = useStateValue('errorMessages')
+  let showErrorMessage = useShowErrorNotification()
 
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
@@ -40,7 +40,7 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
 
   useEffect(() => {
     if (error) {
-      setErrorMessage(error.message)
+      showErrorMessage(error.message)
     }
   }, [error])
 

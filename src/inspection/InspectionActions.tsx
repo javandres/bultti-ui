@@ -21,7 +21,7 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
-import { useShowInfoMessage } from '../util/useShowInfoMessage'
+import { useShowInfoNotification } from '../util/useShowNotification'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -66,7 +66,7 @@ const InspectionActions = observer(
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
-    var setInfoMessage = useShowInfoMessage()
+    var setInfoMessage = useShowInfoNotification()
 
     var onOpenInspection = useCallback(
       (inspection: Inspection) => {

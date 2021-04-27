@@ -35,6 +35,7 @@ import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 import { ApolloError } from '@apollo/client'
 import DatePicker from '../common/input/DatePicker'
+import { useShowErrorNotification } from '../util/useShowNotification'
 
 const ContractEditorView = styled.div``
 
@@ -239,7 +240,7 @@ const renderLabel = (key, val, labels) => {
 const ContractEditor = observer(
   ({ contract, onRefresh, isNew = false, editable }: PropTypes) => {
     let [globalOperator] = useStateValue('globalOperator')
-    let [, { add }] = useStateValue('errorMessages')
+    let showErrorNotification = useShowErrorNotification()
 
     let initialContract: ContractInput = useMemo(() => {
       if (isNew) {
@@ -402,7 +403,7 @@ const ContractEditor = observer(
               operatorId: globalOperator.operatorId,
             },
           }).catch((error: ApolloError) => {
-            add(error.message)
+            showErrorNotification(error.message)
           })
         }
 

@@ -24,13 +24,6 @@ const LinkedInspectionsView = styled.div<{ error?: boolean }>`
   transition: all 0.2s ease-out;
 `
 
-const LinkedStatusText = styled.span<{ updateIsAvailable?: boolean }>`
-  display: block;
-  font-size: 0.875rem;
-  align-self: center;
-  color: ${(p) => (p.updateIsAvailable ? 'var(--red)' : 'var(--light-grey)')};
-`
-
 export type PropTypes = {
   inspection: Inspection
   isEditable?: boolean

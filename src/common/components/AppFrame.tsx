@@ -73,8 +73,7 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
           </>
         )}
       </AppFrameView>
-      <InfoMessages messageType="info" />
-      <InfoMessages messageType="error" />
+      <InfoMessages />
     </>
   )
 })

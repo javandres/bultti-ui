@@ -12,8 +12,8 @@ import {
   getInspectionStatusColor,
   getInspectionStatusName,
   getInspectionTypeStrings,
-  useNavigateToInspection,
   useInspectionById,
+  useNavigateToInspection,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
@@ -25,6 +25,7 @@ import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import SanctionsContainer from '../postInspection/SanctionsContainer'
+import { useShowErrorNotification } from '../util/useShowNotification'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -84,7 +85,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
   ({ inspectionId = '', inspectionType }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
-    var [, { add: setErrorMessage }] = useStateValue('errorMessages')
+    var setErrorMessage = useShowErrorNotification()
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(

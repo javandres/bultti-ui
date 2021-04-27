@@ -2,14 +2,18 @@ import { FunctionMap } from './common'
 import { Language } from '../util/translate'
 import { Operator, Season, User } from '../schema-types'
 
+export type UINotification = {
+  message: string
+  type: 'error' | 'info'
+}
+
 export interface IAppState {
   user?: User
   globalOperator: Operator
   globalSeason: Season
   language: Language
   unsavedFormIds: string[]
-  infoMessages: string[]
-  errorMessages: string[]
+  notifications: UINotification[]
 }
 
 export type Initializer<T = any> = (
@@ -22,8 +26,8 @@ export interface UserActions extends FunctionMap {
 }
 
 export type MessageActions = {
-  add: (message: string) => void
-  remove: (removeMessage: string | number) => void
+  add: (message: UINotification) => void
+  remove: (removeMessage: UINotification | number) => void
 }
 
 export interface UIActions {
@@ -32,8 +36,7 @@ export interface UIActions {
   globalSeason: (season?: Season | null) => void
   appLoaded: () => void
   language: (setTo: Language) => void
-  infoMessages: MessageActions
-  errorMessages: MessageActions
+  notifications: MessageActions
   unsavedFormIds: (unsavedFormIds: string[]) => void
 }
 

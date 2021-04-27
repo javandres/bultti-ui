@@ -1,13 +1,13 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import styled, { css } from 'styled-components/macro'
+import styled from 'styled-components/macro'
 import { Button, ButtonSize, ButtonStyle } from './buttons/Button'
 import { useStateValue } from '../../state/useAppState'
 import { Text } from '../../util/translate'
 
 type MessageType = 'info' | 'error'
 
-const InfoWrapper = styled.div<{ type: MessageType }>`
+const InfoWrapper = styled.div`
   position: absolute;
   bottom: 0;
   right: 2rem;
@@ -32,30 +32,21 @@ const DismissButton = styled(Button)`
   margin-left: 1rem;
 `
 
-type PropTypes = {
-  messageType: MessageType
-}
-
-const InfoMessages: React.FC<PropTypes> = observer(({ messageType }) => {
-  // You'd think Typescript could figure this one out without help
-  let stateKey = (messageType === 'info' ? 'infoMessages' : 'errorMessages') as
-    | 'infoMessages'
-    | 'errorMessages'
-
-  let [messages, { remove: removeMessage }] = useStateValue(stateKey)
+const InfoMessages = observer(() => {
+  let [messages, { remove: removeMessage }] = useStateValue('notifications')
 
   if (messages.length === 0) {
     return null
   }
 
   return (
-    <InfoWrapper type={messageType}>
+    <InfoWrapper>
       {messages.map((message, idx) => (
-        <InfoMessage type={messageType} key={`message-${idx}`}>
-          <span>{message}</span>
+        <InfoMessage type={message.type} key={`message-${idx}`}>
+          <span>{message.message}</span>
           <DismissButton
             size={ButtonSize.SMALL}
-            buttonStyle={messageType === 'error' ? ButtonStyle.REMOVE : ButtonStyle.NORMAL}
+            buttonStyle={message.type === 'error' ? ButtonStyle.REMOVE : ButtonStyle.NORMAL}
             onClick={() => removeMessage(message)}>
             <Text>dismiss</Text>
           </DismissButton>

@@ -3,11 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
-import {
-  ExecutionRequirementValue,
-  ObservedExecutionValue,
-  ObservedRequirementValueInput,
-} from '../schema-types'
+import { ObservedExecutionValue } from '../schema-types'
 import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
