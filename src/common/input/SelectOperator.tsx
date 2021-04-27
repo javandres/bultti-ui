@@ -54,11 +54,6 @@ const SelectOperator: React.FC<PropTypes> = observer(
         operatorList = operatorList.filter((op) => operatorIsAuthorized(op, user))
       }
 
-      // The unselected option is not added if the operators list is only 1 long
-      if (operatorList[0]?.id !== unselectedOperator.id && operatorList.length !== 1) {
-        operatorList.unshift(unselectedOperator)
-      }
-
       return operatorList
     }, [userIsOperator, data])
 

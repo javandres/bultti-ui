@@ -18,7 +18,7 @@ export type PropTypes = {
 }
 
 export function seasonIsValid(season: Season | null | undefined) {
-  return season && season.id === unselectedSeason.id
+  return season && season.id !== unselectedSeason.id
 }
 
 const SelectSeason: React.FC<PropTypes> = observer(
@@ -35,11 +35,6 @@ const SelectSeason: React.FC<PropTypes> = observer(
         ({ startDate }) => parseISO(startDate).getTime(),
         'desc'
       )
-
-      // Add the unselected value to the top of the list
-      if (seasonsList[0]?.id !== unselectedVal.id) {
-        seasonsList.unshift(unselectedVal)
-      }
 
       return seasonsList
     }, [seasonsData, value, unselectedVal])
