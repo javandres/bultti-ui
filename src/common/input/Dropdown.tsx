@@ -80,10 +80,10 @@ export type DropdownProps<ValueType = {}> = {
   label?: string
   items: ValueType[] // ValueType object (remember to pass itemToString, itemToLabel), array, { field, value } object.
   onSelect: (selectedItem: ValueType) => unknown
+  selectedItem?: ValueType
   unselectedValue?: ValueType
   itemToString?: string | ((item: ValueType) => string) // property of given object to get value from or a function that returns the value.
   itemToLabel?: string | ((item: ValueType) => string | JSX.Element) // property of given object to get label from or a function that returns the label.
-  selectedItem?: ValueType
   className?: string
   hintText?: string
   style?: CSSProperties
@@ -137,7 +137,7 @@ const Dropdown = observer(
     } = useSelect({
       items,
       onSelectedItemChange: onSelectFn,
-      selectedItem,
+      selectedItem: selectedItem || unselectedValue,
       defaultSelectedItem: items[0] || unselectedValue,
       itemToString: (item) => toString(item, itemToString),
     })

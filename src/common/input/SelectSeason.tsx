@@ -58,15 +58,22 @@ const SelectSeason: React.FC<PropTypes> = observer(
       let initialSeasonId = selectInitialId || (typeof value === 'string' ? value : '')
       let initialSeason = seasons.find((s) => s.id === initialSeasonId)
 
-      // If no value or if we got a string value
-      if ((!value || typeof value === 'string') && initialSeason) {
+      // If no value, or if we got a string value, or if the value is the "unselected" object,
+      // set the initial season if we've got one.
+      if (
+        (!value || typeof value === 'string' || value.id === unselectedVal.id) &&
+        initialSeason
+      ) {
         onSelect(initialSeason)
-      } else if (!value && !initialSeason && seasons.length !== 0) {
+      } else if (!initialSeason && seasons.length !== 0) {
+        // If no initial season, set the first actual season from the options.
         onSelect(seasons.find((season) => !enableAll && season.id !== unselectedVal.id))
       }
     }, [value, seasons, unselectedVal, onSelect, selectInitialId, enableAll])
 
+    // The currently selected season.
     const currentSeason = useMemo(() => {
+      // Find the season object if the value is a string
       if (!!value && typeof value === 'string') {
         return seasons.find((s) => s.id === value)
       }
