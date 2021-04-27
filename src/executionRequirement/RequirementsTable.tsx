@@ -15,6 +15,7 @@ import {
 import Big from 'big.js'
 import { text } from '../util/translate'
 import { DEFAULT_DECIMALS } from '../constants'
+import { getThousandSeparatedNumber } from '../util/formatNumber'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1rem;
@@ -135,7 +136,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      let useVal = round(val)
+      let useVal = getThousandSeparatedNumber(round(val))
       return `${useVal} ${unit}`
     }, [])
 
@@ -145,7 +146,10 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalVal = round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
+        let totalVal = getThousandSeparatedNumber(
+          round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
+        )
+
         switch (key) {
           case 'percentage':
           case 'quotaRequirement':
