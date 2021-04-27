@@ -58,22 +58,24 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
   )
 
   return (
-    <AppFrameView>
+    <>
+      <AppFrameView>
+        {isAuthenticated && (
+          <>
+            <Sidebar>
+              <AppSidebar />
+            </Sidebar>
+            <ScrollContext.Provider value={subscribe}>
+              <Main onScroll={scrollHandler} ref={mainViewRef}>
+                {children}
+              </Main>
+            </ScrollContext.Provider>
+          </>
+        )}
+      </AppFrameView>
       <InfoMessages messageType="info" />
-      {isAuthenticated && (
-        <>
-          <Sidebar>
-            <AppSidebar />
-          </Sidebar>
-          <ScrollContext.Provider value={subscribe}>
-            <Main onScroll={scrollHandler} ref={mainViewRef}>
-              {children}
-            </Main>
-          </ScrollContext.Provider>
-        </>
-      )}
       <InfoMessages messageType="error" />
-    </AppFrameView>
+    </>
   )
 })
 

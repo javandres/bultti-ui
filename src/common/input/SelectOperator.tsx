@@ -8,7 +8,7 @@ import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
 import { operatorIsAuthorized } from '../../util/operatorIsAuthorized'
 import { isNumeric } from '../../util/isNumeric'
-import { defaultOperator } from '../../state/UIStore'
+import { unselectedOperator } from '../../state/UIStore'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -34,7 +34,7 @@ export const operatorIsValid = (operator: Operator | number | null | undefined) 
   if (
     !operator ||
     typeof operator === 'number' ||
-    operator?.id === defaultOperator.id ||
+    operator?.id === unselectedOperator.id ||
     !isNumeric(operator?.id)
   ) {
     return false
@@ -59,8 +59,8 @@ const SelectOperator: React.FC<PropTypes> = observer(
       }
 
       // The unselected option is not added if the operators list is only 1 long
-      if (operatorList[0]?.id !== defaultOperator.id && operatorList.length !== 1) {
-        operatorList.unshift(defaultOperator)
+      if (operatorList[0]?.id !== unselectedOperator.id && operatorList.length !== 1) {
+        operatorList.unshift(unselectedOperator)
       }
 
       return operatorList
@@ -116,7 +116,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}
-        unselectedValue={defaultOperator}
+        unselectedValue={unselectedOperator}
         itemToString="id"
         itemToLabel="operatorName"
       />

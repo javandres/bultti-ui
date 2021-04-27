@@ -20,6 +20,7 @@ import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import InspectionValidationErrors from './InspectionValidationErrors'
 import { Button } from '../common/components/buttons/Button'
 import { getInspectionTypeStrings } from './inspectionUtils'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -78,7 +79,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     )
 
     useEffect(() => {
-      if (!inspection || !operator || !season) {
+      if (!inspection || !operatorIsValid(operator) || !season) {
         return
       }
 

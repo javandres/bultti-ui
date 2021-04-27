@@ -20,7 +20,7 @@ import { useMatch } from '@reach/router'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { useShowInfoMessage } from '../util/useShowInfoMessage'
 
 const ButtonRow = styled.div`
@@ -72,7 +72,10 @@ const InspectionActions = observer(
       (inspection: Inspection) => {
         // If the season of the inspection is not already selected, change the selected season to match.
         if (inspection && inspection.seasonId !== season.id) {
-          setInfoMessage(`The season changed to ${inspection.season.id}`)
+          setInfoMessage(
+            text('inspection_seasonChangedAutomatically', { newSeason: inspection.season.id })
+          )
+
           setSeason(inspection.season)
         }
 

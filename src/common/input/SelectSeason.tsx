@@ -5,7 +5,7 @@ import { parseISO } from 'date-fns'
 import { orderBy } from 'lodash'
 import Dropdown from './Dropdown'
 import { useSeasons } from '../../util/useSeasons'
-import { defaultSeason } from '../../state/UIStore'
+import { unselectedSeason } from '../../state/UIStore'
 import { text } from '../../util/translate'
 
 export type PropTypes = {
@@ -19,7 +19,7 @@ export type PropTypes = {
 
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ enableAll = false, onSelect, value = null, label, className, selectInitialId }) => {
-    let unselectedVal = { ...defaultSeason }
+    let unselectedVal = { ...unselectedSeason }
     unselectedVal.id = enableAll ? text('all') : text('unselected')
 
     let seasonsData = useSeasons()

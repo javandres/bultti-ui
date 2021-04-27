@@ -7,7 +7,7 @@ import { setUrlValue } from '../util/urlValue'
 import { uniq } from 'lodash'
 import { languageState, setLanguage } from './languageState'
 
-export const defaultOperator: Operator = {
+export const unselectedOperator: Operator = {
   equipment: [],
   equipmentCatalogues: [],
   executionRequirements: [],
@@ -19,7 +19,7 @@ export const defaultOperator: Operator = {
   contracts: [],
 }
 
-export const defaultSeason: Season = {
+export const unselectedSeason: Season = {
   endDate: '',
   inspections: [],
   startDate: '',
@@ -30,8 +30,8 @@ export const defaultSeason: Season = {
 export const UIStore = (state): UIActions => {
   const defaultState = {
     appLoaded: false,
-    globalOperator: defaultOperator,
-    globalSeason: defaultSeason,
+    globalOperator: unselectedOperator,
+    globalSeason: unselectedSeason,
     get language() {
       // proxy separate language state through app state
       return languageState.language
@@ -43,12 +43,12 @@ export const UIStore = (state): UIActions => {
 
   extendObservable(state, defaultState)
 
-  const setOperatorFilter = action((value: Operator | null = defaultOperator) => {
+  const setOperatorFilter = action((value: Operator | null = unselectedOperator) => {
     if (!operatorIsAuthorized(value, state.user)) {
       return
     }
 
-    let setValue = value || defaultOperator
+    let setValue = value || unselectedOperator
     state.globalOperator = setValue
 
     setUrlValue(
@@ -57,8 +57,8 @@ export const UIStore = (state): UIActions => {
     )
   })
 
-  const setSeasonFilter = action((value: Season | null = defaultSeason) => {
-    let setValue = value || defaultSeason
+  const setSeasonFilter = action((value: Season | null = unselectedSeason) => {
+    let setValue = value || unselectedSeason
     state.globalSeason = setValue
     setUrlValue('season', setValue?.id || '')
   })

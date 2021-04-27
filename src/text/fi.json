@@ -172,6 +172,7 @@
   "inspectionPage_sanctions": "Sanktiointi",
   "inspectionPage_relatedUsers": "Käyttäjät",
 
+  "inspection_seasonChangedAutomatically": "The season was changed automatically to ${newSeason}",
   "inspection_inspectionNotSelected": "Tarkastusta ei ole valittu.",
   "inspection_inspectionName": "Tarkastuksen nimi",
   "inspection_selectInspection": "Tarkastusjakso",
