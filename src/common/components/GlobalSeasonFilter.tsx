@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import SelectSeason from '../input/SelectSeason'
+import SelectSeason, { seasonIsValid } from '../input/SelectSeason'
 import { getUrlValue } from '../../util/urlValue'
 import { getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
@@ -31,7 +31,7 @@ const GlobalSeasonFilter: React.FC = observer(() => {
         label={text('selectSeason')}
         selectInitialId={initialSeasonId}
       />
-      {season.startDate && (
+      {seasonIsValid(season) && (
         <SeasonTimeSpan>
           {getReadableDateRange({ start: season.startDate, end: season.endDate })}
         </SeasonTimeSpan>
