@@ -17,6 +17,10 @@ export type PropTypes = {
   enableAll?: boolean
 }
 
+export function seasonIsValid(season: Season | null | undefined) {
+  return season && season.id === unselectedSeason.id
+}
+
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ enableAll = false, onSelect, value = null, label, className, selectInitialId }) => {
     let unselectedVal = { ...unselectedSeason }

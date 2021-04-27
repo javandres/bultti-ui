@@ -26,6 +26,8 @@ import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import SanctionsContainer from '../postInspection/SanctionsContainer'
 import { useShowErrorNotification } from '../util/useShowNotification'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { seasonIsValid } from '../common/input/SelectSeason'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -142,7 +144,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             )}
           </PageTitle>
           <EditInspectionPageContainer>
-            {!operator || !season ? (
+            {!operatorIsValid(operator) || !seasonIsValid(season) ? (
               <MessageContainer style={{ margin: '1rem' }}>
                 <MessageView>
                   <Text>inspectionPage_selectOperatorAndSeason</Text>

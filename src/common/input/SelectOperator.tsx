@@ -31,16 +31,12 @@ export type PropTypes = {
 }
 
 export const operatorIsValid = (operator: Operator | number | null | undefined) => {
-  if (
-    !operator ||
-    typeof operator === 'number' ||
-    operator?.id === unselectedOperator.id ||
-    !isNumeric(operator?.id)
-  ) {
-    return false
-  }
-
-  return true
+  return (
+    operator &&
+    typeof operator !== 'number' &&
+    operator.id !== unselectedOperator.id &&
+    isNumeric(operator.id)
+  )
 }
 
 const SelectOperator: React.FC<PropTypes> = observer(

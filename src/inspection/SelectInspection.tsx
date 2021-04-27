@@ -18,6 +18,8 @@ import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
 import { LoadingDisplay } from '../common/components/Loading'
 import { getReadableDate } from '../util/formatDate'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { seasonIsValid } from '../common/input/SelectSeason'
 
 const SelectInspectionView = styled.div`
   position: relative;
@@ -197,7 +199,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
     return (
       <SelectInspectionView>
         <LoadingDisplay loading={loading} />
-        {!operator || !season ? (
+        {!operatorIsValid(operator) || !seasonIsValid(season) ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
           </MessageContainer>

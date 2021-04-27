@@ -19,6 +19,7 @@ import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
 import { text, Text } from '../util/translate'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -105,7 +106,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         <Text keyValueMap={{ inspection: typeStrings.prefix }}>inspectionReports_heading</Text>
       </PageTitle>
       <PageContainer>
-        {!operator && (
+        {!operatorIsValid(operator) && (
           <MessageContainer>
             <MessageView>
               <Text>selectOperator</Text>
