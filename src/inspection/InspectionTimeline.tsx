@@ -10,6 +10,7 @@ import { orderBy } from 'lodash'
 import { useQueryData } from '../util/useQueryData'
 import { inspectionsTimelineByOperatorQuery } from './inspectionQueries'
 import { getReadableDate } from '../util/formatDate'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 const InspectionTimelineView = styled.div`
   margin: 1rem 0;
@@ -66,7 +67,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
   let { data: inspectionsData } = useQueryData<InspectionTimelineItem>(
     inspectionsTimelineByOperatorQuery,
     {
-      skip: !operator,
+      skip: !operatorIsValid(operator),
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: operator?.operatorId,

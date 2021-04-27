@@ -11,7 +11,7 @@ import { text } from '../../util/translate'
 export type PropTypes = {
   label?: string | null
   className?: string
-  value: Season | string
+  value: Season
   onSelect: (season?: Season) => void
   selectInitialId?: string
   enableAll?: boolean
@@ -55,18 +55,19 @@ const SelectSeason: React.FC<PropTypes> = observer(
 
     // Auto-select the first season if there is only one.
     useEffect(() => {
-      let initialSeasonId = selectInitialId || (typeof value === 'string' ? value : '')
-      let initialSeason = seasons.find((s) => s.id === initialSeasonId)
+      // Get the season matching the initialId value or the value string as a proper object.
+      let initialSeason = seasons.find((s) => s.id === selectInitialId)
 
+      // Value is empty when it is falsy or when the value.id matches the unselected season object id.
+      let valueIsEmpty = !value || value.id === unselectedVal.id
       // If no value, or if we got a string value, or if the value is the "unselected" object,
       // set the initial season if we've got one.
-      if (
-        (!value || typeof value === 'string' || value.id === unselectedVal.id) &&
-        initialSeason
-      ) {
+      let setProvidedInitialSeason = initialSeason && valueIsEmpty
+
+      if (setProvidedInitialSeason) {
         onSelect(initialSeason)
-      } else if (!initialSeason && seasons.length !== 0) {
-        // If no initial season, set the first actual season from the options.
+      } else if (seasons.length !== 0 && valueIsEmpty) {
+        // If no initial season and no actual value already, set the first actual season from the options.
         onSelect(seasons.find((season) => !enableAll && season.id !== unselectedVal.id))
       }
     }, [value, seasons, unselectedVal, onSelect, selectInitialId, enableAll])

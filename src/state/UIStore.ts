@@ -57,9 +57,8 @@ export const UIStore = (state): UIActions => {
   })
 
   const setSeasonFilter = action((value: Season | null = unselectedSeason) => {
-    let setValue = value || unselectedSeason
-    state.globalSeason = setValue
-    setUrlValue('season', setValue?.id || '')
+    state.globalSeason = value || unselectedSeason
+    setUrlValue('season', value?.id === unselectedSeason.id ? '' : value?.id || '')
   })
 
   const addNotification = action((message: UINotification) => {
