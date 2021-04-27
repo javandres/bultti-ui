@@ -112,6 +112,12 @@ export const lightInspectionFragment = gql`
       id
       operatorName
     }
+    season {
+      id
+      season
+      startDate
+      endDate
+    }
   }
 `
 

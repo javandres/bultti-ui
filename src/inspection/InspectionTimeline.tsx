@@ -90,16 +90,17 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
   let arrow = <ArrowRight fill="var(--light-grey)" width="1.5rem" height="1.5rem" />
 
   let seasonStartElement = useMemo(
-    () => (
-      <>
-        <TimelineStart>
-          Kauden alku
-          <br />
-          <strong>{getReadableDate(season.startDate)}</strong>
-        </TimelineStart>
-        {arrow}
-      </>
-    ),
+    () =>
+      season.startDate && (
+        <>
+          <TimelineStart>
+            Kauden alku
+            <br />
+            <strong>{getReadableDate(season.startDate)}</strong>
+          </TimelineStart>
+          {arrow}
+        </>
+      ),
     [season]
   )
 

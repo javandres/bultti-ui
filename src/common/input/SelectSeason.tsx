@@ -17,9 +17,6 @@ export type PropTypes = {
   enableAll?: boolean
 }
 
-const valueIsSeason = (value: null | Season | string): value is Season =>
-  !!value && typeof value !== 'string' && typeof value?.id !== 'undefined'
-
 const SelectSeason: React.FC<PropTypes> = observer(
   ({ enableAll = false, onSelect, value = null, label, className, selectInitialId }) => {
     let unselectedVal = { ...defaultSeason }
@@ -64,12 +61,10 @@ const SelectSeason: React.FC<PropTypes> = observer(
       // If no value or if we got a string value
       if ((!value || typeof value === 'string') && initialSeason) {
         onSelect(initialSeason)
-      }
-
-      if (!value && !initialSeason && seasons.length !== 0) {
+      } else if (!value && !initialSeason && seasons.length !== 0) {
         onSelect(seasons.find((season) => !enableAll && season.id !== unselectedVal.id))
       }
-    }, [value, seasons, onSelect, selectInitialId, enableAll])
+    }, [value, seasons, unselectedVal, onSelect, selectInitialId, enableAll])
 
     const currentSeason = useMemo(() => {
       if (!!value && typeof value === 'string') {
