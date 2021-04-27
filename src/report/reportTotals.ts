@@ -4,10 +4,7 @@ import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 import Big from 'big.js'
 import { text } from '../util/translate'
-import {
-  getThousandSeparatedNumber,
-  getThousandSeparatedNumberBig,
-} from '../util/formatNumber'
+import { getThousandSeparatedNumber } from '../util/formatNumber'
 
 // Define column total functions here with the name of the report they apply to.
 const reportTotalFns = {
@@ -41,7 +38,7 @@ function createSanctionSummaryColumnTotals(rows: SanctionSummaryReportData[]) {
     // Show how many percentage of all sanctions this sanction column accounts for
     if (key.endsWith('%')) {
       return (
-        getThousandSeparatedNumberBig(
+        getThousandSeparatedNumber(
           Big(getTotal(rows, key)).div(Math.max(rows.length, 1)).round(6).mul(100)
         ) + '%'
       )

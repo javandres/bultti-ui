@@ -149,6 +149,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         let totalVal = getThousandSeparatedNumber(
           round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
         )
+
         switch (key) {
           case 'percentage':
           case 'quotaRequirement':
