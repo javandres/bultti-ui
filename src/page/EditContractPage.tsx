@@ -28,7 +28,7 @@ export type PropTypes = {
 } & RouteComponentProps
 
 const EditContractPage = observer(({ contractId }: PropTypes) => {
-  let [globalOperator] = useStateValue<Operator>('globalOperator')
+  let [globalOperator] = useStateValue('globalOperator')
   let hasOperatorAccess = useHasOperatorUserAccessRights(globalOperator?.id)
   let hasAdminAccessRights = useHasAdminAccessRights()
   let isNew = contractId === 'new'

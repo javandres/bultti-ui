@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { css } from 'styled-components/macro'
 import { Button, ButtonSize, ButtonStyle } from './buttons/Button'
@@ -44,19 +44,12 @@ type PropTypes = {
 }
 
 const InfoMessages: React.FC<PropTypes> = observer(({ messageType }) => {
-  let stateKey = messageType === 'info' ? 'infoMessages' : 'errorMessages'
-  let [messages, setMessages] = useStateValue(stateKey)
+  // You'd think Typescript could figure this one out without help
+  let stateKey = (messageType === 'info' ? 'infoMessages' : 'errorMessages') as
+    | 'infoMessages'
+    | 'errorMessages'
 
-  let onDismiss = useCallback(
-    (messageIdx) => {
-      setMessages((currentMessages) => {
-        let nextMessages = [...currentMessages]
-        nextMessages.splice(messageIdx, 1)
-        return nextMessages
-      })
-    },
-    [setMessages]
-  )
+  let [messages, { remove: removeMessage }] = useStateValue(stateKey)
 
   if (messages.length === 0) {
     return null
@@ -70,7 +63,7 @@ const InfoMessages: React.FC<PropTypes> = observer(({ messageType }) => {
           <DismissButton
             size={ButtonSize.SMALL}
             buttonStyle={messageType === 'error' ? ButtonStyle.REMOVE : ButtonStyle.NORMAL}
-            onClick={() => onDismiss(idx)}>
+            onClick={() => removeMessage(message)}>
             <Text>dismiss</Text>
           </DismissButton>
         </InfoMessage>

@@ -25,7 +25,7 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
 ): Mutator<TData, TVariables> => {
-  let [, setErrorMessage] = useStateValue('errorMessage')
+  let [, { add: setErrorMessage }] = useStateValue('errorMessages')
 
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,

@@ -75,14 +75,15 @@ const DropdownItem = styled.li<{ highlighted: boolean }>`
   user-select: none;
 `
 
-export type DropdownProps = {
+export type DropdownProps<ValueType = {}> = {
   disabled?: boolean
   label?: string
-  items: any[] // any object (remember to pass itemToString, itemToLabel), array, { field, value } object.
-  onSelect: (selectedItem: any | null) => unknown
-  itemToString?: string | ((item: any | null) => string) // property of given object to get value from or a function that returns the value.
-  itemToLabel?: string | ((item: any | null) => string | JSX.Element) // property of given object to get label from or a function that returns the label.
-  selectedItem?: any // TODO: add documentation of this property or change any
+  items: ValueType[] // ValueType object (remember to pass itemToString, itemToLabel), array, { field, value } object.
+  onSelect: (selectedItem: ValueType) => unknown
+  unselectedValue?: ValueType
+  itemToString?: string | ((item: ValueType) => string) // property of given object to get value from or a function that returns the value.
+  itemToLabel?: string | ((item: ValueType) => string | JSX.Element) // property of given object to get label from or a function that returns the label.
+  selectedItem?: ValueType
   className?: string
   hintText?: string
   style?: CSSProperties
@@ -104,8 +105,8 @@ function toString(item, converter?: string | ((item) => string | JSX.Element)) {
   return ''
 }
 
-const Dropdown: React.FC<DropdownProps> = observer(
-  ({
+const Dropdown = observer(
+  <ValueType extends {} | string = {}>({
     disabled = false,
     className,
     style = {},
@@ -116,10 +117,11 @@ const Dropdown: React.FC<DropdownProps> = observer(
     hintText,
     itemToString = 'id',
     itemToLabel = 'label',
-  }) => {
+    unselectedValue,
+  }: DropdownProps<ValueType>) => {
     const onSelectFn = useCallback(
-      ({ selectedItem = null }) => {
-        setTimeout(() => onSelect(selectedItem || null), 1)
+      ({ selectedItem = unselectedValue }) => {
+        onSelect(selectedItem)
       },
       [onSelect]
     )
@@ -136,11 +138,14 @@ const Dropdown: React.FC<DropdownProps> = observer(
       items,
       onSelectedItemChange: onSelectFn,
       selectedItem,
-      defaultSelectedItem: items[0],
-      itemToString: (item: any) => toString(item, itemToString),
+      defaultSelectedItem: items[0] || unselectedValue,
+      itemToString: (item) => toString(item, itemToString),
     })
 
-    let buttonLabel = toString(currentlySelected, itemToLabel) || text('all')
+    let buttonLabel =
+      toString(currentlySelected, itemToLabel) ||
+      toString(unselectedValue, itemToLabel) ||
+      text('all')
 
     return (
       <DropdownView className={className} style={style}>

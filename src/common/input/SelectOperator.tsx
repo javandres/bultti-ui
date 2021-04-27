@@ -1,13 +1,14 @@
 import React, { CSSProperties, useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
-import { Operator, User, UserRole } from '../../schema-types'
+import { Operator, UserRole } from '../../schema-types'
 import Dropdown from './Dropdown'
 import { gql } from '@apollo/client'
 import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
 import { operatorIsAuthorized } from '../../util/operatorIsAuthorized'
 import { isNumeric } from '../../util/isNumeric'
+import { defaultOperator } from '../../state/UIStore'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -23,21 +24,17 @@ export type PropTypes = {
   label?: string | null
   className?: string
   style?: CSSProperties
-  value: null | Operator | number
-  onSelect: (operator: null | Operator) => void
+  value: Operator | number
+  onSelect: (operator?: Operator) => void
   selectInitialId?: number
   disabled?: boolean
-  useUnselected?: boolean
 }
-
-const unselectedId = 0
-const unselectedName = '...'
 
 export const operatorIsValid = (operator: Operator | number | null | undefined) => {
   if (
     !operator ||
     typeof operator === 'number' ||
-    operator?.id === unselectedId ||
+    operator?.id === defaultOperator.id ||
     !isNumeric(operator?.id)
   ) {
     return false
@@ -47,18 +44,9 @@ export const operatorIsValid = (operator: Operator | number | null | undefined) 
 }
 
 const SelectOperator: React.FC<PropTypes> = observer(
-  ({
-    onSelect,
-    value = null,
-    label,
-    className,
-    style,
-    disabled = false,
-    selectInitialId,
-    useUnselected = true,
-  }) => {
+  ({ onSelect, value, label, className, style, disabled = false, selectInitialId }) => {
     const { data } = useQueryData(operatorsQuery)
-    const [user] = useStateValue<User>('user')
+    const [user] = useStateValue('user')
 
     let userIsOperator = useMemo(() => user && user?.role === UserRole.Operator, [user])
 
@@ -70,16 +58,13 @@ const SelectOperator: React.FC<PropTypes> = observer(
         operatorList = operatorList.filter((op) => operatorIsAuthorized(op, user))
       }
 
-      // The "..." option is not added if the operators list is only 1 long
-      if (useUnselected && operatorList[0]?.id !== unselectedId && operatorList.length !== 1) {
-        operatorList.unshift({
-          id: unselectedId,
-          operatorName: unselectedName,
-        })
+      // The unselected option is not added if the operators list is only 1 long
+      if (operatorList[0]?.id !== defaultOperator.id && operatorList.length !== 1) {
+        operatorList.unshift(defaultOperator)
       }
 
       return operatorList
-    }, [userIsOperator, data, useUnselected])
+    }, [userIsOperator, data])
 
     // Auto-select the first operator if there is only one, or the initially selected id.
     useEffect(() => {
@@ -119,8 +104,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
 
     const currentOperator = useMemo(() => {
       let valueId = typeof value === 'number' ? value : value?.id
-
-      return !valueId ? null : operators.find((op) => valueId === op.id) || operators[0]
+      return !valueId ? undefined : operators.find((op) => valueId === op.id) || operators[0]
     }, [operators, value])
 
     return (
@@ -132,6 +116,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
         items={operators}
         onSelect={onSelectOperator}
         selectedItem={currentOperator}
+        unselectedValue={defaultOperator}
         itemToString="id"
         itemToLabel="operatorName"
       />

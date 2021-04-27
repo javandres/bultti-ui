@@ -57,14 +57,9 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
 
   let [globalSeason] = useStateValue('globalSeason')
 
-  let [selectedSeason, setSelectedSeason] = useState<Season | null>(globalSeason)
   let [selectedDate, setSelectedDate] = useState<{ value: string; label: string }>(
     defaultSelectedDate
   )
-
-  useEffect(() => {
-    setSelectedSeason(globalSeason)
-  }, [globalSeason])
 
   let openReports = useNavigateToInspectionReports()
 
@@ -74,11 +69,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         return false
       }
 
-      if (
-        selectedSeason &&
-        selectedSeason.id !== 'Kaikki' &&
-        selectedSeason.id !== inspection.seasonId
-      ) {
+      if (globalSeason && globalSeason.id !== inspection.seasonId) {
         return false
       }
 
@@ -94,7 +85,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
     })
 
     return orderBy(filteredList, 'startDate', 'desc')
-  }, [inspections, selectedSeason, selectedDate])
+  }, [inspections, globalSeason, selectedDate])
 
   let startDateOptions = useMemo(
     () => [
@@ -126,14 +117,6 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         {inspections.length !== 0 && (
           <>
             <FilterBar>
-              <FilterControlGroup>
-                <SelectSeason
-                  enableAll={true}
-                  label={text('selectSeason')}
-                  onSelect={setSelectedSeason}
-                  value={selectedSeason}
-                />
-              </FilterControlGroup>
               <FilterControlGroup>
                 <Dropdown
                   label={text('inspectionReports_selectDate')}

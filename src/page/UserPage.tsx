@@ -8,7 +8,7 @@ import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import { modifyUserMutation } from '../common/query/authQueries'
 import { LoadingDisplay } from '../common/components/Loading'
-import { User, UserInput } from '../schema-types'
+import { User, UserInput, UserRole } from '../schema-types'
 import { PageTitle } from '../common/components/PageTitle'
 import { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
@@ -17,13 +17,13 @@ const UserPageView = styled(Page)``
 
 export type PropTypes = RouteComponentProps
 
-function createUserInput(user: User): UserInput {
+function createUserInput(user?: User): UserInput {
   return {
-    id: user.id,
-    name: user.name,
+    id: user?.id || '',
+    name: user?.name || '',
     operatorIds: (user?.operatorIds || []).join(','),
-    organisation: user.organisation,
-    role: user.role,
+    organisation: user?.organisation || '',
+    role: user?.role || UserRole.Blocked,
   }
 }
 
@@ -92,6 +92,10 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     [user]
   )
 
+  if (!user) {
+    return null
+  }
+
   return (
     <UserPageView>
       <PageTitle>Käyttäjä</PageTitle>
@@ -104,7 +108,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
           onDone={onDone}
           onCancel={onCancel}
           readOnly={['email', 'hslIdGroups']}
-          item={{ email: user.email, hslIdGroups: user.hslIdGroups, ...pendingUser }}
+          item={{ email: user?.email, hslIdGroups: user?.hslIdGroups, ...pendingUser }}
           renderInput={renderUserInput}
         />
       </PageContainer>

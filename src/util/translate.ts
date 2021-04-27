@@ -1,19 +1,19 @@
+export type Language = 'fi'
+
 import { observer } from 'mobx-react-lite'
-import { languageState } from '../state/UIStore'
 import { get } from 'lodash'
+import { languageState } from '../state/languageState'
 
 const languageFiles = {
   fi: require('../text/fi.json'),
 }
 
-export type Language = 'fi'
-
 /**
  * @param {String} key - key in language files
+ * @param {String} language - The currently selected language
  **/
-function translate(key: string) {
-  const language = languageState.language
-  const languageFile = get(languageFiles, `${language}`, false)
+export function translate(key: string, language = languageState.language) {
+  const languageFile = get(languageFiles, language, false)
 
   if (!languageFile) {
     console.error('No language file found for language: ' + language)
@@ -35,10 +35,15 @@ function translate(key: string) {
 export function text(key: string, keyValueMap?: Object) {
   let lineString = translate(key)
   const regexRule = /\$\{(\w+)\}/g // ${...}
-  if (!keyValueMap) return lineString
+
+  if (!keyValueMap) {
+    return lineString
+  }
+
   const replacer = (match: any, name: string) => {
     return name in keyValueMap ? keyValueMap[name] : match
   }
+
   lineString = lineString.replace(regexRule, replacer)
   return lineString
 }

@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useNavigateToInspection,
@@ -53,7 +53,7 @@ export type PropTypes = {
 
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style }: PropTypes) => {
-    var [season, setSeason] = useStateValue<Season>('globalSeason')
+    var [season, setSeason] = useStateValue('globalSeason')
     var [isSubmitActive, setSubmitActive] = useState<boolean>(false)
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(

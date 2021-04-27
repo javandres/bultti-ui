@@ -1,20 +1,11 @@
-import { action, extendObservable, observable } from 'mobx'
+import { action, extendObservable } from 'mobx'
 import { UIActions } from '../type/state'
-import { Language } from '../util/translate'
+import { translate } from '../util/translate'
 import { Operator, Season } from '../schema-types'
 import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
 import { setUrlValue } from '../util/urlValue'
 import { uniq } from 'lodash'
-
-// Language state is separate because some parts of the app that aren't
-// in the scope of the React component tree may want to use it.
-export const languageState: { language: Language } = observable({
-  language: 'fi',
-})
-
-export const setLanguage = action((setTo: Language = 'fi') => {
-  languageState.language = setTo
-})
+import { languageState, setLanguage } from './languageState'
 
 export const defaultOperator: Operator = {
   equipment: [],
@@ -23,7 +14,7 @@ export const defaultOperator: Operator = {
   procurementUnits: [],
   id: 0,
   operatorId: 0,
-  operatorName: 'Ei valittu',
+  operatorName: translate('unselected', languageState.language),
   inspections: [],
   contracts: [],
 }
@@ -32,8 +23,8 @@ export const defaultSeason: Season = {
   endDate: '',
   inspections: [],
   startDate: '',
-  id: '',
-  season: 'Ei valittu',
+  id: translate('unselected', languageState.language),
+  season: '',
 }
 
 export const UIStore = (state): UIActions => {
@@ -52,18 +43,24 @@ export const UIStore = (state): UIActions => {
 
   extendObservable(state, defaultState)
 
-  const setOperatorFilter = action((value: Operator = defaultOperator) => {
+  const setOperatorFilter = action((value: Operator | null = defaultOperator) => {
     if (!operatorIsAuthorized(value, state.user)) {
       return
     }
 
-    state.globalOperator = value
-    setUrlValue('operator', !value || value.id === 0 ? '' : value?.operatorId + '' || '')
+    let setValue = value || defaultOperator
+    state.globalOperator = setValue
+
+    setUrlValue(
+      'operator',
+      !setValue || setValue.id === 0 ? '' : setValue?.operatorId + '' || ''
+    )
   })
 
-  const setSeasonFilter = action((value: Season | string) => {
-    state.globalSeason = value
-    setUrlValue('season', typeof value === 'string' ? value : value?.id || '')
+  const setSeasonFilter = action((value: Season | null = defaultSeason) => {
+    let setValue = value || defaultSeason
+    state.globalSeason = setValue
+    setUrlValue('season', setValue?.id || '')
   })
 
   type MessageFields = 'errorMessages' | 'infoMessages'
@@ -76,8 +73,10 @@ export const UIStore = (state): UIActions => {
     })
 
   const createMessageRemove = (stateVal: MessageFields) =>
-    action((removeIdx) => {
-      if (state[stateVal][removeIdx]) {
+    action((message: string | number) => {
+      let removeIdx = typeof message === 'number' ? message : state[stateVal].indexOf(message)
+
+      if (removeIdx !== -1 && state[stateVal][removeIdx]) {
         let nextMessages = [...state[stateVal]]
         nextMessages.splice(removeIdx, 1)
         state[stateVal] = nextMessages
