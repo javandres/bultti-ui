@@ -145,7 +145,7 @@
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
   "catalogue_cataloguesListHeading": "Kalustoluettelot",
-  "catalogue_showGrouped": "Näytä ryhmissä",
+  "catalogue_showGrouped": "Näytä ryhmäytettyinä (Kylkinumero - Malli - Tyyppi - Rekisteripäivä)",
   "catalogue_itemRemovalNotAllowedInGroupedListModeNotification": "Poistaaksesi ajoneuvon, näytä ajoneuvot ilman ryhmiä ensin.",
   "catalogue_updateEquipment": "Päivitä ajoneuvotiedot JOREsta",
   "catalogue_removeAllEquipment": "Poista kaikki ajoneuvot luettelosta",
