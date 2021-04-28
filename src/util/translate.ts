@@ -1,8 +1,8 @@
-export type Language = 'fi'
-
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
 import { languageState } from '../state/languageState'
+
+export type Language = 'fi'
 
 const languageFiles = {
   fi: require('../text/fi.json'),
