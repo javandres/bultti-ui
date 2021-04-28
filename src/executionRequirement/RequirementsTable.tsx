@@ -13,8 +13,7 @@ import {
   RequirementsTableLayout,
 } from './executionRequirementUtils'
 import Big from 'big.js'
-import { text } from '../util/translate'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { getThousandSeparatedNumber } from '../util/formatNumber'
 
 const ExecutionRequirementsAreaContainer = styled.div`
@@ -136,7 +135,9 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      let useVal = getThousandSeparatedNumber(round(val, DEFAULT_DECIMALS))
+      let decimalCount = unit === '%' ? DEFAULT_PERCENTAGE_DECIMALS : DEFAULT_DECIMALS
+
+      let useVal = getThousandSeparatedNumber(round(val, decimalCount))
       return `${useVal} ${unit}`
     }, [])
 
@@ -146,9 +147,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalVal = getThousandSeparatedNumber(
-          round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
-        )
+        let unit
 
         switch (key) {
           case 'percentage':
@@ -158,17 +157,27 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           case 'cumulativeDifferencePercentage':
           case 'sanctionAmount':
           case 'classSanctionAmount':
-            return `${totalVal}%`
+            unit = '%'
+            break
           case 'kilometers':
           case 'kilometerRequirement':
           case 'kilometersFulfilled':
-            return `${totalVal} ${text('kilometersAbbreviation')}`
+            unit = 'km'
+            break
           case 'equipmentCount':
           case 'equipmentCountFulfilled':
-            return `${totalVal} ${text('count')}`
+            unit = 'kpl'
+            break
           default:
-            return totalVal
+            unit = ''
         }
+
+        let decimalCount = unit === '%' ? DEFAULT_PERCENTAGE_DECIMALS : DEFAULT_DECIMALS
+
+        let totalVal = getThousandSeparatedNumber(
+          round(getTotal<any, string>(requirementRows, key), decimalCount)
+        )
+        return `${totalVal} ${unit}`
       },
       [executionRequirement]
     )

@@ -8,7 +8,7 @@ import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 import { EditValue, TableEditProps } from '../common/table/tableUtils'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { getThousandSeparatedNumber } from '../util/formatNumber'
 
 const ExecutionRequirementsAreaContainer = styled.div`
@@ -97,7 +97,9 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      return `${getThousandSeparatedNumber(round(val, DEFAULT_DECIMALS))} ${unit}`
+      let decimalCount = unit === '%' ? DEFAULT_PERCENTAGE_DECIMALS : DEFAULT_DECIMALS
+
+      return `${getThousandSeparatedNumber(round(val, decimalCount))} ${unit}`
     }, [])
 
     let getColumnTotal = useCallback(
@@ -113,25 +115,34 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalValue = getThousandSeparatedNumber(
-          round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
-        )
+        let unit
+
         switch (key) {
           case 'quotaRequired':
           case 'quotaObserved':
           case 'cumulativeDifferencePercentage':
           case 'sanctionablePercentage':
           case 'sanctionAmount':
-            return `${totalValue}%`
+            unit = '%'
+            break
           case 'kilometersRequired':
           case 'kilometersObserved':
-            return `${totalValue} km`
+            unit = 'km'
+            break
           case 'equipmentCountRequired':
           case 'equipmentCountObserved':
-            return `${totalValue} kpl`
+            unit = 'kpl'
+            break
           default:
-            return totalValue
+            unit = ''
         }
+
+        let decimalCount = unit === '%' ? DEFAULT_PERCENTAGE_DECIMALS : DEFAULT_DECIMALS
+
+        let totalVal = getThousandSeparatedNumber(
+          round(getTotal<any, string>(requirementRows, key), decimalCount)
+        )
+        return `${totalVal} ${unit}`
       },
       [requirementRows]
     )
