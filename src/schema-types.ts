@@ -9,16 +9,20 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
-  DateTime: any;
   /** A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki. */
   BulttiDate: any;
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
 
 export type Query = {
   __typename?: 'Query';
+  executionRequirementsByOperator: Array<ExecutionRequirement>;
+  executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
+  executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
+  executionSchemaStats?: Maybe<ExecutionSchemaStats>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
   inspectionsTimeline: Array<InspectionTimelineItem>;
@@ -37,10 +41,6 @@ export type Query = {
   queryEquipmentFromSource?: Maybe<Equipment>;
   equipmentCatalogue?: Maybe<EquipmentCatalogue>;
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>;
-  executionRequirementsByOperator: Array<ExecutionRequirement>;
-  executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
-  executionSchemaStats?: Maybe<ExecutionSchemaStats>;
   user?: Maybe<User>;
   users: Array<User>;
   currentUser?: Maybe<User>;
@@ -83,6 +83,27 @@ export type Query = {
   getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
+};
+
+
+export type QueryExecutionRequirementsByOperatorArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryExecutionRequirementForProcurementUnitArgs = {
+  inspectionId: Scalars['String'];
+  procurementUnitId: Scalars['String'];
+};
+
+
+export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryExecutionSchemaStatsArgs = {
+  executionRequirementId: Scalars['String'];
 };
 
 
@@ -173,27 +194,6 @@ export type QueryEquipmentCatalogueArgs = {
 
 export type QueryEquipmentCatalogueByOperatorArgs = {
   operatorId: Scalars['Int'];
-};
-
-
-export type QueryExecutionRequirementsByOperatorArgs = {
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryExecutionRequirementForProcurementUnitArgs = {
-  inspectionId: Scalars['String'];
-  procurementUnitId: Scalars['String'];
-};
-
-
-export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type QueryExecutionSchemaStatsArgs = {
-  executionRequirementId: Scalars['String'];
 };
 
 
@@ -443,6 +443,75 @@ export type QueryRunSanctioningArgs = {
   inspectionId: Scalars['String'];
 };
 
+export type ExecutionRequirement = {
+  __typename?: 'ExecutionRequirement';
+  id: Scalars['ID'];
+  area: OperatingArea;
+  operator: Operator;
+  operatorId: Scalars['Float'];
+  inspectionId: Scalars['String'];
+  inspection: Inspection;
+  equipmentQuotas: Array<ExecutionRequirementQuota>;
+  procurementUnit?: Maybe<ProcurementUnit>;
+  procurementUnitId?: Maybe<Scalars['String']>;
+  areaRequirement?: Maybe<ExecutionRequirement>;
+  areaRequirementId?: Maybe<Scalars['String']>;
+  procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
+  weeklyMeters?: Maybe<Scalars['Float']>;
+  totalKilometers?: Maybe<Scalars['Float']>;
+  totalKilometersFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
+  requirements: Array<ExecutionRequirementValue>;
+};
+
+export type OperatingArea = {
+  __typename?: 'OperatingArea';
+  id: Scalars['Int'];
+  name: OperatingAreaName;
+  procurementUnits?: Maybe<Array<ProcurementUnit>>;
+  executionRequirements?: Maybe<Array<ExecutionRequirement>>;
+};
+
+export enum OperatingAreaName {
+  Center = 'CENTER',
+  Other = 'OTHER',
+  Unknown = 'UNKNOWN'
+}
+
+export type ProcurementUnit = {
+  __typename?: 'ProcurementUnit';
+  id: Scalars['ID'];
+  procurementUnitId: Scalars['String'];
+  operatorId: Scalars['Int'];
+  operator: Operator;
+  medianAgeRequirement: Scalars['Float'];
+  equipmentCatalogues: Array<EquipmentCatalogue>;
+  areaId?: Maybe<Scalars['Int']>;
+  area?: Maybe<OperatingArea>;
+  routes: Array<ProcurementUnitRoute>;
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  optionsUsed: Scalars['Int'];
+  executionRequirements: Array<ExecutionRequirement>;
+  contracts: Array<Contract>;
+  currentContracts?: Maybe<Array<Contract>>;
+};
+
+export type Operator = {
+  __typename?: 'Operator';
+  id: Scalars['Int'];
+  operatorId: Scalars['Int'];
+  operatorName: Scalars['String'];
+  inspections: Array<Inspection>;
+  contracts: Array<Contract>;
+  procurementUnits: Array<ProcurementUnit>;
+  executionRequirements: Array<ExecutionRequirement>;
+  equipment: Array<Equipment>;
+  equipmentCatalogues: Array<EquipmentCatalogue>;
+};
+
 export type Inspection = {
   __typename?: 'Inspection';
   id: Scalars['ID'];
@@ -486,239 +555,6 @@ export type LinkedInspectionForWeek = {
   inspection: Inspection;
 };
 
-export type Operator = {
-  __typename?: 'Operator';
-  id: Scalars['Int'];
-  operatorId: Scalars['Int'];
-  operatorName: Scalars['String'];
-  inspections: Array<Inspection>;
-  contracts: Array<Contract>;
-  procurementUnits: Array<ProcurementUnit>;
-  executionRequirements: Array<ExecutionRequirement>;
-  equipment: Array<Equipment>;
-  equipmentCatalogues: Array<EquipmentCatalogue>;
-};
-
-export type Contract = {
-  __typename?: 'Contract';
-  id: Scalars['ID'];
-  description?: Maybe<Scalars['String']>;
-  operatorId?: Maybe<Scalars['Int']>;
-  operator: Operator;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-  userRelations: Array<ContractUserRelation>;
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  procurementUnits: Array<ProcurementUnit>;
-  rulesFile?: Maybe<Scalars['String']>;
-  rules?: Maybe<Array<ContractRule>>;
-};
-
-
-export type ContractUserRelation = {
-  __typename?: 'ContractUserRelation';
-  id: Scalars['ID'];
-  relatedBy: ContractUserRelationType;
-  subscribed: Scalars['Boolean'];
-  contract: Contract;
-  user: User;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export enum ContractUserRelationType {
-  CreatedBy = 'CREATED_BY',
-  UpdatedBy = 'UPDATED_BY',
-  SubscribedTo = 'SUBSCRIBED_TO'
-}
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID'];
-  name: Scalars['String'];
-  email: Scalars['String'];
-  role: UserRole;
-  organisation?: Maybe<Scalars['String']>;
-  operatorIds?: Maybe<Array<Scalars['Int']>>;
-  hslIdGroups?: Maybe<Array<Scalars['String']>>;
-  inspectionRelations: Array<InspectionUserRelation>;
-  contractRelations: Array<ContractUserRelation>;
-};
-
-export enum UserRole {
-  Admin = 'ADMIN',
-  Hsl = 'HSL',
-  Operator = 'OPERATOR',
-  Blocked = 'BLOCKED'
-}
-
-export type InspectionUserRelation = {
-  __typename?: 'InspectionUserRelation';
-  id: Scalars['ID'];
-  relatedBy: InspectionUserRelationType;
-  subscribed: Scalars['Boolean'];
-  inspection: Inspection;
-  user: User;
-  createdAt: Scalars['DateTime'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export enum InspectionUserRelationType {
-  CreatedBy = 'CREATED_BY',
-  UpdatedBy = 'UPDATED_BY',
-  SubscribedTo = 'SUBSCRIBED_TO',
-  PublishedBy = 'PUBLISHED_BY',
-  RejectedBy = 'REJECTED_BY',
-  SubmittedBy = 'SUBMITTED_BY',
-  MadeSanctionableBy = 'MADE_SANCTIONABLE_BY',
-  SanctionsAbandonedBy = 'SANCTIONS_ABANDONED_BY'
-}
-
-
-export type ProcurementUnit = {
-  __typename?: 'ProcurementUnit';
-  id: Scalars['ID'];
-  procurementUnitId: Scalars['String'];
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  medianAgeRequirement: Scalars['Float'];
-  equipmentCatalogues: Array<EquipmentCatalogue>;
-  areaId?: Maybe<Scalars['Int']>;
-  area?: Maybe<OperatingArea>;
-  routes: Array<ProcurementUnitRoute>;
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  optionsUsed: Scalars['Int'];
-  executionRequirements: Array<ExecutionRequirement>;
-  contracts: Array<Contract>;
-  currentContracts?: Maybe<Array<Contract>>;
-};
-
-export type EquipmentCatalogue = {
-  __typename?: 'EquipmentCatalogue';
-  id: Scalars['ID'];
-  equipmentCatalogueId: Scalars['String'];
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  procurementUnitId: Scalars['String'];
-  procurementUnit: ProcurementUnit;
-  startDate: Scalars['String'];
-  endDate: Scalars['String'];
-  equipmentQuotas: Array<EquipmentCatalogueQuota>;
-};
-
-export type EquipmentCatalogueQuota = {
-  __typename?: 'EquipmentCatalogueQuota';
-  id: Scalars['ID'];
-  percentageQuota: Scalars['Float'];
-  equipmentId: Scalars['String'];
-  equipmentCatalogueId: Scalars['String'];
-  equipment?: Maybe<Equipment>;
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
-  catalogueStartDate: Scalars['BulttiDate'];
-  catalogueEndDate: Scalars['BulttiDate'];
-};
-
-export type Equipment = {
-  __typename?: 'Equipment';
-  id: Scalars['ID'];
-  vehicleId: Scalars['String'];
-  operator: Operator;
-  operatorId: Scalars['Int'];
-  model?: Maybe<Scalars['String']>;
-  registryNr: Scalars['String'];
-  registryDate: Scalars['BulttiDate'];
-  type: Scalars['String'];
-  exteriorColor: Scalars['String'];
-  hasInfoSystems: Scalars['Boolean'];
-  option: Scalars['Boolean'];
-  approvedOverage: Scalars['Boolean'];
-  emissionClass: Scalars['Int'];
-  equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
-  executionRequirementQuotas: Array<ExecutionRequirementQuota>;
-};
-
-export type ExecutionRequirementQuota = {
-  __typename?: 'ExecutionRequirementQuota';
-  id: Scalars['ID'];
-  percentageQuota: Scalars['Float'];
-  meterRequirement: Scalars['Float'];
-  equipmentId: Scalars['String'];
-  executionRequirementId: Scalars['String'];
-  equipment: Equipment;
-  executionRequirement: ExecutionRequirement;
-  requirementOnly: Scalars['Boolean'];
-};
-
-export type ExecutionRequirement = {
-  __typename?: 'ExecutionRequirement';
-  id: Scalars['ID'];
-  area: OperatingArea;
-  operator: Operator;
-  operatorId: Scalars['Float'];
-  inspectionId: Scalars['String'];
-  inspection: Inspection;
-  equipmentQuotas: Array<ExecutionRequirementQuota>;
-  procurementUnit?: Maybe<ProcurementUnit>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  areaRequirement?: Maybe<ExecutionRequirement>;
-  areaRequirementId?: Maybe<Scalars['String']>;
-  procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
-  weeklyMeters?: Maybe<Scalars['Float']>;
-  totalKilometers?: Maybe<Scalars['Float']>;
-  totalKilometersFulfilled?: Maybe<Scalars['Float']>;
-  averageAgeWeighted?: Maybe<Scalars['Float']>;
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
-  averageAgeRequirement?: Maybe<Scalars['Float']>;
-  requirements: Array<ExecutionRequirementValue>;
-};
-
-export type OperatingArea = {
-  __typename?: 'OperatingArea';
-  id: Scalars['Int'];
-  name: OperatingAreaName;
-  procurementUnits?: Maybe<Array<ProcurementUnit>>;
-  executionRequirements?: Maybe<Array<ExecutionRequirement>>;
-};
-
-export enum OperatingAreaName {
-  Center = 'CENTER',
-  Other = 'OTHER',
-  Unknown = 'UNKNOWN'
-}
-
-export type ExecutionRequirementValue = {
-  __typename?: 'ExecutionRequirementValue';
-  emissionClass: Scalars['Int'];
-  kilometerRequirement?: Maybe<Scalars['Float']>;
-  quotaRequirement?: Maybe<Scalars['Float']>;
-  kilometersFulfilled?: Maybe<Scalars['Float']>;
-  quotaFulfilled?: Maybe<Scalars['Float']>;
-  differencePercentage?: Maybe<Scalars['Float']>;
-  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
-  equipmentCount?: Maybe<Scalars['Int']>;
-  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
-  sanctionThreshold?: Maybe<Scalars['Float']>;
-  sanctionAmount?: Maybe<Scalars['Float']>;
-  classSanctionAmount?: Maybe<Scalars['Float']>;
-};
-
-export type ProcurementUnitRoute = {
-  __typename?: 'ProcurementUnitRoute';
-  routeId: Scalars['String'];
-};
-
-export type ContractRule = {
-  __typename?: 'ContractRule';
-  name: Scalars['String'];
-  code?: Maybe<Scalars['String']>;
-  category: Scalars['String'];
-  value: Scalars['String'];
-  condition?: Maybe<Scalars['String']>;
-  description?: Maybe<Scalars['String']>;
-};
-
 export type Season = {
   __typename?: 'Season';
   id: Scalars['ID'];
@@ -727,6 +563,7 @@ export type Season = {
   endDate: Scalars['BulttiDate'];
   inspections: Array<Inspection>;
 };
+
 
 export type ObservedExecutionRequirement = {
   __typename?: 'ObservedExecutionRequirement';
@@ -774,6 +611,92 @@ export enum InspectionStatus {
   Sanctionable = 'Sanctionable'
 }
 
+
+export type InspectionUserRelation = {
+  __typename?: 'InspectionUserRelation';
+  id: Scalars['ID'];
+  relatedBy: InspectionUserRelationType;
+  subscribed: Scalars['Boolean'];
+  inspection: Inspection;
+  user: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum InspectionUserRelationType {
+  CreatedBy = 'CREATED_BY',
+  UpdatedBy = 'UPDATED_BY',
+  SubscribedTo = 'SUBSCRIBED_TO',
+  PublishedBy = 'PUBLISHED_BY',
+  RejectedBy = 'REJECTED_BY',
+  SubmittedBy = 'SUBMITTED_BY',
+  MadeSanctionableBy = 'MADE_SANCTIONABLE_BY',
+  SanctionsAbandonedBy = 'SANCTIONS_ABANDONED_BY'
+}
+
+export type User = {
+  __typename?: 'User';
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  email: Scalars['String'];
+  role: UserRole;
+  organisation?: Maybe<Scalars['String']>;
+  operatorIds?: Maybe<Array<Scalars['Int']>>;
+  hslIdGroups?: Maybe<Array<Scalars['String']>>;
+  inspectionRelations: Array<InspectionUserRelation>;
+  contractRelations: Array<ContractUserRelation>;
+};
+
+export enum UserRole {
+  Admin = 'ADMIN',
+  Hsl = 'HSL',
+  Operator = 'OPERATOR',
+  Blocked = 'BLOCKED'
+}
+
+export type ContractUserRelation = {
+  __typename?: 'ContractUserRelation';
+  id: Scalars['ID'];
+  relatedBy: ContractUserRelationType;
+  subscribed: Scalars['Boolean'];
+  contract: Contract;
+  user: User;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum ContractUserRelationType {
+  CreatedBy = 'CREATED_BY',
+  UpdatedBy = 'UPDATED_BY',
+  SubscribedTo = 'SUBSCRIBED_TO'
+}
+
+export type Contract = {
+  __typename?: 'Contract';
+  id: Scalars['ID'];
+  description?: Maybe<Scalars['String']>;
+  operatorId?: Maybe<Scalars['Int']>;
+  operator: Operator;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  userRelations: Array<ContractUserRelation>;
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  procurementUnits: Array<ProcurementUnit>;
+  rulesFile?: Maybe<Scalars['String']>;
+  rules?: Maybe<Array<ContractRule>>;
+};
+
+export type ContractRule = {
+  __typename?: 'ContractRule';
+  name: Scalars['String'];
+  code?: Maybe<Scalars['String']>;
+  category: Scalars['String'];
+  value: Scalars['String'];
+  condition?: Maybe<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+};
+
 export type InspectionDate = {
   __typename?: 'InspectionDate';
   id: Scalars['ID'];
@@ -813,14 +736,81 @@ export enum InspectionValidationError {
   PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS'
 }
 
-export type InspectionTimelineItem = {
-  __typename?: 'InspectionTimelineItem';
+export type Equipment = {
+  __typename?: 'Equipment';
   id: Scalars['ID'];
-  operatorName: Scalars['String'];
-  seasonId: Scalars['String'];
-  inspectionStartDate: Scalars['BulttiDate'];
-  inspectionEndDate: Scalars['BulttiDate'];
-  version: Scalars['Int'];
+  vehicleId: Scalars['String'];
+  operator: Operator;
+  operatorId: Scalars['Int'];
+  model?: Maybe<Scalars['String']>;
+  registryNr: Scalars['String'];
+  registryDate: Scalars['BulttiDate'];
+  type: Scalars['String'];
+  exteriorColor: Scalars['String'];
+  hasInfoSystems: Scalars['Boolean'];
+  option: Scalars['Boolean'];
+  approvedOverage: Scalars['Boolean'];
+  emissionClass: Scalars['Int'];
+  equipmentCatalogueQuotas: Array<EquipmentCatalogueQuota>;
+  executionRequirementQuotas: Array<ExecutionRequirementQuota>;
+};
+
+export type EquipmentCatalogueQuota = {
+  __typename?: 'EquipmentCatalogueQuota';
+  id: Scalars['ID'];
+  percentageQuota: Scalars['Float'];
+  equipmentId: Scalars['String'];
+  equipmentCatalogueId: Scalars['String'];
+  equipment?: Maybe<Equipment>;
+  equipmentCatalogue?: Maybe<EquipmentCatalogue>;
+  catalogueStartDate: Scalars['BulttiDate'];
+  catalogueEndDate: Scalars['BulttiDate'];
+};
+
+export type EquipmentCatalogue = {
+  __typename?: 'EquipmentCatalogue';
+  id: Scalars['ID'];
+  equipmentCatalogueId: Scalars['String'];
+  operatorId: Scalars['Int'];
+  operator: Operator;
+  procurementUnitId: Scalars['String'];
+  procurementUnit: ProcurementUnit;
+  startDate: Scalars['String'];
+  endDate: Scalars['String'];
+  equipmentQuotas: Array<EquipmentCatalogueQuota>;
+};
+
+export type ExecutionRequirementQuota = {
+  __typename?: 'ExecutionRequirementQuota';
+  id: Scalars['ID'];
+  percentageQuota: Scalars['Float'];
+  meterRequirement: Scalars['Float'];
+  equipmentId: Scalars['String'];
+  executionRequirementId: Scalars['String'];
+  equipment: Equipment;
+  executionRequirement: ExecutionRequirement;
+  requirementOnly: Scalars['Boolean'];
+};
+
+export type ProcurementUnitRoute = {
+  __typename?: 'ProcurementUnitRoute';
+  routeId: Scalars['String'];
+};
+
+export type ExecutionRequirementValue = {
+  __typename?: 'ExecutionRequirementValue';
+  emissionClass: Scalars['Int'];
+  kilometerRequirement?: Maybe<Scalars['Float']>;
+  quotaRequirement?: Maybe<Scalars['Float']>;
+  kilometersFulfilled?: Maybe<Scalars['Float']>;
+  quotaFulfilled?: Maybe<Scalars['Float']>;
+  differencePercentage?: Maybe<Scalars['Float']>;
+  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
+  equipmentCount?: Maybe<Scalars['Int']>;
+  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
+  classSanctionAmount?: Maybe<Scalars['Float']>;
 };
 
 export type ExecutionSchemaStats = {
@@ -844,6 +834,16 @@ export type EquipmentTypeStat = {
   equipmentType: Scalars['String'];
   equipmentCount: Scalars['Int'];
   kilometers: Scalars['Float'];
+};
+
+export type InspectionTimelineItem = {
+  __typename?: 'InspectionTimelineItem';
+  id: Scalars['ID'];
+  operatorName: Scalars['String'];
+  seasonId: Scalars['String'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  version: Scalars['Int'];
 };
 
 export type ReportListItem = {
@@ -1863,6 +1863,13 @@ export enum SanctionExceptionReason {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
+  updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
+  refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
+  addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
+  removeEquipmentFromExecutionRequirement: ExecutionRequirement;
+  removeAllEquipmentFromExecutionRequirement?: Maybe<ExecutionRequirement>;
+  removeExecutionRequirement: ExecutionRequirement;
   createInspection: Inspection;
   updateLinkedInspection: Inspection;
   updateInspection: Inspection;
@@ -1885,13 +1892,6 @@ export type Mutation = {
   removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>;
   removeAllEquipmentFromCatalogue: EquipmentCatalogue;
   removeEquipmentCatalogue: Scalars['Boolean'];
-  createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
-  updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
-  refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeEquipmentFromExecutionRequirement: ExecutionRequirement;
-  removeAllEquipmentFromExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeExecutionRequirement: ExecutionRequirement;
   login?: Maybe<Scalars['String']>;
   logout: Scalars['Boolean'];
   modifyUser: User;
@@ -1915,6 +1915,45 @@ export type Mutation = {
   generateTestBlockDepartures: Array<DepartureBlockFile>;
   removeTestData: Scalars['Boolean'];
   forceRemoveInspection: Scalars['Boolean'];
+};
+
+
+export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
+  inspectionId: Scalars['String'];
+  procurementUnitId: Scalars['String'];
+};
+
+
+export type MutationUpdateWeeklyExecutionMetersFromSourceArgs = {
+  date: Scalars['String'];
+  executionRequirementId: Scalars['String'];
+};
+
+
+export type MutationRefreshExecutionRequirementForProcurementUnitArgs = {
+  executionRequirementId: Scalars['String'];
+};
+
+
+export type MutationAddEquipmentToExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
+export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+  equipmentId: Scalars['String'];
+};
+
+
+export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
+};
+
+
+export type MutationRemoveExecutionRequirementArgs = {
+  executionRequirementId: Scalars['String'];
 };
 
 
@@ -2037,45 +2076,6 @@ export type MutationRemoveAllEquipmentFromCatalogueArgs = {
 
 export type MutationRemoveEquipmentCatalogueArgs = {
   catalogueId: Scalars['String'];
-};
-
-
-export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
-  inspectionId: Scalars['String'];
-  procurementUnitId: Scalars['String'];
-};
-
-
-export type MutationUpdateWeeklyExecutionMetersFromSourceArgs = {
-  date: Scalars['String'];
-  executionRequirementId: Scalars['String'];
-};
-
-
-export type MutationRefreshExecutionRequirementForProcurementUnitArgs = {
-  executionRequirementId: Scalars['String'];
-};
-
-
-export type MutationAddEquipmentToExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationRemoveEquipmentFromExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
-  equipmentId: Scalars['String'];
-};
-
-
-export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
-};
-
-
-export type MutationRemoveExecutionRequirementArgs = {
-  executionRequirementId: Scalars['String'];
 };
 
 

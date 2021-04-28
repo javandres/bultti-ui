@@ -117,6 +117,7 @@ const InspectionReports = observer(
                 reportName={reportListItem.name as keyof ReportTypeByName}
                 inspectionId={inspectionId}
                 inspectionType={inspection.inspectionType}
+                inspectionStatus={inspection.status}
               />
             </ReportListItem>
           ))}

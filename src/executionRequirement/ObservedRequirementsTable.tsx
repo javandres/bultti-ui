@@ -13,6 +13,7 @@ import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
 import { EditValue, TableEditProps } from '../common/table/tableUtils'
 import { DEFAULT_DECIMALS } from '../constants'
+import { getThousandSeparatedNumber } from '../util/formatNumber'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1.5rem;
@@ -100,7 +101,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      return `${round(val, 6)} ${unit}`
+      return `${getThousandSeparatedNumber(round(val, 6))} ${unit}`
     }, [])
 
     let getColumnTotal = useCallback(
@@ -116,7 +117,9 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           return ''
         }
 
-        let totalValue = round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
+        let totalValue = getThousandSeparatedNumber(
+          round(getTotal<any, string>(requirementRows, key), DEFAULT_DECIMALS)
+        )
         switch (key) {
           case 'quotaRequired':
           case 'quotaObserved':

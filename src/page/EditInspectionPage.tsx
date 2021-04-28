@@ -12,7 +12,7 @@ import {
   getInspectionStatusColor,
   getInspectionStatusName,
   getInspectionTypeStrings,
-  useEditInspection,
+  useNavigateToInspection,
   useInspectionById,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -85,7 +85,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
     var [, setErrorMessage] = useStateValue('errorMessage')
-    var editInspection = useEditInspection(inspectionType)
+    var navigateToInspection = useNavigateToInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
       inspectionId
@@ -150,7 +150,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             ) : !inspection && !inspectionLoading ? (
               <MessageContainer style={{ margin: '1rem' }}>
                 <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
-                <Button onClick={() => editInspection()}>
+                <Button onClick={() => navigateToInspection()}>
                   <Text>back</Text>
                 </Button>
               </MessageContainer>

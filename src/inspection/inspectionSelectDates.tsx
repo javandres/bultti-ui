@@ -17,7 +17,6 @@ import { text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
 import { getHfpStatusColor, HfpStatusIndicator } from '../common/components/HfpStatus'
 import { lowerCase, orderBy } from 'lodash'
-import { useStateValue } from '../state/useAppState'
 
 const InspectionSelectDatesView = styled.div`
   margin: 1rem 0;
@@ -43,20 +42,25 @@ interface DateOption {
 export type PropTypes = {
   isEditingDisabled: boolean
   inspectionType: InspectionType
+  inspectionSeason: Season
   inspectionInput: InspectionInput
   onChange: (startDate: Date, endDate: Date, id?: string) => void
 }
 
 const InspectionSelectDates = observer(
-  ({ isEditingDisabled, inspectionType, inspectionInput, onChange }: PropTypes) => {
-    let [season] = useStateValue<Season>('globalSeason')
-
+  ({
+    isEditingDisabled,
+    inspectionType,
+    inspectionSeason,
+    inspectionInput,
+    onChange,
+  }: PropTypes) => {
     let {
       data: inspectionDatesQueryResult,
       loading: areInspectionDatesLoading,
     } = useQueryData<InspectionDate[]>(getObservedInspectionDatesQuery, {
       variables: {
-        seasonId: season.id,
+        seasonId: inspectionSeason.id,
       },
       skip: inspectionType === InspectionType.Pre,
     })
@@ -65,7 +69,7 @@ const InspectionSelectDates = observer(
       let opts: DateOption[] = []
 
       if (inspectionType === InspectionType.Pre) {
-        opts = getPreInspectionDateOptions(season)
+        opts = getPreInspectionDateOptions(inspectionSeason)
       } else {
         opts = inspectionDatesQueryResult
           ? getPostInspectionDateOptions(inspectionDatesQueryResult)

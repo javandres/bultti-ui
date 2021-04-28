@@ -19,6 +19,7 @@ import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import InspectionValidationErrors from './InspectionValidationErrors'
 import { Button } from '../common/components/buttons/Button'
+import { getInspectionTypeStrings } from './inspectionUtils'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -82,7 +83,9 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       }
 
       if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
-        navigateWithQueryString(`/pre-inspection/edit`)
+        navigateWithQueryString(
+          `/${getInspectionTypeStrings(inspection.inspectionType).prefixLC}-inspection/edit`
+        )
       }
     }, [inspection, operator, season])
 
