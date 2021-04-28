@@ -93,8 +93,6 @@ export function useRemoveInspection(
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
   let { operatorId, inspectionType } = inspection
 
-  console.log(operatorId)
-
   let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
     refetchQueries: [
       {
