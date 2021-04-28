@@ -5,6 +5,7 @@ import { round } from '../util/round'
 import Big from 'big.js'
 import { text } from '../util/translate'
 import { getThousandSeparatedNumber } from '../util/formatNumber'
+import { DEFAULT_DECIMALS } from '../constants'
 
 // Define column total functions here with the name of the report they apply to.
 const reportTotalFns = {
@@ -32,14 +33,17 @@ function createSanctionSummaryColumnTotals(rows: SanctionSummaryReportData[]) {
   return (key: keyof SanctionSummaryReportData) => {
     // Show the total kilometers sanctioned by this sanction
     if (key.endsWith('KM')) {
-      return getThousandSeparatedNumber(round(getTotal(rows, key), 6)) + ' KM'
+      return getThousandSeparatedNumber(round(getTotal(rows, key), DEFAULT_DECIMALS)) + ' KM'
     }
 
     // Show how many percentage of all sanctions this sanction column accounts for
     if (key.endsWith('%')) {
       return (
         getThousandSeparatedNumber(
-          Big(getTotal(rows, key)).div(Math.max(rows.length, 1)).round(6).mul(100)
+          Big(getTotal(rows, key))
+            .div(Math.max(rows.length, 1))
+            .round(DEFAULT_DECIMALS)
+            .mul(100)
         ) + '%'
       )
     }
@@ -54,6 +58,6 @@ function createEmissionClassExecutionColumnTotals(rows: EmissionClassExecutionRe
       return text('table_totalCount')
     }
     // Show the total kilometers of this emission class
-    return getThousandSeparatedNumber(round(getTotal(rows, key), 0)) + ' km'
+    return getThousandSeparatedNumber(round(getTotal(rows, key), DEFAULT_DECIMALS)) + ' km'
   }
 }

@@ -1,10 +1,20 @@
 import Big from 'big.js'
+import { DEFAULT_DECIMALS } from '../constants'
 
-// Round to three decimals
-export function round(number: number | string | Big, decimals: number = 3): string {
-  return Big(number).round(decimals, 2).toString()
+export function round(
+  number: number | string | Big,
+  decimals: number = DEFAULT_DECIMALS
+): string {
+  // Rounds towards nearest neighbour. If equidistant, rounds towards even neighbour.
+  let bigRoundingMode = 2
+  return Big(number).round(decimals, bigRoundingMode).toString()
 }
 
-export function roundNumber(number: number | string | Big, decimals: number = 3): number {
-  return Big(number).round(decimals, 2).toNumber()
+export function roundNumber(
+  number: number | string | Big,
+  decimals: number = DEFAULT_DECIMALS
+): number {
+  // Rounds towards nearest neighbour. If equidistant, rounds towards even neighbour.
+  let bigRoundingMode = 2
+  return Big(number).round(decimals, bigRoundingMode).toNumber()
 }
