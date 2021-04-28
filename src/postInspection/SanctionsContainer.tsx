@@ -21,7 +21,7 @@ import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
-import { DEBUG } from '../constants'
+import { DEBUG, DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
 
 const PostInspectionSanctionsView = styled.div`
@@ -269,7 +269,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           'sanctionResultKilometers',
         ].includes(key)
       ) {
-        return round(val, 5)
+        return round(val, DEFAULT_DECIMALS)
       }
 
       if (key !== 'entityIdentifier' || isHeader || !item) {
