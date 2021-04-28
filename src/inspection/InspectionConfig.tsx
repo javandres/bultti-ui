@@ -43,8 +43,8 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     endDate = max([addDays(startDate, 1), endDate])
 
     return {
-      startDate,
-      endDate,
+      startDate: getDateString(startDate),
+      endDate: getDateString(endDate),
       name: inspection.name || '',
       inspectionDateId: inspection.inspectionDateId,
       inspectionStartDate: inspection.inspectionStartDate || '',
