@@ -66,13 +66,13 @@ const InspectionActions = observer(
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
-    var showInfoMessage = useShowInfoNotification()
+    var showInfoNotification = useShowInfoNotification()
 
     var onOpenInspection = useCallback(
       (inspection: Inspection) => {
         // If the season of the inspection is not already selected, change the selected season to match.
         if (inspection && inspection.seasonId !== season.id) {
-          showInfoMessage(
+          showInfoNotification(
             text('inspection_seasonChangedAutomatically', { newSeason: inspection.season.id })
           )
 

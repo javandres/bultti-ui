@@ -20,7 +20,7 @@ export enum AuthState {
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [currentUser, setCurrentUser] = useStateValue('user')
-  let showErrorMessage = useShowErrorNotification()
+  let showErrorNotification = useShowErrorNotification()
 
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
@@ -120,7 +120,7 @@ export const useAuth = (): [AuthState, boolean] => {
           refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
-          showErrorMessage(text('login_failed'))
+          showErrorNotification(text('login_failed'))
         }
       })
     }

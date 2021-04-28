@@ -25,7 +25,7 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''
 ): Mutator<TData, TVariables> => {
-  let showErrorMessage = useShowErrorNotification()
+  let showErrorNotification = useShowErrorNotification()
 
   const [mutationFn, { data, loading, error, called }] = useMutation<TData, TVariables>(
     mutation,
@@ -40,7 +40,7 @@ export const useMutationData = <TData = any, TVariables = OperationVariables>(
 
   useEffect(() => {
     if (error) {
-      showErrorMessage(error.message)
+      showErrorNotification(error.message)
     }
   }, [error])
 

@@ -87,7 +87,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
   ({ inspectionId = '', inspectionType }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
-    var setErrorMessage = useShowErrorNotification()
+    var showErrorNotification = useShowErrorNotification()
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
@@ -103,7 +103,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       let errorUpdate = pickGraphqlData(errorUpdateData)
 
       if (errorUpdate) {
-        setErrorMessage(errorUpdate.message)
+        showErrorNotification(errorUpdate.message)
       }
     }, [errorUpdateData])
 
