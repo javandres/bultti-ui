@@ -12,8 +12,8 @@ import {
   getInspectionStatusColor,
   getInspectionStatusName,
   getInspectionTypeStrings,
-  useNavigateToInspection,
   useInspectionById,
+  useNavigateToInspection,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { InspectionStatus, InspectionType } from '../schema-types'
@@ -25,6 +25,9 @@ import { useSubscription } from '@apollo/client'
 import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import SanctionsContainer from '../postInspection/SanctionsContainer'
+import { useShowErrorNotification } from '../util/useShowNotification'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { seasonIsValid } from '../common/input/SelectSeason'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -84,7 +87,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
   ({ inspectionId = '', inspectionType }) => {
     var [season] = useStateValue('globalSeason')
     var [operator] = useStateValue('globalOperator')
-    var [, setErrorMessage] = useStateValue('errorMessage')
+    var showErrorNotification = useShowErrorNotification()
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
@@ -100,7 +103,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
       let errorUpdate = pickGraphqlData(errorUpdateData)
 
       if (errorUpdate) {
-        setErrorMessage(errorUpdate.message)
+        showErrorNotification(errorUpdate.message)
       }
     }, [errorUpdateData])
 
@@ -141,7 +144,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             )}
           </PageTitle>
           <EditInspectionPageContainer>
-            {!operator || !season ? (
+            {!operatorIsValid(operator) || !seasonIsValid(season) ? (
               <MessageContainer style={{ margin: '1rem' }}>
                 <MessageView>
                   <Text>inspectionPage_selectOperatorAndSeason</Text>

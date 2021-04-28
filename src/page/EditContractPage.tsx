@@ -5,7 +5,7 @@ import { Redirect, RouteComponentProps } from '@reach/router'
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
-import { Contract, Operator } from '../schema-types'
+import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { LoadingDisplay } from '../common/components/Loading'
@@ -28,7 +28,7 @@ export type PropTypes = {
 } & RouteComponentProps
 
 const EditContractPage = observer(({ contractId }: PropTypes) => {
-  let [globalOperator] = useStateValue<Operator>('globalOperator')
+  let [globalOperator] = useStateValue('globalOperator')
   let hasOperatorAccess = useHasOperatorUserAccessRights(globalOperator?.id)
   let hasAdminAccessRights = useHasAdminAccessRights()
   let isNew = contractId === 'new'

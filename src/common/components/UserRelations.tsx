@@ -96,7 +96,7 @@ const UserRelations = observer(
     var [user] = useStateValue('user')
 
     let allRelations = orderBy<UserRelation>(relations || [], 'updatedAt', 'desc')
-    let ownRelations = allRelations.filter((rel) => rel.user.email === user.email)
+    let ownRelations = allRelations.filter((rel) => rel.user.email === user?.email)
 
     let subscriptionRelation = ownRelations.find(
       (rel) => rel.relatedBy === InspectionUserRelationType.SubscribedTo
@@ -111,8 +111,8 @@ const UserRelations = observer(
           <RowTitle>Sinä</RowTitle>
           <RowContent>
             <RowUserName>
-              <UserRoleBadge>{user.role}</UserRoleBadge>
-              {user.name}
+              <UserRoleBadge>{user?.role}</UserRoleBadge>
+              {user?.name}
             </RowUserName>
             <SubscribedCheckbox
               loading={loading}

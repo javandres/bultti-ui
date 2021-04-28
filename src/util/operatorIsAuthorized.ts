@@ -2,7 +2,7 @@ import { Operator, User, UserRole } from '../schema-types'
 
 export const operatorIsAuthorized = (
   operator: Operator | null | undefined,
-  user: User | null
+  user: User | null | undefined
 ) => {
   if (operator && user && user.role === UserRole.Operator) {
     const userOperators = user.operatorIds || []

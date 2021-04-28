@@ -83,11 +83,11 @@ const InspectionSelectDates = observer(
       onChange(dateOption.startDate, dateOption.endDate, dateOption.id)
     }
 
-    let selectedItem: DateOption | null = useMemo(() => {
+    let selectedItem: DateOption | undefined = useMemo(() => {
       let { inspectionEndDate, inspectionStartDate, inspectionDateId } = inspectionInput
 
       if (!(inspectionStartDate && inspectionEndDate)) {
-        return null
+        return undefined
       }
 
       let selectedDateOption: DateOption = {
@@ -123,7 +123,7 @@ const InspectionSelectDates = observer(
         ) : (
           <Dropdown
             disabled={isEditingDisabled}
-            label={text('inspection_inspectionPeriod')}
+            label={text('inspection_selectInspectionDate')}
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}

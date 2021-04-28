@@ -1,62 +1,80 @@
-import { action, extendObservable, observable } from 'mobx'
-import { UIActions } from '../type/state'
-import { Language } from '../util/translate'
+import { action, extendObservable } from 'mobx'
+import { UIActions, UINotification } from '../type/state'
+import { translate } from '../util/translate'
 import { Operator, Season } from '../schema-types'
 import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
 import { setUrlValue } from '../util/urlValue'
+import { uniqBy } from 'lodash'
+import { languageState, setLanguage } from './languageState'
 
-// Language state is separate because some parts of the app that aren't
-// in the scope of the React component tree may want to use it.
-export const languageState: { language: Language } = observable({
-  language: 'fi',
-})
+export const unselectedOperator: Operator = {
+  equipment: [],
+  equipmentCatalogues: [],
+  executionRequirements: [],
+  procurementUnits: [],
+  id: 0,
+  operatorId: 0,
+  operatorName: translate('unselected', languageState.language),
+  inspections: [],
+  contracts: [],
+}
 
-export const setLanguage = action((setTo: Language = 'fi') => {
-  languageState.language = setTo
-})
+export const unselectedSeason: Season = {
+  endDate: '',
+  inspections: [],
+  startDate: '',
+  id: translate('unselected', languageState.language),
+  season: '',
+}
 
 export const UIStore = (state): UIActions => {
   const defaultState = {
     appLoaded: false,
-    globalOperator: null,
-    globalSeason: null,
+    globalOperator: unselectedOperator,
+    globalSeason: unselectedSeason,
     get language() {
       // proxy separate language state through app state
       return languageState.language
     },
-    errorMessage: '',
+    notifications: [],
     unsavedFormIds: [],
   }
 
   extendObservable(state, defaultState)
 
-  const setOperatorFilter = action((value: Operator | null) => {
+  const setOperatorFilter = action((value: Operator | null = unselectedOperator) => {
     if (!operatorIsAuthorized(value, state.user)) {
       return
     }
 
-    state.globalOperator = value
-    setUrlValue('operator', !value || value.id === 0 ? null : value?.operatorId + '' || '')
+    let setValue = value || unselectedOperator
+    state.globalOperator = setValue
+
+    setUrlValue(
+      'operator',
+      !setValue || setValue.id === 0 ? '' : setValue?.operatorId + '' || ''
+    )
   })
 
-  const setSeasonFilter = action((value: Season | string | null) => {
-    state.globalSeason = value
-    setUrlValue('season', typeof value === 'string' ? value : value?.id || '')
+  const setSeasonFilter = action((value: Season | null = unselectedSeason) => {
+    state.globalSeason = value || unselectedSeason
+    setUrlValue('season', value?.id === unselectedSeason.id ? '' : value?.id || '')
   })
 
-  let prevDismissedMessage = ''
+  const addNotification = action((message: UINotification) => {
+    let nextMessages = [...state.notifications]
+    nextMessages.push(message)
+    state.notifications = uniqBy(nextMessages, (notif) => `${notif.message} ${notif.type}`)
+  })
 
-  const setErrorMessage = action((message: string) => {
-    // To prevent a loop of messages as the hooks rerender, keep track of the
-    // previously dismissed message so that it can't be immediately re-assigned.
-    if (!message && state.errorMessage) {
-      prevDismissedMessage = state.errorMessage
-    }
+  const removeNotification = action((message: UINotification | number) => {
+    let removeIdx =
+      typeof message === 'number' ? message : state.notifications.indexOf(message)
 
-    if (!(message && prevDismissedMessage && message === prevDismissedMessage)) {
-      state.errorMessage = message
-      // We just need to break the loop, not prevent all future error messages
-      prevDismissedMessage = ''
+    if (removeIdx !== -1 && state.notifications[removeIdx]) {
+      let nextMessages = [...state.notifications]
+      nextMessages.splice(removeIdx, 1)
+      state.notifications = nextMessages
     }
   })
 
@@ -73,7 +91,10 @@ export const UIStore = (state): UIActions => {
     globalSeason: setSeasonFilter,
     appLoaded: onAppLoaded,
     language: setLanguage,
-    errorMessage: setErrorMessage,
+    notifications: {
+      add: addNotification,
+      remove: removeNotification,
+    },
     unsavedFormIds: setUnsavedFormIds,
   }
 }

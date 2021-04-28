@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
@@ -11,8 +11,7 @@ import { Page, PageContainer } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
-import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
-import SelectSeason from '../common/input/SelectSeason'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
 import { orderBy } from 'lodash'
@@ -20,6 +19,7 @@ import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
 import { text, Text } from '../util/translate'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -57,14 +57,9 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
 
   let [globalSeason] = useStateValue('globalSeason')
 
-  let [selectedSeason, setSelectedSeason] = useState<Season | null>(globalSeason)
   let [selectedDate, setSelectedDate] = useState<{ value: string; label: string }>(
     defaultSelectedDate
   )
-
-  useEffect(() => {
-    setSelectedSeason(globalSeason)
-  }, [globalSeason])
 
   let openReports = useNavigateToInspectionReports()
 
@@ -74,11 +69,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         return false
       }
 
-      if (
-        selectedSeason &&
-        selectedSeason.id !== 'Kaikki' &&
-        selectedSeason.id !== inspection.seasonId
-      ) {
+      if (globalSeason && globalSeason.id !== inspection.seasonId) {
         return false
       }
 
@@ -94,7 +85,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
     })
 
     return orderBy(filteredList, 'startDate', 'desc')
-  }, [inspections, selectedSeason, selectedDate])
+  }, [inspections, globalSeason, selectedDate])
 
   let startDateOptions = useMemo(
     () => [
@@ -115,7 +106,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         <Text keyValueMap={{ inspection: typeStrings.prefix }}>inspectionReports_heading</Text>
       </PageTitle>
       <PageContainer>
-        {!operator && (
+        {!operatorIsValid(operator) && (
           <MessageContainer>
             <MessageView>
               <Text>selectOperator</Text>
@@ -126,14 +117,6 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
         {inspections.length !== 0 && (
           <>
             <FilterBar>
-              <FilterControlGroup>
-                <SelectSeason
-                  enableAll={true}
-                  label={text('selectSeason')}
-                  onSelect={setSelectedSeason}
-                  value={selectedSeason}
-                />
-              </FilterControlGroup>
               <FilterControlGroup>
                 <Dropdown
                   label={text('inspectionReports_selectDate')}
