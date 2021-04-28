@@ -46,4 +46,4 @@ function getScrollbarWidth() {
 }
 
 export const SCROLLBAR_WIDTH = getScrollbarWidth() + 1
-export const DEFAULT_DECIMALS = 3
+export const DEFAULT_DECIMALS = 1

@@ -97,7 +97,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      return `${getThousandSeparatedNumber(round(val, 6))} ${unit}`
+      return `${getThousandSeparatedNumber(round(val, DEFAULT_DECIMALS))} ${unit}`
     }, [])
 
     let getColumnTotal = useCallback(

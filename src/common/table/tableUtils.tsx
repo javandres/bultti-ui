@@ -2,7 +2,7 @@ import { FilterConfig, SortConfig } from '../../schema-types'
 import React, { useCallback } from 'react'
 import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
-import { READABLE_TIME_FORMAT } from '../../constants'
+import { DEFAULT_DECIMALS, READABLE_TIME_FORMAT } from '../../constants'
 import { toString } from 'lodash'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
 import { CellContent } from './TableCell'
@@ -38,7 +38,7 @@ export function useRenderCellValue() {
     }
 
     if (typeof val === 'number') {
-      return getThousandSeparatedNumber(round(val))
+      return getThousandSeparatedNumber(round(val, DEFAULT_DECIMALS))
     }
 
     if (val.length >= 20) {

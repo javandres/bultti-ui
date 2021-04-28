@@ -98,7 +98,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           bg = val > (ageReq || 0) ? 'var(--light-red)' : 'transparent'
         }
 
-        let displayVal = round(val)
+        let displayVal = round(val, DEFAULT_DECIMALS)
         let displayUnit = key === 'totalKilometers' ? 'km' : 'vuotta'
 
         return <span style={{ backgroundColor: bg }}>{`${displayVal} ${displayUnit}`}</span>
@@ -136,7 +136,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           unit = ''
       }
 
-      let useVal = getThousandSeparatedNumber(round(val))
+      let useVal = getThousandSeparatedNumber(round(val, DEFAULT_DECIMALS))
       return `${useVal} ${unit}`
     }, [])
 
