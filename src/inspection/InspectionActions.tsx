@@ -1,10 +1,10 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
-  useEditInspection,
+  useNavigateToInspection,
   useNavigateToInspectionReports,
   useRemoveInspection,
 } from './inspectionUtils'
@@ -19,7 +19,8 @@ import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { navigateWithQueryString } from '../util/urlValue'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
+import { useShowInfoNotification } from '../util/useShowNotification'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -51,7 +52,7 @@ export type PropTypes = {
 
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style }: PropTypes) => {
-    var [season, setSeason] = useStateValue<Season>('globalSeason')
+    var [season, setSeason] = useStateValue('globalSeason')
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
       inspection?.operatorId || undefined
@@ -59,21 +60,26 @@ const InspectionActions = observer(
 
     var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
-    var goToInspectionEdit = useEditInspection(inspection.inspectionType)
+    var navigateToInspection = useNavigateToInspection(inspection.inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
+    var showInfoNotification = useShowInfoNotification()
 
-    var onEditInspection = useCallback(
+    var onOpenInspection = useCallback(
       (inspection: Inspection) => {
-        // If the season of the inspection is not already selected, ensure it is selected.
-        if (inspection.seasonId !== season.id) {
+        // If the season of the inspection is not already selected, change the selected season to match.
+        if (inspection && inspection.seasonId !== season.id) {
+          showInfoNotification(
+            text('inspection_seasonChangedAutomatically', { newSeason: inspection.season.id })
+          )
+
           setSeason(inspection.season)
         }
 
-        goToInspectionEdit(inspection)
+        navigateToInspection(inspection)
       },
-      [goToInspectionEdit, setSeason, season]
+      [inspection, navigateToInspection, setSeason, season]
     )
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(
@@ -178,7 +184,7 @@ const InspectionActions = observer(
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
-              onClick={() => onEditInspection(inspection)}>
+              onClick={() => onOpenInspection(inspection)}>
               {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
             </Button>
           )}

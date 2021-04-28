@@ -1,25 +1,20 @@
 import { useContext } from 'react'
 import { StateContext } from './stateContext'
-import { action } from 'mobx'
-import { StoreContext } from '../type/state'
-import { useObserver } from 'mobx-react-lite'
+import { ActionMap, IAppState, StoreContext } from '../type/state'
 
-const createDefaultAction = (state, stateKey) =>
-  action((value) => {
-    state[stateKey] = value
-  })
+export function useStateValue<
+  ValueKeyType extends keyof IAppState,
+  ActionKeyType extends keyof ActionMap = ValueKeyType
+>(
+  valueKey: ValueKeyType,
+  actionName: ActionKeyType = (valueKey as unknown) as ActionKeyType
+): [IAppState[typeof valueKey], ActionMap[typeof actionName]] {
+  const stateContext = useAppState()
 
-export const useStateValue = <T = any>(valueKey): [T, (...args: any[]) => any] => {
-  const stateContext = useContext(StateContext)
-  const value = useObserver(() => stateContext?.state[valueKey] || null)
+  let actionKey = ((actionName || valueKey) as unknown) as keyof ActionMap
+  let action = stateContext?.actions[actionKey] || (() => {})
 
-  if (!stateContext) {
-    return [value, () => {}]
-  }
-
-  const action =
-    stateContext.actions[valueKey] || createDefaultAction(stateContext.state, valueKey)
-  return [value, action]
+  return [stateContext?.state[valueKey], action as ActionMap[typeof actionName]]
 }
 
 export const useAppState = (): StoreContext => {

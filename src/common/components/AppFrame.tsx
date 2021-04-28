@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import styled from 'styled-components/macro'
 import AppSidebar from './AppSidebar'
 import { observer } from 'mobx-react-lite'
-import ErrorMessages from './ErrorMessages'
+import InfoMessages from './InfoMessages'
 
 const AppFrameView = styled.div`
   display: grid;
@@ -58,21 +58,23 @@ const AppFrame = observer(({ children, isAuthenticated = false }: AppFrameProps)
   )
 
   return (
-    <AppFrameView>
-      {isAuthenticated && (
-        <>
-          <Sidebar>
-            <AppSidebar />
-          </Sidebar>
-          <ScrollContext.Provider value={subscribe}>
-            <Main onScroll={scrollHandler} ref={mainViewRef}>
-              {children}
-            </Main>
-          </ScrollContext.Provider>
-        </>
-      )}
-      <ErrorMessages />
-    </AppFrameView>
+    <>
+      <AppFrameView>
+        {isAuthenticated && (
+          <>
+            <Sidebar>
+              <AppSidebar />
+            </Sidebar>
+            <ScrollContext.Provider value={subscribe}>
+              <Main onScroll={scrollHandler} ref={mainViewRef}>
+                {children}
+              </Main>
+            </ScrollContext.Provider>
+          </>
+        )}
+      </AppFrameView>
+      <InfoMessages />
+    </>
   )
 })
 

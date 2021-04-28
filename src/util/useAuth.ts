@@ -9,6 +9,7 @@ import { useRefetch } from './useRefetch'
 import { getAuthToken, saveAuthToken } from './authToken'
 import { pickGraphqlData } from './pickGraphqlData'
 import { text } from './translate'
+import { useShowErrorNotification } from './useShowNotification'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -19,16 +20,20 @@ export enum AuthState {
 export const useAuth = (): [AuthState, boolean] => {
   const [authState, setAuthState] = useState<AuthState>(AuthState.UNAUTHENTICATED)
   const [currentUser, setCurrentUser] = useStateValue('user')
-  let [, setErrorMessage] = useStateValue('errorMessage')
+  let showErrorNotification = useShowErrorNotification()
+
   // To prevent unwanted navigation, only set this to true when the app should
   // navigate away from the login screen.
   let shouldNavigate = useRef(false)
+
   const [login, { loading: isLoginLoading }] = useMutationData<User>(loginMutation)
+
   const {
     data: fetchedUser,
     refetch: refetchUserCb,
     loading: isCurrentUserLoading,
   } = useQueryData<User>(currentUserQuery)
+
   let refetchUser = useRefetch(refetchUserCb)
 
   let navigateNext = useCallback(() => {
@@ -115,7 +120,7 @@ export const useAuth = (): [AuthState, boolean] => {
           refetchUser()
         } else {
           setAuthState(AuthState.UNAUTHENTICATED)
-          setErrorMessage(text('login_failed'))
+          showErrorNotification(text('login_failed'))
         }
       })
     }

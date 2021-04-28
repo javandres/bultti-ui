@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../components/buttons/Button'
-import Dropdown from '../input/Dropdown'
+import Dropdown, { DropdownProps } from '../input/Dropdown'
 import { FlexRow } from '../components/common'
 import { Text } from '../../util/translate'
 import { TablePagingStateType } from './usePaging'
@@ -133,12 +133,12 @@ const TablePagingControl = observer(
                     minWidth: '8rem',
                     justifyContent: 'center',
                   }}>
-                  <PageSelectDropdown
+                  <PageSelectDropdown<FC<DropdownProps<number>>>
                     selectedItem={pageState.currentPage || 1}
                     items={pageOptions}
                     onSelect={(selectedPage) => pageState.setCurrentPage(selectedPage)}
-                    itemToString={(idx) => idx}
-                    itemToLabel={(idx) => idx}
+                    itemToString={(idx) => idx + ''}
+                    itemToLabel={(idx) => idx + ''}
                   />
                   <strong>/ {pageState.pageCount}</strong>
                 </PageValue>

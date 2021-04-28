@@ -4,8 +4,8 @@ import { useStateValue } from '../../state/useAppState'
 import SelectOperator from '../input/SelectOperator'
 import { UserRole } from '../../schema-types'
 import { getUrlValue } from '../../util/urlValue'
-import { SidebarStyledSelect } from './AppSidebar'
 import { useLocation } from '@reach/router'
+import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 
 const GlobalOperatorFilter: React.FC = observer(() => {
   var [operator, setOperatorFilter] = useStateValue('globalOperator')
@@ -20,7 +20,7 @@ const GlobalOperatorFilter: React.FC = observer(() => {
   var userIsOperator = user && user?.role === UserRole.Operator
 
   return (
-    <SidebarStyledSelect
+    <SidebarStyledDropdown
       as={SelectOperator}
       onSelect={setOperatorFilter}
       value={operator}

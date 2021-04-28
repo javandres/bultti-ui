@@ -74,7 +74,8 @@ const App: React.FC = observer(() => {
   const hasAdminAccessRights = useHasAdminAccessRights()
 
   // Listen for the browser close event. Conditionally prompt user when needed.
-  let [unsavedFormIds] = useStateValue('unsavedFormIds')
+  let [unsavedFormIds = []] = useStateValue('unsavedFormIds')
+
   useEffect(() => {
     let listener = (event: BeforeUnloadEvent) => {
       if (unsavedFormIds.length > 0) {

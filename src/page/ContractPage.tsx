@@ -16,6 +16,7 @@ import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import { useRefetch } from '../util/useRefetch'
 import { LinkButton } from '../common/components/buttons/LinkButton'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 const ContractPageView = styled(Page)``
 
@@ -71,7 +72,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   }, [])
 
   const onCreateNewContract = useCallback(() => {
-    if (!operator) {
+    if (!operatorIsValid(operator)) {
       return
     }
 
@@ -94,7 +95,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
         {hasAccessRights && (
           <FlexRow style={{ margin: '1rem' }}>
             <Button
-              disabled={!operator}
+              disabled={!operatorIsValid(operator)}
               onClick={onCreateNewContract}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}

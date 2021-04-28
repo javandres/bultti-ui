@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import { createReportQueryByName } from './reportQueries'
-import { InspectionType } from '../schema-types'
+import { InspectionStatus, InspectionType } from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
 import DownloadReport from './DownloadReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
@@ -33,12 +33,14 @@ export type PropTypes = {
   reportName: keyof ReportTypeByName
   inspectionType: InspectionType
   inspectionId: string
+  inspectionStatus: InspectionStatus
 }
 
 let reportKeyFromItem = (item: any) =>
   item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
-const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: PropTypes) => {
+const ReportContainer = observer((props: PropTypes) => {
+  let { reportName, inspectionId, inspectionType, inspectionStatus } = props
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
 
@@ -126,13 +128,15 @@ const ReportContainer = observer(({ reportName, inspectionId, inspectionType }: 
   return (
     <ReportViewWrapper>
       <ReportFunctionsRow>
-        {inspectionType && inspectionId && (
-          <DownloadReport
-            reportName={reportName}
-            inspectionId={inspectionId}
-            inspectionType={inspectionType}
-          />
-        )}
+        {inspectionStatus === InspectionStatus.InProduction &&
+          inspectionType &&
+          inspectionId && (
+            <DownloadReport
+              reportName={reportName}
+              inspectionId={inspectionId}
+              inspectionType={inspectionType}
+            />
+          )}
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}

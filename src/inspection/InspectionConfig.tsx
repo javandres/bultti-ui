@@ -118,6 +118,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           <FlexRow>
             <InspectionSelectDates
               inspectionType={inspection.inspectionType}
+              inspectionSeason={inspection.season}
               isEditingDisabled={inspection.status !== InspectionStatus.Draft}
               inspectionInput={pendingInspectionInputValues}
               onChange={onChangeInspectionDate}

@@ -19,6 +19,9 @@ import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import InspectionValidationErrors from './InspectionValidationErrors'
 import { Button } from '../common/components/buttons/Button'
+import { getInspectionTypeStrings } from './inspectionUtils'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { seasonIsValid } from '../common/input/SelectSeason'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -77,12 +80,14 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     )
 
     useEffect(() => {
-      if (!inspection || !operator || !season) {
+      if (!inspection || !operatorIsValid(operator) || !seasonIsValid(season)) {
         return
       }
 
       if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
-        navigateWithQueryString(`/pre-inspection/edit`)
+        navigateWithQueryString(
+          `/${getInspectionTypeStrings(inspection.inspectionType).path}-inspection/edit`
+        )
       }
     }, [inspection, operator, season])
 

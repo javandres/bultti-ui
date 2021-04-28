@@ -3,8 +3,7 @@ import { useStateValue } from '../state/useAppState'
 
 export function useHasAdminAccessRights(): boolean {
   const [user] = useStateValue('user')
-
-  return user && user.role === UserRole.Admin
+  return !!user && user.role === UserRole.Admin
 }
 
 export function useHasHSLUserAccessRights(): boolean {
@@ -14,7 +13,7 @@ export function useHasHSLUserAccessRights(): boolean {
     return true
   }
 
-  return user && user.role === UserRole.Hsl
+  return !!user && user.role === UserRole.Hsl
 }
 
 export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
@@ -29,6 +28,6 @@ export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
   }
 
   return (
-    user && user.role === UserRole.Operator && (user.operatorIds || []).includes(operatorId)
+    !!user && user.role === UserRole.Operator && (user.operatorIds || []).includes(operatorId)
   )
 }
