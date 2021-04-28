@@ -1345,7 +1345,7 @@ type UnobservedDeparturesReportData {
 type User {
   contractRelations: [ContractUserRelation!]!
   email: String!
-  hslIdGroups: [String!]
+  hslIdGroups: [String!]!
   id: ID!
   inspectionRelations: [InspectionUserRelation!]!
   name: String!
@@ -1555,11 +1555,11 @@ input UserInput {
 }
 
 
-"The javascript `Date` as string. Type represents date and time as the ISO Date string."
-scalar DateTime
-
 "A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki."
 scalar BulttiDate
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime
 
 "The `Upload` scalar type represents a file upload."
 scalar Upload

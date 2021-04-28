@@ -642,7 +642,7 @@ export type User = {
   role: UserRole;
   organisation?: Maybe<Scalars['String']>;
   operatorIds?: Maybe<Array<Scalars['Int']>>;
-  hslIdGroups?: Maybe<Array<Scalars['String']>>;
+  hslIdGroups: Array<Scalars['String']>;
   inspectionRelations: Array<InspectionUserRelation>;
   contractRelations: Array<ContractUserRelation>;
 };
