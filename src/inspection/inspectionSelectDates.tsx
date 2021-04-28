@@ -123,7 +123,7 @@ const InspectionSelectDates = observer(
         ) : (
           <Dropdown
             disabled={isEditingDisabled}
-            label={text('inspection_selectInspection')}
+            label={text('inspection_selectInspectionDate')}
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}

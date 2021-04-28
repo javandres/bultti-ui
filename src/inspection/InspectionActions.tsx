@@ -1,4 +1,4 @@
-import React, { CSSProperties, useCallback, useState } from 'react'
+import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
@@ -18,7 +18,6 @@ import {
 import { useStateValue } from '../state/useAppState'
 import { useMatch } from '@reach/router'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
-import InspectionApprovalSubmit from './InspectionApprovalSubmit'
 import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
@@ -54,7 +53,6 @@ export type PropTypes = {
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style }: PropTypes) => {
     var [season, setSeason] = useStateValue('globalSeason')
-    var [isSubmitActive, setSubmitActive] = useState<boolean>(false)
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
       inspection?.operatorId || undefined
@@ -114,33 +112,17 @@ const InspectionActions = observer(
       rejectInspectionMutation
     )
 
-    var onSubmitProcessStart = useCallback(() => {
-      setSubmitActive(true)
-    }, [])
+    var onSubmitInspection = useCallback(async () => {
+      await submitInspection({
+        variables: {
+          inspectionId: inspection.id,
+          startDate: inspection.startDate,
+          endDate: inspection.endDate,
+        },
+      })
 
-    var onCancelSubmit = useCallback(() => {
-      setSubmitActive(false)
-    }, [])
-
-    var onSubmitInspection = useCallback(
-      async (startDate: string, endDate: string) => {
-        if (hasErrors) {
-          return
-        }
-
-        await submitInspection({
-          variables: {
-            inspectionId: inspection.id,
-            startDate,
-            endDate,
-          },
-        })
-
-        await onRefresh()
-        setSubmitActive(false)
-      },
-      [onRefresh, inspection, hasErrors]
-    )
+      await onRefresh()
+    }, [onRefresh, inspection, hasErrors])
 
     var onMakeInspectionSanctionable = useCallback(async () => {
       if (hasErrors) {
@@ -223,14 +205,14 @@ const InspectionActions = observer(
               Raportit
             </Button>
           )}
-          {!isSubmitActive && canInspectionBeSubmitted && isEditing && (
+          {canInspectionBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
               disabled={hasErrors}
               size={ButtonSize.MEDIUM}
-              onClick={onSubmitProcessStart}>
-              <Text>inspection_actions_openSubmitContainer</Text>
+              onClick={onSubmitInspection}>
+              <Text>inspection_actions_submit</Text>
             </Button>
           )}
 
@@ -281,18 +263,6 @@ const InspectionActions = observer(
             </>
           )}
         </ButtonRow>
-        {isSubmitActive &&
-          canInspectionBeSubmitted &&
-          hasOperatorUserAccessRights &&
-          isEditing && (
-            <InspectionApprovalSubmit
-              disabled={hasErrors}
-              inspection={inspection}
-              onSubmit={onSubmitInspection}
-              onCancel={onCancelSubmit}
-              loading={submitLoading}
-            />
-          )}
       </>
     )
   }
