@@ -122,7 +122,7 @@ export function useRemoveInspection(
 export function useNavigateToInspection(inspectionType: InspectionType = InspectionType.Pre) {
   return useCallback(
     (inspection?: Inspection) => {
-      let pathSegment = getInspectionTypeStrings(inspectionType).prefixLC
+      let pathSegment = getInspectionTypeStrings(inspectionType).path
 
       if (inspection) {
         return navigateWithQueryString(`/${pathSegment}-inspection/edit/${inspection.id}`)

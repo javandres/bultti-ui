@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
-import SelectSeason from '../input/SelectSeason'
+import SelectSeason, { seasonIsValid } from '../input/SelectSeason'
 import { getUrlValue } from '../../util/urlValue'
 import { getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
 import { text } from '../../util/translate'
-import { Season } from '../../schema-types'
 import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 
 const SeasonTimeSpan = styled.div`
@@ -16,7 +15,7 @@ const SeasonTimeSpan = styled.div`
 `
 
 const GlobalSeasonFilter: React.FC = observer(() => {
-  const [season, setSeasonFilter] = useStateValue<Season>('globalSeason')
+  const [season, setSeasonFilter] = useStateValue('globalSeason')
 
   let initialSeasonId: string | undefined = useMemo(() => {
     let initialVal = (getUrlValue('season') || '') + ''
@@ -32,7 +31,7 @@ const GlobalSeasonFilter: React.FC = observer(() => {
         label={text('selectSeason')}
         selectInitialId={initialSeasonId}
       />
-      {season && (
+      {seasonIsValid(season) && (
         <SeasonTimeSpan>
           {getReadableDateRange({ start: season.startDate, end: season.endDate })}
         </SeasonTimeSpan>

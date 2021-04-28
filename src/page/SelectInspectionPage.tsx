@@ -9,6 +9,8 @@ import { currentPreInspectionsByOperatorAndSeasonQuery } from '../inspection/ins
 import { useQueryData } from '../util/useQueryData'
 import { PageTitle } from '../common/components/PageTitle'
 import { getInspectionTypeStrings } from '../inspection/inspectionUtils'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { seasonIsValid } from '../common/input/SelectSeason'
 
 export type PropTypes = {
   inspectionType: InspectionType
@@ -21,7 +23,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   let { data: inspections, loading, refetch } = useQueryData<Inspection[]>(
     currentPreInspectionsByOperatorAndSeasonQuery,
     {
-      skip: !operator?.id || !season?.id,
+      skip: !operatorIsValid(operator) || !seasonIsValid(season),
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: operator?.id || 0,

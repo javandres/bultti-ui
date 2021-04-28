@@ -10,6 +10,7 @@ import { MessageContainer, MessageView } from '../common/components/Messages'
 import { getInspectionTypeStrings, useFetchInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { InspectionType } from '../schema-types'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -36,7 +37,7 @@ const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
         {typeStrings.prefix}tarkastukset
       </PageTitle>
       <PageContainer>
-        {!operator ? (
+        {!operatorIsValid(operator) ? (
           <MessageContainer>
             <MessageView>Valitse liikennöitsijä.</MessageView>
           </MessageContainer>

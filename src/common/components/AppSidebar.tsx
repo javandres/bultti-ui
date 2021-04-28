@@ -22,7 +22,6 @@ import { navigateWithQueryString } from '../../util/urlValue'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
-import { User } from '../../schema-types'
 import { gql, useMutation } from '@apollo/client'
 
 const AppSidebarView = styled.div`
@@ -114,7 +113,7 @@ export type AppSidebarProps = {
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
-  const [user, setUser] = useStateValue<User>('user')
+  const [user, setUser] = useStateValue('user')
   let hasAdminAccess = useHasAdminAccessRights()
 
   let unsavedFormIdsState = useStateValue('unsavedFormIds')
