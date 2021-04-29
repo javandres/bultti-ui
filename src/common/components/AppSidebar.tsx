@@ -227,6 +227,11 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Menu fill="white" width="1rem" height="1rem" />
             <Text>reports</Text>
           </NavLink>
+          {DEBUG && (
+            <NavLink to="admin">
+              <div>Admin</div>
+            </NavLink>
+          )}
         </NavCategory>
         <NavCategory>
           <Button
@@ -239,12 +244,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           </Button>
         </NavCategory>
         {DEBUG && (
-          <Button
-            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-            onClick={() => clearCache()}
-            size={ButtonSize.MEDIUM}>
-            <Text>Clear cache</Text>
-          </Button>
+          <NavCategory>
+            <Button
+              style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+              onClick={() => clearCache()}
+              size={ButtonSize.MEDIUM}>
+              <div>Clear cache</div>
+            </Button>
+          </NavCategory>
         )}
       </AppNav>
     </AppSidebarView>
