@@ -19,9 +19,8 @@ export type Scalars = {
 
 export type Query = {
   __typename?: 'Query';
-  executionRequirementsByOperator: Array<ExecutionRequirement>;
-  executionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  executionRequirementsForPreInspectionAreas: Array<ExecutionRequirement>;
+  executionRequirementsByOperator: Array<PlannedUnitExecutionRequirement>;
+  executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>;
   executionSchemaStats?: Maybe<ExecutionSchemaStats>;
   inspection?: Maybe<Inspection>;
   inspectionsByOperator: Array<Inspection>;
@@ -83,6 +82,7 @@ export type Query = {
   getObservedInspectionDates: Array<InspectionDate>;
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
+  executionRequirementsForPreInspectionAreas: Array<PlannedAreaExecutionRequirement>;
 };
 
 
@@ -94,11 +94,6 @@ export type QueryExecutionRequirementsByOperatorArgs = {
 export type QueryExecutionRequirementForProcurementUnitArgs = {
   inspectionId: Scalars['String'];
   procurementUnitId: Scalars['String'];
-};
-
-
-export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
-  inspectionId: Scalars['String'];
 };
 
 
@@ -443,27 +438,33 @@ export type QueryRunSanctioningArgs = {
   inspectionId: Scalars['String'];
 };
 
-export type ExecutionRequirement = {
-  __typename?: 'ExecutionRequirement';
-  id: Scalars['ID'];
-  area: OperatingArea;
-  operator: Operator;
-  operatorId: Scalars['Float'];
+
+export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
   inspectionId: Scalars['String'];
-  inspection: Inspection;
-  equipmentQuotas: Array<ExecutionRequirementQuota>;
-  procurementUnit?: Maybe<ProcurementUnit>;
-  procurementUnitId?: Maybe<Scalars['String']>;
-  areaRequirement?: Maybe<ExecutionRequirement>;
-  areaRequirementId?: Maybe<Scalars['String']>;
-  procurementUnitRequirements?: Maybe<Array<ExecutionRequirement>>;
-  weeklyMeters?: Maybe<Scalars['Float']>;
-  totalKilometers?: Maybe<Scalars['Float']>;
-  totalKilometersFulfilled?: Maybe<Scalars['Float']>;
+};
+
+export type PlannedUnitExecutionRequirement = {
+  __typename?: 'PlannedUnitExecutionRequirement';
+  id: Scalars['ID'];
+  metersRequired?: Maybe<Scalars['Float']>;
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  metersObserved?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
   averageAgeWeighted?: Maybe<Scalars['Float']>;
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
   averageAgeRequirement?: Maybe<Scalars['Float']>;
-  requirements: Array<ExecutionRequirementValue>;
+  area: OperatingArea;
+  areaId: Scalars['Int'];
+  operator: Operator;
+  operatorId: Scalars['Int'];
+  inspection: Inspection;
+  inspectionId: Scalars['String'];
+  equipmentQuotas: Array<ExecutionRequirementQuota>;
+  procurementUnit: ProcurementUnit;
+  procurementUnitId: Scalars['String'];
+  areaRequirement?: Maybe<PlannedExecutionRequirement>;
+  areaRequirementId?: Maybe<Scalars['String']>;
+  requirements: Array<PlannedEmissionClassRequirement>;
 };
 
 export type OperatingArea = {
@@ -471,7 +472,9 @@ export type OperatingArea = {
   id: Scalars['Int'];
   name: OperatingAreaName;
   procurementUnits?: Maybe<Array<ProcurementUnit>>;
-  executionRequirements?: Maybe<Array<ExecutionRequirement>>;
+  unitExecutionRequirements?: Maybe<Array<PlannedUnitExecutionRequirement>>;
+  areaExecutionRequirements?: Maybe<Array<PlannedAreaExecutionRequirement>>;
+  observedExecutionRequirements?: Maybe<Array<ObservedExecutionRequirement>>;
 };
 
 export enum OperatingAreaName {
@@ -494,7 +497,7 @@ export type ProcurementUnit = {
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
   optionsUsed: Scalars['Int'];
-  executionRequirements: Array<ExecutionRequirement>;
+  executionRequirements: Array<PlannedUnitExecutionRequirement>;
   contracts: Array<Contract>;
   currentContracts?: Maybe<Array<Contract>>;
 };
@@ -507,7 +510,6 @@ export type Operator = {
   inspections: Array<Inspection>;
   contracts: Array<Contract>;
   procurementUnits: Array<ProcurementUnit>;
-  executionRequirements: Array<ExecutionRequirement>;
   equipment: Array<Equipment>;
   equipmentCatalogues: Array<EquipmentCatalogue>;
 };
@@ -524,7 +526,8 @@ export type Inspection = {
   operator: Operator;
   seasonId: Scalars['String'];
   season: Season;
-  executionRequirements: Array<ExecutionRequirement>;
+  areaExecutionRequirements: Array<PlannedAreaExecutionRequirement>;
+  unitExecutionRequirements: Array<PlannedUnitExecutionRequirement>;
   observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
@@ -565,27 +568,63 @@ export type Season = {
 };
 
 
-export type ObservedExecutionRequirement = {
-  __typename?: 'ObservedExecutionRequirement';
+export type PlannedAreaExecutionRequirement = {
+  __typename?: 'PlannedAreaExecutionRequirement';
   id: Scalars['ID'];
-  isCombinedAreaRequirement: Scalars['Boolean'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  areaId: Scalars['Int'];
-  area: OperatingArea;
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  inspection: Inspection;
-  inspectionId: Scalars['String'];
   metersRequired?: Maybe<Scalars['Float']>;
   kilometersRequired?: Maybe<Scalars['Float']>;
   metersObserved?: Maybe<Scalars['Float']>;
   kilometersObserved?: Maybe<Scalars['Float']>;
-  observedRequirements: Array<ObservedExecutionValue>;
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
+  area: OperatingArea;
+  areaId: Scalars['Int'];
+  operator: Operator;
+  operatorId: Scalars['Int'];
+  inspection: Inspection;
+  inspectionId: Scalars['String'];
+  procurementUnitRequirements?: Maybe<Array<PlannedUnitExecutionRequirement>>;
+  requirements: Array<PlannedEmissionClassRequirement>;
 };
 
-export type ObservedExecutionValue = {
-  __typename?: 'ObservedExecutionValue';
+export type PlannedEmissionClassRequirement = {
+  __typename?: 'PlannedEmissionClassRequirement';
+  emissionClass: Scalars['Int'];
+  kilometerRequirement?: Maybe<Scalars['Float']>;
+  quotaRequirement?: Maybe<Scalars['Float']>;
+  kilometersFulfilled?: Maybe<Scalars['Float']>;
+  quotaFulfilled?: Maybe<Scalars['Float']>;
+  differencePercentage?: Maybe<Scalars['Float']>;
+  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
+  equipmentCount?: Maybe<Scalars['Int']>;
+  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
+  classSanctionAmount?: Maybe<Scalars['Float']>;
+};
+
+export type ObservedExecutionRequirement = {
+  __typename?: 'ObservedExecutionRequirement';
+  id: Scalars['ID'];
+  metersRequired?: Maybe<Scalars['Float']>;
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  metersObserved?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
+  area: OperatingArea;
+  areaId: Scalars['Int'];
+  operator: Operator;
+  operatorId: Scalars['Int'];
+  inspection: Inspection;
+  inspectionId: Scalars['String'];
+  isCombinedAreaRequirement: Scalars['Boolean'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  observedRequirements: Array<ObservedEmissionClassRequirement>;
+};
+
+export type ObservedEmissionClassRequirement = {
+  __typename?: 'ObservedEmissionClassRequirement';
   id?: Maybe<Scalars['ID']>;
   observedExecutionRequirement: ObservedExecutionRequirement;
   emissionClass: Scalars['Int'];
@@ -788,7 +827,7 @@ export type ExecutionRequirementQuota = {
   equipmentId: Scalars['String'];
   executionRequirementId: Scalars['String'];
   equipment: Equipment;
-  executionRequirement: ExecutionRequirement;
+  executionRequirement: PlannedUnitExecutionRequirement;
   requirementOnly: Scalars['Boolean'];
 };
 
@@ -797,20 +836,16 @@ export type ProcurementUnitRoute = {
   routeId: Scalars['String'];
 };
 
-export type ExecutionRequirementValue = {
-  __typename?: 'ExecutionRequirementValue';
-  emissionClass: Scalars['Int'];
-  kilometerRequirement?: Maybe<Scalars['Float']>;
-  quotaRequirement?: Maybe<Scalars['Float']>;
-  kilometersFulfilled?: Maybe<Scalars['Float']>;
-  quotaFulfilled?: Maybe<Scalars['Float']>;
-  differencePercentage?: Maybe<Scalars['Float']>;
-  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
-  equipmentCount?: Maybe<Scalars['Int']>;
-  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
-  sanctionThreshold?: Maybe<Scalars['Float']>;
-  sanctionAmount?: Maybe<Scalars['Float']>;
-  classSanctionAmount?: Maybe<Scalars['Float']>;
+export type PlannedExecutionRequirement = {
+  __typename?: 'PlannedExecutionRequirement';
+  id: Scalars['ID'];
+  metersRequired?: Maybe<Scalars['Float']>;
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  metersObserved?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
 };
 
 export type ExecutionSchemaStats = {
@@ -1176,7 +1211,7 @@ export type ExecutionRequirementsReportData = {
   averageAgeWeighted?: Maybe<Scalars['Float']>;
   averageAgeRequirement?: Maybe<Scalars['Float']>;
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
-  requirements: Array<ExecutionRequirementValue>;
+  requirements: Array<PlannedEmissionClassRequirement>;
 };
 
 export type ExtraBlockDeparturesReport = {
@@ -1385,8 +1420,8 @@ export type UnitExecutionReportData = {
   __typename?: 'UnitExecutionReportData';
   id: Scalars['ID'];
   procurementUnitId: Scalars['String'];
-  totalKilometers: Scalars['Float'];
-  totalKilometersFulfilled: Scalars['Float'];
+  kilometersRequired: Scalars['Float'];
+  kilometersFulfilled: Scalars['Float'];
   averageAgeMax: Scalars['Float'];
   averageAgeRequired: Scalars['Float'];
   averageAgeWeighted: Scalars['Float'];
@@ -1627,7 +1662,7 @@ export type ObservedExecutionRequirementsReportData = {
   areaName: Scalars['String'];
   totalKilometersRequired: Scalars['Float'];
   totalKilometersObserved: Scalars['Float'];
-  observedRequirements: Array<ObservedExecutionValue>;
+  observedRequirements: Array<ObservedEmissionClassRequirement>;
 };
 
 export type ObservedOverAgeDeparturesReport = {
@@ -1863,13 +1898,13 @@ export enum SanctionExceptionReason {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  createExecutionRequirementsForProcurementUnit?: Maybe<ExecutionRequirement>;
-  updateWeeklyExecutionMetersFromSource: ExecutionRequirement;
-  refreshExecutionRequirementForProcurementUnit?: Maybe<ExecutionRequirement>;
-  addEquipmentToExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeEquipmentFromExecutionRequirement: ExecutionRequirement;
-  removeAllEquipmentFromExecutionRequirement?: Maybe<ExecutionRequirement>;
-  removeExecutionRequirement: ExecutionRequirement;
+  createExecutionRequirementsForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>;
+  updateWeeklyExecutionMetersFromSource: PlannedUnitExecutionRequirement;
+  refreshExecutionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>;
+  addEquipmentToExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>;
+  removeEquipmentFromExecutionRequirement: PlannedUnitExecutionRequirement;
+  removeAllEquipmentFromExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>;
+  removeUnitExecutionRequirement: Scalars['Boolean'];
   createInspection: Inspection;
   updateLinkedInspection: Inspection;
   updateInspection: Inspection;
@@ -1948,7 +1983,7 @@ export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
 };
 
 
-export type MutationRemoveExecutionRequirementArgs = {
+export type MutationRemoveUnitExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
 };
 
