@@ -59,9 +59,9 @@ const SidebarToggleButton = styled.div<{ isSidebarExpanded: boolean }>`
     background-color: white;
     border: 2px solid var(--blue);
     fill: var(--blue);
-    height: 1.75rem; // Adjust button width with height, width, padding
-    width: 1.75rem; // Adjust button width with height, width, padding
-    padding: 5px; // Adjust button width with height, width, padding
+    height: 1.75rem; // Adjust button size with height, width, padding
+    width: 1.75rem; // Adjust button size with height, width, padding
+    padding: 5px; // Adjust button size with height, width, padding
   }
 
   &:hover {
