@@ -7,7 +7,7 @@ import { ArrowRight } from '../icon/ArrowRight'
 import { text } from '../../util/translate'
 
 const SIDEBAR_WIDTH = 270
-const SIDEBAR_TOGGLE_BUTTON_WIDTH = 26
+const SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH = 40
 
 const AppFrameView = styled.div`
   display: grid;
@@ -38,31 +38,37 @@ const Main = styled.div`
 const SidebarToggleButton = styled.div<{ isSidebarExpanded: boolean }>`
   position: absolute;
   display: flex;
-  top: ${APP_TITLE_HEIGHT / 2 - SIDEBAR_TOGGLE_BUTTON_WIDTH / 2}px;
+  top: ${APP_TITLE_HEIGHT / 2 - SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH / 2}px;
   left: ${(p) =>
-    p.isSidebarExpanded ? `${SIDEBAR_WIDTH - SIDEBAR_TOGGLE_BUTTON_WIDTH / 2}px` : '0px'};
-  width: ${SIDEBAR_TOGGLE_BUTTON_WIDTH}px;
-  height: ${SIDEBAR_TOGGLE_BUTTON_WIDTH}px;
-  border-radius: ${SIDEBAR_TOGGLE_BUTTON_WIDTH}px;
+    p.isSidebarExpanded
+      ? `${SIDEBAR_WIDTH - SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH / 2}px`
+      : `-${SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH / 4}px`};
+  width: ${SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH}px;
+  height: ${SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH}px;
   transform: ${(p) => (p.isSidebarExpanded ? 'rotate(180deg)' : '')};
-  background-color: white;
-  border: 2px solid var(--blue);
   font-weight: bold;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   z-index: 99999;
   transition: 0.5s;
+  border-radius: ${SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH}px;
 
   svg {
+    border-radius: ${SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH}px;
+    background-color: white;
+    border: 2px solid var(--blue);
     fill: var(--blue);
-    height: 0.75rem;
-    width: 0.75rem;
+    height: 1.75rem; // Adjust button width with height, width, padding
+    width: 1.75rem; // Adjust button width with height, width, padding
+    padding: 5px; // Adjust button width with height, width, padding
   }
 
   &:hover {
-    border: 2px solid var(--dark-blue);
-    transition: 0.5s;
+    svg {
+      border: 2px solid var(--dark-blue);
+      transition: 0.5s;
+    }
   }
 `
 
