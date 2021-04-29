@@ -1,18 +1,13 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { TabsWrapper } from './Tabs'
 import { Button, ButtonSize, ButtonStyle, StyledButton } from './buttons/Button'
-import { Link } from '@reach/router'
-import { ArrowLeftLong } from '../icon/ArrowLeftLong'
-import { history, pathWithQuery } from '../../util/urlValue'
-import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
-import { useStateValue } from '../../state/useAppState'
 import { Text } from '../../util/translate'
 
 const PageTitleView = styled.h2`
   border-bottom: 1px solid var(--lighter-grey);
-  padding: 1rem;
+  padding: 1rem 1rem 1rem 2rem;
   margin-bottom: 0;
   margin-left: 0;
   margin-top: 0;
@@ -31,16 +26,6 @@ const PageTitleView = styled.h2`
   }
 `
 
-const BackLink = styled(Link)`
-  padding-right: 1rem;
-  width: 2rem;
-  transition: transform 0.1s ease-out;
-
-  &:hover {
-    transform: scale(1.1);
-  }
-`
-
 const HeaderButtons = styled.div`
   display: flex;
   align-items: center;
@@ -54,34 +39,15 @@ const HeaderButtons = styled.div`
 
 export type PropTypes = {
   children?: React.ReactNode
-  showBackLink?: boolean
   onRefresh?: () => unknown
   loading?: boolean
   headerButtons?: React.ReactNode
 }
 
 export const PageTitle = observer(
-  ({
-    children,
-    showBackLink = true,
-    onRefresh,
-    loading = false,
-    headerButtons,
-  }: PropTypes) => {
-    let canGoBack = useMemo(() => !!showBackLink && history.location.pathname !== '/', [
-      showBackLink,
-      history,
-    ])
-    let unsavedFormIdsState = useStateValue('unsavedFormIds')
+  ({ children, onRefresh, loading = false, headerButtons }: PropTypes) => {
     return (
       <PageTitleView>
-        {canGoBack && (
-          <BackLink
-            onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)}
-            to={pathWithQuery('../')}>
-            <ArrowLeftLong fill="var(--dark-grey)" width="1rem" height="1rem" />
-          </BackLink>
-        )}
         {children}
         <HeaderButtons>
           {onRefresh && (
