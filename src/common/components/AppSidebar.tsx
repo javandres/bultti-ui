@@ -24,7 +24,10 @@ import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { gql, useMutation } from '@apollo/client'
 
+export const APP_TITLE_HEIGHT = 100
+
 const AppSidebarView = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -37,6 +40,7 @@ const HSLLogo = styled(HSLLogoNoText)`
 `
 
 const AppTitle = styled(Link)`
+  height: ${APP_TITLE_HEIGHT}px;
   padding: 2rem 1rem;
   margin: 0;
   display: flex;
