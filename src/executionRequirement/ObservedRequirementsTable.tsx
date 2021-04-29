@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ObservedExecutionValue } from '../schema-types'
+import { ObservedEmissionClassRequirement } from '../schema-types'
 import { orderBy } from 'lodash'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
@@ -26,19 +26,21 @@ const ExecutionRequirementsAreaContainer = styled.div`
   }
 `
 
-export type EditObservedRequirementValue = EditValue<ObservedExecutionValue>
+export type EditObservedRequirementValue = EditValue<ObservedEmissionClassRequirement>
 
 export interface IObservedExecutionRequirement {
-  observedRequirements: ObservedExecutionValue[]
+  observedRequirements: ObservedEmissionClassRequirement[]
   kilometersRequired?: number | null
 }
 
 export type PropTypes = {
   executionRequirement: IObservedExecutionRequirement
   isEditable?: boolean
-} & TableEditProps<ObservedExecutionValue>
+} & TableEditProps<ObservedEmissionClassRequirement>
 
-const valuesLayoutColumnLabels: { [key in keyof ObservedExecutionValue]?: string } = {
+const valuesLayoutColumnLabels: {
+  [key in keyof ObservedEmissionClassRequirement]?: string
+} = {
   emissionClass: 'Päästöluokka',
   kilometersRequired: 'Kaavioiden km',
   kilometersObserved: 'Toteuma km',
@@ -63,7 +65,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     pendingValues,
     isEditable = false,
   }) => {
-    let requirementRows: ObservedExecutionValue[] = useMemo(() => {
+    let requirementRows: ObservedEmissionClassRequirement[] = useMemo(() => {
       let requirementValues = executionRequirement.observedRequirements
       return orderBy(requirementValues, 'emissionClass', 'desc')
     }, [executionRequirement])
@@ -149,7 +151,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
 
     return (
       <ExecutionRequirementsAreaContainer>
-        <Table<ObservedExecutionValue>
+        <Table<ObservedEmissionClassRequirement>
           items={requirementRows}
           columnLabels={valuesLayoutColumnLabels}
           renderValue={renderTableValue}

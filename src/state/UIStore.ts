@@ -10,7 +10,6 @@ import { languageState, setLanguage } from './languageState'
 export const unselectedOperator: Operator = {
   equipment: [],
   equipmentCatalogues: [],
-  executionRequirements: [],
   procurementUnits: [],
   id: 0,
   operatorId: 0,
