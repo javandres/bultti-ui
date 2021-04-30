@@ -674,7 +674,11 @@ type Mutation {
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
 <<<<<<< HEAD
+<<<<<<< HEAD
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
+=======
+  removeTestData: Boolean!
+>>>>>>> master
 =======
   removeTestData: Boolean!
 >>>>>>> master
