@@ -89,7 +89,7 @@ const App: React.FC = observer(() => {
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
       <Router style={{ height: '100%' }}>
         <Index path="/" />
-        <DevPage path="admin" />
+        <DevPage path="dev-tools" />
 
         <ProcurementUnitsPage path="procurement-units" />
 
