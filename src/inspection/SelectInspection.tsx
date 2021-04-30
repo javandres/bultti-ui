@@ -1,23 +1,20 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionType } from '../schema-types'
 import { orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
-  getInspectionStatusColor,
-  getInspectionStatusName,
   getInspectionTypeStrings,
   useCreateInspection,
   useNavigateToInspection,
 } from './inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { SubHeading } from '../common/components/Typography'
-import InspectionActions from './InspectionActions'
 import { Plus } from '../common/icon/Plus'
 import { LoadingDisplay } from '../common/components/Loading'
-import { getReadableDate } from '../util/formatDate'
+import InspectionCard from './InspectionCard'
+import { Text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
 
@@ -40,23 +37,6 @@ const HeaderRow = styled(FlexRow)`
 
 const ListHeading = styled.h4`
   margin: 0 1rem 0 0;
-`
-
-type StatusProps = { status?: InspectionStatus }
-
-const InspectionItem = styled.div<StatusProps>`
-  padding: 0.75rem 1rem 0;
-  border-radius: 5px;
-  margin-bottom: 1rem;
-  background: white;
-  border: 2px solid ${(p) => getInspectionStatusColor(p.status)};
-  font-family: inherit;
-  margin-left: 1rem;
-  text-align: left;
-  line-height: 1.4;
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 25rem;
 `
 
 const NewInspection = styled.button`
@@ -94,69 +74,6 @@ const NewInspection = styled.button`
 const ItemContent = styled.div`
   line-height: 1.4;
   position: relative;
-`
-
-const InspectionTitle = styled(SubHeading)`
-  margin-bottom: 0.75rem;
-`
-
-const InspectionSubtitle = styled(SubHeading)`
-  margin-top: -0.75rem;
-  margin-bottom: 0.75rem;
-  font-size: 0.875rem;
-`
-
-const InspectionVersion = styled.div`
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.2rem 0.6rem;
-  border-radius: 5px;
-  background: var(--lighter-grey);
-  font-weight: bold;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const InspectionStatusDisplay = styled.div<StatusProps>`
-  padding: 0.25rem 0;
-  text-align: center;
-  background: ${(p) => getInspectionStatusColor(p.status)};
-  color: ${(p) => (p.status === InspectionStatus.InReview ? 'var(--dark-grey)' : 'white')};
-  margin: 0 0 1rem;
-  border-radius: 5px;
-`
-
-const InspectionPeriodDisplay = styled.div`
-  margin-bottom: 0.75rem;
-
-  &:last-child {
-    margin-bottom: 0.5rem;
-  }
-`
-
-const StartDate = styled.span`
-  margin-right: 0.75rem;
-
-  &:after {
-    content: '➔';
-    display: inline-block;
-    margin-left: 0.75rem;
-  }
-`
-
-const EndDate = styled(StartDate)`
-  &:after {
-    content: '';
-  }
-`
-
-const DateTitle = styled.h6`
-  font-size: 0.75rem;
-  margin-top: 0;
-  margin-bottom: 0.25rem;
 `
 
 export type PropTypes = {
@@ -201,7 +118,9 @@ const SelectInspection: React.FC<PropTypes> = observer(
         <LoadingDisplay loading={loading} />
         {!operatorIsValid(operator) || !seasonIsValid(season) ? (
           <MessageContainer>
-            <MessageView>Valitse liikennöitsijä ja kausi.</MessageView>
+            <MessageView>
+              <Text>inspectionPage_selectOperatorAndSeason</Text>
+            </MessageView>
           </MessageContainer>
         ) : (
           <>
@@ -216,41 +135,17 @@ const SelectInspection: React.FC<PropTypes> = observer(
                   <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
                 </ItemContent>
                 <ItemContent style={{ marginTop: 0 }}>
-                  Luo uusi {typeStrings.prefixLC}tarkastus
+                  <Text keyValueMap={{ prefix: typeStrings.prefixLC }}>
+                    inspectionPage_createNewInspection
+                  </Text>
                 </ItemContent>
               </NewInspection>
               {orderBy(inspections, 'version', 'desc').map((inspection) => (
-                <InspectionItem key={inspection.id} status={inspection.status}>
-                  <ItemContent>
-                    {inspection.name ? (
-                      <>
-                        <InspectionTitle>{inspection.name}</InspectionTitle>
-                        <InspectionSubtitle>
-                          {inspection.operator.operatorName}, {inspection.seasonId}
-                        </InspectionSubtitle>
-                      </>
-                    ) : (
-                      <InspectionTitle>
-                        {inspection.operator.operatorName}, {inspection.seasonId}
-                      </InspectionTitle>
-                    )}
-                    <InspectionVersion>{inspection.version}</InspectionVersion>
-                    <InspectionStatusDisplay status={inspection.status}>
-                      {getInspectionStatusName(inspection.status)}
-                    </InspectionStatusDisplay>
-                    <InspectionPeriodDisplay>
-                      <DateTitle>Tuotantojakso</DateTitle>
-                      <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
-                      <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
-                    </InspectionPeriodDisplay>
-                    <InspectionPeriodDisplay>
-                      <DateTitle>Tarkastusjakso</DateTitle>
-                      <StartDate>{getReadableDate(inspection.inspectionStartDate)}</StartDate>
-                      <EndDate>{getReadableDate(inspection.inspectionEndDate)}</EndDate>
-                    </InspectionPeriodDisplay>
-                  </ItemContent>
-                  <InspectionActions onRefresh={refetchInspections} inspection={inspection} />
-                </InspectionItem>
+                <InspectionCard
+                  key={inspection.id}
+                  onRefresh={refetchInspections}
+                  inspection={inspection}
+                />
               ))}
             </InspectionItems>
           </>

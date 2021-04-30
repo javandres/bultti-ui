@@ -112,6 +112,12 @@ type DeadrunsReportData {
   schemaId: String
 }
 
+type DepartureBlockFile {
+  blockFile: String!
+  dayType: String!
+  operatorId: Int!
+}
+
 type DepartureBlocksReport {
   columnLabels: String!
   description: String!
@@ -643,11 +649,14 @@ type Mutation {
   createInspection(inspection: InitialInspectionInput!): Inspection!
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  createTestData: Boolean!
+  forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
+  generateTestBlockDepartures: [DepartureBlockFile!]!
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): Inspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
-  login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
+  login(authorizationCode: String!, isTest: Boolean = false, role: String): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!
@@ -664,7 +673,11 @@ type Mutation {
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
+<<<<<<< HEAD
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
+=======
+  removeTestData: Boolean!
+>>>>>>> master
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -1368,7 +1381,7 @@ type UnobservedDeparturesReportData {
 type User {
   contractRelations: [ContractUserRelation!]!
   email: String!
-  hslIdGroups: [String!]
+  hslIdGroups: [String!]!
   id: ID!
   inspectionRelations: [InspectionUserRelation!]!
   name: String!
