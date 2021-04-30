@@ -82,6 +82,7 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
   let { data: inspection } = useQueryData(inspectionQuery, {
+    // Do not fetch inspection preview before the full UUID is written in the input. 36 = length of a valid UUID.
     skip: removeInspectionId.length < 36,
     nextFetchPolicy: !removeInspectionId ? 'network-only' : 'cache-first',
     variables: {
