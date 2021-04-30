@@ -57,7 +57,7 @@ async function base64ToBlob(base64?: string) {
 
 export type PropTypes = RouteComponentProps
 
-const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
+const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
   let [generateTestBlocks, { loading: testBlocksLoading }] = useMutationData(
     generateTestBlockDeparturesMutation
@@ -82,6 +82,7 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
   let { data: inspection } = useQueryData(inspectionQuery, {
+    // Do not fetch inspection preview before the full UUID is written in the input. 36 = length of a valid UUID.
     skip: removeInspectionId.length < 36,
     nextFetchPolicy: !removeInspectionId ? 'network-only' : 'cache-first',
     variables: {
@@ -128,6 +129,10 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
           <br />
           Use season "TESTIKAUSI" and operator "Bultin testiliikennöitsijä" to create test
           inspections.
+          <br />
+          <strong>Important!</strong> If you change or fix test data generator code, be sure to
+          first <em>remove</em> the old test data before creating new test data with the
+          updated code. Otherwise all test data may not be properly updated.
         </p>
         <Button loading={testDataLoading} onClick={() => createTestData()}>
           Create test data
@@ -175,4 +180,4 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
   )
 })
 
-export default AdminPage
+export default DevPage
