@@ -642,7 +642,7 @@ export type User = {
   role: UserRole;
   organisation?: Maybe<Scalars['String']>;
   operatorIds?: Maybe<Array<Scalars['Int']>>;
-  hslIdGroups?: Maybe<Array<Scalars['String']>>;
+  hslIdGroups: Array<Scalars['String']>;
   inspectionRelations: Array<InspectionUserRelation>;
   contractRelations: Array<ContractUserRelation>;
 };
@@ -1911,6 +1911,10 @@ export type Mutation = {
   removeInspectionDate: Scalars['Boolean'];
   updateSanctions: Array<Sanction>;
   clearCache: Scalars['Boolean'];
+  createTestData: Scalars['Boolean'];
+  generateTestBlockDepartures: Array<DepartureBlockFile>;
+  removeTestData: Scalars['Boolean'];
+  forceRemoveInspection: Scalars['Boolean'];
 };
 
 
@@ -2076,7 +2080,7 @@ export type MutationRemoveEquipmentCatalogueArgs = {
 
 
 export type MutationLoginArgs = {
-  role: Scalars['String'];
+  role?: Maybe<Scalars['String']>;
   isTest?: Maybe<Scalars['Boolean']>;
   authorizationCode: Scalars['String'];
 };
@@ -2175,6 +2179,12 @@ export type MutationUpdateSanctionsArgs = {
   sanctionUpdates: Array<SanctionUpdate>;
 };
 
+
+export type MutationForceRemoveInspectionArgs = {
+  testOnly?: Maybe<Scalars['Boolean']>;
+  inspectionId: Scalars['String'];
+};
+
 export type InitialInspectionInput = {
   name?: Maybe<Scalars['String']>;
   startDate?: Maybe<Scalars['BulttiDate']>;
@@ -2241,6 +2251,13 @@ export type InspectionDateInput = {
 export type SanctionUpdate = {
   sanctionId: Scalars['String'];
   appliedSanctionAmount: Scalars['Float'];
+};
+
+export type DepartureBlockFile = {
+  __typename?: 'DepartureBlockFile';
+  dayType: Scalars['String'];
+  operatorId: Scalars['Int'];
+  blockFile: Scalars['String'];
 };
 
 export type Subscription = {

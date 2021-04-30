@@ -24,6 +24,7 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
 import { text } from '../util/translate'
+import { operatorIsValid } from '../common/input/SelectOperator'
 
 export function useInspectionById(inspectionId?: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -55,7 +56,7 @@ export function useCreateInspection(
   return useCallback(
     async (seasonId = season?.id) => {
       // A pre-inspection can be created when there is not one currently existing or loading
-      if (operator && seasonId && !createLoading) {
+      if (operatorIsValid(operator) && seasonId && !createLoading) {
         // InitialInspectionInput requires operator, season ID and inspection type.
         let inspectionInput: InitialInspectionInput = {
           operatorId: operator.id,
@@ -155,7 +156,7 @@ export function useFetchInspections(
   let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
     inspectionsByOperatorQuery,
     {
-      skip: !queryOperator,
+      skip: !operatorIsValid(queryOperator),
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: queryOperator?.operatorId,

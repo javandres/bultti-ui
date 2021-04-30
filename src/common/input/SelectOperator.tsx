@@ -74,7 +74,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
         let initialOperator = operators.find((s) => s.id === selectInitialId)
 
         // Preselect the initial operator if there isn't a value already.
-        if (!operatorIsValid(value) && initialOperator) {
+        if (!operatorIsValid(value) && operatorIsValid(initialOperator)) {
           onSelect(initialOperator)
         }
       }
