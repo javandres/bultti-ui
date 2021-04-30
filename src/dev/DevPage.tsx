@@ -15,8 +15,10 @@ import InspectionCard from '../inspection/InspectionCard'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { DepartureBlockFile } from '../schema-types'
 import { saveAs } from 'file-saver'
+import { DEBUG } from '../constants'
 
 const AdminPageView = styled.div``
+const LENGTH_OF_VALID_INSPECTION_UUID = 36
 
 const createTestDataMutation = gql`
   mutation createTestData {
@@ -41,8 +43,8 @@ const removeTestDataMutation = gql`
 `
 
 const forceRemoveInspectionMutation = gql`
-  mutation forceRemoveInspection($inspectionId: String!) {
-    forceRemoveInspection(inspectionId: $inspectionId)
+  mutation forceRemoveInspection($inspectionId: String!, $testOnly: Boolean) {
+    forceRemoveInspection(inspectionId: $inspectionId, testOnly: $testOnly)
   }
 `
 
@@ -82,8 +84,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
   let { data: inspection } = useQueryData(inspectionQuery, {
-    // Do not fetch inspection preview before the full UUID is written in the input. 36 = length of a valid UUID.
-    skip: removeInspectionId.length < 36,
+    // Do not fetch inspection preview before the full UUID is written in the input.
+    skip: removeInspectionId.length < LENGTH_OF_VALID_INSPECTION_UUID,
     nextFetchPolicy: !removeInspectionId ? 'network-only' : 'cache-first',
     variables: {
       inspectionId: removeInspectionId,
@@ -101,7 +103,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         variables: {
           inspectionId: removeInspectionId,
           // Non-test inspections can also be removed by adding testOnly: false,
-          // but that is dangerous and not necessary for now.
+          // this is dangerous so it's allowed only if DEBUG = true
+          testOnly: !DEBUG,
         },
       })
     }
@@ -158,6 +161,14 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
 
         <h3>Force remove inspections</h3>
         <p>
+          <b>Pre inspections for the selected operator</b>
+        </p>
+        <p>TODO: query a list of pre inspections here.</p>
+        <p>
+          <b>Post inspections for the selected operator</b>
+        </p>
+        <p>TODO: query a list of post inspections here.</p>
+        <p>
           Force removal of inspections belonging to the test season. Will also remove any
           inspections where this is linked from.
         </p>
@@ -172,7 +183,10 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
           <InspectionCard key={inspection.id} onRefresh={() => {}} inspection={inspection} />
         )}
 
-        <Button loading={forceRemoveInspectionLoading} onClick={onRemoveInspection}>
+        <Button
+          loading={forceRemoveInspectionLoading}
+          onClick={onRemoveInspection}
+          disabled={removeInspectionId.length !== LENGTH_OF_VALID_INSPECTION_UUID}>
           Force remove inspection
         </Button>
       </PageContainer>

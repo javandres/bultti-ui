@@ -228,8 +228,8 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <Text>reports</Text>
           </NavLink>
           {DEBUG && (
-            <NavLink to="admin">
-              <div>Admin</div>
+            <NavLink to="dev-tools">
+              <div>Dev tools</div>
             </NavLink>
           )}
         </NavCategory>
