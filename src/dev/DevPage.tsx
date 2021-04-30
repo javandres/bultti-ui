@@ -57,7 +57,7 @@ async function base64ToBlob(base64?: string) {
 
 export type PropTypes = RouteComponentProps
 
-const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
+const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
   let [generateTestBlocks, { loading: testBlocksLoading }] = useMutationData(
     generateTestBlockDeparturesMutation
@@ -128,6 +128,10 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
           <br />
           Use season "TESTIKAUSI" and operator "Bultin testiliikennöitsijä" to create test
           inspections.
+          <br />
+          <strong>Important!</strong> If you change or fix test data generator code, be sure to
+          first <em>remove</em> the old test data before creating new test data with the
+          updated code. Otherwise all test data may not be properly updated.
         </p>
         <Button loading={testDataLoading} onClick={() => createTestData()}>
           Create test data
@@ -175,4 +179,4 @@ const AdminPage: React.FC<PropTypes> = observer(({ children }) => {
   )
 })
 
-export default AdminPage
+export default DevPage

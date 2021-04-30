@@ -15,7 +15,6 @@ import UserPage from './page/UserPage'
 import { Page } from './common/components/common'
 import ContractPage from './page/ContractPage'
 import EditContractPage from './page/EditContractPage'
-import { PageTitle } from './common/components/PageTitle'
 import { InspectionType } from './schema-types'
 import { removeAuthToken } from './util/authToken'
 import { useMutationData } from './util/useMutationData'
@@ -27,16 +26,7 @@ import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
-import AdminPage from './page/AdminPage'
-
-const Todo: React.FC<RouteComponentProps> = () => {
-  return (
-    <Page>
-      <PageTitle>TODO</PageTitle>
-      Placeholder page for future planned content.
-    </Page>
-  )
-}
+import DevPage from './dev/DevPage'
 
 const Logout: React.FC<RouteComponentProps> = () => {
   const [user, setUser] = useStateValue('user')
@@ -99,7 +89,7 @@ const App: React.FC = observer(() => {
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
       <Router style={{ height: '100%' }}>
         <Index path="/" />
-        <AdminPage path="admin" />
+        <DevPage path="admin" />
 
         <ProcurementUnitsPage path="procurement-units" />
 
@@ -139,7 +129,6 @@ const App: React.FC = observer(() => {
         {DEBUG ? <UserPage path="user" /> : <Redirect from="user" to="/" noThrow />}
         <ContractPage path="contract" />
         <EditContractPage path="contract/:contractId" />
-        <Todo path="contracts" />
         <Logout path="logout" />
       </Router>
     </AppFrame>
