@@ -66,7 +66,6 @@ export type Query = {
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>;
   preInspection: PreInspection;
   preInspectionsByOperator: Array<PreInspection>;
-  preInspectionsTimeline: Array<InspectionTimelineItem>;
   currentPreInspectionsByOperatorAndSeason: Array<PreInspection>;
   allPreInspections: Array<InspectionUserRelation>;
   contracts: Array<Contract>;
@@ -84,9 +83,9 @@ export type Query = {
   executionRequirementsForPreInspectionAreas: Array<PlannedAreaExecutionRequirement>;
   postInspection: PostInspection;
   postInspectionsByOperator: Array<PostInspection>;
-  postInspectionsTimeline: Array<InspectionTimelineItem>;
   currentPostInspectionsByOperatorAndSeason: Array<PostInspection>;
   allPostInspections: Array<InspectionUserRelation>;
+  inspectionsTimeline: Array<InspectionTimelineItem>;
 };
 
 
@@ -363,11 +362,6 @@ export type QueryPreInspectionsByOperatorArgs = {
 };
 
 
-export type QueryPreInspectionsTimelineArgs = {
-  operatorId: Scalars['Int'];
-};
-
-
 export type QueryCurrentPreInspectionsByOperatorAndSeasonArgs = {
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -450,11 +444,6 @@ export type QueryPostInspectionsByOperatorArgs = {
 };
 
 
-export type QueryPostInspectionsTimelineArgs = {
-  operatorId: Scalars['Int'];
-};
-
-
 export type QueryCurrentPostInspectionsByOperatorAndSeasonArgs = {
   seasonId: Scalars['String'];
   operatorId: Scalars['Int'];
@@ -463,6 +452,12 @@ export type QueryCurrentPostInspectionsByOperatorAndSeasonArgs = {
 
 export type QueryAllPostInspectionsArgs = {
   inspectionId: Scalars['String'];
+};
+
+
+export type QueryInspectionsTimelineArgs = {
+  inspectionType: InspectionType;
+  operatorId: Scalars['Int'];
 };
 
 export type PlannedUnitExecutionRequirement = {
@@ -551,6 +546,7 @@ export type PreInspection = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   minStartDate: Scalars['BulttiDate'];
   versionStackIdentifier?: Maybe<Scalars['String']>;
+  inspectionType: InspectionType;
   operatorId: Scalars['Int'];
   operator: Operator;
   seasonId: Scalars['String'];
@@ -570,6 +566,11 @@ export enum InspectionStatus {
 }
 
 
+
+export enum InspectionType {
+  Pre = 'PRE',
+  Post = 'POST'
+}
 
 export type Season = {
   __typename?: 'Season';
@@ -595,6 +596,7 @@ export type PostInspection = {
   endDate?: Maybe<Scalars['BulttiDate']>;
   minStartDate: Scalars['BulttiDate'];
   versionStackIdentifier?: Maybe<Scalars['String']>;
+  inspectionType: InspectionType;
   operatorId: Scalars['Int'];
   operator: Operator;
   seasonId: Scalars['String'];
@@ -1824,16 +1826,6 @@ export enum SanctionReason {
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
 }
 
-export type InspectionTimelineItem = {
-  __typename?: 'InspectionTimelineItem';
-  id: Scalars['ID'];
-  operatorName: Scalars['String'];
-  seasonId: Scalars['String'];
-  inspectionStartDate: Scalars['BulttiDate'];
-  inspectionEndDate: Scalars['BulttiDate'];
-  version: Scalars['Int'];
-};
-
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption';
   id: Scalars['String'];
@@ -1906,6 +1898,16 @@ export enum SanctionExceptionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE'
 }
+
+export type InspectionTimelineItem = {
+  __typename?: 'InspectionTimelineItem';
+  id: Scalars['ID'];
+  operatorName: Scalars['String'];
+  seasonId: Scalars['String'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  version: Scalars['Int'];
+};
 
 export type Mutation = {
   __typename?: 'Mutation';

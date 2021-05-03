@@ -12,7 +12,6 @@ import {
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
-  createInspectionMutation,
   inspectionQuery,
   inspectionsByOperatorQuery,
   inspectionStatusSubscription,
@@ -49,7 +48,9 @@ export function useCreateInspection(
   inspectionType: InspectionType
 ) {
   let [createInspection, { loading: createLoading }] = useMutationData(
-    createInspectionMutation
+    inspectionType === InspectionType.Pre
+      ? createPreInspectionMutation
+      : createPostInspectionMutation
   )
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
@@ -63,7 +64,6 @@ export function useCreateInspection(
           seasonId,
           startDate: season.startDate,
           endDate: season.endDate,
-          inspectionType,
         }
 
         let createResult = await createInspection({

@@ -1,5 +1,6 @@
-import { Inspection, InspectionValidationError } from '../schema-types'
+import { InspectionValidationError } from '../schema-types'
 import { useMemo } from 'react'
+import { Inspection } from '../inspection/inspectionTypes'
 
 export function hasInspectionError(inspection: Inspection, error?: InspectionValidationError) {
   let inspectionErrors = inspection?.inspectionErrors || []

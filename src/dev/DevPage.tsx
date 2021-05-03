@@ -15,6 +15,7 @@ import InspectionCard from '../inspection/InspectionCard'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
+import { DepartureBlockFile } from '../schema-types'
 
 const AdminPageView = styled.div``
 const LENGTH_OF_VALID_INSPECTION_UUID = 36
@@ -179,7 +180,12 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         />
 
         {inspection && (
-          <InspectionCard key={inspection.id} onRefresh={() => {}} inspection={inspection} />
+          <InspectionCard
+            inspectionType={ins}
+            key={inspection.id}
+            onRefresh={() => {}}
+            inspection={inspection}
+          />
         )}
 
         <Button

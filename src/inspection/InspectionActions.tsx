@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { InspectionStatus, InspectionType } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useNavigateToInspection,
@@ -21,6 +21,7 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
+import { Inspection } from './inspectionTypes'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -58,9 +59,11 @@ const InspectionActions = observer(
       inspection?.operatorId || undefined
     )
 
+    var { inspectionType } = inspection
+
     var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
 
-    var navigateToInspection = useNavigateToInspection(inspection.inspectionType)
+    var navigateToInspection = useNavigateToInspection(inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
 
     var hasErrors = inspection?.inspectionErrors?.length !== 0
@@ -91,7 +94,7 @@ const InspectionActions = observer(
       let removed = await removeInspection(inspection)
 
       if (removed) {
-        let pathSegment = inspection.inspectionType === InspectionType.Pre ? 'pre' : 'post'
+        let pathSegment = inspectionType === InspectionType.Pre ? 'pre' : 'post'
         navigateWithQueryString(`/${pathSegment}-inspection/edit`)
       }
     }, [removeInspection, inspection])
@@ -167,15 +170,14 @@ const InspectionActions = observer(
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let canInspectionBeSubmitted =
-      (inspection.inspectionType === InspectionType.Pre &&
+      (inspectionType === InspectionType.Pre &&
         inspection.status === InspectionStatus.Draft) ||
-      (inspection.inspectionType === InspectionType.Post &&
+      (inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Sanctionable)
 
     // Only post-inspections which are in draft state can be made sanctionable.
     let canInspectionBeSanctionable =
-      inspection.inspectionType === InspectionType.Post &&
-      inspection.status === InspectionStatus.Draft
+      inspectionType === InspectionType.Post && inspection.status === InspectionStatus.Draft
 
     return (
       <>
@@ -195,7 +197,7 @@ const InspectionActions = observer(
                   ? { marginLeft: 'auto', marginRight: 0 }
                   : undefined
               }
-              onClick={() => goToInspectionReports(inspection.id, inspection.inspectionType)}
+              onClick={() => goToInspectionReports(inspection.id, inspectionType)}
               buttonStyle={
                 inspection.status === InspectionStatus.InProduction
                   ? ButtonStyle.NORMAL

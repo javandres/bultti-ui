@@ -1061,6 +1061,7 @@ type PostInspection {
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
+  inspectionType: InspectionType!
   linkedInspectionUpdateAvailable: Boolean
   linkedInspections: [LinkedInspectionForWeek!]
   minStartDate: BulttiDate!
@@ -1086,6 +1087,7 @@ type PreInspection {
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
   inspectionStartDate: BulttiDate!
+  inspectionType: InspectionType!
   minStartDate: BulttiDate!
   name: String
   operator: Operator!
@@ -1168,6 +1170,7 @@ type Query {
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
+  inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport
   observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport
@@ -1184,10 +1187,8 @@ type Query {
   overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport
   postInspection(inspectionId: String!): PostInspection!
   postInspectionsByOperator(operatorId: Int!): [PostInspection!]!
-  postInspectionsTimeline(operatorId: Int!): [InspectionTimelineItem!]!
   preInspection(inspectionId: String!): PreInspection!
   preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
-  preInspectionsTimeline(operatorId: Int!): [InspectionTimelineItem!]!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
@@ -1426,6 +1427,11 @@ enum InspectionStatus {
   InReview
   Processing
   Sanctionable
+}
+
+enum InspectionType {
+  POST
+  PRE
 }
 
 enum InspectionUserRelationType {

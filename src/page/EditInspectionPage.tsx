@@ -160,7 +160,11 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             ) : (
               inspection && (
                 <>
-                  <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+                  <InspectionActionsRow
+                    inspection={inspection}
+                    inspectionType={inspectionType}
+                    onRefresh={refetch}
+                  />
                   <EditInspectionWrapper>
                     {inspection?.status === InspectionStatus.InProduction ? (
                       <InspectionEditor inspection={inspection} refetchData={refetch} />

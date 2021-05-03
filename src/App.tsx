@@ -26,7 +26,7 @@ import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
 import DevPage from './dev/DevPage'
-import { InspectionType } from './inspection/inspectionTypes'
+import { InspectionType } from './schema-types'
 
 const Logout: React.FC<RouteComponentProps> = () => {
   const [user, setUser] = useStateValue('user')
