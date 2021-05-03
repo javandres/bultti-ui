@@ -15,7 +15,6 @@ import UserPage from './page/UserPage'
 import { Page } from './common/components/common'
 import ContractPage from './page/ContractPage'
 import EditContractPage from './page/EditContractPage'
-import { InspectionType } from './schema-types'
 import { removeAuthToken } from './util/authToken'
 import { useMutationData } from './util/useMutationData'
 import { logoutMutation } from './common/query/authQueries'
@@ -27,6 +26,7 @@ import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
 import { DEBUG } from './constants'
 import DevPage from './dev/DevPage'
+import { InspectionType } from './inspection/inspectionTypes'
 
 const Logout: React.FC<RouteComponentProps> = () => {
   const [user, setUser] = useStateValue('user')

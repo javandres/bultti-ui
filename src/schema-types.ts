@@ -9,10 +9,10 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki. */
-  BulttiDate: any;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** A Date string in YYYY-MM-DD format. The timezone is assumed to be Europe/Helsinki. */
+  BulttiDate: any;
   /** The `Upload` scalar type represents a file upload. */
   Upload: any;
 };
@@ -22,12 +22,6 @@ export type Query = {
   executionRequirementsByOperator: Array<PlannedUnitExecutionRequirement>;
   executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>;
   executionSchemaStats?: Maybe<ExecutionSchemaStats>;
-  inspection?: Maybe<Inspection>;
-  inspectionsByOperator: Array<Inspection>;
-  inspectionsTimeline: Array<InspectionTimelineItem>;
-  currentInspectionsByOperatorAndSeason: Array<Inspection>;
-  allInspections: Array<Inspection>;
-  inspectionUserRelations: Array<InspectionUserRelation>;
   operator?: Maybe<Operator>;
   operators: Array<Operator>;
   season?: Maybe<Array<Season>>;
@@ -70,6 +64,11 @@ export type Query = {
   observedUnitExecutionReport?: Maybe<ObservedUnitExecutionReport>;
   unobservedDeparturesReport?: Maybe<UnobservedDeparturesReport>;
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>;
+  preInspection: PreInspection;
+  preInspectionsByOperator: Array<PreInspection>;
+  preInspectionsTimeline: Array<InspectionTimelineItem>;
+  currentPreInspectionsByOperatorAndSeason: Array<PreInspection>;
+  allPreInspections: Array<InspectionUserRelation>;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -83,6 +82,11 @@ export type Query = {
   inspectionSanctions: SanctionsResponse;
   runSanctioning: Array<Sanction>;
   executionRequirementsForPreInspectionAreas: Array<PlannedAreaExecutionRequirement>;
+  postInspection: PostInspection;
+  postInspectionsByOperator: Array<PostInspection>;
+  postInspectionsTimeline: Array<InspectionTimelineItem>;
+  currentPostInspectionsByOperatorAndSeason: Array<PostInspection>;
+  allPostInspections: Array<InspectionUserRelation>;
 };
 
 
@@ -99,40 +103,6 @@ export type QueryExecutionRequirementForProcurementUnitArgs = {
 
 export type QueryExecutionSchemaStatsArgs = {
   executionRequirementId: Scalars['String'];
-};
-
-
-export type QueryInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type QueryInspectionsByOperatorArgs = {
-  inspectionType: InspectionType;
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryInspectionsTimelineArgs = {
-  inspectionType: InspectionType;
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
-  inspectionType: InspectionType;
-  seasonId: Scalars['String'];
-  operatorId: Scalars['Int'];
-};
-
-
-export type QueryAllInspectionsArgs = {
-  inspectionType: InspectionType;
-};
-
-
-export type QueryInspectionUserRelationsArgs = {
-  inspectionId: Scalars['String'];
 };
 
 
@@ -204,7 +174,7 @@ export type QueryAvailableDayTypesArgs = {
 
 export type QueryReportsArgs = {
   inspectionId?: Maybe<Scalars['String']>;
-  inspectionType: InspectionType;
+  inspectionType: Scalars['String'];
 };
 
 
@@ -383,6 +353,32 @@ export type QuerySanctionSummaryReportArgs = {
 };
 
 
+export type QueryPreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryPreInspectionsByOperatorArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryPreInspectionsTimelineArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentPreInspectionsByOperatorAndSeasonArgs = {
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryAllPreInspectionsArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
 export type QueryContractsArgs = {
   date?: Maybe<Scalars['BulttiDate']>;
   operatorId?: Maybe<Scalars['Int']>;
@@ -443,6 +439,32 @@ export type QueryExecutionRequirementsForPreInspectionAreasArgs = {
   inspectionId: Scalars['String'];
 };
 
+
+export type QueryPostInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type QueryPostInspectionsByOperatorArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryPostInspectionsTimelineArgs = {
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryCurrentPostInspectionsByOperatorAndSeasonArgs = {
+  seasonId: Scalars['String'];
+  operatorId: Scalars['Int'];
+};
+
+
+export type QueryAllPostInspectionsArgs = {
+  inspectionId: Scalars['String'];
+};
+
 export type PlannedUnitExecutionRequirement = {
   __typename?: 'PlannedUnitExecutionRequirement';
   id: Scalars['ID'];
@@ -457,7 +479,7 @@ export type PlannedUnitExecutionRequirement = {
   areaId: Scalars['Int'];
   operator: Operator;
   operatorId: Scalars['Int'];
-  inspection: Inspection;
+  inspection: PreInspection;
   inspectionId: Scalars['String'];
   equipmentQuotas: Array<ExecutionRequirementQuota>;
   procurementUnit: ProcurementUnit;
@@ -507,56 +529,47 @@ export type Operator = {
   id: Scalars['Int'];
   operatorId: Scalars['Int'];
   operatorName: Scalars['String'];
-  inspections: Array<Inspection>;
+  preInspections: Array<PreInspection>;
+  postInspections: Array<PostInspection>;
   contracts: Array<Contract>;
   procurementUnits: Array<ProcurementUnit>;
   equipment: Array<Equipment>;
   equipmentCatalogues: Array<EquipmentCatalogue>;
 };
 
-export type Inspection = {
-  __typename?: 'Inspection';
+export type PreInspection = {
+  __typename?: 'PreInspection';
   id: Scalars['ID'];
   name?: Maybe<Scalars['String']>;
-  inspectionType: InspectionType;
-  linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>;
-  linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
-  defectInspection?: Maybe<Inspection>;
-  operatorId: Scalars['Int'];
-  operator: Operator;
-  seasonId: Scalars['String'];
-  season: Season;
-  areaExecutionRequirements: Array<PlannedAreaExecutionRequirement>;
-  unitExecutionRequirements: Array<PlannedUnitExecutionRequirement>;
-  observedExecutionRequirements: Array<ObservedExecutionRequirement>;
   status: InspectionStatus;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  userRelations: Array<InspectionUserRelation>;
   version: Scalars['Int'];
-  inspectionDate?: Maybe<InspectionDate>;
-  inspectionDateId?: Maybe<Scalars['String']>;
   inspectionStartDate: Scalars['BulttiDate'];
   inspectionEndDate: Scalars['BulttiDate'];
   startDate?: Maybe<Scalars['BulttiDate']>;
   endDate?: Maybe<Scalars['BulttiDate']>;
   minStartDate: Scalars['BulttiDate'];
   versionStackIdentifier?: Maybe<Scalars['String']>;
+  operatorId: Scalars['Int'];
+  operator: Operator;
+  seasonId: Scalars['String'];
+  season: Season;
+  areaExecutionRequirements: Array<PlannedAreaExecutionRequirement>;
+  unitExecutionRequirements: Array<PlannedUnitExecutionRequirement>;
+  userRelations?: Maybe<Array<InspectionUserRelation>>;
   inspectionErrors?: Maybe<Array<ValidationErrorData>>;
 };
 
-export enum InspectionType {
-  Pre = 'PRE',
-  Post = 'POST',
-  EquipmentDefect = 'EQUIPMENT_DEFECT'
+export enum InspectionStatus {
+  Draft = 'Draft',
+  InReview = 'InReview',
+  InProduction = 'InProduction',
+  Processing = 'Processing',
+  Sanctionable = 'Sanctionable'
 }
 
-export type LinkedInspectionForWeek = {
-  __typename?: 'LinkedInspectionForWeek';
-  id: Scalars['String'];
-  startOfWeek: Scalars['String'];
-  inspection: Inspection;
-};
+
 
 export type Season = {
   __typename?: 'Season';
@@ -564,44 +577,57 @@ export type Season = {
   season: Scalars['String'];
   startDate: Scalars['BulttiDate'];
   endDate: Scalars['BulttiDate'];
-  inspections: Array<Inspection>;
+  preInspections: Array<PreInspection>;
+  postInspections: Array<PostInspection>;
 };
 
-
-export type PlannedAreaExecutionRequirement = {
-  __typename?: 'PlannedAreaExecutionRequirement';
+export type PostInspection = {
+  __typename?: 'PostInspection';
   id: Scalars['ID'];
-  metersRequired?: Maybe<Scalars['Float']>;
-  kilometersRequired?: Maybe<Scalars['Float']>;
-  metersObserved?: Maybe<Scalars['Float']>;
-  kilometersObserved?: Maybe<Scalars['Float']>;
-  averageAgeWeighted?: Maybe<Scalars['Float']>;
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
-  averageAgeRequirement?: Maybe<Scalars['Float']>;
-  area: OperatingArea;
-  areaId: Scalars['Int'];
-  operator: Operator;
+  name?: Maybe<Scalars['String']>;
+  status: InspectionStatus;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+  version: Scalars['Int'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+  minStartDate: Scalars['BulttiDate'];
+  versionStackIdentifier?: Maybe<Scalars['String']>;
   operatorId: Scalars['Int'];
-  inspection: Inspection;
-  inspectionId: Scalars['String'];
-  procurementUnitRequirements?: Maybe<Array<PlannedUnitExecutionRequirement>>;
-  requirements: Array<PlannedEmissionClassRequirement>;
+  operator: Operator;
+  seasonId: Scalars['String'];
+  season: Season;
+  inspectionDate?: Maybe<InspectionDate>;
+  inspectionDateId?: Maybe<Scalars['String']>;
+  linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>;
+  linkedInspectionUpdateAvailable?: Maybe<Scalars['Boolean']>;
+  observedExecutionRequirements: Array<ObservedExecutionRequirement>;
+  userRelations?: Maybe<Array<InspectionUserRelation>>;
+  inspectionErrors?: Maybe<Array<ValidationErrorData>>;
 };
 
-export type PlannedEmissionClassRequirement = {
-  __typename?: 'PlannedEmissionClassRequirement';
-  emissionClass: Scalars['Int'];
-  kilometerRequirement?: Maybe<Scalars['Float']>;
-  quotaRequirement?: Maybe<Scalars['Float']>;
-  kilometersFulfilled?: Maybe<Scalars['Float']>;
-  quotaFulfilled?: Maybe<Scalars['Float']>;
-  differencePercentage?: Maybe<Scalars['Float']>;
-  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
-  equipmentCount?: Maybe<Scalars['Int']>;
-  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
-  sanctionThreshold?: Maybe<Scalars['Float']>;
-  sanctionAmount?: Maybe<Scalars['Float']>;
-  classSanctionAmount?: Maybe<Scalars['Float']>;
+export type InspectionDate = {
+  __typename?: 'InspectionDate';
+  id: Scalars['ID'];
+  startDate: Scalars['BulttiDate'];
+  endDate: Scalars['BulttiDate'];
+  hfpDataStatus: HfpStatus;
+  inspections?: Maybe<Array<PostInspection>>;
+};
+
+export enum HfpStatus {
+  NotLoaded = 'NOT_LOADED',
+  Loading = 'LOADING',
+  Ready = 'READY'
+}
+
+export type LinkedInspectionForWeek = {
+  __typename?: 'LinkedInspectionForWeek';
+  id: Scalars['String'];
+  startOfWeek: Scalars['String'];
+  inspection: PreInspection;
 };
 
 export type ObservedExecutionRequirement = {
@@ -615,7 +641,7 @@ export type ObservedExecutionRequirement = {
   areaId: Scalars['Int'];
   operator: Operator;
   operatorId: Scalars['Int'];
-  inspection: Inspection;
+  inspection: PostInspection;
   inspectionId: Scalars['String'];
   isCombinedAreaRequirement: Scalars['Boolean'];
   startDate: Scalars['BulttiDate'];
@@ -642,21 +668,13 @@ export type ObservedEmissionClassRequirement = {
   sanctionablePercentage?: Maybe<Scalars['Float']>;
 };
 
-export enum InspectionStatus {
-  Draft = 'Draft',
-  InReview = 'InReview',
-  InProduction = 'InProduction',
-  Processing = 'Processing',
-  Sanctionable = 'Sanctionable'
-}
-
-
 export type InspectionUserRelation = {
   __typename?: 'InspectionUserRelation';
   id: Scalars['ID'];
   relatedBy: InspectionUserRelationType;
   subscribed: Scalars['Boolean'];
-  inspection: Inspection;
+  preInspection?: Maybe<PreInspection>;
+  postInspection?: Maybe<PostInspection>;
   user: User;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
@@ -736,21 +754,6 @@ export type ContractRule = {
   description?: Maybe<Scalars['String']>;
 };
 
-export type InspectionDate = {
-  __typename?: 'InspectionDate';
-  id: Scalars['ID'];
-  startDate: Scalars['BulttiDate'];
-  endDate: Scalars['BulttiDate'];
-  hfpDataStatus: HfpStatus;
-  inspections?: Maybe<Array<Inspection>>;
-};
-
-export enum HfpStatus {
-  NotLoaded = 'NOT_LOADED',
-  Loading = 'LOADING',
-  Ready = 'READY'
-}
-
 export type ValidationErrorData = {
   __typename?: 'ValidationErrorData';
   type: InspectionValidationError;
@@ -760,8 +763,6 @@ export type ValidationErrorData = {
 };
 
 export enum InspectionValidationError {
-  NotPre = 'NOT_PRE',
-  NotPost = 'NOT_POST',
   InvalidProductionTime = 'INVALID_PRODUCTION_TIME',
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
@@ -774,6 +775,42 @@ export enum InspectionValidationError {
   PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST',
   PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS'
 }
+
+export type PlannedAreaExecutionRequirement = {
+  __typename?: 'PlannedAreaExecutionRequirement';
+  id: Scalars['ID'];
+  metersRequired?: Maybe<Scalars['Float']>;
+  kilometersRequired?: Maybe<Scalars['Float']>;
+  metersObserved?: Maybe<Scalars['Float']>;
+  kilometersObserved?: Maybe<Scalars['Float']>;
+  averageAgeWeighted?: Maybe<Scalars['Float']>;
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>;
+  averageAgeRequirement?: Maybe<Scalars['Float']>;
+  area: OperatingArea;
+  areaId: Scalars['Int'];
+  operator: Operator;
+  operatorId: Scalars['Int'];
+  inspection: PreInspection;
+  inspectionId: Scalars['String'];
+  procurementUnitRequirements?: Maybe<Array<PlannedUnitExecutionRequirement>>;
+  requirements: Array<PlannedEmissionClassRequirement>;
+};
+
+export type PlannedEmissionClassRequirement = {
+  __typename?: 'PlannedEmissionClassRequirement';
+  emissionClass: Scalars['Int'];
+  kilometerRequirement?: Maybe<Scalars['Float']>;
+  quotaRequirement?: Maybe<Scalars['Float']>;
+  kilometersFulfilled?: Maybe<Scalars['Float']>;
+  quotaFulfilled?: Maybe<Scalars['Float']>;
+  differencePercentage?: Maybe<Scalars['Float']>;
+  cumulativeDifferencePercentage?: Maybe<Scalars['Float']>;
+  equipmentCount?: Maybe<Scalars['Int']>;
+  equipmentCountFulfilled?: Maybe<Scalars['Int']>;
+  sanctionThreshold?: Maybe<Scalars['Float']>;
+  sanctionAmount?: Maybe<Scalars['Float']>;
+  classSanctionAmount?: Maybe<Scalars['Float']>;
+};
 
 export type Equipment = {
   __typename?: 'Equipment';
@@ -871,20 +908,9 @@ export type EquipmentTypeStat = {
   kilometers: Scalars['Float'];
 };
 
-export type InspectionTimelineItem = {
-  __typename?: 'InspectionTimelineItem';
-  id: Scalars['ID'];
-  operatorName: Scalars['String'];
-  seasonId: Scalars['String'];
-  inspectionStartDate: Scalars['BulttiDate'];
-  inspectionEndDate: Scalars['BulttiDate'];
-  version: Scalars['Int'];
-};
-
 export type ReportListItem = {
   __typename?: 'ReportListItem';
   name: Scalars['String'];
-  inspectionType: InspectionType;
   title: Scalars['String'];
   description: Scalars['String'];
 };
@@ -900,7 +926,6 @@ export type BlockDeviationsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -980,7 +1005,6 @@ export type DeadrunsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1028,7 +1052,6 @@ export type DepartureBlocksReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1063,7 +1086,6 @@ export type DeviationsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1084,7 +1106,6 @@ export type EmissionClassExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1121,7 +1142,6 @@ export type EquipmentColorReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1155,7 +1175,6 @@ export type EquipmentTypeReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1191,7 +1210,6 @@ export type ExecutionRequirementsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1225,7 +1243,6 @@ export type ExtraBlockDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1257,7 +1274,6 @@ export type MissingBlockDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1289,7 +1305,6 @@ export type MissingEquipmentReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1318,7 +1333,6 @@ export type OperatorDeadrunsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1339,7 +1353,6 @@ export type OverAgeDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1374,7 +1387,6 @@ export type TrackedDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1406,7 +1418,6 @@ export type UnitExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1439,7 +1450,6 @@ export type EarlyTimingStopDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1480,7 +1490,6 @@ export type LateDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1522,7 +1531,6 @@ export type ObservedEmissionClassExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1559,7 +1567,6 @@ export type ObservedEquipmentColorReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1600,7 +1607,6 @@ export type ObservedEquipmentTypeReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1643,7 +1649,6 @@ export type ObservedExecutionRequirementsReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1676,7 +1681,6 @@ export type ObservedOverAgeDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1718,7 +1722,6 @@ export type ObservedUnitExecutionReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1753,7 +1756,6 @@ export type UnobservedDeparturesReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1789,7 +1791,6 @@ export type SanctionSummaryReport = {
   name: Scalars['String'];
   title: Scalars['String'];
   description: Scalars['String'];
-  inspectionType: InspectionType;
   columnLabels: Scalars['String'];
   seasonId: Scalars['String'];
   operatorId: Scalars['Float'];
@@ -1822,6 +1823,16 @@ export enum SanctionReason {
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY'
 }
+
+export type InspectionTimelineItem = {
+  __typename?: 'InspectionTimelineItem';
+  id: Scalars['ID'];
+  operatorName: Scalars['String'];
+  seasonId: Scalars['String'];
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  version: Scalars['Int'];
+};
 
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption';
@@ -1856,7 +1867,7 @@ export type SanctionsResponse = {
 export type Sanction = {
   __typename?: 'Sanction';
   id: Scalars['ID'];
-  inspection: Inspection;
+  inspection: PostInspection;
   inspectionId: Scalars['String'];
   procurementUnitId?: Maybe<Scalars['String']>;
   area?: Maybe<OperatingAreaName>;
@@ -1905,18 +1916,6 @@ export type Mutation = {
   removeEquipmentFromExecutionRequirement: PlannedUnitExecutionRequirement;
   removeAllEquipmentFromExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>;
   removeUnitExecutionRequirement: Scalars['Boolean'];
-  createInspection: Inspection;
-  updateLinkedInspection: Inspection;
-  updateInspection: Inspection;
-  inspectionSanctionable: Inspection;
-  abandonSanctions: Inspection;
-  submitInspection: Inspection;
-  publishInspection: Inspection;
-  rejectInspection: Inspection;
-  removeInspection: Scalars['Boolean'];
-  toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
-  initInspectionContractUnitMap: Scalars['Boolean'];
-  generateEquipmentForPreInspection: Scalars['Boolean'];
   updateProcurementUnit: ProcurementUnit;
   updateEquipment?: Maybe<Equipment>;
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>;
@@ -1934,6 +1933,13 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>;
   removeDepartureBlocksForDayTypes: Scalars['Boolean'];
   updateEquipmentRequirementQuota?: Maybe<Equipment>;
+  createPreInspection?: Maybe<PreInspection>;
+  submitPreInspection: PreInspection;
+  publishPreInspection: PreInspection;
+  rejectPreInspection: PreInspection;
+  removePreInspection: Scalars['Boolean'];
+  initInspectionContractUnitMap: Scalars['Boolean'];
+  generateEquipmentForPreInspection: Scalars['Boolean'];
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
   createContract: Contract;
   modifyContract: Contract;
@@ -1950,6 +1956,15 @@ export type Mutation = {
   generateTestBlockDepartures: Array<DepartureBlockFile>;
   removeTestData: Scalars['Boolean'];
   forceRemoveInspection: Scalars['Boolean'];
+  createPostInspection?: Maybe<PostInspection>;
+  submitPostInspection: PostInspection;
+  publishPostInspection: PostInspection;
+  rejectPostInspection: PostInspection;
+  removePostInspection: Scalars['Boolean'];
+  updateLinkedInspection: PostInspection;
+  inspectionSanctionable: PostInspection;
+  abandonSanctions: PostInspection;
+  toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
 };
 
 
@@ -1989,70 +2004,6 @@ export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
 
 export type MutationRemoveUnitExecutionRequirementArgs = {
   executionRequirementId: Scalars['String'];
-};
-
-
-export type MutationCreateInspectionArgs = {
-  inspection: InitialInspectionInput;
-};
-
-
-export type MutationUpdateLinkedInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationUpdateInspectionArgs = {
-  inspection: InspectionInput;
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationInspectionSanctionableArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationAbandonSanctionsArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationSubmitInspectionArgs = {
-  endDate: Scalars['BulttiDate'];
-  startDate: Scalars['BulttiDate'];
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationPublishInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationRejectInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationRemoveInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationToggleInspectionUserSubscribedArgs = {
-  userId: Scalars['String'];
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationInitInspectionContractUnitMapArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type MutationGenerateEquipmentForPreInspectionArgs = {
-  inspectionId: Scalars['String'];
 };
 
 
@@ -2154,6 +2105,43 @@ export type MutationUpdateEquipmentRequirementQuotaArgs = {
 };
 
 
+export type MutationCreatePreInspectionArgs = {
+  inspection: InitialInspectionInput;
+};
+
+
+export type MutationSubmitPreInspectionArgs = {
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationPublishPreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRejectPreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRemovePreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInitInspectionContractUnitMapArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationGenerateEquipmentForPreInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
 export type MutationToggleContractUserSubscribedArgs = {
   userId: Scalars['String'];
   contractId: Scalars['String'];
@@ -2220,25 +2208,52 @@ export type MutationForceRemoveInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 
-export type InitialInspectionInput = {
-  name?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
-  inspectionDateId?: Maybe<Scalars['String']>;
-  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
-  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
-  operatorId: Scalars['Int'];
-  seasonId: Scalars['String'];
-  inspectionType: InspectionType;
+
+export type MutationCreatePostInspectionArgs = {
+  inspection: InitialInspectionInput;
 };
 
-export type InspectionInput = {
-  name?: Maybe<Scalars['String']>;
-  startDate?: Maybe<Scalars['BulttiDate']>;
-  endDate?: Maybe<Scalars['BulttiDate']>;
-  inspectionDateId?: Maybe<Scalars['String']>;
-  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
-  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
+
+export type MutationSubmitPostInspectionArgs = {
+  endDate: Scalars['BulttiDate'];
+  startDate: Scalars['BulttiDate'];
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationPublishPostInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRejectPostInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRemovePostInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationUpdateLinkedInspectionArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationInspectionSanctionableArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationAbandonSanctionsArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationToggleInspectionUserSubscribedArgs = {
+  userId: Scalars['String'];
+  inspectionId: Scalars['String'];
 };
 
 export type ProcurementUnitEditInput = {
@@ -2259,6 +2274,17 @@ export type UserInput = {
   operatorIds?: Maybe<Scalars['String']>;
 };
 
+
+export type InitialInspectionInput = {
+  name?: Maybe<Scalars['String']>;
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionDateId?: Maybe<Scalars['String']>;
+  inspectionStartDate?: Maybe<Scalars['BulttiDate']>;
+  inspectionEndDate?: Maybe<Scalars['BulttiDate']>;
+  operatorId: Scalars['Int'];
+  seasonId: Scalars['String'];
+};
 
 export type ContractInput = {
   id?: Maybe<Scalars['ID']>;
@@ -2297,20 +2323,10 @@ export type DepartureBlockFile = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  inspectionStatus?: Maybe<Inspection>;
-  inspectionError?: Maybe<InspectionErrorUpdate>;
   hfpPreloadStatus?: Maybe<Array<HfpDateStatus>>;
   hfpLoadingProgress?: Maybe<HfpDateProgress>;
-};
-
-
-export type SubscriptionInspectionStatusArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
-export type SubscriptionInspectionErrorArgs = {
-  inspectionId: Scalars['String'];
+  inspectionStatus?: Maybe<InspectionStatusUpdate>;
+  inspectionError?: Maybe<InspectionErrorUpdate>;
 };
 
 
@@ -2325,16 +2341,37 @@ export type SubscriptionHfpLoadingProgressArgs = {
   rangeStart: Scalars['String'];
 };
 
-export type InspectionErrorUpdate = {
-  __typename?: 'InspectionErrorUpdate';
-  id: Scalars['ID'];
-  status: InspectionStatus;
-  errorType: Scalars['String'];
-  message: Scalars['String'];
+
+export type SubscriptionInspectionStatusArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type SubscriptionInspectionErrorArgs = {
+  inspectionId: Scalars['String'];
 };
 
 export type HfpDateProgress = {
   __typename?: 'HfpDateProgress';
   date: Scalars['BulttiDate'];
   progress: Scalars['Int'];
+};
+
+export type InspectionStatusUpdate = {
+  __typename?: 'InspectionStatusUpdate';
+  id: Scalars['ID'];
+  status: InspectionStatus;
+  inspectionStartDate: Scalars['BulttiDate'];
+  inspectionEndDate: Scalars['BulttiDate'];
+  startDate?: Maybe<Scalars['BulttiDate']>;
+  endDate?: Maybe<Scalars['BulttiDate']>;
+  version: Scalars['Int'];
+};
+
+export type InspectionErrorUpdate = {
+  __typename?: 'InspectionErrorUpdate';
+  id: Scalars['ID'];
+  status: InspectionStatus;
+  errorType: Scalars['String'];
+  message: Scalars['String'];
 };
