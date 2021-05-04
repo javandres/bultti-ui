@@ -22,7 +22,7 @@ import {
 } from '../equipment/equipmentUtils'
 import { parseISO } from 'date-fns'
 import AddEquipment from '../equipment/AddEquipment'
-import { ExecutionRequirement, ProcurementUnit } from '../schema-types'
+import { PlannedUnitExecutionRequirement, ProcurementUnit } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
 import { SectionHeading, SubHeading } from '../common/components/Typography'
 import { RequirementsTableLayout } from './executionRequirementUtils'
@@ -80,12 +80,15 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       data: procurementUnitRequirement,
       loading: requirementsLoading,
       refetch: updateRequirements,
-    } = useQueryData<ExecutionRequirement>(executionRequirementForProcurementUnitQuery, {
-      variables: {
-        procurementUnitId: procurementUnit.id,
-        inspectionId: inspection?.id,
-      },
-    })
+    } = useQueryData<PlannedUnitExecutionRequirement>(
+      executionRequirementForProcurementUnitQuery,
+      {
+        variables: {
+          procurementUnitId: procurementUnit.id,
+          inspectionId: inspection?.id,
+        },
+      }
+    )
 
     let [createExecutionRequirement, { loading: createLoading }] = useMutationData(
       createExecutionRequirementForProcurementUnitMutation
@@ -228,7 +231,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               </Button>
             )}
           </div>
-          <span>{(procurementUnitRequirement?.weeklyMeters || 0) / 1000} km</span>
+          <span>{(procurementUnitRequirement?.metersRequired || 0) / 1000} km</span>
         </ExecutionDisplay>
         {procurementUnitRequirement && (
           <PlannedExecutionStats executionRequirement={procurementUnitRequirement} />

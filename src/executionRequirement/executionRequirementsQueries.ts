@@ -2,7 +2,7 @@ import { gql } from '@apollo/client'
 import { EquipmentFragment } from '../equipment/equipmentQuery'
 
 export const RequirementValueFragment = gql`
-  fragment RequirementValueFragment on ExecutionRequirementValue {
+  fragment RequirementValueFragment on PlannedEmissionClassRequirement {
     emissionClass
     kilometerRequirement
     kilometersFulfilled
@@ -19,7 +19,7 @@ export const RequirementValueFragment = gql`
 `
 
 export const ObservedRequirementValueFragment = gql`
-  fragment ObservedRequirementValueFragment on ObservedExecutionValue {
+  fragment ObservedRequirementValueFragment on ObservedEmissionClassRequirement {
     id
     emissionClass
     kilometersRequired
@@ -40,12 +40,32 @@ export const ObservedRequirementValueFragment = gql`
   }
 `
 
-export const ExecutionRequirementFragment = gql`
-  fragment ExecutionRequirementFragment on ExecutionRequirement {
+export const UnitExecutionRequirementFragment = gql`
+  fragment UnitExecutionRequirementFragment on PlannedUnitExecutionRequirement {
     id
-    weeklyMeters
-    totalKilometers
-    totalKilometersFulfilled
+    metersRequired
+    kilometersRequired
+    kilometersObserved
+    metersObserved
+    operator {
+      id
+      operatorId
+      operatorName
+    }
+    area {
+      id
+      name
+    }
+  }
+`
+
+export const AreaExecutionRequirementFragment = gql`
+  fragment AreaExecutionRequirementFragment on PlannedAreaExecutionRequirement {
+    id
+    metersRequired
+    kilometersRequired
+    kilometersObserved
+    metersObserved
     operator {
       id
       operatorId
@@ -94,7 +114,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       averageAgeWeighted
       averageAgeRequirement
       averageAgeWeightedFulfilled
-      ...ExecutionRequirementFragment
+      ...UnitExecutionRequirementFragment
       equipmentQuotas {
         id
         meterRequirement
@@ -109,7 +129,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       }
     }
   }
-  ${ExecutionRequirementFragment}
+  ${UnitExecutionRequirementFragment}
   ${EquipmentFragment}
   ${RequirementValueFragment}
 `
@@ -117,7 +137,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
 export const executionRequirementsForAreaQuery = gql`
   query executionRequirementsByPreInspection($inspectionId: String!) {
     executionRequirementsForPreInspectionAreas(inspectionId: $inspectionId) {
-      ...ExecutionRequirementFragment
+      ...AreaExecutionRequirementFragment
       requirements {
         ...RequirementValueFragment
       }
@@ -132,7 +152,7 @@ export const executionRequirementsForAreaQuery = gql`
       }
     }
   }
-  ${ExecutionRequirementFragment}
+  ${AreaExecutionRequirementFragment}
   ${RequirementValueFragment}
 `
 
@@ -207,8 +227,8 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
       inspectionId: $inspectionId
     ) {
       id
-      weeklyMeters
-      totalKilometers
+      metersRequired
+      kilometersRequired
       area {
         id
         name
@@ -245,8 +265,8 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
       executionRequirementId: $executionRequirementId
     ) {
       id
-      weeklyMeters
-      totalKilometers
+      metersRequired
+      kilometersRequired
       area {
         id
         name
@@ -273,20 +293,8 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
 
 export const removeExecutionRequirementMutation = gql`
   mutation removeExecutionRequirement($requirementId: String!) {
-    removeExecutionRequirement(executionRequirementId: $requirementId) {
-      id
-      equipmentQuotas {
-        id
-        meterRequirement
-        percentageQuota
-        requirementOnly
-        equipment {
-          ...EquipmentFragment
-        }
-      }
-    }
+    removeUnitExecutionRequirement(executionRequirementId: $requirementId)
   }
-  ${EquipmentFragment}
 `
 
 export const removeAllEquipmentFromExecutionRequirement = gql`
@@ -316,8 +324,8 @@ export const weeklyMetersFromJoreMutation = gql`
       date: $date
     ) {
       id
-      weeklyMeters
-      totalKilometers
+      metersRequired
+      kilometersRequired
     }
   }
 `

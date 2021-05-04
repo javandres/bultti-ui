@@ -6,8 +6,8 @@ import { executionSchemaStatsQuery } from './executionRequirementsQueries'
 import {
   DayTypeEquipmentStat,
   EquipmentTypeStat,
-  ExecutionRequirement,
   ExecutionSchemaStats,
+  PlannedUnitExecutionRequirement,
 } from '../schema-types'
 import Table, { TablePropTypes } from '../common/table/Table'
 import { text, Text } from '../util/translate'
@@ -46,7 +46,7 @@ const statsTableLabels = {
 }
 
 export type PropTypes = {
-  executionRequirement: ExecutionRequirement
+  executionRequirement: PlannedUnitExecutionRequirement
 }
 
 const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => {
