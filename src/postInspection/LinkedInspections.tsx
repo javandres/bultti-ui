@@ -5,7 +5,7 @@ import { Heading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
-import { Inspection, InspectionType, InspectionValidationError } from '../schema-types'
+import { InspectionType, InspectionValidationError, PostInspection } from '../schema-types'
 import { useNavigateToInspectionReports } from '../inspection/inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -25,7 +25,7 @@ const LinkedInspectionsView = styled.div<{ error?: boolean }>`
 `
 
 export type PropTypes = {
-  inspection: Inspection
+  inspection: PostInspection
   isEditable?: boolean
 }
 
@@ -52,7 +52,10 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
         inspectionId: inspection.id,
       },
       refetchQueries: [
-        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: inspectionQuery(InspectionType.Post),
+          variables: { inspectionId: inspection?.id || '' },
+        },
         {
           query: observedExecutionRequirementsQuery,
           variables: { postInspectionId: inspection?.id || '' },

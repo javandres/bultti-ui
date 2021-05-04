@@ -10,10 +10,10 @@ import InspectionItem from './InspectionItem'
 import { ErrorView, MessageView } from '../common/components/Messages'
 import { SubHeading } from '../common/components/Typography'
 import type { ReportListItem as ReportListItemType } from '../schema-types'
-import { Inspection } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import ReportContainer from '../report/ReportContainer'
 import { ReportTypeByName } from '../report/reportTypes'
+import { Inspection } from './inspectionTypes'
 
 type ReportTypeNames = keyof ReportTypeByName
 const preInspectionReportOrder: ReportTypeNames[] = [

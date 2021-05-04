@@ -13,9 +13,10 @@ type PropTypes = {
 } & RouteComponentProps
 
 const InspectionReportsPage: React.FC<PropTypes> = observer(
-  ({ inspectionId, inspectionType }) => {
+  ({ inspectionId = '', inspectionType }) => {
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
-      inspectionId
+      inspectionId,
+      inspectionType
     )
 
     let typeStrings = getInspectionTypeStrings(inspectionType)

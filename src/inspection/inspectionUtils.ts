@@ -5,6 +5,8 @@ import {
   InspectionType,
   InspectionUserRelationType,
   Operator,
+  PostInspection,
+  PreInspection,
   Season,
   User,
 } from '../schema-types'
@@ -25,6 +27,8 @@ import { orderBy } from 'lodash'
 import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { Inspection } from './inspectionTypes'
+import { inspect } from 'util'
+import { isObjectLike } from '../util/isObjectLike'
 
 export function useInspectionById(inspectionId: string, inspectionType: InspectionType) {
   let { data, loading, error, refetch: refetcher } = useQueryData(
@@ -232,4 +236,12 @@ export function getInspectionTypeStrings(inspectionType: InspectionType) {
     prefixLC: inspectionTypePrefix.toLocaleLowerCase(),
     path: inspectionTypePath,
   }
+}
+
+export function isPreInspection(inspection: unknown): inspection is PreInspection {
+  return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Pre
+}
+
+export function isPostInspection(inspection: unknown): inspection is PostInspection {
+  return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Post
 }

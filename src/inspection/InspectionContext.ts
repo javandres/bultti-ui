@@ -1,4 +1,4 @@
 import React from 'react'
-import { Inspection } from '../schema-types'
+import { Inspection } from './inspectionTypes'
 
 export const InspectionContext = React.createContext<Inspection | null>(null)

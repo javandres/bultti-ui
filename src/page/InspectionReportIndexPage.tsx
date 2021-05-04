@@ -11,7 +11,7 @@ import { Page, PageContainer } from '../common/components/common'
 import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { InspectionStatus, InspectionType } from '../schema-types'
 import { LoadingDisplay } from '../common/components/Loading'
 import Dropdown from '../common/input/Dropdown'
 import { orderBy } from 'lodash'
@@ -20,6 +20,7 @@ import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
 import { text, Text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
+import { Inspection } from '../inspection/inspectionTypes'
 
 const InspectionReportIndexPageView = styled(Page)``
 

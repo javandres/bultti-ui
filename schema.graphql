@@ -659,6 +659,8 @@ type Mutation {
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
+  updatePostInspection(inspection: InspectionInput!, inspectionId: String!): PostInspection!
+  updatePreInspection(inspection: InspectionInput!, inspectionId: String!): PreInspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
   updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
@@ -1564,6 +1566,15 @@ input InputSortConfig {
 input InspectionDateInput {
   endDate: BulttiDate!
   startDate: BulttiDate!
+}
+
+input InspectionInput {
+  endDate: BulttiDate
+  inspectionDateId: String
+  inspectionEndDate: BulttiDate
+  inspectionStartDate: BulttiDate
+  name: String
+  startDate: BulttiDate
 }
 
 input ObservedRequirementValueInput {

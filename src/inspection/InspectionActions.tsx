@@ -100,7 +100,7 @@ const InspectionActions = observer(
     }, [removeInspection, inspection])
 
     var [submitInspection, { loading: submitLoading }] = useMutationData(
-      submitInspectionMutation
+      submitInspectionMutation(inspectionType)
     )
 
     var [setInspectionSanctionable, { loading: sanctionableLoading }] = useMutationData(
@@ -108,11 +108,11 @@ const InspectionActions = observer(
     )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
-      publishInspectionMutation
+      publishInspectionMutation(inspectionType)
     )
 
     var [rejectInspection, { loading: rejectLoading }] = useMutationData(
-      rejectInspectionMutation
+      rejectInspectionMutation(inspectionType)
     )
 
     var onSubmitInspection = useCallback(async () => {
