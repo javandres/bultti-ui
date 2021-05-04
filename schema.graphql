@@ -6,6 +6,8 @@ schema {
   subscription: Subscription
 }
 
+union AnyInspection = PostInspection | PreInspection
+
 type BlockDeviationsReport {
   columnLabels: String!
   description: String!
@@ -641,10 +643,9 @@ type Mutation {
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
+  removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
-  removePostInspection(inspectionId: String!): Boolean!
-  removePreInspection(inspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   submitPostInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): PostInspection!
@@ -1139,8 +1140,9 @@ type ProcurementUnitRoute {
 type Query {
   allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
-  allPostInspections(inspectionId: String!): [InspectionUserRelation!]!
-  allPreInspections(inspectionId: String!): [InspectionUserRelation!]!
+  allPostInspections: [PostInspection!]!
+  allPreInspections: [PreInspection!]!
+  anyInspectionById(inspectionId: String!): AnyInspection!
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
@@ -1170,6 +1172,7 @@ type Query {
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
+  inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport

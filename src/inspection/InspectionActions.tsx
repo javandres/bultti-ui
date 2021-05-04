@@ -10,7 +10,7 @@ import {
 } from './inspectionUtils'
 import { useMutationData } from '../util/useMutationData'
 import {
-  makeInspectionSanctionableMutation,
+  makePostInspectionSanctionableMutation,
   publishInspectionMutation,
   rejectInspectionMutation,
   submitInspectionMutation,
@@ -104,7 +104,7 @@ const InspectionActions = observer(
     )
 
     var [setInspectionSanctionable, { loading: sanctionableLoading }] = useMutationData(
-      makeInspectionSanctionableMutation
+      makePostInspectionSanctionableMutation
     )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(

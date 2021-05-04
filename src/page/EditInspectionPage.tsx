@@ -91,7 +91,8 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
-      inspectionId
+      inspectionId,
+      inspectionType
     )
 
     const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
@@ -160,11 +161,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
             ) : (
               inspection && (
                 <>
-                  <InspectionActionsRow
-                    inspection={inspection}
-                    inspectionType={inspectionType}
-                    onRefresh={refetch}
-                  />
+                  <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
                   <EditInspectionWrapper>
                     {inspection?.status === InspectionStatus.InProduction ? (
                       <InspectionEditor inspection={inspection} refetchData={refetch} />

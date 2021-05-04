@@ -96,47 +96,50 @@ const ItemContent = styled.div`
 
 export type PropTypes = {
   inspection: Inspection
+  showActions?: boolean
   onRefresh: () => unknown
 }
 
-const InspectionCard: React.FC<PropTypes> = observer(({ inspection, onRefresh }) => {
-  return (
-    <InspectionItem key={inspection.id} status={inspection.status}>
-      <ItemContent>
-        {inspection.name ? (
-          <>
-            <InspectionTitle>{inspection.name}</InspectionTitle>
-            <InspectionSubtitle>
+const InspectionCard: React.FC<PropTypes> = observer(
+  ({ inspection, onRefresh, showActions = true }) => {
+    return (
+      <InspectionItem key={inspection.id} status={inspection.status}>
+        <ItemContent>
+          {inspection.name ? (
+            <>
+              <InspectionTitle>{inspection.name}</InspectionTitle>
+              <InspectionSubtitle>
+                {inspection.operator.operatorName}, {inspection.seasonId}
+              </InspectionSubtitle>
+            </>
+          ) : (
+            <InspectionTitle>
               {inspection.operator.operatorName}, {inspection.seasonId}
-            </InspectionSubtitle>
-          </>
-        ) : (
-          <InspectionTitle>
-            {inspection.operator.operatorName}, {inspection.seasonId}
-          </InspectionTitle>
-        )}
-        <InspectionVersion>{inspection.version}</InspectionVersion>
-        <InspectionStatusDisplay status={inspection.status}>
-          {getInspectionStatusName(inspection.status)}
-        </InspectionStatusDisplay>
-        <InspectionPeriodDisplay>
-          <DateTitle>
-            <Text>inspection_inspectionSeason</Text>
-          </DateTitle>
-          <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
-          <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
-        </InspectionPeriodDisplay>
-        <InspectionPeriodDisplay>
-          <DateTitle>
-            <Text>inspection_inspectionPeriod</Text>
-          </DateTitle>
-          <StartDate>{getReadableDate(inspection.inspectionStartDate)}</StartDate>
-          <EndDate>{getReadableDate(inspection.inspectionEndDate)}</EndDate>
-        </InspectionPeriodDisplay>
-      </ItemContent>
-      <InspectionActions onRefresh={onRefresh} inspection={inspection} />
-    </InspectionItem>
-  )
-})
+            </InspectionTitle>
+          )}
+          <InspectionVersion>{inspection.version}</InspectionVersion>
+          <InspectionStatusDisplay status={inspection.status}>
+            {getInspectionStatusName(inspection.status)}
+          </InspectionStatusDisplay>
+          <InspectionPeriodDisplay>
+            <DateTitle>
+              <Text>inspection_inspectionSeason</Text>
+            </DateTitle>
+            <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
+            <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
+          </InspectionPeriodDisplay>
+          <InspectionPeriodDisplay>
+            <DateTitle>
+              <Text>inspection_inspectionPeriod</Text>
+            </DateTitle>
+            <StartDate>{getReadableDate(inspection.inspectionStartDate)}</StartDate>
+            <EndDate>{getReadableDate(inspection.inspectionEndDate)}</EndDate>
+          </InspectionPeriodDisplay>
+        </ItemContent>
+        {showActions && <InspectionActions onRefresh={onRefresh} inspection={inspection} />}
+      </InspectionItem>
+    )
+  }
+)
 
 export default InspectionCard

@@ -1,7 +1,6 @@
 import { useCallback } from 'react'
 import {
   InitialInspectionInput,
-  Inspection,
   InspectionStatus,
   InspectionType,
   InspectionUserRelationType,
@@ -12,6 +11,7 @@ import {
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
 import {
+  createInspectionMutation,
   inspectionQuery,
   inspectionsByOperatorQuery,
   inspectionStatusSubscription,
@@ -24,10 +24,11 @@ import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
 import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
+import { Inspection } from './inspectionTypes'
 
-export function useInspectionById(inspectionId?: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
-    inspectionQuery,
+export function useInspectionById(inspectionId: string, inspectionType: InspectionType) {
+  let { data, loading, error, refetch: refetcher } = useQueryData(
+    inspectionQuery(inspectionType),
     {
       skip: !inspectionId,
       notifyOnNetworkStatusChange: true,
@@ -48,9 +49,7 @@ export function useCreateInspection(
   inspectionType: InspectionType
 ) {
   let [createInspection, { loading: createLoading }] = useMutationData(
-    inspectionType === InspectionType.Pre
-      ? createPreInspectionMutation
-      : createPostInspectionMutation
+    createInspectionMutation(inspectionType)
   )
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
@@ -94,15 +93,17 @@ export function useRemoveInspection(
   let { operatorId, inspectionType } = inspection
 
   let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
-    refetchQueries: [
-      {
-        query: inspectionsByOperatorQuery,
-        variables: {
-          operatorId,
-          inspectionType,
-        },
-      },
-    ],
+    refetchQueries: inspection
+      ? [
+          {
+            query: inspectionsByOperatorQuery(inspection.inspectionType),
+            variables: {
+              operatorId,
+              inspectionType,
+            },
+          },
+        ]
+      : [],
   })
 
   let execRemove = useCallback(async () => {
@@ -154,7 +155,7 @@ export function useFetchInspections(
   let queryOperator = operator || globalOperator || undefined
 
   let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
-    inspectionsByOperatorQuery,
+    inspectionsByOperatorQuery(inspectionType),
     {
       skip: !operatorIsValid(queryOperator),
       notifyOnNetworkStatusChange: true,

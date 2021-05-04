@@ -10,7 +10,7 @@ import { useMutationData } from '../util/useMutationData'
 import { useHasAdminAccessRights } from '../util/userRoles'
 import Input from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
-import { inspectionQuery } from '../inspection/inspectionQueries'
+import { anyInspectionQuery } from '../inspection/inspectionQueries'
 import InspectionCard from '../inspection/InspectionCard'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { saveAs } from 'file-saver'
@@ -83,7 +83,7 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
 
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
-  let { data: inspection } = useQueryData(inspectionQuery, {
+  let { data: inspection } = useQueryData(anyInspectionQuery, {
     // Do not fetch inspection preview before the full UUID is written in the input.
     skip: removeInspectionId.length < LENGTH_OF_VALID_INSPECTION_UUID,
     nextFetchPolicy: !removeInspectionId ? 'network-only' : 'cache-first',
@@ -180,12 +180,7 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         />
 
         {inspection && (
-          <InspectionCard
-            inspectionType={ins}
-            key={inspection.id}
-            onRefresh={() => {}}
-            inspection={inspection}
-          />
+          <InspectionCard key={inspection.id} onRefresh={() => {}} inspection={inspection} />
         )}
 
         <Button

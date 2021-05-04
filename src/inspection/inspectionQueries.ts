@@ -107,7 +107,22 @@ export const inspectionQuery = createInspectionQuery(
 `
 )
 
-export const currentPreInspectionsByOperatorAndSeasonQuery = createInspectionQuery(
+export const anyInspectionQuery = gql`
+  query anyInspectionById($inspectionId: String!) {
+    anyInspectionById(inspectionId: $inspectionId) {
+      ... on PreInspection {
+        ...PreInspectionFragment
+      }
+      ... on PostInspection {
+        ...PostInspectionFragment
+      }
+    }
+  }
+  ${inspectionFragment(InspectionType.Pre)}
+  ${inspectionFragment(InspectionType.Post)}
+`
+
+export const currentInspectionsByOperatorAndSeasonQuery = createInspectionQuery(
   (prefix, capitalizedPrefix, inspectionType) => gql`
   query current${capitalizedPrefix}InspectionsByOperatorAndSeason(
     $operatorId: Int!
@@ -154,83 +169,82 @@ export const initInspectionContractUnitMap = gql`
   }
 `
 
-export const createInspectionMutation = gql`
-  mutation createInspection($inspectionInput: InitialInspectionInput!) {
-    createInspection(inspection: $inspectionInput) {
-      ...InspectionFragment
+export const createInspectionMutation = createInspectionQuery(
+  (prefix, capitalizedPrefix, inspectionType) => gql`
+  mutation create${capitalizedPrefix}Inspection($inspectionInput: InitialInspectionInput!) {
+    create${capitalizedPrefix}Inspection(inspection: $inspectionInput) {
+      ...${capitalizedPrefix}InspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(inspectionType)}
 `
-
-export const createInspectionMutation = createInspectionQuery(
-  (prefix, upperCasePrefix) => gql`
-    mutation createInspection($inspectionInput: InitialInspectionInput!) {
-      createInspection(inspection: $inspectionInput) {
-        ...PostIns
-      }
-    }
-    ${preInspectionFragment}
-  `
 )
 
-export const updateInspectionMutation = gql`
-  mutation updateInspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
-    updateInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
-      ...InspectionFragment
+export const updateInspectionMutation = createInspectionQuery(
+  (prefix, capitalizedPrefix, inspectionType) => gql`
+  mutation update${capitalizedPrefix}Inspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
+    update${capitalizedPrefix}Inspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
+      ...${capitalizedPrefix}InspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(inspectionType)}
 `
+)
 
 export const updateLinkedInspectionsMutation = gql`
   mutation updateLinkedInspections($inspectionId: String!) {
     updateLinkedInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...PostInspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(InspectionType.Post)}
 `
 
-export const submitInspectionMutation = gql`
-  mutation submitInspection(
+export const submitInspectionMutation = createInspectionQuery(
+  (prefix, capitalizedPrefix, inspectionType) => gql`
+  mutation submit${capitalizedPrefix}Inspection(
     $inspectionId: String!
     $startDate: BulttiDate!
     $endDate: BulttiDate!
   ) {
-    submitInspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
-      ...InspectionFragment
+    submit${capitalizedPrefix}Inspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
+      ...${capitalizedPrefix}InspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(inspectionType)}
 `
+)
 
-export const makeInspectionSanctionableMutation = gql`
-  mutation inspectionReady($inspectionId: String!) {
+export const makePostInspectionSanctionableMutation = gql`
+  mutation postInspectionSanctionable($inspectionId: String!) {
     inspectionSanctionable(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...PostInspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(InspectionType.Post)}
 `
 
-export const publishInspectionMutation = gql`
-  mutation publishInspection($inspectionId: String!) {
-    publishInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+export const publishInspectionMutation = createInspectionQuery(
+  (prefix, capitalizedPrefix, inspectionType) => gql`
+  mutation publish${capitalizedPrefix}Inspection($inspectionId: String!) {
+    publish${capitalizedPrefix}Inspection(inspectionId: $inspectionId) {
+      ...${capitalizedPrefix}InspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(inspectionType)}
 `
+)
 
-export const rejectInspectionMutation = gql`
-  mutation rejectInspection($inspectionId: String!) {
-    rejectInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+export const rejectInspectionMutation = createInspectionQuery(
+  (prefix, capitalizedPrefix, inspectionType) => gql`
+  mutation reject${capitalizedPrefix}Inspection($inspectionId: String!) {
+    reject${capitalizedPrefix}Inspection(inspectionId: $inspectionId) {
+      ...${capitalizedPrefix}InspectionFragment
     }
   }
-  ${preInspectionFragment}
+  ${inspectionFragment(inspectionType)}
 `
+)
 
 export const inspectionUserRelationsQuery = gql`
   query inspectionUserRelations($inspectionId: String!) {
@@ -240,7 +254,10 @@ export const inspectionUserRelationsQuery = gql`
       updatedAt
       relatedBy
       subscribed
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
       user {
@@ -259,7 +276,10 @@ export const toggleUserInspectionSubscription = gql`
       updatedAt
       relatedBy
       subscribed
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
       user {

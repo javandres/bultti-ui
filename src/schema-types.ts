@@ -67,7 +67,7 @@ export type Query = {
   preInspection: PreInspection;
   preInspectionsByOperator: Array<PreInspection>;
   currentPreInspectionsByOperatorAndSeason: Array<PreInspection>;
-  allPreInspections: Array<InspectionUserRelation>;
+  allPreInspections: Array<PreInspection>;
   contracts: Array<Contract>;
   contractsByProcurementUnit: Array<Contract>;
   contract?: Maybe<Contract>;
@@ -84,8 +84,10 @@ export type Query = {
   postInspection: PostInspection;
   postInspectionsByOperator: Array<PostInspection>;
   currentPostInspectionsByOperatorAndSeason: Array<PostInspection>;
-  allPostInspections: Array<InspectionUserRelation>;
+  allPostInspections: Array<PostInspection>;
+  anyInspectionById: AnyInspection;
   inspectionsTimeline: Array<InspectionTimelineItem>;
+  inspectionUserRelations: Array<InspectionUserRelation>;
 };
 
 
@@ -368,11 +370,6 @@ export type QueryCurrentPreInspectionsByOperatorAndSeasonArgs = {
 };
 
 
-export type QueryAllPreInspectionsArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
 export type QueryContractsArgs = {
   date?: Maybe<Scalars['BulttiDate']>;
   operatorId?: Maybe<Scalars['Int']>;
@@ -450,7 +447,7 @@ export type QueryCurrentPostInspectionsByOperatorAndSeasonArgs = {
 };
 
 
-export type QueryAllPostInspectionsArgs = {
+export type QueryAnyInspectionByIdArgs = {
   inspectionId: Scalars['String'];
 };
 
@@ -458,6 +455,11 @@ export type QueryAllPostInspectionsArgs = {
 export type QueryInspectionsTimelineArgs = {
   inspectionType: InspectionType;
   operatorId: Scalars['Int'];
+};
+
+
+export type QueryInspectionUserRelationsArgs = {
+  inspectionId: Scalars['String'];
 };
 
 export type PlannedUnitExecutionRequirement = {
@@ -1899,6 +1901,8 @@ export enum SanctionExceptionReason {
   LateDeparture = 'LATE_DEPARTURE'
 }
 
+export type AnyInspection = PreInspection | PostInspection;
+
 export type InspectionTimelineItem = {
   __typename?: 'InspectionTimelineItem';
   id: Scalars['ID'];
@@ -1939,7 +1943,6 @@ export type Mutation = {
   submitPreInspection: PreInspection;
   publishPreInspection: PreInspection;
   rejectPreInspection: PreInspection;
-  removePreInspection: Scalars['Boolean'];
   initInspectionContractUnitMap: Scalars['Boolean'];
   generateEquipmentForPreInspection: Scalars['Boolean'];
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>;
@@ -1962,10 +1965,10 @@ export type Mutation = {
   submitPostInspection: PostInspection;
   publishPostInspection: PostInspection;
   rejectPostInspection: PostInspection;
-  removePostInspection: Scalars['Boolean'];
   updateLinkedInspection: PostInspection;
   inspectionSanctionable: PostInspection;
   abandonSanctions: PostInspection;
+  removeInspection: Scalars['Boolean'];
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>;
 };
 
@@ -2129,11 +2132,6 @@ export type MutationRejectPreInspectionArgs = {
 };
 
 
-export type MutationRemovePreInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
 export type MutationInitInspectionContractUnitMapArgs = {
   inspectionId: Scalars['String'];
 };
@@ -2233,11 +2231,6 @@ export type MutationRejectPostInspectionArgs = {
 };
 
 
-export type MutationRemovePostInspectionArgs = {
-  inspectionId: Scalars['String'];
-};
-
-
 export type MutationUpdateLinkedInspectionArgs = {
   inspectionId: Scalars['String'];
 };
@@ -2249,6 +2242,11 @@ export type MutationInspectionSanctionableArgs = {
 
 
 export type MutationAbandonSanctionsArgs = {
+  inspectionId: Scalars['String'];
+};
+
+
+export type MutationRemoveInspectionArgs = {
   inspectionId: Scalars['String'];
 };
 

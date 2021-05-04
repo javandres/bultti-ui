@@ -5,7 +5,12 @@
         }
       }
       const result: PossibleTypesResultData = {
-  "possibleTypes": {}
+  "possibleTypes": {
+    "AnyInspection": [
+      "PreInspection",
+      "PostInspection"
+    ]
+  }
 };
       export default result;
     
