@@ -8,6 +8,7 @@ import ExpandableSection, {
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { InspectionContext } from '../inspection/InspectionContext'
 import {
+  InspectionType,
   InspectionValidationError,
   ObservedExecutionRequirement,
   ObservedRequirementValueInput,
@@ -112,7 +113,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
-        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: inspectionQuery(InspectionType.Post),
+          variables: { inspectionId: inspection?.id || '' },
+        },
       ],
       notifyOnNetworkStatusChange: true,
       variables: {
@@ -145,7 +149,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
-        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: inspectionQuery(InspectionType.Post),
+          variables: { inspectionId: inspection?.id || '' },
+        },
       ],
     }
   )

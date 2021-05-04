@@ -14,13 +14,15 @@ export const unselectedOperator: Operator = {
   id: 0,
   operatorId: 0,
   operatorName: translate('unselected', languageState.language),
-  inspections: [],
+  preInspections: [],
+  postInspections: [],
   contracts: [],
 }
 
 export const unselectedSeason: Season = {
   endDate: '',
-  inspections: [],
+  preInspections: [],
+  postInspections: [],
   startDate: '',
   id: translate('unselected', languageState.language),
   season: '',
