@@ -61,9 +61,9 @@ export const inspectionFragment = createInspectionQuery(
         ? `
       linkedInspectionUpdateAvailable
       linkedInspections {
+        id
+        startOfWeek
         inspection {
-          id
-          startOfWeek
           ...LightPreInspectionFragment
         }
       }
