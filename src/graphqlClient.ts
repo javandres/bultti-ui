@@ -13,6 +13,7 @@ import introspection from './possibleTypes'
 import { getAuthToken } from './util/authToken'
 import { WebSocketLink } from '@apollo/client/link/ws'
 import { getMainDefinition } from '@apollo/client/utilities'
+import { PlannedUnitExecutionRequirement } from './schema-types'
 
 export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
@@ -76,7 +77,10 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     typePolicies: {
       Query: {
         fields: {
-          currentInspectionsByOperatorAndSeason: {
+          currentPreInspectionsByOperatorAndSeason: {
+            merge: cacheMerge,
+          },
+          currentPostInspectionsByOperatorAndSeason: {
             merge: cacheMerge,
           },
           availableDayTypes: {
@@ -87,7 +91,14 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           },
         },
       },
-      Inspection: {
+      PreInspection: {
+        fields: {
+          inspectionErrors: {
+            merge: cacheMerge,
+          },
+        },
+      },
+      PostInspection: {
         fields: {
           inspectionErrors: {
             merge: cacheMerge,
@@ -101,7 +112,7 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           },
         },
       },
-      ExecutionRequirement: {
+      PlannedUnitExecutionRequirement: {
         fields: {
           equipmentQuotas: {
             merge: cacheMerge,
