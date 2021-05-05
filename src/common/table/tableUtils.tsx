@@ -64,7 +64,7 @@ export function useRenderCellValue() {
 
 export type CellValType = string | number
 
-export type EditValue<ItemType = unknown, ValueType = CellValType> = {
+export type EditValue<ItemType = Record<string, unknown>, ValueType = CellValType> = {
   key: keyof ItemType
   value: ValueType
   item: ItemType
@@ -80,10 +80,13 @@ export type TableEditProps<ItemType, EditValueType = CellValType> = {
   isAlwaysEditable?: boolean
 }
 
-export type RenderInputType<ItemType> = (
+export type RenderInputType<
+  ItemType extends Record<string, ValueType>,
+  ValueType = unknown
+> = (
   key: keyof ItemType,
-  val: unknown,
-  onChange: (val: unknown) => void,
+  val: ValueType,
+  onChange: (val: CellValType) => unknown,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
   tabIndex?: number
@@ -94,44 +97,52 @@ export const defaultKeyFromItem = (item) => item.id
 export const defaultRenderCellContent = (key: unknown, val: unknown): React.ReactChild => (
   <>
     {!(val === false || val === null || typeof val === 'undefined') && (
-      <CellContent>{val}</CellContent>
+      <CellContent>{val as string}</CellContent>
     )}
   </>
 )
 
 export const defaultRenderValue = (key: unknown, val: unknown) => toString(val)
 
-export const defaultRenderInput = <ItemType extends Record<string, unknown>>(
+export function defaultRenderInput<ItemType extends Record<string, unknown>>(
   key: keyof ItemType,
   val: unknown,
-  onChange,
-  onAccept,
-  onCancel,
-  tabIndex
-) => (
-  <TableInput
-    autoFocus
-    tabIndex={tabIndex}
-    value={val}
-    onChange={(value) => onChange(value)}
-    name={key as string}
-    onEnterPress={onAccept}
-    onEscPress={onCancel}
-    inputComponent={TableTextInput}
-  />
-)
+  onChange: (val: CellValType) => unknown,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown,
+  tabIndex?: number
+) {
+  return (
+    <TableInput
+      autoFocus
+      tabIndex={tabIndex}
+      value={val as string}
+      onChange={(value: CellValType) => onChange(value)}
+      name={key as string}
+      onEnterPress={onAccept}
+      onEscPress={onCancel}
+      inputComponent={TableTextInput}
+    />
+  )
+}
 
-export type TableRowWithDataAndFunctions<ItemType = unknown, EditValueType = CellValType> = {
+export type TableRowWithDataAndFunctions<
+  ItemType = Record<string, unknown>,
+  EditValueType = CellValType
+> = {
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
   onMakeEditable: (key: keyof ItemType, value: EditValueType) => unknown
-  onValueChange: (key: string) => (value: EditValueType) => unknown
+  onValueChange: (key: keyof ItemType) => (value: unknown) => unknown
   itemEntries: [string, EditValueType][]
   item: ItemType
 }
 
-export type ContextTypes<ItemType, EditValueType = CellValType> = {
+export type ContextTypes<
+  ItemType extends Record<string, unknown>,
+  EditValueType = CellValType
+> = {
   pendingValues?: EditValue<ItemType, EditValueType>[]
   columnWidths?: Array<number | string>
   editableValues?: TablePropTypes<ItemType, EditValueType>['editableValues']

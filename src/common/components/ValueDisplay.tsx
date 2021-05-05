@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import styled, { CSSProperties } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { get } from 'lodash'
@@ -46,29 +46,29 @@ const ValueLabel = styled.label`
 
 const ValueView = styled.div``
 
-export type PropTypes<ItemType = unknown> = {
+export type PropTypes<ItemType extends Record<string, unknown>> = {
   item: ItemType
-  labels?: { [key in keyof ItemType]: string }
+  labels?: { [key in keyof ItemType]?: string }
   order?: string[]
   hideKeys?: string[]
-  renderValue?: (key: string, val: unknown) => unknown
-  objectPaths?: { [key in keyof ItemType]: string }
+  renderValue?: (key: string, val: unknown) => ReactNode
+  objectPaths?: { [key in keyof ItemType]?: string }
   className?: string
   children?: React.ReactChild | false
   style?: CSSProperties
   valuesPerRow?: number
 }
 
-const defaultRenderValue = (key, val) => {
+const defaultRenderValue = (key: string, val: unknown): ReactNode => {
   if (Array.isArray(val)) {
     return val.join(', ')
   }
 
-  return val
+  return val as string
 }
 
-const ValueDisplay: React.FC<PropTypes> = observer(
-  ({
+const ValueDisplay = observer(
+  <ItemType extends Record<string, unknown>>({
     className,
     item,
     labels = {},
@@ -79,7 +79,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
     style,
     objectPaths,
     valuesPerRow = 2,
-  }) => {
+  }: PropTypes<ItemType>) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     return (
@@ -94,7 +94,7 @@ const ValueDisplay: React.FC<PropTypes> = observer(
               return null
             }
 
-            displayValue = get(val, path)
+            displayValue = get(val, path as string)
           }
 
           if (

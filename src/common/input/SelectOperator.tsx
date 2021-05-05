@@ -41,7 +41,7 @@ export const operatorIsValid = (operator: Operator | number | null | undefined) 
 
 const SelectOperator: React.FC<PropTypes> = observer(
   ({ onSelect, value, label, className, style, disabled = false, selectInitialId }) => {
-    const { data } = useQueryData(operatorsQuery)
+    const { data } = useQueryData<Operator[]>(operatorsQuery)
     const [user] = useStateValue('user')
 
     let userIsOperator = useMemo(() => user && user?.role === UserRole.Operator, [user])

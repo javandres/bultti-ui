@@ -172,7 +172,13 @@ const ProcurementUnitItemContent = observer(
     )
 
     let renderProcurementItemInput = useCallback((key: string, val: unknown, onChange) => {
-      return <TextInput type="number" value={val} onChange={(e) => onChange(e.target.value)} />
+      return (
+        <TextInput
+          type="number"
+          value={val as string}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )
     }, [])
 
     let calcMedianAgeRequirement = useMemo(() => {

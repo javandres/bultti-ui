@@ -1,7 +1,7 @@
 import get from 'lodash/get'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
-import { createHistory } from '@reach/router'
+import { createHistory, NavigateOptions } from '@reach/router'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
 import { APP_PATH } from '../constants'
@@ -47,7 +47,10 @@ export const __setHistoryForTesting = (historyObj) => {
   history = historyObj
 }
 
-export const navigate = (navigateTo: string, opts?: unknown) => {
+export const navigate = (
+  navigateTo: string,
+  opts?: NavigateOptions<Record<string, unknown>>
+) => {
   history.navigate(navigateTo, opts)
 }
 
@@ -131,12 +134,14 @@ export const pathWithQuery = (path = '', location?: Location | string) => {
 }
 
 /**
- * @param {string} navigateTo - Path to navigate into (query string gets included)
+ * @param navigateTo
  * @param {Object} opts - Optional options
- * @param {boolean} opts.replace - if true, the current entry in the history stack will be replaced with the new one. If empty/false, a call to navigate will push a new entry into the history stack so the user can click the back button to get back to the previous page.
  * @returns {void}
  */
-export const navigateWithQueryString = (navigateTo: string, opts?: unknown) => {
+export const navigateWithQueryString = (
+  navigateTo: string,
+  opts?: NavigateOptions<Record<string, unknown>>
+) => {
   let path = pathWithQuery(navigateTo, history.location)
   return navigate(path, opts)
 }

@@ -252,7 +252,7 @@ const renderDatePickerInput = ({
   openCalendar,
   attrs,
 }: {
-  onInputChange: (value: unknown) => unknown
+  onInputChange: (value: string) => unknown
   onInputBlur: () => unknown
   placeholder: string
   value?: string

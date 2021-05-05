@@ -38,7 +38,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     }))
   }, [])
 
-  let [modifyUser, { data: nextUser, loading: userLoading }] = useMutationData(
+  let [modifyUser, { data: nextUser, loading: userLoading }] = useMutationData<User>(
     modifyUserMutation
   )
 

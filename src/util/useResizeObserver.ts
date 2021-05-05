@@ -1,10 +1,5 @@
 import { RefObject, useEffect, useState } from 'react'
 
-export interface ResizeObserverEntry {
-  target: HTMLElement
-  contentRect: DOMRectReadOnly
-}
-
 type RectValue = DOMRectReadOnly | Partial<DOMRectReadOnly>
 
 export const useResizeObserver = (ref: RefObject<HTMLElement>) => {
@@ -15,12 +10,10 @@ export const useResizeObserver = (ref: RefObject<HTMLElement>) => {
       return
     }
 
-    const resizeObserver = new (window as unknown).ResizeObserver(
-      (entries: ResizeObserverEntry[]) => {
-        let rect = entries[0].contentRect
-        setSizeRect(rect)
-      }
-    )
+    const resizeObserver = new window.ResizeObserver((entries: ResizeObserverEntry[]) => {
+      let rect = entries[0].contentRect
+      setSizeRect(rect)
+    })
 
     resizeObserver.observe(ref.current)
 
@@ -41,12 +34,10 @@ export const useResizeCallback = (
       return
     }
 
-    const resizeObserver = new (window as unknown).ResizeObserver(
-      (entries: ResizeObserverEntry[]) => {
-        let rect = entries[0].contentRect
-        cb(rect)
-      }
-    )
+    const resizeObserver = new window.ResizeObserver((entries: ResizeObserverEntry[]) => {
+      let rect = entries[0].contentRect
+      cb(rect)
+    })
 
     resizeObserver.observe(ref.current)
 

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import FileUploadInput from './FileUploadInput'
 import styled from 'styled-components/macro'
+import { Uploader } from '../../util/useUploader'
 
 const ErrorMessage = styled.span`
   display: flex;
@@ -11,8 +12,8 @@ const ErrorMessage = styled.span`
   width: 100%;
 `
 
-export type PropTypes = {
-  uploader?: unknown // (file: File, variables?: { [key: string]: any }) => void
+export type PropTypes<TData> = {
+  uploader?: Uploader<TData> // (file: File, variables?: { [key: string]: any }) => void
   label?: string
   className?: string
   onChange: (files: File[]) => void
@@ -20,17 +21,17 @@ export type PropTypes = {
   disabled?: boolean
 }
 
-const UploadFile: React.FC<PropTypes> = observer(
-  ({
-    uploader = [],
+const UploadFile = observer(
+  <TData extends unknown>({
+    uploader,
     label = 'Valitse tiedosto',
     className,
     onChange,
     value,
     disabled = false,
-  }) => {
+  }: PropTypes<TData>) => {
     const prevUpload = useRef<string | null>('')
-    const [upload, state = { loading: false, called: false, error: undefined }] =
+    const [upload, state = { loading: false, called: false, uploadError: undefined }] =
       uploader || []
 
     useEffect(() => {
@@ -50,14 +51,22 @@ const UploadFile: React.FC<PropTypes> = observer(
         !disabled &&
         prevUpload.current !== null &&
         !state.loading &&
-        !state.error &&
+        !state.uploadError &&
         state.called &&
         upload
       ) {
         prevUpload.current = null
         upload(null)
       }
-    }, [disabled, value, upload, state.called, state.loading, state.error, prevUpload.current])
+    }, [
+      disabled,
+      value,
+      upload,
+      state.called,
+      state.loading,
+      state.uploadError,
+      prevUpload.current,
+    ])
 
     let onReset = useCallback(() => {
       prevUpload.current = null
@@ -72,7 +81,7 @@ const UploadFile: React.FC<PropTypes> = observer(
         disabled={disabled}
         loading={state.loading}
         onReset={onReset}>
-        {state.error && <ErrorMessage>{state.error.message}</ErrorMessage>}
+        {state.uploadError && <ErrorMessage>{state.uploadError.message}</ErrorMessage>}
       </FileUploadInput>
     )
   }

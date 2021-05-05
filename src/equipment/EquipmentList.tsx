@@ -194,7 +194,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}
-                value={val}
+                value={val as string}
                 valueName={key}
                 onChange={onChange}
                 onAccept={onAccept}

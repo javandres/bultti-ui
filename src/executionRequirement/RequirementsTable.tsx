@@ -175,8 +175,9 @@ const RequirementsTable: React.FC<PropTypes> = observer(
         let decimalCount = unit === '%' ? DEFAULT_PERCENTAGE_DECIMALS : DEFAULT_DECIMALS
 
         let totalVal = getThousandSeparatedNumber(
-          round(getTotal<unknown, string>(requirementRows, key), decimalCount)
+          round(getTotal(requirementRows, key as keyof ValueItemType), decimalCount)
         )
+
         return `${totalVal} ${unit}`
       },
       [executionRequirement]

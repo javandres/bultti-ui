@@ -83,7 +83,10 @@ const ColumnSortIndicator = styled.div`
   padding: 0 0.25rem 0 0.75rem;
 `
 
-export type TablePropTypes<ItemType, EditValueType = CellValType> = {
+export type TablePropTypes<
+  ItemType extends Record<string, unknown>,
+  EditValueType = CellValType
+> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
@@ -96,7 +99,7 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   renderCell?: (key: keyof ItemType, val: unknown, item?: ItemType) => React.ReactNode
   renderValue?: (
     key: string,
-    val: unknown,
+    val: CellValType,
     isHeader?: boolean,
     item?: ItemType
   ) => React.ReactNode

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { FC } from 'react'
 import styled from 'styled-components/macro'
-import { Inspection, InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus, User } from '../schema-types'
 import { getCreatedByUser } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
@@ -31,7 +31,7 @@ const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: bo
   flex: 0 0 calc(33.333% - 1rem);
 `
 
-const ItemContent = styled(ValueDisplay)<ValueDisplayPropTypes>`
+const ItemContent = styled(ValueDisplay)`
   margin-bottom: 1rem;
   line-height: 1.4;
 `
@@ -106,7 +106,7 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
       className={className}
       status={inspection.status}
       inEffect={isCurrentlyInEffect}>
-      <ItemContent
+      <ItemContent<FC<ValueDisplayPropTypes<Inspection & { createdBy?: User }>>>
         item={{ ...inspection, createdBy }}
         labels={itemTableHeadings}
         objectPaths={itemObjectDisplayPaths}

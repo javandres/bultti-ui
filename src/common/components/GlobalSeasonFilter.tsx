@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import SelectSeason, { seasonIsValid } from '../input/SelectSeason'
 import { getUrlValue } from '../../util/urlValue'
-import { getReadableDateRange } from '../../util/formatDate'
+import { getDateObject, getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
 import { text } from '../../util/translate'
 import { SidebarStyledDropdown } from './SidebarStyledDropdown'
@@ -33,7 +33,10 @@ const GlobalSeasonFilter: React.FC = observer(() => {
       />
       {seasonIsValid(season) && (
         <SeasonTimeSpan>
-          {getReadableDateRange({ start: season.startDate, end: season.endDate })}
+          {getReadableDateRange({
+            start: getDateObject(season.startDate),
+            end: getDateObject(season.endDate),
+          })}
         </SeasonTimeSpan>
       )}
     </React.Fragment>

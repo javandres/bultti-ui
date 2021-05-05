@@ -80,7 +80,7 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
-type CellPropTypes<ItemType = unknown, EditValueType = CellValType> = {
+type CellPropTypes<ItemType = Record<string, CellValType>, EditValueType = CellValType> = {
   row: TableRowWithDataAndFunctions<ItemType, EditValueType>
   cell: [keyof ItemType, EditValueType]
   colIndex: number
@@ -178,12 +178,16 @@ export const TableCell = observer(
           ? renderInput(
               key,
               editValue.value,
-              onValueChange((valueKey as unknown) as string),
+              onValueChange(valueKey),
               onSaveEdit,
               onCancelEdit,
               tabIndex
             )
-          : renderCell(valueKey, renderValue(valueKey as string, val, false, item), item)}
+          : renderCell(
+              valueKey,
+              renderValue(valueKey as string, (val as unknown) as string, false, item),
+              item
+            )}
       </TableCellElement>
     )
   }

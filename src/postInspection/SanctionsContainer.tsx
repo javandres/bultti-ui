@@ -60,13 +60,13 @@ let sanctionColumnLabels = {
   matchesException: 'Sanktiopoikkeus',
 }
 
-let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, onChange) => {
+let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: unknown, onChange) => {
   return (
     <SanctionToggleLabel>
       <SanctionToggleInput
         type="checkbox"
-        value={val + ''}
-        onChange={() => onChange(val)}
+        value={(val + '') as string}
+        onChange={() => onChange(val as string)}
         checked={val !== 0}
         name="sanctionable"
       />
@@ -168,11 +168,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   )
 
-  let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData(
+  let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
     {
-      update: (cache, { data: { updateSanctions } }) => {
-        for (let update of updateSanctions) {
+      update: (cache, { data: updateSanctions }) => {
+        // TODO: Test that this works. Apollo types may be wrong here.
+        console.log(updateSanctions)
+
+        for (let update of updateSanctions || []) {
           let cacheId = cache.identify(update)
           cache.writeFragment({
             id: cacheId,
@@ -260,7 +263,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   })
 
   let renderValue = useCallback(
-    (key: string, val: unknown, isHeader?: boolean, item?: Sanction) => {
+    (key: string, val: string | number, isHeader?: boolean, item?: Sanction) => {
       if (
         [
           'sanctionAmount',
@@ -276,7 +279,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         return val
       }
 
-      let idParts = (val as string).split('_')
+      let idParts = String(val).split('_')
 
       switch (item.sanctionableType) {
         case SanctionableEntity.Departure:

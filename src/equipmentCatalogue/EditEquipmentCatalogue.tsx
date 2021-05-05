@@ -145,7 +145,11 @@ const EditEquipmentCatalogue = observer(
 
     const renderCatalogueInput = useCallback((key: string, val: unknown, onChange) => {
       return (
-        <EquipmentCatalogueFormInput value={val || ''} valueName={key} onChange={onChange} />
+        <EquipmentCatalogueFormInput
+          value={(val || '') as string}
+          valueName={key}
+          onChange={onChange}
+        />
       )
     }, [])
 
@@ -177,7 +181,7 @@ const EditEquipmentCatalogue = observer(
             </ValueDisplay>
           )}
           {pendingCatalogue && (
-            <ItemForm
+            <ItemForm<EquipmentCatalogueInput>
               item={pendingCatalogue}
               labels={equipmentCatalogueLabels}
               hints={equipmentCatalogueHints}
@@ -185,7 +189,7 @@ const EditEquipmentCatalogue = observer(
               onDone={onSaveEquipmentCatalogue}
               onCancel={onCancelPendingEquipmentCatalogue}
               isDirty={isDirty}
-              keyFromItem={(item) => item.id}
+              keyFromItem={(item) => item.startDate}
               renderInput={renderCatalogueInput}
               doneLabel={
                 catalogueEditMode.current === CatalogueEditMode.UPDATE

@@ -40,7 +40,7 @@ export function useTableRows<
     () =>
       items.map((item) => {
         // Again, omit keys that start with an underscore.
-        let itemEntries = Object.entries<EditValueType>(item)
+        let itemEntries = Object.entries(item as Record<string, EditValueType>)
 
         itemEntries = itemEntries.filter(
           ([key]) => !key.startsWith('_') && !keysToHide.includes(key)

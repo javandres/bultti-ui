@@ -8,7 +8,7 @@ const currentDate = new Date()
 
 export function useSeasons(): Season[] {
   // Get seasons to display in the seasons select.
-  const { data: seasonsData } = useQueryData(seasonsQuery, {
+  const { data: seasonsData } = useQueryData<Season[]>(seasonsQuery, {
     variables: {
       date: getDateString(startOfYear(subYears(currentDate, 5))),
     },

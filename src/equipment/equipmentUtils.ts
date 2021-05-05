@@ -20,6 +20,7 @@ import {
 import { useCallback } from 'react'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
 import Big from 'big.js'
+import { isObjectLike } from '../util/isObjectLike'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
   percentageQuota: number | string
@@ -121,6 +122,7 @@ export function groupedEquipment(
 
 function isCatalogue(item?: unknown): item is EquipmentCatalogue {
   return (
+    isObjectLike(item) &&
     !!item &&
     typeof item?.equipmentQuotas !== 'undefined' &&
     typeof item?.requirements === 'undefined'
@@ -129,6 +131,7 @@ function isCatalogue(item?: unknown): item is EquipmentCatalogue {
 
 function isRequirement(item?: unknown): item is PlannedUnitExecutionRequirement {
   return (
+    isObjectLike(item) &&
     !!item &&
     typeof item?.equipmentQuotas !== 'undefined' &&
     typeof item?.requirements !== 'undefined'
