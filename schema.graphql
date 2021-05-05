@@ -6,7 +6,7 @@ schema {
   subscription: Subscription
 }
 
-union AnyInspection = PostInspection | PreInspection
+union Inspection = PostInspection | PreInspection
 
 type BlockDeviationsReport {
   columnLabels: String!
@@ -616,10 +616,9 @@ type Mutation {
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
+  createInspection(inspection: InitialInspectionInput!): Inspection
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
-  createPostInspection(inspection: InitialInspectionInput!): PostInspection
-  createPreInspection(inspection: InitialInspectionInput!): PreInspection
   createTestData: Boolean!
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
@@ -631,11 +630,9 @@ type Mutation {
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!
-  publishPostInspection(inspectionId: String!): PostInspection!
-  publishPreInspection(inspectionId: String!): PreInspection!
+  publishInspection(inspectionId: String!): Inspection!
   refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): PlannedUnitExecutionRequirement
-  rejectPostInspection(inspectionId: String!): PostInspection!
-  rejectPreInspection(inspectionId: String!): PreInspection!
+  rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): PlannedUnitExecutionRequirement
   removeContract(contractId: String!, operatorId: Int!): Boolean!
@@ -648,8 +645,7 @@ type Mutation {
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
-  submitPostInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): PostInspection!
-  submitPreInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): PreInspection!
+  submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
@@ -657,10 +653,9 @@ type Mutation {
   updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
+  updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
-  updatePostInspection(inspection: InspectionInput!, inspectionId: String!): PostInspection!
-  updatePreInspection(inspection: InspectionInput!, inspectionId: String!): PreInspection!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
   updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
@@ -1142,9 +1137,7 @@ type ProcurementUnitRoute {
 type Query {
   allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
-  allPostInspections: [PostInspection!]!
-  allPreInspections: [PreInspection!]!
-  anyInspectionById(inspectionId: String!): AnyInspection!
+  allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
@@ -1152,8 +1145,7 @@ type Query {
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
-  currentPostInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PostInspection!]!
-  currentPreInspectionsByOperatorAndSeason(operatorId: Int!, seasonId: String!): [PreInspection!]!
+  currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
   deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeadrunsReport
@@ -1173,8 +1165,10 @@ type Query {
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
+  inspection(inspectionId: String!): Inspection!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
+  inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
   inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
   missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
   missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport
@@ -1190,10 +1184,6 @@ type Query {
   operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OperatorDeadrunsReport
   operators: [Operator!]!
   overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport
-  postInspection(inspectionId: String!): PostInspection!
-  postInspectionsByOperator(operatorId: Int!): [PostInspection!]!
-  preInspection(inspectionId: String!): PreInspection!
-  preInspectionsByOperator(operatorId: Int!): [PreInspection!]!
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
@@ -1547,6 +1537,7 @@ input InitialInspectionInput {
   inspectionDateId: String
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
+  inspectionType: InspectionType!
   name: String
   operatorId: Int!
   seasonId: String!
@@ -1573,6 +1564,7 @@ input InspectionInput {
   inspectionDateId: String
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
+  inspectionType: InspectionType
   name: String
   startDate: BulttiDate
 }

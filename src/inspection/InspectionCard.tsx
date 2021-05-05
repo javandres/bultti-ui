@@ -4,10 +4,9 @@ import { observer } from 'mobx-react-lite'
 import { getInspectionStatusColor, getInspectionStatusName } from './inspectionUtils'
 import { getReadableDate } from '../util/formatDate'
 import InspectionActions from './InspectionActions'
-import { InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { SubHeading } from '../common/components/Typography'
 import { Text } from '../util/translate'
-import { Inspection } from './inspectionTypes'
 
 type StatusProps = { status?: InspectionStatus }
 

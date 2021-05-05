@@ -15,8 +15,7 @@ type PropTypes = {
 const InspectionReportsPage: React.FC<PropTypes> = observer(
   ({ inspectionId = '', inspectionType }) => {
     let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
-      inspectionId,
-      inspectionType
+      inspectionId
     )
 
     let typeStrings = getInspectionTypeStrings(inspectionType)

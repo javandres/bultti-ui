@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
 import { isEqual, pick, uniqueId } from 'lodash'
 import { FormColumn } from '../common/components/form'
-import { InspectionInput, InspectionStatus } from '../schema-types'
+import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { FlexRow, PageSection } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/buttons/Button'
@@ -16,7 +16,6 @@ import { Text, text } from '../util/translate'
 import { usePromptUnsavedChanges } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
 import { addDays, max, parseISO } from 'date-fns'
-import { Inspection } from './inspectionTypes'
 import { isPostInspection } from './inspectionUtils'
 
 const InspectionConfigView = styled(PageSection)`
@@ -45,6 +44,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     endDate = max([addDays(startDate, 1), endDate])
 
     return {
+      inspectionType: inspection.inspectionType,
       startDate: getDateString(startDate),
       endDate: getDateString(endDate),
       name: inspection.name || '',

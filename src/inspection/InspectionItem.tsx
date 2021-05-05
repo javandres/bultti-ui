@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components/macro'
-import { InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { getCreatedByUser } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
@@ -8,7 +8,6 @@ import ValueDisplay, {
 import InspectionActions from './InspectionActions'
 import { getReadableDate } from '../util/formatDate'
 import { text } from '../util/translate'
-import { Inspection } from './inspectionTypes'
 
 const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;

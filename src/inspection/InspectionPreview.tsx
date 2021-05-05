@@ -3,10 +3,9 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { TabChildProps } from '../common/components/Tabs'
 import InspectionMeta from './InspectionMeta'
-import { InspectionStatus } from '../schema-types'
+import { Inspection, InspectionStatus } from '../schema-types'
 import { ErrorView, MessageContainer } from '../common/components/Messages'
 import InspectionReports from './InspectionReports'
-import { Inspection } from './inspectionTypes'
 
 const PreviewInspectionView = styled.div`
   padding: 1rem 0.75rem 2rem;

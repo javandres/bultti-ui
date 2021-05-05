@@ -53,7 +53,7 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
       },
       refetchQueries: [
         {
-          query: inspectionQuery(InspectionType.Post),
+          query: inspectionQuery,
           variables: { inspectionId: inspection?.id || '' },
         },
         {

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { ArrowRight } from '../common/icon/ArrowRight'
 import { SubHeading } from '../common/components/Typography'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { Inspection } from './inspectionTypes'
+import { Inspection } from '../schema-types'
 
 const ContentRow = styled.div`
   display: flex;

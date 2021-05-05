@@ -11,8 +11,7 @@ import { useQueryData } from '../util/useQueryData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
-import { InspectionUserRelation } from '../schema-types'
-import { Inspection } from './inspectionTypes'
+import { Inspection, InspectionUserRelation } from '../schema-types'
 
 export type PropTypes = {
   inspection: Inspection

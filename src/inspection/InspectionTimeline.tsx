@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
-import { InspectionStatus, InspectionTimelineItem } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionTimelineItem } from '../schema-types'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { InputLabel } from '../common/components/form'
 import { ArrowRight } from '../common/icon/ArrowRight'
@@ -11,7 +11,6 @@ import { useQueryData } from '../util/useQueryData'
 import { inspectionsTimelineByOperatorQuery } from './inspectionQueries'
 import { getReadableDate } from '../util/formatDate'
 import { operatorIsValid } from '../common/input/SelectOperator'
-import { Inspection } from './inspectionTypes'
 
 const InspectionTimelineView = styled.div`
   margin: 1rem 0;

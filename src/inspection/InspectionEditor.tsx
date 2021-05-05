@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
+  Inspection,
   InspectionInput,
   InspectionStatus,
   InspectionType,
@@ -26,7 +27,6 @@ import { Button } from '../common/components/buttons/Button'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
-import { Inspection } from './inspectionTypes'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 
@@ -61,11 +61,11 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     let inspectionType = inspection.inspectionType
 
     let [updatePreInspection, { loading: updateLoading }] = useMutationData(
-      updateInspectionMutation(inspectionType),
+      updateInspectionMutation,
       {
         refetchQueries: [
           {
-            query: inspectionQuery(inspectionType),
+            query: inspectionQuery,
             variables: { inspectionId: inspection?.id || '' },
           },
         ],

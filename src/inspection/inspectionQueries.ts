@@ -1,74 +1,101 @@
 import { gql } from '@apollo/client'
 import { UserFragment } from '../common/query/authQueries'
-import { InspectionType } from '../schema-types'
-import { DocumentNode } from 'graphql'
-import { lowerCase } from 'lodash'
 
-function createInspectionQuery(
-  queryFn: (
-    prefix: string,
-    capitalizedPrefix: string,
-    inspectionType: InspectionType
-  ) => DocumentNode
-) {
-  return (inspectionType: InspectionType) => {
-    let inspectionTypePrefix = inspectionType === InspectionType.Pre ? 'Pre' : 'Post'
-    return queryFn(lowerCase(inspectionTypePrefix), inspectionTypePrefix, inspectionType)
-  }
-}
-
-export const CommonInspectionFields = `
-id
-inspectionType
-name
-createdAt
-updatedAt
-startDate
-endDate
-inspectionStartDate
-inspectionEndDate
-version
-status
-minStartDate
-operatorId
-seasonId
-operator {
-  id
-  operatorName
-}
-season {
-  id
-  season
-  startDate
-  endDate
-}
-`
-
-export const lightInspectionFragment = createInspectionQuery(
-  (prefix, capitalizedPrefix) => gql`
-  fragment Light${capitalizedPrefix}InspectionFragment on ${capitalizedPrefix}Inspection {
-    ${CommonInspectionFields}
+export const lightPreInspectionFragment = gql`
+  fragment LightPreInspectionFragment on PreInspection {
+    id
+    inspectionType
+    name
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    inspectionStartDate
+    inspectionEndDate
+    version
+    status
+    minStartDate
+    operatorId
+    seasonId
+    operator {
+      id
+      operatorName
+    }
+    season {
+      id
+      season
+      startDate
+      endDate
+    }
   }
 `
-)
 
-export const inspectionFragment = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType: InspectionType) => gql`
-  fragment ${capitalizedPrefix}InspectionFragment on ${capitalizedPrefix}Inspection {
-    ${CommonInspectionFields}
-    ${
-      inspectionType === InspectionType.Post
-        ? `
-      linkedInspectionUpdateAvailable
-      linkedInspections {
+export const lightPostInspectionFragment = gql`
+  fragment LightPostInspectionFragment on PostInspection {
+    id
+    inspectionType
+    name
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    inspectionStartDate
+    inspectionEndDate
+    version
+    status
+    minStartDate
+    operatorId
+    seasonId
+    operator {
+      id
+      operatorName
+    }
+    season {
+      id
+      season
+      startDate
+      endDate
+    }
+  }
+`
+
+export const preInspectionFragment = gql`
+  fragment PreInspectionFragment on PreInspection {
+    ...LightPreInspectionFragment
+    inspectionErrors {
+      keys
+      objectId
+      referenceKeys
+      type
+    }
+    userRelations {
+      id
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      user {
         id
-        startOfWeek
-        inspection {
-          ...LightPreInspectionFragment
-        }
+        email
+        name
+        organisation
+        role
       }
-    `
-        : ''
+    }
+  }
+  ${lightPreInspectionFragment}
+`
+
+export const postInspectionFragment = gql`
+  fragment PostInspectionFragment on PostInspection {
+    ...LightPostInspectionFragment
+    linkedInspectionUpdateAvailable
+    linkedInspections {
+      id
+      startOfWeek
+      inspection {
+        ...LightPreInspectionFragment
+      }
     }
     inspectionErrors {
       keys
@@ -91,64 +118,70 @@ export const inspectionFragment = createInspectionQuery(
       }
     }
   }
-  ${inspectionType === InspectionType.Post ? lightInspectionFragment(InspectionType.Pre) : ''}
+  ${lightPreInspectionFragment}
+  ${lightPostInspectionFragment}
 `
-)
 
-export const inspectionQuery = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  query ${prefix}InspectionById($inspectionId: String!) {
-    ${prefix}Inspection(inspectionId: $inspectionId) {
-      ...${capitalizedPrefix}InspectionFragment
+const lightInspectionUnionFragment = gql`
+  fragment LightInspectionUnionFragment on Inspection {
+    ... on PreInspection {
+      ...LightPreInspectionFragment
+    }
+    ... on PostInspection {
+      ...LightPostInspectionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
-  ${inspectionType === InspectionType.Post ? lightInspectionFragment(InspectionType.Pre) : ''}
+  ${lightPreInspectionFragment}
+  ${lightPostInspectionFragment}
 `
-)
 
-export const anyInspectionQuery = gql`
-  query anyInspectionById($inspectionId: String!) {
-    anyInspectionById(inspectionId: $inspectionId) {
-      ... on PreInspection {
-        ...PreInspectionFragment
-      }
-      ... on PostInspection {
-        ...PostInspectionFragment
-      }
+const inspectionUnionFragment = gql`
+  fragment InspectionUnionFragment on Inspection {
+    ... on PreInspection {
+      ...PreInspectionFragment
+    }
+    ... on PostInspection {
+      ...PostInspectionFragment
     }
   }
-  ${inspectionFragment(InspectionType.Pre)}
-  ${inspectionFragment(InspectionType.Post)}
+  ${preInspectionFragment}
+  ${postInspectionFragment}
 `
 
-export const currentInspectionsByOperatorAndSeasonQuery = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  query current${capitalizedPrefix}InspectionsByOperatorAndSeason(
+export const inspectionQuery = gql`
+  query inspectionById($inspectionId: String!) {
+    inspection(inspectionId: $inspectionId) {
+      ...InspectionUnionFragment
+    }
+  }
+  ${inspectionUnionFragment}
+`
+
+export const currentInspectionsByOperatorAndSeasonQuery = gql`
+  query currentInspectionsByOperatorAndSeason(
     $operatorId: Int!
     $seasonId: String!
+    $inspectionType: InspectionType!
   ) {
-    current${capitalizedPrefix}InspectionsByOperatorAndSeason(
+    currentInspectionsByOperatorAndSeason(
       operatorId: $operatorId
       seasonId: $seasonId
+      inspectionType: $inspectionType
     ) {
-      ...Light${capitalizedPrefix}InspectionFragment
+      ...LightInspectionUnionFragment
     }
   }
-  ${lightInspectionFragment(inspectionType)}
+  ${lightInspectionUnionFragment}
 `
-)
 
-export const inspectionsByOperatorQuery = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  query ${prefix}InspectionsByOperator($operatorId: Int!) {
-    ${prefix}InspectionsByOperator(operatorId: $operatorId) {
-      ...Light${capitalizedPrefix}InspectionFragment
+export const inspectionsByOperatorQuery = gql`
+  query inspectionsByOperator($operatorId: Int!, $inspectionType: InspectionType!) {
+    inspectionsByOperator(operatorId: $operatorId, inspectionType: $inspectionType) {
+      ...LightInspectionUnionFragment
     }
   }
-  ${lightInspectionFragment(inspectionType)}
+  ${lightInspectionUnionFragment}
 `
-)
 
 export const inspectionsTimelineByOperatorQuery = gql`
   query inspectionsTimeline($operatorId: Int!, $inspectionType: InspectionType!) {
@@ -169,27 +202,23 @@ export const initInspectionContractUnitMap = gql`
   }
 `
 
-export const createInspectionMutation = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  mutation create${capitalizedPrefix}Inspection($inspectionInput: InitialInspectionInput!) {
-    create${capitalizedPrefix}Inspection(inspection: $inspectionInput) {
-      ...${capitalizedPrefix}InspectionFragment
+export const createInspectionMutation = gql`
+  mutation createInspection($inspectionInput: InitialInspectionInput!) {
+    createInspection(inspection: $inspectionInput) {
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
+  ${inspectionUnionFragment}
 `
-)
 
-export const updateInspectionMutation = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  mutation update${capitalizedPrefix}Inspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
-    update${capitalizedPrefix}Inspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
-      ...${capitalizedPrefix}InspectionFragment
+export const updateInspectionMutation = gql`
+  mutation updateInspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
+    updateInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
+  ${inspectionUnionFragment}
 `
-)
 
 export const updateLinkedInspectionsMutation = gql`
   mutation updateLinkedInspections($inspectionId: String!) {
@@ -197,23 +226,21 @@ export const updateLinkedInspectionsMutation = gql`
       ...PostInspectionFragment
     }
   }
-  ${inspectionFragment(InspectionType.Post)}
+  ${postInspectionFragment}
 `
 
-export const submitInspectionMutation = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  mutation submit${capitalizedPrefix}Inspection(
+export const submitInspectionMutation = gql`
+  mutation submitInspection(
     $inspectionId: String!
     $startDate: BulttiDate!
     $endDate: BulttiDate!
   ) {
-    submit${capitalizedPrefix}Inspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
-      ...${capitalizedPrefix}InspectionFragment
+    submitInspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
+  ${inspectionUnionFragment}
 `
-)
 
 export const makePostInspectionSanctionableMutation = gql`
   mutation postInspectionSanctionable($inspectionId: String!) {
@@ -221,30 +248,26 @@ export const makePostInspectionSanctionableMutation = gql`
       ...PostInspectionFragment
     }
   }
-  ${inspectionFragment(InspectionType.Post)}
+  ${postInspectionFragment}
 `
 
-export const publishInspectionMutation = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  mutation publish${capitalizedPrefix}Inspection($inspectionId: String!) {
-    publish${capitalizedPrefix}Inspection(inspectionId: $inspectionId) {
-      ...${capitalizedPrefix}InspectionFragment
+export const publishInspectionMutation = gql`
+  mutation publishInspection($inspectionId: String!) {
+    publishInspection(inspectionId: $inspectionId) {
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
+  ${inspectionUnionFragment}
 `
-)
 
-export const rejectInspectionMutation = createInspectionQuery(
-  (prefix, capitalizedPrefix, inspectionType) => gql`
-  mutation reject${capitalizedPrefix}Inspection($inspectionId: String!) {
-    reject${capitalizedPrefix}Inspection(inspectionId: $inspectionId) {
-      ...${capitalizedPrefix}InspectionFragment
+export const rejectInspectionMutation = gql`
+  mutation rejectInspection($inspectionId: String!) {
+    rejectInspection(inspectionId: $inspectionId) {
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment(inspectionType)}
+  ${inspectionUnionFragment}
 `
-)
 
 export const inspectionUserRelationsQuery = gql`
   query inspectionUserRelations($inspectionId: String!) {

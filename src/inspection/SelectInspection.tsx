@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { InspectionType } from '../schema-types'
+import { Inspection, InspectionType } from '../schema-types'
 import { orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
@@ -17,7 +17,6 @@ import InspectionCard from './InspectionCard'
 import { Text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
-import { Inspection } from './inspectionTypes'
 
 const SelectInspectionView = styled.div`
   position: relative;

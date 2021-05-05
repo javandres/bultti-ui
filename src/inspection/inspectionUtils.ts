@@ -1,6 +1,7 @@
 import { useCallback } from 'react'
 import {
   InitialInspectionInput,
+  Inspection,
   InspectionStatus,
   InspectionType,
   InspectionUserRelationType,
@@ -26,13 +27,11 @@ import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
 import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
-import { Inspection } from './inspectionTypes'
-import { inspect } from 'util'
 import { isObjectLike } from '../util/isObjectLike'
 
-export function useInspectionById(inspectionId: string, inspectionType: InspectionType) {
+export function useInspectionById(inspectionId: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData(
-    inspectionQuery(inspectionType),
+    inspectionQuery,
     {
       skip: !inspectionId,
       notifyOnNetworkStatusChange: true,
@@ -53,7 +52,7 @@ export function useCreateInspection(
   inspectionType: InspectionType
 ) {
   let [createInspection, { loading: createLoading }] = useMutationData(
-    createInspectionMutation(inspectionType)
+    createInspectionMutation
   )
 
   // Initialize the form by creating a pre-inspection on the server and getting the ID.
@@ -63,6 +62,7 @@ export function useCreateInspection(
       if (operatorIsValid(operator) && seasonId && !createLoading) {
         // InitialInspectionInput requires operator, season ID and inspection type.
         let inspectionInput: InitialInspectionInput = {
+          inspectionType,
           operatorId: operator.id,
           seasonId,
           startDate: season.startDate,
@@ -86,7 +86,7 @@ export function useCreateInspection(
         return null
       }
     },
-    [season, operator, createLoading]
+    [season, operator, createLoading, inspectionType]
   )
 }
 
@@ -100,7 +100,7 @@ export function useRemoveInspection(
     refetchQueries: inspection
       ? [
           {
-            query: inspectionsByOperatorQuery(inspection.inspectionType),
+            query: inspectionsByOperatorQuery,
             variables: {
               operatorId,
               inspectionType,
@@ -159,7 +159,7 @@ export function useFetchInspections(
   let queryOperator = operator || globalOperator || undefined
 
   let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
-    inspectionsByOperatorQuery(inspectionType),
+    inspectionsByOperatorQuery,
     {
       skip: !operatorIsValid(queryOperator),
       notifyOnNetworkStatusChange: true,

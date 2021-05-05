@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { get, groupBy, orderBy } from 'lodash'
 import InspectionItem from './InspectionItem'
-import { InspectionStatus, InspectionType, Season } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import { isBetween } from '../util/isBetween'
 import { LoadingDisplay } from '../common/components/Loading'
@@ -10,7 +10,6 @@ import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
 import { getDateString } from '../util/formatDate'
 import { Text } from '../util/translate'
-import { Inspection } from './inspectionTypes'
 
 const InspectionsListView = styled.div`
   min-height: 100%;

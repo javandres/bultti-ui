@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useNavigateToInspection,
@@ -21,7 +21,6 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
-import { Inspection } from './inspectionTypes'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -100,7 +99,7 @@ const InspectionActions = observer(
     }, [removeInspection, inspection])
 
     var [submitInspection, { loading: submitLoading }] = useMutationData(
-      submitInspectionMutation(inspectionType)
+      submitInspectionMutation
     )
 
     var [setInspectionSanctionable, { loading: sanctionableLoading }] = useMutationData(
@@ -108,11 +107,11 @@ const InspectionActions = observer(
     )
 
     var [publishInspection, { loading: publishLoading }] = useMutationData(
-      publishInspectionMutation(inspectionType)
+      publishInspectionMutation
     )
 
     var [rejectInspection, { loading: rejectLoading }] = useMutationData(
-      rejectInspectionMutation(inspectionType)
+      rejectInspectionMutation
     )
 
     var onSubmitInspection = useCallback(async () => {
