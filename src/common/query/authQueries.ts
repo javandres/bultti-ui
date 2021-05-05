@@ -11,7 +11,10 @@ export const UserFragment = gql`
     role
     inspectionRelations {
       id
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
     }

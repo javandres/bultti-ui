@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionValidationError } from '../schema-types'
+import { InspectionValidationError, PreInspection } from '../schema-types'
 import DepartureBlocks from '../departureBlock/DepartureBlocks'
 import ProcurementUnits from '../procurementUnit/ProcurementUnits'
 import { SectionHeading } from '../common/components/Typography'
@@ -20,7 +20,7 @@ const PreInspectionEditorView = styled.div`
 type PreInspectionProps = {
   refetchData: () => unknown
   isEditable: boolean
-  inspection: Inspection
+  inspection: PreInspection
 }
 
 const PreInspectionEditor: React.FC<PreInspectionProps> = observer(

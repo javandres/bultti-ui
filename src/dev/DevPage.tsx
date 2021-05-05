@@ -13,9 +13,9 @@ import { useQueryData } from '../util/useQueryData'
 import { inspectionQuery } from '../inspection/inspectionQueries'
 import InspectionCard from '../inspection/InspectionCard'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import { DepartureBlockFile } from '../schema-types'
 import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
+import { DepartureBlockFile } from '../schema-types'
 
 const AdminPageView = styled.div``
 const LENGTH_OF_VALID_INSPECTION_UUID = 36

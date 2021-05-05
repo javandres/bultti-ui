@@ -16,6 +16,7 @@ import { Text, text } from '../util/translate'
 import { usePromptUnsavedChanges } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
 import { addDays, max, parseISO } from 'date-fns'
+import { isPostInspection } from './inspectionUtils'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -43,10 +44,11 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     endDate = max([addDays(startDate, 1), endDate])
 
     return {
+      inspectionType: inspection.inspectionType,
       startDate: getDateString(startDate),
       endDate: getDateString(endDate),
       name: inspection.name || '',
-      inspectionDateId: inspection.inspectionDateId,
+      inspectionDateId: isPostInspection(inspection) ? inspection.inspectionDateId : undefined,
       inspectionStartDate: inspection.inspectionStartDate || '',
       inspectionEndDate: inspection.inspectionEndDate || '',
     }

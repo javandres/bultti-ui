@@ -286,8 +286,8 @@ export const reportQueryFragments = {
     fragment UnitExecutionFragment on UnitExecutionReportData {
       id
       procurementUnitId
-      totalKilometers
-      totalKilometersFulfilled
+      kilometersRequired
+      kilometersFulfilled
       averageAgeMax
       averageAgeRequired
       averageAgeWeighted
