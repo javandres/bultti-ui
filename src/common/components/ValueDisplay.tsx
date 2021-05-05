@@ -46,12 +46,12 @@ const ValueLabel = styled.label`
 
 const ValueView = styled.div``
 
-export type PropTypes<ItemType = any> = {
+export type PropTypes<ItemType = unknown> = {
   item: ItemType
   labels?: { [key in keyof ItemType]: string }
   order?: string[]
   hideKeys?: string[]
-  renderValue?: (key: string, val: any) => any
+  renderValue?: (key: string, val: unknown) => unknown
   objectPaths?: { [key in keyof ItemType]: string }
   className?: string
   children?: React.ReactChild | false

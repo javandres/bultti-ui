@@ -12,7 +12,7 @@ const ErrorMessage = styled.span`
 `
 
 export type PropTypes = {
-  uploader?: any // (file: File, variables?: { [key: string]: any }) => void
+  uploader?: unknown // (file: File, variables?: { [key: string]: any }) => void
   label?: string
   className?: string
   onChange: (files: File[]) => void

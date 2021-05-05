@@ -6,7 +6,7 @@ export const createState = async (
   initialData = {}
 ): Promise<StoreContext> => {
   const state = observable<IAppState>({} as IAppState)
-  let actions: any = {}
+  let actions: unknown = {}
   const actionPromises: Array<Promise<ActionMap>> = []
 
   for (const initializer of initializers) {

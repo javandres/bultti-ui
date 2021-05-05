@@ -80,7 +80,7 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
-type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
+type CellPropTypes<ItemType = unknown, EditValueType = CellValType> = {
   row: TableRowWithDataAndFunctions<ItemType, EditValueType>
   cell: [keyof ItemType, EditValueType]
   colIndex: number
@@ -89,7 +89,7 @@ type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
 }
 
 export const TableCell = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
     row,
     cell,
     colIndex,

@@ -15,7 +15,7 @@ export const useResizeObserver = (ref: RefObject<HTMLElement>) => {
       return
     }
 
-    const resizeObserver = new (window as any).ResizeObserver(
+    const resizeObserver = new (window as unknown).ResizeObserver(
       (entries: ResizeObserverEntry[]) => {
         let rect = entries[0].contentRect
         setSizeRect(rect)
@@ -41,7 +41,7 @@ export const useResizeCallback = (
       return
     }
 
-    const resizeObserver = new (window as any).ResizeObserver(
+    const resizeObserver = new (window as unknown).ResizeObserver(
       (entries: ResizeObserverEntry[]) => {
         let rect = entries[0].contentRect
         cb(rect)

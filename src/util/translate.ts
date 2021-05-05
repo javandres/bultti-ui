@@ -32,7 +32,7 @@ export function translate(key: string, language = languageState.language) {
  * @param {String} key - key in language files
  * @param {Object} keyValueMap { key: value } - key is the same as ${key} in textCodeList, ${key} is replaced with value
  **/
-export function text(key: string, keyValueMap?: Object) {
+export function text(key: string, keyValueMap?: Record<string, string>) {
   let lineString = translate(key)
   const regexRule = /\$\{(\w+)\}/g // ${...}
 
@@ -40,7 +40,7 @@ export function text(key: string, keyValueMap?: Object) {
     return lineString
   }
 
-  const replacer = (match: any, name: string) => {
+  const replacer = (match: unknown, name: string) => {
     return name in keyValueMap ? keyValueMap[name] : match
   }
 
@@ -54,7 +54,7 @@ export function text(key: string, keyValueMap?: Object) {
  * @param {Object} props.keyValueMap { key: value } - key is the same as ${key} in textCodeList, ${key} is replaced with value
  **/
 export const Text = observer(
-  ({ children, keyValueMap }: { children?: string; keyValueMap?: Object }) => {
+  ({ children, keyValueMap }: { children?: string; keyValueMap?: Record<string, string> }) => {
     if (!children) {
       return ''
     }

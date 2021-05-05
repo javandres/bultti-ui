@@ -13,7 +13,7 @@ import { Text } from '../util/translate'
 
 const ProcurementUnitsView = styled(Page)``
 
-export type PropTypes = {} & RouteComponentProps
+export type PropTypes = Record<string, unknown> & RouteComponentProps
 
 const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
   const {

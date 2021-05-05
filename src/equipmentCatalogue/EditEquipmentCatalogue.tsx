@@ -143,7 +143,7 @@ const EditEquipmentCatalogue = observer(
       setPendingCatalogue(null)
     }, [])
 
-    const renderCatalogueInput = useCallback((key: string, val: any, onChange) => {
+    const renderCatalogueInput = useCallback((key: string, val: unknown, onChange) => {
       return (
         <EquipmentCatalogueFormInput value={val || ''} valueName={key} onChange={onChange} />
       )

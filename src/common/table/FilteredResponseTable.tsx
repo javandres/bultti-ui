@@ -20,7 +20,10 @@ const TableEmptyView = styled(EmptyView)`
   margin: 1rem !important;
 `
 
-export type PropTypes<ItemType extends {}, EditValueType = CellValType> = {
+export type PropTypes<
+  ItemType extends Record<string, unknown>,
+  EditValueType = CellValType
+> = {
   tableState: TableStateType
   data?: IFilteredSortedResponse<ItemType>
   loading?: boolean
@@ -29,7 +32,7 @@ export type PropTypes<ItemType extends {}, EditValueType = CellValType> = {
 } & Omit<TablePropTypes<ItemType, EditValueType>, 'items'>
 
 const FilteredResponseTable = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
     data,
     columnLabels,
     loading = false,

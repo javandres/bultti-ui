@@ -81,7 +81,7 @@ export const ActionsWrapper = styled.div`
 type LabelsType<ItemType> = { [key in keyof ItemType]: string }
 type HintsType<ItemType> = { [key in keyof ItemType]: string }
 
-export type PropTypes<ItemType = any> = {
+export type PropTypes<ItemType = unknown> = {
   item: ItemType
   children?: React.ReactChild
   onChange: (key: string, value: string) => void
@@ -99,14 +99,14 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   renderLabel?: (
     key: string,
-    val: any,
+    val: unknown,
     labels: LabelsType<ItemType>,
     hints: HintsType<ItemType>
   ) => React.ReactChild | false
   renderInput?: (
     key: string,
-    val: any,
-    onChange: (val: any) => void,
+    val: unknown,
+    onChange: (val: unknown) => void,
     readOnly: boolean,
     loading?: boolean,
     onReset?: () => unknown

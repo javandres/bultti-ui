@@ -119,7 +119,7 @@ export function groupedEquipment(
   })
 }
 
-function isCatalogue(item?: any): item is EquipmentCatalogue {
+function isCatalogue(item?: unknown): item is EquipmentCatalogue {
   return (
     !!item &&
     typeof item?.equipmentQuotas !== 'undefined' &&
@@ -127,7 +127,7 @@ function isCatalogue(item?: any): item is EquipmentCatalogue {
   )
 }
 
-function isRequirement(item?: any): item is PlannedUnitExecutionRequirement {
+function isRequirement(item?: unknown): item is PlannedUnitExecutionRequirement {
   return (
     !!item &&
     typeof item?.equipmentQuotas !== 'undefined' &&

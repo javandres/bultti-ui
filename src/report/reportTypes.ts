@@ -26,7 +26,7 @@ import {
   UnobservedDeparturesReport,
 } from '../schema-types'
 
-export type ReportComponentProps<T = {}> = {
+export type ReportComponentProps<T = Record<string, unknown>> = {
   items: T[]
   columnLabels?: { [key: string]: string }
 }

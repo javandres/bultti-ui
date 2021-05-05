@@ -62,7 +62,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       })
     }
 
-    let renderInput = (key: string, val: any, onChange) => {
+    let renderInput = (key: string, val: unknown, onChange) => {
       if (key === 'startDate') {
         return (
           <DatePicker

@@ -50,7 +50,7 @@ export const TableHeader = styled(TableRowElement)`
   border-bottom-color: var(--lighter-grey) !important;
 `
 
-type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
+type RowPropTypes<ItemType = unknown, EditValueType = CellValType> = {
   index: number
   row: TableRowWithDataAndFunctions<ItemType, EditValueType>
   data?: TableRowWithDataAndFunctions<ItemType, EditValueType>[]
@@ -59,7 +59,7 @@ type RowPropTypes<ItemType = any, EditValueType = CellValType> = {
 }
 
 export const TableRow = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
     row,
     style,
     index,

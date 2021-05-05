@@ -93,8 +93,13 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
   onRemoveRow?: (item: ItemType) => unknown
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
-  renderCell?: (key: keyof ItemType, val: any, item?: ItemType) => React.ReactNode
-  renderValue?: (key: string, val: any, isHeader?: boolean, item?: ItemType) => React.ReactNode
+  renderCell?: (key: keyof ItemType, val: unknown, item?: ItemType) => React.ReactNode
+  renderValue?: (
+    key: string,
+    val: unknown,
+    isHeader?: boolean,
+    item?: ItemType
+  ) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
   renderInput?: RenderInputType<ItemType>
@@ -107,7 +112,7 @@ export type TablePropTypes<ItemType, EditValueType = CellValType> = {
 } & TableEditProps<ItemType, EditValueType>
 
 const Table = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
     items,
     columnLabels = {},
     columnOrder = [],

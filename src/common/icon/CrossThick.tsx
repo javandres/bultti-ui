@@ -1,5 +1,5 @@
-import React from "react";
-import {svgSize} from "../../util/svg";
+import React from 'react'
+import { svgSize } from '../../util/svg'
 
 type IconProps = {
   fill?: string
@@ -9,7 +9,7 @@ type IconProps = {
   [propName: string]: string | number
 }
 
-export function CrossThick({fill, height, width, ...rest}: IconProps) {
+export function CrossThick({ fill, height, width, ...rest }: IconProps) {
   return (
     <svg
       {...rest}
@@ -22,5 +22,5 @@ export function CrossThick({fill, height, width, ...rest}: IconProps) {
         id="Shape"
       />
     </svg>
-  );
+  )
 }

@@ -17,12 +17,12 @@ const TableEmptyView = styled(EmptyView)`
 `
 
 export type PropTypes<
-  ItemType extends {},
+  ItemType extends Record<string, unknown>,
   EditValueType = CellValType
 > = FilteredResponseMeta & TablePropTypes<ItemType, EditValueType>
 
 const PagedTable = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
     filteredCount,
     totalCount,
     items,

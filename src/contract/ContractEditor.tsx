@@ -90,8 +90,8 @@ const renderInput = ({
   isNew: boolean
 }) => (
   key: string,
-  val: any,
-  onChange: (val: any) => void,
+  val: unknown,
+  onChange: (val: unknown) => void,
   readOnly: boolean,
   loading: boolean = false,
   onCancel?: () => unknown

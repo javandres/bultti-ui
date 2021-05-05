@@ -32,7 +32,7 @@ const FilterButtonsWrapper = styled.div`
   flex: 0;
 `
 
-export type PropTypes<ItemType = any> = {
+export type PropTypes<ItemType = unknown> = {
   excludeFields?: string[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
@@ -40,7 +40,7 @@ export type PropTypes<ItemType = any> = {
 }
 
 const TableFiltersControl = observer(
-  <ItemType extends {}>({
+  <ItemType extends Record<string, unknown>>({
     excludeFields = [],
     fieldLabels = {},
     filters,

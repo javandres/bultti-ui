@@ -13,7 +13,7 @@ export type FilteredResponseMeta = {
   totalCount?: number
 }
 
-export interface IFilteredSortedResponse<DataType> {
+export interface IFilteredSortedResponse<DataType extends Record<string, unknown>> {
   rows: DataType[]
   filteredCount: number
   totalCount: number
@@ -64,7 +64,7 @@ export function useRenderCellValue() {
 
 export type CellValType = string | number
 
-export type EditValue<ItemType = any, ValueType = CellValType> = {
+export type EditValue<ItemType = unknown, ValueType = CellValType> = {
   key: keyof ItemType
   value: ValueType
   item: ItemType
@@ -82,8 +82,8 @@ export type TableEditProps<ItemType, EditValueType = CellValType> = {
 
 export type RenderInputType<ItemType> = (
   key: keyof ItemType,
-  val: any,
-  onChange: (val: any) => void,
+  val: unknown,
+  onChange: (val: unknown) => void,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
   tabIndex?: number
@@ -91,7 +91,7 @@ export type RenderInputType<ItemType> = (
 
 export const defaultKeyFromItem = (item) => item.id
 
-export const defaultRenderCellContent = (key: unknown, val: any): React.ReactChild => (
+export const defaultRenderCellContent = (key: unknown, val: unknown): React.ReactChild => (
   <>
     {!(val === false || val === null || typeof val === 'undefined') && (
       <CellContent>{val}</CellContent>
@@ -99,11 +99,11 @@ export const defaultRenderCellContent = (key: unknown, val: any): React.ReactChi
   </>
 )
 
-export const defaultRenderValue = (key: unknown, val: any) => toString(val)
+export const defaultRenderValue = (key: unknown, val: unknown) => toString(val)
 
-export const defaultRenderInput = <ItemType extends {}>(
+export const defaultRenderInput = <ItemType extends Record<string, unknown>>(
   key: keyof ItemType,
-  val: any,
+  val: unknown,
   onChange,
   onAccept,
   onCancel,
@@ -121,7 +121,7 @@ export const defaultRenderInput = <ItemType extends {}>(
   />
 )
 
-export type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellValType> = {
+export type TableRowWithDataAndFunctions<ItemType = unknown, EditValueType = CellValType> = {
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void

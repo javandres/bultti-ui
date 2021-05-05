@@ -1,6 +1,6 @@
 import { Dictionary, difference, get, omitBy, orderBy } from 'lodash'
 
-export function useTableColumns<ItemType extends {}>({
+export function useTableColumns<ItemType extends Record<string, unknown>>({
   items,
   columnLabels = {},
   columnOrder = [],

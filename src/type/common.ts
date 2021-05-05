@@ -1,5 +1,5 @@
 export interface FunctionMap {
-  [name: string]: (...args: any[]) => any
+  [name: string]: (...args: any[]) => unknown
 }
 
-export type AnyFunction<T = any, ReturnT = any> = (...args: T[]) => ReturnT
+export type AnyFunction<T = unknown, ReturnT = unknown> = (...args: T[]) => ReturnT

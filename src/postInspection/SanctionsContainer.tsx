@@ -260,7 +260,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   })
 
   let renderValue = useCallback(
-    (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+    (key: string, val: unknown, isHeader?: boolean, item?: Sanction) => {
       if (
         [
           'sanctionAmount',

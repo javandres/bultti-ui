@@ -171,7 +171,7 @@ const ProcurementUnitItemContent = observer(
       [procurementUnit, medianAgeValue]
     )
 
-    let renderProcurementItemInput = useCallback((key: string, val: any, onChange) => {
+    let renderProcurementItemInput = useCallback((key: string, val: unknown, onChange) => {
       return <TextInput type="number" value={val} onChange={(e) => onChange(e.target.value)} />
     }, [])
 

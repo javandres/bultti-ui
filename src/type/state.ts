@@ -16,7 +16,7 @@ export interface IAppState {
   notifications: UINotification[]
 }
 
-export type Initializer<T = any> = (
+export type Initializer<T = unknown> = (
   state: IAppState,
   initialData: Partial<IAppState>
 ) => T | Promise<T>

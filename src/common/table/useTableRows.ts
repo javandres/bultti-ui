@@ -3,7 +3,10 @@ import { useMemo } from 'react'
 import { orderBy } from 'lodash'
 import { useTableColumns } from './useTableColumns'
 
-export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
+export function useTableRows<
+  ItemType extends Record<string, unknown>,
+  EditValueType = CellValType
+>({
   items,
   pendingValues,
   editableValues,

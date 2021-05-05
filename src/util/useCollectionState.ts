@@ -6,7 +6,7 @@ export type CollectionStateTuple<T> = [
   {
     add: (item: T) => void
     remove: (item: T) => void
-    update: (item: T, key?: string, value?: any, onEdit?: (item: T) => T) => void
+    update: (item: T, key?: string, value?: unknown, onEdit?: (item: T) => T) => void
     replace: (items: T[]) => void
   }
 ]
@@ -43,7 +43,7 @@ export const useCollectionState = <T>(
   }, [])
 
   const update = useCallback(
-    (item: T, key?: string, value?: any, onEdit: (item: T) => T = (item) => item) => {
+    (item: T, key?: string, value?: unknown, onEdit: (item: T) => T = (item) => item) => {
       setCurrentValue((val) => {
         const nextValue = [...val]
         let itemId = get(item, idProp)

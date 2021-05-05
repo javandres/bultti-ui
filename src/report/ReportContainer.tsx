@@ -36,7 +36,7 @@ export type PropTypes = {
   inspectionStatus: InspectionStatus
 }
 
-let reportKeyFromItem = (item: any) =>
+let reportKeyFromItem = (item: unknown) =>
   item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
 const ReportContainer = observer((props: PropTypes) => {

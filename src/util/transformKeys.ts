@@ -4,7 +4,7 @@ type ValueOf<T> = T[keyof T]
 // Removes fields not present in keyMap.
 
 export function transformKeys(
-  obj: { [key: string]: any },
+  obj: { [key: string]: unknown },
   keyMap: { [key in keyof typeof obj]: string }
 ) {
   let entries = Object.entries(obj)

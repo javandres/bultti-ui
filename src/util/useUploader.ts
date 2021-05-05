@@ -25,7 +25,7 @@ type Uploader<TData, TVariables> = [
   }
 ]
 
-export const useUploader = <TData = any, TVariables = OperationVariables>(
+export const useUploader = <TData = unknown, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   onUploadFinished?: (data?: TData, errors?: ReadonlyArray<GraphQLError>) => void

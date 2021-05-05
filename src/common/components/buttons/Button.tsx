@@ -213,7 +213,7 @@ export type ButtonProps = {
 } & StyledButtonProps
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
-  ({ helpText, children, loading, ...props }, ref: any) => {
+  ({ helpText, children, loading, ...props }, ref: unknown) => {
     let style = props2style(props)
 
     return (

@@ -7,7 +7,7 @@ import { useMemo } from 'react'
  */
 
 export const useOrderedValues = (
-  item: any,
+  item: unknown,
   labels = {},
   order: string[] = [],
   hideKeys?: string[]
