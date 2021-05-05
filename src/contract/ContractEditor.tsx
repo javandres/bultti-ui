@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Contract, ContractInput } from '../schema-types'
+import { Contract, ContractInput, ContractRule } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
@@ -78,6 +78,8 @@ function createContractInput(contract: Partial<Contract>): ContractInput {
   }
 }
 
+type RulesValue = { uploadFile: File[]; currentRules: ContractRule[] }
+
 const renderInput = ({
   contract,
   operatorName,
@@ -98,6 +100,7 @@ const renderInput = ({
 ) => {
   if (key === 'rules') {
     let isRulesFileSet = !!contract.rulesFile
+    let rulesValue = val as RulesValue
 
     return (
       <>
@@ -106,7 +109,7 @@ const renderInput = ({
             <FileUploadInput
               label={text('contractForm_labelUploadRules')}
               onChange={onChange}
-              value={val.uploadFile}
+              value={rulesValue.uploadFile}
               disabled={readOnly}
               onReset={onCancel}
               loading={loading}
@@ -144,7 +147,7 @@ const renderInput = ({
                   category: text('contractForm_category'),
                   code: text('contractForm_code'),
                 }}
-                items={val.currentRules}
+                items={rulesValue.currentRules}
               />
             )}
           </div>
@@ -179,13 +182,13 @@ const renderInput = ({
   }
 
   if (readOnly) {
-    return <FieldValueDisplay>{val}</FieldValueDisplay>
+    return <FieldValueDisplay>{val as string}</FieldValueDisplay>
   }
 
   if (key === 'description') {
     return (
       <TextArea
-        value={val || ''}
+        value={(val || '') as string}
         onChange={(e) => onChange(e.target.value)}
         name={key}
         style={{ width: '100%' }}
@@ -196,9 +199,9 @@ const renderInput = ({
   if (key === 'startDate') {
     return (
       <DatePicker
-        value={val}
+        value={val as string}
         onChange={onChange}
-        maxDate={contract.endDate}
+        maxDate={contract.endDate as string}
         acceptableDayTypes={['Ma']}
       />
     )
@@ -207,16 +210,21 @@ const renderInput = ({
   if (key === 'endDate') {
     return (
       <DatePicker
-        value={val}
+        value={val as string}
         onChange={onChange}
-        minDate={contract.startDate}
+        minDate={contract.startDate as string}
         acceptableDayTypes={['Su']}
       />
     )
   }
 
   return (
-    <TextInput type="text" value={val} onChange={(e) => onChange(e.target.value)} name={key} />
+    <TextInput
+      type="text"
+      value={val as string}
+      onChange={(e) => onChange(e.target.value)}
+      name={key}
+    />
   )
 }
 

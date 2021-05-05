@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ForwardedRef } from 'react'
 import styled from 'styled-components/macro'
 import { useTooltip } from '../../../util/useTooltip'
 import { LoadingDisplay } from '../Loading'
@@ -213,7 +213,7 @@ export type ButtonProps = {
 } & StyledButtonProps
 
 export const Button: React.FC<ButtonProps> = React.forwardRef(
-  ({ helpText, children, loading, ...props }, ref: unknown) => {
+  ({ helpText, children, loading, ...props }, ref: ForwardedRef<HTMLButtonElement>) => {
     let style = props2style(props)
 
     return (
