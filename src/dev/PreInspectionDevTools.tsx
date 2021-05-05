@@ -4,14 +4,14 @@ import { observer } from 'mobx-react-lite'
 import { Button } from '../common/components/buttons/Button'
 import { gql } from '@apollo/client'
 import { useMutationData } from '../util/useMutationData'
-import { Inspection } from '../schema-types'
+import { PreInspection } from '../schema-types'
 
 const InspectionDevToolsView = styled.div`
   display: flex;
 `
 
 export type PropTypes = {
-  inspection: Inspection
+  inspection: PreInspection
   onUpdate: () => unknown
 }
 

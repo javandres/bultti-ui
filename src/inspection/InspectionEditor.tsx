@@ -1,7 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionInput, InspectionStatus, InspectionType } from '../schema-types'
+import {
+  Inspection,
+  InspectionInput,
+  InspectionStatus,
+  InspectionType,
+  PostInspection,
+  PreInspection,
+} from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
 import {
   initInspectionContractUnitMap,
@@ -15,13 +22,13 @@ import { TabChildProps } from '../common/components/Tabs'
 import { navigateWithQueryString } from '../util/urlValue'
 import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from './InspectionUsers'
-import PostInspectionEditor from '../postInspection/PostInspectionEditor'
-import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import InspectionValidationErrors from './InspectionValidationErrors'
 import { Button } from '../common/components/buttons/Button'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
+import PreInspectionEditor from '../preInspection/PreInspectionEditor'
+import PostInspectionEditor from '../postInspection/PostInspectionEditor'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -51,11 +58,16 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       },
     })
 
+    let inspectionType = inspection.inspectionType
+
     let [updatePreInspection, { loading: updateLoading }] = useMutationData(
       updateInspectionMutation,
       {
         refetchQueries: [
-          { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+          {
+            query: inspectionQuery,
+            variables: { inspectionId: inspection?.id || '' },
+          },
         ],
       }
     )
@@ -91,18 +103,6 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       }
     }, [inspection, operator, season])
 
-    let InspectionTypeEditor = useMemo(() => {
-      if (inspection.inspectionType === InspectionType.Pre) {
-        return PreInspectionEditor
-      }
-
-      if (inspection.inspectionType === InspectionType.Post) {
-        return PostInspectionEditor
-      }
-
-      return React.Fragment
-    }, [inspection])
-
     let hasErrors = inspection?.inspectionErrors?.length !== 0
 
     return (
@@ -122,11 +122,19 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
             <InspectionMeta inspection={inspection} />
             <InspectionUsers inspection={inspection} />
             <InspectionConfig inspection={inspection} saveValues={updatePreInspectionCb} />
-            <InspectionTypeEditor
-              inspection={inspection}
-              isEditable={isEditable}
-              refetchData={refetchData}
-            />
+            {inspectionType === InspectionType.Pre ? (
+              <PreInspectionEditor
+                inspection={inspection as PreInspection}
+                isEditable={isEditable}
+                refetchData={refetchData}
+              />
+            ) : inspectionType === InspectionType.Post ? (
+              <PostInspectionEditor
+                inspection={inspection as PostInspection}
+                isEditable={isEditable}
+                refetchData={refetchData}
+              />
+            ) : null}
           </>
         )}
       </EditInspectionView>

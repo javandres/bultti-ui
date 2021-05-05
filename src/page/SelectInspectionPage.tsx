@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionType } from '../schema-types'
 import SelectInspection from '../inspection/SelectInspection'
-import { currentPreInspectionsByOperatorAndSeasonQuery } from '../inspection/inspectionQueries'
+import { currentInspectionsByOperatorAndSeasonQuery } from '../inspection/inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { PageTitle } from '../common/components/PageTitle'
 import { getInspectionTypeStrings } from '../inspection/inspectionUtils'
@@ -21,7 +21,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   var [operator] = useStateValue('globalOperator')
 
   let { data: inspections, loading, refetch } = useQueryData<Inspection[]>(
-    currentPreInspectionsByOperatorAndSeasonQuery,
+    currentInspectionsByOperatorAndSeasonQuery,
     {
       skip: !operatorIsValid(operator) || !seasonIsValid(season),
       notifyOnNetworkStatusChange: true,

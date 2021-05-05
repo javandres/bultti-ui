@@ -4,8 +4,8 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Bu
 import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
 import styled from 'styled-components/macro'
-import { InspectionType } from '../schema-types'
 import { getAuthToken } from '../util/authToken'
+import { InspectionType } from '../schema-types'
 
 const DownloadWrapper = styled.div`
   position: relative;

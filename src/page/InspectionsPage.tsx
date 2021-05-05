@@ -9,8 +9,8 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { getInspectionTypeStrings, useFetchInspections } from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
-import { InspectionType } from '../schema-types'
 import { operatorIsValid } from '../common/input/SelectOperator'
+import { InspectionType } from '../schema-types'
 
 type PropTypes = {
   children?: React.ReactNode

@@ -1,25 +1,24 @@
 import { gql } from '@apollo/client'
 import { UserFragment } from '../common/query/authQueries'
 
-export const linkedInspectionFragment = gql`
-  fragment LinkedInspectionFragment on Inspection {
+export const lightPreInspectionFragment = gql`
+  fragment LightPreInspectionFragment on PreInspection {
     id
+    inspectionType
     name
     createdAt
+    updatedAt
     startDate
     endDate
-    inspectionDateId
     inspectionStartDate
     inspectionEndDate
-    minStartDate
     version
+    status
+    minStartDate
     operatorId
     seasonId
-    status
-    inspectionType
     operator {
       id
-      operatorId
       operatorName
     }
     season {
@@ -28,53 +27,47 @@ export const linkedInspectionFragment = gql`
       startDate
       endDate
     }
-    updatedAt
-    createdAt
   }
 `
 
-export const inspectionFragment = gql`
-  fragment InspectionFragment on Inspection {
+export const lightPostInspectionFragment = gql`
+  fragment LightPostInspectionFragment on PostInspection {
     id
+    inspectionType
     name
     createdAt
+    updatedAt
     startDate
     endDate
-    inspectionDateId
-    inspectionDate {
-      id
-      startDate
-      endDate
-      hfpDataStatus
-    }
     inspectionStartDate
     inspectionEndDate
-    minStartDate
     version
+    status
+    minStartDate
     operatorId
     seasonId
-    status
-    inspectionType
-    linkedInspectionUpdateAvailable
+    operator {
+      id
+      operatorName
+    }
+    season {
+      id
+      season
+      startDate
+      endDate
+    }
+  }
+`
+
+export const preInspectionFragment = gql`
+  fragment PreInspectionFragment on PreInspection {
+    ...LightPreInspectionFragment
     inspectionErrors {
       keys
       objectId
       referenceKeys
       type
     }
-    operator {
-      id
-      operatorId
-      operatorName
-    }
-    season {
-      id
-      season
-      startDate
-      endDate
-    }
-    updatedAt
-    createdAt
     userRelations {
       id
       createdAt
@@ -90,55 +83,81 @@ export const inspectionFragment = gql`
       }
     }
   }
+  ${lightPreInspectionFragment}
 `
 
-export const lightInspectionFragment = gql`
-  fragment LightInspectionFragment on Inspection {
-    id
-    name
-    createdAt
-    updatedAt
-    startDate
-    endDate
-    inspectionStartDate
-    inspectionEndDate
-    version
-    status
-    inspectionType
-    minStartDate
-    operatorId
-    seasonId
-    operator {
+export const postInspectionFragment = gql`
+  fragment PostInspectionFragment on PostInspection {
+    ...LightPostInspectionFragment
+    linkedInspectionUpdateAvailable
+    linkedInspections {
       id
-      operatorName
+      startOfWeek
+      inspection {
+        ...LightPreInspectionFragment
+      }
     }
-    season {
+    inspectionErrors {
+      keys
+      objectId
+      referenceKeys
+      type
+    }
+    userRelations {
       id
-      season
-      startDate
-      endDate
+      createdAt
+      updatedAt
+      relatedBy
+      subscribed
+      user {
+        id
+        email
+        name
+        organisation
+        role
+      }
     }
   }
+  ${lightPreInspectionFragment}
+  ${lightPostInspectionFragment}
+`
+
+const lightInspectionUnionFragment = gql`
+  fragment LightInspectionUnionFragment on Inspection {
+    ... on PreInspection {
+      ...LightPreInspectionFragment
+    }
+    ... on PostInspection {
+      ...LightPostInspectionFragment
+    }
+  }
+  ${lightPreInspectionFragment}
+  ${lightPostInspectionFragment}
+`
+
+const inspectionUnionFragment = gql`
+  fragment InspectionUnionFragment on Inspection {
+    ... on PreInspection {
+      ...PreInspectionFragment
+    }
+    ... on PostInspection {
+      ...PostInspectionFragment
+    }
+  }
+  ${preInspectionFragment}
+  ${postInspectionFragment}
 `
 
 export const inspectionQuery = gql`
   query inspectionById($inspectionId: String!) {
     inspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
-      linkedInspections {
-        id
-        startOfWeek
-        inspection {
-          ...LinkedInspectionFragment
-        }
-      }
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
-  ${linkedInspectionFragment}
+  ${inspectionUnionFragment}
 `
 
-export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
+export const currentInspectionsByOperatorAndSeasonQuery = gql`
   query currentInspectionsByOperatorAndSeason(
     $operatorId: Int!
     $seasonId: String!
@@ -149,19 +168,19 @@ export const currentPreInspectionsByOperatorAndSeasonQuery = gql`
       seasonId: $seasonId
       inspectionType: $inspectionType
     ) {
-      ...LightInspectionFragment
+      ...LightInspectionUnionFragment
     }
   }
-  ${lightInspectionFragment}
+  ${lightInspectionUnionFragment}
 `
 
 export const inspectionsByOperatorQuery = gql`
   query inspectionsByOperator($operatorId: Int!, $inspectionType: InspectionType!) {
     inspectionsByOperator(operatorId: $operatorId, inspectionType: $inspectionType) {
-      ...LightInspectionFragment
+      ...LightInspectionUnionFragment
     }
   }
-  ${lightInspectionFragment}
+  ${lightInspectionUnionFragment}
 `
 
 export const inspectionsTimelineByOperatorQuery = gql`
@@ -186,28 +205,28 @@ export const initInspectionContractUnitMap = gql`
 export const createInspectionMutation = gql`
   mutation createInspection($inspectionInput: InitialInspectionInput!) {
     createInspection(inspection: $inspectionInput) {
-      ...InspectionFragment
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
+  ${inspectionUnionFragment}
 `
 
 export const updateInspectionMutation = gql`
   mutation updateInspection($inspectionId: String!, $inspectionInput: InspectionInput!) {
     updateInspection(inspectionId: $inspectionId, inspection: $inspectionInput) {
-      ...InspectionFragment
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
+  ${inspectionUnionFragment}
 `
 
 export const updateLinkedInspectionsMutation = gql`
   mutation updateLinkedInspections($inspectionId: String!) {
     updateLinkedInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...PostInspectionFragment
     }
   }
-  ${inspectionFragment}
+  ${postInspectionFragment}
 `
 
 export const submitInspectionMutation = gql`
@@ -217,37 +236,37 @@ export const submitInspectionMutation = gql`
     $endDate: BulttiDate!
   ) {
     submitInspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
-      ...InspectionFragment
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
+  ${inspectionUnionFragment}
 `
 
-export const makeInspectionSanctionableMutation = gql`
-  mutation inspectionReady($inspectionId: String!) {
+export const makePostInspectionSanctionableMutation = gql`
+  mutation postInspectionSanctionable($inspectionId: String!) {
     inspectionSanctionable(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...PostInspectionFragment
     }
   }
-  ${inspectionFragment}
+  ${postInspectionFragment}
 `
 
 export const publishInspectionMutation = gql`
   mutation publishInspection($inspectionId: String!) {
     publishInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
+  ${inspectionUnionFragment}
 `
 
 export const rejectInspectionMutation = gql`
   mutation rejectInspection($inspectionId: String!) {
     rejectInspection(inspectionId: $inspectionId) {
-      ...InspectionFragment
+      ...InspectionUnionFragment
     }
   }
-  ${inspectionFragment}
+  ${inspectionUnionFragment}
 `
 
 export const inspectionUserRelationsQuery = gql`
@@ -258,7 +277,10 @@ export const inspectionUserRelationsQuery = gql`
       updatedAt
       relatedBy
       subscribed
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
       user {
@@ -277,7 +299,10 @@ export const toggleUserInspectionSubscription = gql`
       updatedAt
       relatedBy
       subscribed
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
       user {
