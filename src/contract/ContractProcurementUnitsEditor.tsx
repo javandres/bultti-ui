@@ -32,7 +32,7 @@ const EmptyView = styled(MessageContainer)`
   border-top: 1px solid var(--lighter-grey);
 `
 
-const ProcurementUnitOption = styled.div`
+const ProcurementUnitOptionContainer = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   background: white;
@@ -176,7 +176,7 @@ const ContractProcurementUnitsEditor = observer(
             }
 
             return (
-              <ProcurementUnitOption key={unitOption.id}>
+              <ProcurementUnitOptionContainer key={unitOption.id}>
                 <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
                   {unitOption.name}
                 </HeaderBoldHeading>
@@ -237,7 +237,7 @@ const ContractProcurementUnitsEditor = observer(
                     </CurrentContractDisplay>
                   )}
                 </HeaderSection>
-              </ProcurementUnitOption>
+              </ProcurementUnitOptionContainer>
             )
           })}
         </UnitContentWrapper>
