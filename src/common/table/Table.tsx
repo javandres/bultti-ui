@@ -7,7 +7,6 @@ import FormSaveToolbar from '../components/FormSaveToolbar'
 import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
 import {
-  CellValType,
   ContextTypes,
   defaultHighlightRow,
   defaultKeyFromItem,
@@ -17,6 +16,7 @@ import {
   RenderInputType,
   TableContext,
   TableEditProps,
+  TableItemType,
 } from './tableUtils'
 import { ROW_HEIGHT, TableHeader, TableRow, TableRowElement } from './TableRow'
 import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
@@ -25,6 +25,7 @@ import { useTableSorting } from './useTableSorting'
 import { useFloatingToolbar } from './useFloatingToolbar'
 import { useTableRows } from './useTableRows'
 import { SCROLLBAR_WIDTH } from '../../constants'
+import { ValueOf } from '../../type/common'
 
 const TableWrapper = styled.div<{ height: number }>`
   position: relative;
@@ -83,10 +84,7 @@ const ColumnSortIndicator = styled.div`
   padding: 0 0.25rem 0 0.75rem;
 `
 
-export type TablePropTypes<
-  ItemType extends Record<string, unknown>,
-  EditValueType = CellValType
-> = {
+export type TablePropTypes<ItemType extends TableItemType> = {
   items: ItemType[]
   columnLabels?: { [key in keyof ItemType]?: string }
   columnOrder?: string[]
@@ -96,10 +94,14 @@ export type TablePropTypes<
   onRemoveRow?: (item: ItemType) => unknown
   canRemoveRow?: (item: ItemType) => boolean
   className?: string
-  renderCell?: (key: keyof ItemType, val: unknown, item?: ItemType) => React.ReactNode
+  renderCell?: <K extends keyof ItemType>(
+    key: K,
+    val: ItemType[K] | React.ReactNode,
+    item?: ItemType
+  ) => React.ReactNode
   renderValue?: (
-    key: string,
-    val: CellValType,
+    key: keyof ItemType,
+    val: ValueOf<ItemType> | string,
     isHeader?: boolean,
     item?: ItemType
   ) => React.ReactNode
@@ -112,10 +114,10 @@ export type TablePropTypes<
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
   isResizeEnabled?: boolean
-} & TableEditProps<ItemType, EditValueType>
+} & TableEditProps<ItemType>
 
 const Table = observer(
-  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
+  <ItemType extends TableItemType>({
     items,
     columnLabels = {},
     columnOrder = [],
@@ -140,7 +142,7 @@ const Table = observer(
     sort: propSort,
     setSort: propSetSort,
     isResizeEnabled = true,
-  }: TablePropTypes<ItemType, EditValueType>) => {
+  }: TablePropTypes<ItemType>) => {
     const formId = useMemo(() => uniqueId(), [])
 
     let tableViewRef = useRef<null | HTMLDivElement>(null)
@@ -156,7 +158,7 @@ const Table = observer(
       itemsAreSorted: typeof propSort !== 'undefined',
     })
 
-    let { columnNames, columns, rows } = useTableRows<ItemType, EditValueType>({
+    let { columnNames, columns, rows } = useTableRows<ItemType>({
       items: sortedItems,
       pendingValues,
       editableValues,
@@ -183,7 +185,7 @@ const Table = observer(
       isResizeEnabled
     )
 
-    let contextValue: ContextTypes<ItemType, EditValueType> = {
+    let contextValue: ContextTypes<ItemType> = {
       columnWidths,
       editableValues,
       pendingValues,
@@ -277,11 +279,7 @@ const Table = observer(
             {tableIsEmpty
               ? emptyContent
               : rows.map((row, rowIndex) => (
-                  <TableRow<ItemType, EditValueType>
-                    key={row.key || rowIndex}
-                    row={row}
-                    index={rowIndex}
-                  />
+                  <TableRow<ItemType> key={row.key || rowIndex} row={row} index={rowIndex} />
                 ))}
             {typeof getColumnTotal === 'function' && (
               <TableRowElement key="totals" footer={true}>

@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../components/Loading'
 import TableFiltersControl from './TableFiltersControl'
 import { TableStateType } from './useTableState'
-import { CellValType, IFilteredSortedResponse, useRenderCellValue } from './tableUtils'
+import { IFilteredSortedResponse, TableItemType, useRenderCellValue } from './tableUtils'
 import { groupBy, pick } from 'lodash'
 import { TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
@@ -20,19 +20,16 @@ const TableEmptyView = styled(EmptyView)`
   margin: 1rem !important;
 `
 
-export type PropTypes<
-  ItemType extends Record<string, unknown>,
-  EditValueType = CellValType
-> = {
+export type PropTypes<ItemType extends TableItemType> = {
   tableState: TableStateType
   data?: IFilteredSortedResponse<ItemType>
   loading?: boolean
   groupBy?: (item: ItemType) => string
   transformItems?: (items: ItemType[]) => ItemType[]
-} & Omit<TablePropTypes<ItemType, EditValueType>, 'items'>
+} & Omit<TablePropTypes<ItemType>, 'items'>
 
 const FilteredResponseTable = observer(
-  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
+  <ItemType extends TableItemType>({
     data,
     columnLabels,
     loading = false,
@@ -40,7 +37,7 @@ const FilteredResponseTable = observer(
     groupBy: groupByFn,
     transformItems = (items) => items,
     ...tableProps
-  }: PropTypes<ItemType, EditValueType>) => {
+  }: PropTypes<ItemType>) => {
     let { filters = [], sort = [], setFilters = () => {}, setSort = () => {} } = tableState
     const renderCellValue = useRenderCellValue()
 
@@ -83,7 +80,7 @@ const FilteredResponseTable = observer(
         {Object.entries(itemGroups).map(([groupName, items]) => (
           <React.Fragment key={groupName}>
             {groupName && groupName !== 'default' && <SubHeading>{groupName}</SubHeading>}
-            <PagedTable<ItemType, EditValueType>
+            <PagedTable<ItemType>
               {...tableProps}
               items={transformItems(items)}
               totalCount={items.length}

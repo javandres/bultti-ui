@@ -6,7 +6,7 @@ import { EmptyView } from '../components/Messages'
 import { Text } from '../../util/translate'
 import { usePaging } from './usePaging'
 import TablePagingControl from './TablePagingControl'
-import { CellValType, FilteredResponseMeta } from './tableUtils'
+import { FilteredResponseMeta, TableItemType } from './tableUtils'
 
 const TableViewWrapper = styled.div`
   position: relative;
@@ -16,18 +16,16 @@ const TableEmptyView = styled(EmptyView)`
   margin: 1rem !important;
 `
 
-export type PropTypes<
-  ItemType extends Record<string, unknown>,
-  EditValueType = CellValType
-> = FilteredResponseMeta & TablePropTypes<ItemType, EditValueType>
+export type PropTypes<ItemType extends TableItemType> = FilteredResponseMeta &
+  TablePropTypes<ItemType>
 
 const PagedTable = observer(
-  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
+  <ItemType extends TableItemType>({
     filteredCount,
     totalCount,
     items,
     ...tableProps
-  }: PropTypes<ItemType, EditValueType>) => {
+  }: PropTypes<ItemType>) => {
     let pageState = usePaging(items)
 
     return (
@@ -37,7 +35,7 @@ const PagedTable = observer(
           filteredCount={filteredCount}
           totalCount={totalCount}
         />
-        <Table<ItemType, EditValueType> {...tableProps} items={pageState.currentPageItems}>
+        <Table<ItemType> {...tableProps} items={pageState.currentPageItems}>
           <TableEmptyView>
             <Text>tableEmpty</Text>
           </TableEmptyView>

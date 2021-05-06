@@ -1,6 +1,6 @@
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { CellValType, TableRowWithDataAndFunctions } from './tableUtils'
+import { TableItemType, TableRowWithDataAndFunctions } from './tableUtils'
 import React, { CSSProperties } from 'react'
 import { RemoveButton } from '../components/buttons/Button'
 import { TableCell } from './TableCell'
@@ -50,21 +50,21 @@ export const TableHeader = styled(TableRowElement)`
   border-bottom-color: var(--lighter-grey) !important;
 `
 
-type RowPropTypes<ItemType = unknown, EditValueType = CellValType> = {
+type RowPropTypes<ItemType extends TableItemType> = {
   index: number
-  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
-  data?: TableRowWithDataAndFunctions<ItemType, EditValueType>[]
+  row: TableRowWithDataAndFunctions<ItemType>
+  data?: TableRowWithDataAndFunctions<ItemType>[]
   style?: CSSProperties
   isScrolling?: boolean
 }
 
 export const TableRow = observer(
-  <ItemType extends Record<string, unknown>, EditValueType = CellValType>({
+  <ItemType extends TableItemType>({
     row,
     style,
     index,
     data: allRows = [],
-  }: RowPropTypes<ItemType, EditValueType>) => {
+  }: RowPropTypes<ItemType>) => {
     let rowItem = row || allRows[index]
 
     if (!rowItem) {
@@ -77,7 +77,7 @@ export const TableRow = observer(
     return (
       <TableRowElement key={rowId} isEditing={isEditingRow} style={style}>
         {itemEntries.map(([key, val], colIndex) => (
-          <TableCell<ItemType, EditValueType>
+          <TableCell<ItemType>
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}

@@ -3,3 +3,5 @@ export interface FunctionMap {
 }
 
 export type AnyFunction<T = unknown, ReturnT = unknown> = (...args: T[]) => ReturnT
+
+export type ValueOf<T> = T[keyof T]

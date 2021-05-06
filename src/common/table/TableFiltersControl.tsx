@@ -11,6 +11,7 @@ import { FlexRow } from '../components/common'
 import { SubHeading } from '../components/Typography'
 import { FilterConfig } from '../../schema-types'
 import UserHint from '../components/UserHint'
+import { TableItemType } from './tableUtils'
 
 const TableFiltersView = styled.div`
   margin: 1rem 0 0;
@@ -32,15 +33,15 @@ const FilterButtonsWrapper = styled.div`
   flex: 0;
 `
 
-export type PropTypes<ItemType = unknown> = {
-  excludeFields?: string[]
+export type PropTypes<ItemType extends TableItemType> = {
+  excludeFields?: (keyof ItemType)[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
   setFilters: React.Dispatch<SetStateAction<FilterConfig[]>>
 }
 
 const TableFiltersControl = observer(
-  <ItemType extends Record<string, unknown>>({
+  <ItemType extends TableItemType>({
     excludeFields = [],
     fieldLabels = {},
     filters,
