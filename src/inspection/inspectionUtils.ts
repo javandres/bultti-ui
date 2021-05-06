@@ -6,6 +6,8 @@ import {
   InspectionType,
   InspectionUserRelationType,
   Operator,
+  PostInspection,
+  PreInspection,
   Season,
   User,
 } from '../schema-types'
@@ -24,9 +26,11 @@ import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
 import { text } from '../util/translate'
+import { operatorIsValid } from '../common/input/SelectOperator'
+import { isObjectLike } from '../util/isObjectLike'
 
-export function useInspectionById(inspectionId?: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
+export function useInspectionById(inspectionId: string) {
+  let { data, loading, error, refetch: refetcher } = useQueryData(
     inspectionQuery,
     {
       skip: !inspectionId,
@@ -55,14 +59,14 @@ export function useCreateInspection(
   return useCallback(
     async (seasonId = season?.id) => {
       // A pre-inspection can be created when there is not one currently existing or loading
-      if (operator && seasonId && !createLoading) {
+      if (operatorIsValid(operator) && seasonId && !createLoading) {
         // InitialInspectionInput requires operator, season ID and inspection type.
         let inspectionInput: InitialInspectionInput = {
+          inspectionType,
           operatorId: operator.id,
           seasonId,
           startDate: season.startDate,
           endDate: season.endDate,
-          inspectionType,
         }
 
         let createResult = await createInspection({
@@ -82,7 +86,7 @@ export function useCreateInspection(
         return null
       }
     },
-    [season, operator, createLoading]
+    [season, operator, createLoading, inspectionType]
   )
 }
 
@@ -93,15 +97,17 @@ export function useRemoveInspection(
   let { operatorId, inspectionType } = inspection
 
   let [removeInspection, { loading }] = useMutationData(removeInspectionMutation, {
-    refetchQueries: [
-      {
-        query: inspectionsByOperatorQuery,
-        variables: {
-          operatorId,
-          inspectionType,
-        },
-      },
-    ],
+    refetchQueries: inspection
+      ? [
+          {
+            query: inspectionsByOperatorQuery,
+            variables: {
+              operatorId,
+              inspectionType,
+            },
+          },
+        ]
+      : [],
   })
 
   let execRemove = useCallback(async () => {
@@ -155,7 +161,7 @@ export function useFetchInspections(
   let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
     inspectionsByOperatorQuery,
     {
-      skip: !queryOperator,
+      skip: !operatorIsValid(queryOperator),
       notifyOnNetworkStatusChange: true,
       variables: {
         operatorId: queryOperator?.operatorId,
@@ -230,4 +236,12 @@ export function getInspectionTypeStrings(inspectionType: InspectionType) {
     prefixLC: inspectionTypePrefix.toLocaleLowerCase(),
     path: inspectionTypePath,
   }
+}
+
+export function isPreInspection(inspection: unknown): inspection is PreInspection {
+  return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Pre
+}
+
+export function isPostInspection(inspection: unknown): inspection is PostInspection {
+  return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Post
 }

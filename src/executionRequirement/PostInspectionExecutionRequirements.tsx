@@ -112,7 +112,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
-        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: inspectionQuery,
+          variables: { inspectionId: inspection?.id || '' },
+        },
       ],
       notifyOnNetworkStatusChange: true,
       variables: {
@@ -145,7 +148,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
             postInspectionId: inspection?.id,
           },
         },
-        { query: inspectionQuery, variables: { inspectionId: inspection?.id || '' } },
+        {
+          query: inspectionQuery,
+          variables: { inspectionId: inspection?.id || '' },
+        },
       ],
     }
   )

@@ -11,7 +11,10 @@ export const UserFragment = gql`
     role
     inspectionRelations {
       id
-      inspection {
+      preInspection {
+        id
+      }
+      postInspection {
         id
       }
     }
@@ -19,7 +22,7 @@ export const UserFragment = gql`
 `
 
 export const loginMutation = gql`
-  mutation login($authorizationCode: String!, $isTest: Boolean, $role: String!) {
+  mutation login($authorizationCode: String!, $isTest: Boolean, $role: String) {
     login(authorizationCode: $authorizationCode, isTest: $isTest, role: $role)
   }
 `

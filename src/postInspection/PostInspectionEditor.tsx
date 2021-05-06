@@ -1,6 +1,6 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionValidationError } from '../schema-types'
+import { InspectionValidationError, PostInspection } from '../schema-types'
 import PostInspectionExecutionRequirements from '../executionRequirement/PostInspectionExecutionRequirements'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Text } from '../util/translate'
@@ -15,7 +15,7 @@ const PostInspectionEditorView = styled.div`
 type PostInspectionProps = {
   refetchData: () => unknown
   isEditable: boolean
-  inspection: Inspection
+  inspection: PostInspection
 }
 
 const PostInspectionEditor: React.FC<PostInspectionProps> = observer(

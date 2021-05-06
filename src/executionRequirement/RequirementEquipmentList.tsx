@@ -6,15 +6,15 @@ import {
   updateEquipmentRequirementQuotaMutation,
 } from '../equipment/equipmentQuery'
 import { EquipmentWithQuota, getEquipmentAge } from '../equipment/equipmentUtils'
-import { ExecutionRequirement } from '../schema-types'
 import EquipmentList, { EquipmentUpdate } from '../equipment/EquipmentList'
 import { MessageView } from '../common/components/Messages'
 import { getDateObject } from '../util/formatDate'
 import { text } from '../util/translate'
+import { PlannedUnitExecutionRequirement } from '../schema-types'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
-  executionRequirement: ExecutionRequirement
+  executionRequirement: PlannedUnitExecutionRequirement
   startDate: Date
   onEquipmentChanged: () => unknown
   isEditable: boolean

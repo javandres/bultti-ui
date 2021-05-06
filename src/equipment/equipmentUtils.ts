@@ -2,8 +2,8 @@ import {
   Equipment,
   EquipmentCatalogue,
   EquipmentCatalogueQuota,
-  ExecutionRequirement,
   ExecutionRequirementQuota,
+  PlannedUnitExecutionRequirement,
 } from '../schema-types'
 import { compact, groupBy, omit, trim } from 'lodash'
 import { strval } from '../util/strval'
@@ -60,7 +60,7 @@ export function catalogueEquipment(catalogue?: EquipmentCatalogue): EquipmentWit
 }
 
 export function createRequirementEquipment(
-  executionRequirement?: ExecutionRequirement
+  executionRequirement?: PlannedUnitExecutionRequirement
 ): EquipmentWithQuota[] {
   if (!executionRequirement) {
     return []
@@ -127,7 +127,7 @@ function isCatalogue(item?: any): item is EquipmentCatalogue {
   )
 }
 
-function isRequirement(item?: any): item is ExecutionRequirement {
+function isRequirement(item?: any): item is PlannedUnitExecutionRequirement {
   return (
     !!item &&
     typeof item?.equipmentQuotas !== 'undefined' &&
@@ -136,7 +136,7 @@ function isRequirement(item?: any): item is ExecutionRequirement {
 }
 
 export function useEquipmentCrud(
-  catalogueOrRequirement?: EquipmentCatalogue | ExecutionRequirement,
+  catalogueOrRequirement?: EquipmentCatalogue | PlannedUnitExecutionRequirement,
   onChanged: () => unknown = () => Promise.resolve()
 ) {
   let mode: 'catalogue' | 'requirement' | false = false

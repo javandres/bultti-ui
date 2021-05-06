@@ -1,5 +1,5 @@
-import React from "react";
-import {svgSize} from "../../util/svg";
+import React from 'react'
+import { svgSize } from '../../util/svg'
 
 type IconProps = {
   fill?: string

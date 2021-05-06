@@ -5,7 +5,7 @@ import {
 } from './executionRequirementsQueries'
 import { useRefetch } from '../util/useRefetch'
 import { useMemo } from 'react'
-import { ExecutionRequirement, ObservedExecutionRequirement } from '../schema-types'
+import { ObservedExecutionRequirement, PlannedAreaExecutionRequirement } from '../schema-types'
 import { orderBy } from 'lodash'
 
 export function usePreInspectionAreaRequirements(inspectionId?: string) {
@@ -23,7 +23,7 @@ export function usePreInspectionAreaRequirements(inspectionId?: string) {
 
   let refetch = useRefetch(refetchRequirements)
 
-  let areaExecutionRequirements = useMemo<ExecutionRequirement[]>(
+  let areaExecutionRequirements = useMemo<PlannedAreaExecutionRequirement[]>(
     () => (!executionRequirementsData ? [] : orderBy(executionRequirementsData, 'area.id')),
     [executionRequirementsData]
   )

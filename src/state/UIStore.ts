@@ -10,18 +10,19 @@ import { languageState, setLanguage } from './languageState'
 export const unselectedOperator: Operator = {
   equipment: [],
   equipmentCatalogues: [],
-  executionRequirements: [],
   procurementUnits: [],
   id: 0,
   operatorId: 0,
   operatorName: translate('unselected', languageState.language),
-  inspections: [],
+  preInspections: [],
+  postInspections: [],
   contracts: [],
 }
 
 export const unselectedSeason: Season = {
   endDate: '',
-  inspections: [],
+  preInspections: [],
+  postInspections: [],
   startDate: '',
   id: translate('unselected', languageState.language),
   season: '',

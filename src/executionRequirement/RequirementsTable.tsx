@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite'
 import { round } from '../util/round'
 import Table from '../common/table/Table'
 import { isNumeric } from '../util/isNumeric'
-import { ExecutionRequirementValue } from '../schema-types'
 import { orderBy, pick } from 'lodash'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { getTotal } from '../util/getTotal'
@@ -15,6 +14,7 @@ import {
 import Big from 'big.js'
 import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { getThousandSeparatedNumber } from '../util/formatNumber'
+import { PlannedEmissionClassRequirement } from '../schema-types'
 
 const ExecutionRequirementsAreaContainer = styled.div`
   margin-top: 1rem;
@@ -32,7 +32,7 @@ const ExecutionRequirementsAreaContainer = styled.div`
 `
 
 export interface IExecutionRequirement {
-  requirements: ExecutionRequirementValue[]
+  requirements: PlannedEmissionClassRequirement[]
   totalKilometers?: number | null
   averageAgeWeighted?: number | null
   averageAgeRequirement?: number | null
@@ -44,7 +44,7 @@ export type PropTypes = {
   tableLayout?: RequirementsTableLayout
 }
 
-const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: string } = {
+const valuesLayoutColumnLabels: { [key in keyof PlannedEmissionClassRequirement]?: string } = {
   emissionClass: 'Päästöluokka',
   kilometerRequirement: 'Km vaatimus',
   kilometersFulfilled: 'Toteuma km',
@@ -60,7 +60,7 @@ const valuesLayoutColumnLabels: { [key in keyof ExecutionRequirementValue]?: str
 }
 
 type SummaryType = { unit: string; total: string }
-type ValueItemType = ExecutionRequirementValue | SummaryType
+type ValueItemType = PlannedEmissionClassRequirement | SummaryType
 
 const RequirementsTable: React.FC<PropTypes> = observer(
   ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
@@ -214,7 +214,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           renderValue={renderTableValue}
           keyFromItem={(item: ValueItemType): string =>
             tableLayout === RequirementsTableLayout.BY_VALUES
-              ? (item as ExecutionRequirementValue).emissionClass + ''
+              ? (item as PlannedEmissionClassRequirement).emissionClass + ''
               : (item as SummaryType).unit
           }
           getColumnTotal={

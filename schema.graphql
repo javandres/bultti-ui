@@ -6,6 +6,8 @@ schema {
   subscription: Subscription
 }
 
+union Inspection = PostInspection | PreInspection
+
 type BlockDeviationsReport {
   columnLabels: String!
   description: String!
@@ -13,7 +15,6 @@ type BlockDeviationsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -73,7 +74,6 @@ type DeadrunsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -112,6 +112,12 @@ type DeadrunsReportData {
   schemaId: String
 }
 
+type DepartureBlockFile {
+  blockFile: String!
+  dayType: String!
+  operatorId: Int!
+}
+
 type DepartureBlocksReport {
   columnLabels: String!
   description: String!
@@ -119,7 +125,6 @@ type DepartureBlocksReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -152,7 +157,6 @@ type DeviationsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -187,7 +191,6 @@ type EarlyTimingStopDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -226,7 +229,6 @@ type EmissionClassExecutionReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -302,7 +304,6 @@ type EquipmentColorReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -334,7 +335,6 @@ type EquipmentTypeReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -367,52 +367,15 @@ type EquipmentTypeStat {
   kilometers: Float!
 }
 
-type ExecutionRequirement {
-  area: OperatingArea!
-  areaRequirement: ExecutionRequirement
-  areaRequirementId: String
-  averageAgeRequirement: Float
-  averageAgeWeighted: Float
-  averageAgeWeightedFulfilled: Float
-  equipmentQuotas: [ExecutionRequirementQuota!]!
-  id: ID!
-  inspection: Inspection!
-  inspectionId: String!
-  operator: Operator!
-  operatorId: Float!
-  procurementUnit: ProcurementUnit
-  procurementUnitId: String
-  procurementUnitRequirements: [ExecutionRequirement!]
-  requirements: [ExecutionRequirementValue!]!
-  totalKilometers: Float
-  totalKilometersFulfilled: Float
-  weeklyMeters: Float
-}
-
 type ExecutionRequirementQuota {
   equipment: Equipment!
   equipmentId: String!
-  executionRequirement: ExecutionRequirement!
+  executionRequirement: PlannedUnitExecutionRequirement!
   executionRequirementId: String!
   id: ID!
   meterRequirement: Float!
   percentageQuota: Float!
   requirementOnly: Boolean!
-}
-
-type ExecutionRequirementValue {
-  classSanctionAmount: Float
-  cumulativeDifferencePercentage: Float
-  differencePercentage: Float
-  emissionClass: Int!
-  equipmentCount: Int
-  equipmentCountFulfilled: Int
-  kilometerRequirement: Float
-  kilometersFulfilled: Float
-  quotaFulfilled: Float
-  quotaRequirement: Float
-  sanctionAmount: Float
-  sanctionThreshold: Float
 }
 
 type ExecutionRequirementsReport {
@@ -422,7 +385,6 @@ type ExecutionRequirementsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -442,7 +404,7 @@ type ExecutionRequirementsReportData {
   averageAgeWeightedFulfilled: Float
   id: ID!
   operatorId: Int!
-  requirements: [ExecutionRequirementValue!]!
+  requirements: [PlannedEmissionClassRequirement!]!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
@@ -462,7 +424,6 @@ type ExtraBlockDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -500,40 +461,11 @@ type HfpDateStatus {
   status: HfpStatus!
 }
 
-type Inspection {
-  createdAt: DateTime!
-  defectInspection: Inspection
-  endDate: BulttiDate
-  executionRequirements: [ExecutionRequirement!]!
-  id: ID!
-  inspectionDate: InspectionDate
-  inspectionDateId: String
-  inspectionEndDate: BulttiDate!
-  inspectionErrors: [ValidationErrorData!]
-  inspectionStartDate: BulttiDate!
-  inspectionType: InspectionType!
-  linkedInspectionUpdateAvailable: Boolean
-  linkedInspections: [LinkedInspectionForWeek!]
-  minStartDate: BulttiDate!
-  name: String
-  observedExecutionRequirements: [ObservedExecutionRequirement!]!
-  operator: Operator!
-  operatorId: Int!
-  season: Season!
-  seasonId: String!
-  startDate: BulttiDate
-  status: InspectionStatus!
-  updatedAt: DateTime!
-  userRelations: [InspectionUserRelation!]!
-  version: Int!
-  versionStackIdentifier: String
-}
-
 type InspectionDate {
   endDate: BulttiDate!
   hfpDataStatus: HfpStatus!
   id: ID!
-  inspections: [Inspection!]
+  inspections: [PostInspection!]
   startDate: BulttiDate!
 }
 
@@ -542,6 +474,16 @@ type InspectionErrorUpdate {
   id: ID!
   message: String!
   status: InspectionStatus!
+}
+
+type InspectionStatusUpdate {
+  endDate: BulttiDate
+  id: ID!
+  inspectionEndDate: BulttiDate!
+  inspectionStartDate: BulttiDate!
+  startDate: BulttiDate
+  status: InspectionStatus!
+  version: Int!
 }
 
 type InspectionTimelineItem {
@@ -556,7 +498,8 @@ type InspectionTimelineItem {
 type InspectionUserRelation {
   createdAt: DateTime!
   id: ID!
-  inspection: Inspection!
+  postInspection: PostInspection
+  preInspection: PreInspection
   relatedBy: InspectionUserRelationType!
   subscribed: Boolean!
   updatedAt: DateTime!
@@ -570,7 +513,6 @@ type LateDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -605,7 +547,7 @@ type LateDeparturesReportData {
 
 type LinkedInspectionForWeek {
   id: String!
-  inspection: Inspection!
+  inspection: PreInspection!
   startOfWeek: String!
 }
 
@@ -616,7 +558,6 @@ type MissingBlockDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -646,7 +587,6 @@ type MissingEquipmentReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -667,40 +607,44 @@ type MissingEquipmentReportData {
 }
 
 type Mutation {
-  abandonSanctions(inspectionId: String!): Inspection!
+  abandonSanctions(inspectionId: String!): PostInspection!
   addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
-  addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement
+  addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   clearCache: Boolean!
   createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
-  createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
-  createInspection(inspection: InitialInspectionInput!): Inspection!
+  createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
+  createInspection(inspection: InitialInspectionInput!): Inspection
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
   createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
+  createTestData: Boolean!
+  forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
+  generateTestBlockDepartures: [DepartureBlockFile!]!
   initInspectionContractUnitMap(inspectionId: String!): Boolean!
-  inspectionSanctionable(inspectionId: String!): Inspection!
+  inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
-  login(authorizationCode: String!, isTest: Boolean = false, role: String!): String
+  login(authorizationCode: String!, isTest: Boolean = false, role: String): String
   logout: Boolean!
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
-  refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): ExecutionRequirement
+  refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): PlannedUnitExecutionRequirement
   rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
-  removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): ExecutionRequirement
+  removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): PlannedUnitExecutionRequirement
   removeContract(contractId: String!, operatorId: Int!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
-  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): ExecutionRequirement!
-  removeExecutionRequirement(executionRequirementId: String!): ExecutionRequirement!
+  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
+  removeTestData: Boolean!
+  removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -710,11 +654,11 @@ type Mutation {
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
-  updateLinkedInspection(inspectionId: String!): Inspection!
+  updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
   updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
-  updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): ExecutionRequirement!
+  updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
 }
 
 type ObservedEmissionClassExecutionReport {
@@ -724,7 +668,6 @@ type ObservedEmissionClassExecutionReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -752,6 +695,24 @@ type ObservedEmissionClassExecutionReportData {
   procurementUnitId: String
 }
 
+type ObservedEmissionClassRequirement {
+  cumulativeDifferencePercentage: Float
+  differenceKilometers: Float
+  differencePercentage: Float
+  emissionClass: Int!
+  equipmentCountObserved: Int
+  equipmentCountRequired: Int
+  id: ID
+  kilometersObserved: Float
+  kilometersRequired: Float
+  observedExecutionRequirement: ObservedExecutionRequirement!
+  quotaObserved: Float
+  quotaRequired: Float
+  sanctionAmount: Float
+  sanctionThreshold: Float
+  sanctionablePercentage: Float
+}
+
 type ObservedEquipmentColorReport {
   columnLabels: String!
   description: String!
@@ -759,7 +720,6 @@ type ObservedEquipmentColorReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -798,7 +758,6 @@ type ObservedEquipmentTypeReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -837,14 +796,14 @@ type ObservedExecutionRequirement {
   areaId: Int!
   endDate: BulttiDate!
   id: ID!
-  inspection: Inspection!
+  inspection: PostInspection!
   inspectionId: String!
   isCombinedAreaRequirement: Boolean!
   kilometersObserved: Float
   kilometersRequired: Float
   metersObserved: Float
   metersRequired: Float
-  observedRequirements: [ObservedExecutionValue!]!
+  observedRequirements: [ObservedEmissionClassRequirement!]!
   operator: Operator!
   operatorId: Int!
   startDate: BulttiDate!
@@ -857,7 +816,6 @@ type ObservedExecutionRequirementsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -874,29 +832,11 @@ type ObservedExecutionRequirementsReportData {
   areaName: String!
   endDate: BulttiDate!
   id: ID!
-  observedRequirements: [ObservedExecutionValue!]!
+  observedRequirements: [ObservedEmissionClassRequirement!]!
   operatorId: Int!
   startDate: BulttiDate!
   totalKilometersObserved: Float!
   totalKilometersRequired: Float!
-}
-
-type ObservedExecutionValue {
-  cumulativeDifferencePercentage: Float
-  differenceKilometers: Float
-  differencePercentage: Float
-  emissionClass: Int!
-  equipmentCountObserved: Int
-  equipmentCountRequired: Int
-  id: ID
-  kilometersObserved: Float
-  kilometersRequired: Float
-  observedExecutionRequirement: ObservedExecutionRequirement!
-  quotaObserved: Float
-  quotaRequired: Float
-  sanctionAmount: Float
-  sanctionThreshold: Float
-  sanctionablePercentage: Float
 }
 
 type ObservedOverAgeDeparturesReport {
@@ -906,7 +846,6 @@ type ObservedOverAgeDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -959,7 +898,6 @@ type ObservedUnitExecutionReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -973,21 +911,23 @@ type ObservedUnitExecutionReport {
 }
 
 type OperatingArea {
-  executionRequirements: [ExecutionRequirement!]
+  areaExecutionRequirements: [PlannedAreaExecutionRequirement!]
   id: Int!
   name: OperatingAreaName!
+  observedExecutionRequirements: [ObservedExecutionRequirement!]
   procurementUnits: [ProcurementUnit!]
+  unitExecutionRequirements: [PlannedUnitExecutionRequirement!]
 }
 
 type Operator {
   contracts: [Contract!]!
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
-  executionRequirements: [ExecutionRequirement!]!
   id: Int!
-  inspections: [Inspection!]!
   operatorId: Int!
   operatorName: String!
+  postInspections: [PostInspection!]!
+  preInspections: [PreInspection!]!
   procurementUnits: [ProcurementUnit!]!
 }
 
@@ -998,7 +938,6 @@ type OperatorDeadrunsReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1018,7 +957,6 @@ type OverAgeDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1044,6 +982,125 @@ type OverAgeDeparturesReportData {
   trackReason: TrackReason!
 }
 
+type PlannedAreaExecutionRequirement {
+  area: OperatingArea!
+  areaId: Int!
+  averageAgeRequirement: Float
+  averageAgeWeighted: Float
+  averageAgeWeightedFulfilled: Float
+  id: ID!
+  inspection: PreInspection!
+  inspectionId: String!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  metersObserved: Float
+  metersRequired: Float
+  operator: Operator!
+  operatorId: Int!
+  procurementUnitRequirements: [PlannedUnitExecutionRequirement!]
+  requirements: [PlannedEmissionClassRequirement!]!
+}
+
+type PlannedEmissionClassRequirement {
+  classSanctionAmount: Float
+  cumulativeDifferencePercentage: Float
+  differencePercentage: Float
+  emissionClass: Int!
+  equipmentCount: Int
+  equipmentCountFulfilled: Int
+  kilometerRequirement: Float
+  kilometersFulfilled: Float
+  quotaFulfilled: Float
+  quotaRequirement: Float
+  sanctionAmount: Float
+  sanctionThreshold: Float
+}
+
+type PlannedExecutionRequirement {
+  averageAgeRequirement: Float
+  averageAgeWeighted: Float
+  averageAgeWeightedFulfilled: Float
+  id: ID!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  metersObserved: Float
+  metersRequired: Float
+}
+
+type PlannedUnitExecutionRequirement {
+  area: OperatingArea!
+  areaId: Int!
+  areaRequirement: PlannedExecutionRequirement
+  areaRequirementId: String
+  averageAgeRequirement: Float
+  averageAgeWeighted: Float
+  averageAgeWeightedFulfilled: Float
+  equipmentQuotas: [ExecutionRequirementQuota!]!
+  id: ID!
+  inspection: PreInspection!
+  inspectionId: String!
+  kilometersObserved: Float
+  kilometersRequired: Float
+  metersObserved: Float
+  metersRequired: Float
+  operator: Operator!
+  operatorId: Int!
+  procurementUnit: ProcurementUnit!
+  procurementUnitId: String!
+  requirements: [PlannedEmissionClassRequirement!]!
+}
+
+type PostInspection {
+  createdAt: DateTime!
+  endDate: BulttiDate
+  id: ID!
+  inspectionDate: InspectionDate
+  inspectionDateId: String
+  inspectionEndDate: BulttiDate!
+  inspectionErrors: [ValidationErrorData!]
+  inspectionStartDate: BulttiDate!
+  inspectionType: InspectionType!
+  linkedInspectionUpdateAvailable: Boolean
+  linkedInspections: [LinkedInspectionForWeek!]
+  minStartDate: BulttiDate!
+  name: String
+  observedExecutionRequirements: [ObservedExecutionRequirement!]!
+  operator: Operator!
+  operatorId: Int!
+  season: Season!
+  seasonId: String!
+  startDate: BulttiDate
+  status: InspectionStatus!
+  updatedAt: DateTime!
+  userRelations: [InspectionUserRelation!]
+  version: Int!
+  versionStackIdentifier: String
+}
+
+type PreInspection {
+  areaExecutionRequirements: [PlannedAreaExecutionRequirement!]!
+  createdAt: DateTime!
+  endDate: BulttiDate
+  id: ID!
+  inspectionEndDate: BulttiDate!
+  inspectionErrors: [ValidationErrorData!]
+  inspectionStartDate: BulttiDate!
+  inspectionType: InspectionType!
+  minStartDate: BulttiDate!
+  name: String
+  operator: Operator!
+  operatorId: Int!
+  season: Season!
+  seasonId: String!
+  startDate: BulttiDate
+  status: InspectionStatus!
+  unitExecutionRequirements: [PlannedUnitExecutionRequirement!]!
+  updatedAt: DateTime!
+  userRelations: [InspectionUserRelation!]
+  version: Int!
+  versionStackIdentifier: String
+}
+
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
@@ -1051,7 +1108,7 @@ type ProcurementUnit {
   currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
-  executionRequirements: [ExecutionRequirement!]!
+  executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
   medianAgeRequirement: Float!
   operator: Operator!
@@ -1101,14 +1158,14 @@ type Query {
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
   equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentColorReport
   equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentTypeReport
-  executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): ExecutionRequirement
-  executionRequirementsByOperator(operatorId: Int!): [ExecutionRequirement!]!
-  executionRequirementsForPreInspectionAreas(inspectionId: String!): [ExecutionRequirement!]!
+  executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
+  executionRequirementsByOperator(operatorId: Int!): [PlannedUnitExecutionRequirement!]!
+  executionRequirementsForPreInspectionAreas(inspectionId: String!): [PlannedAreaExecutionRequirement!]!
   executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExecutionRequirementsReport
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
-  inspection(inspectionId: String!): Inspection
+  inspection(inspectionId: String!): Inspection!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
@@ -1131,7 +1188,7 @@ type Query {
   procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
-  reports(inspectionId: String, inspectionType: InspectionType!): [ReportListItem!]!
+  reports(inspectionId: String, inspectionType: String!): [ReportListItem!]!
   runSanctioning(inspectionId: String!): [Sanction!]!
   sanctionSummaryReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionSummaryReport
   season(seasonId: String!): [Season!]
@@ -1146,7 +1203,6 @@ type Query {
 
 type ReportListItem {
   description: String!
-  inspectionType: InspectionType!
   name: String!
   title: String!
 }
@@ -1156,7 +1212,7 @@ type Sanction {
   area: OperatingAreaName
   entityIdentifier: String!
   id: ID!
-  inspection: Inspection!
+  inspection: PostInspection!
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
@@ -1182,7 +1238,6 @@ type SanctionSummaryReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1220,7 +1275,8 @@ type SanctionsResponse {
 type Season {
   endDate: BulttiDate!
   id: ID!
-  inspections: [Inspection!]!
+  postInspections: [PostInspection!]!
+  preInspections: [PreInspection!]!
   season: String!
   startDate: BulttiDate!
 }
@@ -1234,7 +1290,7 @@ type Subscription {
   hfpLoadingProgress(rangeEnd: String!, rangeStart: String!): HfpDateProgress
   hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
-  inspectionStatus(inspectionId: String!): Inspection
+  inspectionStatus(inspectionId: String!): InspectionStatusUpdate
 }
 
 type TrackedDeparturesReport {
@@ -1244,7 +1300,6 @@ type TrackedDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1274,7 +1329,6 @@ type UnitExecutionReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1293,9 +1347,9 @@ type UnitExecutionReportData {
   averageAgeWeighted: Float!
   averageAgeWeightedFulfilled: Float!
   id: ID!
+  kilometersFulfilled: Float!
+  kilometersRequired: Float!
   procurementUnitId: String!
-  totalKilometers: Float!
-  totalKilometersFulfilled: Float!
 }
 
 type UnobservedDeparturesReport {
@@ -1305,7 +1359,6 @@ type UnobservedDeparturesReport {
   filters: [FilterConfig!]
   id: String!
   inspectionId: String!
-  inspectionType: InspectionType!
   name: String!
   operatorId: Float!
   responseId: String!
@@ -1335,7 +1388,7 @@ type UnobservedDeparturesReportData {
 type User {
   contractRelations: [ContractUserRelation!]!
   email: String!
-  hslIdGroups: [String!]
+  hslIdGroups: [String!]!
   id: ID!
   inspectionRelations: [InspectionUserRelation!]!
   name: String!
@@ -1372,7 +1425,6 @@ enum InspectionStatus {
 }
 
 enum InspectionType {
-  EQUIPMENT_DEFECT
   POST
   PRE
 }
@@ -1398,8 +1450,6 @@ enum InspectionValidationError {
   MISSING_EQUIPMENT_CATALOGUES
   MISSING_EXECUTION_REQUIREMENTS
   MISSING_REQUIREMENT_QUOTAS
-  NOT_POST
-  NOT_PRE
   POST_INSPECTION_END_DATE_NOT_IN_THE_PAST
   POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS
 }
@@ -1514,6 +1564,7 @@ input InspectionInput {
   inspectionDateId: String
   inspectionEndDate: BulttiDate
   inspectionStartDate: BulttiDate
+  inspectionType: InspectionType
   name: String
   startDate: BulttiDate
 }

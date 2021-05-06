@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import {
-  Inspection,
+  PostInspection,
   Sanction,
   SanctionableEntity,
   SanctionException,
@@ -143,7 +143,7 @@ let abandonSanctionsMutation = gql`
 `
 
 export type PropTypes = {
-  inspection: Inspection
+  inspection: PostInspection
 } & TabChildProps
 
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
@@ -192,14 +192,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   )
 
-  let [execAbandonSanctions, { loading: abandonSanctionsLoading }] = useMutationData(
-    abandonSanctionsMutation,
-    {
-      variables: {
-        inspectionId: inspection.id,
-      },
-    }
-  )
+  let [
+    execAbandonSanctions,
+    { loading: abandonSanctionsLoading },
+  ] = useMutationData<PostInspection>(abandonSanctionsMutation, {
+    variables: {
+      inspectionId: inspection.id,
+    },
+  })
 
   let onChangeSanction = useCallback((key: keyof Sanction, value: number, item: Sanction) => {
     setPendingValues((currentValues) => {
