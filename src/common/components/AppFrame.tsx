@@ -11,7 +11,7 @@ const SIDEBAR_TOGGLE_BUTTON_CLICKABLE_AREA_WIDTH = 40
 
 const AppFrameView = styled.div`
   display: grid;
-  grid-template-columns: fit-content(25rem) auto;
+  grid-template-columns: fit-content(${SIDEBAR_WIDTH}px) auto;
   min-height: 100vh;
 
   @media screen and (min-height: 700px) {

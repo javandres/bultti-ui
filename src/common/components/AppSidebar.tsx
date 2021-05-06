@@ -46,6 +46,7 @@ const AppTitle = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: nowrap;
   transition: background 0.1s ease-out, transform 0.1s ease-out;
   color: white;
   text-decoration: none;
@@ -57,6 +58,7 @@ const AppTitle = styled(Link)`
 
   h1 {
     margin: 0;
+    white-space: nowrap;
   }
 `
 
@@ -87,12 +89,14 @@ const CategoryTitle = styled.h3`
 `
 
 const UserBar = styled.div`
+  width: 100%;
   text-decoration: none;
   background: rgba(0, 0, 0, 0.15);
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
   &:hover {
     background: rgba(0, 0, 0, 0.2);
   }
@@ -100,7 +104,7 @@ const UserBar = styled.div`
 
 const UserDisplay = styled.div`
   margin-left: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.875rem;
 `
 
 const UserLink = styled(Link)`
@@ -241,11 +245,11 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
-          {DEBUG && (
-            <NavLink to="dev-tools">
-              <div>Dev tools</div>
-            </NavLink>
-          )}
+            {DEBUG && (
+              <NavLink to="dev-tools">
+                <div>Dev tools</div>
+              </NavLink>
+            )}
           </NavCategory>
           <NavCategory>
             <Button
@@ -258,14 +262,14 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             </Button>
           </NavCategory>
           {DEBUG && (
-          <NavCategory>
-            <Button
-              style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-              onClick={() => clearCache()}
-              size={ButtonSize.MEDIUM}>
-              <div>Clear cache</div>
-            </Button>
-          </NavCategory>
+            <NavCategory>
+              <Button
+                style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+                onClick={() => clearCache()}
+                size={ButtonSize.MEDIUM}>
+                <div>Clear cache</div>
+              </Button>
+            </NavCategory>
           )}
         </AppNav>
       </SidebarScrollContainer>
