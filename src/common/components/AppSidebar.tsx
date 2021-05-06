@@ -24,9 +24,13 @@ import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { gql, useMutation } from '@apollo/client'
 
+export const APP_TITLE_HEIGHT = 100
+
 const AppSidebarView = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
   overflow-y: auto;
-  overflow-x: hidden;
   height: 100%;
 `
 
@@ -36,11 +40,13 @@ const HSLLogo = styled(HSLLogoNoText)`
 `
 
 const AppTitle = styled(Link)`
+  height: ${APP_TITLE_HEIGHT}px;
   padding: 2rem 1rem;
   margin: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  flex-wrap: nowrap;
   transition: background 0.1s ease-out, transform 0.1s ease-out;
   color: white;
   text-decoration: none;
@@ -52,7 +58,14 @@ const AppTitle = styled(Link)`
 
   h1 {
     margin: 0;
+    white-space: nowrap;
   }
+`
+
+const SidebarScrollContainer = styled.div`
+  overflow-y: auto;
+  overflow-x: hidden;
+  height: 100%;
 `
 
 const AppNav = styled.nav`
@@ -76,12 +89,14 @@ const CategoryTitle = styled.h3`
 `
 
 const UserBar = styled.div`
+  width: 100%;
   text-decoration: none;
   background: rgba(0, 0, 0, 0.15);
-  padding: 0.75rem 1rem;
+  padding: 0.75rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+
   &:hover {
     background: rgba(0, 0, 0, 0.2);
   }
@@ -89,7 +104,7 @@ const UserBar = styled.div`
 
 const UserDisplay = styled.div`
   margin-left: 0.5rem;
-  font-size: 1rem;
+  font-size: 0.875rem;
 `
 
 const UserLink = styled(Link)`
@@ -156,104 +171,108 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
           <Text>appName</Text>
         </h1>
       </AppTitle>
-      <UserBar>
-        {DEBUG ? (
-          <UserLink onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="user">
-            {userContent}
-          </UserLink>
-        ) : (
-          userContent
-        )}
-      </UserBar>
-      <GlobalFilters>
-        <GlobalOperatorFilter />
-        <GlobalSeasonFilter />
-      </GlobalFilters>
-      <AppNav>
-        <NavCategory>
-          <CategoryTitle>
-            <Text>procurementUnits</Text>
-          </CategoryTitle>
-          <NavLink to="procurement-units">
-            <Bus fill="white" width="1rem" height="1rem" />
-            <Text>nav_editProcurementUnits</Text>
-          </NavLink>
-        </NavCategory>
-        <NavCategory>
-          <CategoryTitle>
-            <Text>contracts</Text>
-          </CategoryTitle>
-          <NavLink to="contract">
-            <Menu fill="white" width="1rem" height="1rem" />
-            <Text>nav_editContracts</Text>
-          </NavLink>
-        </NavCategory>
-        <NavCategory>
-          <CategoryTitle>
-            <Text>preInspection</Text>
-          </CategoryTitle>
-          <NavLink to="pre-inspection">
-            <Search fill="white" width="1rem" height="1rem" />
-            <Text>preInspections</Text>
-          </NavLink>
-          <NavLink to="pre-inspection/edit">
-            <Plus fill="white" width="1rem" height="1rem" />
-            <Text>nav_newPreInspection</Text>
-          </NavLink>
-          <NavLink to="pre-inspection/reports">
-            <Menu fill="white" width="1rem" height="1rem" />
-            <Text>reports</Text>
-          </NavLink>
-        </NavCategory>
-        <NavCategory>
-          <CategoryTitle>
-            <Text>postInspection</Text>
-          </CategoryTitle>
-          <NavLink to="post-inspection">
-            <Search fill="white" width="1rem" height="1rem" />
-            <Text>postInspections</Text>
-          </NavLink>
-          <NavLink to="post-inspection/edit">
-            <Plus fill="white" width="1rem" height="1rem" />
-            <Text>nav_newPostInspection</Text>
-          </NavLink>
-          {hasAdminAccess && (
-            <NavLink to="inspection-date">
+      <SidebarScrollContainer>
+        <UserBar>
+          {DEBUG ? (
+            <UserLink
+              onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)}
+              to="user">
+              {userContent}
+            </UserLink>
+          ) : (
+            userContent
+          )}
+        </UserBar>
+        <GlobalFilters>
+          <GlobalOperatorFilter />
+          <GlobalSeasonFilter />
+        </GlobalFilters>
+        <AppNav>
+          <NavCategory>
+            <CategoryTitle>
+              <Text>procurementUnits</Text>
+            </CategoryTitle>
+            <NavLink to="procurement-units">
+              <Bus fill="white" width="1rem" height="1rem" />
+              <Text>nav_editProcurementUnits</Text>
+            </NavLink>
+          </NavCategory>
+          <NavCategory>
+            <CategoryTitle>
+              <Text>contracts</Text>
+            </CategoryTitle>
+            <NavLink to="contract">
+              <Menu fill="white" width="1rem" height="1rem" />
+              <Text>nav_editContracts</Text>
+            </NavLink>
+          </NavCategory>
+          <NavCategory>
+            <CategoryTitle>
+              <Text>preInspection</Text>
+            </CategoryTitle>
+            <NavLink to="pre-inspection">
+              <Search fill="white" width="1rem" height="1rem" />
+              <Text>preInspections</Text>
+            </NavLink>
+            <NavLink to="pre-inspection/edit">
               <Plus fill="white" width="1rem" height="1rem" />
-              <Text>nav_editInspectionDates</Text>
+              <Text>nav_newPreInspection</Text>
             </NavLink>
-          )}
-          <NavLink to="post-inspection/reports">
-            <Menu fill="white" width="1rem" height="1rem" />
-            <Text>reports</Text>
-          </NavLink>
-          {DEBUG && (
-            <NavLink to="dev-tools">
-              <div>Dev tools</div>
+            <NavLink to="pre-inspection/reports">
+              <Menu fill="white" width="1rem" height="1rem" />
+              <Text>reports</Text>
             </NavLink>
-          )}
-        </NavCategory>
-        <NavCategory>
-          <Button
-            style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-            loading={logoutLoading}
-            onClick={onLogout}
-            size={ButtonSize.MEDIUM}
-            data-cy="logoutButton">
-            <Text>logout</Text>
-          </Button>
-        </NavCategory>
-        {DEBUG && (
+          </NavCategory>
+          <NavCategory>
+            <CategoryTitle>
+              <Text>postInspection</Text>
+            </CategoryTitle>
+            <NavLink to="post-inspection">
+              <Search fill="white" width="1rem" height="1rem" />
+              <Text>postInspections</Text>
+            </NavLink>
+            <NavLink to="post-inspection/edit">
+              <Plus fill="white" width="1rem" height="1rem" />
+              <Text>nav_newPostInspection</Text>
+            </NavLink>
+            {hasAdminAccess && (
+              <NavLink to="inspection-date">
+                <Plus fill="white" width="1rem" height="1rem" />
+                <Text>nav_editInspectionDates</Text>
+              </NavLink>
+            )}
+            <NavLink to="post-inspection/reports">
+              <Menu fill="white" width="1rem" height="1rem" />
+              <Text>reports</Text>
+            </NavLink>
+            {DEBUG && (
+              <NavLink to="dev-tools">
+                <div>Dev tools</div>
+              </NavLink>
+            )}
+          </NavCategory>
           <NavCategory>
             <Button
               style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-              onClick={() => clearCache()}
-              size={ButtonSize.MEDIUM}>
-              <div>Clear cache</div>
+              loading={logoutLoading}
+              onClick={onLogout}
+              size={ButtonSize.MEDIUM}
+              data-cy="logoutButton">
+              <Text>logout</Text>
             </Button>
           </NavCategory>
-        )}
-      </AppNav>
+          {DEBUG && (
+            <NavCategory>
+              <Button
+                style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
+                onClick={() => clearCache()}
+                size={ButtonSize.MEDIUM}>
+                <div>Clear cache</div>
+              </Button>
+            </NavCategory>
+          )}
+        </AppNav>
+      </SidebarScrollContainer>
     </AppSidebarView>
   )
 })
