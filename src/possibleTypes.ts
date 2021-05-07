@@ -1,11 +1,16 @@
-export interface PossibleTypesResultData {
-  possibleTypes: {
-    [key: string]: string[]
+
+      export interface PossibleTypesResultData {
+        possibleTypes: {
+          [key: string]: string[]
+        }
+      }
+      const result: PossibleTypesResultData = {
+  "possibleTypes": {
+    "Inspection": [
+      "PreInspection",
+      "PostInspection"
+    ]
   }
-}
-const result: PossibleTypesResultData = {
-  possibleTypes: {
-    Inspection: ['PreInspection', 'PostInspection'],
-  },
-}
-export default result
+};
+      export default result;
+    
