@@ -15,7 +15,7 @@ export const TabsWrapper = styled.div`
   height: 100%;
 `
 
-const TabButtonsWrapper = styled.div<{ path?: any }>`
+const TabButtonsWrapper = styled.div<{ path?: unknown }>`
   background-color: transparent;
   border-bottom: 1px solid var(--blue);
   display: flex;

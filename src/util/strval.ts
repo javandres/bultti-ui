@@ -2,7 +2,7 @@ import { toString } from 'lodash'
 import { isValid } from 'date-fns'
 import { getDateString } from './formatDate'
 
-export const strval = (val: any): string => {
+export const strval = (val: unknown): string => {
   if ((val !== 0 && !val) || (typeof val === 'number' && isNaN(val))) {
     return ''
   }

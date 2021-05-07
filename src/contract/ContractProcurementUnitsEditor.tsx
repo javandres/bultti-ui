@@ -1,11 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import {
-  Contract,
-  ContractInput,
-  ProcurementUnitOption as ProcurementUnitOptionType,
-} from '../schema-types'
+import { Contract, ContractInput, ProcurementUnitOption } from '../schema-types'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitOptionsQuery } from './contractQueries'
 import {
@@ -21,8 +17,9 @@ import { useContractPage } from './contractUtils'
 import { TextButton } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { text, Text } from '../util/translate'
-import { areIntervalsOverlapping, parseISO } from 'date-fns'
+import { areIntervalsOverlapping } from 'date-fns'
 import { DEFAULT_DECIMALS } from '../constants'
+import { getDateObject } from '../util/formatDate'
 
 const ContractProcurementUnitsEditorView = styled.div``
 
@@ -35,7 +32,7 @@ const EmptyView = styled(MessageContainer)`
   border-top: 1px solid var(--lighter-grey);
 `
 
-const ProcurementUnitOption = styled.div`
+const ProcurementUnitOptionContainer = styled.div`
   border-bottom: 1px solid var(--lighter-grey);
   border-radius: 0;
   background: white;
@@ -71,23 +68,19 @@ const ContractProcurementUnitsEditor = observer(
   ({ contract, onChange, readOnly }: PropTypes) => {
     let includedUnitIds = useMemo(() => contract?.procurementUnitIds || [], [contract])
 
-    let { data: procurementUnitOptions, loading: unitsLoading } = useQueryData(
-      procurementUnitOptionsQuery,
-      {
-        skip: !contract || !contract?.operatorId || !contract?.startDate,
-        variables: {
-          operatorId: contract?.operatorId,
-          startDate: contract?.startDate,
-          endDate: contract?.endDate,
-          contractId: contract?.id,
-        },
-      }
-    )
+    let { data: procurementUnitOptions, loading: unitsLoading } = useQueryData<
+      ProcurementUnitOption[]
+    >(procurementUnitOptionsQuery, {
+      skip: !contract || !contract?.operatorId || !contract?.startDate,
+      variables: {
+        operatorId: contract?.operatorId,
+        startDate: contract?.startDate,
+        endDate: contract?.endDate,
+        contractId: contract?.id,
+      },
+    })
 
-    let unitOptions = useMemo<ProcurementUnitOptionType[]>(
-      () => procurementUnitOptions || [],
-      [procurementUnitOptions]
-    )
+    let unitOptions = useMemo(() => procurementUnitOptions || [], [procurementUnitOptions])
 
     let onToggleUnitInclusion = useCallback(
       (unitId) => {
@@ -171,19 +164,19 @@ const ContractProcurementUnitsEditor = observer(
               overlappingWithExistingContract = currentContracts.find((c) =>
                 areIntervalsOverlapping(
                   {
-                    start: parseISO(c.startDate),
-                    end: parseISO(c.endDate),
+                    start: getDateObject(c.startDate),
+                    end: getDateObject(c.endDate),
                   },
                   {
-                    start: parseISO(contract.startDate),
-                    end: parseISO(contract.endDate),
+                    start: getDateObject(contract.startDate || ''),
+                    end: getDateObject(contract.endDate || ''),
                   }
                 )
               )
             }
 
             return (
-              <ProcurementUnitOption key={unitOption.id}>
+              <ProcurementUnitOptionContainer key={unitOption.id}>
                 <HeaderBoldHeading style={{ flex: '1 0 10rem' }}>
                   {unitOption.name}
                 </HeaderBoldHeading>
@@ -244,7 +237,7 @@ const ContractProcurementUnitsEditor = observer(
                     </CurrentContractDisplay>
                   )}
                 </HeaderSection>
-              </ProcurementUnitOption>
+              </ProcurementUnitOptionContainer>
             )
           })}
         </UnitContentWrapper>

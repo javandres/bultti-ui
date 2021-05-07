@@ -15,7 +15,7 @@ import InspectionCard from '../inspection/InspectionCard'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
-import { DepartureBlockFile } from '../schema-types'
+import { DepartureBlockFile, Inspection } from '../schema-types'
 
 const AdminPageView = styled.div``
 const LENGTH_OF_VALID_INSPECTION_UUID = 36
@@ -83,7 +83,7 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
 
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
-  let { data: inspection } = useQueryData(inspectionQuery, {
+  let { data: inspection } = useQueryData<Inspection>(inspectionQuery, {
     // Do not fetch inspection preview before the full UUID is written in the input.
     skip: removeInspectionId.length < LENGTH_OF_VALID_INSPECTION_UUID,
     nextFetchPolicy: !removeInspectionId ? 'network-only' : 'cache-first',

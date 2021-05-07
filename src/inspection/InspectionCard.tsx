@@ -120,13 +120,15 @@ const InspectionCard: React.FC<PropTypes> = observer(
           <InspectionStatusDisplay status={inspection.status}>
             {getInspectionStatusName(inspection.status)}
           </InspectionStatusDisplay>
-          <InspectionPeriodDisplay>
-            <DateTitle>
-              <Text>inspection_inspectionSeason</Text>
-            </DateTitle>
-            <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
-            <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
-          </InspectionPeriodDisplay>
+          {inspection.startDate && inspection.endDate && (
+            <InspectionPeriodDisplay>
+              <DateTitle>
+                <Text>inspection_inspectionValidPeriod</Text>
+              </DateTitle>
+              <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
+              <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
+            </InspectionPeriodDisplay>
+          )}
           <InspectionPeriodDisplay>
             <DateTitle>
               <Text>inspection_inspectionPeriod</Text>

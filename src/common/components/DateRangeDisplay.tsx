@@ -33,11 +33,15 @@ const EndDate = styled(StartDate)`
 export type PropTypes = {
   className?: string
   style?: CSSProperties
-  startDate: Date | string
-  endDate: Date | string
+  startDate?: Date | string
+  endDate?: Date | string
 }
 
 const DateRangeDisplay = observer(({ startDate, endDate, className, style }: PropTypes) => {
+  if (!startDate || !endDate) {
+    return null
+  }
+
   let startDateObj = typeof startDate === 'string' ? parseISO(startDate) : startDate
   let endDateObj = typeof endDate === 'string' ? parseISO(endDate) : endDate
 

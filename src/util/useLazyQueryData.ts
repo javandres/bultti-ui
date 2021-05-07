@@ -25,7 +25,10 @@ const defaultOptions = {
   notifyOnNetworkStatusChange: true,
 }
 
-export const useLazyQueryData = <TData extends {} = {}, TVariables = OperationVariables>(
+export const useLazyQueryData = <
+  TData extends Record<string, unknown> = Record<string, unknown>,
+  TVariables = OperationVariables
+>(
   query: DocumentNode,
   options: LazyQueryHookOptions<TData, TVariables> = {},
   pickData = ''

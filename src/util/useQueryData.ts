@@ -8,7 +8,7 @@ const defaultOptions = {
   notifyOnNetworkStatusChange: true,
 }
 
-export const useQueryData = <TData = any, TVariables = OperationVariables>(
+export const useQueryData = <TData = unknown, TVariables = OperationVariables>(
   query: DocumentNode,
   options: QueryHookOptions<TData, TVariables> & { pickData?: string } = {},
   subscriber?: { document: DocumentNode; variables?: TVariables }

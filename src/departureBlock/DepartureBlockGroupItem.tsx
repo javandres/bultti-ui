@@ -84,7 +84,7 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
     const [fileValue, setFileValue] = useState<File[]>([])
 
     // Create an upload handler for uploading the departure block file.
-    const uploader = useUploader(uploadDepartureBlocksMutation, {
+    const uploader = useUploader<boolean>(uploadDepartureBlocksMutation, {
       variables: {
         inspectionId: inspectionId,
         dayTypes: getEnabledDayTypes(dayTypeGroup),

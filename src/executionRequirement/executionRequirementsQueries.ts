@@ -254,7 +254,7 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
 `
 
 export const removeExecutionRequirementsFromPostInspectionMutation = gql`
-  mutation($postInspectionId: String!) {
+  mutation removeObservedExecutionRequirements($postInspectionId: String!) {
     removeObservedExecutionRequirementsFromPreInspection(postInspectionId: $postInspectionId)
   }
 `

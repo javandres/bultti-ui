@@ -75,7 +75,9 @@ const DropdownItem = styled.li<{ highlighted: boolean }>`
   user-select: none;
 `
 
-export type DropdownProps<ValueType = {}> = {
+export type DefaultDropdownValueType = { label: string; value: string }
+
+export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   disabled?: boolean
   label?: string
   items: ValueType[] // ValueType object (remember to pass itemToString, itemToLabel), array, { field, value } object.
@@ -106,7 +108,7 @@ function toString(item, converter?: string | ((item) => string | JSX.Element)) {
 }
 
 const Dropdown = observer(
-  <ValueType extends {} | string = {}>({
+  <ValueType extends Record<string, unknown> | string = DefaultDropdownValueType>({
     disabled = false,
     className,
     style = {},

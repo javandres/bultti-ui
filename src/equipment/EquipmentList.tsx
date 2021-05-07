@@ -12,9 +12,10 @@ import EquipmentFormInput from './EquipmentFormInput'
 import { text, Text } from '../util/translate'
 import { undefinedOrNumber } from '../util/emptyOrNumber'
 import PagedTable from '../common/table/PagedTable'
-import { CellValType, EditValue } from '../common/table/tableUtils'
+import { EditValue } from '../common/table/tableUtils'
 import { averageByProp } from '../util/averageByProp'
 import { DEFAULT_DECIMALS } from '../constants'
+import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
   equipmentId: string
@@ -30,7 +31,7 @@ export type PropTypes = {
   startDate: Date
   columnLabels: { [key: string]: string }
   groupedColumnLabels: { [key: string]: string }
-  editableValues?: string[]
+  editableValues?: (keyof EquipmentWithQuota)[]
 }
 
 const EquipmentList: React.FC<PropTypes> = observer(
@@ -49,7 +50,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
 
     const onEditValue = useCallback(
-      (key: keyof EquipmentWithQuota, value: CellValType, item: EquipmentWithQuota) => {
+      (
+        key: keyof EquipmentWithQuota,
+        value: ValueOf<EquipmentWithQuota>,
+        item: EquipmentWithQuota
+      ) => {
         if (isEquipmentShownInGroup || !editableValues.includes(key)) {
           return
         }
@@ -194,7 +199,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}
-                value={val}
+                value={val as string}
                 valueName={key}
                 onChange={onChange}
                 onAccept={onAccept}
