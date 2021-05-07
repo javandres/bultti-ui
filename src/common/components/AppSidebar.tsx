@@ -19,7 +19,7 @@ import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
 import { navigateWithQueryString } from '../../util/urlValue'
-import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
+import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { gql, useMutation } from '@apollo/client'
@@ -131,8 +131,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user, setUser] = useStateValue('user')
   let hasAdminAccess = useHasAdminAccessRights()
 
-  let unsavedFormIdsState = useStateValue('unsavedFormIds')
-
   let userContent = (
     <>
       <UserIcon width="1rem" height="1rem" fill="white" />
@@ -163,9 +161,11 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
 
   const [clearCache] = useMutation(clearCacheMutation)
 
+  let promptUnsavedChangesOnClick = usePromptUnsavedChanges()
+
   return (
     <AppSidebarView>
-      <AppTitle onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)} to="/">
+      <AppTitle onClick={promptUnsavedChangesOnClick} to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
           <Text>appName</Text>
@@ -174,9 +174,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       <SidebarScrollContainer>
         <UserBar>
           {DEBUG ? (
-            <UserLink
-              onClick={promptUnsavedChangesOnClickEvent(unsavedFormIdsState)}
-              to="user">
+            <UserLink onClick={promptUnsavedChangesOnClick} to="user">
               {userContent}
             </UserLink>
           ) : (

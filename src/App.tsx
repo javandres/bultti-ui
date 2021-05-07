@@ -64,21 +64,6 @@ const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
   const hasAdminAccessRights = useHasAdminAccessRights()
 
-  // Listen for the browser close event. Conditionally prompt user when needed.
-  let [unsavedFormIds = []] = useStateValue('unsavedFormIds')
-
-  useEffect(() => {
-    let listener = (event: BeforeUnloadEvent) => {
-      if (unsavedFormIds.length > 0) {
-        event.preventDefault()
-        // Chrome requires event.returnValue to be cleared.
-        event.returnValue = ''
-      }
-    }
-    window.addEventListener('beforeunload', listener)
-    return () => window.removeEventListener('beforeunload', listener)
-  })
-
   if (authState !== AuthState.AUTHENTICATED) {
     return (
       <AuthGate loading={loading} unauthenticated={authState === AuthState.UNAUTHENTICATED} />

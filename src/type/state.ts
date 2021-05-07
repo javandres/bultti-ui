@@ -12,7 +12,6 @@ export interface IAppState {
   globalOperator: Operator
   globalSeason: Season
   language: Language
-  unsavedFormIds: string[]
   notifications: UINotification[]
 }
 
@@ -37,7 +36,6 @@ export interface UIActions {
   appLoaded: () => void
   language: (setTo: Language) => void
   notifications: MessageActions
-  unsavedFormIds: (unsavedFormIds: string[]) => void
 }
 
 export type ActionMap = UserActions & UIActions

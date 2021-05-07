@@ -11,6 +11,7 @@ import { ApolloProvider } from '@apollo/client'
 import { LocationProvider } from '@reach/router'
 import { history } from './util/urlValue'
 import { removeAuthToken } from './util/authToken'
+import { UnsavedChangesProvider } from './util/promptUnsavedChanges'
 
 const initializers = [UserStore, UIStore]
 
@@ -32,7 +33,9 @@ const main = async () => {
     <LocationProvider history={history}>
       <ApolloProvider client={client}>
         <StateContext.Provider value={state}>
-          <App />
+          <UnsavedChangesProvider>
+            <App />
+          </UnsavedChangesProvider>
         </StateContext.Provider>
       </ApolloProvider>
     </LocationProvider>,

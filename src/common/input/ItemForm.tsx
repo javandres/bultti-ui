@@ -1,11 +1,11 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { useCallback } from 'react'
 import styled, { CSSProperties } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { get, uniqueId } from 'lodash'
+import { get } from 'lodash'
 import { TextInput } from './Input'
 import { Button, ButtonStyle } from '../components/buttons/Button'
 import { useOrderedValues } from '../../util/useOrderedValues'
-import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
+import { useWatchDirtyForm } from '../../util/promptUnsavedChanges'
 import UserHint from '../components/UserHint'
 import { Text } from '../../util/translate'
 
@@ -174,8 +174,7 @@ const ItemForm = observer(
       [readOnly]
     )
 
-    const formId = useMemo(() => uniqueId(), [])
-    usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: isDirty })
+    useWatchDirtyForm(isDirty)
 
     return (
       <ControlledFormView style={style} frameless={frameless}>
