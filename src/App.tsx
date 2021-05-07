@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Redirect, RouteComponentProps, Router } from '@reach/router'
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import InspectionsPage from './page/InspectionsPage'
@@ -24,11 +24,10 @@ import { HeaderHeading } from './common/components/ExpandableSection'
 import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
-import { DEBUG } from './constants'
 import DevPage from './dev/DevPage'
 import { InspectionType } from './schema-types'
 
-const Logout: React.FC<RouteComponentProps> = () => {
+const Logout: React.FC = () => {
   const [user, setUser] = useStateValue('user')
   const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
 
@@ -57,7 +56,7 @@ const Logout: React.FC<RouteComponentProps> = () => {
     )
   }
 
-  return <Redirect to="/" noThrow={true} />
+  return <Redirect to="/" />
 }
 
 const App: React.FC = observer(() => {
@@ -72,49 +71,84 @@ const App: React.FC = observer(() => {
 
   return (
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
-      <Router style={{ height: '100%' }}>
-        <Index path="/" />
-        <DevPage path="dev-tools" />
-
-        <ProcurementUnitsPage path="procurement-units" />
-
-        <InspectionsPage path="pre-inspection" inspectionType={InspectionType.Pre} />
-        <SelectInspectionPage path="pre-inspection/edit" inspectionType={InspectionType.Pre} />
-        <EditInspectionPage
-          path="pre-inspection/edit/:inspectionId/*"
-          inspectionType={InspectionType.Pre}
-        />
-        <InspectionReportsPage
-          path="pre-inspection/reports/:inspectionId"
-          inspectionType={InspectionType.Pre}
-        />
-        <InspectionReportIndexPage
-          path="pre-inspection/reports"
-          inspectionType={InspectionType.Pre}
-        />
-
-        <InspectionsPage path="post-inspection" inspectionType={InspectionType.Post} />
-        <SelectInspectionPage
-          path="post-inspection/edit"
-          inspectionType={InspectionType.Post}
-        />
-        <EditInspectionPage
-          path="post-inspection/edit/:inspectionId/*"
-          inspectionType={InspectionType.Post}
-        />
-        <InspectionReportsPage
-          path="post-inspection/reports/:inspectionId"
-          inspectionType={InspectionType.Post}
-        />
-        <InspectionReportIndexPage
-          path="post-inspection/reports"
-          inspectionType={InspectionType.Post}
-        />
-        {hasAdminAccessRights && <InspectionDatePage path="inspection-date" />}
-        {DEBUG ? <UserPage path="user" /> : <Redirect from="user" to="/" noThrow />}
-        <ContractPage path="contract" />
-        <EditContractPage path="contract/:contractId" />
-        <Logout path="logout" />
+      <Router>
+        <Switch>
+          <Route
+            component={(routeProps) => (
+              <EditInspectionPage inspectionType={InspectionType.Pre} {...routeProps} />
+            )}
+            path="/pre-inspection/edit/:inspectionId/*"
+          />
+          <Route
+            component={(routeProps) => (
+              <InspectionReportsPage inspectionType={InspectionType.Pre} {...routeProps} />
+            )}
+            path="/pre-inspection/reports/:inspectionId"
+          />
+          <Route
+            component={(routeProps) => (
+              <SelectInspectionPage inspectionType={InspectionType.Pre} {...routeProps} />
+            )}
+            path="/pre-inspection/edit"
+          />
+          <Route
+            component={(routeProps) => (
+              <InspectionReportIndexPage inspectionType={InspectionType.Pre} {...routeProps} />
+            )}
+            path="/pre-inspection/reports"
+          />
+          <Route
+            component={(routeProps) => (
+              <InspectionsPage inspectionType={InspectionType.Pre} {...routeProps} />
+            )}
+            path="/pre-inspection"
+          />
+          <Route
+            component={(routeProps) => (
+              <EditInspectionPage inspectionType={InspectionType.Post} {...routeProps} />
+            )}
+            path="/post-inspection/edit/:inspectionId/*"
+          />
+          <Route
+            render={(routeProps) => (
+              <InspectionReportsPage inspectionType={InspectionType.Post} {...routeProps} />
+            )}
+            path="/post-inspection/reports/:inspectionId"
+          />
+          <Route
+            component={(routeProps) => (
+              <SelectInspectionPage inspectionType={InspectionType.Post} {...routeProps} />
+            )}
+            path="/post-inspection/edit"
+          />
+          <Route
+            render={(routeProps) => (
+              <InspectionReportIndexPage
+                inspectionType={InspectionType.Post}
+                {...routeProps}
+              />
+            )}
+            path="/post-inspection/reports"
+          />
+          <Route
+            component={(routeProps) => (
+              <InspectionsPage inspectionType={InspectionType.Post} {...routeProps} />
+            )}
+            path="/post-inspection"
+          />
+          {hasAdminAccessRights && (
+            <Route component={InspectionDatePage} path="/inspection-date" />
+          )}
+          <Route path="/user">
+            {({ match }) => (match ? <UserPage /> : <Redirect from="user" to="/" />)}
+          </Route>
+          <Route component={EditContractPage} path="/contract/:contractId" />
+          <Route component={ContractPage} path="/contract" />
+          <Route component={DevPage} path="/dev-tools" />
+          <Route component={ProcurementUnitsPage} path="/procurement-units" />
+          <Route component={Logout} path="/logout" />
+          <Route exact component={Index} path="/" />
+        </Switch>
       </Router>
     </AppFrame>
   )

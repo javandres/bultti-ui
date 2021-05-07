@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
-import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import Tabs from '../common/components/Tabs'
@@ -28,6 +27,7 @@ import SanctionsContainer from '../postInspection/SanctionsContainer'
 import { useShowErrorNotification } from '../util/useShowNotification'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
+import { RouteChildrenProps, useParams } from 'react-router-dom'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -79,127 +79,126 @@ const InspectionNameTitle = styled.span`
 `
 
 export type PropTypes = {
-  inspectionId?: string
   inspectionType: InspectionType
-} & RouteComponentProps
+} & RouteChildrenProps
 
-const EditInspectionPage: React.FC<PropTypes> = observer(
-  ({ inspectionId = '', inspectionType }) => {
-    var [season] = useStateValue('globalSeason')
-    var [operator] = useStateValue('globalOperator')
-    var showErrorNotification = useShowErrorNotification()
-    var navigateToInspection = useNavigateToInspection(inspectionType)
+const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
+  let { inspectionId = '' } = useParams<{ inspectionId?: string }>()
 
-    let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
-      inspectionId
-    )
+  var [season] = useStateValue('globalSeason')
+  var [operator] = useStateValue('globalOperator')
+  var showErrorNotification = useShowErrorNotification()
+  var navigateToInspection = useNavigateToInspection(inspectionType)
 
-    const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
-      shouldResubscribe: true,
-      variables: { inspectionId },
-    })
+  let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
+    inspectionId
+  )
 
-    useEffect(() => {
-      let errorUpdate = pickGraphqlData(errorUpdateData)
+  const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
+    shouldResubscribe: true,
+    variables: { inspectionId },
+  })
 
-      if (errorUpdate) {
-        showErrorNotification(errorUpdate.message)
-      }
-    }, [errorUpdateData])
+  useEffect(() => {
+    let errorUpdate = pickGraphqlData(errorUpdateData)
 
-    let typeStrings = getInspectionTypeStrings(inspectionType)
-    let inspectionGenericName = inspection
-      ? `${inspection.operator.operatorName}/${inspection.seasonId}`
-      : ''
+    if (errorUpdate) {
+      showErrorNotification(errorUpdate.message)
+    }
+  }, [errorUpdateData])
 
-    let inspectionName = inspection
-      ? inspection.name
-        ? `${inspection.name} (${inspectionGenericName})`
-        : inspectionGenericName
-      : ''
+  let typeStrings = getInspectionTypeStrings(inspectionType)
+  let inspectionGenericName = inspection
+    ? `${inspection.operator.operatorName}/${inspection.seasonId}`
+    : ''
 
-    return (
-      <EditInspectionView>
-        <InspectionContext.Provider value={inspection || null}>
-          <PageTitle loading={inspectionLoading} onRefresh={refetch}>
-            <InspectionTypeContainer>
-              {inspection?.status !== InspectionStatus.InProduction
-                ? typeStrings.prefixLC
-                : typeStrings.prefix}
-              tarkastus
-            </InspectionTypeContainer>
-            <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
-            {inspection && (
-              <InspectionStatusContainer
-                style={{
-                  backgroundColor: getInspectionStatusColor(inspection.status),
-                  borderColor: getInspectionStatusColor(inspection.status),
-                  color:
-                    inspection.status === InspectionStatus.InReview
-                      ? 'var(--dark-grey)'
-                      : 'white',
-                }}>
-                <strong>{getInspectionStatusName(inspection.status)}</strong>
-              </InspectionStatusContainer>
-            )}
-          </PageTitle>
-          <EditInspectionPageContainer>
-            {!operatorIsValid(operator) || !seasonIsValid(season) ? (
-              <MessageContainer style={{ margin: '1rem' }}>
-                <MessageView>
-                  <Text>inspectionPage_selectOperatorAndSeason</Text>
-                </MessageView>
-              </MessageContainer>
-            ) : !inspection && !inspectionLoading ? (
-              <MessageContainer style={{ margin: '1rem' }}>
-                <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
-                <Button onClick={() => navigateToInspection()}>
-                  <Text>back</Text>
-                </Button>
-              </MessageContainer>
-            ) : (
-              inspection && (
-                <>
-                  <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
-                  <EditInspectionWrapper>
-                    {inspection?.status === InspectionStatus.InProduction ? (
-                      <InspectionEditor inspection={inspection} refetchData={refetch} />
-                    ) : (
-                      <Tabs>
-                        <InspectionEditor
-                          default={true}
-                          name="create"
-                          path="/"
-                          label={text('inspectionPage_inspectionInformation')}
-                          loading={inspectionLoading}
-                          refetchData={refetch}
-                          inspection={inspection}
+  let inspectionName = inspection
+    ? inspection.name
+      ? `${inspection.name} (${inspectionGenericName})`
+      : inspectionGenericName
+    : ''
+
+  return (
+    <EditInspectionView>
+      <InspectionContext.Provider value={inspection || null}>
+        <PageTitle loading={inspectionLoading} onRefresh={refetch}>
+          <InspectionTypeContainer>
+            {inspection?.status !== InspectionStatus.InProduction
+              ? typeStrings.prefixLC
+              : typeStrings.prefix}
+            tarkastus
+          </InspectionTypeContainer>
+          <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+          {inspection && (
+            <InspectionStatusContainer
+              style={{
+                backgroundColor: getInspectionStatusColor(inspection.status),
+                borderColor: getInspectionStatusColor(inspection.status),
+                color:
+                  inspection.status === InspectionStatus.InReview
+                    ? 'var(--dark-grey)'
+                    : 'white',
+              }}>
+              <strong>{getInspectionStatusName(inspection.status)}</strong>
+            </InspectionStatusContainer>
+          )}
+        </PageTitle>
+        <EditInspectionPageContainer>
+          {!operatorIsValid(operator) || !seasonIsValid(season) ? (
+            <MessageContainer style={{ margin: '1rem' }}>
+              <MessageView>
+                <Text>inspectionPage_selectOperatorAndSeason</Text>
+              </MessageView>
+            </MessageContainer>
+          ) : !inspection && !inspectionLoading ? (
+            <MessageContainer style={{ margin: '1rem' }}>
+              <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
+              <Button onClick={() => navigateToInspection()}>
+                <Text>back</Text>
+              </Button>
+            </MessageContainer>
+          ) : (
+            inspection && (
+              <>
+                <InspectionActionsRow inspection={inspection} onRefresh={refetch} />
+                <EditInspectionWrapper>
+                  {inspection?.status === InspectionStatus.InProduction ? (
+                    <InspectionEditor inspection={inspection} refetchData={refetch} />
+                  ) : (
+                    <Tabs>
+                      <InspectionEditor
+                        default={true}
+                        name="create"
+                        path="/"
+                        label={text('inspectionPage_inspectionInformation')}
+                        loading={inspectionLoading}
+                        refetchData={refetch}
+                        inspection={inspection}
+                      />
+                      {inspection.status === InspectionStatus.Sanctionable && (
+                        <SanctionsContainer
+                          inspection={inspection as PostInspection}
+                          name="sanction"
+                          path="sanctions"
+                          label={text('inspectionPage_sanctions')}
                         />
-                        {inspection.status === InspectionStatus.Sanctionable && (
-                          <SanctionsContainer
-                            inspection={inspection as PostInspection}
-                            name="sanction"
-                            path="sanctions"
-                            label={text('inspectionPage_sanctions')}
-                          />
-                        )}
-                        <InspectionPreview
-                          inspection={inspection}
-                          path="results"
-                          name="results"
-                          label={text('inspectionPage_results')}
-                        />
-                      </Tabs>
-                    )}
-                  </EditInspectionWrapper>
-                </>
-              )
-            )}
-          </EditInspectionPageContainer>
-        </InspectionContext.Provider>
-      </EditInspectionView>
-    )
-  }
-)
+                      )}
+                      <InspectionPreview
+                        inspection={inspection}
+                        path="results"
+                        name="results"
+                        label={text('inspectionPage_results')}
+                      />
+                    </Tabs>
+                  )}
+                </EditInspectionWrapper>
+              </>
+            )
+          )}
+        </EditInspectionPageContainer>
+      </InspectionContext.Provider>
+    </EditInspectionView>
+  )
+})
 
 export default EditInspectionPage

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Redirect, RouteComponentProps } from '@reach/router'
+import { Redirect } from '@reach/router'
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
@@ -15,6 +15,7 @@ import { Text } from '../util/translate'
 import { MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
 import { navigateWithQueryString } from '../util/urlValue'
+import { RouteChildrenProps, useParams } from 'react-router-dom'
 
 const EditContractPageView = styled(Page)``
 
@@ -23,11 +24,11 @@ const PageTitleOperator = styled.span`
   font-weight: normal;
 `
 
-export type PropTypes = {
-  contractId?: string
-} & RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
-const EditContractPage = observer(({ contractId }: PropTypes) => {
+const EditContractPage: React.FC<PropTypes> = observer(() => {
+  let { contractId = '' } = useParams<{ contractId?: string }>()
+
   let [globalOperator] = useStateValue('globalOperator')
   let hasOperatorAccess = useHasOperatorUserAccessRights(globalOperator?.id)
   let hasAdminAccessRights = useHasAdminAccessRights()

@@ -1,9 +1,9 @@
-import React, { Children, ReactNode, useMemo } from 'react'
+import React, { Children, ReactElement, ReactNode, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Link, Match, RouteComponentProps, Router, useLocation } from '@reach/router'
+import { Link, Match, Route, useLocation, useRouteMatch } from 'react-router-dom'
 import { pathWithQuery } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
@@ -58,7 +58,7 @@ const TabButton = styled(Link)<{ selected?: boolean }>`
   }
 `
 
-const TabContentWrapper = styled.div<RouteComponentProps>`
+const TabContentWrapper = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -112,14 +112,18 @@ type PropTypes = {
   rootPath?: string
 }
 
+type TabChildComponent = React.ReactElement<{ name: string; path: string; label: string }>
+
 let getPathName = (path) => (path === '/' ? './' : path)
 
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
+    let { path } = useRouteMatch()
+
     // The children usually contain an empty string as the first element.
     // Remove all such falsy values from the array.
-    const validChildren: ReactNode[] = useMemo(
-      () => compact<ReactNode>(Children.toArray(children)),
+    const validChildren: ReactElement[] = useMemo(
+      () => compact<ReactElement>(Children.toArray(children)),
       [children]
     )
 
@@ -157,9 +161,11 @@ const Tabs: React.FC<PropTypes> = decorate(
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>
-          <Router style={{ width: '100%', flex: 1 }} primary={false}>
-            {children}
-          </Router>
+          {validChildren.map((tabChild) => (
+            <Route key={tabChild.props.name} path={`${path}/${tabChild.props.path}`}>
+              {tabChild}
+            </Route>
+          ))}
         </TabContentWrapper>
       </TabsWrapper>
     )
