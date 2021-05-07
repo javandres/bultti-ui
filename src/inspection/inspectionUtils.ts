@@ -91,8 +91,7 @@ export function useCreateInspection(
 }
 
 export function useRemoveInspection(
-  inspection: Inspection,
-  afterRemove: () => unknown = () => {}
+  inspection: Inspection
 ): [(inspection?: Inspection) => Promise<unknown>, { loading: boolean }] {
   let { operatorId, inspectionType } = inspection
 
@@ -117,10 +116,8 @@ export function useRemoveInspection(
       },
     })
 
-    await afterRemove()
-
     return pickGraphqlData(removeResult.data) || false
-  }, [removeInspection, inspection, afterRemove])
+  }, [removeInspection, inspection])
 
   return [execRemove, { loading }]
 }

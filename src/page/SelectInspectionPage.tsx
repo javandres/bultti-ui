@@ -25,6 +25,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
     {
       skip: !operatorIsValid(operator) || !seasonIsValid(season),
       notifyOnNetworkStatusChange: true,
+      fetchPolicy: 'no-cache',
       variables: {
         operatorId: operator?.id || 0,
         seasonId: (typeof season === 'string' ? season : season?.id) || '',

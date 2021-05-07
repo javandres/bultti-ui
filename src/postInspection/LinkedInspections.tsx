@@ -44,7 +44,6 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
     },
     [navigateToInspectionReports]
   )
-
   let [updateConnectedInspections, { loading: updateLoading }] = useMutationData(
     updateLinkedInspectionsMutation,
     {
