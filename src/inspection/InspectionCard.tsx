@@ -122,7 +122,7 @@ const InspectionCard: React.FC<PropTypes> = observer(
           </InspectionStatusDisplay>
           <InspectionPeriodDisplay>
             <DateTitle>
-              <Text>inspection_inspectionSeason</Text>
+              <Text>inspection_inspectionValidPeriod</Text>
             </DateTitle>
             <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
             <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
