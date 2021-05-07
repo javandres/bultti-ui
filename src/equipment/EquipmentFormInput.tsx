@@ -26,13 +26,11 @@ export const FormDropdown = styled(Dropdown)`
   }
 `
 
-type ValueType = string | number
-
 export type PropTypes = {
   fieldComponent?: React.ElementType
-  value: ValueType
+  value: string
   valueName: string
-  onChange: (value: ValueType, key: string) => unknown
+  onChange: (value: string, key: string) => unknown
   onAccept?: () => unknown
   onCancel?: () => unknown
 }

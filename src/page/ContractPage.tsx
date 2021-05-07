@@ -17,6 +17,7 @@ import { PageTitle } from '../common/components/PageTitle'
 import { useRefetch } from '../util/useRefetch'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { operatorIsValid } from '../common/input/SelectOperator'
+import { Contract } from '../schema-types'
 
 const ContractPageView = styled(Page)``
 
@@ -55,7 +56,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
     data: contractsData,
     loading: contractsLoading,
     refetch: refetchContracts,
-  } = useQueryData(contractsQuery, {
+  } = useQueryData<Contract[]>(contractsQuery, {
     variables: {
       operatorId: operator?.id,
     },
@@ -114,10 +115,9 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
               {contractItem?.description && (
                 <ContractDescription>{contractItem?.description}</ContractDescription>
               )}
-
               <ContractDates
-                startDate={contractItem.startDate}
-                endDate={contractItem.endDate}
+                startDate={contractItem.startDate as string}
+                endDate={contractItem.endDate as string}
               />
             </LinkButton>
           ))}

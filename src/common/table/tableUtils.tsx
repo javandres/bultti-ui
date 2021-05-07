@@ -1,5 +1,5 @@
 import { FilterConfig, SortConfig } from '../../schema-types'
-import React, { useCallback } from 'react'
+import React, { ReactNode, useCallback } from 'react'
 import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
 import { DEFAULT_DECIMALS, READABLE_TIME_FORMAT } from '../../constants'
@@ -7,13 +7,16 @@ import { toString } from 'lodash'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
 import { CellContent } from './TableCell'
 import { getThousandSeparatedNumber } from '../../util/formatNumber'
+import { ValueOf } from '../../type/common'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
   totalCount?: number
 }
 
-export interface IFilteredSortedResponse<DataType> {
+export type TableItemType = Record<string, unknown>
+
+export interface IFilteredSortedResponse<DataType extends TableItemType> {
   rows: DataType[]
   filteredCount: number
   totalCount: number
@@ -62,88 +65,100 @@ export function useRenderCellValue() {
   }, [])
 }
 
-export type CellValType = string | number
-
-export type EditValue<ItemType = any, ValueType = CellValType> = {
+export type EditValue<ItemType extends TableItemType> = {
   key: keyof ItemType
-  value: ValueType
+  value: ValueOf<ItemType>
   item: ItemType
   itemId: string
 }
 
-export type TableEditProps<ItemType, EditValueType = CellValType> = {
-  onEditValue?: (key: keyof Partial<ItemType>, value: EditValueType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType, EditValueType>[]
+export type TableEditProps<ItemType extends TableItemType> = {
+  onEditValue?: (key: keyof ItemType, value: ValueOf<ItemType>, item: ItemType) => unknown
+  pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
-  editableValues?: string[]
+  editableValues?: (keyof ItemType)[]
   isAlwaysEditable?: boolean
 }
 
-export type RenderInputType<ItemType> = (
+export type RenderInputType<ItemType extends TableItemType> = (
   key: keyof ItemType,
-  val: any,
-  onChange: (val: any) => void,
+  val: ValueOf<ItemType>,
+  onChange: (val: string) => unknown,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
   tabIndex?: number
 ) => React.ReactChild
 
-export const defaultKeyFromItem = (item) => item.id
+export function defaultKeyFromItem(item) {
+  return item.id
+}
 
-export const defaultRenderCellContent = (key: unknown, val: any): React.ReactChild => (
-  <>
-    {!(val === false || val === null || typeof val === 'undefined') && (
-      <CellContent>{val}</CellContent>
-    )}
-  </>
-)
-
-export const defaultRenderValue = (key: unknown, val: any) => toString(val)
-
-export const defaultRenderInput = <ItemType extends {}>(
+export function defaultRenderCellContent<ItemType extends TableItemType>(
   key: keyof ItemType,
-  val: any,
-  onChange,
-  onAccept,
-  onCancel,
-  tabIndex
-) => (
-  <TableInput
-    autoFocus
-    tabIndex={tabIndex}
-    value={val}
-    onChange={(value) => onChange(value)}
-    name={key as string}
-    onEnterPress={onAccept}
-    onEscPress={onCancel}
-    inputComponent={TableTextInput}
-  />
-)
+  val: ValueOf<ItemType> | ReactNode
+): ReactNode {
+  return (
+    <>
+      {!(val === false || val === null || typeof val === 'undefined') && (
+        <CellContent>{val + ''}</CellContent>
+      )}
+    </>
+  )
+}
 
-export type TableRowWithDataAndFunctions<ItemType = any, EditValueType = CellValType> = {
+export function defaultRenderValue<ItemType extends TableItemType>(
+  key: keyof ItemType,
+  val: ValueOf<ItemType> | string
+) {
+  return toString(val)
+}
+
+export function defaultRenderInput<ItemType extends TableItemType>(
+  key: keyof ItemType,
+  val: ValueOf<ItemType>,
+  onChange: (val: string) => unknown,
+  onAccept?: () => unknown,
+  onCancel?: () => unknown,
+  tabIndex?: number
+): React.ReactChild {
+  return (
+    <TableInput
+      autoFocus
+      tabIndex={tabIndex}
+      value={val + ''}
+      onChange={(value) => onChange(value)}
+      name={key as string}
+      onEnterPress={onAccept}
+      onEscPress={onCancel}
+      inputComponent={TableTextInput}
+    />
+  )
+}
+
+export type TableRowWithDataAndFunctions<ItemType extends TableItemType> = {
   key: string
   isEditingRow: boolean
   onRemoveRow?: (item: ItemType) => void
-  onMakeEditable: (key: keyof ItemType, value: EditValueType) => unknown
-  onValueChange: (key: string) => (value: EditValueType) => unknown
-  itemEntries: [string, EditValueType][]
+  onMakeEditable: <K extends keyof ItemType>(key: K, value: ItemType[K]) => unknown
+  onValueChange: (key: keyof ItemType) => (value: string) => unknown
+  itemEntries: [string, ValueOf<ItemType>][]
   item: ItemType
 }
 
-export type ContextTypes<ItemType, EditValueType = CellValType> = {
-  pendingValues?: EditValue<ItemType, EditValueType>[]
+export type ContextTypes<ItemType extends TableItemType> = {
+  pendingValues?: EditValue<ItemType>[]
   columnWidths?: Array<number | string>
-  editableValues?: TablePropTypes<ItemType, EditValueType>['editableValues']
-  onEditValue?: TablePropTypes<ItemType, EditValueType>['onEditValue']
-  renderInput?: TablePropTypes<ItemType, EditValueType>['renderInput']
-  onSaveEdit?: TablePropTypes<ItemType, EditValueType>['onSaveEdit']
-  onCancelEdit?: TablePropTypes<ItemType, EditValueType>['onCancelEdit']
-  renderCell?: TablePropTypes<ItemType, EditValueType>['renderCell']
-  renderValue?: TablePropTypes<ItemType, EditValueType>['renderValue']
-  keyFromItem?: TablePropTypes<ItemType, EditValueType>['keyFromItem']
-  highlightRow?: TablePropTypes<ItemType, EditValueType>['highlightRow']
-  isAlwaysEditable?: TablePropTypes<ItemType, EditValueType>['isAlwaysEditable']
+  editableValues?: TablePropTypes<ItemType>['editableValues']
+  onEditValue?: TablePropTypes<ItemType>['onEditValue']
+  renderInput?: TablePropTypes<ItemType>['renderInput']
+  onSaveEdit?: TablePropTypes<ItemType>['onSaveEdit']
+  onCancelEdit?: TablePropTypes<ItemType>['onCancelEdit']
+  renderCell?: TablePropTypes<ItemType>['renderCell']
+  renderValue?: TablePropTypes<ItemType>['renderValue']
+  keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
+  highlightRow?: TablePropTypes<ItemType>['highlightRow']
+  isAlwaysEditable?: TablePropTypes<ItemType>['isAlwaysEditable']
 }
 
 export const TableContext = React.createContext({})

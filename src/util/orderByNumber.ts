@@ -1,4 +1,6 @@
-export function orderByNumber(val: string | number | [string, any] | [number, any]): number {
+export function orderByNumber(
+  val: string | number | [string, unknown] | [number, unknown]
+): number {
   let useVal: string | number
 
   if (Array.isArray(val)) {

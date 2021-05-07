@@ -23,6 +23,7 @@ import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { DEBUG, DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
+import { ValueOf } from '../type/common'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -60,14 +61,16 @@ let sanctionColumnLabels = {
   matchesException: 'Sanktiopoikkeus',
 }
 
-let renderSanctionInput: RenderInputType<Sanction> = (key: string, val: number, onChange) => {
+let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
+  console.log(val)
+
   return (
     <SanctionToggleLabel>
       <SanctionToggleInput
         type="checkbox"
         value={val + ''}
-        onChange={() => onChange(val)}
-        checked={val !== 0}
+        onChange={() => onChange(val as string)}
+        checked={val !== '0'}
         name="sanctionable"
       />
     </SanctionToggleLabel>
@@ -149,7 +152,7 @@ export type PropTypes = {
 const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
-  let [pendingValues, setPendingValues] = useState<EditValue<Sanction, number>[]>([])
+  let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
 
   let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
     sanctionsQuery,
@@ -168,11 +171,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   )
 
-  let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData(
+  let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
     {
-      update: (cache, { data: { updateSanctions } }) => {
-        for (let update of updateSanctions) {
+      update: (cache, { data: updateSanctions }) => {
+        // TODO: Test that this works. Apollo types may be wrong here.
+        console.log(updateSanctions)
+
+        for (let update of updateSanctions || []) {
           let cacheId = cache.identify(update)
           cache.writeFragment({
             id: cacheId,
@@ -201,22 +207,25 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     },
   })
 
-  let onChangeSanction = useCallback((key: keyof Sanction, value: number, item: Sanction) => {
-    setPendingValues((currentValues) => {
-      let existingEditValueIndex = currentValues.findIndex(
-        (val) => val.key === key && val.itemId === item.id
-      )
+  let onChangeSanction = useCallback(
+    (key: keyof Sanction, value: ValueOf<Sanction>, item: Sanction) => {
+      setPendingValues((currentValues) => {
+        let existingEditValueIndex = currentValues.findIndex(
+          (val) => val.key === key && val.itemId === item.id
+        )
 
-      let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+        let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
 
-      if (existingEditValueIndex !== -1) {
-        currentValues.splice(existingEditValueIndex, 1)
-      }
+        if (existingEditValueIndex !== -1) {
+          currentValues.splice(existingEditValueIndex, 1)
+        }
 
-      let editValue = { item, itemId: item.id, key, value: setValue }
-      return [...currentValues, editValue]
-    })
-  }, [])
+        let editValue = { item, itemId: item.id, key, value: setValue }
+        return [...currentValues, editValue]
+      })
+    },
+    []
+  )
 
   let onSaveSanctions = useCallback(async () => {
     if (pendingValues.length === 0) {
@@ -260,7 +269,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   })
 
   let renderValue = useCallback(
-    (key: string, val: any, isHeader?: boolean, item?: Sanction) => {
+    (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
       if (
         [
           'sanctionAmount',
@@ -269,14 +278,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           'sanctionResultKilometers',
         ].includes(key)
       ) {
-        return round(val, DEFAULT_DECIMALS)
+        return round(val as number, DEFAULT_DECIMALS)
       }
 
       if (key !== 'entityIdentifier' || isHeader || !item) {
         return val
       }
 
-      let idParts = (val as string).split('_')
+      let idParts = String(val).split('_')
 
       switch (item.sanctionableType) {
         case SanctionableEntity.Departure:
@@ -333,7 +342,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         </Button>
       </FunctionsRow>
       <PageSection>
-        <FilteredResponseTable<Sanction, number>
+        <FilteredResponseTable<Sanction>
           loading={isLoading}
           data={sanctionsData}
           tableState={tableState}

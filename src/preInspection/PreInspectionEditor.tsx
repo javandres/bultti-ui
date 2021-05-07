@@ -61,7 +61,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             operatorId={inspection.operatorId!}
             startDate={inspection.inspectionStartDate}
             endDate={inspection.inspectionEndDate}
-            contractSelectionDate={getDateObject(inspection.startDate)}
+            contractSelectionDate={getDateObject(inspection.startDate || '')}
           />
         )}
         {DEBUG && (

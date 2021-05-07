@@ -1,6 +1,5 @@
 import styled from 'styled-components/macro'
 import {
-  CellValType,
   ContextTypes,
   defaultHighlightRow,
   defaultKeyFromItem,
@@ -9,10 +8,12 @@ import {
   defaultRenderValue,
   EditValue,
   TableContext,
+  TableItemType,
   TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { observer } from 'mobx-react-lite'
 import React, { useCallback, useContext, useState } from 'react'
+import { ValueOf } from '../../type/common'
 
 export const TableCellElement = styled.div<{
   editable?: boolean
@@ -80,21 +81,21 @@ export const CellContent = styled.div<{ footerCell?: boolean }>`
   background: ${(p) => (p.footerCell ? 'rgba(255,255,255,0.75)' : 'transparent')};
 `
 
-type CellPropTypes<ItemType = any, EditValueType = CellValType> = {
-  row: TableRowWithDataAndFunctions<ItemType, EditValueType>
-  cell: [keyof ItemType, EditValueType]
+type CellPropTypes<ItemType extends TableItemType> = {
+  row: TableRowWithDataAndFunctions<ItemType>
+  cell: [keyof ItemType, ValueOf<ItemType>]
   colIndex: number
   tabIndex?: number
   rowId: string
 }
 
 export const TableCell = observer(
-  <ItemType extends {}, EditValueType = CellValType>({
+  <ItemType extends TableItemType>({
     row,
     cell,
     colIndex,
     tabIndex = 1,
-  }: CellPropTypes<ItemType, EditValueType>) => {
+  }: CellPropTypes<ItemType>) => {
     let {
       pendingValues = [],
       onEditValue,
@@ -108,7 +109,7 @@ export const TableCell = observer(
       keyFromItem = defaultKeyFromItem,
       highlightRow = defaultHighlightRow,
       isAlwaysEditable,
-    }: ContextTypes<ItemType, EditValueType> = useContext(TableContext)
+    }: ContextTypes<ItemType> = useContext(TableContext)
 
     let [isFocused, setIsFocused] = useState(false)
 
@@ -130,7 +131,7 @@ export const TableCell = observer(
       value: val,
       item,
       itemId,
-    }) as EditValue<ItemType, EditValueType>
+    }) as EditValue<ItemType>
 
     let columnWidth = columnWidths[colIndex]
 
@@ -178,12 +179,12 @@ export const TableCell = observer(
           ? renderInput(
               key,
               editValue.value,
-              onValueChange((valueKey as unknown) as string),
+              onValueChange(valueKey),
               onSaveEdit,
               onCancelEdit,
               tabIndex
             )
-          : renderCell(valueKey, renderValue(valueKey as string, val, false, item), item)}
+          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
       </TableCellElement>
     )
   }

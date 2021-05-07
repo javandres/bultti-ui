@@ -38,19 +38,21 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
     let [createInspectionDate] = useMutationData(createInspectionDateMutation)
 
     let onDone = useCallback(() => {
-      let inspectionDateInput: InspectionDateInput = {
-        startDate: pendingInspectionDate.startDate,
-        endDate: pendingInspectionDate.endDate,
-      }
+      if (pendingInspectionDate.startDate && pendingInspectionDate.endDate) {
+        let inspectionDateInput: InspectionDateInput = {
+          startDate: pendingInspectionDate.startDate,
+          endDate: pendingInspectionDate.endDate,
+        }
 
-      createInspectionDate({
-        variables: {
-          inspectionDateInput,
-        },
-      }).then(() => {
-        closeInspectionDateList()
-        refetchInspectionDateList()
-      })
+        createInspectionDate({
+          variables: {
+            inspectionDateInput,
+          },
+        }).then(() => {
+          closeInspectionDateList()
+          refetchInspectionDateList()
+        })
+      }
     }, [refetchInspectionDateList, closeInspectionDateList, pendingInspectionDate])
 
     let onChange = (key, nextValue) => {
@@ -62,7 +64,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
       })
     }
 
-    let renderInput = (key: string, val: any, onChange) => {
+    let renderInput = (key: string, val: unknown, onChange) => {
       if (key === 'startDate') {
         return (
           <DatePicker
@@ -91,7 +93,8 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
     // TODO: implement better validation
     let isValid: boolean = useMemo(() => {
       return (
-        pendingInspectionDate.startDate.length > 0 && pendingInspectionDate.endDate.length > 0
+        (pendingInspectionDate.startDate || '').length > 0 &&
+        (pendingInspectionDate.endDate || '').length > 0
       )
     }, [pendingInspectionDate])
 
@@ -100,7 +103,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
         <Header>
           <Text>inspectionDateForm_header</Text>
         </Header>
-        <ItemForm
+        <ItemForm<Partial<InspectionDateInput>>
           item={pendingInspectionDate}
           labels={inspectionDateLabels}
           renderInput={renderInput}
@@ -108,7 +111,7 @@ const InspectionDateForm: React.FC<PropTypes> = observer(
           onChange={onChange}
           onCancel={() => closeInspectionDateList()}
           doneDisabled={!isValid}
-          keyFromItem={(item) => item.id}
+          keyFromItem={(item) => item.startDate || ''}
         />
       </InspectionDateFormContainer>
     )

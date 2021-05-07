@@ -110,7 +110,10 @@ const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
               {inspection.operator.operatorName} / {inspection.seasonId}
             </InspectionTitle>
           )}
-          <InspectionDates startDate={inspection.startDate} endDate={inspection.endDate} />
+          <InspectionDates
+            startDate={inspection.startDate || ''}
+            endDate={inspection.endDate || ''}
+          />
         </ContentRow>
         {inspection.name && (
           <ContentRow>

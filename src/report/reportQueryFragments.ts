@@ -1,5 +1,3 @@
-import { gql } from '@apollo/client'
-
 /**
  * This file contains GraphQL fragments for all report data items. Common fields can be
  * extracted into strings and reused in many fragments.
@@ -71,22 +69,22 @@ deadrunPlannedBy
 // The keys should match the capitalized reportName + 'Fragment'.
 // Example: report name 'trackedDepartures' becomes fragment name 'TrackedDeparturesFragment'
 export const reportQueryFragments = {
-  TrackedDeparturesFragment: gql`
+  TrackedDeparturesFragment: `
     fragment TrackedDeparturesFragment on TrackedDeparturesReportData {
       ${departureReportBaseFragment}      
     }
   `,
-  EmissionClassExecutionFragment: gql`
+  EmissionClassExecutionFragment: `
     fragment EmissionClassExecutionFragment on EmissionClassExecutionReportData {
       ${emissionClassExecutionBaseFragment}
     }
   `,
-  ObservedEmissionClassExecutionFragment: gql`
+  ObservedEmissionClassExecutionFragment: `
     fragment ObservedEmissionClassExecutionFragment on ObservedEmissionClassExecutionReportData {
       ${emissionClassExecutionBaseFragment}
     }
   `,
-  ObservedUnitExecutionFragment: gql`
+  ObservedUnitExecutionFragment: `
     fragment ObservedUnitExecutionFragment on ObservedUnitExecution {
       id
       procurementUnitId
@@ -97,7 +95,7 @@ export const reportQueryFragments = {
       sanctionedKilometers
     }
   `,
-  ObservedLateDeparturesFragment: gql`
+  ObservedLateDeparturesFragment: `
     fragment ObservedLateDeparturesFragment on LateDeparturesReportData {
       ${observedDepartureReportBaseFragment}
       journeyKilometers
@@ -107,7 +105,7 @@ export const reportQueryFragments = {
       registryNr
     }
   `,
-  ObservedOverageDeparturesFragment: gql`
+  ObservedOverageDeparturesFragment: `
     fragment ObservedOverageDeparturesFragment on ObservedOverAgeDeparturesReportData {
       ${observedDepartureReportBaseFragment}
       registryNr
@@ -117,7 +115,7 @@ export const reportQueryFragments = {
       journeyKilometers
     }
   `,
-  ObservedEquipmentColorFragment: gql`
+  ObservedEquipmentColorFragment: `
     fragment ObservedEquipmentColorFragment on ObservedEquipmentColorReportData {
       ${observedDepartureReportBaseFragment}
       registryNr
@@ -126,7 +124,7 @@ export const reportQueryFragments = {
       procurementUnitId
     }
   `,
-  ObservedEquipmentTypeFragment: gql`
+  ObservedEquipmentTypeFragment: `
     fragment ObservedEquipmentTypeFragment on ObservedEquipmentTypeReportData {
       ${observedDepartureReportBaseFragment}
       registryNr
@@ -137,7 +135,7 @@ export const reportQueryFragments = {
       plannedEquipmentType
     }
   `,
-  ObservedExecutionRequirementsFragment: gql`
+  ObservedExecutionRequirementsFragment: `
     fragment ObservedExecutionRequirementsFragment on ObservedExecutionRequirementsReportData {
       id
       operatorId
@@ -163,7 +161,7 @@ export const reportQueryFragments = {
       }
     }
   `,
-  EarlyTimingStopDeparturesFragment: gql`
+  EarlyTimingStopDeparturesFragment: `
     fragment EarlyTimingStopDeparturesFragment on EarlyTimingStopDeparturesReportData {
       ${departureReportBaseFragment}
       date
@@ -175,7 +173,7 @@ export const reportQueryFragments = {
       journeyKilometers
     }
   `,
-  BlockDeviationsFragment: gql`
+  BlockDeviationsFragment: `
     fragment BlockDeviationsFragment on DeviationsReportData {
       ${departureReportBaseFragment}
       overlapSeconds
@@ -183,7 +181,7 @@ export const reportQueryFragments = {
       registryNr
     }
   `,
-  AllDeviationsFragment: gql`
+  AllDeviationsFragment: `
     fragment AllDeviationsFragment on DeviationsReportData {
       ${departureReportBaseFragment}
       overlapSeconds
@@ -191,17 +189,17 @@ export const reportQueryFragments = {
       registryNr
     }
   `,
-  DeadrunsFragment: gql`
+  DeadrunsFragment: `
     fragment DeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
     }
   `,
-  OperatorDeadrunsFragment: gql`
+  OperatorDeadrunsFragment: `
     fragment OperatorDeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
     }
   `,
-  DepartureBlocksFragment: gql`
+  DepartureBlocksFragment: `
     fragment DepartureBlocksFragment on DepartureBlocksReportData {
       id
       dayType
@@ -215,14 +213,14 @@ export const reportQueryFragments = {
       vehicleId
     }
   `,
-  EquipmentColorFragment: gql`
+  EquipmentColorFragment: `
     fragment EquipmentColorFragment on EquipmentColorReportData {
       ${departureReportBaseFragment}
       registryNr
       equipmentExteriorColor
     }
   `,
-  EquipmentTypeFragment: gql`
+  EquipmentTypeFragment: `
     fragment EquipmentTypeFragment on EquipmentTypeReportData {
       ${departureReportBaseFragment}
       registryNr
@@ -231,7 +229,7 @@ export const reportQueryFragments = {
       equipmentTypeRequired
     }
   `,
-  ExecutionRequirementsFragment: gql`
+  ExecutionRequirementsFragment: `
     fragment ExecutionRequirementsFragment on ExecutionRequirementsReportData {
       id
       operatorId
@@ -256,17 +254,17 @@ export const reportQueryFragments = {
       }
     }
   `,
-  ExtraBlockDeparturesFragment: gql`
+  ExtraBlockDeparturesFragment: `
     fragment ExtraBlockDeparturesFragment on ExtraBlockDeparturesReportData {
       ${departureReportBaseFragment}
     }
   `,
-  MissingBlockDeparturesFragment: gql`
+  MissingBlockDeparturesFragment: `
     fragment MissingBlockDeparturesFragment on MissingBlockDeparturesReportData {
       ${departureReportBaseFragment}
     }
   `,
-  MissingEquipmentFragment: gql`
+  MissingEquipmentFragment: `
     fragment MissingEquipmentFragment on MissingEquipmentReportData {
       id
       registryNr
@@ -274,7 +272,7 @@ export const reportQueryFragments = {
       blockNumber
     }
   `,
-  OverageDeparturesFragment: gql`
+  OverageDeparturesFragment: `
     fragment OverageDeparturesFragment on OverAgeDeparturesReportData {
       ${departureReportBaseFragment}
       registryNr
@@ -282,7 +280,7 @@ export const reportQueryFragments = {
       observedEquipmentAge
     }
   `,
-  UnitExecutionFragment: gql`
+  UnitExecutionFragment: `
     fragment UnitExecutionFragment on UnitExecutionReportData {
       id
       procurementUnitId
@@ -294,7 +292,7 @@ export const reportQueryFragments = {
       averageAgeWeightedFulfilled
     }
   `,
-  UnobservedDeparturesFragment: gql`
+  UnobservedDeparturesFragment: `
     fragment UnobservedDeparturesFragment on UnobservedDeparturesReportData {
       ${departureReportBaseFragment}
       journeyKilometers
@@ -303,7 +301,7 @@ export const reportQueryFragments = {
       date
     }
   `,
-  SanctionSummaryFragment: gql`
+  SanctionSummaryFragment: `
     fragment SanctionSummaryFragment on SanctionSummaryReportData {
       id
       procurementUnitId

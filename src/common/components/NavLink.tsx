@@ -6,7 +6,7 @@ import { pathWithQuery } from '../../util/urlValue'
 import { promptUnsavedChangesOnClickEvent } from '../../util/promptUnsavedChanges'
 import { useStateValue } from '../../state/useAppState'
 
-export type PropTypes = LinkProps<any>
+export type PropTypes = LinkProps<unknown>
 
 const NavLinkView = styled(Link)`
   padding: 1.25rem 1rem 1.25rem 1rem;

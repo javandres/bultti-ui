@@ -85,7 +85,7 @@ const PageSelectorOption = styled.div`
 let selectedPageOptionStyles = {
   color: 'var(--dark-grey)',
   cursor: 'default',
-  fontWeight: 'bold' as 'bold',
+  fontWeight: 'bold' as const,
 }
 
 export type PropTypes = {

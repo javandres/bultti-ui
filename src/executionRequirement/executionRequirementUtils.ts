@@ -5,7 +5,11 @@ import {
 } from './executionRequirementsQueries'
 import { useRefetch } from '../util/useRefetch'
 import { useMemo } from 'react'
-import { ObservedExecutionRequirement, PlannedAreaExecutionRequirement } from '../schema-types'
+import {
+  ObservedExecutionRequirement,
+  PlannedAreaExecutionRequirement,
+  PlannedUnitExecutionRequirement,
+} from '../schema-types'
 import { orderBy } from 'lodash'
 
 export function usePreInspectionAreaRequirements(inspectionId?: string) {
@@ -13,7 +17,7 @@ export function usePreInspectionAreaRequirements(inspectionId?: string) {
     data: executionRequirementsData,
     loading,
     refetch: refetchRequirements,
-  } = useQueryData(executionRequirementsForAreaQuery, {
+  } = useQueryData<PlannedAreaExecutionRequirement[]>(executionRequirementsForAreaQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,
     variables: {
@@ -36,7 +40,7 @@ export function useObservedRequirements(inspectionId?: string) {
     data: executionRequirementsData,
     loading,
     refetch: refetchRequirements,
-  } = useQueryData(observedExecutionRequirementsQuery, {
+  } = useQueryData<ObservedExecutionRequirement[]>(observedExecutionRequirementsQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,
     variables: {

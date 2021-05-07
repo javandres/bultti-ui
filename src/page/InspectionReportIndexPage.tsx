@@ -13,7 +13,7 @@ import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
 import { LoadingDisplay } from '../common/components/Loading'
-import Dropdown from '../common/input/Dropdown'
+import Dropdown, { DefaultDropdownValueType } from '../common/input/Dropdown'
 import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionIndexItem from '../inspection/InspectionIndexItem'
@@ -57,9 +57,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
 
   let [globalSeason] = useStateValue('globalSeason')
 
-  let [selectedDate, setSelectedDate] = useState<{ value: string; label: string }>(
-    defaultSelectedDate
-  )
+  let [selectedDate, setSelectedDate] = useState<DefaultDropdownValueType>(defaultSelectedDate)
 
   let openReports = useNavigateToInspectionReports()
 
@@ -91,7 +89,7 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
     () => [
       defaultSelectedDate,
       ...inspectionsList.map((inspection: Inspection) => ({
-        value: inspection.startDate,
+        value: inspection.startDate || '',
         label: getReadableDate(inspection.startDate),
       })),
     ],

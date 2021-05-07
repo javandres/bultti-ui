@@ -5,9 +5,13 @@ import {
   parseISO,
 } from 'date-fns'
 
-type ValueType = Date | string | number
+type ValueType = Date | string | number | undefined | null
 
-export function compareVal(val: ValueType = 0) {
+export function compareVal(val: ValueType = 0): number {
+  if (val === null) {
+    return 0
+  }
+
   let strVal = ''
 
   if (val instanceof Date) {

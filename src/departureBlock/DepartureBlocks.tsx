@@ -40,7 +40,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
     data: availableDayTypesData,
     loading: departureBlocksLoading,
     refetch: refetchBlocks,
-  } = useQueryData(availableDayTypesQuery, {
+  } = useQueryData<string[]>(availableDayTypesQuery, {
     fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,

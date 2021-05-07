@@ -34,7 +34,8 @@ const StyledLinkButton = styled.button`
   }
 `
 
-type LinkButtonProps = {} & React.PropsWithRef<JSX.IntrinsicElements['button']>
+type LinkButtonProps = React.PropsWithRef<JSX.IntrinsicElements['button']> &
+  Record<string, unknown>
 
 export const LinkButton: React.FC<LinkButtonProps> = observer(({ children, ...props }) => {
   return (
