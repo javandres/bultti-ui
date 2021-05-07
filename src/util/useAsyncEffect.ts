@@ -4,8 +4,8 @@ const noop = () => {}
 
 export const useAsyncEffect = (
   effect: () => Promise<void>,
-  depsOrCleanup: (() => void) | any[],
-  deps?: any[]
+  depsOrCleanup: (() => void) | unknown[],
+  deps?: unknown[]
 ) => {
   const cleanupFn = typeof depsOrCleanup === 'function' ? depsOrCleanup : noop
   const depsArr = Array.isArray(depsOrCleanup)

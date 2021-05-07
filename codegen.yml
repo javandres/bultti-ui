@@ -1,6 +1,6 @@
 overwrite: true
+schema: 'schema.graphql'
 documents: null
-schema: http://localhost:4100/graphql
 generates:
   ./src/possibleTypes.ts:
     plugins:
@@ -10,6 +10,9 @@ generates:
   ./src/schema-types.ts:
     plugins:
       - typescript
+      - typescript-operations
+    config:
+      defaultScalarType: 'string'
   ./src/graphql.schema.json:
     plugins:
       - introspection

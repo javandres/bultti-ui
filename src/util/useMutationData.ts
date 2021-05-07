@@ -20,7 +20,7 @@ type Mutator<TData, TVariables> = [
   { data: null | TData; loading: boolean; error?: ApolloError; called: boolean }
 ]
 
-export const useMutationData = <TData = any, TVariables = OperationVariables>(
+export const useMutationData = <TData = unknown, TVariables = OperationVariables>(
   mutation: DocumentNode,
   options: MutationHookOptions<TData, TVariables> = {},
   pickData = ''

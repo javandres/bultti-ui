@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Contract } from '../schema-types'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
-import { getReadableDateRange } from '../util/formatDate'
+import { getDateObject, getReadableDateRange } from '../util/formatDate'
 
 const ContractTitle = styled.h3`
   margin: 0;
@@ -33,8 +33,8 @@ const ContractListItem: React.FC<PropTypes> = observer(
             )}
             <HeaderSection>
               {getReadableDateRange({
-                start: contractData?.startDate,
-                end: contractData?.endDate,
+                start: getDateObject(contractData?.startDate),
+                end: getDateObject(contractData?.endDate),
               })}
             </HeaderSection>
             {headerContent}

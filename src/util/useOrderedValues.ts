@@ -6,8 +6,8 @@ import { useMemo } from 'react'
  * Use hideKeys to hide any keys from the list.
  */
 
-export const useOrderedValues = (
-  item: any,
+export const useOrderedValues = <ItemType extends Record<string, unknown>>(
+  item: ItemType,
   labels = {},
   order: string[] = [],
   hideKeys?: string[]

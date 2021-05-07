@@ -97,11 +97,11 @@ const SuggestionItem = styled.li<{ highlighted: boolean }>`
 export type AutoCompleteProps = {
   disabled?: boolean
   label?: string
-  items: any[]
-  onSelect: (selectedItem: any | null) => unknown
-  itemToString?: string | ((item: any | null) => string)
-  itemToLabel?: string | ((item: any | null) => string)
-  selectedItem?: any
+  items: unknown[]
+  onSelect: (selectedItem: unknown | null) => unknown
+  itemToString?: string | ((item: unknown | null) => string)
+  itemToLabel?: string | ((item: unknown | null) => string)
+  selectedItem?: unknown
   className?: string
   style?: CSSProperties
 }
@@ -170,7 +170,7 @@ const AutoComplete: React.FC<AutoCompleteProps> = observer(
       selectedItem: selectedItem,
       onSelectedItemChange: onSelectFn,
       onInputValueChange: ({ inputValue }) => setCurrentValue(inputValue),
-      itemToString: (item: any) => toString(item, itemToString),
+      itemToString: (item: unknown) => toString(item, itemToString),
     })
 
     return (

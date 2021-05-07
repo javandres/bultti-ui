@@ -16,10 +16,10 @@ export interface IAppState {
   notifications: UINotification[]
 }
 
-export type Initializer<T = any> = (
+export type Initializer<T = UIActions | UserActions> = (
   state: IAppState,
   initialData: Partial<IAppState>
-) => T | Promise<T>
+) => T
 
 export interface UserActions extends FunctionMap {
   user: (User) => void

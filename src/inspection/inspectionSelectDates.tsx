@@ -31,7 +31,7 @@ const InspectionDateLabel = styled.div`
   justify-content: space-between;
 `
 
-interface DateOption {
+type DateOption = {
   label: string
   id?: string
   startDate: Date
@@ -90,13 +90,16 @@ const InspectionSelectDates = observer(
         return undefined
       }
 
+      let startDate = getDateObject(inspectionStartDate)
+      let endDate = getDateObject(inspectionEndDate)
+
       let selectedDateOption: DateOption = {
         label: getReadableDateRange({
-          start: inspectionStartDate,
-          end: inspectionEndDate,
+          start: startDate,
+          end: endDate,
         }),
-        startDate: inspectionStartDate,
-        endDate: inspectionEndDate,
+        startDate: startDate,
+        endDate: endDate,
       }
 
       if (inspectionType === InspectionType.Post) {
@@ -121,7 +124,7 @@ const InspectionSelectDates = observer(
         {areInspectionDatesLoading ? (
           <LoadingDisplay />
         ) : (
-          <Dropdown
+          <Dropdown<DateOption>
             disabled={isEditingDisabled}
             label={text('inspection_selectInspectionDate')}
             items={dateOptions}
@@ -176,7 +179,10 @@ function getPostInspectionDateOptions(
 ): DateOption[] {
   return inspectionDatesQueryResult.map((inspectionDate: InspectionDate) => {
     let { id, hfpDataStatus, startDate, endDate } = inspectionDate
-    let label = getReadableDateRange({ start: startDate, end: endDate })
+    let label = getReadableDateRange({
+      start: getDateObject(startDate),
+      end: getDateObject(endDate),
+    })
 
     return {
       label,

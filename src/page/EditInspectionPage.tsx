@@ -16,7 +16,7 @@ import {
   useNavigateToInspection,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { InspectionStatus, InspectionType } from '../schema-types'
+import { InspectionStatus, InspectionType, PostInspection } from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
 import { text, Text } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
@@ -177,7 +177,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(
                         />
                         {inspection.status === InspectionStatus.Sanctionable && (
                           <SanctionsContainer
-                            inspection={inspection}
+                            inspection={inspection as PostInspection}
                             name="sanction"
                             path="sanctions"
                             label={text('inspectionPage_sanctions')}

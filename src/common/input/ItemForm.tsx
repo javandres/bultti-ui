@@ -78,10 +78,13 @@ export const ActionsWrapper = styled.div`
   flex-direction: row;
 `
 
-type LabelsType<ItemType> = { [key in keyof ItemType]: string }
-type HintsType<ItemType> = { [key in keyof ItemType]: string }
+type LabelsType<ItemType extends Record<string, unknown>> = {
+  [key in keyof ItemType]?: string
+}
 
-export type PropTypes<ItemType = any> = {
+type HintsType<ItemType extends Record<string, unknown>> = { [key in keyof ItemType]?: string }
+
+export type PropTypes<ItemType extends Record<string, unknown>> = {
   item: ItemType
   children?: React.ReactChild
   onChange: (key: string, value: string) => void
@@ -99,14 +102,14 @@ export type PropTypes<ItemType = any> = {
   keyFromItem?: (item: ItemType) => string
   renderLabel?: (
     key: string,
-    val: any,
+    val: unknown,
     labels: LabelsType<ItemType>,
     hints: HintsType<ItemType>
   ) => React.ReactChild | false
   renderInput?: (
     key: string,
-    val: any,
-    onChange: (val: any) => void,
+    val: unknown,
+    onChange: (val: unknown) => void,
     readOnly: boolean,
     loading?: boolean,
     onReset?: () => unknown
@@ -134,8 +137,8 @@ const defaultRenderLabel = (key, val, labels, hints) => (
   </FieldLabel>
 )
 
-const ItemForm: React.FC<PropTypes> = observer(
-  ({
+const ItemForm = observer(
+  <ItemType extends Record<string, unknown>>({
     item,
     children,
     labels = {},
@@ -156,7 +159,7 @@ const ItemForm: React.FC<PropTypes> = observer(
     loading = false,
     fullWidthFields = [],
     showButtons = true,
-  }) => {
+  }: PropTypes<ItemType>) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     const onValueChange = useCallback(

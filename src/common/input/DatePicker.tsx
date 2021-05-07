@@ -252,7 +252,7 @@ const renderDatePickerInput = ({
   openCalendar,
   attrs,
 }: {
-  onInputChange: (value: any) => unknown
+  onInputChange: (value: string) => unknown
   onInputBlur: () => unknown
   placeholder: string
   value?: string
@@ -261,7 +261,7 @@ const renderDatePickerInput = ({
   acceptableDayTypes?: AcceptableDayType[]
   isEmptyValueAllowed?: boolean
   openCalendar: () => unknown
-  attrs: any
+  attrs: unknown
 }) => {
   const onChange = (value: string) => {
     onInputChange(value)

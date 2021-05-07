@@ -5,7 +5,7 @@ export interface PossibleTypesResultData {
 }
 const result: PossibleTypesResultData = {
   possibleTypes: {
-    Inspection: ['PreInspection', 'PostInspection'],
+    Inspection: ['PostInspection', 'PreInspection'],
   },
 }
 export default result

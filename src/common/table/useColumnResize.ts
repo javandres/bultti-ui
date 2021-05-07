@@ -3,7 +3,7 @@ import { roundNumber } from '../../util/round'
 
 const minWidth = 75
 
-export function useColumnResize(columns: any[], isResizeEnabled = true) {
+export function useColumnResize(columns: unknown[], isResizeEnabled = true) {
   // The widths are in percentages. The default widths for each column is 100 divided by the number of columns.
   let columnWidth = Math.max(10, 100 / Math.max(1, columns.length))
 

@@ -30,7 +30,7 @@ import { operatorIsValid } from '../common/input/SelectOperator'
 import { isObjectLike } from '../util/isObjectLike'
 
 export function useInspectionById(inspectionId: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData(
+  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
     inspectionQuery,
     {
       skip: !inspectionId,

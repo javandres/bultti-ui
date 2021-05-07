@@ -36,7 +36,14 @@ export type PropTypes = {
   inspectionStatus: InspectionStatus
 }
 
-let reportKeyFromItem = (item: any) =>
+interface ReportItemKeyInterface {
+  id?: string
+  _id?: string
+  departureId?: string
+  registryNr?: string
+}
+
+let reportKeyFromItem = (item: ReportItemKeyInterface): string =>
   item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
 const ReportContainer = observer((props: PropTypes) => {

@@ -1,9 +1,10 @@
-import { CellValType, EditValue, TableRowWithDataAndFunctions } from './tableUtils'
+import { EditValue, TableItemType, TableRowWithDataAndFunctions } from './tableUtils'
 import { useMemo } from 'react'
 import { orderBy } from 'lodash'
 import { useTableColumns } from './useTableColumns'
+import { ValueOf } from '../../type/common'
 
-export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
+export function useTableRows<ItemType extends TableItemType>({
   items,
   pendingValues,
   editableValues,
@@ -21,9 +22,13 @@ export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
   columnOrder?: string[]
   hideKeys?: string[]
   onRemoveRow?: (item: ItemType) => unknown
-  onEditValue?: (key: keyof ItemType, value: EditValueType, item: ItemType) => unknown
-  pendingValues?: EditValue<ItemType, EditValueType>[]
-  editableValues?: string[]
+  onEditValue?: <K extends keyof ItemType>(
+    key: K,
+    value: ItemType[K],
+    item: ItemType
+  ) => unknown
+  pendingValues?: EditValue<ItemType>[]
+  editableValues?: (keyof ItemType)[]
   isAlwaysEditable?: boolean
 }) {
   let { columnNames, keysToHide, columnKeysOrdering, columns } = useTableColumns({
@@ -33,11 +38,11 @@ export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
     hideKeys,
   })
 
-  let rows: TableRowWithDataAndFunctions<ItemType, EditValueType>[] = useMemo(
+  let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
     () =>
       items.map((item) => {
         // Again, omit keys that start with an underscore.
-        let itemEntries = Object.entries<EditValueType>(item)
+        let itemEntries = Object.entries(item) as [string, ValueOf<ItemType>][]
 
         itemEntries = itemEntries.filter(
           ([key]) => !key.startsWith('_') && !keysToHide.includes(key)
@@ -57,7 +62,7 @@ export function useTableRows<ItemType extends {}, EditValueType = CellValType>({
           (!!pendingValues &&
             pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey))
 
-        const onMakeEditable = (key: keyof ItemType, val: EditValueType) => {
+        const onMakeEditable = (key: keyof ItemType, val: ValueOf<ItemType>) => {
           if (!isEditingRow && onEditValue && (editableValues || []).includes(key as string)) {
             onEditValue(key, val, item)
           }

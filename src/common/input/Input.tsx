@@ -73,7 +73,7 @@ const Input: React.FC<PropTypes> = observer(
     ...inputProps
   }) => {
     const onValueChange = useCallback(
-      (e) => {
+      (e: React.ChangeEvent<HTMLInputElement>) => {
         const nextVal = e.target.value
 
         if (typeof onChange === 'function') {

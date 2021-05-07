@@ -1,4 +1,4 @@
-export const isNumeric = (value: any) => {
+export const isNumeric = (value: unknown) => {
   if (typeof value === 'number') {
     return true
   }
