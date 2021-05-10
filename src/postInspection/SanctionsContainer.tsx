@@ -62,8 +62,6 @@ let sanctionColumnLabels = {
 }
 
 let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
-  console.log(val)
-
   return (
     <SanctionToggleLabel>
       <SanctionToggleInput
