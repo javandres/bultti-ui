@@ -18,9 +18,9 @@ import {
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
-import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
+import { useNavigate } from '../util/urlValue'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -89,14 +89,16 @@ const InspectionActions = observer(
       onRefresh
     )
 
+    let navigate = useNavigate()
+
     let onRemoveInspection = useCallback(async () => {
       let removed = await removeInspection(inspection)
 
       if (removed) {
         let pathSegment = inspectionType === InspectionType.Pre ? 'pre' : 'post'
-        navigateWithQueryString(`/${pathSegment}-inspection/edit`)
+        navigate.push(`/${pathSegment}-inspection/edit`)
       }
-    }, [removeInspection, inspection])
+    }, [removeInspection, inspection, navigate])
 
     var [submitInspection, { loading: submitLoading }] = useMutationData(
       submitInspectionMutation

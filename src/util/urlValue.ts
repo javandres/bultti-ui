@@ -3,56 +3,18 @@ import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
-import { createBrowserHistory, Location } from 'history'
-
-/**
- * Make sure that all history operations happen through the specific history object
- * created here:
- */
-export const history = createBrowserHistory(window)
+import { useHistory } from 'react-router-dom'
+import { History } from 'history'
+import { useCallback } from 'react'
 
 type UrlStateValue = string | boolean | number
 type UrlState = { [key: string]: UrlStateValue }
-type HistoryListener = (urlState: UrlState) => unknown
-
-const excludeQueryStringParams = ['scope', 'code', 'is_test']
-
-const historyChangeListeners: HistoryListener[] = []
-
-export function onHistoryChange(cb) {
-  if (!historyChangeListeners.includes(cb)) {
-    historyChangeListeners.push(cb)
-  }
-
-  return () => {
-    const cbIndex = historyChangeListeners.indexOf(cb)
-
-    if (cbIndex !== -1) {
-      historyChangeListeners.splice(cbIndex, 1)
-    }
-  }
-}
-
-history.listen((location) => {
-  if (get(location, 'state.allowReactions', false)) {
-    const urlState = getUrlState()
-    historyChangeListeners.forEach((cb) => cb(urlState))
-  }
-})
-
-export function navigate(navigateTo: string, useReplace: boolean = false) {
-  if (useReplace) {
-    history.replace(navigateTo)
-  } else {
-    history.push(navigateTo)
-  }
-}
 
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
 export function setUrlValue(key: string, val: UrlStateValue | null) {
-  const query = new URLSearchParams(history.location.search)
+  const query = new URLSearchParams(window.location.search)
 
   if (val === null || typeof val === 'undefined') {
     query.delete(key)
@@ -63,11 +25,11 @@ export function setUrlValue(key: string, val: UrlStateValue | null) {
   }
 
   const queryStr = query.toString()
-  return navigate(`${history.location.pathname}?${queryStr}`)
+  return window.history.replaceState({}, '', `${window.location.pathname}?${queryStr}`)
 }
 
 export function getUrlState(): UrlState {
-  const query = new URLSearchParams(history.location.search)
+  const query = new URLSearchParams(window.location.search)
 
   return fromPairs(
     Array.from(query.entries()).map(([key, value]) => {
@@ -99,11 +61,9 @@ export function getUrlValue(key: string, defaultValue: UrlStateValue = ''): UrlS
   return get(values, key, defaultValue)
 }
 
-export function getPathName() {
-  return history.location.pathname
-}
+const excludeQueryStringParams = ['scope', 'code', 'is_test']
 
-function excludeQueryParams(queryString = history.location.search) {
+function excludeQueryParams(queryString = window.location.search) {
   const query = new URLSearchParams(queryString)
 
   for (let excludeVal of excludeQueryStringParams) {
@@ -113,23 +73,37 @@ function excludeQueryParams(queryString = history.location.search) {
   return query
 }
 
+interface HasQueryString {
+  search: string
+}
+
 // Provide a Location object with a `search` param or the full URL with the query string.
-export function pathWithQuery(path = '', location?: Location | string) {
+export function pathWithQuery(path = '', location?: HasQueryString | string) {
   let locationWithQueryString = typeof location === 'string' ? new URL(location) : location
 
   let currentQuery = excludeQueryParams(locationWithQueryString?.search)
   return `${path}?${currentQuery.toString()}`
 }
 
-/**
- * @param navigateTo
- * @param {Object} opts - Optional options
- * @returns {void}
- */
-export function navigateWithQueryString(
-  navigateTo: string,
-  opts: { replace: boolean } = { replace: false }
-) {
-  let path = pathWithQuery(navigateTo, history.location)
-  return navigate(path, opts.replace)
+function navigateTo({ replace, history }: { replace: boolean; history: History }) {
+  return (to: string) => {
+    let path = pathWithQuery(to, history.location)
+
+    console.log(path)
+
+    if (replace) {
+      history.replace(path)
+    } else {
+      history.push(path)
+    }
+  }
+}
+
+export function useNavigate() {
+  let history = useHistory()
+
+  return {
+    push: useCallback(navigateTo({ replace: false, history }), []),
+    replace: useCallback(navigateTo({ replace: false, history }), []),
+  }
 }

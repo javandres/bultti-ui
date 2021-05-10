@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Redirect } from 'react-router-dom'
+import { Redirect, RouteChildrenProps, useHistory, useParams } from 'react-router-dom'
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
@@ -14,8 +14,6 @@ import { useRefetch } from '../util/useRefetch'
 import { Text } from '../util/translate'
 import { MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
-import { navigateWithQueryString } from '../util/urlValue'
-import { RouteChildrenProps, useParams } from 'react-router-dom'
 
 const EditContractPageView = styled(Page)``
 
@@ -43,12 +41,13 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   })
 
   let refetch = useRefetch(refetchContract)
+  let history = useHistory()
 
   useEffect(() => {
     if (!contract && !loading && contractId !== 'new') {
-      navigateWithQueryString('/contract', { replace: true })
+      history.replace('/contract')
     }
-  }, [contractId, contract, loading])
+  }, [contractId, contract, loading, history])
 
   if (!hasOperatorAccess) {
     return <Redirect to="/contract" />

@@ -3,13 +3,14 @@ import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { getUrlValue, navigate, setUrlValue } from './urlValue'
+import { getUrlValue, setUrlValue } from './urlValue'
 import { useQueryData } from './useQueryData'
 import { useRefetch } from './useRefetch'
 import { getAuthToken, saveAuthToken } from './authToken'
 import { pickGraphqlData } from './pickGraphqlData'
 import { text } from './translate'
 import { useShowErrorNotification } from './useShowNotification'
+import { useHistory } from 'react-router-dom'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -35,15 +36,16 @@ export const useAuth = (): [AuthState, boolean] => {
   } = useQueryData<User>(currentUserQuery)
 
   let refetchUser = useRefetch(refetchUserCb)
+  let history = useHistory()
 
   let navigateNext = useCallback(() => {
     if (shouldNavigate.current) {
       shouldNavigate.current = false
       let nextUrl = sessionStorage.getItem('return_to_url') || '/'
       sessionStorage.removeItem('return_to_url')
-      navigate(nextUrl, true)
+      history.replace(nextUrl)
     }
-  }, [navigate, shouldNavigate.current])
+  }, [history, shouldNavigate.current])
 
   useEffect(() => {
     if (currentUser || isCurrentUserLoading) {

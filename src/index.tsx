@@ -10,8 +10,7 @@ import { createGraphqlClient } from './graphqlClient'
 import { ApolloProvider } from '@apollo/client'
 import { removeAuthToken } from './util/authToken'
 import { UnsavedChangesProvider } from './util/promptUnsavedChanges'
-import { history } from './util/urlValue'
-import { Router } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
 
 const initializers = [UserStore, UIStore]
 
@@ -31,13 +30,13 @@ const main = async () => {
 
   ReactDOM.render(
     <ApolloProvider client={client}>
-      <StateContext.Provider value={state}>
-        <Router history={history}>
+      <BrowserRouter>
+        <StateContext.Provider value={state}>
           <UnsavedChangesProvider>
             <App />
           </UnsavedChangesProvider>
-        </Router>
-      </StateContext.Provider>
+        </StateContext.Provider>
+      </BrowserRouter>
     </ApolloProvider>,
     document.getElementById('root')
   )

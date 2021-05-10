@@ -3,8 +3,8 @@ import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Link, Route, useLocation, useRouteMatch } from 'react-router-dom'
-import { pathWithQuery } from '../../util/urlValue'
+import { Route, useLocation, useRouteMatch } from 'react-router-dom'
+import LinkWithQuery from './LinkWithQuery'
 
 export const TabsWrapper = styled.div`
   display: grid;
@@ -24,7 +24,7 @@ const TabButtonsWrapper = styled.div<{ path?: unknown }>`
   width: 100%;
 `
 
-const TabButton = styled(Link)<{ selected?: boolean }>`
+const TabButton = styled(LinkWithQuery)<{ selected?: boolean }>`
   font-family: inherit;
   font-size: 1rem;
   font-weight: ${({ selected }) => (selected ? 'bold' : 'normal')};
@@ -156,7 +156,7 @@ const Tabs: React.FC<PropTypes> = decorate(
             <Route key={`tab_link_${tabOption.name}`} path={getPathName(tabOption.path)}>
               {({ match }) => (
                 <TabButton
-                  to={pathWithQuery(getPathName(tabOption.path), location)}
+                  to={getPathName(tabOption.path)}
                   data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
                   selected={!!match}>
                   {tabOption.loading && <LoadingIndicator data-testid="loading" />}

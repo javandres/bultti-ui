@@ -1,10 +1,7 @@
 import { ActionMap, IAppState, Initializer, StoreContext } from '../type/state'
 import { observable } from 'mobx'
 
-export async function createState(
-  initializers: Initializer[] = [],
-  initialData = {}
-): Promise<StoreContext> {
+export function createState(initializers: Initializer[] = [], initialData = {}): StoreContext {
   const state = observable<IAppState>({} as IAppState)
   let actions: Partial<ActionMap> = {}
 

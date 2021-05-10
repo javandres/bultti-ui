@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
-import { Link } from 'react-router-dom'
 import { Search } from '../icon/Search'
 import { Plus } from '../icon/Plus'
 import { Menu } from '../icon/Menu'
@@ -11,17 +10,17 @@ import { UserIcon } from '../icon/UserIcon'
 import GlobalOperatorFilter from './GlobalOperatorFilter'
 import { Bus } from '../icon/Bus'
 import GlobalSeasonFilter from './GlobalSeasonFilter'
-import NavLink from './NavLink'
+import LinkWithQuery from './LinkWithQuery'
 import { logoutMutation } from '../query/authQueries'
 import { Button, ButtonSize } from './buttons/Button'
 import { Text } from '../../util/translate'
 import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
-import { navigateWithQueryString } from '../../util/urlValue'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { gql, useMutation } from '@apollo/client'
+import { useNavigate } from '../../util/urlValue'
 
 export const APP_TITLE_HEIGHT = 100
 
@@ -38,7 +37,7 @@ const HSLLogo = styled(HSLLogoNoText)`
   display: block;
 `
 
-const AppTitle = styled(Link)`
+const AppTitle = styled(LinkWithQuery)`
   height: ${APP_TITLE_HEIGHT}px;
   padding: 2rem 1rem;
   margin: 0;
@@ -101,12 +100,33 @@ const UserBar = styled.div`
   }
 `
 
+const NavLink = styled(LinkWithQuery)`
+  padding: 1.25rem 1rem 1.25rem 1rem;
+  color: white;
+  text-decoration: none;
+  transition: background 0.1s ease-out, transform 0.1s ease-out;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.15);
+    transform: scale(1.025);
+  }
+
+  svg {
+    display: block;
+    margin-right: 0.75rem;
+  }
+`
+
 const UserDisplay = styled.div`
   margin-left: 0.5rem;
   font-size: 0.875rem;
 `
 
-const UserLink = styled(Link)`
+const UserLink = styled(LinkWithQuery)`
   color: white;
   display: flex;
   justify-content: flex-start;
@@ -145,9 +165,10 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   )
 
   const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
+  const navigate = useNavigate()
 
   const onLogout = useCallback(async () => {
-    navigateWithQueryString('/')
+    navigate.push('/')
 
     const result = await logout()
     let isLoggedOut = pickGraphqlData(result.data)
@@ -156,7 +177,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       removeAuthToken()
       setUser(null)
     }
-  }, [])
+  }, [navigate])
 
   const [clearCache] = useMutation(clearCacheMutation)
 
@@ -179,7 +200,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <CategoryTitle>
               <Text>procurementUnits</Text>
             </CategoryTitle>
-            <NavLink to="procurement-units">
+            <NavLink to="/procurement-units">
               <Bus fill="white" width="1rem" height="1rem" />
               <Text>nav_editProcurementUnits</Text>
             </NavLink>
@@ -188,7 +209,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <CategoryTitle>
               <Text>contracts</Text>
             </CategoryTitle>
-            <NavLink to="contract">
+            <NavLink to="/contract">
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>nav_editContracts</Text>
             </NavLink>
@@ -197,15 +218,15 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <CategoryTitle>
               <Text>preInspection</Text>
             </CategoryTitle>
-            <NavLink to="pre-inspection">
+            <NavLink to="/pre-inspection">
               <Search fill="white" width="1rem" height="1rem" />
               <Text>preInspections</Text>
             </NavLink>
-            <NavLink to="pre-inspection/edit">
+            <NavLink to="/pre-inspection/edit">
               <Plus fill="white" width="1rem" height="1rem" />
               <Text>nav_newPreInspection</Text>
             </NavLink>
-            <NavLink to="pre-inspection/reports">
+            <NavLink to="/pre-inspection/reports">
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
@@ -214,26 +235,26 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
             <CategoryTitle>
               <Text>postInspection</Text>
             </CategoryTitle>
-            <NavLink to="post-inspection">
+            <NavLink to="/post-inspection">
               <Search fill="white" width="1rem" height="1rem" />
               <Text>postInspections</Text>
             </NavLink>
-            <NavLink to="post-inspection/edit">
+            <NavLink to="/post-inspection/edit">
               <Plus fill="white" width="1rem" height="1rem" />
               <Text>nav_newPostInspection</Text>
             </NavLink>
             {hasAdminAccess && (
-              <NavLink to="inspection-date">
+              <NavLink to="/inspection-date">
                 <Plus fill="white" width="1rem" height="1rem" />
                 <Text>nav_editInspectionDates</Text>
               </NavLink>
             )}
-            <NavLink to="post-inspection/reports">
+            <NavLink to="/post-inspection/reports">
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
             {DEBUG && (
-              <NavLink to="dev-tools">
+              <NavLink to="/dev-tools">
                 <div>Dev tools</div>
               </NavLink>
             )}

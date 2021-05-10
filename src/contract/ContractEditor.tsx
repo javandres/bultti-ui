@@ -30,12 +30,12 @@ import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
-import { navigateWithQueryString } from '../util/urlValue'
 import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 import { ApolloError } from '@apollo/client'
 import DatePicker from '../common/input/DatePicker'
 import { useShowErrorNotification } from '../util/useShowNotification'
+import { useHistory } from 'react-router-dom'
 
 const ContractEditorView = styled.div``
 
@@ -447,6 +447,8 @@ const ContractEditor = observer(
       }
     )
 
+    let history = useHistory()
+
     let execRemoveContract = useCallback(async () => {
       if (!editable) {
         return
@@ -454,7 +456,7 @@ const ContractEditor = observer(
 
       if (isNew) {
         // Go back to the previous page
-        navigateWithQueryString('/contract', { replace: true })
+        history.replace('/contract')
         return
       }
       if (confirm(text('contractForm_removeConfirm'))) {
@@ -470,9 +472,9 @@ const ContractEditor = observer(
         }
 
         // Go back to the previous page
-        navigateWithQueryString('/contract', { replace: true })
+        history.replace('/contract')
       }
-    }, [removeContract, contract, isNew, onRefresh, editable])
+    }, [removeContract, contract, isNew, onRefresh, editable, history])
 
     return (
       <ContractEditorView>
