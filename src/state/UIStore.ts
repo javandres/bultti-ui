@@ -1,5 +1,5 @@
 import { action, extendObservable } from 'mobx'
-import { UIActions, UINotification } from '../type/state'
+import { Initializer, UIActions, UINotification } from '../type/state'
 import { translate } from '../util/translate'
 import { Operator, Season } from '../schema-types'
 import { operatorIsAuthorized } from '../util/operatorIsAuthorized'
@@ -28,9 +28,8 @@ export const unselectedSeason: Season = {
   season: '',
 }
 
-export const UIStore = (state): UIActions => {
+export const UIStore: Initializer = (state, initialState, history): UIActions => {
   const defaultState = {
-    appLoaded: false,
     globalOperator: unselectedOperator,
     globalSeason: unselectedSeason,
     get language() {
@@ -51,6 +50,7 @@ export const UIStore = (state): UIActions => {
     state.globalOperator = setValue
 
     setUrlValue(
+      history,
       'operator',
       !setValue || setValue.id === 0 ? '' : setValue?.operatorId + '' || ''
     )
@@ -58,7 +58,7 @@ export const UIStore = (state): UIActions => {
 
   const setSeasonFilter = action((value: Season | null = unselectedSeason) => {
     state.globalSeason = value || unselectedSeason
-    setUrlValue('season', value?.id === unselectedSeason.id ? '' : value?.id || '')
+    setUrlValue(history, 'season', value?.id === unselectedSeason.id ? '' : value?.id || '')
   })
 
   const addNotification = action((message: UINotification) => {
@@ -78,14 +78,9 @@ export const UIStore = (state): UIActions => {
     }
   })
 
-  const onAppLoaded = action(() => {
-    state.appLoaded = true
-  })
-
   return {
     globalOperator: setOperatorFilter,
     globalSeason: setSeasonFilter,
-    appLoaded: onAppLoaded,
     language: setLanguage,
     notifications: {
       add: addNotification,

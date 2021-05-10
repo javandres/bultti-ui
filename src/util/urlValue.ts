@@ -13,8 +13,8 @@ type UrlState = { [key: string]: UrlStateValue }
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
-export function setUrlValue(key: string, val: UrlStateValue | null) {
-  const query = new URLSearchParams(window.location.search)
+export function setUrlValue(history: History, key: string, val: UrlStateValue | null) {
+  const query = new URLSearchParams(history.location.search)
 
   if (val === null || typeof val === 'undefined') {
     query.delete(key)
@@ -25,11 +25,11 @@ export function setUrlValue(key: string, val: UrlStateValue | null) {
   }
 
   const queryStr = query.toString()
-  return window.history.replaceState({}, '', `${window.location.pathname}?${queryStr}`)
+  return history.replace(`${history.location.pathname}?${queryStr}`)
 }
 
-export function getUrlState(): UrlState {
-  const query = new URLSearchParams(window.location.search)
+export function getUrlState(history: History): UrlState {
+  const query = new URLSearchParams(history.location.search)
 
   return fromPairs(
     Array.from(query.entries()).map(([key, value]) => {
@@ -56,8 +56,12 @@ export function getUrlState(): UrlState {
   )
 }
 
-export function getUrlValue(key: string, defaultValue: UrlStateValue = ''): UrlStateValue {
-  const values = getUrlState()
+export function getUrlValue(
+  history: History,
+  key: string,
+  defaultValue: UrlStateValue = ''
+): UrlStateValue {
+  const values = getUrlState(history)
   return get(values, key, defaultValue)
 }
 
