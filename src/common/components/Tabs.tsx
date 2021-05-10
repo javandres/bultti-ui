@@ -1,9 +1,9 @@
-import React, { Children, ReactElement, ReactNode, useMemo } from 'react'
+import React, { Children, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Link, Match, Route, useLocation, useRouteMatch } from 'react-router-dom'
+import { Link, Route, useLocation, useRouteMatch } from 'react-router-dom'
 import { pathWithQuery } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
@@ -105,14 +105,20 @@ export type TabChildProps = {
   default?: boolean
 }
 
+type TabChildComponent = React.ReactElement<{
+  name: string
+  path: string
+  label: string
+  loading?: boolean
+  testId?: string
+}>
+
 type PropTypes = {
-  children: ReactNode | ReactNode[]
+  children: (TabChildComponent | false)[]
   testIdPrefix?: string
   className?: string
   rootPath?: string
 }
-
-type TabChildComponent = React.ReactElement<{ name: string; path: string; label: string }>
 
 let getPathName = (path) => (path === '/' ? './' : path)
 
@@ -122,8 +128,8 @@ const Tabs: React.FC<PropTypes> = decorate(
 
     // The children usually contain an empty string as the first element.
     // Remove all such falsy values from the array.
-    const validChildren: ReactElement[] = useMemo(
-      () => compact<ReactElement>(Children.toArray(children)),
+    const validChildren = useMemo(
+      () => compact(Children.toArray(children)) as TabChildComponent[],
       [children]
     )
 
@@ -147,7 +153,7 @@ const Tabs: React.FC<PropTypes> = decorate(
       <TabsWrapper className={className}>
         <TabButtonsWrapper>
           {tabs.map((tabOption) => (
-            <Match key={`tab_link_${tabOption.name}`} path={getPathName(tabOption.path)}>
+            <Route key={`tab_link_${tabOption.name}`} path={getPathName(tabOption.path)}>
               {({ match }) => (
                 <TabButton
                   to={pathWithQuery(getPathName(tabOption.path), location)}
@@ -157,7 +163,7 @@ const Tabs: React.FC<PropTypes> = decorate(
                   <TabLabel>{tabOption.label}</TabLabel>
                 </TabButton>
               )}
-            </Match>
+            </Route>
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>

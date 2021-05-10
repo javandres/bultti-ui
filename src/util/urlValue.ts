@@ -1,17 +1,15 @@
 import get from 'lodash/get'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
-import { createHistory, NavigateOptions } from '@reach/router'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
-import { APP_PATH } from '../constants'
+import { createBrowserHistory, Location } from 'history'
 
 /**
  * Make sure that all history operations happen through the specific history object
  * created here:
  */
-// @ts-ignore
-export let history = createHistory(window)
+export const history = createBrowserHistory(window)
 
 type UrlStateValue = string | boolean | number
 type UrlState = { [key: string]: UrlStateValue }
@@ -21,7 +19,7 @@ const excludeQueryStringParams = ['scope', 'code', 'is_test']
 
 const historyChangeListeners: HistoryListener[] = []
 
-export const onHistoryChange = (cb) => {
+export function onHistoryChange(cb) {
   if (!historyChangeListeners.includes(cb)) {
     historyChangeListeners.push(cb)
   }
@@ -42,22 +40,18 @@ history.listen((location) => {
   }
 })
 
-// Only for testing
-export const __setHistoryForTesting = (historyObj) => {
-  history = historyObj
-}
-
-export const navigate = (
-  navigateTo: string,
-  opts?: NavigateOptions<Record<string, unknown>>
-) => {
-  history.navigate(navigateTo, opts)
+export function navigate(navigateTo: string, useReplace: boolean = false) {
+  if (useReplace) {
+    history.replace(navigateTo)
+  } else {
+    history.push(navigateTo)
+  }
 }
 
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
-export const setUrlValue = (key: string, val: UrlStateValue | null) => {
+export function setUrlValue(key: string, val: UrlStateValue | null) {
   const query = new URLSearchParams(history.location.search)
 
   if (val === null || typeof val === 'undefined') {
@@ -72,8 +66,9 @@ export const setUrlValue = (key: string, val: UrlStateValue | null) => {
   return navigate(`${history.location.pathname}?${queryStr}`)
 }
 
-export const getUrlState = (): UrlState => {
+export function getUrlState(): UrlState {
   const query = new URLSearchParams(history.location.search)
+
   return fromPairs(
     Array.from(query.entries()).map(([key, value]) => {
       let nextVal: UrlStateValue = value
@@ -99,21 +94,13 @@ export const getUrlState = (): UrlState => {
   )
 }
 
-export const getUrlValue = (key: string, defaultValue: UrlStateValue = ''): UrlStateValue => {
+export function getUrlValue(key: string, defaultValue: UrlStateValue = ''): UrlStateValue {
   const values = getUrlState()
   return get(values, key, defaultValue)
 }
 
-export const getPathName = () => {
+export function getPathName() {
   return history.location.pathname
-}
-
-export const getAppRoot = () => {
-  return `${history.location.origin}${APP_PATH}${APP_PATH !== '/' ? '/' : ''}`
-}
-
-export const resetUrlState = (replace = false) => {
-  return navigate('/', { replace })
 }
 
 function excludeQueryParams(queryString = history.location.search) {
@@ -126,7 +113,8 @@ function excludeQueryParams(queryString = history.location.search) {
   return query
 }
 
-export const pathWithQuery = (path = '', location?: Location | string) => {
+// Provide a Location object with a `search` param or the full URL with the query string.
+export function pathWithQuery(path = '', location?: Location | string) {
   let locationWithQueryString = typeof location === 'string' ? new URL(location) : location
 
   let currentQuery = excludeQueryParams(locationWithQueryString?.search)
@@ -138,10 +126,10 @@ export const pathWithQuery = (path = '', location?: Location | string) => {
  * @param {Object} opts - Optional options
  * @returns {void}
  */
-export const navigateWithQueryString = (
+export function navigateWithQueryString(
   navigateTo: string,
-  opts?: NavigateOptions<Record<string, unknown>>
-) => {
+  opts: { replace: boolean } = { replace: false }
+) {
   let path = pathWithQuery(navigateTo, history.location)
-  return navigate(path, opts)
+  return navigate(path, opts.replace)
 }

@@ -8,10 +8,10 @@ import { createState } from './state/createState'
 import { UIStore } from './state/UIStore'
 import { createGraphqlClient } from './graphqlClient'
 import { ApolloProvider } from '@apollo/client'
-import { LocationProvider } from '@reach/router'
-import { history } from './util/urlValue'
 import { removeAuthToken } from './util/authToken'
 import { UnsavedChangesProvider } from './util/promptUnsavedChanges'
+import { history } from './util/urlValue'
+import { Router } from 'react-router-dom'
 
 const initializers = [UserStore, UIStore]
 
@@ -30,15 +30,15 @@ const main = async () => {
   const client = await createGraphqlClient(onAuthError)
 
   ReactDOM.render(
-    <LocationProvider history={history}>
-      <ApolloProvider client={client}>
-        <StateContext.Provider value={state}>
+    <ApolloProvider client={client}>
+      <StateContext.Provider value={state}>
+        <Router history={history}>
           <UnsavedChangesProvider>
             <App />
           </UnsavedChangesProvider>
-        </StateContext.Provider>
-      </ApolloProvider>
-    </LocationProvider>,
+        </Router>
+      </StateContext.Provider>
+    </ApolloProvider>,
     document.getElementById('root')
   )
 }

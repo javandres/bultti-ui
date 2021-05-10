@@ -4,7 +4,7 @@ import { useStateValue } from '../../state/useAppState'
 import SelectOperator from '../input/SelectOperator'
 import { UserRole } from '../../schema-types'
 import { getUrlValue } from '../../util/urlValue'
-import { useLocation } from '@reach/router'
+import { useLocation } from 'react-router-dom'
 import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 
 const GlobalOperatorFilter: React.FC = observer(() => {

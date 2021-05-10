@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
-import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import ItemForm from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
@@ -12,10 +11,11 @@ import { User, UserInput, UserRole } from '../schema-types'
 import { PageTitle } from '../common/components/PageTitle'
 import { TextInput } from '../common/input/Input'
 import Dropdown from '../common/input/Dropdown'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const UserPageView = styled(Page)``
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
 function createUserInput(user?: User): UserInput {
   return {

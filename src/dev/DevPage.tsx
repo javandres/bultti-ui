@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
 import { PageTitle } from '../common/components/PageTitle'
 import { PageContainer } from '../common/components/common'
 import { Button } from '../common/components/buttons/Button'
@@ -16,6 +15,7 @@ import { pickGraphqlData } from '../util/pickGraphqlData'
 import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
 import { DepartureBlockFile, Inspection } from '../schema-types'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const AdminPageView = styled.div``
 const LENGTH_OF_VALID_INSPECTION_UUID = 36
@@ -57,7 +57,7 @@ async function base64ToBlob(base64?: string) {
   return response.blob()
 }
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)

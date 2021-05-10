@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
 import { FlexRow, Page, PageContainer } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { Text } from '../util/translate'
@@ -18,6 +17,7 @@ import { useRefetch } from '../util/useRefetch'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { Contract } from '../schema-types'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const ContractPageView = styled(Page)``
 
@@ -46,7 +46,7 @@ const ContractDates = styled(DateRangeDisplay)`
   align-self: flex-start;
 `
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
 const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   let [operator] = useStateValue('globalOperator')

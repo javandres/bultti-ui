@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { HSLLogoNoText } from '../icon/HSLLogoNoText'
-import { Link } from '@reach/router'
+import { Link } from 'react-router-dom'
 import { Search } from '../icon/Search'
 import { Plus } from '../icon/Plus'
 import { Menu } from '../icon/Menu'
@@ -19,7 +19,6 @@ import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
 import { navigateWithQueryString } from '../../util/urlValue'
-import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
 import { gql, useMutation } from '@apollo/client'
@@ -161,26 +160,16 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
 
   const [clearCache] = useMutation(clearCacheMutation)
 
-  let promptUnsavedChangesOnClick = usePromptUnsavedChanges()
-
   return (
     <AppSidebarView>
-      <AppTitle onClick={promptUnsavedChangesOnClick} to="/">
+      <AppTitle to="/">
         <HSLLogo fill="white" height={40} />
         <h1>
           <Text>appName</Text>
         </h1>
       </AppTitle>
       <SidebarScrollContainer>
-        <UserBar>
-          {DEBUG ? (
-            <UserLink onClick={promptUnsavedChangesOnClick} to="user">
-              {userContent}
-            </UserLink>
-          ) : (
-            userContent
-          )}
-        </UserBar>
+        <UserBar>{DEBUG ? <UserLink to="user">{userContent}</UserLink> : userContent}</UserBar>
         <GlobalFilters>
           <GlobalOperatorFilter />
           <GlobalSeasonFilter />

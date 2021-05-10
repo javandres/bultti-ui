@@ -41,7 +41,7 @@ export const useAuth = (): [AuthState, boolean] => {
       shouldNavigate.current = false
       let nextUrl = sessionStorage.getItem('return_to_url') || '/'
       sessionStorage.removeItem('return_to_url')
-      navigate(nextUrl, { replace: true })
+      navigate(nextUrl, true)
     }
   }, [navigate, shouldNavigate.current])
 

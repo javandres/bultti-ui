@@ -1,6 +1,5 @@
 import React from 'react'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import InspectionsList from '../inspection/InspectionsList'
 import { Plus } from '../common/icon/Plus'
@@ -11,11 +10,12 @@ import { getInspectionTypeStrings, useFetchInspections } from '../inspection/ins
 import { PageTitle } from '../common/components/PageTitle'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { InspectionType } from '../schema-types'
+import { RouteChildrenProps } from 'react-router-dom'
 
 type PropTypes = {
   children?: React.ReactNode
   inspectionType: InspectionType
-} & RouteComponentProps
+} & RouteChildrenProps
 
 const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)

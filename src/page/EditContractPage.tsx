@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Redirect } from '@reach/router'
+import { Redirect } from 'react-router-dom'
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
@@ -51,7 +51,7 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   }, [contractId, contract, loading])
 
   if (!hasOperatorAccess) {
-    return <Redirect noThrow to="/contract" />
+    return <Redirect to="/contract" />
   }
 
   return (

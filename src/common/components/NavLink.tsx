@@ -1,9 +1,8 @@
 import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Link, LinkProps, useLocation } from '@reach/router'
+import { Link, LinkProps, useLocation } from 'react-router-dom'
 import { pathWithQuery } from '../../util/urlValue'
-import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
 
 export type PropTypes = LinkProps<unknown>
 
@@ -32,14 +31,9 @@ const NavLink: React.FC<PropTypes> = observer(({ to, children, ...props }) => {
   let location = useLocation()
   let queryPath = pathWithQuery(to, location)
 
-  let promptUnsavedChangesOnClick = usePromptUnsavedChanges()
-
   return (
-    <NavLinkView
-      onClick={promptUnsavedChangesOnClick}
-      to={queryPath}
-      {...props}
-      ref={undefined}>
+    // Must unassign ref from props
+    <NavLinkView to={queryPath} {...props} ref={undefined}>
       {children}
     </NavLinkView>
   )

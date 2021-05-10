@@ -16,7 +16,7 @@ import {
   submitInspectionMutation,
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
-import { useMatch } from '@reach/router'
+import { useRouteMatch } from 'react-router-dom'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
@@ -59,8 +59,8 @@ const InspectionActions = observer(
     )
 
     var { inspectionType } = inspection
-
-    var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
+    // useRouteMatch returns null if the route does not match
+    var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId/*`))
 
     var navigateToInspection = useNavigateToInspection(inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
