@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Redirect, Route, Switch } from 'react-router-dom'
+import { Prompt, Redirect, Route, Switch } from 'react-router-dom'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import InspectionsPage from './page/InspectionsPage'
@@ -19,10 +19,13 @@ import { useHasAdminAccessRights } from './util/userRoles'
 import DevPage from './dev/DevPage'
 import { InspectionType } from './schema-types'
 import { DEBUG } from './constants'
+import { useUnsavedChangesPrompt } from './util/promptUnsavedChanges'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
   const hasAdminAccessRights = useHasAdminAccessRights()
+
+  const [promptCondition, promptMessage] = useUnsavedChangesPrompt()
 
   if (authState !== AuthState.AUTHENTICATED) {
     return (
@@ -32,6 +35,7 @@ const App: React.FC = observer(() => {
 
   return (
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
+      <Prompt when={promptCondition} message={promptMessage} />
       <Switch>
         <Route exact component={Index} path="/" />
         <Route

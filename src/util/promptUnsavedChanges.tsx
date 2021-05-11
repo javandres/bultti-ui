@@ -1,7 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-
-const DEFAULT_MESSAGE =
-  'Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua näkymästä? Tallentamattomat muutokset kumotaan'
+import { text } from './translate'
 
 const UnsavedChangesContext = React.createContext({
   registerDirtyForm: () => {},
@@ -52,19 +50,29 @@ export const useWatchDirtyForm = (isDirty: boolean = false) => {
   }, [isDirty, registerDirtyForm])
 }
 
-export function usePromptUnsavedChanges() {
-  let { resetDirtyForms, dirtyFormsCount } = useContext(UnsavedChangesContext)
+export function useUnsavedChangesPrompt(): [boolean, string] {
+  let { dirtyFormsCount } = useContext(UnsavedChangesContext)
+  let message = text('unsavedChangesPrompt')
+
+  return [dirtyFormsCount > 0, message]
+}
+
+export function useGetUserConfirmation(): (
+  message: string,
+  callback: (allowTransition: boolean) => unknown
+) => void {
+  let { resetDirtyForms } = useContext(UnsavedChangesContext)
 
   return useCallback(
-    (clickEvent: React.MouseEvent) => {
-      if (dirtyFormsCount > 0) {
-        if (window.confirm(DEFAULT_MESSAGE)) {
-          resetDirtyForms()
-        } else {
-          clickEvent.preventDefault()
-        }
+    (message, callback) => {
+      let allowTransition = window.confirm(message)
+
+      if (allowTransition) {
+        resetDirtyForms()
       }
+
+      callback(allowTransition)
     },
-    [dirtyFormsCount, resetDirtyForms]
+    [resetDirtyForms]
   )
 }
