@@ -1,7 +1,7 @@
 import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import InspectionsPage from './page/InspectionsPage'
@@ -18,6 +18,7 @@ import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
 import DevPage from './dev/DevPage'
 import { InspectionType } from './schema-types'
+import { DEBUG } from './constants'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -96,7 +97,10 @@ const App: React.FC = observer(() => {
         {hasAdminAccessRights && (
           <Route component={InspectionDatePage} path="/inspection-date" />
         )}
-        <Route path="/user" component={UserPage} />
+        <Route
+          path="/user"
+          render={(routeProps) => (DEBUG ? <UserPage {...routeProps} /> : <Redirect to="/" />)}
+        />
         <Route component={EditContractPage} path="/contract/:contractId" />
         <Route component={ContractPage} path="/contract" />
         <Route component={DevPage} path="/dev-tools" />
