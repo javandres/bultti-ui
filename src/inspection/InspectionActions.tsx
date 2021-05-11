@@ -60,7 +60,7 @@ const InspectionActions = observer(
 
     var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
-    var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId/*`))
+    var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId`))
 
     var navigateToInspection = useNavigateToInspection(inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
