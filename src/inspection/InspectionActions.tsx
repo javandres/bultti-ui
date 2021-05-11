@@ -21,6 +21,7 @@ import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
+import { useUnsavedChangesPrompt } from '../util/promptUnsavedChanges'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -180,6 +181,8 @@ const InspectionActions = observer(
     let canInspectionBeSanctionable =
       inspectionType === InspectionType.Post && inspection.status === InspectionStatus.Draft
 
+    let [isDirty] = useUnsavedChangesPrompt()
+
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -212,7 +215,7 @@ const InspectionActions = observer(
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
-              disabled={hasErrors}
+              disabled={hasErrors || isDirty}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitInspection}>
               <Text>inspection_actions_submit</Text>
@@ -224,7 +227,7 @@ const InspectionActions = observer(
               loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
-              disabled={hasErrors}
+              disabled={hasErrors || isDirty}
               onClick={onMakeInspectionSanctionable}>
               <Text>inspection_actions_startSanctioning</Text>
             </Button>
