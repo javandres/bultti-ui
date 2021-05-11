@@ -42,7 +42,7 @@ const App: React.FC = observer(() => {
           render={(routeProps) => (
             <EditInspectionPage inspectionType={InspectionType.Pre} {...routeProps} />
           )}
-          path="/pre-inspection/edit/:inspectionId/*"
+          path="/pre-inspection/edit/:inspectionId"
         />
         <Route
           render={(routeProps) => (
@@ -72,7 +72,7 @@ const App: React.FC = observer(() => {
           render={(routeProps) => (
             <EditInspectionPage inspectionType={InspectionType.Post} {...routeProps} />
           )}
-          path="/post-inspection/edit/:inspectionId/*"
+          path="/post-inspection/edit/:inspectionId"
         />
         <Route
           render={(routeProps) => (

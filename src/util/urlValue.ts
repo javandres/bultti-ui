@@ -93,8 +93,6 @@ function navigateTo({ replace, history }: { replace: boolean; history: History }
   return (to: string) => {
     let path = pathWithQuery(to, history.location)
 
-    console.log(path)
-
     if (replace) {
       history.replace(path)
     } else {
@@ -108,6 +106,6 @@ export function useNavigate() {
 
   return {
     push: useCallback(navigateTo({ replace: false, history }), []),
-    replace: useCallback(navigateTo({ replace: false, history }), []),
+    replace: useCallback(navigateTo({ replace: true, history }), []),
   }
 }

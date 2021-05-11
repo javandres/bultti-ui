@@ -136,7 +136,7 @@ export function useNavigateToInspection(inspectionType: InspectionType = Inspect
         return navigate.push(`/${pathSegment}-inspection/edit/${inspection.id}`)
       }
 
-      return navigate.replace(`/${pathSegment}-inspection/edit`)
+      return navigate.push(`/${pathSegment}-inspection/edit`)
     },
     [inspectionType, navigate]
   )

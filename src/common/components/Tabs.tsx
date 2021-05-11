@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Route, useLocation, useRouteMatch } from 'react-router-dom'
+import { Route, Switch, useRouteMatch } from 'react-router-dom'
 import LinkWithQuery from './LinkWithQuery'
 
 export const TabsWrapper = styled.div`
@@ -120,11 +120,11 @@ type PropTypes = {
   rootPath?: string
 }
 
-let getPathName = (path) => (path === '/' ? './' : path)
+let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`)
 
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
-    let { path } = useRouteMatch()
+    let { path, url } = useRouteMatch()
 
     // The children usually contain an empty string as the first element.
     // Remove all such falsy values from the array.
@@ -147,16 +147,17 @@ const Tabs: React.FC<PropTypes> = decorate(
       return compact(childrenTabs)
     }, [validChildren])
 
-    let location = useLocation()
-
     return (
       <TabsWrapper className={className}>
         <TabButtonsWrapper>
           {tabs.map((tabOption) => (
-            <Route key={`tab_link_${tabOption.name}`} path={getPathName(tabOption.path)}>
+            <Route
+              key={`tab_link_${tabOption.name}`}
+              exact={tabOption.path === '/'}
+              path={getPathName(path, tabOption.path)}>
               {({ match }) => (
                 <TabButton
-                  to={getPathName(tabOption.path)}
+                  to={getPathName(url, tabOption.path)}
                   data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
                   selected={!!match}>
                   {tabOption.loading && <LoadingIndicator data-testid="loading" />}
@@ -167,11 +168,16 @@ const Tabs: React.FC<PropTypes> = decorate(
           ))}
         </TabButtonsWrapper>
         <TabContentWrapper>
-          {validChildren.map((tabChild) => (
-            <Route key={tabChild.props.name} path={`${path}/${tabChild.props.path}`}>
-              {tabChild}
-            </Route>
-          ))}
+          <Switch>
+            {validChildren.map((tabChild) => (
+              <Route
+                exact={tabChild.props.path === '/'}
+                key={tabChild.props.name}
+                path={getPathName(path, tabChild.props.path)}
+                render={() => tabChild}
+              />
+            ))}
+          </Switch>
         </TabContentWrapper>
       </TabsWrapper>
     )
