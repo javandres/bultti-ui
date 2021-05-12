@@ -85,21 +85,18 @@ const InspectionActions = observer(
       [inspection, navigateToInspection, setSeason, season]
     )
 
-    var [removeInspection, { loading: removeLoading }] = useRemoveInspection(
-      inspection,
-      onRefresh
-    )
+    var [removeInspection, { loading: removeLoading }] = useRemoveInspection(inspection)
 
     let navigate = useNavigate()
 
     let onRemoveInspection = useCallback(async () => {
-      let removed = await removeInspection(inspection)
+      let removed = await removeInspection()
 
       if (removed) {
         let pathSegment = inspectionType === InspectionType.Pre ? 'pre' : 'post'
         navigate.push(`/${pathSegment}-inspection/edit`)
       }
-    }, [removeInspection, inspection, navigate])
+    }, [removeInspection, navigate])
 
     var [submitInspection, { loading: submitLoading }] = useMutationData(
       submitInspectionMutation
