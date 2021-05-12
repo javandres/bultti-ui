@@ -82,7 +82,7 @@ interface HasQueryString {
 }
 
 // Provide a Location object with a `search` param or the full URL with the query string.
-export function pathWithQuery(path = '', location?: HasQueryString | string) {
+export function getPathWithSearch(path = '', location?: HasQueryString | string) {
   let locationWithQueryString = typeof location === 'string' ? new URL(location) : location
 
   let currentQuery = excludeQueryParams(locationWithQueryString?.search)
@@ -91,7 +91,7 @@ export function pathWithQuery(path = '', location?: HasQueryString | string) {
 
 function navigateTo({ replace, history }: { replace: boolean; history: History }) {
   return (to: string) => {
-    let path = pathWithQuery(to, history.location)
+    let path = getPathWithSearch(to, history.location)
 
     if (replace) {
       history.replace(path)
