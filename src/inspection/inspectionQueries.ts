@@ -198,7 +198,9 @@ export const inspectionsTimelineByOperatorQuery = gql`
 
 export const initInspectionContractUnitMap = gql`
   mutation initInspectionContractUnitMap($inspectionId: String!) {
-    initInspectionContractUnitMap(inspectionId: $inspectionId)
+    initInspectionContractUnitMap(inspectionId: $inspectionId) {
+      id
+    }
   }
 `
 
