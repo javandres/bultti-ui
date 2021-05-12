@@ -1333,7 +1333,6 @@ export type PlannedUnitExecutionRequirement = {
   area: OperatingArea
   areaId: Scalars['Int']
   areaRequirement?: Maybe<PlannedExecutionRequirement>
-  areaRequirementId?: Maybe<Scalars['String']>
   averageAgeRequirement?: Maybe<Scalars['Float']>
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
