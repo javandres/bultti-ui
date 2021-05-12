@@ -2,40 +2,26 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import './index.css'
 import App from './App'
-import { StateContext } from './state/stateContext'
-import { UserStore } from './state/UserStore'
-import { createState } from './state/createState'
-import { UIStore } from './state/UIStore'
-import { createGraphqlClient } from './graphqlClient'
-import { ApolloProvider } from '@apollo/client'
-import { LocationProvider } from '@reach/router'
-import { history } from './util/urlValue'
-import { removeAuthToken } from './util/authToken'
+import { StateProvider } from './state/stateContext'
+import { UnsavedChangesProvider, useGetUserConfirmation } from './util/promptUnsavedChanges'
+import { BrowserRouter } from 'react-router-dom'
 
-const initializers = [UserStore, UIStore]
+// Wrap Router like this to get access to the UnsavedFormsContext in order to reset
+// dirty forms if the user decides to navigate away.
+function RouterProvider({ children }) {
+  let onUserConfirmation = useGetUserConfirmation()
+  return <BrowserRouter getUserConfirmation={onUserConfirmation}>{children}</BrowserRouter>
+}
 
 const main = async () => {
-  const state = await createState(initializers)
-
-  let onAuthError = () => {
-    removeAuthToken()
-    state.actions.user(null)
-    state.actions.notifications.add({
-      message: 'Authentication expired or invalid. Please log in again.',
-      type: 'error',
-    })
-  }
-
-  const client = await createGraphqlClient(onAuthError)
-
   ReactDOM.render(
-    <LocationProvider history={history}>
-      <ApolloProvider client={client}>
-        <StateContext.Provider value={state}>
+    <UnsavedChangesProvider>
+      <RouterProvider>
+        <StateProvider>
           <App />
-        </StateContext.Provider>
-      </ApolloProvider>
-    </LocationProvider>,
+        </StateProvider>
+      </RouterProvider>
+    </UnsavedChangesProvider>,
     document.getElementById('root')
   )
 }

@@ -1,5 +1,4 @@
 import React from 'react'
-import { RouteComponentProps } from '@reach/router'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../state/useAppState'
@@ -11,10 +10,11 @@ import { PageTitle } from '../common/components/PageTitle'
 import { getInspectionTypeStrings } from '../inspection/inspectionUtils'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
+import { RouteChildrenProps } from 'react-router-dom'
 
 export type PropTypes = {
   inspectionType: InspectionType
-} & RouteComponentProps
+} & RouteChildrenProps
 
 const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   var [season] = useStateValue('globalSeason')

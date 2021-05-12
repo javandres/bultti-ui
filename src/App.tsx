@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { AuthState, useAuth } from './util/useAuth'
 import { observer } from 'mobx-react-lite'
-import { Redirect, RouteComponentProps, Router } from '@reach/router'
+import { Prompt, Redirect, Route, Switch } from 'react-router-dom'
 import Index from './page/Index'
 import AuthGate from './page/AuthGate'
 import InspectionsPage from './page/InspectionsPage'
@@ -12,72 +12,20 @@ import ProcurementUnitsPage from './page/ProcurementUnitsPage'
 import EditInspectionPage from './page/EditInspectionPage'
 import InspectionReportIndexPage from './page/InspectionReportIndexPage'
 import UserPage from './page/UserPage'
-import { Page } from './common/components/common'
 import ContractPage from './page/ContractPage'
 import EditContractPage from './page/EditContractPage'
-import { removeAuthToken } from './util/authToken'
-import { useMutationData } from './util/useMutationData'
-import { logoutMutation } from './common/query/authQueries'
-import { pickGraphqlData } from './util/pickGraphqlData'
-import { useStateValue } from './state/useAppState'
-import { HeaderHeading } from './common/components/ExpandableSection'
-import Loading from './common/components/Loading'
 import InspectionDatePage from './page/InspectionDatePage'
 import { useHasAdminAccessRights } from './util/userRoles'
-import { DEBUG } from './constants'
 import DevPage from './dev/DevPage'
 import { InspectionType } from './schema-types'
-
-const Logout: React.FC<RouteComponentProps> = () => {
-  const [user, setUser] = useStateValue('user')
-  const [logout, { loading: logoutLoading }] = useMutationData(logoutMutation)
-
-  useEffect(() => {
-    if (user) {
-      logout().then((result) => {
-        let isLoggedOut = pickGraphqlData(result.data)
-
-        if (isLoggedOut) {
-          setUser(null)
-        }
-
-        removeAuthToken()
-      })
-    } else {
-      removeAuthToken()
-    }
-  }, [])
-
-  if (user || logoutLoading) {
-    return (
-      <Page>
-        <HeaderHeading>Kirjaudutaan ulos...</HeaderHeading>
-        <Loading />
-      </Page>
-    )
-  }
-
-  return <Redirect to="/" noThrow={true} />
-}
+import { DEBUG } from './constants'
+import { useUnsavedChangesPrompt } from './util/promptUnsavedChanges'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
   const hasAdminAccessRights = useHasAdminAccessRights()
 
-  // Listen for the browser close event. Conditionally prompt user when needed.
-  let [unsavedFormIds = []] = useStateValue('unsavedFormIds')
-
-  useEffect(() => {
-    let listener = (event: BeforeUnloadEvent) => {
-      if (unsavedFormIds.length > 0) {
-        event.preventDefault()
-        // Chrome requires event.returnValue to be cleared.
-        event.returnValue = ''
-      }
-    }
-    window.addEventListener('beforeunload', listener)
-    return () => window.removeEventListener('beforeunload', listener)
-  })
+  const [promptCondition, promptMessage] = useUnsavedChangesPrompt()
 
   if (authState !== AuthState.AUTHENTICATED) {
     return (
@@ -87,50 +35,81 @@ const App: React.FC = observer(() => {
 
   return (
     <AppFrame isAuthenticated={authState === AuthState.AUTHENTICATED}>
-      <Router style={{ height: '100%' }}>
-        <Index path="/" />
-        <DevPage path="dev-tools" />
-
-        <ProcurementUnitsPage path="procurement-units" />
-
-        <InspectionsPage path="pre-inspection" inspectionType={InspectionType.Pre} />
-        <SelectInspectionPage path="pre-inspection/edit" inspectionType={InspectionType.Pre} />
-        <EditInspectionPage
-          path="pre-inspection/edit/:inspectionId/*"
-          inspectionType={InspectionType.Pre}
+      <Prompt when={promptCondition} message={promptMessage} />
+      <Switch>
+        <Route exact component={Index} path="/" />
+        <Route
+          render={(routeProps) => (
+            <EditInspectionPage inspectionType={InspectionType.Pre} {...routeProps} />
+          )}
+          path="/pre-inspection/edit/:inspectionId"
         />
-        <InspectionReportsPage
-          path="pre-inspection/reports/:inspectionId"
-          inspectionType={InspectionType.Pre}
+        <Route
+          render={(routeProps) => (
+            <InspectionReportsPage inspectionType={InspectionType.Pre} {...routeProps} />
+          )}
+          path="/pre-inspection/reports/:inspectionId"
         />
-        <InspectionReportIndexPage
-          path="pre-inspection/reports"
-          inspectionType={InspectionType.Pre}
+        <Route
+          render={(routeProps) => (
+            <SelectInspectionPage inspectionType={InspectionType.Pre} {...routeProps} />
+          )}
+          path="/pre-inspection/edit"
         />
-
-        <InspectionsPage path="post-inspection" inspectionType={InspectionType.Post} />
-        <SelectInspectionPage
-          path="post-inspection/edit"
-          inspectionType={InspectionType.Post}
+        <Route
+          render={(routeProps) => (
+            <InspectionReportIndexPage inspectionType={InspectionType.Pre} {...routeProps} />
+          )}
+          path="/pre-inspection/reports"
         />
-        <EditInspectionPage
-          path="post-inspection/edit/:inspectionId/*"
-          inspectionType={InspectionType.Post}
+        <Route
+          render={(routeProps) => (
+            <InspectionsPage inspectionType={InspectionType.Pre} {...routeProps} />
+          )}
+          path="/pre-inspection"
         />
-        <InspectionReportsPage
-          path="post-inspection/reports/:inspectionId"
-          inspectionType={InspectionType.Post}
+        <Route
+          render={(routeProps) => (
+            <EditInspectionPage inspectionType={InspectionType.Post} {...routeProps} />
+          )}
+          path="/post-inspection/edit/:inspectionId"
         />
-        <InspectionReportIndexPage
-          path="post-inspection/reports"
-          inspectionType={InspectionType.Post}
+        <Route
+          render={(routeProps) => (
+            <InspectionReportsPage inspectionType={InspectionType.Post} {...routeProps} />
+          )}
+          path="/post-inspection/reports/:inspectionId"
         />
-        {hasAdminAccessRights && <InspectionDatePage path="inspection-date" />}
-        {DEBUG ? <UserPage path="user" /> : <Redirect from="user" to="/" noThrow />}
-        <ContractPage path="contract" />
-        <EditContractPage path="contract/:contractId" />
-        <Logout path="logout" />
-      </Router>
+        <Route
+          render={(routeProps) => (
+            <SelectInspectionPage inspectionType={InspectionType.Post} {...routeProps} />
+          )}
+          path="/post-inspection/edit"
+        />
+        <Route
+          render={(routeProps) => (
+            <InspectionReportIndexPage inspectionType={InspectionType.Post} {...routeProps} />
+          )}
+          path="/post-inspection/reports"
+        />
+        <Route
+          render={(routeProps) => (
+            <InspectionsPage inspectionType={InspectionType.Post} {...routeProps} />
+          )}
+          path="/post-inspection"
+        />
+        {hasAdminAccessRights && (
+          <Route component={InspectionDatePage} path="/inspection-date" />
+        )}
+        <Route
+          path="/user"
+          render={(routeProps) => (DEBUG ? <UserPage {...routeProps} /> : <Redirect to="/" />)}
+        />
+        <Route component={EditContractPage} path="/contract/:contractId" />
+        <Route component={ContractPage} path="/contract" />
+        <Route component={DevPage} path="/dev-tools" />
+        <Route component={ProcurementUnitsPage} path="/procurement-units" />
+      </Switch>
     </AppFrame>
   )
 })

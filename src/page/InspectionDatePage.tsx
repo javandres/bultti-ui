@@ -3,7 +3,6 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
 import { Page, PageContainer, PageSection } from '../common/components/common'
-import { RouteComponentProps } from '@reach/router'
 import InspectionDateForm from '../inspection/inspectionDate/InspectionDateForm'
 import { Button } from '../common/components/buttons/Button'
 import InspectionDateList from '../inspection/inspectionDate/InsectionDateList'
@@ -13,6 +12,7 @@ import { allInspectionDatesQuery } from '../inspection/inspectionDate/inspection
 import { orderBy } from 'lodash'
 import { Text } from '../util/translate'
 import { InspectionDate } from '../schema-types'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const InspectionDatesPage = styled(Page)``
 
@@ -20,7 +20,7 @@ const InspectionDateListWrapper = styled(PageSection)``
 
 const NewInspectionButtonWrapper = styled.div``
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
 const InspectionDatePage: React.FC<PropTypes> = observer(() => {
   let loading = false

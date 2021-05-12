@@ -18,12 +18,12 @@ import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { TabChildProps } from '../common/components/Tabs'
-import { navigateWithQueryString } from '../util/urlValue'
 import { EditValue, RenderInputType } from '../common/table/tableUtils'
 import { useLazyQueryData } from '../util/useLazyQueryData'
 import { DEBUG, DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
 import { ValueOf } from '../type/common'
+import { useNavigate } from '../util/urlValue'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -255,12 +255,14 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let isLoading = loading || setSanctionLoading || false
 
+  let navigate = useNavigate()
+
   let onAbandonSanctions = useCallback(async () => {
     if (confirm(text('postInspection_confirmAbandonSanctions'))) {
       await execAbandonSanctions()
-      navigateWithQueryString(`/post-inspection/edit/${inspection.id}/`)
+      navigate.push(`/post-inspection/edit/${inspection.id}/`)
     }
-  }, [execAbandonSanctions, inspection])
+  }, [execAbandonSanctions, inspection, navigate])
 
   let [loadSanctions, { loading: devLoadingSanctions }] = useLazyQueryData(devLoadSanctions, {
     variables: { inspectionId: inspection?.id },

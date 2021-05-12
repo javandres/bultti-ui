@@ -3,13 +3,14 @@ import { useStateValue } from '../state/useAppState'
 import { useMutationData } from './useMutationData'
 import { currentUserQuery, loginMutation } from '../common/query/authQueries'
 import { User } from '../schema-types'
-import { getUrlValue, navigate, setUrlValue } from './urlValue'
+import { getUrlValue, setUrlValue, useNavigate } from './urlValue'
 import { useQueryData } from './useQueryData'
 import { useRefetch } from './useRefetch'
 import { getAuthToken, saveAuthToken } from './authToken'
 import { pickGraphqlData } from './pickGraphqlData'
 import { text } from './translate'
 import { useShowErrorNotification } from './useShowNotification'
+import { useHistory } from 'react-router-dom'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -35,13 +36,14 @@ export const useAuth = (): [AuthState, boolean] => {
   } = useQueryData<User>(currentUserQuery)
 
   let refetchUser = useRefetch(refetchUserCb)
+  let navigate = useNavigate()
 
   let navigateNext = useCallback(() => {
     if (shouldNavigate.current) {
       shouldNavigate.current = false
       let nextUrl = sessionStorage.getItem('return_to_url') || '/'
       sessionStorage.removeItem('return_to_url')
-      navigate(nextUrl, { replace: true })
+      navigate.replace(nextUrl)
     }
   }, [navigate, shouldNavigate.current])
 
@@ -60,6 +62,8 @@ export const useAuth = (): [AuthState, boolean] => {
     }
   }, [fetchedUser, refetchUser, currentUser])
 
+  let history = useHistory()
+
   const {
     codeUrlParam,
     isTestUrlParam = false,
@@ -70,11 +74,11 @@ export const useAuth = (): [AuthState, boolean] => {
     roleUrlParam: string
   } = useMemo(
     () => ({
-      codeUrlParam: (getUrlValue('code', '') || '') as string,
-      isTestUrlParam: (getUrlValue('isTest', false) || false) as boolean,
-      roleUrlParam: (getUrlValue('role', '') || '') as string,
+      codeUrlParam: (getUrlValue(history, 'code', '') || '') as string,
+      isTestUrlParam: (getUrlValue(history, 'isTest', false) || false) as boolean,
+      roleUrlParam: (getUrlValue(history, 'role', '') || '') as string,
     }),
-    [authState] // Re-evaluate after authState changes
+    [authState, history] // Re-evaluate after authState changes
   )
 
   useEffect(() => {
@@ -102,9 +106,9 @@ export const useAuth = (): [AuthState, boolean] => {
 
     if (codeUrlParam && authState === AuthState.UNAUTHENTICATED) {
       setAuthState(AuthState.PENDING)
-      setUrlValue('code', null)
-      setUrlValue('isTest', null)
-      setUrlValue('role', null)
+      setUrlValue(history, 'code', null)
+      setUrlValue(history, 'isTest', null)
+      setUrlValue(history, 'role', null)
 
       login({
         variables: {
@@ -127,7 +131,7 @@ export const useAuth = (): [AuthState, boolean] => {
         }
       })
     }
-  }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext])
+  }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext, history])
 
   return [authState, isLoginLoading]
 }

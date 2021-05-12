@@ -1,63 +1,19 @@
 import get from 'lodash/get'
 import fromPairs from 'lodash/fromPairs'
 import toString from 'lodash/toString'
-import { createHistory, NavigateOptions } from '@reach/router'
 import { isNumeric } from './isNumeric'
 import { numval } from './numval'
-import { APP_PATH } from '../constants'
-
-/**
- * Make sure that all history operations happen through the specific history object
- * created here:
- */
-// @ts-ignore
-export let history = createHistory(window)
+import { useHistory } from 'react-router-dom'
+import { History } from 'history'
+import { useCallback } from 'react'
 
 type UrlStateValue = string | boolean | number
 type UrlState = { [key: string]: UrlStateValue }
-type HistoryListener = (urlState: UrlState) => unknown
-
-const excludeQueryStringParams = ['scope', 'code', 'is_test']
-
-const historyChangeListeners: HistoryListener[] = []
-
-export const onHistoryChange = (cb) => {
-  if (!historyChangeListeners.includes(cb)) {
-    historyChangeListeners.push(cb)
-  }
-
-  return () => {
-    const cbIndex = historyChangeListeners.indexOf(cb)
-
-    if (cbIndex !== -1) {
-      historyChangeListeners.splice(cbIndex, 1)
-    }
-  }
-}
-
-history.listen((location) => {
-  if (get(location, 'state.allowReactions', false)) {
-    const urlState = getUrlState()
-    historyChangeListeners.forEach((cb) => cb(urlState))
-  }
-})
-
-// Only for testing
-export const __setHistoryForTesting = (historyObj) => {
-  history = historyObj
-}
-
-export const navigate = (
-  navigateTo: string,
-  opts?: NavigateOptions<Record<string, unknown>>
-) => {
-  history.navigate(navigateTo, opts)
-}
 
 // Sets or changes an URL value. Use replace by default,
 // as we don't need to grow the history stack. We're not
 // listening to the url anyway, so going back does nothing.
-export const setUrlValue = (key: string, val: UrlStateValue | null) => {
+export function setUrlValue(history: History, key: string, val: UrlStateValue | null) {
   const query = new URLSearchParams(history.location.search)
 
   if (val === null || typeof val === 'undefined') {
@@ -69,11 +25,12 @@ export const setUrlValue = (key: string, val: UrlStateValue | null) => {
   }
 
   const queryStr = query.toString()
-  return navigate(`${history.location.pathname}?${queryStr}`)
+  return history.replace(`${history.location.pathname}?${queryStr}`)
 }
 
-export const getUrlState = (): UrlState => {
+export function getUrlState(history: History): UrlState {
   const query = new URLSearchParams(history.location.search)
+
   return fromPairs(
     Array.from(query.entries()).map(([key, value]) => {
       let nextVal: UrlStateValue = value
@@ -99,24 +56,18 @@ export const getUrlState = (): UrlState => {
   )
 }
 
-export const getUrlValue = (key: string, defaultValue: UrlStateValue = ''): UrlStateValue => {
-  const values = getUrlState()
+export function getUrlValue(
+  history: History,
+  key: string,
+  defaultValue: UrlStateValue = ''
+): UrlStateValue {
+  const values = getUrlState(history)
   return get(values, key, defaultValue)
 }
 
-export const getPathName = () => {
-  return history.location.pathname
-}
+const excludeQueryStringParams = ['scope', 'code', 'is_test']
 
-export const getAppRoot = () => {
-  return `${history.location.origin}${APP_PATH}${APP_PATH !== '/' ? '/' : ''}`
-}
-
-export const resetUrlState = (replace = false) => {
-  return navigate('/', { replace })
-}
-
-function excludeQueryParams(queryString = history.location.search) {
+function excludeQueryParams(queryString = window.location.search) {
   const query = new URLSearchParams(queryString)
 
   for (let excludeVal of excludeQueryStringParams) {
@@ -126,22 +77,35 @@ function excludeQueryParams(queryString = history.location.search) {
   return query
 }
 
-export const pathWithQuery = (path = '', location?: Location | string) => {
+interface HasQueryString {
+  search: string
+}
+
+// Provide a Location object with a `search` param or the full URL with the query string.
+export function getPathWithSearch(path = '', location?: HasQueryString | string) {
   let locationWithQueryString = typeof location === 'string' ? new URL(location) : location
 
   let currentQuery = excludeQueryParams(locationWithQueryString?.search)
   return `${path}?${currentQuery.toString()}`
 }
 
-/**
- * @param navigateTo
- * @param {Object} opts - Optional options
- * @returns {void}
- */
-export const navigateWithQueryString = (
-  navigateTo: string,
-  opts?: NavigateOptions<Record<string, unknown>>
-) => {
-  let path = pathWithQuery(navigateTo, history.location)
-  return navigate(path, opts)
+function navigateTo({ replace, history }: { replace: boolean; history: History }) {
+  return (to: string) => {
+    let path = getPathWithSearch(to, history.location)
+
+    if (replace) {
+      history.replace(path)
+    } else {
+      history.push(path)
+    }
+  }
+}
+
+export function useNavigate() {
+  let history = useHistory()
+
+  return {
+    push: useCallback(navigateTo({ replace: false, history }), []),
+    replace: useCallback(navigateTo({ replace: true, history }), []),
+  }
 }

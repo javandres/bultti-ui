@@ -7,6 +7,7 @@ import { getDateObject, getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
 import { text } from '../../util/translate'
 import { SidebarStyledDropdown } from './SidebarStyledDropdown'
+import { useHistory } from 'react-router-dom'
 
 const SeasonTimeSpan = styled.div`
   padding-top: 0.2rem;
@@ -16,11 +17,12 @@ const SeasonTimeSpan = styled.div`
 
 const GlobalSeasonFilter: React.FC = observer(() => {
   const [season, setSeasonFilter] = useStateValue('globalSeason')
+  let history = useHistory()
 
   let initialSeasonId: string | undefined = useMemo(() => {
-    let initialVal = (getUrlValue('season') || '') + ''
+    let initialVal = (getUrlValue(history, 'season', undefined) || '') + ''
     return initialVal || undefined
-  }, [])
+  }, [history])
 
   return (
     <React.Fragment>

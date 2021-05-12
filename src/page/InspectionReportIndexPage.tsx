@@ -8,7 +8,6 @@ import {
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Page, PageContainer } from '../common/components/common'
-import { RouteComponentProps } from '@reach/router'
 import { ControlGroup } from '../common/components/form'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
@@ -20,6 +19,7 @@ import InspectionIndexItem from '../inspection/InspectionIndexItem'
 import { getReadableDate } from '../util/formatDate'
 import { text, Text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const InspectionReportIndexPageView = styled(Page)``
 
@@ -50,13 +50,12 @@ const defaultSelectedDate = { label: 'Kaikki', value: 'kaikki' }
 
 export type PropTypes = {
   inspectionType: InspectionType
-} & RouteComponentProps
+} & RouteChildrenProps
 
 const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)
 
   let [globalSeason] = useStateValue('globalSeason')
-
   let [selectedDate, setSelectedDate] = useState<DefaultDropdownValueType>(defaultSelectedDate)
 
   let openReports = useNavigateToInspectionReports()

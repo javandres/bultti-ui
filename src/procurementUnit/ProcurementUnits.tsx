@@ -58,7 +58,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
       loading: procurementUnitsLoading,
       refetch,
     } = useQueryData<ProcurementUnitType[]>(procurementUnitsQuery, {
-      skip: !operatorId,
+      skip: !operatorId || !startDate,
       variables: {
         operatorId: operatorId,
         startDate,

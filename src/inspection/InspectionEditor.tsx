@@ -19,7 +19,6 @@ import { useStateValue } from '../state/useAppState'
 import InspectionMeta from './InspectionMeta'
 import InspectionConfig from './InspectionConfig'
 import { TabChildProps } from '../common/components/Tabs'
-import { navigateWithQueryString } from '../util/urlValue'
 import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from './InspectionUsers'
 import InspectionValidationErrors from './InspectionValidationErrors'
@@ -29,6 +28,7 @@ import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
 import PreInspectionEditor from '../preInspection/PreInspectionEditor'
 import PostInspectionEditor from '../postInspection/PostInspectionEditor'
+import { useNavigate } from '../util/urlValue'
 
 const EditInspectionView = styled.div`
   width: 100%;
@@ -91,17 +91,19 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       [isUpdating.current, inspection, updatePreInspection, refetchData]
     )
 
+    let navigate = useNavigate()
+
     useEffect(() => {
       if (!inspection || !operatorIsValid(operator) || !seasonIsValid(season)) {
         return
       }
 
       if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
-        navigateWithQueryString(
+        navigate.push(
           `/${getInspectionTypeStrings(inspection.inspectionType).path}-inspection/edit`
         )
       }
-    }, [inspection, operator, season])
+    }, [inspection, operator, season, navigate])
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
 

@@ -1,7 +1,6 @@
 import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { RouteComponentProps } from '@reach/router'
 import { FlexRow, Page, PageContainer } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
 import { Text } from '../util/translate'
@@ -11,13 +10,14 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Bu
 import { useStateValue } from '../state/useAppState'
 import { useHasAdminAccessRights } from '../util/userRoles'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { navigateWithQueryString } from '../util/urlValue'
 import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import { useRefetch } from '../util/useRefetch'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { Contract } from '../schema-types'
+import { RouteChildrenProps } from 'react-router-dom'
+import { useNavigate } from '../util/urlValue'
 
 const ContractPageView = styled(Page)``
 
@@ -46,7 +46,7 @@ const ContractDates = styled(DateRangeDisplay)`
   align-self: flex-start;
 `
 
-export type PropTypes = RouteComponentProps
+export type PropTypes = RouteChildrenProps
 
 const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   let [operator] = useStateValue('globalOperator')
@@ -68,9 +68,14 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
     contractsData,
   ])
 
-  const onOpenContract = useCallback((contractId) => {
-    return navigateWithQueryString(`/contract/${contractId}`)
-  }, [])
+  let navigate = useNavigate()
+
+  const onOpenContract = useCallback(
+    (contractId) => {
+      return navigate.push(`/contract/${contractId}`)
+    },
+    [navigate]
+  )
 
   const onCreateNewContract = useCallback(() => {
     if (!operatorIsValid(operator)) {
