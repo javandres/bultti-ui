@@ -1152,6 +1152,19 @@ export type ExecutionRequirementsReportData = {
   totalKilometers: Scalars['Float']
   totalKilometersFulfilled: Scalars['Float']
   averageAgeWeighted?: Maybe<Scalars['Float']>
+  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
+  id: Scalars['ID']
+  kilometersObserved?: Maybe<Scalars['Float']>
+  kilometersRequired?: Maybe<Scalars['Float']>
+  metersObserved?: Maybe<Scalars['Float']>
+  metersRequired?: Maybe<Scalars['Float']>
+}
+
+export type PlannedUnitExecutionRequirement = {
+  __typename?: 'PlannedUnitExecutionRequirement'
+  area: OperatingArea
+  areaId: Scalars['Int']
+  areaRequirement?: Maybe<PlannedExecutionRequirement>
   averageAgeRequirement?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   requirements: Array<PlannedEmissionClassRequirement>
