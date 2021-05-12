@@ -51,6 +51,8 @@
   "selectOperator": "Valitse liikennöitsijä.",
   "selectSeason": "Valitse aikataulukausi",
 
+  "authentication_expired": "Autentikointi umpeutui, kirjaudu sisään uudestaan.",
+
   "datePicker_insertDate": "Syötä päivä",
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",

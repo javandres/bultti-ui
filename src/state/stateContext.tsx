@@ -8,6 +8,7 @@ import { removeAuthToken } from '../util/authToken'
 import { createGraphqlClient } from '../graphqlClient'
 import { ApolloProvider } from '@apollo/client'
 import { useHistory } from 'react-router-dom'
+import { translate } from '../util/translate'
 
 export const StateContext = React.createContext<StoreContext | null>(null)
 
@@ -21,7 +22,7 @@ export const StateProvider: React.FC = ({ children }) => {
     removeAuthToken()
     state.actions.user(null)
     state.actions.notifications.add({
-      message: 'Authentication expired or invalid. Please log in again.',
+      message: translate('authentication_expired', state.state.language),
       type: 'error',
     })
   }, [state])
