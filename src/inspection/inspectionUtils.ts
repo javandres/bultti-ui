@@ -23,12 +23,12 @@ import {
 } from './inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
 import { useRefetch } from '../util/useRefetch'
-import { navigateWithQueryString } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
 import { orderBy } from 'lodash'
 import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { isObjectLike } from '../util/isObjectLike'
+import { useNavigate } from '../util/urlValue'
 
 export function useInspectionById(inspectionId: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -115,27 +115,31 @@ export function useRemoveInspection(
 }
 
 export function useNavigateToInspection(inspectionType: InspectionType = InspectionType.Pre) {
+  let navigate = useNavigate()
+
   return useCallback(
     (inspection?: Inspection) => {
       let pathSegment = getInspectionTypeStrings(inspectionType).path
 
       if (inspection) {
-        return navigateWithQueryString(`/${pathSegment}-inspection/edit/${inspection.id}`)
+        return navigate.push(`/${pathSegment}-inspection/edit/${inspection.id}`)
       }
 
-      return navigateWithQueryString(`/${pathSegment}-inspection/edit`, { replace: true })
+      return navigate.push(`/${pathSegment}-inspection/edit`)
     },
-    [inspectionType]
+    [inspectionType, navigate]
   )
 }
 
 export function useNavigateToInspectionReports() {
+  let navigate = useNavigate()
+
   return useCallback(
     (inspectionId: string = '', inspectionType: InspectionType = InspectionType.Pre) => {
       let inspectionPath = inspectionType === InspectionType.Pre ? 'pre' : 'post'
-      return navigateWithQueryString(`/${inspectionPath}-inspection/reports/${inspectionId}`)
+      return navigate.push(`/${inspectionPath}-inspection/reports/${inspectionId}`)
     },
-    []
+    [navigate]
   )
 }
 

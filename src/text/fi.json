@@ -51,6 +51,8 @@
   "selectOperator": "Valitse liikennöitsijä.",
   "selectSeason": "Valitse aikataulukausi",
 
+  "authentication_expired": "Autentikointi umpeutui, kirjaudu sisään uudestaan.",
+
   "datePicker_insertDate": "Syötä päivä",
   "table_rowsPerPage": "Rivejä per sivu",
   "table_rowsInView": "Rivejä näkymässä",
@@ -252,5 +254,7 @@
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
   "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaoleva sopimus.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
-  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia."
+  "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
+
+  "unsavedChangesPrompt": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua näkymästä? Tallentamattomat muutokset kumotaan."
 }

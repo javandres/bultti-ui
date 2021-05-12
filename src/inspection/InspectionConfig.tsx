@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { isEqual, pick, uniqueId } from 'lodash'
+import { isEqual, pick } from 'lodash'
 import { FormColumn } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -13,7 +13,7 @@ import InspectionTimeline from './InspectionTimeline'
 import InspectionSelectDates from './inspectionSelectDates'
 import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
-import { usePromptUnsavedChanges } from '../util/promptUnsavedChanges'
+import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
 import { addDays, max, parseISO } from 'date-fns'
 import { isPostInspection } from './inspectionUtils'
@@ -81,17 +81,11 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
   }, [pendingInspectionInputValues])
 
   let isDirty = useMemo(
-    () =>
-      !isEqual(
-        // Pick only props existing on the pending inspection input for comparison
-        pick(inspection, Object.keys(pendingInspectionInputValues)),
-        pendingInspectionInputValues
-      ),
-    [pendingInspectionInputValues, inspection]
+    () => !isEqual(initialInspectionInputValues, pendingInspectionInputValues),
+    [pendingInspectionInputValues, initialInspectionInputValues]
   )
 
-  const formId = useMemo(() => uniqueId(), [])
-  usePromptUnsavedChanges({ uniqueComponentId: formId, shouldShowPrompt: isDirty })
+  useWatchDirtyForm(isDirty)
 
   return (
     <InspectionConfigView>

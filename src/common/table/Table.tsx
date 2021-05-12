@@ -1,10 +1,9 @@
 import React, { useMemo, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { uniqueId } from 'lodash'
 import Input, { TextInput } from '../input/Input'
 import FormSaveToolbar from '../components/FormSaveToolbar'
-import { usePromptUnsavedChanges } from '../../util/promptUnsavedChanges'
+import { useWatchDirtyForm } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
 import {
   ContextTypes,
@@ -143,8 +142,6 @@ const Table = observer(
     setSort: propSetSort,
     isResizeEnabled = true,
   }: TablePropTypes<ItemType>) => {
-    const formId = useMemo(() => uniqueId(), [])
-
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
 
@@ -200,10 +197,7 @@ const Table = observer(
       isAlwaysEditable,
     }
 
-    usePromptUnsavedChanges({
-      uniqueComponentId: formId,
-      shouldShowPrompt: pendingValues.length !== 0 && !!onSaveEdit,
-    })
+    useWatchDirtyForm(pendingValues.length !== 0 && !!onSaveEdit)
 
     let showFooterRow = typeof getColumnTotal === 'function'
 

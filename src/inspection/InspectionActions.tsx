@@ -16,11 +16,12 @@ import {
   submitInspectionMutation,
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
-import { useMatch } from '@reach/router'
+import { useRouteMatch } from 'react-router-dom'
 import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
-import { navigateWithQueryString } from '../util/urlValue'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
+import { useNavigate } from '../util/urlValue'
+import { useUnsavedChangesPrompt } from '../util/promptUnsavedChanges'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -59,8 +60,8 @@ const InspectionActions = observer(
     )
 
     var { inspectionType } = inspection
-
-    var isEditing: boolean = Boolean(useMatch(`/:inspectionType/edit/:inspectionId/*`))
+    // useRouteMatch returns null if the route does not match
+    var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId`))
 
     var navigateToInspection = useNavigateToInspection(inspectionType)
     var goToInspectionReports = useNavigateToInspectionReports()
@@ -86,14 +87,16 @@ const InspectionActions = observer(
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(inspection)
 
+    let navigate = useNavigate()
+
     let onRemoveInspection = useCallback(async () => {
       let removed = await removeInspection()
 
       if (removed) {
         let pathSegment = inspectionType === InspectionType.Pre ? 'pre' : 'post'
-        navigateWithQueryString(`/${pathSegment}-inspection/edit`)
+        navigate.push(`/${pathSegment}-inspection/edit`)
       }
-    }, [removeInspection])
+    }, [removeInspection, navigate])
 
     var [submitInspection, { loading: submitLoading }] = useMutationData(
       submitInspectionMutation
@@ -175,6 +178,8 @@ const InspectionActions = observer(
     let canInspectionBeSanctionable =
       inspectionType === InspectionType.Post && inspection.status === InspectionStatus.Draft
 
+    let [isDirty] = useUnsavedChangesPrompt()
+
     return (
       <>
         <ButtonRow className={className} style={style}>
@@ -207,7 +212,7 @@ const InspectionActions = observer(
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
-              disabled={hasErrors}
+              disabled={hasErrors || isDirty}
               size={ButtonSize.MEDIUM}
               onClick={onSubmitInspection}>
               <Text>inspection_actions_submit</Text>
@@ -219,7 +224,7 @@ const InspectionActions = observer(
               loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
-              disabled={hasErrors}
+              disabled={hasErrors || isDirty}
               onClick={onMakeInspectionSanctionable}>
               <Text>inspection_actions_startSanctioning</Text>
             </Button>

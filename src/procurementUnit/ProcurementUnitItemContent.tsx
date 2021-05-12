@@ -27,8 +27,8 @@ import ItemForm from '../common/input/ItemForm'
 import { TextInput } from '../common/input/Input'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/buttons/Button'
-import { navigateWithQueryString } from '../util/urlValue'
 import { LinkButton } from '../common/components/buttons/LinkButton'
+import { useNavigate } from '../util/urlValue'
 
 const procurementUnitLabels = {
   medianAgeRequirement: text('procurementUnit_ageRequirement'),
@@ -187,9 +187,14 @@ const ProcurementUnitItemContent = observer(
       return medianAgeRequirement + 0.5 * optionsUsed
     }, [procurementUnit])
 
-    const onOpenContract = useCallback((contractId) => {
-      return navigateWithQueryString(`/contract/${contractId}`)
-    }, [])
+    let navigate = useNavigate()
+
+    const onOpenContract = useCallback(
+      (contractId) => {
+        return navigate.push(`/contract/${contractId}`)
+      },
+      [navigate]
+    )
 
     return (
       <ContentWrapper>
