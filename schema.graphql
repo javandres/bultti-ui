@@ -328,6 +328,23 @@ type EquipmentColorReportData {
   trackReason: TrackReason!
 }
 
+type EquipmentDefect {
+  concludedDate: String!
+  deadlineDate: String!
+  description: String!
+  id: ID!
+  jolaId: String!
+  link: String!
+  name: String!
+  observationDate: String!
+  operator: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  status: EquipmentDefectStatus!
+  updatedDate: String!
+}
+
 type EquipmentTypeReport {
   columnLabels: String!
   description: String!
@@ -1156,6 +1173,7 @@ type Query {
   equipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
   equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentColorReport
+  equipmentDefectObservations(inspectionId: String!): [EquipmentDefect!]!
   equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentTypeReport
   executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [PlannedUnitExecutionRequirement!]!
@@ -1407,6 +1425,18 @@ enum ContractUserRelationType {
   CREATED_BY
   SUBSCRIBED_TO
   UPDATED_BY
+}
+
+enum EquipmentDefectPriority {
+  DANGEROUS
+  MUST_FIX
+}
+
+enum EquipmentDefectStatus {
+  ACCEPTED
+  FIXED
+  FIXED_TEMPORARILY
+  WAITING_ON_OPERATOR
 }
 
 enum HfpStatus {

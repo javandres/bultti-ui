@@ -84,6 +84,7 @@ export type Query = {
   allInspections: Array<Inspection>
   inspectionsTimeline: Array<InspectionTimelineItem>
   inspectionUserRelations: Array<InspectionUserRelation>
+  equipmentDefectObservations: Array<EquipmentDefect>
 }
 
 export type QueryExecutionRequirementsByOperatorArgs = {
@@ -383,6 +384,10 @@ export type QueryInspectionsTimelineArgs = {
 }
 
 export type QueryInspectionUserRelationsArgs = {
+  inspectionId: Scalars['String']
+}
+
+export type QueryEquipmentDefectObservationsArgs = {
   inspectionId: Scalars['String']
 }
 
@@ -1832,6 +1837,36 @@ export type InspectionTimelineItem = {
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
   version: Scalars['Int']
+}
+
+export type EquipmentDefect = {
+  __typename?: 'EquipmentDefect'
+  id: Scalars['ID']
+  concludedDate: Scalars['String']
+  deadlineDate: Scalars['String']
+  description: Scalars['String']
+  jolaId: Scalars['String']
+  link: Scalars['String']
+  name: Scalars['String']
+  observationDate: Scalars['String']
+  operator: Scalars['String']
+  priority: EquipmentDefectPriority
+  procurementUnitId: Scalars['String']
+  registryNumber: Scalars['String']
+  status: EquipmentDefectStatus
+  updatedDate: Scalars['String']
+}
+
+export enum EquipmentDefectPriority {
+  Dangerous = 'DANGEROUS',
+  MustFix = 'MUST_FIX',
+}
+
+export enum EquipmentDefectStatus {
+  WaitingOnOperator = 'WAITING_ON_OPERATOR',
+  Fixed = 'FIXED',
+  FixedTemporarily = 'FIXED_TEMPORARILY',
+  Accepted = 'ACCEPTED',
 }
 
 export type Mutation = {
