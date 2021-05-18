@@ -16,6 +16,7 @@ export function hasReportTransform(reportName: string) {
 
 type SanctionSummaryReportItemConstants = {
   procurementUnitId: string
+  totalKilometers: number
   areaName: string
   averageAgeWeightedObserved: number
 }
@@ -67,14 +68,16 @@ function sanctionSummaryTransform(
     let resultRow: SanctionSummaryReportItemConstants | undefined = resultRows.get(
       procurementUnitId
     )
-
     if (!resultRow) {
       resultRow = {
         procurementUnitId: row.procurementUnitId,
+        totalKilometers: row.totalKilometers,
         areaName: row.areaName,
         averageAgeWeightedObserved: row.averageAgeWeightedObserved,
         ...sanctionAmountColumnsTemplate,
       }
+    } else {
+      resultRow.totalKilometers = row.totalKilometers
     }
 
     let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {
