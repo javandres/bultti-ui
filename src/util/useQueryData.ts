@@ -26,8 +26,13 @@ export const useQueryData = <TData = unknown, TVariables = OperationVariables>(
   // Execute the Apollo hook
   let queryData = useQuery<TData, TVariables>(query, allOptions)
 
-  let { loading, error, data = {} as TData, refetch, subscribeToMore = () => {} } =
-    queryData || {}
+  let {
+    loading,
+    error,
+    data = {} as TData,
+    refetch,
+    subscribeToMore = () => {},
+  } = queryData || {}
 
   // Special treatment when a subscriber is provided
   useEffect(() => {

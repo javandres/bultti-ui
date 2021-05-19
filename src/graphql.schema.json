@@ -20603,7 +20603,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "BulttiDate",
                 "ofType": null
               }
             },
@@ -20619,7 +20619,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "BulttiDate",
                 "ofType": null
               }
             },
@@ -20699,7 +20699,7 @@
               "name": null,
               "ofType": {
                 "kind": "SCALAR",
-                "name": "String",
+                "name": "BulttiDate",
                 "ofType": null
               }
             },
@@ -20780,22 +20780,6 @@
               "ofType": {
                 "kind": "ENUM",
                 "name": "EquipmentDefectStatus",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "updatedDate",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
                 "ofType": null
               }
             },

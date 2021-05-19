@@ -6,7 +6,5 @@
   "bracketSpacing": true,
   "trailingComma": "es5",
   "tabWidth": 2,
-  "jsxBracketSameLine": true,
-  "htmlWhitespaceSensitivity": "strict",
-  "quoteProps": "consistent"
+  "jsxBracketSameLine": true
 }

@@ -19,9 +19,11 @@ export type PropTypes = {
 
 const InspectionUsers: React.FC<PropTypes> = observer(({ inspection }) => {
   var [user] = useStateValue('user')
-  let { data: inspectionUserRelations, loading: relationsLoading, refetch } = useQueryData<
-    InspectionUserRelation[]
-  >(inspectionUserRelationsQuery, {
+  let {
+    data: inspectionUserRelations,
+    loading: relationsLoading,
+    refetch,
+  } = useQueryData<InspectionUserRelation[]>(inspectionUserRelationsQuery, {
     variables: {
       inspectionId: inspection.id,
     },

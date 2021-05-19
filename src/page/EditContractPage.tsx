@@ -32,9 +32,11 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   let hasAdminAccessRights = useHasAdminAccessRights()
   let isNew = contractId === 'new'
 
-  let { data: contract, loading, refetch: refetchContract } = useQueryData<
-    Contract | undefined
-  >(contractQuery, {
+  let {
+    data: contract,
+    loading,
+    refetch: refetchContract,
+  } = useQueryData<Contract | undefined>(contractQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !contractId || contractId === 'new',
     variables: { contractId },

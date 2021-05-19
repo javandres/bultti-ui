@@ -329,20 +329,19 @@ type EquipmentColorReportData {
 }
 
 type EquipmentDefect {
-  concludedDate: String!
-  deadlineDate: String!
+  concludedDate: BulttiDate!
+  deadlineDate: BulttiDate!
   description: String!
   id: ID!
   jolaId: String!
   link: String!
   name: String!
-  observationDate: String!
+  observationDate: BulttiDate!
   operator: String!
   priority: EquipmentDefectPriority!
   procurementUnitId: String!
   registryNumber: String!
   status: EquipmentDefectStatus!
-  updatedDate: String!
 }
 
 type EquipmentTypeReport {

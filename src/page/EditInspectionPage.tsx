@@ -90,9 +90,11 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
   var showErrorNotification = useShowErrorNotification()
   var navigateToInspection = useNavigateToInspection(inspectionType)
 
-  let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
-    inspectionId
-  )
+  let {
+    data: inspection,
+    loading: inspectionLoading,
+    refetch,
+  } = useInspectionById(inspectionId)
 
   const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
     shouldResubscribe: true,

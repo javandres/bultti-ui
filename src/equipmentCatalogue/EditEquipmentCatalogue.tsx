@@ -49,9 +49,8 @@ const EditEquipmentCatalogue = observer(
       !catalogue ? CatalogueEditMode.CREATE : CatalogueEditMode.UPDATE
     )
 
-    const [pendingCatalogue, setPendingCatalogue] = useState<EquipmentCatalogueInput | null>(
-      null
-    )
+    const [pendingCatalogue, setPendingCatalogue] =
+      useState<EquipmentCatalogueInput | null>(null)
 
     const [createCatalogue] = useMutationData(createEquipmentCatalogueMutation)
     const [updateCatalogue] = useMutationData(updateEquipmentCatalogueMutation)

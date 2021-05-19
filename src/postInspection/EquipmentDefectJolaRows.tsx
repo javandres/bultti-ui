@@ -1,12 +1,10 @@
 import React from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { EquipmentDefect, PostInspection } from '../schema-types'
 import { gql } from '@apollo/client'
 import { useQueryData } from '../util/useQueryData'
 import Table from '../common/table/Table'
-
-const EquipmentDefectJolaRowsView = styled.div``
+import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
 
 export type PropTypes = {
   inspection: PostInspection
@@ -28,7 +26,6 @@ const equipmentDefectPreviewQuery = gql`
       procurementUnitId
       registryNumber
       status
-      updatedDate
     }
   }
 `
@@ -43,9 +40,12 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
   console.log(data)
 
   return (
-    <EquipmentDefectJolaRowsView>
+    <ExpandableSection
+      isExpanded={true}
+      unmountOnClose={true}
+      headerContent={<HeaderMainHeading>JOLA rows</HeaderMainHeading>}>
       <Table items={data || []} />
-    </EquipmentDefectJolaRowsView>
+    </ExpandableSection>
   )
 })
 

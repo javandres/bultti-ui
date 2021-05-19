@@ -64,9 +64,10 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
 
   let refetch = useRefetch(refetchContracts)
 
-  let contracts = useMemo(() => orderBy(contractsData || [], 'startDate', 'desc'), [
-    contractsData,
-  ])
+  let contracts = useMemo(
+    () => orderBy(contractsData || [], 'startDate', 'desc'),
+    [contractsData]
+  )
 
   let navigate = useNavigate()
 

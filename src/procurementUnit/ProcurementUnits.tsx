@@ -48,9 +48,10 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
       setProcurementUnitsExpanded((currentVal) => !currentVal)
     }, [])
 
-    let getUnitErrors = useCallback((id: string) => (getErrorsById ? getErrorsById(id) : []), [
-      getErrorsById,
-    ])
+    let getUnitErrors = useCallback(
+      (id: string) => (getErrorsById ? getErrorsById(id) : []),
+      [getErrorsById]
+    )
 
     // Get the operating units for the selected operator.
     const {

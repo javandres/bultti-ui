@@ -1842,19 +1842,18 @@ export type InspectionTimelineItem = {
 export type EquipmentDefect = {
   __typename?: 'EquipmentDefect'
   id: Scalars['ID']
-  concludedDate: Scalars['String']
-  deadlineDate: Scalars['String']
+  concludedDate: Scalars['BulttiDate']
+  deadlineDate: Scalars['BulttiDate']
   description: Scalars['String']
   jolaId: Scalars['String']
   link: Scalars['String']
   name: Scalars['String']
-  observationDate: Scalars['String']
+  observationDate: Scalars['BulttiDate']
   operator: Scalars['String']
   priority: EquipmentDefectPriority
   procurementUnitId: Scalars['String']
   registryNumber: Scalars['String']
   status: EquipmentDefectStatus
-  updatedDate: Scalars['String']
 }
 
 export enum EquipmentDefectPriority {

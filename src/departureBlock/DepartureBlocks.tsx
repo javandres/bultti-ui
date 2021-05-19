@@ -50,9 +50,10 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
   })
 
   // Ensure the available dayTypes are in an array
-  let dayTypesWithDepartures = useMemo(() => availableDayTypesData || [], [
-    availableDayTypesData,
-  ])
+  let dayTypesWithDepartures = useMemo(
+    () => availableDayTypesData || [],
+    [availableDayTypesData]
+  )
 
   // Figure out which day types are selectable. The day type is selectable (or unselectable)
   // when it doesn't have any blocks attached to it.

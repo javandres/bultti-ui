@@ -64,7 +64,7 @@ export enum RequirementsTableLayout {
 }
 
 export const emissionClassLayoutColumnLabels = {
-  'unit': 'Yksikkö',
+  unit: 'Yksikkö',
   '1': 'Euro 3',
   '2': 'Euro 4',
   '3': 'Euro 3 CNG',
@@ -75,5 +75,5 @@ export const emissionClassLayoutColumnLabels = {
   '8': 'Euro 6',
   '9': 'Euro 6 eteho.',
   '10': 'Sähkö',
-  'total': 'Yhteensä',
+  total: 'Yhteensä',
 }
