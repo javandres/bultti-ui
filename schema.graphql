@@ -329,7 +329,7 @@ type EquipmentColorReportData {
 }
 
 type EquipmentDefect {
-  concludedDate: BulttiDate!
+  concludedDate: BulttiDate
   deadlineDate: BulttiDate!
   description: String!
   id: ID!
@@ -337,7 +337,7 @@ type EquipmentDefect {
   link: String!
   name: String!
   observationDate: BulttiDate!
-  operator: String!
+  operatorId: Int!
   priority: EquipmentDefectPriority!
   procurementUnitId: String!
   registryNumber: String!
@@ -1435,7 +1435,7 @@ enum EquipmentDefectStatus {
   ACCEPTED
   FIXED
   FIXED_TEMPORARILY
-  WAITING_ON_OPERATOR
+  WAITING_FOR_OPERATOR
 }
 
 enum HfpStatus {

@@ -21,7 +21,7 @@ const equipmentDefectPreviewQuery = gql`
       link
       name
       observationDate
-      operator
+      operatorId
       priority
       procurementUnitId
       registryNumber
