@@ -4,10 +4,10 @@ import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
 import { DEFAULT_DECIMALS, READABLE_TIME_FORMAT } from '../../constants'
 import { toString } from 'lodash'
-import { TableInput, TablePropTypes, TableTextInput } from './Table'
 import { CellContent } from './TableCell'
 import { getThousandSeparatedNumber } from '../../util/formatNumber'
 import { ValueOf } from '../../type/common'
+import { TableInput, TablePropTypes, TableTextInput } from './Table'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
@@ -101,7 +101,7 @@ export function defaultRenderCellContent<ItemType extends TableItemType>(
   return (
     <>
       {!(val === false || val === null || typeof val === 'undefined') && (
-        <CellContent>{val + ''}</CellContent>
+        <CellContent>{val as ReactNode}</CellContent>
       )}
     </>
   )
