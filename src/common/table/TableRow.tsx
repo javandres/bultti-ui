@@ -56,6 +56,7 @@ type RowPropTypes<ItemType extends TableItemType> = {
   data?: TableRowWithDataAndFunctions<ItemType>[]
   style?: CSSProperties
   isScrolling?: boolean
+  cellHighlighter?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => boolean
 }
 
 export const TableRow = observer(
@@ -63,6 +64,7 @@ export const TableRow = observer(
     row,
     style,
     index,
+    cellHighlighter,
     data: allRows = [],
   }: RowPropTypes<ItemType>) => {
     let rowItem = row || allRows[index]
@@ -84,6 +86,13 @@ export const TableRow = observer(
             colIndex={colIndex}
             tabIndex={index * allRows.length + colIndex + 1}
             cell={[key as keyof ItemType, val]}
+            rowHighlightColor={
+              cellHighlighter
+                ? cellHighlighter(rowItem, key as string)
+                  ? '--yellow'
+                  : undefined
+                : undefined
+            }
           />
         ))}
         {onRemoveRow && (

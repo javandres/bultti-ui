@@ -19,6 +19,7 @@ type SanctionSummaryReportItemConstants = {
   totalKilometers: number
   areaName: string
   averageAgeWeightedObserved: number
+  unitEquipmentMaxAge: number
 }
 
 type SanctionSummaryReportItem = SanctionSummaryReportItemConstants & Record<string, number>
@@ -74,10 +75,12 @@ function sanctionSummaryTransform(
         totalKilometers: row.totalKilometers,
         areaName: row.areaName,
         averageAgeWeightedObserved: row.averageAgeWeightedObserved,
+        unitEquipmentMaxAge: row.unitEquipmentMaxAge,
         ...sanctionAmountColumnsTemplate,
       }
     } else {
       resultRow.totalKilometers = row.totalKilometers
+      resultRow.unitEquipmentMaxAge = row.unitEquipmentMaxAge
     }
 
     let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {

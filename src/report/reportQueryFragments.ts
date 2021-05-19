@@ -312,6 +312,7 @@ export const reportQueryFragments = {
       sanctionReason
       sanctionAmountRatio
       sanctionedKilometers
+      unitEquipmentMaxAge
     }
   `,
 }
