@@ -87,14 +87,11 @@ const ProcurementUnitItemContent = observer(
     }
 
     // Get the operating units for the selected operator.
-    const {
-      data: procurementUnit,
-      loading,
-      refetch,
-    } = useQueryData<ProcurementUnitType>(procurementUnitQuery, {
-      skip: !procurementUnitId || !isVisible,
-      variables: unitQueryVariables,
-    }) || {}
+    const { data: procurementUnit, loading, refetch } =
+      useQueryData<ProcurementUnitType>(procurementUnitQuery, {
+        skip: !procurementUnitId || !isVisible,
+        variables: unitQueryVariables,
+      }) || {}
 
     let updateViewData = useCallback(() => {
       refetch()

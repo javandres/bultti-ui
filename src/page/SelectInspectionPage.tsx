@@ -20,19 +20,18 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
 
-  let {
-    data: inspections,
-    loading,
-    refetch,
-  } = useQueryData<Inspection[]>(currentInspectionsByOperatorAndSeasonQuery, {
-    skip: !operatorIsValid(operator) || !seasonIsValid(season),
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      operatorId: operator?.id || 0,
-      seasonId: (typeof season === 'string' ? season : season?.id) || '',
-      inspectionType,
-    },
-  })
+  let { data: inspections, loading, refetch } = useQueryData<Inspection[]>(
+    currentInspectionsByOperatorAndSeasonQuery,
+    {
+      skip: !operatorIsValid(operator) || !seasonIsValid(season),
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: operator?.id || 0,
+        seasonId: (typeof season === 'string' ? season : season?.id) || '',
+        inspectionType,
+      },
+    }
+  )
 
   let typeStrings = getInspectionTypeStrings(inspectionType)
 

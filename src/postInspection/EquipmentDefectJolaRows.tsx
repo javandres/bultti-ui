@@ -50,15 +50,14 @@ const equipmentDefectColumnLabels: { [key in keyof EquipmentDefect]?: string } =
 }
 
 const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) => {
-  let {
-    data = [],
-    loading,
-    refetch,
-  } = useQueryData<EquipmentDefect[]>(equipmentDefectPreviewQuery, {
-    variables: {
-      inspectionId: inspection.id,
-    },
-  })
+  let { data = [], loading, refetch } = useQueryData<EquipmentDefect[]>(
+    equipmentDefectPreviewQuery,
+    {
+      variables: {
+        inspectionId: inspection.id,
+      },
+    }
+  )
 
   let renderJolaValue = useCallback(
     (key: keyof EquipmentDefect, value: ValueOf<EquipmentDefect>) => {

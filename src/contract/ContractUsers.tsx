@@ -23,11 +23,9 @@ export type PropTypes = {
 const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) => {
   var [user] = useStateValue('user')
 
-  let {
-    data: contractRelations,
-    loading: relationsLoading,
-    refetch,
-  } = useQueryData<ContractUserRelation[]>(contractUserRelationsQuery, {
+  let { data: contractRelations, loading: relationsLoading, refetch } = useQueryData<
+    ContractUserRelation[]
+  >(contractUserRelationsQuery, {
     skip: !contractId,
     variables: {
       contractId,

@@ -65,8 +65,9 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
     generateTestBlockDeparturesMutation
   )
 
-  let [removeTestData, { loading: testDataRemoveLoading }] =
-    useMutationData(removeTestDataMutation)
+  let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
+    removeTestDataMutation
+  )
 
   let [forceRemoveInspection, { loading: forceRemoveInspectionLoading }] = useMutationData(
     forceRemoveInspectionMutation

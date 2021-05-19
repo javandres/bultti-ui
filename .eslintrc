@@ -11,6 +11,7 @@
     "react-app",
     "plugin:@typescript-eslint/recommended",
     "plugin:cypress/recommended",
+    "plugin:prettier/recommended",
     "prettier"
   ],
   "settings": {

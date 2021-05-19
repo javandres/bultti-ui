@@ -53,11 +53,9 @@ const ReportContainer = observer((props: PropTypes) => {
 
   type ReportDataType = ReportTypeByName[typeof reportName]
 
-  let {
-    data: report,
-    loading: reportLoading,
-    refetch,
-  } = useQueryData<BaseReport<ReportDataType>>(createReportQueryByName(reportName), {
+  let { data: report, loading: reportLoading, refetch } = useQueryData<
+    BaseReport<ReportDataType>
+  >(createReportQueryByName(reportName), {
     notifyOnNetworkStatusChange: true,
     variables: {
       // Add a string variable that changes when the table state changes.

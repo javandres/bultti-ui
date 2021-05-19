@@ -94,12 +94,10 @@ const EquipmentList: React.FC<PropTypes> = observer(
       for (let [, pendingEditValues] of pendingEquipmentInput) {
         let item = pendingEditValues[0].item
 
-        let percentageQuota = pendingEditValues.find(
-          (val) => val.key === 'percentageQuota'
-        )?.value
-        let meterRequirement = pendingEditValues.find(
-          (val) => val.key === 'meterRequirement'
-        )?.value
+        let percentageQuota = pendingEditValues.find((val) => val.key === 'percentageQuota')
+          ?.value
+        let meterRequirement = pendingEditValues.find((val) => val.key === 'meterRequirement')
+          ?.value
 
         updates.push({
           equipmentId: item.id,

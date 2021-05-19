@@ -31,12 +31,7 @@ import { isObjectLike } from '../util/isObjectLike'
 import { useNavigate } from '../util/urlValue'
 
 export function useInspectionById(inspectionId: string) {
-  let {
-    data,
-    loading,
-    error,
-    refetch: refetcher,
-  } = useQueryData<Inspection>(
+  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
     inspectionQuery,
     {
       skip: !inspectionId,
@@ -156,18 +151,17 @@ export function useFetchInspections(
 
   let queryOperator = operator || globalOperator || undefined
 
-  let {
-    data: inspectionsData,
-    loading,
-    refetch,
-  } = useQueryData<Inspection>(inspectionsByOperatorQuery, {
-    skip: !operatorIsValid(queryOperator),
-    notifyOnNetworkStatusChange: true,
-    variables: {
-      operatorId: queryOperator?.operatorId,
-      inspectionType,
-    },
-  })
+  let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
+    inspectionsByOperatorQuery,
+    {
+      skip: !operatorIsValid(queryOperator),
+      notifyOnNetworkStatusChange: true,
+      variables: {
+        operatorId: queryOperator?.operatorId,
+        inspectionType,
+      },
+    }
+  )
 
   let inspections = !!inspectionsData && Array.isArray(inspectionsData) ? inspectionsData : []
 

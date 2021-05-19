@@ -7,11 +7,11 @@ export function useStateValue<
   ActionKeyType extends keyof ActionMap = ValueKeyType
 >(
   valueKey: ValueKeyType,
-  actionName: ActionKeyType = valueKey as unknown as ActionKeyType
+  actionName: ActionKeyType = (valueKey as unknown) as ActionKeyType
 ): [IAppState[typeof valueKey], ActionMap[typeof actionName]] {
   const stateContext = useAppState()
 
-  let actionKey = (actionName || valueKey) as unknown as keyof ActionMap
+  let actionKey = ((actionName || valueKey) as unknown) as keyof ActionMap
   let action = stateContext?.actions[actionKey] || (() => {})
 
   return [stateContext?.state[valueKey], action as ActionMap[typeof actionName]]

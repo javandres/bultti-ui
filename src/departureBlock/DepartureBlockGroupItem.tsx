@@ -91,8 +91,10 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       },
     })
 
-    const [, { data: uploadedData, loading: uploadLoading, uploadError: uploadFileError }] =
-      uploader
+    const [
+      ,
+      { data: uploadedData, loading: uploadLoading, uploadError: uploadFileError },
+    ] = uploader
 
     useEffect(() => {
       if (uploadedData && !uploadLoading) {
@@ -100,8 +102,9 @@ const DepartureBlockGroupItem: React.FC<PropTypes> = observer(
       }
     }, [onBlocksChange, uploadLoading, uploadedData])
 
-    const [removeDepartureBlocksForDays, { loading: removeBlocksLoading }] =
-      useMutationData(removeDepartureBlocks)
+    const [removeDepartureBlocksForDays, { loading: removeBlocksLoading }] = useMutationData(
+      removeDepartureBlocks
+    )
 
     let isLoading = useMemo(
       () => removeBlocksLoading || ((hasDepartures || showBlocksLoading) && uploadLoading),
