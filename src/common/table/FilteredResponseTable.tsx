@@ -4,12 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { LoadingDisplay } from '../components/Loading'
 import TableFiltersControl from './TableFiltersControl'
 import { TableStateType } from './useTableState'
-import {
-  IFilteredSortedResponse,
-  TableItemType,
-  TableRowWithDataAndFunctions,
-  useRenderCellValue,
-} from './tableUtils'
+import { IFilteredSortedResponse, TableItemType, useRenderCellValue } from './tableUtils'
 import { groupBy, pick } from 'lodash'
 import { TablePropTypes } from './Table'
 import { EmptyView } from '../components/Messages'
@@ -31,7 +26,6 @@ export type PropTypes<ItemType extends TableItemType> = {
   loading?: boolean
   groupBy?: (item: ItemType) => string
   transformItems?: (items: ItemType[]) => ItemType[]
-  cellHighlighter?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => boolean
 } & Omit<TablePropTypes<ItemType>, 'items'>
 
 const FilteredResponseTable = observer(
@@ -42,7 +36,6 @@ const FilteredResponseTable = observer(
     tableState,
     groupBy: groupByFn,
     transformItems = (items) => items,
-    cellHighlighter,
     ...tableProps
   }: PropTypes<ItemType>) => {
     let { filters = [], sort = [], setFilters = () => {}, setSort = () => {} } = tableState
@@ -95,8 +88,7 @@ const FilteredResponseTable = observer(
               renderValue={tableProps.renderValue || renderCellValue}
               sort={sort}
               setSort={setSort}
-              columnLabels={existingPropLabels}
-              cellHighlighter={cellHighlighter}>
+              columnLabels={existingPropLabels}>
               <TableEmptyView>
                 <Text>tableEmpty</Text>
               </TableEmptyView>

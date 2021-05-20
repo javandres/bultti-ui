@@ -17,7 +17,9 @@ export const createReportQueryByName = (reportName: string) => {
     reportName[0].toUpperCase() + reportName.substring(1)
   }Fragment` as keyof typeof reportQueryFragments
 
-  let dataFragment = reportQueryFragments[dataFragmentName]
+  // "Hide" these queries from graphql-codegen by using gql()
+  // since it can't parse dynamic queries.
+  let dataFragment = gql(reportQueryFragments[dataFragmentName])
 
   let queryStr = `
     query ${reportName}Report(

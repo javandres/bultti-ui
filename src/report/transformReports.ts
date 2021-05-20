@@ -1,25 +1,23 @@
 import { SanctionSummaryReportData } from '../schema-types'
 import { text } from '../util/translate'
 
-const reportTransformsMap = {
+const reportTransforms = {
   sanctionSummary: sanctionSummaryTransform,
 }
 
 export function transformReport(reportName: string, reportRows: unknown[]) {
-  let transformFn = reportTransformsMap[reportName] || ((rows) => rows)
+  let transformFn = reportTransforms[reportName] || ((rows) => rows)
   return transformFn(reportRows)
 }
 
 export function hasReportTransform(reportName: string) {
-  return !!reportTransformsMap[reportName]
+  return !!reportTransforms[reportName]
 }
 
 type SanctionSummaryReportItemConstants = {
   procurementUnitId: string
-  totalKilometers: number
   areaName: string
   averageAgeWeightedObserved: number
-  unitEquipmentMaxAge: number
 }
 
 type SanctionSummaryReportItem = SanctionSummaryReportItemConstants & Record<string, number>
@@ -35,7 +33,7 @@ function getSanctionCols(
   let cols = {}
   let reasonText = text('postInspection_sanctionReason_' + sanctionReason)
   let sanctionAmountCol = `${reasonText} ${sanctionAmount}%`
-  let sanctionAmountKmCol = `${reasonText} KM`
+  let sanctionAmountKmCol = `${reasonText} ${sanctionAmount}% = KM`
 
   cols[sanctionAmountCol] = values.sanctionAmountRatio
   cols[sanctionAmountKmCol] = values.sanctionedKilometers
@@ -69,18 +67,14 @@ function sanctionSummaryTransform(
     let resultRow: SanctionSummaryReportItemConstants | undefined = resultRows.get(
       procurementUnitId
     )
+
     if (!resultRow) {
       resultRow = {
         procurementUnitId: row.procurementUnitId,
-        totalKilometers: row.totalKilometers,
         areaName: row.areaName,
         averageAgeWeightedObserved: row.averageAgeWeightedObserved,
-        unitEquipmentMaxAge: row.unitEquipmentMaxAge,
         ...sanctionAmountColumnsTemplate,
       }
-    } else {
-      resultRow.totalKilometers = row.totalKilometers
-      resultRow.unitEquipmentMaxAge = row.unitEquipmentMaxAge
     }
 
     let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {

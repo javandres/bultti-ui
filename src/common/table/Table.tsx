@@ -16,7 +16,6 @@ import {
   TableContext,
   TableEditProps,
   TableItemType,
-  TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { ROW_HEIGHT, TableHeader, TableRow, TableRowElement } from './TableRow'
 import { CellContent, ColumnHeaderCell, TableCellElement } from './TableCell'
@@ -107,7 +106,6 @@ export type TablePropTypes<ItemType extends TableItemType> = {
   ) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
   highlightRow?: (item: ItemType) => boolean | string
-  cellHighlighter?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => boolean
   renderInput?: RenderInputType<ItemType>
   maxHeight?: number
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
@@ -139,7 +137,6 @@ const Table = observer(
     editableValues = [],
     showToolbar = true,
     highlightRow = defaultHighlightRow,
-    cellHighlighter,
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
@@ -276,12 +273,7 @@ const Table = observer(
             {tableIsEmpty
               ? emptyContent
               : rows.map((row, rowIndex) => (
-                  <TableRow<ItemType>
-                    key={row.key || rowIndex}
-                    row={row}
-                    index={rowIndex}
-                    cellHighlighter={cellHighlighter}
-                  />
+                  <TableRow<ItemType> key={row.key || rowIndex} row={row} index={rowIndex} />
                 ))}
             {typeof getColumnTotal === 'function' && (
               <TableRowElement key="totals" footer={true}>

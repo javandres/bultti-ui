@@ -17,7 +17,6 @@ import ObservedExecutionRequirementsReport from './ObservedExecutionRequirements
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { hasReportTransform, transformReport } from './transformReports'
 import { createColumnTotalCallback } from './reportTotals'
-import { reportCellHighlightMap } from './reportCellHighlight'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -96,11 +95,6 @@ const ReportContainer = observer((props: PropTypes) => {
         continue
       }
 
-      // We don't want to display unitEquipmentMaxAge column in sanction report
-      if (colName === 'unitEquipmentMaxAge') {
-        continue
-      }
-
       if (!columnLabels[colName]) {
         columnLabels[colName] = colName
       }
@@ -138,8 +132,6 @@ const ReportContainer = observer((props: PropTypes) => {
     [reportName, preparedReport]
   )
 
-  let cellHighlighter = reportCellHighlightMap[reportName]
-
   return (
     <ReportViewWrapper>
       <ReportFunctionsRow>
@@ -172,7 +164,6 @@ const ReportContainer = observer((props: PropTypes) => {
           columnLabels={columnLabels}
           keyFromItem={reportKeyFromItem}
           getColumnTotal={calculateReportTotals}
-          cellHighlighter={cellHighlighter}
         />
       )}
     </ReportViewWrapper>

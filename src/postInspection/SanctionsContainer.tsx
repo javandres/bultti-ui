@@ -62,6 +62,8 @@ let sanctionColumnLabels = {
 }
 
 let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
+  console.log(val)
+
   return (
     <SanctionToggleLabel>
       <SanctionToggleInput
@@ -270,10 +272,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let renderValue = useCallback(
     (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
-      if (!val) {
-        return '-'
-      }
-
       if (
         [
           'sanctionAmount',
@@ -281,14 +279,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           'appliedSanctionAmount',
           'sanctionResultKilometers',
         ].includes(key)
-      ) {
-        return round(val as number, DEFAULT_DECIMALS)
-      }
-
-      if (
-        item &&
-        ['sanctionableValue'].includes(key) &&
-        ['UNIT_EQUIPMENT_MAX_AGE_VIOLATION'].includes(item.sanctionReason)
       ) {
         return round(val as number, DEFAULT_DECIMALS)
       }

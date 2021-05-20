@@ -1729,14 +1729,12 @@ export type SanctionSummaryReportData = {
   __typename?: 'SanctionSummaryReportData'
   id: Scalars['ID']
   procurementUnitId: Scalars['String']
-  totalKilometers: Scalars['Float']
   areaName: Scalars['String']
   sanctionAmount: Scalars['Float']
   sanctionAmountRatio: Scalars['Float']
   sanctionedKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
-  unitEquipmentMaxAge: Scalars['Float']
 }
 
 export enum SanctionReason {
@@ -1784,7 +1782,6 @@ export type SanctionsResponse = {
 export type Sanction = {
   __typename?: 'Sanction'
   id: Scalars['ID']
-  entityIdentifier: Scalars['String']
   inspection: PostInspection
   inspectionId: Scalars['String']
   procurementUnitId?: Maybe<Scalars['String']>
@@ -1792,6 +1789,7 @@ export type Sanction = {
   sanctionableType: SanctionableEntity
   sanctionableValue?: Maybe<Scalars['String']>
   sanctionReason: SanctionReason
+  entityIdentifier: Scalars['String']
   sanctionAmount: Scalars['Float']
   appliedSanctionAmount: Scalars['Float']
   sanctionableKilometers: Scalars['Float']
