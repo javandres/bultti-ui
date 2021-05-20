@@ -17,7 +17,7 @@ import ObservedExecutionRequirementsReport from './ObservedExecutionRequirements
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { hasReportTransform, transformReport } from './transformReports'
 import { createColumnTotalCallback } from './reportTotals'
-import { reportCellHighlightMap } from './reportCellHighlight'
+import { reportCellHighlightColorMap } from './reportCellHighlightColor'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -138,7 +138,7 @@ const ReportContainer = observer((props: PropTypes) => {
     [reportName, preparedReport]
   )
 
-  let cellHighlighter = reportCellHighlightMap[reportName]
+  let getCellHighlightColor = reportCellHighlightColorMap[reportName]
 
   return (
     <ReportViewWrapper>
@@ -172,7 +172,7 @@ const ReportContainer = observer((props: PropTypes) => {
           columnLabels={columnLabels}
           keyFromItem={reportKeyFromItem}
           getColumnTotal={calculateReportTotals}
-          cellHighlighter={cellHighlighter}
+          getCellHighlightColor={getCellHighlightColor}
         />
       )}
     </ReportViewWrapper>

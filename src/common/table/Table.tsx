@@ -7,7 +7,8 @@ import { useWatchDirtyForm } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
 import {
   ContextTypes,
-  defaultHighlightRow,
+  defaultGetCellHighlightColor,
+  defaultGetRowHighlightColor,
   defaultKeyFromItem,
   defaultRenderCellContent,
   defaultRenderInput,
@@ -106,8 +107,8 @@ export type TablePropTypes<ItemType extends TableItemType> = {
     item?: ItemType
   ) => React.ReactNode
   getColumnTotal?: (key: string) => React.ReactChild
-  highlightRow?: (item: ItemType) => boolean | string
-  cellHighlighter?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => boolean
+  getRowHighlightColor?: (item: TableRowWithDataAndFunctions<ItemType>) => string
+  getCellHighlightColor?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => string
   renderInput?: RenderInputType<ItemType>
   maxHeight?: number
   showToolbar?: boolean // Show toolbar when there are editable values and a save function
@@ -138,8 +139,8 @@ const Table = observer(
     renderInput = defaultRenderInput,
     editableValues = [],
     showToolbar = true,
-    highlightRow = defaultHighlightRow,
-    cellHighlighter,
+    getRowHighlightColor = defaultGetRowHighlightColor,
+    getCellHighlightColor = defaultGetCellHighlightColor,
     children: emptyContent,
     sort: propSort,
     setSort: propSetSort,
@@ -196,7 +197,6 @@ const Table = observer(
       renderInput,
       renderValue,
       keyFromItem,
-      highlightRow,
       isAlwaysEditable,
     }
 
@@ -280,7 +280,8 @@ const Table = observer(
                     key={row.key || rowIndex}
                     row={row}
                     index={rowIndex}
-                    cellHighlighter={cellHighlighter}
+                    getRowHighlightColor={getRowHighlightColor}
+                    getCellHighlightColor={getCellHighlightColor}
                   />
                 ))}
             {typeof getColumnTotal === 'function' && (

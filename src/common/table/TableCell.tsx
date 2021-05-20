@@ -26,9 +26,7 @@ export const TableCellElement = styled.div<{
   justify-content: center;
   font-size: 0.875rem;
   background: ${(p) =>
-    p.isEditing
-      ? 'var(--lightest-blue)'
-      : `var(${p.highlightColor})` || 'rgba(0, 0, 0, 0.005)'};
+    p.isEditing ? 'var(--lightest-blue)' : `${p.highlightColor}` || 'rgba(0, 0, 0, 0.005)'};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   overflow: hidden;
@@ -88,7 +86,7 @@ type CellPropTypes<ItemType extends TableItemType> = {
   colIndex: number
   tabIndex?: number
   rowId: string
-  rowHighlightColor?: string
+  cellHighlightColor?: string
 }
 
 export const TableCell = observer(
@@ -97,7 +95,7 @@ export const TableCell = observer(
     cell,
     colIndex,
     tabIndex = 1,
-    rowHighlightColor = '',
+    cellHighlightColor = '',
   }: CellPropTypes<ItemType>) => {
     let {
       pendingValues = [],
@@ -159,7 +157,7 @@ export const TableCell = observer(
 
     return (
       <TableCellElement
-        highlightColor={rowHighlightColor}
+        highlightColor={cellHighlightColor}
         style={cellWidthStyle}
         isEditing={cellIsEditable}
         isEditingRow={isEditingRow}

@@ -79,8 +79,10 @@ const PlannedExecutionStats = observer(({ executionRequirement }: PropTypes) => 
             isResizeEnabled={false}
             items={dayTypeStats}
             columnLabels={statsTableLabels}
-            highlightRow={(row) =>
-              row.equipmentCount > requirementEquipmentCount ? 'var(--lighter-red)' : false
+            getRowHighlightColor={(itemRow) =>
+              itemRow.item.equipmentCount > requirementEquipmentCount
+                ? 'var(--lighter-red)'
+                : ''
             }
           />
         </TableWrapper>
