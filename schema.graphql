@@ -1337,6 +1337,8 @@ type SanctionSummaryReportData {
   sanctionAmountRatio: Float!
   sanctionReason: SanctionReason!
   sanctionedKilometers: Float!
+  totalKilometers: Float!
+  unitEquipmentMaxAge: Float!
 }
 
 type SanctionsResponse {
