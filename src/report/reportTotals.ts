@@ -1,15 +1,13 @@
 import React from 'react'
-import { EmissionClassExecutionReportData, SanctionSummaryReportData } from '../schema-types'
+import { EmissionClassExecutionReportData } from '../schema-types'
 import { getTotal } from '../util/getTotal'
 import { round } from '../util/round'
-import Big from 'big.js'
 import { text } from '../util/translate'
 import { getThousandSeparatedNumber } from '../util/formatNumber'
 import { DEFAULT_DECIMALS } from '../constants'
 
 // Define column total functions here with the name of the report they apply to.
 const reportTotalFns = {
-  sanctionSummary: createSanctionSummaryColumnTotals,
   emissionClassExecution: createEmissionClassExecutionColumnTotals,
   observedEmissionClassExecution: createEmissionClassExecutionColumnTotals,
 }
@@ -26,30 +24,6 @@ export function createColumnTotalCallback(
   }
 
   return reportTotalFn(rows)
-}
-
-// Column totals for the sanctionSummary report
-function createSanctionSummaryColumnTotals(rows: SanctionSummaryReportData[]) {
-  return (key: keyof SanctionSummaryReportData) => {
-    // Show the total kilometers sanctioned by this sanction
-    if (key.endsWith('KM')) {
-      return getThousandSeparatedNumber(round(getTotal(rows, key), DEFAULT_DECIMALS)) + ' KM'
-    }
-
-    // Show how many percentage of all sanctions this sanction column accounts for
-    if (key.endsWith('%')) {
-      return (
-        getThousandSeparatedNumber(
-          Big(getTotal(rows, key))
-            .div(Math.max(rows.length, 1))
-            .round(DEFAULT_DECIMALS)
-            .mul(100)
-        ) + '%'
-      )
-    }
-
-    return ''
-  }
 }
 
 function createEmissionClassExecutionColumnTotals(rows: EmissionClassExecutionReportData[]) {

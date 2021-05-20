@@ -306,12 +306,14 @@ export const reportQueryFragments = {
     fragment SanctionSummaryFragment on SanctionSummaryReportData {
       id
       procurementUnitId
+      totalKilometers
       areaName
       averageAgeWeightedObserved
       sanctionAmount
       sanctionReason
       sanctionAmountRatio
       sanctionedKilometers
+      unitEquipmentMaxAge
     }
   `,
   DangerousDefectSanctionsFragment: `
