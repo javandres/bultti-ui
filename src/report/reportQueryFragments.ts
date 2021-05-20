@@ -68,6 +68,7 @@ deadrunPlannedBy
 
 // The keys should match the capitalized reportName + 'Fragment'.
 // Example: report name 'trackedDepartures' becomes fragment name 'TrackedDeparturesFragment'
+// language=GraphQL
 export const reportQueryFragments = {
   TrackedDeparturesFragment: `
     fragment TrackedDeparturesFragment on TrackedDeparturesReportData {
@@ -311,6 +312,19 @@ export const reportQueryFragments = {
       sanctionReason
       sanctionAmountRatio
       sanctionedKilometers
+    }
+  `,
+  DangerousDefectSanctionsFragment: `
+    fragment DangerousDefectSanctionsFragment on DangerousDefectSanctionsReportData {
+      id
+      jolaId
+      procurementUnitId
+      name
+      description
+      observationDate
+      priority
+      registryNumber
+      sanctionFinancialAmount
     }
   `,
 }
