@@ -17,7 +17,7 @@ import ObservedExecutionRequirementsReport from './ObservedExecutionRequirements
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { hasReportTransform, transformReport } from './transformReports'
 import { createColumnTotalCallback } from './reportTotals'
-import { cellHighlight } from './cellHighlight'
+import { reportCellHighlightMap } from './reportCellHighlight'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -138,7 +138,7 @@ const ReportContainer = observer((props: PropTypes) => {
     [reportName, preparedReport]
   )
 
-  let cellHighlighter = cellHighlight[reportName]
+  let cellHighlighter = reportCellHighlightMap[reportName]
 
   return (
     <ReportViewWrapper>

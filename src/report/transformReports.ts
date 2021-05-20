@@ -1,17 +1,17 @@
 import { SanctionSummaryReportData } from '../schema-types'
 import { text } from '../util/translate'
 
-const reportTransforms = {
+const reportTransformsMap = {
   sanctionSummary: sanctionSummaryTransform,
 }
 
 export function transformReport(reportName: string, reportRows: unknown[]) {
-  let transformFn = reportTransforms[reportName] || ((rows) => rows)
+  let transformFn = reportTransformsMap[reportName] || ((rows) => rows)
   return transformFn(reportRows)
 }
 
 export function hasReportTransform(reportName: string) {
-  return !!reportTransforms[reportName]
+  return !!reportTransformsMap[reportName]
 }
 
 type SanctionSummaryReportItemConstants = {
