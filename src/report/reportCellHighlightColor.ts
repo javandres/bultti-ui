@@ -1,16 +1,16 @@
 import { TableRowWithDataAndFunctions } from '../common/table/tableUtils'
 import { SanctionSummaryReportData } from '../schema-types'
 
-export const reportCellHighlightMap = {
-  sanctionSummary: shouldHighlightSanctionSummaryReportCell,
+export const reportCellHighlightColorMap = {
+  sanctionSummary: getSanctionSummaryReportCellHighlightColor,
 }
 
-function shouldHighlightSanctionSummaryReportCell(
+function getSanctionSummaryReportCellHighlightColor(
   rowItem: TableRowWithDataAndFunctions<SanctionSummaryReportData>,
   key: string
-): boolean {
-  return (
-    key === 'averageAgeWeightedObserved' &&
+): string {
+  return key === 'averageAgeWeightedObserved' &&
     rowItem.item.averageAgeWeightedObserved > rowItem.item.unitEquipmentMaxAge
-  )
+    ? 'var(--yellow)'
+    : ''
 }

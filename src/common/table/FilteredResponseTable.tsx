@@ -31,7 +31,7 @@ export type PropTypes<ItemType extends TableItemType> = {
   loading?: boolean
   groupBy?: (item: ItemType) => string
   transformItems?: (items: ItemType[]) => ItemType[]
-  cellHighlighter?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => boolean
+  getCellHighlightColor?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => string
 } & Omit<TablePropTypes<ItemType>, 'items'>
 
 const FilteredResponseTable = observer(
@@ -42,7 +42,7 @@ const FilteredResponseTable = observer(
     tableState,
     groupBy: groupByFn,
     transformItems = (items) => items,
-    cellHighlighter,
+    getCellHighlightColor,
     ...tableProps
   }: PropTypes<ItemType>) => {
     let { filters = [], sort = [], setFilters = () => {}, setSort = () => {} } = tableState
@@ -96,7 +96,7 @@ const FilteredResponseTable = observer(
               sort={sort}
               setSort={setSort}
               columnLabels={existingPropLabels}
-              cellHighlighter={cellHighlighter}>
+              getCellHighlightColor={getCellHighlightColor}>
               <TableEmptyView>
                 <Text>tableEmpty</Text>
               </TableEmptyView>
