@@ -327,6 +327,21 @@ export const reportQueryFragments = {
       priority
       registryNumber
       sanctionFinancialAmount
+      appliedSanctionFinancialAmount
+    }
+  `,
+  AdCoverSanctionsFragment: `
+    fragment AdCoverSanctionsFragment on AdCoverSanctionsReportData {
+      id
+      jolaId
+      procurementUnitId
+      name
+      description
+      observationDate
+      priority
+      registryNumber
+      sanctionFinancialAmount
+      appliedSanctionFinancialAmount
     }
   `,
 }

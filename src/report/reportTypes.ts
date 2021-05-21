@@ -1,4 +1,5 @@
 import {
+  AdCoverSanctionsReport,
   BlockDeviationsReport,
   DangerousDefectSanctionsReport,
   DeadrunsReport,
@@ -59,4 +60,5 @@ export type ReportTypeByName = {
   unobservedDeparturesReport: UnobservedDeparturesReport
   sanctionSummaryReport: SanctionSummaryReport
   dangerousDefectSanctionsReport: DangerousDefectSanctionsReport
+  adCoverSanctionsReport: AdCoverSanctionsReport
 }

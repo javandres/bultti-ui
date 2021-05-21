@@ -168,6 +168,7 @@ export type DangerousDefectSanctionsReportData = {
   jolaId: Scalars['String']
   priority: EquipmentDefectPriority
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
+  appliedSanctionFinancialAmount?: Maybe<Scalars['Float']>
 }
 
 export type DayTypeEquipmentStat = {

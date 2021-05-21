@@ -119,6 +119,7 @@ type DangerousDefectSanctionsReport {
 }
 
 type DangerousDefectSanctionsReportData {
+  appliedSanctionFinancialAmount: Float
   dayType: String!
   description: String!
   direction: String!
