@@ -195,7 +195,9 @@ const EquipmentList: React.FC<PropTypes> = observer(
             onCancelEdit={onCancelPendingValue}
             onSaveEdit={updateEquipment ? onSavePendingValue : undefined}
             editableValues={editableValues}
-            highlightRow={(item) => (item.requirementOnly ? '#fff4da' : false)}
+            getRowHighlightColor={(itemRow) =>
+              itemRow.item.requirementOnly ? 'var(--lightest-yellow)' : ''
+            }
             renderInput={(key, val, onChange, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}

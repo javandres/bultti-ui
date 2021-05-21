@@ -152,10 +152,12 @@ export type ContextTypes<ItemType extends TableItemType> = {
   renderCell?: TablePropTypes<ItemType>['renderCell']
   renderValue?: TablePropTypes<ItemType>['renderValue']
   keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
-  highlightRow?: TablePropTypes<ItemType>['highlightRow']
+  getRowHighlightColor?: TablePropTypes<ItemType>['getRowHighlightColor']
   isAlwaysEditable?: TablePropTypes<ItemType>['isAlwaysEditable']
 }
 
 export const TableContext = React.createContext({})
 
-export const defaultHighlightRow = (): string | boolean => false
+export const defaultGetRowHighlightColor = (): string => ''
+
+export const defaultGetCellHighlightColor = (): string => ''

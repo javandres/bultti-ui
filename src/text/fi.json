@@ -240,8 +240,8 @@
   "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen maksimi-iän ylitys",
   "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Suoritevaatimuksen alitus",
 
-  "postInspection_jolaPreview_heading": "JOLA esikatselu",
-  "postInspection_jolaPreview_description": "Näiden JOLA-rivien perusteella tehdään tähän jälkitarkastukseen sisältyvä kalustovikasanktiointi. Tämä on pelkkä esikatselu; kun tarkastus viedään sanktioitavaksi, lopulliset rivit haetaan uudestaan JOLA:sta.",
+  "postInspection_jolaPreview_heading": "Kalustovikasanktioinnin esikatselu (JOLA)",
+  "postInspection_jolaPreview_description": "Näiden JOLA:sta haettujen rivien perusteella tehdään tähän jälkitarkastukseen sisältyvä kalustovikasanktiointi. Tämä on pelkkä esikatselu - lopulliset rivit haetaan JOLA:sta kun jälkitarkastus asetetaan julkaistavaksi.",
   "postInspection_jolaPreview_empty": "JOLA:sta ei löydetty yhtäkään sanktioitavaa huomautusta tälle tarkastusjaksolle.",
 
   "jolaPriority_MUST_FIX": "Korjattava",
