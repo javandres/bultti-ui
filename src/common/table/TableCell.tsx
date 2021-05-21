@@ -1,7 +1,6 @@
 import styled from 'styled-components/macro'
 import {
   ContextTypes,
-  defaultHighlightRow,
   defaultKeyFromItem,
   defaultRenderCellContent,
   defaultRenderInput,
@@ -27,7 +26,7 @@ export const TableCellElement = styled.div<{
   justify-content: center;
   font-size: 0.875rem;
   background: ${(p) =>
-    p.isEditing ? 'var(--lightest-blue)' : p.highlightColor || 'rgba(0, 0, 0, 0.005)'};
+    p.isEditing ? 'var(--lightest-blue)' : `${p.highlightColor}` || 'rgba(0, 0, 0, 0.005)'};
   position: relative;
   cursor: ${(p) => (p.editable ? 'pointer' : 'default')};
   overflow: hidden;
@@ -87,6 +86,7 @@ type CellPropTypes<ItemType extends TableItemType> = {
   colIndex: number
   tabIndex?: number
   rowId: string
+  cellHighlightColor?: string
 }
 
 export const TableCell = observer(
@@ -95,6 +95,7 @@ export const TableCell = observer(
     cell,
     colIndex,
     tabIndex = 1,
+    cellHighlightColor = '',
   }: CellPropTypes<ItemType>) => {
     let {
       pendingValues = [],
@@ -107,7 +108,6 @@ export const TableCell = observer(
       renderCell = defaultRenderCellContent,
       renderInput = defaultRenderInput,
       keyFromItem = defaultKeyFromItem,
-      highlightRow = defaultHighlightRow,
       isAlwaysEditable,
     }: ContextTypes<ItemType> = useContext(TableContext)
 
@@ -150,14 +150,6 @@ export const TableCell = observer(
       [makeCellEditable, isFocused]
     )
 
-    let rowHighlight = highlightRow(item)
-    let rowHighlightColor =
-      typeof rowHighlight === 'string'
-        ? rowHighlight
-        : rowHighlight
-        ? '--lightest-blue'
-        : undefined
-
     let cellWidthStyle = {
       width: typeof columnWidth !== 'undefined' ? columnWidth + '%' : 'auto',
       flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
@@ -165,7 +157,7 @@ export const TableCell = observer(
 
     return (
       <TableCellElement
-        highlightColor={rowHighlightColor}
+        highlightColor={cellHighlightColor}
         style={cellWidthStyle}
         isEditing={cellIsEditable}
         isEditingRow={isEditingRow}

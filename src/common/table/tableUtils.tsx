@@ -27,17 +27,12 @@ export interface IFilteredSortedResponse<DataType extends TableItemType> {
 // Sensible default rendering function for nice looking data.
 export function useRenderCellValue() {
   return useCallback((key, val) => {
-    if (typeof val === 'boolean' || typeof val === 'undefined' || val === null) {
-      return (
-        <span
-          style={{
-            fontSize: '1.2rem',
-            marginTop: '-3px',
-            display: 'block',
-          }}>
-          {val ? '✓' : '⨯'}
-        </span>
-      )
+    if (typeof val === 'boolean') {
+      return val ? '✓' : 'x'
+    }
+
+    if (typeof val === 'undefined' || val === null) {
+      return '-'
     }
 
     if (typeof val === 'number') {
@@ -157,10 +152,12 @@ export type ContextTypes<ItemType extends TableItemType> = {
   renderCell?: TablePropTypes<ItemType>['renderCell']
   renderValue?: TablePropTypes<ItemType>['renderValue']
   keyFromItem?: TablePropTypes<ItemType>['keyFromItem']
-  highlightRow?: TablePropTypes<ItemType>['highlightRow']
+  getRowHighlightColor?: TablePropTypes<ItemType>['getRowHighlightColor']
   isAlwaysEditable?: TablePropTypes<ItemType>['isAlwaysEditable']
 }
 
 export const TableContext = React.createContext({})
 
-export const defaultHighlightRow = (): string | boolean => false
+export const defaultGetRowHighlightColor = (): string => ''
+
+export const defaultGetCellHighlightColor = (): string => ''
