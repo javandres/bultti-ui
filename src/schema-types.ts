@@ -18,6 +18,46 @@ export type Scalars = {
   Upload: string
 }
 
+export type AdCoverSanctionsReport = {
+  __typename?: 'AdCoverSanctionsReport'
+  filteredCount: Scalars['Int']
+  totalCount: Scalars['Int']
+  filters?: Maybe<Array<FilterConfig>>
+  sort?: Maybe<Array<SortConfig>>
+  responseId: Scalars['String']
+  id: Scalars['String']
+  name: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  columnLabels: Scalars['String']
+  seasonId: Scalars['String']
+  operatorId: Scalars['Float']
+  inspectionId: Scalars['String']
+  showSanctioned?: Maybe<Scalars['Boolean']>
+  showUnsanctioned?: Maybe<Scalars['Boolean']>
+  rows: Array<AdCoverSanctionsReportData>
+}
+
+export type AdCoverSanctionsReportData = {
+  __typename?: 'AdCoverSanctionsReportData'
+  id: Scalars['ID']
+  routeId: Scalars['String']
+  dayType: Scalars['String']
+  journeyStartTime: Scalars['String']
+  journeyEndTime: Scalars['String']
+  direction: Scalars['String']
+  trackReason: TrackReason
+  name: Scalars['String']
+  description: Scalars['String']
+  procurementUnitId: Scalars['String']
+  observationDate: Scalars['String']
+  registryNumber: Scalars['String']
+  jolaId: Scalars['String']
+  priority: EquipmentDefectPriority
+  sanctionFinancialAmount?: Maybe<Scalars['Float']>
+  appliedSanctionFinancialAmount?: Maybe<Scalars['Float']>
+}
+
 export type BlockDeviationsReport = {
   __typename?: 'BlockDeviationsReport'
   filteredCount: Scalars['Int']
@@ -1710,6 +1750,7 @@ export type Query = {
   unobservedDeparturesReport?: Maybe<UnobservedDeparturesReport>
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>
   dangerousDefectSanctionsReport?: Maybe<DangerousDefectSanctionsReport>
+  adCoverSanctionsReport?: Maybe<AdCoverSanctionsReport>
   contracts: Array<Contract>
   contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
@@ -1956,6 +1997,12 @@ export type QuerySanctionSummaryReportArgs = {
 }
 
 export type QueryDangerousDefectSanctionsReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>
+  sort?: Maybe<Array<InputSortConfig>>
+  inspectionId: Scalars['String']
+}
+
+export type QueryAdCoverSanctionsReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
   inspectionId: Scalars['String']

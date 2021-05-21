@@ -8,6 +8,44 @@ schema {
 
 union Inspection = PostInspection | PreInspection
 
+type AdCoverSanctionsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [AdCoverSanctionsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type AdCoverSanctionsReportData {
+  appliedSanctionFinancialAmount: Float
+  dayType: String!
+  description: String!
+  direction: String!
+  id: ID!
+  jolaId: String!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  name: String!
+  observationDate: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeId: String!
+  sanctionFinancialAmount: Float
+  trackReason: TrackReason!
+}
+
 type BlockDeviationsReport {
   columnLabels: String!
   description: String!
@@ -1210,6 +1248,7 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  adCoverSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): AdCoverSanctionsReport
   allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
