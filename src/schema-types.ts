@@ -65,6 +65,7 @@ export type Query = {
   observedUnitExecutionReport?: Maybe<ObservedUnitExecutionReport>
   unobservedDeparturesReport?: Maybe<UnobservedDeparturesReport>
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>
+  sanctionListReport?: Maybe<SanctionListReport>
   contracts: Array<Contract>
   contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
@@ -303,6 +304,12 @@ export type QueryUnobservedDeparturesReportArgs = {
 }
 
 export type QuerySanctionSummaryReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>
+  sort?: Maybe<Array<InputSortConfig>>
+  inspectionId: Scalars['String']
+}
+
+export type QuerySanctionListReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
   inspectionId: Scalars['String']
@@ -1751,6 +1758,35 @@ export enum SanctionReason {
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 
+export type SanctionListReport = {
+  __typename?: 'SanctionListReport'
+  filteredCount: Scalars['Int']
+  totalCount: Scalars['Int']
+  filters?: Maybe<Array<FilterConfig>>
+  sort?: Maybe<Array<SortConfig>>
+  responseId: Scalars['String']
+  id: Scalars['String']
+  name: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  columnLabels: Scalars['String']
+  seasonId: Scalars['String']
+  operatorId: Scalars['Float']
+  inspectionId: Scalars['String']
+  showSanctioned?: Maybe<Scalars['Boolean']>
+  showUnsanctioned?: Maybe<Scalars['Boolean']>
+  rows: Array<SanctionListReportData>
+}
+
+export type SanctionListReportData = {
+  __typename?: 'SanctionListReportData'
+  id: Scalars['ID']
+  procurementUnitId: Scalars['String']
+  kilometers: Scalars['Float']
+  sanctionSum: Scalars['Float']
+  sanctionReason: Scalars['String']
+}
+
 export type ProcurementUnitOption = {
   __typename?: 'ProcurementUnitOption'
   id: Scalars['String']
@@ -1796,6 +1832,7 @@ export type Sanction = {
   appliedSanctionAmount: Scalars['Float']
   sanctionableKilometers: Scalars['Float']
   sanctionResultKilometers?: Maybe<Scalars['Float']>
+  sanctionSum?: Maybe<Scalars['Int']>
   matchesException?: Maybe<SanctionException>
 }
 
@@ -1880,7 +1917,9 @@ export type Mutation = {
   generateTestBlockDepartures: Array<DepartureBlockFile>
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
+  helperResolver: Scalars['Boolean']
   updateLinkedInspection: PostInspection
+  tempCalcSanctionSums: PostInspection
   inspectionSanctionable: PostInspection
   abandonSanctions: PostInspection
   createInspection?: Maybe<Inspection>
@@ -2070,6 +2109,10 @@ export type MutationForceRemoveInspectionArgs = {
 }
 
 export type MutationUpdateLinkedInspectionArgs = {
+  inspectionId: Scalars['String']
+}
+
+export type MutationTempCalcSanctionSumsArgs = {
   inspectionId: Scalars['String']
 }
 

@@ -26,7 +26,6 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
         if (code === 'UNAUTHENTICATED') {
           authenticationError = true
         }
-
         console.log(`[${code} error]: ${message}`)
       })
     }
