@@ -23,6 +23,7 @@ import {
   ObservedUnitExecutionReport,
   OperatorDeadrunsReport,
   OverAgeDeparturesReport,
+  SanctionListReport,
   SanctionSummaryReport,
   TrackedDeparturesReport,
   UnitExecutionReport,
@@ -60,6 +61,7 @@ export type ReportTypeByName = {
   observedUnitExecutionReport: ObservedUnitExecutionReport
   unobservedDeparturesReport: UnobservedDeparturesReport
   sanctionSummaryReport: SanctionSummaryReport
+  sanctionListReport: SanctionListReport
   dangerousDefectSanctionsReport: DangerousDefectSanctionsReport
   adCoverSanctionsReport: AdCoverSanctionsReport
   defectiveEquipmentDepartureSanctionsReport: DefectiveEquipmentDepartureSanctionsReport

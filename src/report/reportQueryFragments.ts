@@ -316,6 +316,14 @@ export const reportQueryFragments = {
       unitEquipmentMaxAge
     }
   `,
+  SanctionListFragment: `
+    fragment SanctionListFragment on SanctionListReportData {
+      procurementUnitId
+      kilometers
+      sanctionSum
+      sanctionReason
+    }
+  `,
   DangerousDefectSanctionsFragment: `
     fragment DangerousDefectSanctionsFragment on DangerousDefectSanctionsReportData {
       id

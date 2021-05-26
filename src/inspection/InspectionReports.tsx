@@ -35,6 +35,7 @@ const preInspectionReportOrder: ReportTypeNames[] = [
 ]
 const postInspectionReportOrder: ReportTypeNames[] = [
   'sanctionSummaryReport',
+  'sanctionListReport',
   'observedEquipmentTypeReport',
   'observedEquipmentColorReport',
   'observedOverageDeparturesReport',

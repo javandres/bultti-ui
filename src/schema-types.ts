@@ -991,6 +991,7 @@ export type Mutation = {
   generateTestBlockDepartures: Array<DepartureBlockFile>
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
+  helperResolver: Scalars['Boolean']
   updateLinkedInspection: PostInspection
   inspectionSanctionable: PostInspection
   abandonSanctions: PostInspection
@@ -1794,6 +1795,7 @@ export type Query = {
   observedUnitExecutionReport?: Maybe<ObservedUnitExecutionReport>
   unobservedDeparturesReport?: Maybe<UnobservedDeparturesReport>
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>
+  sanctionListReport?: Maybe<SanctionListReport>
   dangerousDefectSanctionsReport?: Maybe<DangerousDefectSanctionsReport>
   adCoverSanctionsReport?: Maybe<AdCoverSanctionsReport>
   defectiveEquipmentDepartureSanctionsReport?: Maybe<DefectiveEquipmentDepartureSanctionsReport>
@@ -2042,6 +2044,12 @@ export type QuerySanctionSummaryReportArgs = {
   inspectionId: Scalars['String']
 }
 
+export type QuerySanctionListReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>
+  sort?: Maybe<Array<InputSortConfig>>
+  inspectionId: Scalars['String']
+}
+
 export type QueryDangerousDefectSanctionsReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
@@ -2170,6 +2178,7 @@ export type Sanction = {
   appliedSanctionAmount: Scalars['Float']
   sanctionableKilometers: Scalars['Float']
   sanctionResultKilometers?: Maybe<Scalars['Float']>
+  sanctionSum?: Maybe<Scalars['Int']>
   matchesException?: Maybe<SanctionException>
 }
 
@@ -2190,6 +2199,35 @@ export enum SanctionExceptionReason {
   ExteriorColorViolation = 'EXTERIOR_COLOR_VIOLATION',
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
+}
+
+export type SanctionListReport = {
+  __typename?: 'SanctionListReport'
+  filteredCount: Scalars['Int']
+  totalCount: Scalars['Int']
+  filters?: Maybe<Array<FilterConfig>>
+  sort?: Maybe<Array<SortConfig>>
+  responseId: Scalars['String']
+  id: Scalars['String']
+  name: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  columnLabels: Scalars['String']
+  seasonId: Scalars['String']
+  operatorId: Scalars['Float']
+  inspectionId: Scalars['String']
+  showSanctioned?: Maybe<Scalars['Boolean']>
+  showUnsanctioned?: Maybe<Scalars['Boolean']>
+  rows: Array<SanctionListReportData>
+}
+
+export type SanctionListReportData = {
+  __typename?: 'SanctionListReportData'
+  id: Scalars['ID']
+  procurementUnitId: Scalars['String']
+  kilometers: Scalars['Float']
+  sanctionSum: Scalars['Float']
+  sanctionReason: Scalars['String']
 }
 
 export enum SanctionReason {
