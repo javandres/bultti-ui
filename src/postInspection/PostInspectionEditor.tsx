@@ -7,6 +7,7 @@ import { Text } from '../util/translate'
 import styled from 'styled-components/macro'
 import LinkedInspections from './LinkedInspections'
 import { useHasInspectionError } from '../util/hasInspectionError'
+import EquipmentDefectJolaRows from './EquipmentDefectJolaRows'
 
 const PostInspectionEditorView = styled.div`
   margin-top: 1rem;
@@ -27,6 +28,7 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
 
     return (
       <PostInspectionEditorView>
+        <EquipmentDefectJolaRows inspection={inspection} />
         <LinkedInspections inspection={inspection} isEditable={isEditable} />
         {hfpLoaded ? (
           <PostInspectionExecutionRequirements isEditable={isEditable} />

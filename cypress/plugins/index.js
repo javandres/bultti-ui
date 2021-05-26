@@ -1,7 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
-const _ = require('lodash');
-const dotenv = require('dotenv');
+const fs = require('fs-extra')
+const path = require('path')
+const _ = require('lodash')
+const dotenv = require('dotenv')
 
 // ***********************************************************
 // This example plugins/index.js can be used to load plugins
@@ -17,58 +17,58 @@ const dotenv = require('dotenv');
 // the project's config changing)
 
 async function getConfigurationByFile(file) {
-    if (!file) {
-        return {};
-    }
+  if (!file) {
+    return {}
+  }
 
-    const pathToConfigFile = path.resolve(`cypress.${file}.json`);
-    return fs.readJson(pathToConfigFile);
+  const pathToConfigFile = path.resolve(`cypress.${file}.json`)
+  return fs.readJson(pathToConfigFile)
 }
 
 async function readEnvVars() {
-    const config = {};
+  const config = {}
 
-    const appRoot = await fs.realpath(process.cwd());
-    const envPaths = [path.resolve(appRoot, '.env')];
-    const envObjects = [];
+  const appRoot = await fs.realpath(process.cwd())
+  const envPaths = [path.resolve(appRoot, '.env')]
+  const envObjects = []
 
-    // Read env config
-    for (const envPath of envPaths) {
-        const pathExists = await fs.exists(envPath);
+  // Read env config
+  for (const envPath of envPaths) {
+    const pathExists = await fs.exists(envPath)
 
-        if (!pathExists) {
-            continue;
-        }
-
-        const envFile = await fs.readFile(envPath, 'utf8');
-        const envContent = dotenv.parse(envFile);
-        envObjects.push(envContent);
+    if (!pathExists) {
+      continue
     }
 
-    const combinedFiles = _.merge({}, ...envObjects);
+    const envFile = await fs.readFile(envPath, 'utf8')
+    const envContent = dotenv.parse(envFile)
+    envObjects.push(envContent)
+  }
 
-    const CYPRESS_PREFIX = /^CYPRESS_/i;
+  const combinedFiles = _.merge({}, ...envObjects)
 
-    // Add CYPRESS-prefixed vars to the config.
-    Object.entries(combinedFiles).forEach(([key, value]) => {
-        config[key] = value;
-    });
+  const CYPRESS_PREFIX = /^CYPRESS_/i
 
-    // Add CYPRESS-prefixed vars from the environment to the config.
-    for (const [envName, envValue] of Object.entries(process.env)) {
-        if (envName.match(CYPRESS_PREFIX)) {
-            config[envName] = envValue;
-        }
+  // Add CYPRESS-prefixed vars to the config.
+  Object.entries(combinedFiles).forEach(([key, value]) => {
+    config[key] = value
+  })
+
+  // Add CYPRESS-prefixed vars from the environment to the config.
+  for (const [envName, envValue] of Object.entries(process.env)) {
+    if (envName.match(CYPRESS_PREFIX)) {
+      config[envName] = envValue
     }
+  }
 
-    return config;
+  return config
 }
 
 module.exports = async (on, config) => {
-    const configFile = config.env.configFile || '';
+  const configFile = config.env.configFile || ''
 
-    const envVars = await readEnvVars();
-    const envConfig = await getConfigurationByFile(configFile);
+  const envVars = await readEnvVars()
+  const envConfig = await getConfigurationByFile(configFile)
 
-    return _.merge({}, config, { env: envVars }, envConfig);
-};
+  return _.merge({}, config, { env: envVars }, envConfig)
+}
