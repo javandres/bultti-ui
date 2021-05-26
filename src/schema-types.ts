@@ -225,6 +225,50 @@ export type DeadrunsReportData = {
   equipmentRotation?: Maybe<Scalars['Int']>
 }
 
+export type DefectiveEquipmentDepartureSanctionsReport = {
+  __typename?: 'DefectiveEquipmentDepartureSanctionsReport'
+  filteredCount: Scalars['Int']
+  totalCount: Scalars['Int']
+  filters?: Maybe<Array<FilterConfig>>
+  sort?: Maybe<Array<SortConfig>>
+  responseId: Scalars['String']
+  id: Scalars['String']
+  name: Scalars['String']
+  title: Scalars['String']
+  description: Scalars['String']
+  columnLabels: Scalars['String']
+  seasonId: Scalars['String']
+  operatorId: Scalars['Float']
+  inspectionId: Scalars['String']
+  showSanctioned?: Maybe<Scalars['Boolean']>
+  showUnsanctioned?: Maybe<Scalars['Boolean']>
+  rows: Array<DefectiveEquipmentDepartureSanctionsReportData>
+}
+
+export type DefectiveEquipmentDepartureSanctionsReportData = {
+  __typename?: 'DefectiveEquipmentDepartureSanctionsReportData'
+  id: Scalars['ID']
+  routeId: Scalars['String']
+  dayType: Scalars['String']
+  journeyStartTime: Scalars['String']
+  journeyEndTime: Scalars['String']
+  direction: Scalars['String']
+  trackReason: TrackReason
+  name: Scalars['String']
+  description: Scalars['String']
+  procurementUnitId: Scalars['String']
+  departureId: Scalars['String']
+  startDate: Scalars['String']
+  endDate: Scalars['String']
+  registryNumber: Scalars['String']
+  jolaId: Scalars['String']
+  priority: EquipmentDefectPriority
+  sanctionPercentageAmount?: Maybe<Scalars['Float']>
+  appliedSanctionPercentage?: Maybe<Scalars['Float']>
+  routeKilometers?: Maybe<Scalars['Float']>
+  sanctionedKilometers?: Maybe<Scalars['Float']>
+}
+
 export type DepartureBlockFile = {
   __typename?: 'DepartureBlockFile'
   dayType: Scalars['String']
@@ -1752,6 +1796,7 @@ export type Query = {
   sanctionSummaryReport?: Maybe<SanctionSummaryReport>
   dangerousDefectSanctionsReport?: Maybe<DangerousDefectSanctionsReport>
   adCoverSanctionsReport?: Maybe<AdCoverSanctionsReport>
+  defectiveEquipmentDepartureSanctionsReport?: Maybe<DefectiveEquipmentDepartureSanctionsReport>
   contracts: Array<Contract>
   contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
@@ -2004,6 +2049,12 @@ export type QueryDangerousDefectSanctionsReportArgs = {
 }
 
 export type QueryAdCoverSanctionsReportArgs = {
+  filters?: Maybe<Array<InputFilterConfig>>
+  sort?: Maybe<Array<InputSortConfig>>
+  inspectionId: Scalars['String']
+}
+
+export type QueryDefectiveEquipmentDepartureSanctionsReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
   inspectionId: Scalars['String']

@@ -188,6 +188,48 @@ type DeadrunsReportData {
   schemaId: String
 }
 
+type DefectiveEquipmentDepartureSanctionsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [DefectiveEquipmentDepartureSanctionsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DefectiveEquipmentDepartureSanctionsReportData {
+  appliedSanctionPercentage: Float
+  dayType: String!
+  departureId: String!
+  description: String!
+  direction: String!
+  endDate: String!
+  id: ID!
+  jolaId: String!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  name: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeId: String!
+  routeKilometers: Float
+  sanctionPercentageAmount: Float
+  sanctionedKilometers: Float
+  startDate: String!
+  trackReason: TrackReason!
+}
+
 type DepartureBlockFile {
   blockFile: String!
   dayType: String!
@@ -1265,6 +1307,7 @@ type Query {
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
   dangerousDefectSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DangerousDefectSanctionsReport
   deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeadrunsReport
+  defectiveEquipmentDepartureSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DefectiveEquipmentDepartureSanctionsReport
   departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DepartureBlocksReport
   earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport
   emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EmissionClassExecutionReport

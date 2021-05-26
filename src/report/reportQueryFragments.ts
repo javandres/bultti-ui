@@ -344,4 +344,22 @@ export const reportQueryFragments = {
       appliedSanctionFinancialAmount
     }
   `,
+  DefectiveEquipmentDepartureSanctionsFragment: `
+    fragment DefectiveEquipmentDepartureSanctionsFragment on DefectiveEquipmentDepartureSanctionsReportData {
+      id
+      jolaId
+      procurementUnitId
+      name
+      description
+      departureId
+      startDate
+      endDate
+      priority
+      registryNumber
+      sanctionPercentageAmount
+      appliedSanctionPercentage
+      routeKilometers
+      sanctionedKilometers
+    }
+  `,
 }
