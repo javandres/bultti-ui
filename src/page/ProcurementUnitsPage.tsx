@@ -35,11 +35,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
             requirementsEditable={false}
             operatorId={globalOperator?.id || 0}
             startDate={globalSeason?.startDate || ''}
-            endDate={
-              globalSeason?.startDate
-                ? getDateString(addDays(parseISO(globalSeason.startDate), 7))
-                : ''
-            }
+            endDate={globalSeason?.endDate || ''}
             contractSelectionDate={getDateObject(globalSeason.startDate)}
           />
         )}

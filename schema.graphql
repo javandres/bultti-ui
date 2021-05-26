@@ -8,6 +8,44 @@ schema {
 
 union Inspection = PostInspection | PreInspection
 
+type AdCoverSanctionsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [AdCoverSanctionsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type AdCoverSanctionsReportData {
+  appliedSanctionFinancialAmount: Float
+  dayType: String!
+  description: String!
+  direction: String!
+  id: ID!
+  jolaId: String!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  name: String!
+  observationDate: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeId: String!
+  sanctionFinancialAmount: Float
+  trackReason: TrackReason!
+}
+
 type BlockDeviationsReport {
   columnLabels: String!
   description: String!
@@ -61,6 +99,44 @@ type ContractUserRelation {
   user: User!
 }
 
+type DangerousDefectSanctionsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [DangerousDefectSanctionsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DangerousDefectSanctionsReportData {
+  appliedSanctionFinancialAmount: Float
+  dayType: String!
+  description: String!
+  direction: String!
+  id: ID!
+  jolaId: String!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  name: String!
+  observationDate: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeId: String!
+  sanctionFinancialAmount: Float
+  trackReason: TrackReason!
+}
+
 type DayTypeEquipmentStat {
   dayType: String!
   equipmentCount: Int!
@@ -110,6 +186,48 @@ type DeadrunsReportData {
   equipmentRotation: Int
   id: ID!
   schemaId: String
+}
+
+type DefectiveEquipmentDepartureSanctionsReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [DefectiveEquipmentDepartureSanctionsReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type DefectiveEquipmentDepartureSanctionsReportData {
+  appliedSanctionPercentage: Float
+  dayType: String!
+  departureId: String!
+  description: String!
+  direction: String!
+  endDate: String!
+  id: ID!
+  jolaId: String!
+  journeyEndTime: String!
+  journeyStartTime: String!
+  name: String!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeId: String!
+  routeKilometers: Float
+  sanctionPercentageAmount: Float
+  sanctionedKilometers: Float
+  startDate: String!
+  trackReason: TrackReason!
 }
 
 type DepartureBlockFile {
@@ -342,6 +460,28 @@ type EquipmentDefect {
   procurementUnitId: String!
   registryNumber: String!
   status: EquipmentDefectStatus!
+}
+
+type EquipmentDefectSanction {
+  appliedSanctionFinancialAmount: Float!
+  appliedSanctionPercentage: Float!
+  departureId: String
+  description: String!
+  endDate: BulttiDate
+  id: ID!
+  inspection: PostInspection!
+  inspectionId: String!
+  jolaId: String!
+  name: String!
+  observationDate: BulttiDate!
+  priority: EquipmentDefectPriority!
+  procurementUnitId: String!
+  registryNumber: String!
+  routeKilometers: Float!
+  sanctionFinancialAmount: Float!
+  sanctionPercentageAmount: Float!
+  sanctionedKilometers: Float
+  startDate: BulttiDate
 }
 
 type EquipmentTypeReport {
@@ -667,6 +807,7 @@ type Mutation {
   updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
+  updateEquipmentDefectSanctions(sanctionUpdates: [EquipmentDefectSanctionUpdate!]!): [EquipmentDefectSanction!]!
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
   updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
@@ -1150,6 +1291,7 @@ type ProcurementUnitRoute {
 }
 
 type Query {
+  adCoverSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): AdCoverSanctionsReport
   allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
@@ -1163,7 +1305,9 @@ type Query {
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
+  dangerousDefectSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DangerousDefectSanctionsReport
   deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeadrunsReport
+  defectiveEquipmentDepartureSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DefectiveEquipmentDepartureSanctionsReport
   departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DepartureBlocksReport
   earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport
   emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EmissionClassExecutionReport
@@ -1182,6 +1326,7 @@ type Query {
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection!
+  inspectionEquipmentDefectSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
@@ -1275,6 +1420,8 @@ type SanctionSummaryReportData {
   sanctionAmountRatio: Float!
   sanctionReason: SanctionReason!
   sanctionedKilometers: Float!
+  totalKilometers: Float!
+  unitEquipmentMaxAge: Float!
 }
 
 type SanctionsResponse {
@@ -1558,6 +1705,12 @@ input ContractInput {
 input EquipmentCatalogueInput {
   endDate: BulttiDate!
   startDate: BulttiDate!
+}
+
+input EquipmentDefectSanctionUpdate {
+  appliedSanctionFinancialAmount: Float
+  appliedSanctionPercentage: Float
+  equipmentDefectSanctionId: String!
 }
 
 input InitialInspectionInput {
