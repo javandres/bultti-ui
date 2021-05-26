@@ -26,7 +26,7 @@ const InspectionDevTools: React.FC<PropTypes> = observer(({ inspection, onUpdate
     variables: {
       inspectionId: inspection.id,
     },
-    onCompleted: () => onUpdate(),
+    refetchQueries: ['executionRequirementsByPreInspection', 'inspectionQuery'],
   })
 
   return (

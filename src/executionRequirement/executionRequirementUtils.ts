@@ -5,11 +5,7 @@ import {
 } from './executionRequirementsQueries'
 import { useRefetch } from '../util/useRefetch'
 import { useMemo } from 'react'
-import {
-  ObservedExecutionRequirement,
-  PlannedAreaExecutionRequirement,
-  PlannedUnitExecutionRequirement,
-} from '../schema-types'
+import { ObservedExecutionRequirement, PlannedAreaExecutionRequirement } from '../schema-types'
 import { orderBy } from 'lodash'
 
 export function usePreInspectionAreaRequirements(inspectionId?: string) {
