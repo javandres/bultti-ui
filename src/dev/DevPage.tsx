@@ -48,6 +48,12 @@ const forceRemoveInspectionMutation = gql`
   }
 `
 
+const helperResolverMutation = gql`
+  mutation helperResolver {
+    helperResolver
+  }
+`
+
 async function base64ToBlob(base64?: string) {
   if (!base64) {
     return
@@ -72,6 +78,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [forceRemoveInspection, { loading: forceRemoveInspectionLoading }] = useMutationData(
     forceRemoveInspectionMutation
   )
+
+  let [helperResolver, { loading: asd }] = useMutationData(helperResolverMutation)
 
   let isAdmin = useHasAdminAccessRights()
 
@@ -109,6 +117,10 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
       })
     }
   }, [removeInspectionId, forceRemoveInspection])
+
+  let onHelperResolver = () => {
+    helperResolver()
+  }
 
   let onGenerateTestBlocks = useCallback(async () => {
     let response = await generateTestBlocks()
@@ -182,13 +194,17 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         {inspection && (
           <InspectionCard key={inspection.id} onRefresh={() => {}} inspection={inspection} />
         )}
-
-        <Button
-          loading={forceRemoveInspectionLoading}
-          onClick={onRemoveInspection}
-          disabled={removeInspectionId.length !== LENGTH_OF_VALID_INSPECTION_UUID}>
-          Force remove inspection
-        </Button>
+        <p>
+          <Button
+            loading={forceRemoveInspectionLoading}
+            onClick={onRemoveInspection}
+            disabled={removeInspectionId.length !== LENGTH_OF_VALID_INSPECTION_UUID}>
+            Force remove inspection
+          </Button>
+        </p>
+        <p>
+          <Button onClick={onHelperResolver}>Call helperResolver</Button>
+        </p>
       </PageContainer>
     </AdminPageView>
   )

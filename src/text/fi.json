@@ -184,7 +184,7 @@
   "inspection_selectProductionDate": "Valitse tuotantojakso",
   "inspection_inspectionValidPeriod": "Tarkastuksen tuotantojakso",
   "inspection_inspectionPeriod": "Tarkastusjakso",
-  "inspection_editor_hfp_unavailable": "Tarkastusjaksolle ei ole ladattu HFP-tiedot.",
+  "inspection_editor_hfp_unavailable": "Tarkastusjakson HFP-tietojen latausta ei ole tehty",
   "inspection_editor_linkedInspections": "Linkitetyt tarkastukset",
   "inspection_editor_linkedInspectionsUpToDate": "Linkitetyt tarkastukset ovat ajantasalla",
   "inspection_editor_linkedInspectionsUpdateAvailable": "Päivitä linkitetyt tarkastukset",
