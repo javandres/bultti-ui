@@ -779,6 +779,8 @@ type Mutation {
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   generateTestBlockDepartures: [DepartureBlockFile!]!
+  helperResolver: Boolean!
+  importHfpForDates(endDate: String!, startDate: String!): Boolean!
   initInspectionContractUnitMap(inspectionId: String!): PreInspection!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
@@ -1351,6 +1353,7 @@ type Query {
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionId: String, inspectionType: String!): [ReportListItem!]!
   runSanctioning(inspectionId: String!): [Sanction!]!
+  sanctionListReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionListReport
   sanctionSummaryReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionSummaryReport
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
@@ -1380,6 +1383,7 @@ type Sanction {
   sanctionAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
+  sanctionSum: Int
   sanctionableKilometers: Float!
   sanctionableType: SanctionableEntity!
   sanctionableValue: String
@@ -1390,6 +1394,33 @@ type SanctionException {
   exceptionAppliesToReason: SanctionExceptionReason!
   exceptionValue: String!
   id: ID!
+}
+
+type SanctionListReport {
+  columnLabels: String!
+  description: String!
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  name: String!
+  operatorId: Float!
+  responseId: String!
+  rows: [SanctionListReportData!]!
+  seasonId: String!
+  showSanctioned: Boolean
+  showUnsanctioned: Boolean
+  sort: [SortConfig!]
+  title: String!
+  totalCount: Int!
+}
+
+type SanctionListReportData {
+  id: ID!
+  kilometers: Float!
+  procurementUnitId: String!
+  sanctionReason: String!
+  sanctionSum: Float!
 }
 
 type SanctionSummaryReport {

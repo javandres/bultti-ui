@@ -991,6 +991,7 @@ export type Mutation = {
   generateTestBlockDepartures: Array<DepartureBlockFile>
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
+  importHfpForDates: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
   updateLinkedInspection: PostInspection
   inspectionSanctionable: PostInspection
@@ -1180,6 +1181,11 @@ export type MutationUpdateSanctionsArgs = {
 export type MutationForceRemoveInspectionArgs = {
   testOnly?: Maybe<Scalars['Boolean']>
   inspectionId: Scalars['String']
+}
+
+export type MutationImportHfpForDatesArgs = {
+  endDate: Scalars['String']
+  startDate: Scalars['String']
 }
 
 export type MutationUpdateLinkedInspectionArgs = {

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
-import { PageContainer } from '../common/components/common'
+import { FlexRow, PageContainer } from '../common/components/common'
 import { Button } from '../common/components/buttons/Button'
 import { gql } from '@apollo/client'
 import { useMutationData } from '../util/useMutationData'
@@ -16,6 +16,8 @@ import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
 import { DepartureBlockFile, Inspection } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
+import DatePicker from '../common/input/DatePicker'
+import { Text } from '../util/translate'
 
 const AdminPageView = styled.div``
 const LENGTH_OF_VALID_INSPECTION_UUID = 36
@@ -45,6 +47,12 @@ const removeTestDataMutation = gql`
 const forceRemoveInspectionMutation = gql`
   mutation forceRemoveInspection($inspectionId: String!, $testOnly: Boolean) {
     forceRemoveInspection(inspectionId: $inspectionId, testOnly: $testOnly)
+  }
+`
+
+const loadHfpMutation = gql`
+  mutation importHfpForDates($startDate: String!, $endDate: String!) {
+    importHfpForDates(startDate: $startDate, endDate: $endDate)
   }
 `
 
@@ -80,6 +88,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   )
 
   let [helperResolver, { loading: asd }] = useMutationData(helperResolverMutation)
+
+  let [importHfpForDates, { loading: hfpLoading }] = useMutationData(loadHfpMutation)
 
   let isAdmin = useHasAdminAccessRights()
 
@@ -132,6 +142,18 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
       saveAs(blob, filename)
     }
   }, [generateTestBlocks])
+
+  let [hfpStartDate, setHfpStartDate] = useState('')
+  let [hfpEndDate, setHfpEndDate] = useState('')
+
+  let onLoadHfpForDates = useCallback(() => {
+    importHfpForDates({
+      variables: {
+        startDate: hfpStartDate,
+        endDate: hfpEndDate,
+      },
+    })
+  }, [hfpStartDate, hfpEndDate])
 
   return (
     <AdminPageView>
@@ -204,6 +226,26 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         </p>
         <p>
           <Button onClick={onHelperResolver}>Call helperResolver</Button>
+        </p>
+        <h2>Load HFP for dates</h2>
+        <FlexRow>
+          <DatePicker
+            value={hfpStartDate}
+            onChange={(dateString: string | null) => {
+              setHfpStartDate(dateString || '')
+            }}
+          />
+          <DatePicker
+            value={hfpEndDate}
+            onChange={(dateString: string | null) => {
+              setHfpEndDate(dateString || '')
+            }}
+          />
+        </FlexRow>
+        <p>
+          <Button onClick={onLoadHfpForDates} loading={hfpLoading}>
+            <Text>Load HFP for dates</Text>
+          </Button>
         </p>
       </PageContainer>
     </AdminPageView>
