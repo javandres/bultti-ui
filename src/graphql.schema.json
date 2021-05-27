@@ -24132,7 +24132,7 @@
             "deprecationReason": null
           },
           {
-            "name": "reasonBenchmarkValue",
+            "name": "sanctionReasonValue",
             "description": null,
             "args": [],
             "type": {
@@ -24144,7 +24144,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionReasonValue",
+            "name": "reasonBenchmarkValue",
             "description": null,
             "args": [],
             "type": {

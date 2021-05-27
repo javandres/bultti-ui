@@ -2198,8 +2198,8 @@ export type Sanction = {
   registryNumber?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
-  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionPercentageAmount: Scalars['Float']
   appliedSanctionPercentageAmount: Scalars['Float']
   sanctionScopeKilometers: Scalars['Float']
