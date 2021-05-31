@@ -21,10 +21,6 @@ type QueryExecutor<TData, TVariables> = [
   }
 ]
 
-const defaultOptions = {
-  notifyOnNetworkStatusChange: true,
-}
-
 export const useLazyQueryData = <
   TData extends Record<string, unknown> = Record<string, unknown>,
   TVariables = OperationVariables
@@ -35,7 +31,8 @@ export const useLazyQueryData = <
 ): QueryExecutor<TData, TVariables> => {
   let allOptions: QueryHookOptions<TData, TVariables> = {
     errorPolicy: 'all',
-    ...defaultOptions,
+    nextFetchPolicy: 'cache-and-network',
+    notifyOnNetworkStatusChange: true,
     ...options,
   }
 
@@ -46,18 +43,18 @@ export const useLazyQueryData = <
     { loading, error, data = {} as TData, refetch, called, networkStatus },
   ] = queryHookArr || [() => {}, {}]
 
-  let availableRefetch = useCallback(
-    async (variables?: TVariables): Promise<void> => {
-      if (refetch) {
-        return refetch(variables).then(() => undefined)
+  let execQuery = useCallback(
+    async (options?: QueryLazyOptions<TVariables> | undefined): Promise<void> => {
+      if (called && typeof refetch === 'function') {
+        return refetch(options?.variables)?.then(() => undefined)
       }
 
-      return queryFn({ variables })
+      return queryFn(options)
     },
-    [refetch, data, loading, networkStatus]
+    [refetch, data, called, loading, networkStatus]
   )
 
   const pickedData = useMemo(() => pickGraphqlData(data, pickData), [data, pickData])
 
-  return [queryFn, { data: pickedData, loading, error, refetch: availableRefetch, called }]
+  return [execQuery, { data: pickedData, loading, error, called }]
 }
