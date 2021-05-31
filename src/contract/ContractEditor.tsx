@@ -267,6 +267,7 @@ const ContractEditor = observer(
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
     }, [initialContract])
+
     let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
 
     useEffect(() => {
@@ -386,18 +387,16 @@ const ContractEditor = observer(
       }
 
       if (pendingContractValid) {
-        let result
-
         if (rulesFiles.length !== 0) {
           let rulesFile = rulesFiles[0]
           if (isNew) {
-            result = await createContract(rulesFile, {
+            await createContract(rulesFile, {
               variables: {
                 contractInput: pendingContract,
               },
             })
           } else {
-            result = await modifyContract(rulesFile, {
+            await modifyContract(rulesFile, {
               variables: {
                 contractInput: pendingContract,
                 operatorId: globalOperator.operatorId,
@@ -405,7 +404,7 @@ const ContractEditor = observer(
             })
           }
         } else {
-          result = await updateMutationFn({
+          await updateMutationFn({
             variables: {
               contractInput: pendingContract,
               operatorId: globalOperator.operatorId,
@@ -420,10 +419,6 @@ const ContractEditor = observer(
         }
 
         setRulesFiles([])
-
-        if (result?.data && isNew) {
-          goToContract(result.data?.id)
-        }
       }
     }, [rulesFiles, pendingContract, pendingContractValid, isNew, goToContract, editable])
 
