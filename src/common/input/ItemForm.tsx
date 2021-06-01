@@ -94,6 +94,7 @@ export type PropTypes<ItemType extends Record<string, unknown>> = {
   doneLabel?: string
   doneDisabled?: boolean
   isDirty?: boolean
+  dirtyFormCheckIsEnabled?: boolean
   labels?: LabelsType<ItemType>
   hints?: HintsType<ItemType>
   order?: string[]
@@ -151,6 +152,7 @@ const ItemForm = observer(
     onCancel,
     doneDisabled = false,
     isDirty = true,
+    dirtyFormCheckIsEnabled = true,
     doneLabel = 'Tallenna',
     renderInput = defaultRenderInput,
     renderLabel = defaultRenderLabel,
@@ -174,7 +176,7 @@ const ItemForm = observer(
       [readOnly]
     )
 
-    useWatchDirtyForm(isDirty)
+    useWatchDirtyForm(dirtyFormCheckIsEnabled && isDirty)
 
     return (
       <ControlledFormView style={style} frameless={frameless}>
@@ -205,7 +207,7 @@ const ItemForm = observer(
               <Button
                 loading={loading}
                 style={{ marginRight: '1rem' }}
-                disabled={doneDisabled || !isDirty}
+                disabled={doneDisabled || (dirtyFormCheckIsEnabled && !isDirty)}
                 onClick={onDone}>
                 {doneLabel}
               </Button>

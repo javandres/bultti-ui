@@ -258,16 +258,18 @@ const ContractEditor = observer(
           startDate: getDateString(new Date()),
           endDate: getDateString(addYears(new Date(), 1)),
         }
+
         return createContractInput(newContract)
       } else {
         return createContractInput(contract!)
       }
     }, [isNew, contract, globalOperator])
 
+    let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
+
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
     }, [initialContract])
-    let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
 
     useEffect(() => {
       if (isNew && pendingContract.operatorId !== globalOperator?.operatorId) {
@@ -281,21 +283,17 @@ const ContractEditor = observer(
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
     let isDirty = useMemo(() => {
-      if (!editable) {
+      // New contracts are not dirty since that would result in dirty-nav-block false positives.
+      if (isNew || !editable) {
         return false
-      }
-
-      // New contracts are always dirty
-      if (isNew) {
-        return true
       }
 
       if (rulesFiles.length !== 0) {
         return true
       }
 
-      return !isEqual(pendingContract, createContractInput(contract!))
-    }, [rulesFiles, pendingContract, contract, editable])
+      return !contract ? true : !isEqual(pendingContract, createContractInput(contract))
+    }, [rulesFiles, isNew, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
       () =>
@@ -390,14 +388,16 @@ const ContractEditor = observer(
 
         if (rulesFiles.length !== 0) {
           let rulesFile = rulesFiles[0]
+
           if (isNew) {
+            // Result is only needed from new contracts.
             result = await createContract(rulesFile, {
               variables: {
                 contractInput: pendingContract,
               },
             })
           } else {
-            result = await modifyContract(rulesFile, {
+            await modifyContract(rulesFile, {
               variables: {
                 contractInput: pendingContract,
                 operatorId: globalOperator.operatorId,
@@ -405,7 +405,7 @@ const ContractEditor = observer(
             })
           }
         } else {
-          result = await updateMutationFn({
+          await updateMutationFn({
             variables: {
               contractInput: pendingContract,
               operatorId: globalOperator.operatorId,
@@ -421,14 +421,13 @@ const ContractEditor = observer(
 
         setRulesFiles([])
 
-        if (result?.data && isNew) {
+        if (result?.data) {
           goToContract(result.data?.id)
         }
       }
     }, [rulesFiles, pendingContract, pendingContractValid, isNew, goToContract, editable])
 
     let onCancel = useCallback(() => {
-      setPendingContract(initialContract)
       setRulesFiles([])
       resetChanges()
     }, [contract, resetChanges])
@@ -506,6 +505,7 @@ const ContractEditor = observer(
           showButtons={editable}
           doneDisabled={!pendingContractValid}
           isDirty={isDirty}
+          dirtyFormCheckIsEnabled={!isNew}
           fullWidthFields={['actions', 'rules', 'procurementUnitIds']}
           renderLabel={renderLabel}
           renderInput={renderInput({
