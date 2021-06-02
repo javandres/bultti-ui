@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
@@ -15,13 +15,22 @@ import {
   useNavigateToInspection,
 } from '../inspection/inspectionUtils'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { InspectionStatus, InspectionType, PostInspection } from '../schema-types'
+import {
+  InspectionErrorUpdate,
+  InspectionStatus,
+  InspectionStatusUpdate,
+  InspectionType,
+  PostInspection,
+} from '../schema-types'
 import InspectionActions from '../inspection/InspectionActions'
 import { text, Text } from '../util/translate'
 import { PageTitle } from '../common/components/PageTitle'
 import InspectionEditor from '../inspection/InspectionEditor'
 import { useSubscription } from '@apollo/client'
-import { inspectionErrorSubscription } from '../inspection/inspectionQueries'
+import {
+  inspectionErrorSubscription,
+  inspectionStatusSubscription,
+} from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import SanctionsContainer from '../postInspection/SanctionsContainer'
 import { useShowErrorNotification } from '../util/useShowNotification'
@@ -94,11 +103,23 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     inspectionId
   )
 
-  const { data: errorUpdateData } = useSubscription(inspectionErrorSubscription, {
-    shouldResubscribe: true,
-    variables: { inspectionId },
-  })
+  const { data: statusUpdateData } = useSubscription<InspectionStatusUpdate>(
+    inspectionStatusSubscription,
+    {
+      shouldResubscribe: true,
+      variables: { inspectionId },
+    }
+  )
 
+  const { data: errorUpdateData } = useSubscription<InspectionErrorUpdate>(
+    inspectionErrorSubscription,
+    {
+      shouldResubscribe: true,
+      variables: { inspectionId },
+    }
+  )
+
+  // Show any errors
   useEffect(() => {
     let errorUpdate = pickGraphqlData(errorUpdateData)
 
@@ -106,6 +127,17 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
       showErrorNotification(errorUpdate.message)
     }
   }, [errorUpdateData])
+
+  // Add updated status on inspection if it did update.
+  inspection = useMemo(() => {
+    let statusUpdate = pickGraphqlData(statusUpdateData)
+
+    if (!inspection || !statusUpdate || inspection.status === statusUpdate.status) {
+      return inspection
+    }
+
+    return { ...inspection, status: statusUpdate.status }
+  }, [inspection, statusUpdateData])
 
   let typeStrings = getInspectionTypeStrings(inspectionType)
   let inspectionGenericName = inspection

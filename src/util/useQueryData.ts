@@ -1,8 +1,7 @@
 import { OperationVariables, QueryHookOptions, useQuery } from '@apollo/client'
 import { DocumentNode } from 'graphql'
 import { pickGraphqlData } from './pickGraphqlData'
-import { useEffect, useMemo, useRef } from 'react'
-import { merge } from 'lodash'
+import { useMemo, useRef } from 'react'
 
 const defaultOptions = {
   notifyOnNetworkStatusChange: true,
@@ -10,8 +9,7 @@ const defaultOptions = {
 
 export const useQueryData = <TData = unknown, TVariables = OperationVariables>(
   query: DocumentNode,
-  options: QueryHookOptions<TData, TVariables> & { pickData?: string } = {},
-  subscriber?: { document: DocumentNode; variables?: TVariables }
+  options: QueryHookOptions<TData, TVariables> & { pickData?: string } = {}
 ) => {
   // Merge default options with provided options
   let allOptions: QueryHookOptions<TData, TVariables> = {
@@ -28,26 +26,6 @@ export const useQueryData = <TData = unknown, TVariables = OperationVariables>(
 
   let { loading, error, data = {} as TData, refetch, subscribeToMore = () => {} } =
     queryData || {}
-
-  // Special treatment when a subscriber is provided
-  useEffect(() => {
-    if (subscriber) {
-      let { document, variables = allOptions.variables } = subscriber
-
-      // Automatically subscribe to more
-      subscribeToMore({
-        document,
-        variables,
-        updateQuery: (prev, { subscriptionData }) => {
-          if (!subscriptionData.data) {
-            return prev
-          }
-
-          return merge({ ...prev }, subscriptionData.data)
-        },
-      })
-    }
-  }, [subscriber, subscribeToMore])
 
   // Save the previous result here so we can show it while the query is refectched.
   let prevData = useRef(undefined)

@@ -18,7 +18,6 @@ import {
   currentInspectionsByOperatorAndSeasonQuery,
   inspectionQuery,
   inspectionsByOperatorQuery,
-  inspectionStatusSubscription,
   removeInspectionMutation,
 } from './inspectionQueries'
 import { useQueryData } from '../util/useQueryData'
@@ -39,8 +38,7 @@ export function useInspectionById(inspectionId: string) {
       variables: {
         inspectionId: inspectionId,
       },
-    },
-    { document: inspectionStatusSubscription }
+    }
   )
 
   let refetch = useRefetch(refetcher, false)
