@@ -970,7 +970,6 @@ export type Mutation = {
   logout: Scalars['Boolean']
   modifyUser: User
   updateEquipmentCatalogueQuota?: Maybe<Equipment>
-  createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>
   removeDepartureBlocksForDayTypes: Scalars['Boolean']
   updateEquipmentRequirementQuota?: Maybe<Equipment>
   initInspectionContractUnitMap: PreInspection
@@ -1099,12 +1098,6 @@ export type MutationUpdateEquipmentCatalogueQuotaArgs = {
   quotaId?: Maybe<Scalars['String']>
   quota: Scalars['Float']
   equipmentId: Scalars['String']
-}
-
-export type MutationCreateBlockDeparturesFromFileArgs = {
-  inspectionId: Scalars['String']
-  dayTypes: Array<Scalars['String']>
-  file?: Maybe<Scalars['Upload']>
 }
 
 export type MutationRemoveDepartureBlocksForDayTypesArgs = {
@@ -1530,6 +1523,28 @@ export type Operator = {
   equipmentCatalogues: Array<EquipmentCatalogue>
 }
 
+export type OperatorBlockDeparture = {
+  __typename?: 'OperatorBlockDeparture'
+  id: Scalars['String']
+  blockNumber: Scalars['String']
+  dayType: Scalars['String']
+  journeyType: Scalars['String']
+  routeId: Scalars['String']
+  direction: Scalars['String']
+  journeyStartTime: Scalars['String']
+  journeyEndTime: Scalars['String']
+  registryNr?: Maybe<Scalars['String']>
+  vehicleId?: Maybe<Scalars['String']>
+  routeLength?: Maybe<Scalars['Float']>
+  operator: Operator
+  operatorId: Scalars['Int']
+  equipment?: Maybe<Equipment>
+  equipmentId?: Maybe<Scalars['String']>
+  procurementUnitId: Scalars['String']
+  inspection?: Maybe<PreInspection>
+  inspectionId?: Maybe<Scalars['String']>
+}
+
 export type OperatorDeadrunsReport = {
   __typename?: 'OperatorDeadrunsReport'
   filteredCount: Scalars['Int']
@@ -1769,6 +1784,7 @@ export type Query = {
   users: Array<User>
   currentUser?: Maybe<User>
   availableDayTypes: Array<Scalars['String']>
+  previewInspectionDepartureBlocks: Array<OperatorBlockDeparture>
   reports: Array<ReportListItem>
   blockDeviationsReport?: Maybe<BlockDeviationsReport>
   deadrunsReport?: Maybe<DeadrunsReport>
@@ -1886,6 +1902,10 @@ export type QueryUserArgs = {
 }
 
 export type QueryAvailableDayTypesArgs = {
+  inspectionId: Scalars['String']
+}
+
+export type QueryPreviewInspectionDepartureBlocksArgs = {
   inspectionId: Scalars['String']
 }
 
