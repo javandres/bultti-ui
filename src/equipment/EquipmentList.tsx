@@ -5,7 +5,7 @@ import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
-import { groupBy, orderBy, uniqBy } from 'lodash'
+import { groupBy } from 'lodash'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
@@ -152,6 +152,16 @@ const EquipmentList: React.FC<PropTypes> = observer(
             return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':
             return round(getTotal(equipment, 'kilometerRequirement'), DEFAULT_DECIMALS) + ' km'
+          default:
+            return ''
+        }
+      },
+      [equipment]
+    )
+
+    let renderGroupedColumnTotals = useCallback(
+      (col) => {
+        switch (col) {
           case 'amount':
             return round(getTotal(equipmentGroups, 'amount'), DEFAULT_DECIMALS) + ' kpl'
           case 'age':
@@ -161,15 +171,10 @@ const EquipmentList: React.FC<PropTypes> = observer(
             return ''
         }
       },
-      [equipment, equipmentGroups]
+      [equipmentGroups]
     )
 
-    let orderedEquipment = useMemo(
-      () => orderBy(uniqBy(equipment, getQuotaId), 'emissionClass', 'desc'),
-      [equipment]
-    )
-
-    let isEquipmentListEditable = !isEquipmentShownInGroup && orderedEquipment.length !== 0
+    let isEquipmentListEditable = !isEquipmentShownInGroup && equipment.length !== 0
 
     return equipment.length !== 0 ? (
       <>
@@ -184,7 +189,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         </FlexRow>
         {isEquipmentListEditable && (
           <PagedTable<EquipmentWithQuota>
-            items={orderedEquipment}
+            items={equipment}
             keyFromItem={getQuotaId}
             columnLabels={columnLabels}
             onRemoveRow={removeEquipment ? onRemoveEquipment : undefined}
@@ -215,7 +220,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}
-            getColumnTotal={renderColumnTotals}
+            getColumnTotal={renderGroupedColumnTotals}
             editableValues={[]}
             onRemoveRow={() =>
               alert(text('catalogue_itemRemovalNotAllowedInGroupedListModeNotification'))
