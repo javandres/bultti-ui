@@ -970,7 +970,7 @@ export type Mutation = {
   logout: Scalars['Boolean']
   modifyUser: User
   updateEquipmentCatalogueQuota?: Maybe<Equipment>
-  removeDepartureBlocksForDayTypes: Scalars['Boolean']
+  saveInspectionDepartureBlocks: Array<OperatorBlockDeparture>
   updateEquipmentRequirementQuota?: Maybe<Equipment>
   initInspectionContractUnitMap: PreInspection
   generateEquipmentForPreInspection: Scalars['Boolean']
@@ -1100,9 +1100,8 @@ export type MutationUpdateEquipmentCatalogueQuotaArgs = {
   equipmentId: Scalars['String']
 }
 
-export type MutationRemoveDepartureBlocksForDayTypesArgs = {
+export type MutationSaveInspectionDepartureBlocksArgs = {
   inspectionId: Scalars['String']
-  dayTypes: Array<Scalars['String']>
 }
 
 export type MutationUpdateEquipmentRequirementQuotaArgs = {
@@ -1783,8 +1782,7 @@ export type Query = {
   user?: Maybe<User>
   users: Array<User>
   currentUser?: Maybe<User>
-  availableDayTypes: Array<Scalars['String']>
-  previewInspectionDepartureBlocks: Array<OperatorBlockDeparture>
+  inspectionDepartureBlocks: Array<OperatorBlockDeparture>
   reports: Array<ReportListItem>
   blockDeviationsReport?: Maybe<BlockDeviationsReport>
   deadrunsReport?: Maybe<DeadrunsReport>
@@ -1901,11 +1899,7 @@ export type QueryUserArgs = {
   userId: Scalars['Int']
 }
 
-export type QueryAvailableDayTypesArgs = {
-  inspectionId: Scalars['String']
-}
-
-export type QueryPreviewInspectionDepartureBlocksArgs = {
+export type QueryInspectionDepartureBlocksArgs = {
   inspectionId: Scalars['String']
 }
 
