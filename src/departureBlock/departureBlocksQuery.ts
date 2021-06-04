@@ -5,18 +5,14 @@ const DepartureBlocksFragment = gql`
     id
     blockNumber
     dayType
-    direction
-    equipmentId
-    inspectionId
+    registryNr
+    vehicleId
     journeyStartTime
     journeyEndTime
-    journeyType
-    operatorId
     procurementUnitId
-    registryNr
     routeId
+    direction
     routeLength
-    vehicleId
   }
 `
 

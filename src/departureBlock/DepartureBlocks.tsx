@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InspectionContext } from '../inspection/InspectionContext'
 import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
 import { departureBlocksQuery, saveDepartureBlocksMutation } from './departureBlocksQuery'
 import { OperatorBlockDeparture } from '../schema-types'
@@ -24,6 +24,19 @@ const DepartureBlocksView = styled.div`
 type PropTypes = {
   isEditable: boolean
   isValid: boolean
+}
+
+let columnLabels = {
+  blockNumber: text('departureBlocks_blockNumber'),
+  dayType: text('departureBlocks_dayType'),
+  registryNr: text('departureBlocks_registryNr'),
+  vehicleId: text('departureBlocks_vehicleId'),
+  journeyStartTime: text('departureBlocks_journeyStartTime'),
+  journeyEndTime: text('departureBlocks_journeyEndTime'),
+  procurementUnitId: text('departureBlocks_procurementUnitId'),
+  routeId: text('departureBlocks_routeId'),
+  direction: text('departureBlocks_direction'),
+  routeLength: text('departureBlocks_routeLength'),
 }
 
 const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) => {
@@ -77,7 +90,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
         {!(loading || fetchLoading) && currentDepartureBlocks.length === 0 ? (
           <FlexRow>
             <Button onClick={() => fetchDepartureBlocks()} loading={fetchLoading}>
-              Fetch departure blocks
+              <Text>departureBlocks_fetchDepartureBlocks</Text>
             </Button>
           </FlexRow>
         ) : (
@@ -91,7 +104,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
                 <Text>update</Text>
               </Button>
             </FlexRow>
-            <PagedTable items={currentDepartureBlocks} />
+            <PagedTable columnLabels={columnLabels} items={currentDepartureBlocks} />
           </>
         )}
       </DepartureBlocksView>
