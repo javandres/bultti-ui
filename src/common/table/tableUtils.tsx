@@ -1,5 +1,5 @@
 import { FilterConfig, SortConfig } from '../../schema-types'
-import React, { ReactNode, useCallback } from 'react'
+import React, { ReactNode, RefObject, useCallback } from 'react'
 import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
 import { DEFAULT_DECIMALS, READABLE_TIME_FORMAT } from '../../constants'
@@ -82,7 +82,8 @@ export type RenderInputType<ItemType extends TableItemType> = (
   onChange: (val: string) => unknown,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
-  tabIndex?: number
+  tabIndex?: number,
+  ref?: RefObject<HTMLInputElement>
 ) => React.ReactChild
 
 export function defaultKeyFromItem(item) {
@@ -115,10 +116,12 @@ export function defaultRenderInput<ItemType extends TableItemType>(
   onChange: (val: string) => unknown,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
-  tabIndex?: number
+  tabIndex?: number,
+  ref?: RefObject<HTMLInputElement>
 ): React.ReactChild {
   return (
     <TableInput
+      ref={ref}
       autoFocus
       tabIndex={tabIndex}
       value={val + ''}
