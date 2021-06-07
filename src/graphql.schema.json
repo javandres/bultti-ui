@@ -5753,9 +5753,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "Equipment",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "Equipment",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -5765,9 +5769,13 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "OBJECT",
-              "name": "EquipmentCatalogue",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "EquipmentCatalogue",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -12072,18 +12080,6 @@
             "description": null,
             "args": [
               {
-                "name": "quotaId",
-                "description": null,
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "String",
-                  "ofType": null
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              },
-              {
                 "name": "kilometers",
                 "description": null,
                 "type": {
@@ -12108,7 +12104,7 @@
                 "deprecationReason": null
               },
               {
-                "name": "equipmentId",
+                "name": "quotaId",
                 "description": null,
                 "type": {
                   "kind": "NON_NULL",
@@ -12126,7 +12122,7 @@
             ],
             "type": {
               "kind": "OBJECT",
-              "name": "Equipment",
+              "name": "ExecutionRequirementQuota",
               "ofType": null
             },
             "isDeprecated": false,

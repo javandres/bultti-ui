@@ -14,7 +14,7 @@ import { undefinedOrNumber } from '../util/emptyOrNumber'
 import PagedTable from '../common/table/PagedTable'
 import { EditValue } from '../common/table/tableUtils'
 import { averageByProp } from '../util/averageByProp'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
@@ -131,7 +131,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
-          return round(val, DEFAULT_DECIMALS) + '%'
+          return round(val, DEFAULT_PERCENTAGE_DECIMALS) + '%'
         case 'meterRequirement':
           return round(val, DEFAULT_DECIMALS) + ' m'
         case 'kilometerRequirement':
@@ -147,7 +147,9 @@ const EquipmentList: React.FC<PropTypes> = observer(
       (col) => {
         switch (col) {
           case 'percentageQuota':
-            return round(getTotal(equipment, 'percentageQuota'), DEFAULT_DECIMALS) + '%'
+            return (
+              round(getTotal(equipment, 'percentageQuota'), DEFAULT_PERCENTAGE_DECIMALS) + '%'
+            )
           case 'meterRequirement':
             return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':

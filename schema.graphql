@@ -407,8 +407,8 @@ type EquipmentCatalogue {
 type EquipmentCatalogueQuota {
   catalogueEndDate: BulttiDate!
   catalogueStartDate: BulttiDate!
-  equipment: Equipment
-  equipmentCatalogue: EquipmentCatalogue
+  equipment: Equipment!
+  equipmentCatalogue: EquipmentCatalogue!
   equipmentCatalogueId: String!
   equipmentId: String!
   id: ID!
@@ -764,40 +764,17 @@ type MissingEquipmentReportData {
 
 type Mutation {
   abandonSanctions(inspectionId: String!): PostInspection!
-  addEquipmentToCatalogue(
-    catalogueId: String!
-    equipmentId: String!
-    quota: Float!
-  ): EquipmentCatalogue
-  addEquipmentToExecutionRequirement(
-    equipmentId: String!
-    executionRequirementId: String!
-  ): PlannedUnitExecutionRequirement
-  batchAddToEquipmentCatalogue(
-    catalogueId: String!
-    vehicleIds: [String!]!
-  ): EquipmentCatalogue
+  addEquipmentToCatalogue(catalogueId: String!, equipmentId: String!, quota: Float!): EquipmentCatalogue
+  addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement
+  batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   clearCache: Boolean!
-  createBlockDeparturesFromFile(
-    dayTypes: [String!]!
-    file: Upload
-    inspectionId: String!
-  ): Boolean
+  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
-  createEquipmentCatalogue(
-    equipmentCatalogue: EquipmentCatalogueInput!
-    operatorId: Int!
-    procurementUnitId: String!
-  ): EquipmentCatalogue
-  createExecutionRequirementsForProcurementUnit(
-    inspectionId: String!
-    procurementUnitId: String!
-  ): PlannedUnitExecutionRequirement
+  createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
+  createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
   createInspection(inspection: InitialInspectionInput!): Inspection
   createInspectionDate(inspectionDate: InspectionDateInput!): InspectionDate!
-  createObservedExecutionRequirementsFromPreInspectionRequirements(
-    postInspectionId: String!
-  ): [ObservedExecutionRequirement!]!
+  createObservedExecutionRequirementsFromPreInspectionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
   createTestData: Boolean!
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
@@ -811,72 +788,35 @@ type Mutation {
   modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
-  refreshExecutionRequirementForProcurementUnit(
-    executionRequirementId: String!
-  ): PlannedUnitExecutionRequirement
+  refreshExecutionRequirementForProcurementUnit(executionRequirementId: String!): PlannedUnitExecutionRequirement
   rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
-  removeAllEquipmentFromExecutionRequirement(
-    executionRequirementId: String!
-  ): PlannedUnitExecutionRequirement
+  removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): PlannedUnitExecutionRequirement
   removeContract(contractId: String!, operatorId: Int!): Boolean!
   removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
-  removeEquipmentFromExecutionRequirement(
-    equipmentId: String!
-    executionRequirementId: String!
-  ): PlannedUnitExecutionRequirement!
+  removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
-  submitInspection(
-    endDate: BulttiDate!
-    inspectionId: String!
-    startDate: BulttiDate!
-  ): Inspection!
+  submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
-  toggleInspectionUserSubscribed(
-    inspectionId: String!
-    userId: String!
-  ): InspectionUserRelation
+  toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
-  updateEquipmentCatalogue(
-    catalogueId: String!
-    equipmentCatalogue: EquipmentCatalogueInput!
-  ): EquipmentCatalogue!
-  updateEquipmentCatalogueQuota(
-    equipmentId: String!
-    quota: Float!
-    quotaId: String
-  ): Equipment
-  updateEquipmentDefectSanctions(
-    sanctionUpdates: [EquipmentDefectSanctionUpdate!]!
-  ): [EquipmentDefectSanction!]!
+  updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
+  updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
+  updateEquipmentDefectSanctions(sanctionUpdates: [EquipmentDefectSanctionUpdate!]!): [EquipmentDefectSanction!]!
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
-  updateEquipmentRequirementQuota(
-    equipmentId: String!
-    kilometers: Float
-    quota: Float
-    quotaId: String
-  ): Equipment
+  updateEquipmentRequirementQuota(kilometers: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateLinkedInspection(inspectionId: String!): PostInspection!
-  updateObservedExecutionRequirementValues(
-    requirementId: String!
-    updateValues: [ObservedRequirementValueInput!]!
-  ): ObservedExecutionRequirement!
-  updateProcurementUnit(
-    procurementUnit: ProcurementUnitEditInput!
-    procurementUnitId: String!
-  ): ProcurementUnit!
+  updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
+  updateProcurementUnit(procurementUnit: ProcurementUnitEditInput!, procurementUnitId: String!): ProcurementUnit!
   updateSanctions(sanctionUpdates: [SanctionUpdate!]!): [Sanction!]!
-  updateWeeklyExecutionMetersFromSource(
-    date: String!
-    executionRequirementId: String!
-  ): PlannedUnitExecutionRequirement!
+  updateWeeklyExecutionMetersFromSource(date: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
 }
 
 type ObservedEmissionClassExecutionReport {
@@ -1352,223 +1292,74 @@ type ProcurementUnitRoute {
 }
 
 type Query {
-  adCoverSanctionsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): AdCoverSanctionsReport
-  allDeviationsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): DeviationsReport
+  adCoverSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): AdCoverSanctionsReport
+  allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
   availableDayTypes(inspectionId: String!): [String!]!
-  blockDeviationsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): BlockDeviationsReport
+  blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
-  contractProcurementUnitOptions(
-    contractId: String!
-    endDate: BulttiDate!
-    operatorId: Int!
-    startDate: BulttiDate!
-  ): [ProcurementUnitOption!]!
+  contractProcurementUnitOptions(contractId: String!, endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
   contracts(date: BulttiDate, operatorId: Int): [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
-  currentInspectionsByOperatorAndSeason(
-    inspectionType: InspectionType!
-    operatorId: Int!
-    seasonId: String!
-  ): [Inspection!]!
+  currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
   currentlyLoadingHfpRanges: [HfpDateStatus!]!
-  dangerousDefectSanctionsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): DangerousDefectSanctionsReport
-  deadrunsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): DeadrunsReport
-  defectiveEquipmentDepartureSanctionsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): DefectiveEquipmentDepartureSanctionsReport
-  departureBlocksReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): DepartureBlocksReport
-  earlyTimingStopDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): EarlyTimingStopDeparturesReport
-  emissionClassExecutionReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): EmissionClassExecutionReport
+  dangerousDefectSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DangerousDefectSanctionsReport
+  deadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeadrunsReport
+  defectiveEquipmentDepartureSanctionsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DefectiveEquipmentDepartureSanctionsReport
+  departureBlocksReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DepartureBlocksReport
+  earlyTimingStopDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EarlyTimingStopDeparturesReport
+  emissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EmissionClassExecutionReport
   equipment: [Equipment!]!
   equipmentByOperator(operatorId: Int!): [Equipment!]!
   equipmentCatalogue(equipmentCatalogueId: String!): EquipmentCatalogue
   equipmentCatalogueByOperator(operatorId: Int!): [EquipmentCatalogue!]!
-  equipmentColorReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): EquipmentColorReport
+  equipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentColorReport
   equipmentDefectObservations(inspectionId: String!): [EquipmentDefect!]!
-  equipmentTypeReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): EquipmentTypeReport
-  executionRequirementForProcurementUnit(
-    inspectionId: String!
-    procurementUnitId: String!
-  ): PlannedUnitExecutionRequirement
+  equipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentTypeReport
+  executionRequirementForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
   executionRequirementsByOperator(operatorId: Int!): [PlannedUnitExecutionRequirement!]!
-  executionRequirementsForPreInspectionAreas(
-    inspectionId: String!
-  ): [PlannedAreaExecutionRequirement!]!
-  executionRequirementsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ExecutionRequirementsReport
+  executionRequirementsForPreInspectionAreas(inspectionId: String!): [PlannedAreaExecutionRequirement!]!
+  executionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExecutionRequirementsReport
   executionSchemaStats(executionRequirementId: String!): ExecutionSchemaStats
-  extraBlockDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ExtraBlockDeparturesReport
+  extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection!
-  inspectionEquipmentDefectSanctions(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): SanctionsResponse!
-  inspectionSanctions(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): SanctionsResponse!
+  inspectionEquipmentDefectSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
+  inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
-  inspectionsTimeline(
-    inspectionType: InspectionType!
-    operatorId: Int!
-  ): [InspectionTimelineItem!]!
-  missingBlockDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): MissingBlockDeparturesReport
-  missingEquipmentReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): MissingEquipmentReport
-  observedEmissionClassExecutionReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedEmissionClassExecutionReport
-  observedEquipmentColorReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedEquipmentColorReport
-  observedEquipmentTypeReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedEquipmentTypeReport
+  inspectionsTimeline(inspectionType: InspectionType!, operatorId: Int!): [InspectionTimelineItem!]!
+  missingBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingBlockDeparturesReport
+  missingEquipmentReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): MissingEquipmentReport
+  observedEmissionClassExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEmissionClassExecutionReport
+  observedEquipmentColorReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEquipmentColorReport
+  observedEquipmentTypeReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedEquipmentTypeReport
   observedExecutionRequirements(postInspectionId: String!): [ObservedExecutionRequirement!]!
-  observedExecutionRequirementsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedExecutionRequirementsReport
-  observedLateDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): LateDeparturesReport
-  observedOverageDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedOverAgeDeparturesReport
-  observedUnitExecutionReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): ObservedUnitExecutionReport
+  observedExecutionRequirementsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedExecutionRequirementsReport
+  observedLateDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): LateDeparturesReport
+  observedOverageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedOverAgeDeparturesReport
+  observedUnitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ObservedUnitExecutionReport
   operator(operatorId: Int!): Operator
-  operatorDeadrunsReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): OperatorDeadrunsReport
+  operatorDeadrunsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OperatorDeadrunsReport
   operators: [Operator!]!
-  overageDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): OverAgeDeparturesReport
+  overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
-  procurementUnit(
-    endDate: BulttiDate!
-    procurementUnitId: String!
-    startDate: BulttiDate!
-  ): ProcurementUnit
-  procurementUnitsByOperator(
-    endDate: BulttiDate!
-    operatorId: Int!
-    startDate: BulttiDate!
-  ): [ProcurementUnit!]!
+  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
+  procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionId: String, inspectionType: String!): [ReportListItem!]!
   runSanctioning(inspectionId: String!): [Sanction!]!
-  sanctionListReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): SanctionListReport
-  sanctionSummaryReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): SanctionSummaryReport
+  sanctionListReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionListReport
+  sanctionSummaryReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionSummaryReport
   season(seasonId: String!): [Season!]
   seasons(date: BulttiDate!): [Season!]!
   singleEquipment(equipmentId: String!): Equipment
-  trackedDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): TrackedDeparturesReport
-  unitExecutionReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): UnitExecutionReport
-  unobservedDeparturesReport(
-    filters: [InputFilterConfig!]
-    inspectionId: String!
-    sort: [InputSortConfig!]
-  ): UnobservedDeparturesReport
+  trackedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): TrackedDeparturesReport
+  unitExecutionReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnitExecutionReport
+  unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnobservedDeparturesReport
   user(userId: Int!): User
   users: [User!]!
 }
@@ -2014,6 +1805,7 @@ input UserInput {
   organisation: String
   role: UserRole
 }
+
 
 "The javascript `Date` as string. Type represents date and time as the ISO Date string."
 scalar DateTime
