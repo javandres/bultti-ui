@@ -18,7 +18,6 @@ import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
-  equipmentId: string
   quota?: number
   kilometers?: number
   quotaId: string
@@ -96,11 +95,11 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
         let percentageQuota = pendingEditValues.find((val) => val.key === 'percentageQuota')
           ?.value
+
         let meterRequirement = pendingEditValues.find((val) => val.key === 'meterRequirement')
           ?.value
 
         updates.push({
-          equipmentId: item.id,
           quota: undefinedOrNumber(percentageQuota),
           kilometers: undefinedOrNumber(meterRequirement),
           quotaId: item.quotaId,
@@ -147,9 +146,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
       (col) => {
         switch (col) {
           case 'percentageQuota':
-            return (
-              round(getTotal(equipment, 'percentageQuota'), DEFAULT_PERCENTAGE_DECIMALS) + '%'
-            )
+            return round(getTotal(equipment, 'percentageQuota'), DEFAULT_DECIMALS) + '%'
           case 'meterRequirement':
             return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':

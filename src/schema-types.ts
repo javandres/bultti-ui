@@ -969,10 +969,10 @@ export type Mutation = {
   login?: Maybe<Scalars['String']>
   logout: Scalars['Boolean']
   modifyUser: User
-  updateEquipmentCatalogueQuota?: Maybe<Equipment>
+  updateEquipmentCatalogueQuota: EquipmentCatalogueQuota
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>
   removeDepartureBlocksForDayTypes: Scalars['Boolean']
-  updateEquipmentRequirementQuota?: Maybe<ExecutionRequirementQuota>
+  updateEquipmentRequirementQuota: ExecutionRequirementQuota
   initInspectionContractUnitMap: PreInspection
   generateEquipmentForPreInspection: Scalars['Boolean']
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>
@@ -1096,9 +1096,8 @@ export type MutationModifyUserArgs = {
 }
 
 export type MutationUpdateEquipmentCatalogueQuotaArgs = {
-  quotaId?: Maybe<Scalars['String']>
+  quotaId: Scalars['String']
   quota: Scalars['Float']
-  equipmentId: Scalars['String']
 }
 
 export type MutationCreateBlockDeparturesFromFileArgs = {
