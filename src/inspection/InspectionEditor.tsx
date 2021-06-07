@@ -10,11 +10,7 @@ import {
   PreInspection,
 } from '../schema-types'
 import { useMutationData } from '../util/useMutationData'
-import {
-  initInspectionContractUnitMap,
-  inspectionQuery,
-  updateInspectionMutation,
-} from './inspectionQueries'
+import { inspectionQuery, updateInspectionMutation } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import InspectionMeta from './InspectionMeta'
 import InspectionConfig from './InspectionConfig'
@@ -50,13 +46,6 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     var [operator] = useStateValue('globalOperator')
 
     let isUpdating = useRef(false)
-
-    let [initInspectionContractUnitMapQuery] = useMutationData(initInspectionContractUnitMap, {
-      variables: {
-        inspectionId: inspection.id,
-      },
-    })
-
     let inspectionType = inspection.inspectionType
 
     let [updatePreInspection, { loading: updateLoading }] = useMutationData(

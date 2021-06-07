@@ -974,7 +974,6 @@ export type Mutation = {
   createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>
   removeDepartureBlocksForDayTypes: Scalars['Boolean']
   updateEquipmentRequirementQuota?: Maybe<Equipment>
-  initInspectionContractUnitMap: PreInspection
   generateEquipmentForPreInspection: Scalars['Boolean']
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>
   createContract: Contract
@@ -1118,10 +1117,6 @@ export type MutationUpdateEquipmentRequirementQuotaArgs = {
   kilometers?: Maybe<Scalars['Float']>
   quota?: Maybe<Scalars['Float']>
   equipmentId: Scalars['String']
-}
-
-export type MutationInitInspectionContractUnitMapArgs = {
-  inspectionId: Scalars['String']
 }
 
 export type MutationGenerateEquipmentForPreInspectionArgs = {

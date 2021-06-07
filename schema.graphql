@@ -780,7 +780,6 @@ type Mutation {
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   generateTestBlockDepartures: [DepartureBlockFile!]!
   helperResolver: Boolean!
-  initInspectionContractUnitMap(inspectionId: String!): PreInspection!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String): String
