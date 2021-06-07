@@ -831,6 +831,7 @@ export enum InspectionValidationError {
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
   MissingContracts = 'MISSING_CONTRACTS',
+  InvalidContracts = 'INVALID_CONTRACTS',
   ContractOutsideInspectionTime = 'CONTRACT_OUTSIDE_INSPECTION_TIME',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',

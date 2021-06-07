@@ -22,7 +22,6 @@ import { TabChildProps } from '../common/components/Tabs'
 import { LoadingDisplay } from '../common/components/Loading'
 import InspectionUsers from './InspectionUsers'
 import InspectionValidationErrors from './InspectionValidationErrors'
-import { Button } from '../common/components/buttons/Button'
 import { getInspectionTypeStrings } from './inspectionUtils'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
@@ -113,14 +112,6 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         {hasErrors && <InspectionValidationErrors inspection={inspection} />}
         {!!inspection && (
           <>
-            {inspection.inspectionType === InspectionType.Pre && (
-              <Button
-                style={{ margin: '10px' }}
-                onClick={() => initInspectionContractUnitMapQuery()}>
-                Lukitse liitetyt sopimukset - Väliaikainen nappi (toimiakseen kaikilta
-                kohteilta täytyy löytyä sopimus)
-              </Button>
-            )}
             <InspectionMeta inspection={inspection} />
             <InspectionUsers inspection={inspection} />
             <InspectionConfig inspection={inspection} saveValues={updatePreInspectionCb} />

@@ -9667,6 +9667,12 @@
             "deprecationReason": null
           },
           {
+            "name": "INVALID_CONTRACTS",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "CONTRACT_OUTSIDE_INSPECTION_TIME",
             "description": null,
             "isDeprecated": false,
