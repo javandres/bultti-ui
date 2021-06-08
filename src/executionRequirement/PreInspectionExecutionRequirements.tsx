@@ -12,6 +12,7 @@ import {
   usePreInspectionAreaRequirements,
 } from './executionRequirementUtils'
 import { Text } from '../util/translate'
+import { FlexRow } from '../common/components/common'
 
 const AreaWrapper = styled.div`
   margin-bottom: 2rem;
@@ -55,22 +56,32 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
               <Text>preInspection_noCalculatedExecutionRequirements</Text>
             </MessageView>
             <div>
-              <Button onClick={refetch}>
+              <Button onClick={refetch} loading={requirementsLoading}>
                 <Text>preInspection_calculateExecutionRequirements</Text>
               </Button>
             </div>
           </>
         )}
-        <LoadingDisplay loading={requirementsLoading} style={{ top: '0' }} />
-        {areaExecutionRequirements.map((areaRequirement) => (
-          <AreaWrapper key={areaRequirement.area.id}>
-            <AreaHeading>{areaRequirement.area.name}</AreaHeading>
-            <RequirementsTable
-              tableLayout={RequirementsTableLayout.BY_VALUES}
-              executionRequirement={areaRequirement}
-            />
-          </AreaWrapper>
-        ))}
+        <div style={{ position: 'relative' }}>
+          <LoadingDisplay loading={requirementsLoading} style={{ top: '0' }} />
+          <FlexRow>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              onClick={refetch}
+              loading={requirementsLoading}>
+              <Text>update</Text>
+            </Button>
+          </FlexRow>
+          {areaExecutionRequirements.map((areaRequirement) => (
+            <AreaWrapper key={areaRequirement.area.id}>
+              <AreaHeading>{areaRequirement.area.name}</AreaHeading>
+              <RequirementsTable
+                tableLayout={RequirementsTableLayout.BY_VALUES}
+                executionRequirement={areaRequirement}
+              />
+            </AreaWrapper>
+          ))}
+        </div>
       </ExpandableSection>
     )
   }

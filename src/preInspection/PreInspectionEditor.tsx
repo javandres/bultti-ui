@@ -45,11 +45,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
 
     return (
       <PreInspectionEditorView>
-        <DepartureBlocks
-          onUpdate={refetchData}
-          isEditable={isEditable}
-          isValid={!departureBlocksInvalid}
-        />
+        <DepartureBlocks isEditable={isEditable} isValid={!departureBlocksInvalid} />
         <PreInspectionExecutionRequirements isValid={!executionRequirementsInvalid} />
         <SectionHeading>
           <Text>procurementUnits</Text>
