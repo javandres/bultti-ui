@@ -269,13 +269,6 @@ export type DefectiveEquipmentDepartureSanctionsReportData = {
   sanctionedKilometers?: Maybe<Scalars['Float']>
 }
 
-export type DepartureBlockFile = {
-  __typename?: 'DepartureBlockFile'
-  dayType: Scalars['String']
-  operatorId: Scalars['Int']
-  blockFile: Scalars['String']
-}
-
 export type DepartureBlocksReport = {
   __typename?: 'DepartureBlocksReport'
   filteredCount: Scalars['Int']
@@ -970,8 +963,7 @@ export type Mutation = {
   logout: Scalars['Boolean']
   modifyUser: User
   updateEquipmentCatalogueQuota: EquipmentCatalogueQuota
-  createBlockDeparturesFromFile?: Maybe<Scalars['Boolean']>
-  removeDepartureBlocksForDayTypes: Scalars['Boolean']
+  saveInspectionDepartureBlocks: Array<OperatorBlockDeparture>
   updateEquipmentRequirementQuota: ExecutionRequirementQuota
   initInspectionContractUnitMap: PreInspection
   generateEquipmentForPreInspection: Scalars['Boolean']
@@ -988,7 +980,6 @@ export type Mutation = {
   updateSanctions: Array<Sanction>
   clearCache: Scalars['Boolean']
   createTestData: Scalars['Boolean']
-  generateTestBlockDepartures: Array<DepartureBlockFile>
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
@@ -1100,15 +1091,8 @@ export type MutationUpdateEquipmentCatalogueQuotaArgs = {
   quota: Scalars['Float']
 }
 
-export type MutationCreateBlockDeparturesFromFileArgs = {
+export type MutationSaveInspectionDepartureBlocksArgs = {
   inspectionId: Scalars['String']
-  dayTypes: Array<Scalars['String']>
-  file?: Maybe<Scalars['Upload']>
-}
-
-export type MutationRemoveDepartureBlocksForDayTypesArgs = {
-  inspectionId: Scalars['String']
-  dayTypes: Array<Scalars['String']>
 }
 
 export type MutationUpdateEquipmentRequirementQuotaArgs = {
@@ -1528,6 +1512,28 @@ export type Operator = {
   equipmentCatalogues: Array<EquipmentCatalogue>
 }
 
+export type OperatorBlockDeparture = {
+  __typename?: 'OperatorBlockDeparture'
+  id: Scalars['String']
+  blockNumber: Scalars['String']
+  dayType: Scalars['String']
+  journeyType: Scalars['String']
+  routeId: Scalars['String']
+  direction: Scalars['String']
+  journeyStartTime: Scalars['String']
+  journeyEndTime: Scalars['String']
+  registryNr?: Maybe<Scalars['String']>
+  vehicleId?: Maybe<Scalars['String']>
+  routeLength?: Maybe<Scalars['Float']>
+  operator: Operator
+  operatorId: Scalars['Int']
+  equipment?: Maybe<Equipment>
+  equipmentId?: Maybe<Scalars['String']>
+  procurementUnitId: Scalars['String']
+  inspection?: Maybe<PreInspection>
+  inspectionId?: Maybe<Scalars['String']>
+}
+
 export type OperatorDeadrunsReport = {
   __typename?: 'OperatorDeadrunsReport'
   filteredCount: Scalars['Int']
@@ -1766,7 +1772,7 @@ export type Query = {
   user?: Maybe<User>
   users: Array<User>
   currentUser?: Maybe<User>
-  availableDayTypes: Array<Scalars['String']>
+  inspectionDepartureBlocks: Array<OperatorBlockDeparture>
   reports: Array<ReportListItem>
   blockDeviationsReport?: Maybe<BlockDeviationsReport>
   deadrunsReport?: Maybe<DeadrunsReport>
@@ -1883,7 +1889,7 @@ export type QueryUserArgs = {
   userId: Scalars['Int']
 }
 
-export type QueryAvailableDayTypesArgs = {
+export type QueryInspectionDepartureBlocksArgs = {
   inspectionId: Scalars['String']
 }
 

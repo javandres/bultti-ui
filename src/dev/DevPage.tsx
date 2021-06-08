@@ -122,17 +122,6 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
     helperResolver()
   }
 
-  let onGenerateTestBlocks = useCallback(async () => {
-    let response = await generateTestBlocks()
-    let departureBlockFiles: DepartureBlockFile[] = pickGraphqlData(response.data) || []
-
-    for (let blockFile of departureBlockFiles) {
-      let blob = await base64ToBlob(blockFile.blockFile)
-      let filename = `test_blocks_${blockFile.operatorId}_${blockFile.dayType}.csv`
-      saveAs(blob, filename)
-    }
-  }, [generateTestBlocks])
-
   return (
     <AdminPageView>
       <PageTitle>Admin</PageTitle>
@@ -151,15 +140,6 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         </p>
         <Button loading={testDataLoading} onClick={() => createTestData()}>
           Create test data
-        </Button>
-
-        <h3>Generate test departure blocks</h3>
-        <p>
-          Generates test departure block CSV's that fit the test data. Will provide four files
-          to download.
-        </p>
-        <Button loading={testBlocksLoading} onClick={onGenerateTestBlocks}>
-          Generate test departure blocks
         </Button>
 
         <h3>Remove test data</h3>
