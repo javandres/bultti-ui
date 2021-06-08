@@ -11,10 +11,8 @@ import Input from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import { inspectionQuery } from '../inspection/inspectionQueries'
 import InspectionCard from '../inspection/InspectionCard'
-import { pickGraphqlData } from '../util/pickGraphqlData'
-import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
-import { DepartureBlockFile, Inspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 
 const AdminPageView = styled.div``
