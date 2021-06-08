@@ -20197,9 +20197,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "ProcurementUnit",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ProcurementUnit",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null

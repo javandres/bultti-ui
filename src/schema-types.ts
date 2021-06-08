@@ -1758,7 +1758,7 @@ export type Query = {
   operators: Array<Operator>
   season?: Maybe<Array<Season>>
   seasons: Array<Season>
-  procurementUnit?: Maybe<ProcurementUnit>
+  procurementUnit: ProcurementUnit
   procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
   equipment: Array<Equipment>
