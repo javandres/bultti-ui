@@ -269,13 +269,6 @@ export type DefectiveEquipmentDepartureSanctionsReportData = {
   sanctionedKilometers?: Maybe<Scalars['Float']>
 }
 
-export type DepartureBlockFile = {
-  __typename?: 'DepartureBlockFile'
-  dayType: Scalars['String']
-  operatorId: Scalars['Int']
-  blockFile: Scalars['String']
-}
-
 export type DepartureBlocksReport = {
   __typename?: 'DepartureBlocksReport'
   filteredCount: Scalars['Int']
@@ -987,7 +980,6 @@ export type Mutation = {
   updateSanctions: Array<Sanction>
   clearCache: Scalars['Boolean']
   createTestData: Scalars['Boolean']
-  generateTestBlockDepartures: Array<DepartureBlockFile>
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
