@@ -24,16 +24,6 @@ const createTestDataMutation = gql`
   }
 `
 
-const generateTestBlockDeparturesMutation = gql`
-  mutation generateTestBlockDepartures {
-    generateTestBlockDepartures {
-      blockFile
-      dayType
-      operatorId
-    }
-  }
-`
-
 const removeTestDataMutation = gql`
   mutation removeTestData {
     removeTestData
@@ -52,22 +42,10 @@ const helperResolverMutation = gql`
   }
 `
 
-async function base64ToBlob(base64?: string) {
-  if (!base64) {
-    return
-  }
-
-  let response = await fetch('data:text/csv;base64,' + base64)
-  return response.blob()
-}
-
 export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
-  let [generateTestBlocks, { loading: testBlocksLoading }] = useMutationData(
-    generateTestBlockDeparturesMutation
-  )
 
   let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
     removeTestDataMutation
