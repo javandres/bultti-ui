@@ -1,83 +1,81 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react'
+import React, { useContext, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { difference } from 'lodash'
-import { Button } from '../common/components/buttons/Button'
-import { defaultDayTypeGroup, useDayTypeGroups } from './departureBlocksCommon'
-import DepartureBlockGroupItem from './DepartureBlockGroupItem'
-import { useQueryData } from '../util/useQueryData'
-import { availableDayTypesQuery } from './blockDeparturesQuery'
-import { normalDayTypes } from '../constants'
 import { InspectionContext } from '../inspection/InspectionContext'
-import { useRefetch } from '../util/useRefetch'
 import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
+import { useQueryData } from '../util/useQueryData'
+import { departureBlocksQuery, saveDepartureBlocksMutation } from './departureBlocksQuery'
+import { OperatorBlockDeparture } from '../schema-types'
+import { LoadingDisplay } from '../common/components/Loading'
+import PagedTable from '../common/table/PagedTable'
+import { Button, ButtonSize } from '../common/components/buttons/Button'
+import { FlexRow } from '../common/components/common'
+import { useMutationData } from '../util/useMutationData'
+import { inspectionQuery } from '../inspection/inspectionQueries'
+import { uniqBy } from 'lodash'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
+  min-height: 10rem;
+  position: relative;
 `
 
 type PropTypes = {
   isEditable: boolean
-  onUpdate: () => unknown
   isValid: boolean
 }
 
-const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, isValid }) => {
+let columnLabels = {
+  blockNumber: text('departureBlocks_blockNumber'),
+  dayType: text('departureBlocks_dayType'),
+  registryNr: text('departureBlocks_registryNr'),
+  vehicleId: text('departureBlocks_vehicleId'),
+  journeyStartTime: text('departureBlocks_journeyStartTime'),
+  journeyEndTime: text('departureBlocks_journeyEndTime'),
+  procurementUnitId: text('departureBlocks_procurementUnitId'),
+  routeId: text('departureBlocks_routeId'),
+  direction: text('departureBlocks_direction'),
+  routeLength: text('departureBlocks_routeLength'),
+}
+
+const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) => {
   const inspection = useContext(InspectionContext)
   const inspectionId = inspection?.id || ''
 
-  // Create day type groups with the special hook. Day type groups are departure blocks grouped by dayType.
-  // The hook contains logic to select and deselect the dayTypes.
-  let [
-    dayTypeGroups,
-    enabledDayTypes,
-    { addDayTypeToGroup, removeDayTypeFromGroup, addDayTypeGroup },
-  ] = useDayTypeGroups(isEditable)
-
-  // The main query that fetches the departure blocks.
-  let {
-    data: availableDayTypesData,
-    loading: departureBlocksLoading,
-    refetch: refetchBlocks,
-  } = useQueryData<string[]>(availableDayTypesQuery, {
-    fetchPolicy: 'network-only', // I don't think the cache works well with a simple string array
+  let { data: departureBlocks = [], loading, refetch } = useQueryData<
+    OperatorBlockDeparture[]
+  >(departureBlocksQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,
     variables: {
-      inspectionId: inspectionId,
+      inspectionId,
     },
   })
 
-  // Ensure the available dayTypes are in an array
-  let dayTypesWithDepartures = useMemo(() => availableDayTypesData || [], [
-    availableDayTypesData,
-  ])
+  let [
+    fetchDepartureBlocks,
+    { data: fetchedDepartureBlocks = [], loading: fetchLoading },
+  ] = useMutationData<OperatorBlockDeparture[]>(saveDepartureBlocksMutation, {
+    variables: {
+      inspectionId,
+    },
+    refetchQueries: [
+      {
+        query: inspectionQuery,
+        variables: {
+          inspectionId,
+        },
+      },
+    ],
+  })
 
-  // Figure out which day types are selectable. The day type is selectable (or unselectable)
-  // when it doesn't have any blocks attached to it.
-  let selectableDayTypes = useMemo(() => {
-    return normalDayTypes.filter((dt) => !dayTypesWithDepartures.includes(dt))
-  }, [dayTypesWithDepartures])
+  let currentDepartureBlocks = useMemo(
+    () => uniqBy([...departureBlocks, ...(fetchedDepartureBlocks || [])], 'id'),
+    [fetchedDepartureBlocks, departureBlocks]
+  )
 
-  // Callback for when the block configuration changes, which will update the blocks query.
-  // Called from each day type group item.
-  let refetch = useRefetch(refetchBlocks)
-
-  let onBlocksChange = useCallback(() => {
-    refetch()
-    onUpdate()
-  }, [refetch, onUpdate])
-
-  // Add a new dayType group for each departure block group
-  // if the dayYpe doesn't already exist in a group.
-  useEffect(() => {
-    for (let dayType of dayTypesWithDepartures) {
-      if (!enabledDayTypes.includes(dayType)) {
-        addDayTypeGroup(dayType)
-      }
-    }
-  }, [dayTypesWithDepartures, enabledDayTypes])
+  // TODO: Localization
 
   return (
     <ExpandableSection
@@ -88,34 +86,27 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, onUpdate, i
         </HeaderMainHeading>
       }>
       <DepartureBlocksView>
-        {dayTypeGroups.map((dayTypeGroup, groupIndex) => {
-          let groupDayTypesDepartures = Object.entries(dayTypeGroup)
-            .filter(([, enabled]) => enabled)
-            .map(([dayType]) => dayType)
-            .filter((dayType) => dayTypesWithDepartures.includes(dayType))
-
-          return (
-            <DepartureBlockGroupItem
-              key={`dayTypeGroup-${groupIndex}`}
-              isEditable={isEditable}
-              loading={departureBlocksLoading}
-              hasDepartures={groupDayTypesDepartures.length !== 0}
-              selectableDayTypes={selectableDayTypes}
-              dayTypeGroup={dayTypeGroup}
-              groupIndex={groupIndex}
-              onAddDayType={addDayTypeToGroup}
-              onRemoveDayType={removeDayTypeFromGroup}
-              onBlocksChange={onBlocksChange}
-            />
-          )
-        })}
-
-        {isEditable &&
-          difference(Object.keys(defaultDayTypeGroup), enabledDayTypes).length !== 0 && (
-            <div>
-              <Button onClick={() => addDayTypeGroup()}>Lisää päiväryhmä</Button>
-            </div>
-          )}
+        <LoadingDisplay loading={loading || fetchLoading} />
+        {!(loading || fetchLoading) && currentDepartureBlocks.length === 0 ? (
+          <FlexRow>
+            <Button onClick={() => fetchDepartureBlocks()} loading={fetchLoading}>
+              <Text>departureBlocks_fetchDepartureBlocks</Text>
+            </Button>
+          </FlexRow>
+        ) : (
+          <>
+            <FlexRow>
+              <Button
+                style={{ marginLeft: 'auto' }}
+                size={ButtonSize.SMALL}
+                onClick={() => refetch()}
+                loading={loading}>
+                <Text>update</Text>
+              </Button>
+            </FlexRow>
+            <PagedTable columnLabels={columnLabels} items={currentDepartureBlocks} />
+          </>
+        )}
       </DepartureBlocksView>
     </ExpandableSection>
   )

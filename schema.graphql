@@ -230,12 +230,6 @@ type DefectiveEquipmentDepartureSanctionsReportData {
   trackReason: TrackReason!
 }
 
-type DepartureBlockFile {
-  blockFile: String!
-  dayType: String!
-  operatorId: Int!
-}
-
 type DepartureBlocksReport {
   columnLabels: String!
   description: String!
@@ -768,7 +762,6 @@ type Mutation {
   addEquipmentToExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement
   batchAddToEquipmentCatalogue(catalogueId: String!, vehicleIds: [String!]!): EquipmentCatalogue
   clearCache: Boolean!
-  createBlockDeparturesFromFile(dayTypes: [String!]!, file: Upload, inspectionId: String!): Boolean
   createContract(contractInput: ContractInput!, file: Upload!): Contract!
   createEquipmentCatalogue(equipmentCatalogue: EquipmentCatalogueInput!, operatorId: Int!, procurementUnitId: String!): EquipmentCatalogue
   createExecutionRequirementsForProcurementUnit(inspectionId: String!, procurementUnitId: String!): PlannedUnitExecutionRequirement
@@ -778,7 +771,6 @@ type Mutation {
   createTestData: Boolean!
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
-  generateTestBlockDepartures: [DepartureBlockFile!]!
   helperResolver: Boolean!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
@@ -792,7 +784,6 @@ type Mutation {
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): PlannedUnitExecutionRequirement
   removeContract(contractId: String!, operatorId: Int!): Boolean!
-  removeDepartureBlocksForDayTypes(dayTypes: [String!]!, inspectionId: String!): Boolean!
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
@@ -801,6 +792,7 @@ type Mutation {
   removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
+  saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
@@ -1088,6 +1080,27 @@ type Operator {
   procurementUnits: [ProcurementUnit!]!
 }
 
+type OperatorBlockDeparture {
+  blockNumber: String!
+  dayType: String!
+  direction: String!
+  equipment: Equipment
+  equipmentId: String
+  id: String!
+  inspection: PreInspection
+  inspectionId: String
+  journeyEndTime: String!
+  journeyStartTime: String!
+  journeyType: String!
+  operator: Operator!
+  operatorId: Int!
+  procurementUnitId: String!
+  registryNr: String
+  routeId: String!
+  routeLength: Float
+  vehicleId: String
+}
+
 type OperatorDeadrunsReport {
   columnLabels: String!
   description: String!
@@ -1295,7 +1308,6 @@ type Query {
   allDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): DeviationsReport
   allInspectionDates: [InspectionDate!]!
   allInspections(inspectionType: InspectionType!): [Inspection!]!
-  availableDayTypes(inspectionId: String!): [String!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
   contractProcurementUnitOptions(contractId: String!, endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
@@ -1326,6 +1338,7 @@ type Query {
   extraBlockDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): ExtraBlockDeparturesReport
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection!
+  inspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   inspectionEquipmentDefectSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
@@ -1645,7 +1658,6 @@ enum InspectionUserRelationType {
 }
 
 enum InspectionValidationError {
-  CONTRACT_OUTSIDE_INSPECTION_TIME
   HFP_UNAVAILABLE_FOR_INSPECTION_DATES
   INVALID_CONTRACTS
   INVALID_INSPECTION_TIME
