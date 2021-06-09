@@ -2285,7 +2285,7 @@ export type SanctionSummaryReportData = {
 
 export type SanctionUpdate = {
   sanctionId: Scalars['String']
-  appliedSanctionAmount: Scalars['Float']
+  appliedSanctionPercentageAmount: Scalars['Float']
 }
 
 export enum SanctionableEntity {

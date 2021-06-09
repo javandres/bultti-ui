@@ -25008,7 +25008,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionAmount",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "type": {
               "kind": "NON_NULL",

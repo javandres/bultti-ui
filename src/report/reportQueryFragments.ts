@@ -320,7 +320,7 @@ export const reportQueryFragments = {
     fragment SanctionListFragment on SanctionListReportData {
       procurementUnitId
       kilometers
-      sanctionSum
+      sanctionFinancialAmount
       sanctionReason
     }
   `,

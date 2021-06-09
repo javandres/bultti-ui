@@ -49,14 +49,17 @@ const SanctionToggleInput = styled.input`
   display: block;
 `
 
-let sanctionColumnLabels = {
+let sanctionColumnLabels: { [name in keyof Partial<Sanction>]: string } = {
+  procurementUnitId: 'Kilpailukohde',
+  area: 'Alue',
   sanctionableType: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
-  sanctionAmount: 'Sanktiomäärä',
+  sanctionPercentageAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
   sanctionableValue: 'Sanktioon johtava arvo',
-  sanctionableKilometers: 'Kilometrisuorite',
-  appliedSanctionAmount: 'Sanktioidaan',
+  sanctionScopeKilometers: 'Kilometrisuorite',
+  appliedSanctionPercentageAmount: 'Sanktioidaan',
+  sanctionFinancialAmount: 'Sanktiosumma €',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
   matchesException: 'Sanktiopoikkeus',
 }
@@ -96,14 +99,17 @@ let sanctionsQuery = gql`
       }
       rows {
         id
+        procurementUnitId
+        area
         entityIdentifier
         inspectionId
-        sanctionAmount
+        sanctionPercentageAmount
         sanctionReason
-        sanctionableKilometers
+        sanctionScopeKilometers
         sanctionableType
-        appliedSanctionAmount
+        appliedSanctionPercentageAmount
         sanctionResultKilometers
+        sanctionFinancialAmount
         sanctionableValue
         matchesException {
           id
@@ -120,7 +126,7 @@ let setSanctionMutation = gql`
   mutation setSanction($sanctionUpdates: [SanctionUpdate!]!) {
     updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
-      appliedSanctionAmount
+      appliedSanctionPercentageAmount
       sanctionResultKilometers
     }
   }
@@ -173,20 +179,17 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     setSanctionMutation,
     {
       update: (cache, { data: updateSanctions }) => {
-        // TODO: Test that this works. Apollo types may be wrong here.
-        console.log(updateSanctions)
-
         for (let update of updateSanctions || []) {
           let cacheId = cache.identify(update)
           cache.writeFragment({
             id: cacheId,
             data: {
-              appliedSanctionAmount: update.appliedSanctionPercentageAmount,
+              appliedSanctionPercentageAmount: update.appliedSanctionPercentageAmount,
               sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
               fragment SanctionFragment on Sanction {
-                appliedSanctionAmount
+                appliedSanctionPercentageAmount
                 sanctionResultKilometers
               }
             `,
@@ -237,7 +240,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     for (let editValue of pendingValues) {
       let updateValue: SanctionUpdate = {
         sanctionId: editValue.itemId,
-        appliedSanctionAmount: editValue.value as number,
+        appliedSanctionPercentageAmount: editValue.value as number,
       }
 
       updateValues.push(updateValue)
@@ -275,15 +278,26 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
         return '-'
       }
 
+      if (key === 'sanctionFinancialAmount') {
+        return round(val as number, DEFAULT_DECIMALS) + '€'
+      }
+
       if (
-        [
-          'sanctionAmount',
-          'sanctionableKilometers',
-          'appliedSanctionAmount',
-          'sanctionResultKilometers',
-        ].includes(key)
+        ([
+          'sanctionPercentageAmount',
+          'appliedSanctionPercentageAmount',
+        ] as (keyof Sanction)[]).includes(key)
       ) {
-        return round(val as number, DEFAULT_DECIMALS)
+        return round(val as number, DEFAULT_DECIMALS) + '%'
+      }
+
+      if (
+        ([
+          'sanctionScopeKilometers',
+          'sanctionResultKilometers',
+        ] as (keyof Sanction)[]).includes(key)
+      ) {
+        return round(val as number, DEFAULT_DECIMALS) + ' km'
       }
 
       if (

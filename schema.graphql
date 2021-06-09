@@ -1807,7 +1807,7 @@ input ProcurementUnitEditInput {
 }
 
 input SanctionUpdate {
-  appliedSanctionAmount: Float!
+  appliedSanctionPercentageAmount: Float!
   sanctionId: String!
 }
 
