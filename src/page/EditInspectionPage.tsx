@@ -96,6 +96,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
 
   var [season] = useStateValue('globalSeason')
   var [operator] = useStateValue('globalOperator')
+
   var showErrorNotification = useShowErrorNotification()
   var navigateToInspection = useNavigateToInspection(inspectionType)
 
