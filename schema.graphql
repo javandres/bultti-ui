@@ -458,7 +458,7 @@ type EquipmentDefect {
 
 type EquipmentDefectSanction {
   appliedSanctionFinancialAmount: Float!
-  appliedSanctionPercentage: Float!
+  appliedSanctionPercentageAmount: Float!
   departureId: String
   description: String!
   endDate: BulttiDate
@@ -471,10 +471,10 @@ type EquipmentDefectSanction {
   priority: EquipmentDefectPriority!
   procurementUnitId: String!
   registryNumber: String!
-  routeKilometers: Float!
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
-  sanctionedKilometers: Float
+  sanctionResultKilometers: Float
+  sanctionScopeKilometers: Float!
   startDate: BulttiDate
 }
 
@@ -1221,6 +1221,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
+  billingPeriodMonth: BulttiDate!
   createdAt: DateTime!
   endDate: BulttiDate
   id: ID!
@@ -1384,7 +1385,7 @@ type ReportListItem {
 }
 
 type Sanction {
-  appliedSanctionAmount: Float!
+  appliedSanctionPercentageAmount: Float!
   area: OperatingAreaName
   entityIdentifier: String!
   id: ID!
@@ -1392,11 +1393,11 @@ type Sanction {
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
-  sanctionAmount: Float!
+  sanctionFinancialAmount: Int
+  sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
-  sanctionSum: Int
-  sanctionableKilometers: Float!
+  sanctionScopeKilometers: Float!
   sanctionableType: SanctionableEntity!
   sanctionableValue: String
 }
@@ -1431,8 +1432,8 @@ type SanctionListReportData {
   id: ID!
   kilometers: Float!
   procurementUnitId: String!
+  sanctionFinancialAmount: Float!
   sanctionReason: String!
-  sanctionSum: Float!
 }
 
 type SanctionSummaryReport {

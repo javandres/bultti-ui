@@ -6653,7 +6653,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionPercentage",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -6685,7 +6685,7 @@
             "deprecationReason": null
           },
           {
-            "name": "routeKilometers",
+            "name": "sanctionScopeKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -6701,7 +6701,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionedKilometers",
+            "name": "sanctionResultKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -18965,6 +18965,22 @@
             "deprecationReason": null
           },
           {
+            "name": "billingPeriodMonth",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "BulttiDate",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "inspectionDate",
             "description": null,
             "args": [],
@@ -23869,7 +23885,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -23885,7 +23901,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionAmount",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -23901,7 +23917,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionableKilometers",
+            "name": "sanctionScopeKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -23929,7 +23945,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionSum",
+            "name": "sanctionFinancialAmount",
             "description": null,
             "args": [],
             "type": {
@@ -24421,7 +24437,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionSum",
+            "name": "sanctionFinancialAmount",
             "description": null,
             "args": [],
             "type": {
