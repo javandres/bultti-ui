@@ -181,7 +181,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           cache.writeFragment({
             id: cacheId,
             data: {
-              appliedSanctionAmount: update.appliedSanctionAmount,
+              appliedSanctionAmount: update.appliedSanctionPercentageAmount,
               sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
@@ -212,7 +212,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           (val) => val.key === key && val.itemId === item.id
         )
 
-        let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+        let setValue =
+          value === item.sanctionPercentageAmount ? 0 : item.sanctionPercentageAmount
 
         if (existingEditValueIndex !== -1) {
           currentValues.splice(existingEditValueIndex, 1)
@@ -362,7 +363,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           keyFromItem={(item) => item.id}
           renderInput={renderSanctionInput}
           pendingValues={pendingValues}
-          editableValues={['appliedSanctionAmount']}
+          editableValues={['appliedSanctionPercentageAmount']}
           onSaveEdit={onSaveSanctions}
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
