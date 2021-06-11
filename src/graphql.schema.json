@@ -9638,12 +9638,6 @@
             "deprecationReason": null
           },
           {
-            "name": "POST_INSPECTION_END_DATE_NOT_IN_THE_PAST",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS",
             "description": null,
             "isDeprecated": false,

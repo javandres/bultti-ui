@@ -829,7 +829,6 @@ export enum InspectionValidationError {
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
   HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
-  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST',
   PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS',
 }
 

@@ -282,7 +282,6 @@
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
   "HFP_UNAVAILABLE_FOR_INSPECTION_DATES": "Tarkastuksen jaksolle ei löydy ladattua HFP-tietoa.",
   "POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS": "Jälkitarkastukselle ei löydy julkaistuja ennakkotarkastuksia.",
-  "POST_INSPECTION_END_DATE_NOT_IN_THE_PAST": "Jälkitarkastusjakson loppupäivä pitää olla aikaisintaan kuukausi menneisyydessä.",
 
   "unsavedChangesPrompt": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua näkymästä? Tallentamattomat muutokset kumotaan."
 }
