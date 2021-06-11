@@ -5,8 +5,8 @@ import { useQueryData } from '../util/useQueryData'
 import {
   PostInspection,
   Sanction,
-  SanctionableEntity,
   SanctionException,
+  SanctionScope,
   SanctionsResponse,
   SanctionUpdate,
 } from '../schema-types'
@@ -51,8 +51,8 @@ const SanctionToggleInput = styled.input`
 
 let sanctionColumnLabels: { [name in keyof Partial<Sanction>]: string } = {
   procurementUnitId: 'Kilpailukohde',
-  area: 'Alue',
-  sanctionableType: 'Sanktioitava kohde',
+  areaName: 'Alue',
+  sanctionScope: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
   sanctionPercentageAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
@@ -320,12 +320,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
       let idParts = String(val).split('_')
 
-      switch (item.sanctionableType) {
-        case SanctionableEntity.Departure:
+      switch (item.sanctionScope) {
+        case SanctionScope.Departure:
           return `${idParts[0]} / ${idParts[1]} / ${idParts[2]} / ${idParts[3]}`
-        case SanctionableEntity.EmissionClass:
+        case SanctionScope.OperatingArea:
           return `Alue: ${idParts[0]} Päästöluokka: ${idParts[1]}`
-        case SanctionableEntity.Equipment:
+        case SanctionScope.ProcurementUnit:
           return `Kohde: ${idParts[0]} Ajoneuvon ikä: ${idParts[1]}`
         default:
           return val

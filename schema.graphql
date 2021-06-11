@@ -1035,8 +1035,8 @@ type ObservedUnitExecution {
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float
-  sanctionedKilometers: Float
+  sanctionFinancialAmount: Float
+  sanctionPercentageAmount: Float
   totalKilometersObserved: Float
   totalUnitKilometers: Float!
 }
@@ -1386,19 +1386,19 @@ type ReportListItem {
 
 type Sanction {
   appliedSanctionPercentageAmount: Float!
-  area: OperatingAreaName
+  areaName: OperatingAreaName
   entityIdentifier: String!
   id: ID!
   inspection: PostInspection!
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
-  sanctionFinancialAmount: Int
+  sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float
+  sanctionScope: SanctionScope!
   sanctionScopeKilometers: Float!
-  sanctionableType: SanctionableEntity!
   sanctionableValue: String
 }
 
@@ -1433,6 +1433,7 @@ type SanctionListReportData {
   kilometers: Float!
   procurementUnitId: String!
   sanctionFinancialAmount: Float!
+  sanctionPercentageAmount: Float!
   sanctionReason: String!
 }
 
@@ -1460,10 +1461,10 @@ type SanctionSummaryReportData {
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float!
-  sanctionAmountRatio: Float!
+  sanctionPercentageAmount: Float!
+  sanctionPercentageRatio: Float!
   sanctionReason: SanctionReason!
-  sanctionedKilometers: Float!
+  sanctionResultKilometers: Float!
   totalKilometers: Float!
   unitEquipmentMaxAge: Float!
 }
@@ -1702,10 +1703,10 @@ enum SanctionReason {
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
 }
 
-enum SanctionableEntity {
+enum SanctionScope {
   DEPARTURE
-  EMISSION_CLASS
-  EQUIPMENT
+  OPERATING_AREA
+  PROCUREMENT_UNIT
 }
 
 enum SortOrder {
