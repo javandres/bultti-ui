@@ -824,12 +824,11 @@ export enum InspectionValidationError {
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
   MissingContracts = 'MISSING_CONTRACTS',
-  ContractOutsideInspectionTime = 'CONTRACT_OUTSIDE_INSPECTION_TIME',
+  InvalidContracts = 'INVALID_CONTRACTS',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
   HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
-  PostInspectionEndDateNotInThePast = 'POST_INSPECTION_END_DATE_NOT_IN_THE_PAST',
   PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS',
 }
 
@@ -965,7 +964,6 @@ export type Mutation = {
   updateEquipmentCatalogueQuota?: Maybe<Equipment>
   saveInspectionDepartureBlocks: Array<OperatorBlockDeparture>
   updateEquipmentRequirementQuota?: Maybe<Equipment>
-  initInspectionContractUnitMap: PreInspection
   generateEquipmentForPreInspection: Scalars['Boolean']
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>
   createContract: Contract
@@ -1101,10 +1099,6 @@ export type MutationUpdateEquipmentRequirementQuotaArgs = {
   kilometers?: Maybe<Scalars['Float']>
   quota?: Maybe<Scalars['Float']>
   equipmentId: Scalars['String']
-}
-
-export type MutationInitInspectionContractUnitMapArgs = {
-  inspectionId: Scalars['String']
 }
 
 export type MutationGenerateEquipmentForPreInspectionArgs = {
@@ -1763,7 +1757,7 @@ export type Query = {
   operators: Array<Operator>
   season?: Maybe<Array<Season>>
   seasons: Array<Season>
-  procurementUnit?: Maybe<ProcurementUnit>
+  procurementUnit: ProcurementUnit
   procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
   equipment: Array<Equipment>

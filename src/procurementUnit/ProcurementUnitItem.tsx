@@ -71,7 +71,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
 
     let contractInvalid = validationErrors.some((err) =>
       [
-        InspectionValidationError.ContractOutsideInspectionTime,
+        InspectionValidationError.InvalidContracts,
         InspectionValidationError.MissingContracts,
       ].includes(err.type)
     )
