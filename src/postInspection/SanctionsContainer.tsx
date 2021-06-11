@@ -71,7 +71,7 @@ let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
         type="checkbox"
         value={val + ''}
         onChange={() => onChange(val as string)}
-        checked={val !== '0'}
+        checked={val !== 0}
         name="sanctionable"
       />
     </SanctionToggleLabel>
@@ -178,9 +178,13 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
     {
-      update: (cache, { data: updateSanctions }) => {
-        for (let update of updateSanctions || []) {
+      update: (cache, result) => {
+        // @ts-ignore faulty types
+        let sanctionUpdates = result.data?.updateSanctions || []
+
+        for (let update of sanctionUpdates) {
           let cacheId = cache.identify(update)
+
           cache.writeFragment({
             id: cacheId,
             data: {
@@ -275,11 +279,13 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let renderValue = useCallback(
     (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
       if (!val) {
-        return '-'
+        return key === 'matchesException' ? '-' : '0'
       }
 
       if (key === 'sanctionFinancialAmount') {
-        return round(val as number, DEFAULT_DECIMALS) + '€'
+        return item?.appliedSanctionPercentageAmount === 0
+          ? 0
+          : round(val as number, DEFAULT_DECIMALS) + '€'
       }
 
       if (
