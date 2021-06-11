@@ -100,13 +100,13 @@ let sanctionsQuery = gql`
       rows {
         id
         procurementUnitId
-        area
+        areaName
         entityIdentifier
         inspectionId
         sanctionPercentageAmount
         sanctionReason
         sanctionScopeKilometers
-        sanctionableType
+        sanctionScope
         appliedSanctionPercentageAmount
         sanctionResultKilometers
         sanctionFinancialAmount
