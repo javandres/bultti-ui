@@ -90,7 +90,7 @@
   "contractForm_removeConfirm": "Haluatko varmasti poistaa sopimuksen?",
 
   "contract_procurementUnitsEditor_routes": "Reitit",
-  "contract_procurementUnitsEditor_unselectingDisabled": "Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.",
+  "contract_procurementUnitsEditor_unselectingDisabled": "Kohdetta ei voida valita pois, koska tämä sopimus käytössä ennakkotarkastuksessa.",
   "contract_procurementUnitsEditor_unitIncluded": "Sopimuksessa mukana",
   "contract_procurementUnitsEditor_currentContracts": "Nykyiset sopimukset:",
   "contract_procurementUnitsEditor_noProcurementUnits": "Ei kilpailukohteita",
