@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
+import { Text } from '../util/translate'
 import styled from 'styled-components/macro'
 import { getAuthToken } from '../util/authToken'
 import { InspectionType } from '../schema-types'
@@ -67,7 +68,7 @@ const DownloadReport = observer(
           <ErrorButton onClick={() => setError('')}>{error}</ErrorButton>
         ) : (
           <Button loading={loading} onClick={onDownloadReport}>
-            Download excel
+            <Text>downloadExcelRaport</Text>
           </Button>
         )}
       </DownloadWrapper>
