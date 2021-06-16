@@ -70,7 +70,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     )
 
     let contractInvalid = validationErrors.some((err) =>
-      [InspectionValidationError.MissingContracts].includes(err.type)
+      [
+        InspectionValidationError.InvalidContracts,
+        InspectionValidationError.MissingContracts,
+      ].includes(err.type)
     )
 
     const procurementUnitAreaName = procurementUnit?.area?.name
