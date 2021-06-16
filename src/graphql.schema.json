@@ -9608,7 +9608,7 @@
             "deprecationReason": null
           },
           {
-            "name": "CONTRACT_OUTSIDE_INSPECTION_TIME",
+            "name": "INVALID_CONTRACTS",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -9633,12 +9633,6 @@
           },
           {
             "name": "HFP_UNAVAILABLE_FOR_INSPECTION_DATES",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "POST_INSPECTION_END_DATE_NOT_IN_THE_PAST",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -11988,39 +11982,6 @@
               "kind": "OBJECT",
               "name": "Equipment",
               "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "initInspectionContractUnitMap",
-            "description": null,
-            "args": [
-              {
-                "name": "inspectionId",
-                "description": null,
-                "type": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "SCALAR",
-                    "name": "String",
-                    "ofType": null
-                  }
-                },
-                "defaultValue": null,
-                "isDeprecated": false,
-                "deprecationReason": null
-              }
-            ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "OBJECT",
-                "name": "PreInspection",
-                "ofType": null
-              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -18969,13 +18930,9 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "BulttiDate",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "BulttiDate",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -20246,9 +20203,13 @@
               }
             ],
             "type": {
-              "kind": "OBJECT",
-              "name": "ProcurementUnit",
-              "ofType": null
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "ProcurementUnit",
+                "ofType": null
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -23857,18 +23818,6 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionableValue",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "sanctionReason",
             "description": null,
             "args": [],
@@ -23880,6 +23829,18 @@
                 "name": "SanctionReason",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sanctionReasonValue",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null

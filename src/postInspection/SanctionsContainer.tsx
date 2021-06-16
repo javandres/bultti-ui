@@ -56,7 +56,7 @@ let sanctionColumnLabels: { [name in keyof Partial<Sanction>]: string } = {
   entityIdentifier: 'Tunnus',
   sanctionPercentageAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
-  sanctionableValue: 'Sanktioon johtava arvo',
+  sanctionReasonValue: 'Sanktioon johtava arvo',
   sanctionScopeKilometers: 'Kilometrisuorite',
   appliedSanctionPercentageAmount: 'Sanktioidaan',
   sanctionFinancialAmount: 'Sanktiosumma €',
@@ -110,7 +110,7 @@ let sanctionsQuery = gql`
         appliedSanctionPercentageAmount
         sanctionResultKilometers
         sanctionFinancialAmount
-        sanctionableValue
+        sanctionReasonValue
         matchesException {
           id
           departureProperty

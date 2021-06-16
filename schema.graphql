@@ -772,7 +772,6 @@ type Mutation {
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   helperResolver: Boolean!
-  initInspectionContractUnitMap(inspectionId: String!): PreInspection!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String): String
@@ -1221,7 +1220,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
-  billingPeriodMonth: BulttiDate!
+  billingPeriodMonth: BulttiDate
   createdAt: DateTime!
   endDate: BulttiDate
   id: ID!
@@ -1361,7 +1360,7 @@ type Query {
   operators: [Operator!]!
   overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
-  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
+  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit!
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionId: String, inspectionType: String!): [ReportListItem!]!
@@ -1396,10 +1395,10 @@ type Sanction {
   sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
+  sanctionReasonValue: String
   sanctionResultKilometers: Float
   sanctionScope: SanctionScope!
   sanctionScopeKilometers: Float!
-  sanctionableValue: String
 }
 
 type SanctionException {
@@ -1661,8 +1660,8 @@ enum InspectionUserRelationType {
 }
 
 enum InspectionValidationError {
-  CONTRACT_OUTSIDE_INSPECTION_TIME
   HFP_UNAVAILABLE_FOR_INSPECTION_DATES
+  INVALID_CONTRACTS
   INVALID_INSPECTION_TIME
   INVALID_PRODUCTION_TIME
   MISSING_BLOCK_DEPARTURES
@@ -1670,7 +1669,6 @@ enum InspectionValidationError {
   MISSING_EQUIPMENT_CATALOGUES
   MISSING_EXECUTION_REQUIREMENTS
   MISSING_REQUIREMENT_QUOTAS
-  POST_INSPECTION_END_DATE_NOT_IN_THE_PAST
   POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS
 }
 
