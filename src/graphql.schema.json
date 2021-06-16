@@ -11926,7 +11926,7 @@
             "description": null,
             "args": [
               {
-                "name": "kilometers",
+                "name": "meters",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",

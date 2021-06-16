@@ -19,7 +19,7 @@ import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
   quota?: number
-  kilometers?: number
+  meters?: number
   quotaId: string
 }
 
@@ -101,7 +101,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
         updates.push({
           quota: undefinedOrNumber(percentageQuota),
-          kilometers: undefinedOrNumber(meterRequirement),
+          meters: undefinedOrNumber(meterRequirement),
           quotaId: item.quotaId,
         })
       }

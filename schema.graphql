@@ -801,7 +801,7 @@ type Mutation {
   updateEquipmentCatalogueQuota(quota: Float!, quotaId: String!): EquipmentCatalogueQuota!
   updateEquipmentDefectSanctions(sanctionUpdates: [EquipmentDefectSanctionUpdate!]!): [EquipmentDefectSanction!]!
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
-  updateEquipmentRequirementQuota(kilometers: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota!
+  updateEquipmentRequirementQuota(meters: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota!
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!

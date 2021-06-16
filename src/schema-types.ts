@@ -1094,7 +1094,7 @@ export type MutationSaveInspectionDepartureBlocksArgs = {
 }
 
 export type MutationUpdateEquipmentRequirementQuotaArgs = {
-  kilometers?: Maybe<Scalars['Float']>
+  meters?: Maybe<Scalars['Float']>
   quota?: Maybe<Scalars['Float']>
   quotaId: Scalars['String']
 }
