@@ -24,12 +24,12 @@ type SanctionSummaryReportItemConstants = {
 
 type SanctionSummaryReportItem = SanctionSummaryReportItemConstants & Record<string, number>
 
-function getSanctionCols(
+function getSanctionColumns(
   sanctionAmount,
   sanctionReason,
-  values: { sanctionAmountRatio: number; sanctionedKilometers: number } = {
-    sanctionedKilometers: 0,
-    sanctionAmountRatio: 0,
+  values: { sanctionPercentageAmount: number; sanctionResultKilometers: number } = {
+    sanctionResultKilometers: 0,
+    sanctionPercentageAmount: 0,
   }
 ) {
   let cols = {}
@@ -37,8 +37,8 @@ function getSanctionCols(
   let sanctionAmountCol = `${reasonText} ${sanctionAmount}%`
   let sanctionAmountKmCol = `${reasonText} KM`
 
-  cols[sanctionAmountCol] = values.sanctionAmountRatio
-  cols[sanctionAmountKmCol] = values.sanctionedKilometers
+  cols[sanctionAmountCol] = values.sanctionPercentageAmount
+  cols[sanctionAmountKmCol] = values.sanctionResultKilometers
 
   return cols
 }
@@ -50,8 +50,8 @@ function sanctionSummaryTransform(
 
   // Template for dynamic keyed sanction summary items
   let sanctionAmountColumnsTemplate = rows.reduce(
-    (cols: Record<string, number>, { sanctionAmount, sanctionReason }) => {
-      let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason)
+    (cols: Record<string, number>, { sanctionPercentageAmount, sanctionReason }) => {
+      let sanctionCols = getSanctionColumns(sanctionPercentageAmount, sanctionReason)
       return { ...cols, ...sanctionCols }
     },
     {}
@@ -59,10 +59,10 @@ function sanctionSummaryTransform(
 
   for (let row of rows) {
     let {
-      sanctionAmount,
+      sanctionPercentageAmount,
       sanctionReason,
-      sanctionAmountRatio,
-      sanctionedKilometers,
+      sanctionPercentageRatio,
+      sanctionResultKilometers,
       procurementUnitId,
     } = row
 
@@ -83,9 +83,9 @@ function sanctionSummaryTransform(
       resultRow.unitEquipmentMaxAge = row.unitEquipmentMaxAge
     }
 
-    let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {
-      sanctionedKilometers,
-      sanctionAmountRatio,
+    let sanctionCols = getSanctionColumns(sanctionPercentageAmount, sanctionReason, {
+      sanctionResultKilometers,
+      sanctionPercentageAmount,
     })
 
     let fullResultRow = {

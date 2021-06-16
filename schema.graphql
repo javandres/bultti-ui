@@ -458,7 +458,7 @@ type EquipmentDefect {
 
 type EquipmentDefectSanction {
   appliedSanctionFinancialAmount: Float!
-  appliedSanctionPercentage: Float!
+  appliedSanctionPercentageAmount: Float!
   departureId: String
   description: String!
   endDate: BulttiDate
@@ -471,10 +471,10 @@ type EquipmentDefectSanction {
   priority: EquipmentDefectPriority!
   procurementUnitId: String!
   registryNumber: String!
-  routeKilometers: Float!
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
-  sanctionedKilometers: Float
+  sanctionResultKilometers: Float
+  sanctionScopeKilometers: Float!
   startDate: BulttiDate
 }
 
@@ -1034,8 +1034,8 @@ type ObservedUnitExecution {
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float
-  sanctionedKilometers: Float
+  sanctionFinancialAmount: Float
+  sanctionPercentageAmount: Float
   totalKilometersObserved: Float
   totalUnitKilometers: Float!
 }
@@ -1220,6 +1220,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
+  billingPeriodMonth: BulttiDate
   createdAt: DateTime!
   endDate: BulttiDate
   id: ID!
@@ -1383,21 +1384,21 @@ type ReportListItem {
 }
 
 type Sanction {
-  appliedSanctionAmount: Float!
-  area: OperatingAreaName
+  appliedSanctionPercentageAmount: Float!
+  areaName: OperatingAreaName
   entityIdentifier: String!
   id: ID!
   inspection: PostInspection!
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
-  sanctionAmount: Float!
+  sanctionFinancialAmount: Float
+  sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
+  sanctionReasonValue: String
   sanctionResultKilometers: Float
-  sanctionSum: Int
-  sanctionableKilometers: Float!
-  sanctionableType: SanctionableEntity!
-  sanctionableValue: String
+  sanctionScope: SanctionScope!
+  sanctionScopeKilometers: Float!
 }
 
 type SanctionException {
@@ -1430,8 +1431,9 @@ type SanctionListReportData {
   id: ID!
   kilometers: Float!
   procurementUnitId: String!
+  sanctionFinancialAmount: Float!
+  sanctionPercentageAmount: Float!
   sanctionReason: String!
-  sanctionSum: Float!
 }
 
 type SanctionSummaryReport {
@@ -1458,10 +1460,10 @@ type SanctionSummaryReportData {
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float!
-  sanctionAmountRatio: Float!
+  sanctionPercentageAmount: Float!
+  sanctionPercentageRatio: Float!
   sanctionReason: SanctionReason!
-  sanctionedKilometers: Float!
+  sanctionResultKilometers: Float!
   totalKilometers: Float!
   unitEquipmentMaxAge: Float!
 }
@@ -1699,10 +1701,10 @@ enum SanctionReason {
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
 }
 
-enum SanctionableEntity {
+enum SanctionScope {
   DEPARTURE
-  EMISSION_CLASS
-  EQUIPMENT
+  OPERATING_AREA
+  PROCUREMENT_UNIT
 }
 
 enum SortOrder {
@@ -1804,7 +1806,7 @@ input ProcurementUnitEditInput {
 }
 
 input SanctionUpdate {
-  appliedSanctionAmount: Float!
+  appliedSanctionPercentageAmount: Float!
   sanctionId: String!
 }
 

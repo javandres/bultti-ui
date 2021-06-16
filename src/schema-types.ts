@@ -536,10 +536,10 @@ export type EquipmentDefectSanction = {
   description: Scalars['String']
   sanctionPercentageAmount: Scalars['Float']
   sanctionFinancialAmount: Scalars['Float']
-  appliedSanctionPercentage: Scalars['Float']
+  appliedSanctionPercentageAmount: Scalars['Float']
   appliedSanctionFinancialAmount: Scalars['Float']
-  routeKilometers: Scalars['Float']
-  sanctionedKilometers?: Maybe<Scalars['Float']>
+  sanctionScopeKilometers: Scalars['Float']
+  sanctionResultKilometers?: Maybe<Scalars['Float']>
 }
 
 export type EquipmentDefectSanctionUpdate = {
@@ -1455,8 +1455,8 @@ export type ObservedUnitExecution = {
   averageAgeMax?: Maybe<Scalars['Float']>
   averageAgeRequired?: Maybe<Scalars['Float']>
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
-  sanctionedKilometers?: Maybe<Scalars['Float']>
-  sanctionAmount?: Maybe<Scalars['Float']>
+  sanctionFinancialAmount?: Maybe<Scalars['Float']>
+  sanctionPercentageAmount?: Maybe<Scalars['Float']>
 }
 
 export type ObservedUnitExecutionReport = {
@@ -1674,6 +1674,7 @@ export type PostInspection = {
   operator: Operator
   seasonId: Scalars['String']
   season: Season
+  billingPeriodMonth?: Maybe<Scalars['BulttiDate']>
   inspectionDate?: Maybe<InspectionDate>
   inspectionDateId?: Maybe<Scalars['String']>
   linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>
@@ -2170,15 +2171,15 @@ export type Sanction = {
   inspection: PostInspection
   inspectionId: Scalars['String']
   procurementUnitId?: Maybe<Scalars['String']>
-  area?: Maybe<OperatingAreaName>
-  sanctionableType: SanctionableEntity
-  sanctionableValue?: Maybe<Scalars['String']>
+  areaName?: Maybe<OperatingAreaName>
+  sanctionScope: SanctionScope
   sanctionReason: SanctionReason
-  sanctionAmount: Scalars['Float']
-  appliedSanctionAmount: Scalars['Float']
-  sanctionableKilometers: Scalars['Float']
+  sanctionReasonValue?: Maybe<Scalars['String']>
+  sanctionPercentageAmount: Scalars['Float']
+  appliedSanctionPercentageAmount: Scalars['Float']
+  sanctionScopeKilometers: Scalars['Float']
   sanctionResultKilometers?: Maybe<Scalars['Float']>
-  sanctionSum?: Maybe<Scalars['Int']>
+  sanctionFinancialAmount?: Maybe<Scalars['Float']>
   matchesException?: Maybe<SanctionException>
 }
 
@@ -2225,8 +2226,9 @@ export type SanctionListReportData = {
   __typename?: 'SanctionListReportData'
   id: Scalars['ID']
   procurementUnitId: Scalars['String']
+  sanctionPercentageAmount: Scalars['Float']
   kilometers: Scalars['Float']
-  sanctionSum: Scalars['Float']
+  sanctionFinancialAmount: Scalars['Float']
   sanctionReason: Scalars['String']
 }
 
@@ -2240,6 +2242,12 @@ export enum SanctionReason {
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
+}
+
+export enum SanctionScope {
+  Departure = 'DEPARTURE',
+  OperatingArea = 'OPERATING_AREA',
+  ProcurementUnit = 'PROCUREMENT_UNIT',
 }
 
 export type SanctionSummaryReport = {
@@ -2268,9 +2276,9 @@ export type SanctionSummaryReportData = {
   procurementUnitId: Scalars['String']
   totalKilometers: Scalars['Float']
   areaName: Scalars['String']
-  sanctionAmount: Scalars['Float']
-  sanctionAmountRatio: Scalars['Float']
-  sanctionedKilometers: Scalars['Float']
+  sanctionPercentageAmount: Scalars['Float']
+  sanctionPercentageRatio: Scalars['Float']
+  sanctionResultKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
   unitEquipmentMaxAge: Scalars['Float']
@@ -2278,13 +2286,7 @@ export type SanctionSummaryReportData = {
 
 export type SanctionUpdate = {
   sanctionId: Scalars['String']
-  appliedSanctionAmount: Scalars['Float']
-}
-
-export enum SanctionableEntity {
-  Departure = 'DEPARTURE',
-  EmissionClass = 'EMISSION_CLASS',
-  Equipment = 'EQUIPMENT',
+  appliedSanctionPercentageAmount: Scalars['Float']
 }
 
 export type SanctionsResponse = {

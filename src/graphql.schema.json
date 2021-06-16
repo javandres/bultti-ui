@@ -6653,7 +6653,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionPercentage",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -6685,7 +6685,7 @@
             "deprecationReason": null
           },
           {
-            "name": "routeKilometers",
+            "name": "sanctionScopeKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -6701,7 +6701,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionedKilometers",
+            "name": "sanctionResultKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -16193,7 +16193,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionedKilometers",
+            "name": "sanctionFinancialAmount",
             "description": null,
             "args": [],
             "type": {
@@ -16205,7 +16205,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -18921,6 +18921,18 @@
                 "name": "Season",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "billingPeriodMonth",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "BulttiDate",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -23778,7 +23790,7 @@
             "deprecationReason": null
           },
           {
-            "name": "area",
+            "name": "areaName",
             "description": null,
             "args": [],
             "type": {
@@ -23790,7 +23802,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionableType",
+            "name": "sanctionScope",
             "description": null,
             "args": [],
             "type": {
@@ -23798,21 +23810,9 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "SanctionableEntity",
+                "name": "SanctionScope",
                 "ofType": null
               }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "sanctionableValue",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -23834,7 +23834,19 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionReasonValue",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "sanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -23850,7 +23862,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionAmount",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -23866,7 +23878,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionableKilometers",
+            "name": "sanctionScopeKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -23894,12 +23906,12 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionSum",
+            "name": "sanctionFinancialAmount",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Int",
+              "name": "Float",
               "ofType": null
             },
             "isDeprecated": false,
@@ -24370,6 +24382,22 @@
             "deprecationReason": null
           },
           {
+            "name": "sanctionPercentageAmount",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Float",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "kilometers",
             "description": null,
             "args": [],
@@ -24386,7 +24414,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionSum",
+            "name": "sanctionFinancialAmount",
             "description": null,
             "args": [],
             "type": {
@@ -24481,6 +24509,35 @@
           },
           {
             "name": "EMISSION_CLASS_DEFICIENCY",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "possibleTypes": null
+      },
+      {
+        "kind": "ENUM",
+        "name": "SanctionScope",
+        "description": null,
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
+        "enumValues": [
+          {
+            "name": "DEPARTURE",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "OPERATING_AREA",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "PROCUREMENT_UNIT",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -24833,7 +24890,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmount",
+            "name": "sanctionPercentageAmount",
             "description": null,
             "args": [],
             "type": {
@@ -24849,7 +24906,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionAmountRatio",
+            "name": "sanctionPercentageRatio",
             "description": null,
             "args": [],
             "type": {
@@ -24865,7 +24922,7 @@
             "deprecationReason": null
           },
           {
-            "name": "sanctionedKilometers",
+            "name": "sanctionResultKilometers",
             "description": null,
             "args": [],
             "type": {
@@ -24957,7 +25014,7 @@
             "deprecationReason": null
           },
           {
-            "name": "appliedSanctionAmount",
+            "name": "appliedSanctionPercentageAmount",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -24975,35 +25032,6 @@
         ],
         "interfaces": null,
         "enumValues": null,
-        "possibleTypes": null
-      },
-      {
-        "kind": "ENUM",
-        "name": "SanctionableEntity",
-        "description": null,
-        "fields": null,
-        "inputFields": null,
-        "interfaces": null,
-        "enumValues": [
-          {
-            "name": "DEPARTURE",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "EMISSION_CLASS",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "EQUIPMENT",
-            "description": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          }
-        ],
         "possibleTypes": null
       },
       {

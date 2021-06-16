@@ -39,6 +39,7 @@ export const lightPostInspectionFragment = gql`
     updatedAt
     startDate
     endDate
+    inspectionDateId
     inspectionStartDate
     inspectionEndDate
     version

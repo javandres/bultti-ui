@@ -92,8 +92,8 @@ export const reportQueryFragments = {
       totalKilometersObserved
       totalUnitKilometers
       averageAgeWeightedObserved
-      sanctionAmount
-      sanctionedKilometers
+      sanctionPercentageAmount
+      sanctionFinancialAmount
     }
   `,
   ObservedLateDeparturesFragment: `
@@ -309,10 +309,10 @@ export const reportQueryFragments = {
       totalKilometers
       areaName
       averageAgeWeightedObserved
-      sanctionAmount
+      sanctionPercentageAmount
       sanctionReason
-      sanctionAmountRatio
-      sanctionedKilometers
+      sanctionPercentageRatio
+      sanctionResultKilometers
       unitEquipmentMaxAge
     }
   `,
@@ -320,7 +320,7 @@ export const reportQueryFragments = {
     fragment SanctionListFragment on SanctionListReportData {
       procurementUnitId
       kilometers
-      sanctionSum
+      sanctionFinancialAmount
       sanctionReason
     }
   `,
