@@ -49,17 +49,26 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
 
     const onEditValue = useCallback(
+      // EquipmentFormInput parses the value as float, so it will be a number type here.
+      // Table props require it to be optional.
       (
         key: keyof EquipmentWithQuota,
         value: ValueOf<EquipmentWithQuota>,
         item: EquipmentWithQuota
       ) => {
-        if (isEquipmentShownInGroup || !editableValues.includes(key)) {
+        if (
+          isEquipmentShownInGroup ||
+          !editableValues.includes(key) ||
+          typeof value === 'undefined' ||
+          typeof item === 'undefined'
+        ) {
           return
         }
 
+        let validValue = !value && value !== 0 ? '' : Math.max(0, value as number)
+
         let itemId = getQuotaId(item)
-        let editValue: EditValue<EquipmentWithQuota> = { key, value, item, itemId }
+        let editValue: EditValue<EquipmentWithQuota> = { key, value: validValue, item, itemId }
 
         setPendingValues((currentValues) => {
           let existingEditValueIndex = currentValues.findIndex(
