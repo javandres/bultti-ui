@@ -458,7 +458,7 @@ type EquipmentDefect {
 
 type EquipmentDefectSanction {
   appliedSanctionFinancialAmount: Float!
-  appliedSanctionPercentage: Float!
+  appliedSanctionPercentageAmount: Float!
   departureId: String
   description: String!
   endDate: BulttiDate
@@ -471,10 +471,10 @@ type EquipmentDefectSanction {
   priority: EquipmentDefectPriority!
   procurementUnitId: String!
   registryNumber: String!
-  routeKilometers: Float!
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
-  sanctionedKilometers: Float
+  sanctionResultKilometers: Float
+  sanctionScopeKilometers: Float!
   startDate: BulttiDate
 }
 
@@ -772,7 +772,6 @@ type Mutation {
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   helperResolver: Boolean!
-  initInspectionContractUnitMap(inspectionId: String!): PreInspection!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String): String
@@ -1035,8 +1034,8 @@ type ObservedUnitExecution {
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float
-  sanctionedKilometers: Float
+  sanctionFinancialAmount: Float
+  sanctionPercentageAmount: Float
   totalKilometersObserved: Float
   totalUnitKilometers: Float!
 }
@@ -1221,6 +1220,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
+  billingPeriodMonth: BulttiDate
   createdAt: DateTime!
   endDate: BulttiDate
   id: ID!
@@ -1360,7 +1360,7 @@ type Query {
   operators: [Operator!]!
   overageDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): OverAgeDeparturesReport
   previewObservedRequirement(requirementId: String!): ObservedExecutionRequirement
-  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit
+  procurementUnit(endDate: BulttiDate!, procurementUnitId: String!, startDate: BulttiDate!): ProcurementUnit!
   procurementUnitsByOperator(endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnit!]!
   queryEquipmentFromSource(operatorId: Int!, registryNr: String, vehicleId: String): Equipment
   reports(inspectionId: String, inspectionType: String!): [ReportListItem!]!
@@ -1384,21 +1384,21 @@ type ReportListItem {
 }
 
 type Sanction {
-  appliedSanctionAmount: Float!
-  area: OperatingAreaName
+  appliedSanctionPercentageAmount: Float!
+  areaName: OperatingAreaName
   entityIdentifier: String!
   id: ID!
   inspection: PostInspection!
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
-  sanctionAmount: Float!
+  sanctionFinancialAmount: Float
+  sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
+  sanctionReasonValue: String
   sanctionResultKilometers: Float
-  sanctionSum: Int
-  sanctionableKilometers: Float!
-  sanctionableType: SanctionableEntity!
-  sanctionableValue: String
+  sanctionScope: SanctionScope!
+  sanctionScopeKilometers: Float!
 }
 
 type SanctionException {
@@ -1431,8 +1431,9 @@ type SanctionListReportData {
   id: ID!
   kilometers: Float!
   procurementUnitId: String!
+  sanctionFinancialAmount: Float!
+  sanctionPercentageAmount: Float!
   sanctionReason: String!
-  sanctionSum: Float!
 }
 
 type SanctionSummaryReport {
@@ -1459,10 +1460,10 @@ type SanctionSummaryReportData {
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
-  sanctionAmount: Float!
-  sanctionAmountRatio: Float!
+  sanctionPercentageAmount: Float!
+  sanctionPercentageRatio: Float!
   sanctionReason: SanctionReason!
-  sanctionedKilometers: Float!
+  sanctionResultKilometers: Float!
   totalKilometers: Float!
   unitEquipmentMaxAge: Float!
 }
@@ -1659,8 +1660,8 @@ enum InspectionUserRelationType {
 }
 
 enum InspectionValidationError {
-  CONTRACT_OUTSIDE_INSPECTION_TIME
   HFP_UNAVAILABLE_FOR_INSPECTION_DATES
+  INVALID_CONTRACTS
   INVALID_INSPECTION_TIME
   INVALID_PRODUCTION_TIME
   MISSING_BLOCK_DEPARTURES
@@ -1668,7 +1669,6 @@ enum InspectionValidationError {
   MISSING_EQUIPMENT_CATALOGUES
   MISSING_EXECUTION_REQUIREMENTS
   MISSING_REQUIREMENT_QUOTAS
-  POST_INSPECTION_END_DATE_NOT_IN_THE_PAST
   POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS
 }
 
@@ -1701,10 +1701,10 @@ enum SanctionReason {
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
 }
 
-enum SanctionableEntity {
+enum SanctionScope {
   DEPARTURE
-  EMISSION_CLASS
-  EQUIPMENT
+  OPERATING_AREA
+  PROCUREMENT_UNIT
 }
 
 enum SortOrder {
@@ -1806,7 +1806,7 @@ input ProcurementUnitEditInput {
 }
 
 input SanctionUpdate {
-  appliedSanctionAmount: Float!
+  appliedSanctionPercentageAmount: Float!
   sanctionId: String!
 }
 

@@ -90,7 +90,7 @@
   "contractForm_removeConfirm": "Haluatko varmasti poistaa sopimuksen?",
 
   "contract_procurementUnitsEditor_routes": "Reitit",
-  "contract_procurementUnitsEditor_unselectingDisabled": "Kohdetta ei voida valita pois, koska tämä sopimus käytössä tarkastuksessa, joka on muussa kuin 'luonnos' tilassa.",
+  "contract_procurementUnitsEditor_unselectingDisabled": "Kohdetta ei voida valita pois, koska tämä sopimus käytössä ennakkotarkastuksessa.",
   "contract_procurementUnitsEditor_unitIncluded": "Sopimuksessa mukana",
   "contract_procurementUnitsEditor_currentContracts": "Nykyiset sopimukset:",
   "contract_procurementUnitsEditor_noProcurementUnits": "Ei kilpailukohteita",
@@ -274,11 +274,14 @@
   "NOT_POST": "Tarkastus ei ole jälkitarkastus",
   "INVALID_PRODUCTION_TIME": "Tuotantoaika väärä",
   "INVALID_INSPECTION_TIME": "Tarkastusaika väärä",
-  "MISSING_BLOCK_DEPARTURES": "Lähtöketjut puuttuu",
+  "MISSING_BLOCK_DEPARTURES": "Lähtöketjut puuttuu.",
   "MISSING_EQUIPMENT_CATALOGUES": "Joiltakin kohteilta puuttuu kalustoluettelo.",
   "MISSING_CONTRACTS": "Joiltakin kohteilta puuttuu voimassaoleva sopimus.",
+  "INVALID_CONTRACTS": "Tarkastukseen on liitetty sopimuksia jotka eivät ole voimassa tarkastusjakson aikaan.",
   "MISSING_EXECUTION_REQUIREMENTS": "Joiltakin kohteilta puuttuu suoritevaatimus.",
   "MISSING_REQUIREMENT_QUOTAS": "Joiltakin kohteilta puuttuu suoritevaatimusten kalusto-osuuksia.",
+  "HFP_UNAVAILABLE_FOR_INSPECTION_DATES": "Tarkastuksen jaksolle ei löydy ladattua HFP-tietoa.",
+  "POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS": "Jälkitarkastukselle ei löydy julkaistuja ennakkotarkastuksia.",
 
   "unsavedChangesPrompt": "Sinulla on tallentamattomia muutoksia. Haluatko varmasti poistua näkymästä? Tallentamattomat muutokset kumotaan."
 }

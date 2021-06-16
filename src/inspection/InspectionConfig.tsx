@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { isEqual, pick } from 'lodash'
+import { isEqual } from 'lodash'
 import { FormColumn } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -37,6 +37,7 @@ export type PropTypes = {
 const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection }) => {
   let initialInspectionInputValues = useMemo(() => {
     let minStartDate = parseISO(inspection.minStartDate)
+
     let startDate = inspection.startDate ? parseISO(inspection.startDate) : minStartDate
     startDate = max([startDate, minStartDate])
 

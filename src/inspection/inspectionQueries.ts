@@ -39,6 +39,7 @@ export const lightPostInspectionFragment = gql`
     updatedAt
     startDate
     endDate
+    inspectionDateId
     inspectionStartDate
     inspectionEndDate
     version
@@ -192,14 +193,6 @@ export const inspectionsTimelineByOperatorQuery = gql`
       operatorName
       seasonId
       version
-    }
-  }
-`
-
-export const initInspectionContractUnitMap = gql`
-  mutation initInspectionContractUnitMap($inspectionId: String!) {
-    initInspectionContractUnitMap(inspectionId: $inspectionId) {
-      id
     }
   }
 `

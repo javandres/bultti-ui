@@ -11,10 +11,8 @@ import Input from '../common/input/Input'
 import { useQueryData } from '../util/useQueryData'
 import { inspectionQuery } from '../inspection/inspectionQueries'
 import InspectionCard from '../inspection/InspectionCard'
-import { pickGraphqlData } from '../util/pickGraphqlData'
-import { saveAs } from 'file-saver'
 import { DEBUG } from '../constants'
-import { DepartureBlockFile, Inspection } from '../schema-types'
+import { Inspection } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 
 const AdminPageView = styled.div``
@@ -23,16 +21,6 @@ const LENGTH_OF_VALID_INSPECTION_UUID = 36
 const createTestDataMutation = gql`
   mutation createTestData {
     createTestData
-  }
-`
-
-const generateTestBlockDeparturesMutation = gql`
-  mutation generateTestBlockDepartures {
-    generateTestBlockDepartures {
-      blockFile
-      dayType
-      operatorId
-    }
   }
 `
 
@@ -54,22 +42,10 @@ const helperResolverMutation = gql`
   }
 `
 
-async function base64ToBlob(base64?: string) {
-  if (!base64) {
-    return
-  }
-
-  let response = await fetch('data:text/csv;base64,' + base64)
-  return response.blob()
-}
-
 export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
-  let [generateTestBlocks, { loading: testBlocksLoading }] = useMutationData(
-    generateTestBlockDeparturesMutation
-  )
 
   let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
     removeTestDataMutation

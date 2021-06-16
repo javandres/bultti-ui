@@ -5,8 +5,8 @@ import { useQueryData } from '../util/useQueryData'
 import {
   PostInspection,
   Sanction,
-  SanctionableEntity,
   SanctionException,
+  SanctionScope,
   SanctionsResponse,
   SanctionUpdate,
 } from '../schema-types'
@@ -49,14 +49,17 @@ const SanctionToggleInput = styled.input`
   display: block;
 `
 
-let sanctionColumnLabels = {
-  sanctionableType: 'Sanktioitava kohde',
+let sanctionColumnLabels: { [name in keyof Partial<Sanction>]: string } = {
+  procurementUnitId: 'Kilpailukohde',
+  areaName: 'Alue',
+  sanctionScope: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
-  sanctionAmount: 'Sanktiomäärä',
+  sanctionPercentageAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
-  sanctionableValue: 'Sanktioon johtava arvo',
-  sanctionableKilometers: 'Kilometrisuorite',
-  appliedSanctionAmount: 'Sanktioidaan',
+  sanctionReasonValue: 'Sanktioon johtava arvo',
+  sanctionScopeKilometers: 'Kilometrisuorite',
+  appliedSanctionPercentageAmount: 'Sanktioidaan',
+  sanctionFinancialAmount: 'Sanktiosumma €',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
   matchesException: 'Sanktiopoikkeus',
 }
@@ -68,7 +71,7 @@ let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
         type="checkbox"
         value={val + ''}
         onChange={() => onChange(val as string)}
-        checked={val !== '0'}
+        checked={val !== 0}
         name="sanctionable"
       />
     </SanctionToggleLabel>
@@ -96,15 +99,18 @@ let sanctionsQuery = gql`
       }
       rows {
         id
+        procurementUnitId
+        areaName
         entityIdentifier
         inspectionId
-        sanctionAmount
+        sanctionPercentageAmount
         sanctionReason
-        sanctionableKilometers
-        sanctionableType
-        appliedSanctionAmount
+        sanctionScopeKilometers
+        sanctionScope
+        appliedSanctionPercentageAmount
         sanctionResultKilometers
-        sanctionableValue
+        sanctionFinancialAmount
+        sanctionReasonValue
         matchesException {
           id
           departureProperty
@@ -120,7 +126,7 @@ let setSanctionMutation = gql`
   mutation setSanction($sanctionUpdates: [SanctionUpdate!]!) {
     updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
-      appliedSanctionAmount
+      appliedSanctionPercentageAmount
       sanctionResultKilometers
     }
   }
@@ -172,21 +178,22 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
     {
-      update: (cache, { data: updateSanctions }) => {
-        // TODO: Test that this works. Apollo types may be wrong here.
-        console.log(updateSanctions)
+      update: (cache, result) => {
+        // @ts-ignore faulty types
+        let sanctionUpdates = result.data?.updateSanctions || []
 
-        for (let update of updateSanctions || []) {
+        for (let update of sanctionUpdates) {
           let cacheId = cache.identify(update)
+
           cache.writeFragment({
             id: cacheId,
             data: {
-              appliedSanctionAmount: update.appliedSanctionAmount,
+              appliedSanctionPercentageAmount: update.appliedSanctionPercentageAmount,
               sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
               fragment SanctionFragment on Sanction {
-                appliedSanctionAmount
+                appliedSanctionPercentageAmount
                 sanctionResultKilometers
               }
             `,
@@ -212,7 +219,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           (val) => val.key === key && val.itemId === item.id
         )
 
-        let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+        let setValue =
+          value === item.sanctionPercentageAmount ? 0 : item.sanctionPercentageAmount
 
         if (existingEditValueIndex !== -1) {
           currentValues.splice(existingEditValueIndex, 1)
@@ -236,7 +244,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     for (let editValue of pendingValues) {
       let updateValue: SanctionUpdate = {
         sanctionId: editValue.itemId,
-        appliedSanctionAmount: editValue.value as number,
+        appliedSanctionPercentageAmount: editValue.value as number,
       }
 
       updateValues.push(updateValue)
@@ -271,18 +279,31 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let renderValue = useCallback(
     (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
       if (!val) {
-        return '-'
+        return key === 'matchesException' ? '-' : '0'
+      }
+
+      if (key === 'sanctionFinancialAmount') {
+        return item?.appliedSanctionPercentageAmount === 0
+          ? 0
+          : round(val as number, DEFAULT_DECIMALS) + '€'
       }
 
       if (
-        [
-          'sanctionAmount',
-          'sanctionableKilometers',
-          'appliedSanctionAmount',
-          'sanctionResultKilometers',
-        ].includes(key)
+        ([
+          'sanctionPercentageAmount',
+          'appliedSanctionPercentageAmount',
+        ] as (keyof Sanction)[]).includes(key)
       ) {
-        return round(val as number, DEFAULT_DECIMALS)
+        return round(val as number, DEFAULT_DECIMALS) + '%'
+      }
+
+      if (
+        ([
+          'sanctionScopeKilometers',
+          'sanctionResultKilometers',
+        ] as (keyof Sanction)[]).includes(key)
+      ) {
+        return round(val as number, DEFAULT_DECIMALS) + ' km'
       }
 
       if (
@@ -299,12 +320,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
       let idParts = String(val).split('_')
 
-      switch (item.sanctionableType) {
-        case SanctionableEntity.Departure:
+      switch (item.sanctionScope) {
+        case SanctionScope.Departure:
           return `${idParts[0]} / ${idParts[1]} / ${idParts[2]} / ${idParts[3]}`
-        case SanctionableEntity.EmissionClass:
+        case SanctionScope.OperatingArea:
           return `Alue: ${idParts[0]} Päästöluokka: ${idParts[1]}`
-        case SanctionableEntity.Equipment:
+        case SanctionScope.ProcurementUnit:
           return `Kohde: ${idParts[0]} Ajoneuvon ikä: ${idParts[1]}`
         default:
           return val
@@ -362,7 +383,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           keyFromItem={(item) => item.id}
           renderInput={renderSanctionInput}
           pendingValues={pendingValues}
-          editableValues={['appliedSanctionAmount']}
+          editableValues={['appliedSanctionPercentageAmount']}
           onSaveEdit={onSaveSanctions}
           onEditValue={onChangeSanction}
           onCancelEdit={onCancelEdit}
