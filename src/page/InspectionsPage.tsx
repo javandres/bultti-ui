@@ -11,6 +11,8 @@ import { operatorIsValid } from '../common/input/SelectOperator'
 import { InspectionType } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
+import { useStateValue } from '../state/useAppState'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -19,6 +21,12 @@ type PropTypes = {
 
 const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)
+
+  var [globalOperator] = useStateValue('globalOperator')
+  let hasOperatorAccessRights = useHasOperatorUserAccessRights(globalOperator?.id)
+  const hasAdminAccessRights = useHasAdminAccessRights()
+  let canCreateInspection =
+    inspectionType === InspectionType.Pre ? hasOperatorAccessRights : hasAdminAccessRights
 
   let typeStrings = getInspectionTypeStrings(inspectionType)
   let navigate = useNavigate()
@@ -29,10 +37,12 @@ const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
         loading={loading}
         onRefresh={refetch}
         headerButtons={
-          <Button onClick={() => navigate.push(`${typeStrings.path}-inspection/edit`)}>
-            <Plus fill="white" width="1rem" height="1rem" />{' '}
-            <span>Uusi {typeStrings.prefix}tarkastus</span>
-          </Button>
+          canCreateInspection ? (
+            <Button onClick={() => navigate.push(`${typeStrings.path}-inspection/edit`)}>
+              <Plus fill="white" width="1rem" height="1rem" />{' '}
+              <span>Uusi {typeStrings.prefix}tarkastus</span>
+            </Button>
+          ) : undefined
         }>
         {typeStrings.prefix}tarkastukset
       </PageTitle>

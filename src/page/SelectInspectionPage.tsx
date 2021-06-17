@@ -38,7 +38,7 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   return (
     <Page>
       <PageTitle loading={loading} onRefresh={refetch}>
-        Valitse {typeStrings.prefixLC}tarkastus muokattavaksi
+        Luo {typeStrings.prefixLC}tarkastus
       </PageTitle>
       <PageContainer>
         <SelectInspection
