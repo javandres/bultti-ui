@@ -33,6 +33,8 @@ export type PropTypes = {
   editableValues?: (keyof EquipmentWithQuota)[]
 }
 
+const getQuotaId = (item) => `${item.quotaId}_${item.id}`
+
 const EquipmentList: React.FC<PropTypes> = observer(
   ({
     equipment,
@@ -45,8 +47,6 @@ const EquipmentList: React.FC<PropTypes> = observer(
   }) => {
     let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(false)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
-
-    let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
 
     const onEditValue = useCallback(
       // EquipmentFormInput parses the value as float, so it will be a number type here.
@@ -96,7 +96,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
       setPendingValues([])
 
-      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, getQuotaId))
+      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, 'itemId'))
       let updates: EquipmentUpdate[] = []
 
       for (let [, pendingEditValues] of pendingEquipmentInput) {
