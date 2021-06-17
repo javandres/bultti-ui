@@ -148,7 +148,7 @@ export type AppSidebarProps = {
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user, setUser] = useStateValue('user')
-  let hasAdminAccess = useHasAdminAccessRights()
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
   let userContent = (
     <>
@@ -243,7 +243,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Plus fill="white" width="1rem" height="1rem" />
               <Text>nav_newPostInspection</Text>
             </NavLink>
-            {hasAdminAccess && (
+            {hasAdminAccessRights && (
               <NavLink to="/inspection-date">
                 <Plus fill="white" width="1rem" height="1rem" />
                 <Text>nav_editInspectionDates</Text>
@@ -253,7 +253,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
-            {DEBUG && (
+            {hasAdminAccessRights && DEBUG && (
               <NavLink to="/dev-tools">
                 <div>Dev tools</div>
               </NavLink>
