@@ -157,6 +157,7 @@ const EquipmentFormInput: React.FC<PropTypes> = observer(
         value={value}
         onChange={onChangeValue}
         name={valueName}
+        min={valueIsNumeric ? 0 : undefined}
         onKeyDown={onKeyPress}
       />
     )

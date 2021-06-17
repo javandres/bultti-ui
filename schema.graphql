@@ -401,8 +401,8 @@ type EquipmentCatalogue {
 type EquipmentCatalogueQuota {
   catalogueEndDate: BulttiDate!
   catalogueStartDate: BulttiDate!
-  equipment: Equipment
-  equipmentCatalogue: EquipmentCatalogue
+  equipment: Equipment!
+  equipmentCatalogue: EquipmentCatalogue!
   equipmentCatalogueId: String!
   equipmentId: String!
   id: ID!
@@ -798,10 +798,10 @@ type Mutation {
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
-  updateEquipmentCatalogueQuota(equipmentId: String!, quota: Float!, quotaId: String): Equipment
+  updateEquipmentCatalogueQuota(quota: Float!, quotaId: String!): EquipmentCatalogueQuota!
   updateEquipmentDefectSanctions(sanctionUpdates: [EquipmentDefectSanctionUpdate!]!): [EquipmentDefectSanction!]!
   updateEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
-  updateEquipmentRequirementQuota(equipmentId: String!, kilometers: Float, quota: Float, quotaId: String): Equipment
+  updateEquipmentRequirementQuota(meters: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota!
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
