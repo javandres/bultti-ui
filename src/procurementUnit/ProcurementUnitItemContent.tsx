@@ -29,6 +29,7 @@ import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/buttons/Button'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { useNavigate } from '../util/urlValue'
+import { useHasAdminAccessRights } from '../util/userRoles'
 
 const procurementUnitLabels = {
   medianAgeRequirement: text('procurementUnit_ageRequirement'),
@@ -88,6 +89,8 @@ const ProcurementUnitItemContent = observer(
       endDate,
     }
 
+    let hasAdminAccessRights = useHasAdminAccessRights()
+
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch } =
       useQueryData<ProcurementUnitType>(procurementUnitQuery, {
@@ -129,18 +132,18 @@ const ProcurementUnitItemContent = observer(
       .some((cat) => cat.equipmentQuotas?.length !== 0)
 
     let [medianAgeValue, setMedianAgeValue] = useState('')
-    let [unitEditable, setUnitEditable] = useState(false)
+    let [isUnitEditable, setIsUnitEditable] = useState(false)
 
     let onEditProcurementUnit = useCallback(() => {
-      if (!unitEditable) {
+      if (!isUnitEditable) {
         setMedianAgeValue((procurementUnit?.medianAgeRequirement || 0) + '')
       }
 
-      setUnitEditable((cur) => !cur)
-    }, [unitEditable, procurementUnit])
+      setIsUnitEditable((cur) => !cur)
+    }, [isUnitEditable, procurementUnit])
 
     let onCancelEdit = useCallback(() => {
-      setUnitEditable(false)
+      setIsUnitEditable(false)
     }, [])
 
     let onChangeProcurementUnit = useCallback(
@@ -163,7 +166,7 @@ const ProcurementUnitItemContent = observer(
         },
       })
 
-      setUnitEditable(false)
+      setIsUnitEditable(false)
     }, [medianAgeValue, isCatalogueEditable])
 
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
@@ -221,7 +224,7 @@ const ProcurementUnitItemContent = observer(
               })}
             </>
           )}
-          {!unitEditable ? (
+          {!isUnitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}
               item={{
@@ -229,11 +232,13 @@ const ProcurementUnitItemContent = observer(
                 calculatedMedianAgeRequirement: calcMedianAgeRequirement,
               }}
               labels={procurementUnitLabels}>
-              <Button
-                style={{ marginLeft: 'auto', marginTop: 'auto' }}
-                onClick={onEditProcurementUnit}>
-                <Text>edit</Text>
-              </Button>
+              {hasAdminAccessRights && (
+                <Button
+                  style={{ marginLeft: 'auto', marginTop: 'auto' }}
+                  onClick={onEditProcurementUnit}>
+                  <Text>edit</Text>
+                </Button>
+              )}
             </ValueDisplay>
           ) : (
             <ItemForm
