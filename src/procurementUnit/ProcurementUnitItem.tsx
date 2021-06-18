@@ -38,6 +38,7 @@ export type PropTypes = {
   className?: string
   validationErrors: ValidationErrorData[]
   contractSelectionDate: Date
+  isOnlyActiveCatalogueVisible: boolean
 }
 
 const operatingAreaNameLocalizationObj = {
@@ -58,6 +59,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     className,
     validationErrors = [],
     contractSelectionDate,
+    isOnlyActiveCatalogueVisible,
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
 
@@ -177,6 +179,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 isCatalogueEditable={isCatalogueEditable}
                 catalogueInvalid={catalogueInvalid}
                 requirementsInvalid={requirementsInvalid}
+                isOnlyActiveCatalogueVisible={isOnlyActiveCatalogueVisible}
               />
             )}
           </ExpandableSection>

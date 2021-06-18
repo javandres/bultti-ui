@@ -31,6 +31,7 @@ export type PropTypes = {
   requirementsEditable: boolean
   getErrorsById?: (objectId: string) => ValidationErrorData[]
   contractSelectionDate: Date
+  isOnlyActiveCatalogueVisible: boolean
 }
 
 const ProcurementUnits: React.FC<PropTypes> = observer(
@@ -41,6 +42,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
     startDate,
     endDate,
     contractSelectionDate,
+    isOnlyActiveCatalogueVisible,
   }) => {
     const inspection = useContext(InspectionContext)
 
@@ -50,7 +52,6 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
         operatorId,
         allowedRoles: [UserRole.Admin, UserRole.Operator],
       })
-
     let showExecutionRequirements = !!inspection
 
     const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
@@ -117,6 +118,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                   procurementUnit={procurementUnit}
                   expanded={procurementUnitsExpanded}
                   contractSelectionDate={contractSelectionDate}
+                  isOnlyActiveCatalogueVisible={isOnlyActiveCatalogueVisible}
                 />
               )
             })}

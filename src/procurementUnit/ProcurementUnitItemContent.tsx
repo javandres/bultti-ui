@@ -65,6 +65,7 @@ type ContentPropTypes = {
   isVisible: boolean
   catalogueInvalid: boolean
   requirementsInvalid: boolean
+  isOnlyActiveCatalogueVisible: boolean
 }
 
 const ProcurementUnitItemContent = observer(
@@ -79,6 +80,7 @@ const ProcurementUnitItemContent = observer(
     isVisible,
     catalogueInvalid,
     requirementsInvalid,
+    isOnlyActiveCatalogueVisible,
   }: ContentPropTypes) => {
     let unitQueryVariables = {
       procurementUnitId,
@@ -117,10 +119,10 @@ const ProcurementUnitItemContent = observer(
     const catalogues: EquipmentCatalogueType[] = useMemo(() => {
       let unitCatalogues = procurementUnit?.equipmentCatalogues || []
 
-      return isCatalogueEditable
-        ? unitCatalogues
-        : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
-    }, [procurementUnit, isCatalogueEditable, startDate])
+      return isOnlyActiveCatalogueVisible
+        ? unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+        : unitCatalogues
+    }, [procurementUnit, isOnlyActiveCatalogueVisible, startDate])
 
     let hasEquipment = catalogues
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
