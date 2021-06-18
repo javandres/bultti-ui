@@ -59,7 +59,7 @@ type ContentPropTypes = {
   startDate: string
   endDate: string
   procurementUnitId: string
-  catalogueEditable: boolean
+  isCatalogueEditable: boolean
   displayedContractUnitId?: string
   requirementsEditable: boolean
   isVisible: boolean
@@ -73,7 +73,7 @@ const ProcurementUnitItemContent = observer(
     startDate,
     endDate,
     procurementUnitId,
-    catalogueEditable,
+    isCatalogueEditable,
     displayedContractUnitId,
     requirementsEditable,
     isVisible,
@@ -117,10 +117,10 @@ const ProcurementUnitItemContent = observer(
     const catalogues: EquipmentCatalogueType[] = useMemo(() => {
       let unitCatalogues = procurementUnit?.equipmentCatalogues || []
 
-      return catalogueEditable
+      return isCatalogueEditable
         ? unitCatalogues
         : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
-    }, [procurementUnit, catalogueEditable, startDate])
+    }, [procurementUnit, isCatalogueEditable, startDate])
 
     let hasEquipment = catalogues
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
@@ -162,7 +162,7 @@ const ProcurementUnitItemContent = observer(
       })
 
       setUnitEditable(false)
-    }, [medianAgeValue, catalogueEditable])
+    }, [medianAgeValue, isCatalogueEditable])
 
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
@@ -278,7 +278,7 @@ const ProcurementUnitItemContent = observer(
                       catalogue={catalogue}
                       operatorId={procurementUnit.operatorId}
                       onCatalogueChanged={updateViewData}
-                      editable={catalogueEditable}
+                      isCatalogueEditable={isCatalogueEditable}
                     />
                   </ExpandableSection>
                 )
@@ -288,7 +288,7 @@ const ProcurementUnitItemContent = observer(
                   <Text>procurementUnit_noCatalogueForUnit</Text>
                 </MessageView>
               )}
-              {catalogueEditable && (
+              {isCatalogueEditable && (
                 <EditEquipmentCatalogue
                   onChange={updateViewData}
                   procurementUnit={procurementUnit}

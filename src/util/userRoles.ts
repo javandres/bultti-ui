@@ -3,7 +3,7 @@ import { useStateValue } from '../state/useAppState'
 
 export function useHasAdminAccessRights(): boolean {
   const [user] = useStateValue('user')
-  return hasAdminAccessRights()
+  return hasAdminAccessRights(user)
 }
 
 export function useHasHSLUserAccessRights(): boolean {

@@ -20,11 +20,18 @@ export type PropTypes = {
   catalogue?: EquipmentCatalogueType
   operatorId: number
   onCatalogueChanged: () => unknown
-  editable: boolean
+  isCatalogueEditable: boolean
 }
 
 const EquipmentCatalogue: React.FC<PropTypes> = observer(
-  ({ editable, procurementUnit, catalogue, startDate, operatorId, onCatalogueChanged }) => {
+  ({
+    isCatalogueEditable,
+    procurementUnit,
+    catalogue,
+    startDate,
+    operatorId,
+    onCatalogueChanged,
+  }) => {
     let { removeAllEquipment, addEquipment, addBatchEquipment } = useEquipmentCrud(
       catalogue,
       onCatalogueChanged
@@ -36,10 +43,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
 
     return (
       <EquipmentCatalogueView>
-        {!editable && catalogue && (
+        {!isCatalogueEditable && catalogue && (
           <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
         )}
-        {editable && (
+        {isCatalogueEditable && (
           <EditEquipmentCatalogue
             catalogue={catalogue}
             procurementUnit={procurementUnit}
@@ -55,9 +62,9 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
               equipment={equipment}
               startDate={startDate}
               onEquipmentChanged={onCatalogueChanged}
-              equipmentEditable={editable}
+              isCatalogueEditable={isCatalogueEditable}
             />
-            {editable && (
+            {isCatalogueEditable && (
               <AddEquipment
                 operatorId={operatorId}
                 equipment={equipment}

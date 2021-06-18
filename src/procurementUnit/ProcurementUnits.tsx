@@ -14,8 +14,13 @@ import { procurementUnitsQuery } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
 import { InspectionContext } from '../inspection/InspectionContext'
 import { MessageView } from '../common/components/Messages'
-import { ProcurementUnit as ProcurementUnitType, ValidationErrorData } from '../schema-types'
+import {
+  ProcurementUnit as ProcurementUnitType,
+  UserRole,
+  ValidationErrorData,
+} from '../schema-types'
 import { text, Text } from '../util/translate'
+import { useHasAccessRights } from '../util/userRoles'
 
 const ProcurementUnitsView = styled(TransparentPageSection)``
 
@@ -39,7 +44,13 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
   }) => {
     const inspection = useContext(InspectionContext)
 
-    let catalogueEditable = !inspection
+    let isCatalogueEditable =
+      !inspection &&
+      useHasAccessRights({
+        operatorId,
+        allowedRoles: [UserRole.Admin, UserRole.Operator],
+      })
+
     let showExecutionRequirements = !!inspection
 
     const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
@@ -98,7 +109,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                 <ProcurementUnitItem
                   validationErrors={unitErrors}
                   requirementsEditable={requirementsEditable}
-                  catalogueEditable={catalogueEditable}
+                  isCatalogueEditable={isCatalogueEditable}
                   showExecutionRequirements={showExecutionRequirements}
                   key={procurementUnit.id}
                   startDate={startDate}

@@ -111,7 +111,7 @@ export type TablePropTypes<ItemType extends TableItemType> = {
   getCellHighlightColor?: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => string
   renderInput?: RenderInputType<ItemType>
   maxHeight?: number
-  showToolbar?: boolean // Show toolbar when there are editable values and a save function
+  showToolbar?: boolean // Show toolbar when there are isCatalogueEditable values and a save function
   children?: React.ReactChild
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown

@@ -32,7 +32,7 @@ export type PropTypes = {
   expanded?: boolean
   startDate: string
   endDate: string
-  catalogueEditable: boolean
+  isCatalogueEditable: boolean
   requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
@@ -48,7 +48,7 @@ const operatingAreaNameLocalizationObj = {
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({
-    catalogueEditable,
+    isCatalogueEditable,
     requirementsEditable,
     showExecutionRequirements,
     startDate,
@@ -174,7 +174,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   displayedContractUnit ? displayedContractUnit.id : undefined
                 }
                 requirementsEditable={requirementsEditable}
-                catalogueEditable={catalogueEditable}
+                isCatalogueEditable={isCatalogueEditable}
                 catalogueInvalid={catalogueInvalid}
                 requirementsInvalid={requirementsInvalid}
               />
