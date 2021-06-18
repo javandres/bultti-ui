@@ -185,7 +185,14 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
             </MessageContainer>
           ) : !inspection && !inspectionLoading ? (
             <MessageContainer style={{ margin: '1rem' }}>
-              <MessageView>Haettu {typeStrings.prefixLC}tarkastus ei löytynyt.</MessageView>
+              <MessageView>
+                <Text
+                  keyValueMap={{
+                    inspection: typeStrings.prefixLC,
+                  }}>
+                  inspectionPage_inspectionNotFound
+                </Text>
+              </MessageView>
               <Button onClick={() => navigateToInspection()}>
                 <Text>back</Text>
               </Button>
