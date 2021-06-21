@@ -171,7 +171,7 @@
 
   "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
   "inspectionPage_createNewInspection": "Luo uusi ${prefix}tarkastus",
-  "inspectionPage_inspectionNotFound": "Tarkastusta ${inspection}ei löytynyt.",
+  "inspectionPage_inspectionNotFound": "${inspection}tarkastusta ei löytynyt tai sinulla ei ole oikeuksia nähdä sitä.",
   "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
   "inspectionPage_results": "Tulokset",
   "inspectionPage_sanctions": "Sanktiointi",
@@ -205,9 +205,9 @@
 
   "inspection_state_Draft": "Muokattavissa",
   "inspection_state_Processing": "Käsittelee tietoja",
+  "inspection_state_Sanctionable": "Sanktioitavana",
   "inspection_state_InReview": "Hyväksyttävänä",
   "inspection_state_InProduction": "Tuotannossa",
-  "inspection_state_Sanctionable": "Sanktiointi",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",

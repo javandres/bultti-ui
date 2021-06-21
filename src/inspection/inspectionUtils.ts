@@ -10,6 +10,7 @@ import {
   PreInspection,
   Season,
   User,
+  UserRole,
 } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
@@ -28,6 +29,7 @@ import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { isObjectLike } from '../util/isObjectLike'
 import { useNavigate } from '../util/urlValue'
+import { hasAccessRights } from '../util/userRoles'
 
 export function useInspectionById(inspectionId: string) {
   let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
@@ -235,4 +237,38 @@ export function isPreInspection(inspection: unknown): inspection is PreInspectio
 
 export function isPostInspection(inspection: unknown): inspection is PostInspection {
   return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Post
+}
+
+export function useCanOpenInspection({
+  inspection,
+  operatorId,
+  isInspectionLoading,
+}: {
+  inspection: Inspection
+  operatorId: number
+  isInspectionLoading: boolean
+}): boolean {
+  const [user] = useStateValue('user')
+
+  // Inspection was not found after loading: user can't open it
+  if (!inspection || (!inspection && !isInspectionLoading)) {
+    return false
+  }
+
+  let allowedRoles: UserRole[] = []
+  if (inspection.status === InspectionStatus.Draft) {
+    if (isPreInspection(inspection)) {
+      allowedRoles = [UserRole.Admin, UserRole.Operator]
+    } else {
+      allowedRoles = [UserRole.Admin]
+    }
+  } else {
+    allowedRoles = [UserRole.Admin, UserRole.Hsl, UserRole.Operator]
+  }
+
+  return hasAccessRights({
+    user,
+    allowedRoles,
+    operatorId,
+  })
 }

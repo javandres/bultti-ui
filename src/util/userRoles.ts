@@ -13,7 +13,7 @@ export function useHasHSLUserAccessRights(): boolean {
 
 export function useHasOperatorUserAccessRights(operatorId?: number): boolean {
   const [user] = useStateValue('user')
-  return hasOperatorUserAccessRights(user)
+  return hasOperatorUserAccessRights(user, operatorId)
 }
 
 export function useHasAccessRights({
@@ -24,7 +24,18 @@ export function useHasAccessRights({
   operatorId?: number
 }): boolean {
   const [user] = useStateValue('user')
+  return hasAccessRights({ user, allowedRoles, operatorId })
+}
 
+export function hasAccessRights({
+  user,
+  allowedRoles,
+  operatorId,
+}: {
+  user?: User
+  allowedRoles: UserRole[]
+  operatorId?: number
+}): boolean {
   if (!user) {
     throw new Error('Current user not found.')
   }
@@ -43,15 +54,15 @@ export function useHasAccessRights({
   return false
 }
 
-function hasAdminAccessRights(user?: User): boolean {
+export function hasAdminAccessRights(user?: User): boolean {
   return !!user && user.role === UserRole.Admin
 }
 
-function hasHSLUserAccessRights(user?: User): boolean {
+export function hasHSLUserAccessRights(user?: User): boolean {
   return !!user && user.role === UserRole.Hsl
 }
 
-function hasOperatorUserAccessRights(user?: User, operatorId?: number): boolean {
+export function hasOperatorUserAccessRights(user?: User, operatorId?: number): boolean {
   if (!operatorId) {
     return false
   }

@@ -94,13 +94,13 @@ export type PropTypes = {
 const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   let { inspectionId = '' } = useParams<{ inspectionId?: string }>()
 
-  var [season] = useStateValue('globalSeason')
-  var [operator] = useStateValue('globalOperator')
+  var [globalSeason] = useStateValue('globalSeason')
+  var [globalOperator] = useStateValue('globalOperator')
 
   var showErrorNotification = useShowErrorNotification()
   var navigateToInspection = useNavigateToInspection(inspectionType)
 
-  let { data: inspection, loading: inspectionLoading, refetch } = useInspectionById(
+  let { data: inspection, loading: isInspectionLoading, refetch } = useInspectionById(
     inspectionId
   )
 
@@ -154,7 +154,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
   return (
     <EditInspectionView>
       <InspectionContext.Provider value={inspection || null}>
-        <PageTitle loading={inspectionLoading} onRefresh={refetch}>
+        <PageTitle loading={isInspectionLoading} onRefresh={refetch}>
           <InspectionTypeContainer>
             {inspection?.status !== InspectionStatus.InProduction
               ? typeStrings.prefixLC
@@ -177,18 +177,18 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
           )}
         </PageTitle>
         <EditInspectionPageContainer>
-          {!operatorIsValid(operator) || !seasonIsValid(season) ? (
+          {!operatorIsValid(globalOperator) || !seasonIsValid(globalSeason) ? (
             <MessageContainer style={{ margin: '1rem' }}>
               <MessageView>
                 <Text>inspectionPage_selectOperatorAndSeason</Text>
               </MessageView>
             </MessageContainer>
-          ) : !inspection && !inspectionLoading ? (
+          ) : !inspection && !isInspectionLoading ? (
             <MessageContainer style={{ margin: '1rem' }}>
               <MessageView>
                 <Text
                   keyValueMap={{
-                    inspection: typeStrings.prefixLC,
+                    inspection: typeStrings.prefix,
                   }}>
                   inspectionPage_inspectionNotFound
                 </Text>
@@ -211,7 +211,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                         name="create"
                         path="/"
                         label={text('inspectionPage_inspectionInformation')}
-                        loading={inspectionLoading}
+                        loading={isInspectionLoading}
                         refetchData={refetch}
                         inspection={inspection}
                       />

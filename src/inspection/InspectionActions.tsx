@@ -49,10 +49,11 @@ export type PropTypes = {
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
+  isEditingAllowed?: boolean
 }
 
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style }: PropTypes) => {
+  ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [season, setSeason] = useStateValue('globalSeason')
     let hasAdminAccessRights = useHasAdminAccessRights()
     let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
@@ -187,6 +188,7 @@ const InspectionActions = observer(
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
+              disabled={!isEditingAllowed}
               onClick={() => onOpenInspection(inspection)}>
               {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
             </Button>
@@ -205,7 +207,7 @@ const InspectionActions = observer(
                   : ButtonStyle.SECONDARY
               }
               size={ButtonSize.MEDIUM}>
-              Raportit
+              <Text>reports</Text>
             </Button>
           )}
           {canInspectionBeSubmitted && isEditing && (
