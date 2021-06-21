@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, UserRole } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useNavigateToInspection,
@@ -17,7 +17,11 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
+import {
+  useHasAccessRights,
+  useHasAdminAccessRights,
+  useHasOperatorUserAccessRights,
+} from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
@@ -52,6 +56,7 @@ export type PropTypes = {
   isEditingAllowed?: boolean
 }
 
+// TODO: Make a InspectionActions folder, put all action buttons seperately there to their own files to improve readability
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [season, setSeason] = useStateValue('globalSeason')
@@ -175,9 +180,22 @@ const InspectionActions = observer(
       (inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Sanctionable)
 
+    let allowedRolesToSubmit: UserRole[] = []
+    if (inspection.inspectionType === InspectionType.Pre) {
+      allowedRolesToSubmit = [UserRole.Admin, UserRole.Operator]
+    } else {
+      allowedRolesToSubmit = [UserRole.Admin]
+    }
+    let canUserSubmit = useHasAccessRights({
+      allowedRoles: allowedRolesToSubmit,
+      operatorId: inspection.operatorId,
+    })
+
     // Only post-inspections which are in draft state can be made sanctionable.
     let canInspectionBeSanctionable =
       inspectionType === InspectionType.Post && inspection.status === InspectionStatus.Draft
+
+    let canUserMakeSanctionable = useHasAdminAccessRights()
 
     let [isDirty] = useUnsavedChangesPrompt()
 
@@ -210,7 +228,7 @@ const InspectionActions = observer(
               <Text>reports</Text>
             </Button>
           )}
-          {canInspectionBeSubmitted && isEditing && (
+          {canUserSubmit && canInspectionBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
@@ -221,16 +239,19 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {canInspectionBeSanctionable && hasOperatorUserAccessRights && isEditing && (
-            <Button
-              loading={sanctionableLoading}
-              buttonStyle={ButtonStyle.ACCEPT}
-              size={ButtonSize.MEDIUM}
-              disabled={hasErrors || isDirty}
-              onClick={onMakeInspectionSanctionable}>
-              <Text>inspection_actions_startSanctioning</Text>
-            </Button>
-          )}
+          {canUserMakeSanctionable &&
+            canInspectionBeSanctionable &&
+            hasOperatorUserAccessRights &&
+            isEditing && (
+              <Button
+                loading={sanctionableLoading}
+                buttonStyle={ButtonStyle.ACCEPT}
+                size={ButtonSize.MEDIUM}
+                disabled={hasErrors || isDirty}
+                onClick={onMakeInspectionSanctionable}>
+                <Text>inspection_actions_startSanctioning</Text>
+              </Button>
+            )}
 
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status

@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionType } from '../schema-types'
+import { Inspection, InspectionType, UserRole } from '../schema-types'
 import { orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
@@ -17,7 +17,7 @@ import InspectionCard from './InspectionCard'
 import { Text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
+import { useHasAccessRights } from '../util/userRoles'
 
 const SelectInspectionView = styled.div`
   position: relative;
@@ -96,10 +96,18 @@ const SelectInspection: React.FC<PropTypes> = observer(
   ({ inspections = [], inspectionType, refetchInspections, loading = false }) => {
     var [globalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
-    let hasOperatorAccessRights = useHasOperatorUserAccessRights(globalOperator?.id)
-    const hasAdminAccessRights = useHasAdminAccessRights()
-    let canCreateInspection =
-      inspectionType === InspectionType.Pre ? hasOperatorAccessRights : hasAdminAccessRights
+
+    let allowedRoles: UserRole[] = []
+    if (inspectionType === InspectionType.Pre) {
+      allowedRoles = [UserRole.Admin, UserRole.Operator]
+    } else {
+      allowedRoles = [UserRole.Admin]
+    }
+    let canCreateInspection = useHasAccessRights({
+      allowedRoles,
+      operatorId: globalOperator?.id,
+    })
+
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
