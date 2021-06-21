@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import {
   removeEquipmentMutation,
-  updateCatalogueEquipmentDataMutation,
+  refreshEquipmentInCatalogueMutation,
   updateEquipmentCatalogueQuotaMutation,
 } from '../equipment/equipmentQuery'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
@@ -54,7 +54,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
 
     let [execUpdateEquipmentData, { loading: equipmentUpdateLoading }] = useMutationData(
-      updateCatalogueEquipmentDataMutation
+      refreshEquipmentInCatalogueMutation
     )
 
     let updateEquipment = useCallback(
