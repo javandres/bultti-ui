@@ -106,10 +106,9 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
   showActions = true,
 }) => {
   let [globalOperator] = useStateValue('globalOperator')
-  let canOpenInspection = useCanOpenInspection({
+  let canEditInspection = useCanOpenInspection({
     inspection,
     operatorId: globalOperator.id,
-    isInspectionLoading: false,
   })
 
   let createdBy = getCreatedByUser(inspection)
@@ -129,7 +128,7 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
         <InspectionActionsRow
           inspection={inspection}
           onRefresh={onInspectionUpdated}
-          isEditingAllowed={canOpenInspection}
+          isEditingAllowed={canEditInspection}
         />
       )}
     </InspectionItemView>

@@ -242,11 +242,11 @@ export function isPostInspection(inspection: unknown): inspection is PostInspect
 export function useCanOpenInspection({
   inspection,
   operatorId,
-  isInspectionLoading,
+  isInspectionLoading = false,
 }: {
   inspection: Inspection
   operatorId: number
-  isInspectionLoading: boolean
+  isInspectionLoading?: boolean
 }): boolean {
   const [user] = useStateValue('user')
 
@@ -264,6 +264,29 @@ export function useCanOpenInspection({
     }
   } else {
     allowedRoles = [UserRole.Admin, UserRole.Hsl, UserRole.Operator]
+  }
+
+  return hasAccessRights({
+    user,
+    allowedRoles,
+    operatorId,
+  })
+}
+
+export function useCanEditInspection({
+  inspection,
+  operatorId,
+}: {
+  inspection: Inspection
+  operatorId: number
+}): boolean {
+  const [user] = useStateValue('user')
+
+  let allowedRoles: UserRole[] = []
+  if (isPreInspection(inspection)) {
+    allowedRoles = [UserRole.Admin, UserRole.Operator]
+  } else {
+    allowedRoles = [UserRole.Admin]
   }
 
   return hasAccessRights({

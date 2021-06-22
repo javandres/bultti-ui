@@ -17,11 +17,7 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import {
-  useHasAccessRights,
-  useHasAdminAccessRights,
-  useHasOperatorUserAccessRights,
-} from '../util/userRoles'
+import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
@@ -61,9 +57,6 @@ const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [season, setSeason] = useStateValue('globalSeason')
     let hasAdminAccessRights = useHasAdminAccessRights()
-    let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
-      inspection?.operatorId || undefined
-    )
 
     var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
@@ -239,19 +232,16 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {canUserMakeSanctionable &&
-            canInspectionBeSanctionable &&
-            hasOperatorUserAccessRights &&
-            isEditing && (
-              <Button
-                loading={sanctionableLoading}
-                buttonStyle={ButtonStyle.ACCEPT}
-                size={ButtonSize.MEDIUM}
-                disabled={hasErrors || isDirty}
-                onClick={onMakeInspectionSanctionable}>
-                <Text>inspection_actions_startSanctioning</Text>
-              </Button>
-            )}
+          {canUserMakeSanctionable && canInspectionBeSanctionable && isEditing && (
+            <Button
+              loading={sanctionableLoading}
+              buttonStyle={ButtonStyle.ACCEPT}
+              size={ButtonSize.MEDIUM}
+              disabled={hasErrors || isDirty}
+              onClick={onMakeInspectionSanctionable}>
+              <Text>inspection_actions_startSanctioning</Text>
+            </Button>
+          )}
 
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status

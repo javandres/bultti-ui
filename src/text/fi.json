@@ -121,7 +121,7 @@
   "executionRequirement_equipmentList": "Suoritevaatimuksen ajoneuvot",
   "executionRequirement_remove": "Poista suoritevaatimus",
   "executionRequirement_unitValues": "Kilpailukohteen suoritearvot",
-  "executionRequirement_missing": "Suoritevaatimukset ei laskettu.",
+  "executionRequirement_missing": "Kohteen suoritevaatimuksia ei ole laskettu.",
   "executionRequirement_create": "Laske kohteen suoritevaatimukset",
   "executionRequirement_removeWarning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
   "executionRequirement_refreshWarning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
