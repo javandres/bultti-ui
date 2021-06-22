@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionStatus, InspectionType, UserRole } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
+  useCanEditInspection,
   useNavigateToInspection,
   useNavigateToInspectionReports,
   useRemoveInspection,
@@ -55,8 +56,14 @@ export type PropTypes = {
 // TODO: Make a InspectionActions folder, put all action buttons seperately there to their own files to improve readability
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
-    var [season, setSeason] = useStateValue('globalSeason')
+    var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
+    var [globalOperator] = useStateValue('globalOperator')
     let hasAdminAccessRights = useHasAdminAccessRights()
+
+    let canEditInspection = useCanEditInspection({
+      inspection,
+      operatorId: globalOperator.id,
+    })
 
     var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
@@ -71,17 +78,17 @@ const InspectionActions = observer(
     var onOpenInspection = useCallback(
       (inspection: Inspection) => {
         // If the season of the inspection is not already selected, change the selected season to match.
-        if (inspection && inspection.seasonId !== season.id) {
+        if (inspection && inspection.seasonId !== globalSeason.id) {
           showInfoNotification(
             text('inspection_seasonChangedAutomatically', { newSeason: inspection.season.id })
           )
 
-          setSeason(inspection.season)
+          setGlobalSeason(inspection.season)
         }
 
         navigateToInspection(inspection)
       },
-      [inspection, navigateToInspection, setSeason, season]
+      [inspection, navigateToInspection, setGlobalSeason, globalSeason]
     )
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(inspection)
@@ -246,7 +253,7 @@ const InspectionActions = observer(
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status
           ) &&
-            hasAdminAccessRights && (
+            canEditInspection && (
               <Button
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={removeLoading}
