@@ -50,6 +50,7 @@
   "tableEmpty": "Taulukko on tyhjä.",
   "selectOperator": "Valitse liikennöitsijä.",
   "selectSeason": "Valitse aikataulukausi",
+  "downloadExcelRaport": "Lataa excel tiedosto",
 
   "authentication_expired": "Autentikointi umpeutui, kirjaudu sisään uudestaan.",
 
@@ -138,6 +139,8 @@
   "executionRequirement_equipmentList_age": "Ikä",
   "executionRequirement_equipmentList_kilometerRequirement": "Kilometriosuus",
   "executionRequirement_equipmentList_amount": "Määrä",
+
+  "executionRequirement_report_notAvailable": "Suoritevaatimuksia ei ole laskettu. Voit laskea suoritevaatimukset ennakkotarkastuksen ollessa muokattavissa.",
 
   "userRelations_createdBy": "Luotu",
   "userRelations_updatedBy": "Päivitetty",

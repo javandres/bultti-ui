@@ -3,6 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import RequirementsTable from '../executionRequirement/RequirementsTable'
 import { ReportComponentProps } from './reportTypes'
+import { Text } from '../util/translate'
 import { ExecutionRequirementsReportData } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
 import { RequirementsTableLayout } from '../executionRequirement/executionRequirementUtils'
@@ -36,8 +37,7 @@ const ExecutionRequirementsReport = observer(
         ))}
         {items.length === 0 && (
           <MessageView>
-            Suoritevaatimukset ei laskettu. Laske ennakkotarkastuksen suoritevaatimukset
-            ennakkotarkastuksen muokkaus-näkymästä.
+            <Text>executionRequirement_report_notAvailable</Text>
           </MessageView>
         )}
       </ExecutionRequirementsReportView>
