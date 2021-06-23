@@ -124,7 +124,7 @@ export const TableCell = observer(
       (val) => keyFromItem(val.item) === itemId && val.key === key
     )
 
-    let cellIsEditable = (isAlwaysEditable || !!pendingValue) && canEditCell
+    let cellInputIsActive = (isAlwaysEditable || !!pendingValue) && canEditCell
 
     let editValue = (pendingValue || {
       key,
@@ -147,7 +147,7 @@ export const TableCell = observer(
           makeCellEditable()
         }
       },
-      [makeCellEditable, isFocused]
+      [makeCellEditable, isFocused, canEditCell]
     )
 
     let cellWidthStyle = {
@@ -159,15 +159,15 @@ export const TableCell = observer(
       <TableCellElement
         highlightColor={cellHighlightColor}
         style={cellWidthStyle}
-        isEditing={cellIsEditable}
+        isEditing={cellInputIsActive}
         isEditingRow={isEditingRow}
         editable={canEditCell}
-        tabIndex={!canEditCell || editValue ? -1 : tabIndex}
+        tabIndex={!canEditCell || cellInputIsActive ? -1 : tabIndex}
         onKeyUp={!editValue && canEditCell ? onKeyUp : undefined}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onDoubleClick={makeCellEditable}>
-        {cellIsEditable
+        {cellInputIsActive
           ? renderInput(
               key,
               editValue.value,

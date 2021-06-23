@@ -5,7 +5,7 @@ import { FlexRow } from '../common/components/common'
 import ToggleButton from '../common/input/ToggleButton'
 import { emissionClassNames } from '../type/values'
 import { EquipmentQuotaGroup, EquipmentWithQuota, groupedEquipment } from './equipmentUtils'
-import { groupBy, orderBy, uniqBy } from 'lodash'
+import { groupBy } from 'lodash'
 import { round } from '../util/round'
 import { getTotal } from '../util/getTotal'
 import EquipmentFormInput from './EquipmentFormInput'
@@ -14,13 +14,12 @@ import { undefinedOrNumber } from '../util/emptyOrNumber'
 import PagedTable from '../common/table/PagedTable'
 import { EditValue } from '../common/table/tableUtils'
 import { averageByProp } from '../util/averageByProp'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS, DEFAULT_PERCENTAGE_DECIMALS } from '../constants'
 import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
-  equipmentId: string
   quota?: number
-  kilometers?: number
+  meters?: number
   quotaId: string
 }
 
@@ -33,6 +32,8 @@ export type PropTypes = {
   groupedColumnLabels: { [key: string]: string }
   editableValues?: (keyof EquipmentWithQuota)[]
 }
+
+const getQuotaId = (item) => `${item.quotaId}_${item.id}`
 
 const EquipmentList: React.FC<PropTypes> = observer(
   ({
@@ -47,20 +48,27 @@ const EquipmentList: React.FC<PropTypes> = observer(
     let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(false)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
 
-    let getQuotaId = useCallback((item) => `${item.quotaId}_${item.id}`, [])
-
     const onEditValue = useCallback(
+      // EquipmentFormInput parses the value as float, so it will be a number type here.
+      // Table props require it to be optional.
       (
         key: keyof EquipmentWithQuota,
         value: ValueOf<EquipmentWithQuota>,
         item: EquipmentWithQuota
       ) => {
-        if (isEquipmentShownInGroup || !editableValues.includes(key)) {
+        if (
+          isEquipmentShownInGroup ||
+          !editableValues.includes(key) ||
+          typeof value === 'undefined' ||
+          typeof item === 'undefined'
+        ) {
           return
         }
 
+        let validValue = !value && value !== 0 ? '' : Math.max(0, value as number)
+
         let itemId = getQuotaId(item)
-        let editValue: EditValue<EquipmentWithQuota> = { key, value, item, itemId }
+        let editValue: EditValue<EquipmentWithQuota> = { key, value: validValue, item, itemId }
 
         setPendingValues((currentValues) => {
           let existingEditValueIndex = currentValues.findIndex(
@@ -88,7 +96,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
       setPendingValues([])
 
-      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, getQuotaId))
+      let pendingEquipmentInput = Object.entries(groupBy(pendingValues, 'itemId'))
       let updates: EquipmentUpdate[] = []
 
       for (let [, pendingEditValues] of pendingEquipmentInput) {
@@ -96,13 +104,13 @@ const EquipmentList: React.FC<PropTypes> = observer(
 
         let percentageQuota = pendingEditValues.find((val) => val.key === 'percentageQuota')
           ?.value
+
         let meterRequirement = pendingEditValues.find((val) => val.key === 'meterRequirement')
           ?.value
 
         updates.push({
-          equipmentId: item.id,
           quota: undefinedOrNumber(percentageQuota),
-          kilometers: undefinedOrNumber(meterRequirement),
+          meters: undefinedOrNumber(meterRequirement),
           quotaId: item.quotaId,
         })
       }
@@ -131,7 +139,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     const renderCellValue = useCallback((key, val) => {
       switch (key) {
         case 'percentageQuota':
-          return round(val, DEFAULT_DECIMALS) + '%'
+          return round(val, DEFAULT_PERCENTAGE_DECIMALS) + '%'
         case 'meterRequirement':
           return round(val, DEFAULT_DECIMALS) + ' m'
         case 'kilometerRequirement':
@@ -152,6 +160,16 @@ const EquipmentList: React.FC<PropTypes> = observer(
             return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':
             return round(getTotal(equipment, 'kilometerRequirement'), DEFAULT_DECIMALS) + ' km'
+          default:
+            return ''
+        }
+      },
+      [equipment]
+    )
+
+    let renderGroupedColumnTotals = useCallback(
+      (col) => {
+        switch (col) {
           case 'amount':
             return round(getTotal(equipmentGroups, 'amount'), DEFAULT_DECIMALS) + ' kpl'
           case 'age':
@@ -161,15 +179,10 @@ const EquipmentList: React.FC<PropTypes> = observer(
             return ''
         }
       },
-      [equipment, equipmentGroups]
+      [equipmentGroups]
     )
 
-    let orderedEquipment = useMemo(
-      () => orderBy(uniqBy(equipment, getQuotaId), 'emissionClass', 'desc'),
-      [equipment]
-    )
-
-    let isEquipmentListEditable = !isEquipmentShownInGroup && orderedEquipment.length !== 0
+    let isEquipmentListEditable = !isEquipmentShownInGroup && equipment.length !== 0
 
     return equipment.length !== 0 ? (
       <>
@@ -184,7 +197,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         </FlexRow>
         {isEquipmentListEditable && (
           <PagedTable<EquipmentWithQuota>
-            items={orderedEquipment}
+            items={equipment}
             keyFromItem={getQuotaId}
             columnLabels={columnLabels}
             onRemoveRow={removeEquipment ? onRemoveEquipment : undefined}
@@ -215,7 +228,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}
-            getColumnTotal={renderColumnTotals}
+            getColumnTotal={renderGroupedColumnTotals}
             editableValues={[]}
             onRemoveRow={() =>
               alert(text('catalogue_itemRemovalNotAllowedInGroupedListModeNotification'))

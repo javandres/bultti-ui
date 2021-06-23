@@ -1,4 +1,4 @@
-import React, { InputHTMLAttributes, useCallback } from 'react'
+import React, { InputHTMLAttributes, RefObject, useCallback } from 'react'
 import styled, { css } from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InputLabel } from '../components/form'
@@ -55,10 +55,12 @@ export type PropTypes = {
   onChange?: (value: string) => unknown
   onEnterPress?: (value?: string) => unknown
   onEscPress?: () => unknown
+  ref?: RefObject<HTMLInputElement>
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
   ({
+    ref,
     className,
     value = '',
     label,
@@ -106,6 +108,7 @@ const Input: React.FC<PropTypes> = observer(
         )}
         <InputComponent
           {...inputProps}
+          ref={ref}
           type={type}
           value={value}
           tabIndex={tabIndex}

@@ -458,8 +458,8 @@ export type EquipmentCatalogueQuota = {
   percentageQuota: Scalars['Float']
   equipmentId: Scalars['String']
   equipmentCatalogueId: Scalars['String']
-  equipment?: Maybe<Equipment>
-  equipmentCatalogue?: Maybe<EquipmentCatalogue>
+  equipment: Equipment
+  equipmentCatalogue: EquipmentCatalogue
   catalogueStartDate: Scalars['BulttiDate']
   catalogueEndDate: Scalars['BulttiDate']
 }
@@ -961,9 +961,9 @@ export type Mutation = {
   login?: Maybe<Scalars['String']>
   logout: Scalars['Boolean']
   modifyUser: User
-  updateEquipmentCatalogueQuota?: Maybe<Equipment>
+  updateEquipmentCatalogueQuota: EquipmentCatalogueQuota
   saveInspectionDepartureBlocks: Array<OperatorBlockDeparture>
-  updateEquipmentRequirementQuota?: Maybe<Equipment>
+  updateEquipmentRequirementQuota: ExecutionRequirementQuota
   generateEquipmentForPreInspection: Scalars['Boolean']
   toggleContractUserSubscribed?: Maybe<ContractUserRelation>
   createContract: Contract
@@ -1085,9 +1085,8 @@ export type MutationModifyUserArgs = {
 }
 
 export type MutationUpdateEquipmentCatalogueQuotaArgs = {
-  quotaId?: Maybe<Scalars['String']>
+  quotaId: Scalars['String']
   quota: Scalars['Float']
-  equipmentId: Scalars['String']
 }
 
 export type MutationSaveInspectionDepartureBlocksArgs = {
@@ -1095,10 +1094,9 @@ export type MutationSaveInspectionDepartureBlocksArgs = {
 }
 
 export type MutationUpdateEquipmentRequirementQuotaArgs = {
-  quotaId?: Maybe<Scalars['String']>
-  kilometers?: Maybe<Scalars['Float']>
+  meters?: Maybe<Scalars['Float']>
   quota?: Maybe<Scalars['Float']>
-  equipmentId: Scalars['String']
+  quotaId: Scalars['String']
 }
 
 export type MutationGenerateEquipmentForPreInspectionArgs = {
