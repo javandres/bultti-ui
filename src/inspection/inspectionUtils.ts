@@ -155,7 +155,7 @@ export function useFetchInspections(
       skip: !operatorIsValid(queryOperator),
       notifyOnNetworkStatusChange: true,
       variables: {
-        operatorId: queryOperator?.operatorId,
+        operatorId: queryOperator?.id,
         inspectionType,
       },
     }

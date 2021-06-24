@@ -70,7 +70,7 @@ const InspectionTimeline = observer(({ currentInspection }: PropTypes) => {
       skip: !operatorIsValid(operator),
       notifyOnNetworkStatusChange: true,
       variables: {
-        operatorId: operator?.operatorId,
+        operatorId: operator?.id,
         inspectionType: currentInspection.inspectionType,
       },
     }

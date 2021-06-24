@@ -1073,7 +1073,7 @@ type Operator {
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: Int!
-  operatorId: Int!
+  operatorIds: [Int!]!
   operatorName: String!
   postInspections: [PostInspection!]!
   preInspections: [PreInspection!]!

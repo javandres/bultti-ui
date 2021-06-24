@@ -86,7 +86,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         return
       }
 
-      if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
+      if (inspection.operatorId !== operator.id || inspection.seasonId !== season.id) {
         navigate.push(
           `/${getInspectionTypeStrings(inspection.inspectionType).path}-inspection/edit`
         )

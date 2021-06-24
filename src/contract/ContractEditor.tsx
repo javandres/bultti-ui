@@ -272,13 +272,13 @@ const ContractEditor = observer(
     }, [initialContract])
 
     useEffect(() => {
-      if (isNew && pendingContract.operatorId !== globalOperator?.operatorId) {
+      if (isNew && pendingContract.operatorId !== globalOperator?.id) {
         setPendingContract({
           ...pendingContract,
-          operatorId: globalOperator?.operatorId,
+          operatorId: globalOperator?.id,
         })
       }
-    }, [globalOperator && globalOperator.operatorId, isNew])
+    }, [globalOperator && globalOperator.id, isNew])
 
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
@@ -400,7 +400,7 @@ const ContractEditor = observer(
             await modifyContract(rulesFile, {
               variables: {
                 contractInput: pendingContract,
-                operatorId: globalOperator.operatorId,
+                operatorId: globalOperator.id,
               },
             })
           }
@@ -408,7 +408,7 @@ const ContractEditor = observer(
           await updateMutationFn({
             variables: {
               contractInput: pendingContract,
-              operatorId: globalOperator.operatorId,
+              operatorId: globalOperator.id,
             },
           }).catch((error: ApolloError) => {
             showErrorNotification(error.message)
@@ -462,7 +462,7 @@ const ContractEditor = observer(
         let result = await removeContract({
           variables: {
             contractId: contract!.id,
-            operatorId: globalOperator.operatorId,
+            operatorId: globalOperator.id,
           },
         })
 
