@@ -49,7 +49,7 @@ export const UnitExecutionRequirementFragment = gql`
     metersObserved
     operator {
       id
-      operatorId
+      operatorIds
       operatorName
     }
     area {
@@ -68,7 +68,7 @@ export const AreaExecutionRequirementFragment = gql`
     metersObserved
     operator {
       id
-      operatorId
+      operatorIds
       operatorName
     }
     area {
@@ -96,7 +96,7 @@ export const ObservedExecutionRequirementFragment = gql`
     }
     operator {
       id
-      operatorId
+      operatorIds
       operatorName
     }
   }
@@ -235,7 +235,7 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
       }
       operator {
         id
-        operatorId
+        operatorIds
         operatorName
       }
       equipmentQuotas {
@@ -273,7 +273,7 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
       }
       operator {
         id
-        operatorId
+        operatorIds
         operatorName
       }
       equipmentQuotas {
