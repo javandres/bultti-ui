@@ -11,7 +11,7 @@ import {
   TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ValueOf } from '../../type/common'
 
 export const TableCellElement = styled.div<{
@@ -118,7 +118,13 @@ export const TableCell = observer(
     let [key, val] = cell
     let valueKey = key as keyof ItemType
 
-    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
+    let itemEditableValues = useMemo(
+      () => (typeof editableValues === 'function' ? editableValues(item) : editableValues),
+      [editableValues, item]
+    )
+
+    let canEditCell =
+      onEditValue && itemEditableValues.includes((valueKey as unknown) as string)
 
     let pendingValue = pendingValues.find(
       (val) => keyFromItem(val.item) === itemId && val.key === key

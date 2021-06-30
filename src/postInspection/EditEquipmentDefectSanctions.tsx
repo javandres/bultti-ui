@@ -1,9 +1,9 @@
 import React, { useCallback, useState } from 'react'
-import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../util/useQueryData'
 import {
   EquipmentDefectSanction,
+  EquipmentDefectSanctionReason,
   EquipmentDefectSanctionsResponse,
   EquipmentDefectSanctionUpdate,
   PostInspection,
@@ -20,6 +20,7 @@ import { round } from '../util/round'
 import { ValueOf } from '../type/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
+import styled from 'styled-components'
 
 const SanctionToggleLabel = styled.label`
   display: block;
@@ -30,6 +31,24 @@ const SanctionToggleLabel = styled.label`
 const SanctionToggleInput = styled.input`
   display: block;
 `
+
+export const renderSanctionInput: RenderInputType<EquipmentDefectSanction> = (
+  key: keyof EquipmentDefectSanction,
+  val: ValueOf<EquipmentDefectSanction>,
+  onChange: (val: string) => unknown
+) => {
+  return (
+    <SanctionToggleLabel>
+      <SanctionToggleInput
+        type="checkbox"
+        value={val + ''}
+        onChange={() => onChange(val as string)}
+        checked={val !== 0}
+        name="sanctionable"
+      />
+    </SanctionToggleLabel>
+  )
+}
 
 let sanctionColumnLabels: { [name in keyof Partial<EquipmentDefectSanction>]: string } = {
   procurementUnitId: 'Kilpailukohde',
@@ -49,20 +68,6 @@ let sanctionColumnLabels: { [name in keyof Partial<EquipmentDefectSanction>]: st
   priority: 'Prioriteetti',
   startDate: 'Sanktioinnin alkupäivä',
   endDate: 'Sanktioinnin loppupäivä',
-}
-
-let renderSanctionInput: RenderInputType<EquipmentDefectSanction> = (key, val, onChange) => {
-  return (
-    <SanctionToggleLabel>
-      <SanctionToggleInput
-        type="checkbox"
-        value={val + ''}
-        onChange={() => onChange(val as string)}
-        checked={val !== 0}
-        name="sanctionable"
-      />
-    </SanctionToggleLabel>
-  )
 }
 
 let inspectionEquipmentDefectSanctionsQuery = gql`
@@ -290,7 +295,11 @@ const EditEquipmentDefectSanctions = observer(({ inspection }: PropTypes) => {
         keyFromItem={(item) => item.id}
         renderInput={renderSanctionInput}
         pendingValues={pendingValues}
-        editableValues={['appliedSanctionPercentageAmount']}
+        editableValues={(item) =>
+          item.sanctionReason === EquipmentDefectSanctionReason.DefectiveEquipmentDeparture
+            ? ['appliedSanctionPercentageAmount']
+            : ['appliedSanctionFinancialAmount']
+        }
         onSaveEdit={onSaveSanctions}
         onEditValue={onChangeSanction}
         onCancelEdit={onCancelEdit}

@@ -73,7 +73,7 @@ export type TableEditProps<ItemType extends TableItemType> = {
   pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
-  editableValues?: (keyof ItemType)[]
+  editableValues?: (keyof ItemType)[] | ((item: ItemType) => (keyof ItemType)[])
   isAlwaysEditable?: boolean
 }
 
