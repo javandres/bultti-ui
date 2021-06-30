@@ -178,6 +178,7 @@ export const TableCell = observer(
               key,
               editValue.value,
               onValueChange(valueKey),
+              item,
               onSaveEdit,
               onCancelEdit,
               tabIndex

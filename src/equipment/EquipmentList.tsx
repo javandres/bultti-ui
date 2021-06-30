@@ -211,7 +211,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
             getRowHighlightColor={(itemRow) =>
               itemRow.item.requirementOnly ? 'var(--lightest-yellow)' : ''
             }
-            renderInput={(key, val, onChange, onAccept, onCancel) => (
+            renderInput={(key, val, onChange, item, onAccept, onCancel) => (
               <EquipmentFormInput
                 fieldComponent={TableTextInput}
                 value={val as string}
