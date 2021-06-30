@@ -18,6 +18,7 @@
   "next": "Seuraava",
   "previous": "Edellinen",
   "unselected": "Ei valittu",
+  "not_applicable": "Ei sovellettavissa",
   "field": "Kenttä",
   "add": "Lisää",
   "area": "Alue",
@@ -254,6 +255,9 @@
   "postInspection_sanctionReason_LATE_DEPARTURE": "Myöhäinen lähtö",
   "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen maksimi-iän ylitys",
   "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Suoritevaatimuksen alitus",
+
+  "postInspection_heading_sanctions": "Sanktiot",
+  "postInspection_heading_equipmentDefectSanctions": "Kalustovikasanktiot",
 
   "postInspection_jolaPreview_heading": "Kalustovikasanktioinnin esikatselu (JOLA)",
   "postInspection_jolaPreview_description": "Näiden JOLA:sta haettujen rivien perusteella tehdään tähän jälkitarkastukseen sisältyvä kalustovikasanktiointi. Tämä on pelkkä esikatselu - lopulliset rivit haetaan JOLA:sta kun jälkitarkastus asetetaan julkaistavaksi.",

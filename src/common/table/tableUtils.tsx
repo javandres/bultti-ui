@@ -8,6 +8,7 @@ import { CellContent } from './TableCell'
 import { getThousandSeparatedNumber } from '../../util/formatNumber'
 import { ValueOf } from '../../type/common'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
+import { text } from '../../util/translate'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
@@ -164,3 +165,7 @@ export const TableContext = React.createContext({})
 export const defaultGetRowHighlightColor = (): string => ''
 
 export const defaultGetCellHighlightColor = (): string => ''
+
+export const NotApplicableValue = (
+  <span style={{ color: '#aaa' }}>{text('not_applicable')}</span>
+)

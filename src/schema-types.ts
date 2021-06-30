@@ -532,6 +532,7 @@ export type EquipmentDefectSanction = {
   registryNumber: Scalars['String']
   jolaId: Scalars['String']
   priority: EquipmentDefectPriority
+  sanctionReason: EquipmentDefectSanctionReason
   name: Scalars['String']
   description: Scalars['String']
   sanctionPercentageAmount: Scalars['Float']
@@ -542,10 +543,28 @@ export type EquipmentDefectSanction = {
   sanctionResultKilometers?: Maybe<Scalars['Float']>
 }
 
+export enum EquipmentDefectSanctionReason {
+  DefectiveEquipmentDeparture = 'DEFECTIVE_EQUIPMENT_DEPARTURE',
+  DangerousDefect = 'DANGEROUS_DEFECT',
+  AdCoverDefect = 'AD_COVER_DEFECT',
+}
+
 export type EquipmentDefectSanctionUpdate = {
   equipmentDefectSanctionId: Scalars['String']
   appliedSanctionPercentage?: Maybe<Scalars['Float']>
   appliedSanctionFinancialAmount?: Maybe<Scalars['Float']>
+}
+
+export type EquipmentDefectSanctionsResponse = {
+  __typename?: 'EquipmentDefectSanctionsResponse'
+  filteredCount: Scalars['Int']
+  totalCount: Scalars['Int']
+  filters?: Maybe<Array<FilterConfig>>
+  sort?: Maybe<Array<SortConfig>>
+  responseId: Scalars['String']
+  id: Scalars['String']
+  rows: Array<EquipmentDefectSanction>
+  inspectionId: Scalars['String']
 }
 
 export enum EquipmentDefectStatus {
@@ -980,6 +999,7 @@ export type Mutation = {
   createTestData: Scalars['Boolean']
   removeTestData: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
+  importHfpForDates: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
   updateLinkedInspection: PostInspection
   inspectionSanctionable: PostInspection
@@ -1156,6 +1176,11 @@ export type MutationUpdateSanctionsArgs = {
 export type MutationForceRemoveInspectionArgs = {
   testOnly?: Maybe<Scalars['Boolean']>
   inspectionId: Scalars['String']
+}
+
+export type MutationImportHfpForDatesArgs = {
+  endDate: Scalars['String']
+  startDate: Scalars['String']
 }
 
 export type MutationUpdateLinkedInspectionArgs = {
@@ -1818,7 +1843,7 @@ export type Query = {
   inspectionsTimeline: Array<InspectionTimelineItem>
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
-  inspectionEquipmentDefectSanctions: SanctionsResponse
+  inspectionEquipmentDefectSanctions: EquipmentDefectSanctionsResponse
 }
 
 export type QueryExecutionRequirementsByOperatorArgs = {
@@ -2170,6 +2195,7 @@ export type Sanction = {
   inspectionId: Scalars['String']
   procurementUnitId?: Maybe<Scalars['String']>
   areaName?: Maybe<OperatingAreaName>
+  registryNumber?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
   sanctionReasonValue?: Maybe<Scalars['String']>

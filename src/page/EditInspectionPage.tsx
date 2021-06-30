@@ -32,11 +32,11 @@ import {
   inspectionStatusSubscription,
 } from '../inspection/inspectionQueries'
 import { pickGraphqlData } from '../util/pickGraphqlData'
-import SanctionsContainer from '../postInspection/SanctionsContainer'
 import { useShowErrorNotification } from '../util/useShowNotification'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { seasonIsValid } from '../common/input/SelectSeason'
 import { RouteChildrenProps, useParams } from 'react-router-dom'
+import ManageSanctions from '../postInspection/ManageSanctions'
 
 const EditInspectionView = styled(Page)`
   background-color: white;
@@ -209,7 +209,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                         inspection={inspection}
                       />
                       {inspection.status === InspectionStatus.Sanctionable && (
-                        <SanctionsContainer
+                        <ManageSanctions
                           inspection={inspection as PostInspection}
                           name="sanction"
                           path="sanctions"

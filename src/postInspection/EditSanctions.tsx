@@ -11,33 +11,17 @@ import {
   SanctionUpdate,
 } from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
-import { text, Text } from '../util/translate'
-import { FlexRow, PageSection } from '../common/components/common'
+import { Text } from '../util/translate'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { TabChildProps } from '../common/components/Tabs'
-import { EditValue, RenderInputType } from '../common/table/tableUtils'
-import { useLazyQueryData } from '../util/useLazyQueryData'
-import { DEBUG, DEFAULT_DECIMALS } from '../constants'
+import { EditValue, NotApplicableValue, RenderInputType } from '../common/table/tableUtils'
+import { DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
 import { ValueOf } from '../type/common'
-import { useNavigate } from '../util/urlValue'
-
-const PostInspectionSanctionsView = styled.div`
-  min-height: 100%;
-  width: 100%;
-  padding: 0 0.75rem 2rem;
-  background-color: var(--white-grey);
-`
-
-const FunctionsRow = styled(FlexRow)`
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--lighter-grey);
-  margin: 0 -0.75rem 0;
-  background: white;
-`
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
+import { FlexRow } from '../common/components/common'
 
 const SanctionToggleLabel = styled.label`
   display: block;
@@ -132,28 +116,11 @@ let setSanctionMutation = gql`
   }
 `
 
-let devLoadSanctions = gql`
-  query runSanctioning($inspectionId: String!) {
-    runSanctioning(inspectionId: $inspectionId) {
-      id
-    }
-  }
-`
-
-let abandonSanctionsMutation = gql`
-  mutation abandonSanctions($inspectionId: String!) {
-    abandonSanctions(inspectionId: $inspectionId) {
-      id
-      status
-    }
-  }
-`
-
 export type PropTypes = {
   inspection: PostInspection
 } & TabChildProps
 
-const SanctionsContainer = observer(({ inspection }: PropTypes) => {
+const EditSanctions = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
@@ -202,15 +169,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
       },
     }
   )
-
-  let [
-    execAbandonSanctions,
-    { loading: abandonSanctionsLoading },
-  ] = useMutationData<PostInspection>(abandonSanctionsMutation, {
-    variables: {
-      inspectionId: inspection.id,
-    },
-  })
 
   let onChangeSanction = useCallback(
     (key: keyof Sanction, value: ValueOf<Sanction>, item: Sanction) => {
@@ -263,26 +221,18 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let isLoading = loading || setSanctionLoading || false
 
-  let navigate = useNavigate()
-
-  let onAbandonSanctions = useCallback(async () => {
-    if (confirm(text('postInspection_confirmAbandonSanctions'))) {
-      await execAbandonSanctions()
-      navigate.push(`/post-inspection/edit/${inspection.id}/`)
-    }
-  }, [execAbandonSanctions, inspection, navigate])
-
-  let [loadSanctions, { loading: devLoadingSanctions }] = useLazyQueryData(devLoadSanctions, {
-    variables: { inspectionId: inspection?.id },
-  })
-
   let renderValue = useCallback(
     (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
+      if (val === 0) {
+        return '0'
+      }
+
       if (!val) {
-        return key === 'matchesException' ? '-' : '0'
+        return NotApplicableValue
       }
 
       if (key === 'sanctionFinancialAmount') {
+        // Show 0 financial amount if the sanction is disabled.
         return item?.appliedSanctionPercentageAmount === 0
           ? 0
           : round(val as number, DEFAULT_DECIMALS) + '€'
@@ -349,23 +299,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   }, [])
 
   return (
-    <PostInspectionSanctionsView>
-      <FunctionsRow>
-        <Button
-          loading={abandonSanctionsLoading}
-          buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-          size={ButtonSize.SMALL}
-          onClick={onAbandonSanctions}>
-          <Text>inspection_actions_abandonSanctions</Text>
-        </Button>
-        {DEBUG && (
-          <Button
-            loading={devLoadingSanctions}
-            size={ButtonSize.SMALL}
-            onClick={() => loadSanctions()}>
-            DEV Load sanctions
-          </Button>
-        )}
+    <>
+      <FlexRow style={{ marginBottom: 0 }}>
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
@@ -373,27 +308,25 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onClick={() => refetch()}>
           <Text>update</Text>
         </Button>
-      </FunctionsRow>
-      <PageSection>
-        <FilteredResponseTable<Sanction>
-          loading={isLoading}
-          data={sanctionsData}
-          tableState={tableState}
-          columnLabels={sanctionColumnLabels}
-          keyFromItem={(item) => item.id}
-          renderInput={renderSanctionInput}
-          pendingValues={pendingValues}
-          editableValues={['appliedSanctionPercentageAmount']}
-          onSaveEdit={onSaveSanctions}
-          onEditValue={onChangeSanction}
-          onCancelEdit={onCancelEdit}
-          isAlwaysEditable={true}
-          renderValue={renderValue}
-          transformItems={transformItems}
-        />
-      </PageSection>
-    </PostInspectionSanctionsView>
+      </FlexRow>
+      <FilteredResponseTable<Sanction>
+        loading={isLoading}
+        data={sanctionsData}
+        tableState={tableState}
+        columnLabels={sanctionColumnLabels}
+        keyFromItem={(item) => item.id}
+        renderInput={renderSanctionInput}
+        pendingValues={pendingValues}
+        editableValues={['appliedSanctionPercentageAmount']}
+        onSaveEdit={onSaveSanctions}
+        onEditValue={onChangeSanction}
+        onCancelEdit={onCancelEdit}
+        isAlwaysEditable={true}
+        renderValue={renderValue}
+        transformItems={transformItems}
+      />
+    </>
   )
 })
 
-export default SanctionsContainer
+export default EditSanctions
