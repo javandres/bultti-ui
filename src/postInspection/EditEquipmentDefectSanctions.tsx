@@ -196,8 +196,12 @@ const EditEquipmentDefectSanctions = observer(({ inspection }: PropTypes) => {
           (val) => val.key === key && val.itemId === item.id
         )
 
-        let setValue =
-          value === item.sanctionPercentageAmount ? 0 : item.sanctionPercentageAmount
+        let enabledKey =
+          key === 'appliedSanctionFinancialAmount'
+            ? 'sanctionFinancialAmount'
+            : 'sanctionPercentageAmount'
+
+        let setValue = value === item[enabledKey] ? 0 : item[enabledKey]
 
         if (existingEditValueIndex !== -1) {
           currentValues.splice(existingEditValueIndex, 1)
