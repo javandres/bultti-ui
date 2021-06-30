@@ -120,7 +120,7 @@ type PropTypes = {
   rootPath?: string
 }
 
-let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`)
+let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`.replace('//', '/'))
 
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
