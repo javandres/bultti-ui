@@ -77,9 +77,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
   ({ procurementUnit, isEditable, onUpdate, valid = true }) => {
     let inspection = useContext(InspectionContext)
 
-    let isAdmin = useHasAdminAccessRights()
-    let requirementEquipmentValuesEditable = isAdmin && isEditable
-
     let {
       data: procurementUnitRequirement,
       loading: requirementsLoading,
@@ -139,7 +136,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
     let onRefreshRequirements = useCallback(async () => {
       if (
-        requirementEquipmentValuesEditable &&
+        isEditable &&
         procurementUnitRequirement &&
         confirm(text('executionRequirement_refreshWarning'))
       ) {
@@ -151,15 +148,11 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
         update()
       }
-    }, [
-      procurementUnitRequirement,
-      refreshExecutionRequirement,
-      requirementEquipmentValuesEditable,
-    ])
+    }, [procurementUnitRequirement, refreshExecutionRequirement, isEditable])
 
     let removeExecutionRequirement = useCallback(async () => {
       if (
-        requirementEquipmentValuesEditable &&
+        isEditable &&
         procurementUnitRequirement &&
         confirm(text('executionRequirement_removeWarning'))
       ) {
@@ -171,12 +164,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
 
         update()
       }
-    }, [
-      procurementUnitRequirement,
-      execRemoveExecutionRequirement,
-      update,
-      requirementEquipmentValuesEditable,
-    ])
+    }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (isEditable) {
@@ -211,7 +199,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               loading={requirementsLoading}>
               <Text>update</Text>
             </Button>
-            {requirementEquipmentValuesEditable && (
+            {isEditable && (
               <Button
                 loading={refreshLoading}
                 onClick={onRefreshRequirements}
@@ -256,13 +244,13 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <Text>executionRequirement_equipmentList</Text>
             </SubHeading>
             <RequirementEquipmentList
-              isEditable={requirementEquipmentValuesEditable}
+              isEditable={isEditable}
               startDate={inspectionStartDate}
               onEquipmentChanged={update}
               equipment={equipment}
               executionRequirement={procurementUnitRequirement}
             />
-            {requirementEquipmentValuesEditable && (
+            {isEditable && (
               <AddEquipment
                 operatorId={procurementUnitRequirement.operator.id}
                 equipment={equipment}
