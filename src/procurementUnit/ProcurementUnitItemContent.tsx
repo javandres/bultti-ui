@@ -156,6 +156,10 @@ const ProcurementUnitItemContent = observer(
     )
 
     const onSaveProcurementUnit = useCallback(async () => {
+      if (!hasAdminAccessRights) {
+        return
+      }
+
       let unitInput: ProcurementUnitEditInput = {
         medianAgeRequirement: numval(medianAgeValue, true),
       }
@@ -167,7 +171,7 @@ const ProcurementUnitItemContent = observer(
       })
 
       setIsUnitEditable(false)
-    }, [medianAgeValue, isCatalogueEditable])
+    }, [medianAgeValue, isCatalogueEditable, hasAdminAccessRights])
 
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
@@ -224,7 +228,7 @@ const ProcurementUnitItemContent = observer(
               })}
             </>
           )}
-          {!isUnitEditable ? (
+          {!hasAdminAccessRights || !isUnitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}
               item={{
