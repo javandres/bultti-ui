@@ -42,8 +42,8 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
   ({ refetchData, loading, inspection }) => {
     var isEditable = inspection?.status === InspectionStatus.Draft
 
-    var [season] = useStateValue('globalSeason')
-    var [operator] = useStateValue('globalOperator')
+    var [globalSeason] = useStateValue('globalSeason')
+    var [globalOperator] = useStateValue('globalOperator')
 
     let isUpdating = useRef(false)
     let inspectionType = inspection.inspectionType
@@ -82,16 +82,19 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
     let navigate = useNavigate()
 
     useEffect(() => {
-      if (!inspection || !operatorIsValid(operator) || !seasonIsValid(season)) {
+      if (!inspection || !operatorIsValid(globalOperator) || !seasonIsValid(globalSeason)) {
         return
       }
 
-      if (inspection.operatorId !== operator.operatorId || inspection.seasonId !== season.id) {
+      if (
+        inspection.operatorId !== globalOperator.operatorId ||
+        inspection.seasonId !== globalSeason.id
+      ) {
         navigate.push(
           `/${getInspectionTypeStrings(inspection.inspectionType).path}-inspection/edit`
         )
       }
-    }, [inspection, operator, season, navigate])
+    }, [inspection, globalOperator, globalSeason, navigate])
 
     let hasErrors = inspection?.inspectionErrors?.length !== 0
 

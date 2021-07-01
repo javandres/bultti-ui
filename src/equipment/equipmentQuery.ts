@@ -100,9 +100,9 @@ export const addBatchEquipmentMutation = gql`
   ${EquipmentFragment}
 `
 
-export const updateCatalogueEquipmentDataMutation = gql`
-  mutation updateEquipmentInCatalogue($catalogueId: String!) {
-    updateEquipmentInCatalogue(catalogueId: $catalogueId) {
+export const refreshEquipmentInCatalogueMutation = gql`
+  mutation refreshEquipmentInCatalogue($catalogueId: String!) {
+    refreshEquipmentInCatalogue(catalogueId: $catalogueId) {
       id
       equipmentQuotas {
         id

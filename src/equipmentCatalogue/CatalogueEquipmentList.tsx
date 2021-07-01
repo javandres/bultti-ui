@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useMutationData } from '../util/useMutationData'
 import {
   removeEquipmentMutation,
-  updateCatalogueEquipmentDataMutation,
+  refreshEquipmentInCatalogueMutation,
   updateEquipmentCatalogueQuotaMutation,
 } from '../equipment/equipmentQuery'
 import { EquipmentWithQuota } from '../equipment/equipmentUtils'
@@ -19,7 +19,7 @@ export type PropTypes = {
   operatorId: number
   startDate: Date
   onEquipmentChanged: () => unknown
-  equipmentEditable: boolean
+  isCatalogueEditable: boolean
 }
 
 export const equipmentColumnLabels = {
@@ -43,7 +43,7 @@ export const groupedEquipmentColumnLabels = {
 
 const CatalogueEquipmentList: React.FC<PropTypes> = observer(
   ({
-    equipmentEditable,
+    isCatalogueEditable,
     equipment,
     catalogueId,
     operatorId,
@@ -54,7 +54,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     let [execUpdateEquipment] = useMutationData(updateEquipmentCatalogueQuotaMutation)
 
     let [execUpdateEquipmentData, { loading: equipmentUpdateLoading }] = useMutationData(
-      updateCatalogueEquipmentDataMutation
+      refreshEquipmentInCatalogueMutation
     )
 
     let updateEquipment = useCallback(
@@ -100,12 +100,12 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
       <>
         <EquipmentList
           equipment={equipment}
-          updateEquipment={equipmentEditable ? updateEquipment : undefined}
-          removeEquipment={equipmentEditable ? removeEquipment : undefined}
+          updateEquipment={isCatalogueEditable ? updateEquipment : undefined}
+          removeEquipment={isCatalogueEditable ? removeEquipment : undefined}
           startDate={startDate}
           columnLabels={equipmentColumnLabels}
           groupedColumnLabels={groupedEquipmentColumnLabels}
-          editableValues={equipmentEditable ? ['percentageQuota'] : undefined}
+          editableValues={isCatalogueEditable ? ['percentageQuota'] : undefined}
         />
         <FlexRow
           style={{

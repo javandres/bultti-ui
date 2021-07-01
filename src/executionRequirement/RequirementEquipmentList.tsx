@@ -11,6 +11,7 @@ import { MessageView } from '../common/components/Messages'
 import { getDateObject } from '../util/formatDate'
 import { text } from '../util/translate'
 import { PlannedUnitExecutionRequirement } from '../schema-types'
+import { useHasAdminAccessRights } from '../util/userRoles'
 
 export type PropTypes = {
   equipment: EquipmentWithQuota[]
@@ -48,9 +49,11 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
     let [execRemoveEquipment] = useMutationData(removeRequirementEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentRequirementQuotaMutation)
 
+    let isAdmin = useHasAdminAccessRights()
+
     let updateEquipmentData = useCallback(
       async (updates: EquipmentUpdate[]) => {
-        if (isEditable) {
+        if (isEditable && isAdmin) {
           await Promise.all(
             updates.map((update) =>
               execUpdateEquipment({
@@ -62,7 +65,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
           await onEquipmentChanged()
         }
       },
-      [execUpdateEquipment, onEquipmentChanged, isEditable]
+      [execUpdateEquipment, onEquipmentChanged, isEditable, isAdmin]
     )
 
     const removeEquipment = useCallback(
@@ -98,7 +101,9 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}
-        editableValues={!isEditable ? undefined : ['percentageQuota', 'meterRequirement']}
+        editableValues={
+          isEditable && isAdmin ? ['percentageQuota', 'meterRequirement'] : undefined
+        }
       />
     ) : (
       <MessageView>Suoritevaatimukseen ei ole liitetty ajoneuvoja.</MessageView>

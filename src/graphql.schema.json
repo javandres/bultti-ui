@@ -11586,7 +11586,7 @@
             "deprecationReason": null
           },
           {
-            "name": "updateEquipmentInCatalogue",
+            "name": "refreshEquipmentInCatalogue",
             "description": null,
             "args": [
               {

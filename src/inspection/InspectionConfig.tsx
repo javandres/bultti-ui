@@ -16,7 +16,8 @@ import { Text, text } from '../util/translate'
 import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
 import { addDays, max, parseISO } from 'date-fns'
-import { isPostInspection } from './inspectionUtils'
+import { isPostInspection, useCanEditInspection } from './inspectionUtils'
+import { useStateValue } from '../state/useAppState'
 
 const InspectionConfigView = styled(PageSection)`
   margin: 1rem 0 0;
@@ -35,6 +36,12 @@ export type PropTypes = {
 }
 
 const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection }) => {
+  let [globalOperator] = useStateValue('globalOperator')
+  let canEditInspection = useCanEditInspection({
+    inspectionType: inspection.inspectionType,
+    operatorId: globalOperator.id,
+  })
+
   let initialInspectionInputValues = useMemo(() => {
     let minStartDate = parseISO(inspection.minStartDate)
 
@@ -101,6 +108,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           <FlexRow>
             <FormColumn>
               <Input
+                disabled={!canEditInspection}
                 value={pendingInspectionInputValues.name || ''}
                 label={text('inspection_inspectionName')}
                 onChange={(value: string) => {

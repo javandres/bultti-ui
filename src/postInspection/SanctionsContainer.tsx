@@ -24,6 +24,7 @@ import { DEBUG, DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
 import { ValueOf } from '../type/common'
 import { useNavigate } from '../util/urlValue'
+import { useHasAdminAccessRights } from '../util/userRoles'
 
 const PostInspectionSanctionsView = styled.div`
   min-height: 100%;
@@ -157,6 +158,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
+
+  let canAbandonSanctions = useHasAdminAccessRights()
 
   let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
     sanctionsQuery,
@@ -351,13 +354,15 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   return (
     <PostInspectionSanctionsView>
       <FunctionsRow>
-        <Button
-          loading={abandonSanctionsLoading}
-          buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-          size={ButtonSize.SMALL}
-          onClick={onAbandonSanctions}>
-          <Text>inspection_actions_abandonSanctions</Text>
-        </Button>
+        {canAbandonSanctions && (
+          <Button
+            loading={abandonSanctionsLoading}
+            buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+            size={ButtonSize.SMALL}
+            onClick={onAbandonSanctions}>
+            <Text>inspection_actions_abandonSanctions</Text>
+          </Button>
+        )}
         {DEBUG && (
           <Button
             loading={devLoadingSanctions}
