@@ -954,7 +954,7 @@ export type Mutation = {
   updateEquipmentCatalogue: EquipmentCatalogue
   addEquipmentToCatalogue?: Maybe<EquipmentCatalogue>
   batchAddToEquipmentCatalogue?: Maybe<EquipmentCatalogue>
-  updateEquipmentInCatalogue: EquipmentCatalogue
+  refreshEquipmentInCatalogue: EquipmentCatalogue
   removeEquipmentFromCatalogue?: Maybe<EquipmentCatalogue>
   removeAllEquipmentFromCatalogue: EquipmentCatalogue
   removeEquipmentCatalogue: Scalars['Boolean']
@@ -1057,7 +1057,7 @@ export type MutationBatchAddToEquipmentCatalogueArgs = {
   catalogueId: Scalars['String']
 }
 
-export type MutationUpdateEquipmentInCatalogueArgs = {
+export type MutationRefreshEquipmentInCatalogueArgs = {
   catalogueId: Scalars['String']
 }
 

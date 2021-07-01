@@ -29,6 +29,7 @@ import ValueDisplay from '../common/components/ValueDisplay'
 import { Button } from '../common/components/buttons/Button'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { useNavigate } from '../util/urlValue'
+import { useHasAdminAccessRights } from '../util/userRoles'
 
 const procurementUnitLabels = {
   medianAgeRequirement: text('procurementUnit_ageRequirement'),
@@ -59,12 +60,13 @@ type ContentPropTypes = {
   startDate: string
   endDate: string
   procurementUnitId: string
-  catalogueEditable: boolean
+  isCatalogueEditable: boolean
   displayedContractUnitId?: string
   requirementsEditable: boolean
   isVisible: boolean
   catalogueInvalid: boolean
   requirementsInvalid: boolean
+  isOnlyActiveCatalogueVisible: boolean
 }
 
 const ProcurementUnitItemContent = observer(
@@ -73,18 +75,21 @@ const ProcurementUnitItemContent = observer(
     startDate,
     endDate,
     procurementUnitId,
-    catalogueEditable,
+    isCatalogueEditable,
     displayedContractUnitId,
     requirementsEditable,
     isVisible,
     catalogueInvalid,
     requirementsInvalid,
+    isOnlyActiveCatalogueVisible,
   }: ContentPropTypes) => {
     let unitQueryVariables = {
       procurementUnitId,
       startDate,
       endDate,
     }
+
+    let hasAdminAccessRights = useHasAdminAccessRights()
 
     // Get the operating units for the selected operator.
     const { data: procurementUnit, loading, refetch } =
@@ -117,28 +122,28 @@ const ProcurementUnitItemContent = observer(
     const catalogues: EquipmentCatalogueType[] = useMemo(() => {
       let unitCatalogues = procurementUnit?.equipmentCatalogues || []
 
-      return catalogueEditable
-        ? unitCatalogues
-        : unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
-    }, [procurementUnit, catalogueEditable, startDate])
+      return isOnlyActiveCatalogueVisible
+        ? unitCatalogues.filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
+        : unitCatalogues
+    }, [procurementUnit, isOnlyActiveCatalogueVisible, startDate])
 
     let hasEquipment = catalogues
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
       .some((cat) => cat.equipmentQuotas?.length !== 0)
 
     let [medianAgeValue, setMedianAgeValue] = useState('')
-    let [unitEditable, setUnitEditable] = useState(false)
+    let [isUnitEditable, setIsUnitEditable] = useState(false)
 
     let onEditProcurementUnit = useCallback(() => {
-      if (!unitEditable) {
+      if (!isUnitEditable) {
         setMedianAgeValue((procurementUnit?.medianAgeRequirement || 0) + '')
       }
 
-      setUnitEditable((cur) => !cur)
-    }, [unitEditable, procurementUnit])
+      setIsUnitEditable((cur) => !cur)
+    }, [isUnitEditable, procurementUnit])
 
     let onCancelEdit = useCallback(() => {
-      setUnitEditable(false)
+      setIsUnitEditable(false)
     }, [])
 
     let onChangeProcurementUnit = useCallback(
@@ -161,8 +166,8 @@ const ProcurementUnitItemContent = observer(
         },
       })
 
-      setUnitEditable(false)
-    }, [medianAgeValue, catalogueEditable])
+      setIsUnitEditable(false)
+    }, [medianAgeValue, isCatalogueEditable])
 
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
@@ -219,7 +224,7 @@ const ProcurementUnitItemContent = observer(
               })}
             </>
           )}
-          {!unitEditable ? (
+          {!isUnitEditable ? (
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}
               item={{
@@ -227,11 +232,13 @@ const ProcurementUnitItemContent = observer(
                 calculatedMedianAgeRequirement: calcMedianAgeRequirement,
               }}
               labels={procurementUnitLabels}>
-              <Button
-                style={{ marginLeft: 'auto', marginTop: 'auto' }}
-                onClick={onEditProcurementUnit}>
-                <Text>edit</Text>
-              </Button>
+              {hasAdminAccessRights && (
+                <Button
+                  style={{ marginLeft: 'auto', marginTop: 'auto' }}
+                  onClick={onEditProcurementUnit}>
+                  <Text>edit</Text>
+                </Button>
+              )}
             </ValueDisplay>
           ) : (
             <ItemForm
@@ -278,7 +285,7 @@ const ProcurementUnitItemContent = observer(
                       catalogue={catalogue}
                       operatorId={procurementUnit.operatorId}
                       onCatalogueChanged={updateViewData}
-                      editable={catalogueEditable}
+                      isCatalogueEditable={isCatalogueEditable}
                     />
                   </ExpandableSection>
                 )
@@ -288,7 +295,7 @@ const ProcurementUnitItemContent = observer(
                   <Text>procurementUnit_noCatalogueForUnit</Text>
                 </MessageView>
               )}
-              {catalogueEditable && (
+              {isCatalogueEditable && (
                 <EditEquipmentCatalogue
                   onChange={updateViewData}
                   procurementUnit={procurementUnit}

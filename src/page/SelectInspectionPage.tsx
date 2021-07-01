@@ -1,6 +1,7 @@
 import React from 'react'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
+import { Text } from '../util/translate'
 import { useStateValue } from '../state/useAppState'
 import { Inspection, InspectionType } from '../schema-types'
 import SelectInspection from '../inspection/SelectInspection'
@@ -38,7 +39,9 @@ const SelectInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) 
   return (
     <Page>
       <PageTitle loading={loading} onRefresh={refetch}>
-        Valitse {typeStrings.prefixLC}tarkastus muokattavaksi
+        <Text keyValueMap={{ prefix: typeStrings.prefixLC }}>
+          inspectionPage_createNewInspection
+        </Text>
       </PageTitle>
       <PageContainer>
         <SelectInspection

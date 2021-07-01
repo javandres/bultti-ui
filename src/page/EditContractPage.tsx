@@ -7,7 +7,7 @@ import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
 import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
+import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page, PageContainer } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
@@ -28,7 +28,12 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   let { contractId = '' } = useParams<{ contractId?: string }>()
 
   let [globalOperator] = useStateValue('globalOperator')
-  let hasOperatorAccess = useHasOperatorUserAccessRights(globalOperator?.id)
+
+  let hasAccessRights = useHasAccessRights({
+    allowedRoles: 'all',
+    operatorId: globalOperator?.id,
+  })
+
   let hasAdminAccessRights = useHasAdminAccessRights()
   let isNew = contractId === 'new'
 
@@ -49,7 +54,7 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
     }
   }, [contractId, contract, loading, history])
 
-  if (!hasOperatorAccess) {
+  if (!hasAccessRights) {
     return <Redirect to="/contract" />
   }
 

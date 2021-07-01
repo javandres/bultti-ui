@@ -5,12 +5,17 @@ import InspectionsList from '../inspection/InspectionsList'
 import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/buttons/Button'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { getInspectionTypeStrings, useFetchInspections } from '../inspection/inspectionUtils'
+import {
+  getInspectionTypeStrings,
+  useCanEditInspection,
+  useFetchInspections,
+} from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { InspectionType } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
+import { useStateValue } from '../state/useAppState'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -19,6 +24,13 @@ type PropTypes = {
 
 const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
   let [{ operator, inspections }, loading, refetch] = useFetchInspections(inspectionType)
+
+  var [globalOperator] = useStateValue('globalOperator')
+
+  let canCreateInspection = useCanEditInspection({
+    inspectionType,
+    operatorId: globalOperator?.id,
+  })
 
   let typeStrings = getInspectionTypeStrings(inspectionType)
   let navigate = useNavigate()
@@ -29,10 +41,12 @@ const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
         loading={loading}
         onRefresh={refetch}
         headerButtons={
-          <Button onClick={() => navigate.push(`${typeStrings.path}-inspection/edit`)}>
-            <Plus fill="white" width="1rem" height="1rem" />{' '}
-            <span>Uusi {typeStrings.prefix}tarkastus</span>
-          </Button>
+          canCreateInspection ? (
+            <Button onClick={() => navigate.push(`${typeStrings.path}-inspection/edit`)}>
+              <Plus fill="white" width="1rem" height="1rem" />{' '}
+              <span>Uusi {typeStrings.prefix}tarkastus</span>
+            </Button>
+          ) : undefined
         }>
         {typeStrings.prefix}tarkastukset
       </PageTitle>
