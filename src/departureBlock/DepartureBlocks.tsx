@@ -75,8 +75,6 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
     [fetchedDepartureBlocks, departureBlocks]
   )
 
-  // TODO: Localization
-
   return (
     <ExpandableSection
       error={!isValid}
