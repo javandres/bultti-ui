@@ -18,8 +18,6 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
   const errorLink = onError(({ graphQLErrors, networkError, operation }) => {
     let authenticationError = false
 
-    console.log(graphQLErrors)
-
     if (graphQLErrors) {
       graphQLErrors.forEach((err) => {
         let { message, extensions } = err
