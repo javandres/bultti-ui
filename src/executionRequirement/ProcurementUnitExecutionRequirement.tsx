@@ -29,6 +29,7 @@ import { RequirementsTableLayout } from './executionRequirementUtils'
 import { text, Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
 import PlannedExecutionStats from './PlannedExecutionStats'
+import { useHasAdminAccessRights } from '../util/userRoles'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
