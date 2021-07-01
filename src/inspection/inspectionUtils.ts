@@ -240,30 +240,25 @@ export function isPostInspection(inspection: unknown): inspection is PostInspect
 }
 
 export function useCanOpenInspection({
-  inspection,
+  inspectionType,
+  inspectionStatus,
   operatorId,
-  isInspectionLoading = false,
 }: {
-  inspection: Inspection
+  inspectionType: InspectionType
+  inspectionStatus?: InspectionStatus
   operatorId: number
-  isInspectionLoading?: boolean
 }): boolean {
   const [user] = useStateValue('user')
 
-  // Inspection was not found after loading: user can't open it
-  if (!inspection || (!inspection && !isInspectionLoading)) {
-    return false
-  }
-
-  let allowedRoles: UserRole[] = []
-  if (inspection.status === InspectionStatus.Draft) {
-    if (isPreInspection(inspection)) {
+  let allowedRoles: 'all' | UserRole[] = []
+  if (inspectionStatus === InspectionStatus.Draft) {
+    if (inspectionType === InspectionType.Pre) {
       allowedRoles = [UserRole.Admin, UserRole.Operator]
     } else {
       allowedRoles = [UserRole.Admin]
     }
   } else {
-    allowedRoles = [UserRole.Admin, UserRole.Hsl, UserRole.Operator]
+    allowedRoles = 'all'
   }
 
   return hasAccessRights({
@@ -274,16 +269,17 @@ export function useCanOpenInspection({
 }
 
 export function useCanEditInspection({
-  inspection,
+  inspectionType,
   operatorId,
 }: {
-  inspection: Inspection
-  operatorId: number
+  inspectionType: InspectionType
+  operatorId?: number
 }): boolean {
   const [user] = useStateValue('user')
 
   let allowedRoles: UserRole[] = []
-  if (isPreInspection(inspection)) {
+
+  if (inspectionType === InspectionType.Pre) {
     allowedRoles = [UserRole.Admin, UserRole.Operator]
   } else {
     allowedRoles = [UserRole.Admin]

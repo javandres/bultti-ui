@@ -7,6 +7,7 @@ import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionTypeStrings,
+  useCanEditInspection,
   useCreateInspection,
   useNavigateToInspection,
 } from './inspectionUtils'
@@ -97,15 +98,9 @@ const SelectInspection: React.FC<PropTypes> = observer(
     var [globalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
 
-    let allowedRoles: UserRole[] = []
-    if (inspectionType === InspectionType.Pre) {
-      allowedRoles = [UserRole.Admin, UserRole.Operator]
-    } else {
-      allowedRoles = [UserRole.Admin]
-    }
-    let canCreateInspection = useHasAccessRights({
-      allowedRoles,
-      operatorId: globalOperator?.id,
+    let canCreateInspection = useCanEditInspection({
+      inspectionType,
+      operatorId: globalOperator.operatorId,
     })
 
     var navigateToInspection = useNavigateToInspection(inspectionType)

@@ -5,7 +5,7 @@ import { Redirect, RouteChildrenProps, useHistory, useParams } from 'react-route
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
-import { Contract, UserRole } from '../schema-types'
+import { Contract } from '../schema-types'
 import { useStateValue } from '../state/useAppState'
 import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
 import { LoadingDisplay } from '../common/components/Loading'
@@ -28,10 +28,12 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   let { contractId = '' } = useParams<{ contractId?: string }>()
 
   let [globalOperator] = useStateValue('globalOperator')
+
   let hasAccessRights = useHasAccessRights({
-    allowedRoles: [UserRole.Admin, UserRole.Hsl, UserRole.Operator],
+    allowedRoles: 'all',
     operatorId: globalOperator?.id,
   })
+
   let hasAdminAccessRights = useHasAdminAccessRights()
   let isNew = contractId === 'new'
 

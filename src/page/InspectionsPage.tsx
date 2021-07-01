@@ -5,14 +5,17 @@ import InspectionsList from '../inspection/InspectionsList'
 import { Plus } from '../common/icon/Plus'
 import { Button } from '../common/components/buttons/Button'
 import { MessageContainer, MessageView } from '../common/components/Messages'
-import { getInspectionTypeStrings, useFetchInspections } from '../inspection/inspectionUtils'
+import {
+  getInspectionTypeStrings,
+  useCanEditInspection,
+  useFetchInspections,
+} from '../inspection/inspectionUtils'
 import { PageTitle } from '../common/components/PageTitle'
 import { operatorIsValid } from '../common/input/SelectOperator'
-import { InspectionType, UserRole } from '../schema-types'
+import { InspectionType } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
 import { useStateValue } from '../state/useAppState'
-import { useHasAccessRights } from '../util/userRoles'
 
 type PropTypes = {
   children?: React.ReactNode
@@ -24,14 +27,8 @@ const InspectionsPage: React.FC<PropTypes> = observer(({ inspectionType }) => {
 
   var [globalOperator] = useStateValue('globalOperator')
 
-  let allowedRoles: UserRole[] = []
-  if (inspectionType === InspectionType.Pre) {
-    allowedRoles = [UserRole.Admin, UserRole.Operator]
-  } else {
-    allowedRoles = [UserRole.Admin]
-  }
-  let canCreateInspection = useHasAccessRights({
-    allowedRoles,
+  let canCreateInspection = useCanEditInspection({
+    inspectionType,
     operatorId: globalOperator?.id,
   })
 

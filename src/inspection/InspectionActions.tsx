@@ -61,7 +61,7 @@ const InspectionActions = observer(
     let hasAdminAccessRights = useHasAdminAccessRights()
 
     let canEditInspection = useCanEditInspection({
-      inspection,
+      inspectionType: inspection.inspectionType,
       operatorId: globalOperator.id,
     })
 
@@ -180,14 +180,8 @@ const InspectionActions = observer(
       (inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Sanctionable)
 
-    let allowedRolesToSubmit: UserRole[] = []
-    if (inspection.inspectionType === InspectionType.Pre) {
-      allowedRolesToSubmit = [UserRole.Admin, UserRole.Operator]
-    } else {
-      allowedRolesToSubmit = [UserRole.Admin]
-    }
-    let canUserSubmit = useHasAccessRights({
-      allowedRoles: allowedRolesToSubmit,
+    let canUserSubmit = useCanEditInspection({
+      inspectionType: inspection.inspectionType,
       operatorId: inspection.operatorId,
     })
 

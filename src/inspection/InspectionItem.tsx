@@ -107,7 +107,7 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
 }) => {
   let [globalOperator] = useStateValue('globalOperator')
   let canEditInspection = useCanOpenInspection({
-    inspection,
+    inspectionType: inspection.inspectionType,
     operatorId: globalOperator.id,
   })
 

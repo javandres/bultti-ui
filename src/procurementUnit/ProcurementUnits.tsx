@@ -52,6 +52,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
         operatorId,
         allowedRoles: [UserRole.Admin, UserRole.Operator],
       })
+
     let showExecutionRequirements = !!inspection
 
     const [procurementUnitsExpanded, setProcurementUnitsExpanded] = useState(false)
