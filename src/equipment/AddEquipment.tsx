@@ -65,7 +65,6 @@ const AddEquipment: React.FC<PropTypes> = observer(
       { data: foundEquipment, loading: searchLoading, called: searchCalled, error },
     ] = useLazyQueryData<Equipment>(searchEquipmentQuery, {
       fetchPolicy: 'network-only',
-      errorPolicy: 'all',
     })
 
     let showError = useShowErrorNotification()
