@@ -16,11 +16,7 @@ import { Text, text } from '../util/translate'
 import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
 import { addDays, max, parseISO } from 'date-fns'
-import {
-  isPostInspection,
-  useCanEditInspection,
-  useCanOpenInspection,
-} from './inspectionUtils'
+import { isPostInspection, useCanEditInspection } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 
 const InspectionConfigView = styled(PageSection)`
@@ -42,7 +38,7 @@ export type PropTypes = {
 const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection }) => {
   let [globalOperator] = useStateValue('globalOperator')
   let canEditInspection = useCanEditInspection({
-    inspection,
+    inspectionType: inspection.inspectionType,
     operatorId: globalOperator.id,
   })
 
