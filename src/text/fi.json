@@ -151,6 +151,9 @@
   "userRelations_madeSanctionableBy": "Sanktioitavaksi",
   "userRelations_sanctionsAbandonedBy": "Sanktiointi peruttu",
 
+  "with_vehicleId": "kylkinumerolla",
+  "with_registryNr": "rekisterinumerolla",
+
   "catalogue_newCatalogue": "Luo uusi kalustoluettelo",
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
@@ -162,7 +165,7 @@
   "catalogue_removeEquipment": "Poista kalustoluettelo",
   "catalogue_addEquipment": "Lisää ajoneuvo",
   "catalogue_batchAddEquipment": "Lisää ajoneuvoja listalta",
-  "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa kylkinumerolla: ${vehicleId}, rekisterinumerolla: ${registryNumber}",
+  "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa ${searchType} ${searchValue}",
   "catalogue_findEquipment": "Hae kalustoa",
   "catalogue_equipmentNotFound": "Kalustoa ei löytynyt.",
   "catalogue_equipmentConfirmRemove": "Haluatko varmasti poistaa ajoneuvon?",

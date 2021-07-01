@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import { FlexRow } from '../common/components/common'
 import { Button, ButtonStyle } from '../common/components/buttons/Button'
@@ -16,6 +16,7 @@ import { text, Text } from '../util/translate'
 import { Equipment } from '../schema-types'
 import ValueDisplay from '../common/components/ValueDisplay'
 import { DEBUG } from '../constants'
+import { useShowErrorNotification } from '../util/useShowNotification'
 
 const AddEquipmentFormWrapper = styled.div`
   background: white;
@@ -61,10 +62,19 @@ const AddEquipment: React.FC<PropTypes> = observer(
 
     let [
       searchEquipment,
-      { data: foundEquipment, loading: searchLoading, called: searchCalled },
+      { data: foundEquipment, loading: searchLoading, called: searchCalled, error },
     ] = useLazyQueryData<Equipment>(searchEquipmentQuery, {
       fetchPolicy: 'network-only',
+      errorPolicy: 'all',
     })
+
+    let showError = useShowErrorNotification()
+
+    useEffect(() => {
+      if (error) {
+        showError(error.message)
+      }
+    }, [error, showError])
 
     let doSearch = useCallback(async () => {
       if (searchVehicleId || searchRegistryNr) {
@@ -219,8 +229,12 @@ const AddEquipment: React.FC<PropTypes> = observer(
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
               doneLabel={text('catalogue_findByVehicleIdAndRegistryNumber', {
-                vehicleId: searchVehicleId ? searchVehicleId : '-',
-                registryNumber: searchRegistryNr ? searchRegistryNr : '-',
+                searchType: searchVehicleId
+                  ? text('with_vehicleId')
+                  : searchRegistryNr
+                  ? text('with_registryNr')
+                  : '',
+                searchValue: searchVehicleId || searchRegistryNr,
               })}
               doneDisabled={!searchVehicleId && !searchRegistryNr}
               fields={[
