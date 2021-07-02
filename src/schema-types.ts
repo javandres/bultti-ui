@@ -1180,8 +1180,6 @@ export type MutationUpdateInspectionArgs = {
 }
 
 export type MutationSubmitInspectionArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
   inspectionId: Scalars['String']
 }
 
@@ -1661,13 +1659,8 @@ export type PostInspection = {
   inspectionType: InspectionType
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  version: Scalars['Int']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
-  minStartDate: Scalars['BulttiDate']
-  versionStackIdentifier?: Maybe<Scalars['String']>
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
@@ -1690,13 +1683,13 @@ export type PreInspection = {
   inspectionType: InspectionType
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  version: Scalars['Int']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
+  startDate: Scalars['BulttiDate']
+  endDate: Scalars['BulttiDate']
   minStartDate: Scalars['BulttiDate']
   versionStackIdentifier?: Maybe<Scalars['String']>
+  version: Scalars['Int']
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
@@ -1749,7 +1742,6 @@ export type ProcurementUnitRoute = {
 
 export type Query = {
   __typename?: 'Query'
-  executionRequirementsByOperator: Array<PlannedUnitExecutionRequirement>
   executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   executionSchemaStats?: Maybe<ExecutionSchemaStats>
   operator?: Maybe<Operator>
@@ -1759,8 +1751,6 @@ export type Query = {
   procurementUnit: ProcurementUnit
   procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
-  equipment: Array<Equipment>
-  equipmentByOperator: Array<Equipment>
   queryEquipmentFromSource?: Maybe<Equipment>
   equipmentCatalogue?: Maybe<EquipmentCatalogue>
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>
@@ -1814,15 +1804,10 @@ export type Query = {
   inspection: Inspection
   inspectionsByOperator: Array<Inspection>
   currentInspectionsByOperatorAndSeason: Array<Inspection>
-  allInspections: Array<Inspection>
   inspectionsTimeline: Array<InspectionTimelineItem>
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
   inspectionEquipmentDefectSanctions: SanctionsResponse
-}
-
-export type QueryExecutionRequirementsByOperatorArgs = {
-  operatorId: Scalars['Int']
 }
 
 export type QueryExecutionRequirementForProcurementUnitArgs = {
@@ -1860,10 +1845,6 @@ export type QueryProcurementUnitsByOperatorArgs = {
 
 export type QuerySingleEquipmentArgs = {
   equipmentId: Scalars['String']
-}
-
-export type QueryEquipmentByOperatorArgs = {
-  operatorId: Scalars['Int']
 }
 
 export type QueryQueryEquipmentFromSourceArgs = {
@@ -2130,10 +2111,6 @@ export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
   inspectionType: InspectionType
   seasonId: Scalars['String']
   operatorId: Scalars['Int']
-}
-
-export type QueryAllInspectionsArgs = {
-  inspectionType: InspectionType
 }
 
 export type QueryInspectionsTimelineArgs = {
