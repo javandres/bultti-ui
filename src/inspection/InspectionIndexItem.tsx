@@ -5,6 +5,7 @@ import { ArrowRight } from '../common/icon/ArrowRight'
 import { SubHeading } from '../common/components/Typography'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { Inspection } from '../schema-types'
+import { isPreInspection } from './inspectionUtils'
 
 const ContentRow = styled.div`
   display: flex;
@@ -100,7 +101,9 @@ export type PropTypes = {
 const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
   return (
     <InspectionListItem key={inspection.id} onClick={onClick} as={onClick ? 'button' : 'div'}>
-      <InspectionVersion>{inspection.version}</InspectionVersion>
+      {isPreInspection(inspection) && (
+        <InspectionVersion>{inspection.version}</InspectionVersion>
+      )}
       <InspectionContentWrapper>
         <ContentRow>
           {inspection.name ? (
@@ -110,10 +113,12 @@ const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
               {inspection.operator.operatorName} / {inspection.seasonId}
             </InspectionTitle>
           )}
-          <InspectionDates
-            startDate={inspection.startDate || ''}
-            endDate={inspection.endDate || ''}
-          />
+          {isPreInspection(inspection) && (
+            <InspectionDates
+              startDate={inspection.startDate || ''}
+              endDate={inspection.endDate || ''}
+            />
+          )}
         </ContentRow>
         {inspection.name && (
           <ContentRow>

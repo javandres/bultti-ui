@@ -29,7 +29,7 @@ import { RequirementsTableLayout } from './executionRequirementUtils'
 import { text, Text } from '../util/translate'
 import { useQueryData } from '../util/useQueryData'
 import PlannedExecutionStats from './PlannedExecutionStats'
-import { useHasAdminAccessRights } from '../util/userRoles'
+import { isPreInspection } from '../inspection/inspectionUtils'
 
 const ProcurementUnitExecutionRequirementView = styled.div<{ isInvalid: boolean }>`
   margin-bottom: 2rem;
@@ -181,7 +181,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     const inspectionStartDate = useMemo(
-      () => (inspection?.startDate ? parseISO(inspection.startDate) : new Date()),
+      () =>
+        !inspection
+          ? undefined
+          : isPreInspection(inspection)
+          ? parseISO(inspection.startDate)
+          : parseISO(inspection?.inspectionStartDate),
       [inspection]
     )
 
@@ -238,7 +243,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
           <PlannedExecutionStats executionRequirement={procurementUnitRequirement} />
         )}
         <LoadingDisplay loading={requirementsLoading} />
-        {procurementUnitRequirement ? (
+        {procurementUnitRequirement && inspectionStartDate ? (
           <>
             <SubHeading>
               <Text>executionRequirement_equipmentList</Text>
