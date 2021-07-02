@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import Input from '../common/input/Input'
-import { isEqual } from 'lodash'
 import { FormColumn } from '../common/components/form'
 import { Inspection, InspectionInput, InspectionStatus, InspectionType } from '../schema-types'
 import { MessageContainer, MessageView } from '../common/components/Messages'
@@ -15,8 +14,11 @@ import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
 import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
-import { addDays, max, parseISO } from 'date-fns'
-import { isPostInspection, useCanEditInspection } from './inspectionUtils'
+import {
+  didInspectionPeriodChange,
+  isPreInspection,
+  useCanEditInspection,
+} from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 
 const InspectionConfigView = styled(PageSection)`
@@ -42,30 +44,10 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     operatorId: globalOperator.id,
   })
 
-  let initialInspectionInputValues = useMemo(() => {
-    let minStartDate = parseISO(inspection.minStartDate)
-
-    let startDate = inspection.startDate ? parseISO(inspection.startDate) : minStartDate
-    startDate = max([startDate, minStartDate])
-
-    let endDate = inspection.endDate ? parseISO(inspection.endDate) : addDays(startDate, 1)
-    endDate = max([addDays(startDate, 1), endDate])
-
-    return {
-      inspectionType: inspection.inspectionType,
-      startDate: getDateString(startDate),
-      endDate: getDateString(endDate),
-      name: inspection.name || '',
-      inspectionDateId: isPostInspection(inspection) ? inspection.inspectionDateId : undefined,
-      inspectionStartDate: inspection.inspectionStartDate || '',
-      inspectionEndDate: inspection.inspectionEndDate || '',
-    }
-  }, [inspection])
-
   let [
     pendingInspectionInputValues,
     setPendingInspectionInputValues,
-  ] = useState<InspectionInput>(initialInspectionInputValues)
+  ] = useState<InspectionInput>({})
 
   let onUpdateValue = useCallback((name: string, value: unknown) => {
     setPendingInspectionInputValues((currentValues) => {
@@ -85,13 +67,26 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
   }, [])
 
   let onSave = useCallback(async () => {
-    await saveValues(pendingInspectionInputValues!)
-  }, [pendingInspectionInputValues])
+    if (
+      inspection.inspectionType === InspectionType.Pre &&
+      didInspectionPeriodChange(pendingInspectionInputValues, inspection) &&
+      !confirm(text('preInspection_confirmInspectionPeriodChange'))
+    ) {
+      return
+    }
 
-  let isDirty = useMemo(
-    () => !isEqual(initialInspectionInputValues, pendingInspectionInputValues),
-    [pendingInspectionInputValues, initialInspectionInputValues]
-  )
+    await saveValues(pendingInspectionInputValues!)
+    setPendingInspectionInputValues({})
+  }, [inspection, pendingInspectionInputValues])
+
+  let inspectionValues = useMemo(() => ({ ...inspection, ...pendingInspectionInputValues }), [
+    inspection,
+    pendingInspectionInputValues,
+  ])
+
+  let isDirty = useMemo(() => Object.keys(pendingInspectionInputValues).length !== 0, [
+    pendingInspectionInputValues,
+  ])
 
   useWatchDirtyForm(isDirty)
 
@@ -109,7 +104,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
             <FormColumn>
               <Input
                 disabled={!canEditInspection}
-                value={pendingInspectionInputValues.name || ''}
+                value={inspectionValues.name || ''}
                 label={text('inspection_inspectionName')}
                 onChange={(value: string) => {
                   onUpdateValue('name', value)
@@ -125,17 +120,17 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               inspectionType={inspection.inspectionType}
               inspectionSeason={inspection.season}
               isEditingDisabled={inspection.status !== InspectionStatus.Draft}
-              inspectionInput={pendingInspectionInputValues}
+              inspectionInput={inspectionValues}
               onChange={onChangeInspectionDate}
             />
           </FlexRow>
           <FieldLabel style={{ textTransform: 'uppercase' }}>
             <Text>inspection_selectProductionDate</Text>
           </FieldLabel>
-          {inspection.inspectionType === InspectionType.Pre && (
+          {isPreInspection(inspection) && (
             <ProductionDatePickers>
               <DatePicker
-                value={getDateString(pendingInspectionInputValues.startDate)}
+                value={getDateString(inspectionValues.startDate)}
                 minDate={inspection.minStartDate}
                 maxDate={inspection.season.endDate}
                 onChange={(dateString: string | null) => {
@@ -145,7 +140,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
                 disabled={inspection.status !== InspectionStatus.Draft}
               />
               <DatePicker
-                value={getDateString(pendingInspectionInputValues.endDate)}
+                value={getDateString(inspectionValues.endDate)}
                 maxDate={inspection.season.endDate}
                 onChange={(dateString: string | null) => {
                   onUpdateValue('endDate', dateString)
@@ -162,7 +157,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               </Button>
               <Button
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-                onClick={() => setPendingInspectionInputValues(initialInspectionInputValues)}>
+                onClick={() => setPendingInspectionInputValues({})}>
                 <Text>cancel</Text>
               </Button>
             </ActionsWrapper>
