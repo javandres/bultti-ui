@@ -61,9 +61,6 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
         ],
         update: (cache, mutationResult) => {
           if (didInspectionPeriodChange(pickGraphqlData(mutationResult.data), inspection)) {
-            // Apollo insists on keeping the departure blocks in the cache. Manipulating the cache
-            // here does not seems to work, but keeping it on the off-chance that it does.
-
             cache.writeQuery({
               query: departureBlocksQuery,
               variables: { inspectionId: inspection.id },
