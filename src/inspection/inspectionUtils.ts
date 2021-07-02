@@ -291,3 +291,19 @@ export function useCanEditInspection({
     operatorId,
   })
 }
+
+interface InspectionPeriodObj {
+  inspectionStartDate?: string | null
+  inspectionEndDate?: string | null
+}
+
+export function didInspectionPeriodChange(
+  inspectionA: InspectionPeriodObj,
+  inspectionB: InspectionPeriodObj
+) {
+  return (
+    inspectionA.inspectionStartDate &&
+    inspectionB.inspectionStartDate &&
+    inspectionA.inspectionStartDate !== inspectionB.inspectionStartDate
+  )
+}
