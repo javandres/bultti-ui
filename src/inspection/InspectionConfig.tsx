@@ -14,12 +14,7 @@ import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
 import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
-import { addDays, max, parseISO } from 'date-fns'
-import {
-  didInspectionPeriodChange,
-  isPostInspection,
-  useCanEditInspection,
-} from './inspectionUtils'
+import { didInspectionPeriodChange, useCanEditInspection } from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 
 const InspectionConfigView = styled(PageSection)`
@@ -44,26 +39,6 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     inspectionType: inspection.inspectionType,
     operatorId: globalOperator.id,
   })
-
-  let initialInspectionInputValues = useMemo(() => {
-    let minStartDate = parseISO(inspection.minStartDate)
-
-    let startDate = inspection.startDate ? parseISO(inspection.startDate) : minStartDate
-    startDate = max([startDate, minStartDate])
-
-    let endDate = inspection.endDate ? parseISO(inspection.endDate) : addDays(startDate, 1)
-    endDate = max([addDays(startDate, 1), endDate])
-
-    return {
-      inspectionType: inspection.inspectionType,
-      startDate: getDateString(startDate),
-      endDate: getDateString(endDate),
-      name: inspection.name || '',
-      inspectionDateId: isPostInspection(inspection) ? inspection.inspectionDateId : undefined,
-      inspectionStartDate: inspection.inspectionStartDate || '',
-      inspectionEndDate: inspection.inspectionEndDate || '',
-    }
-  }, [inspection])
 
   let [
     pendingInspectionInputValues,
