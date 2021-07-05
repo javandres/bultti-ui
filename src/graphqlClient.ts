@@ -75,10 +75,7 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
     typePolicies: {
       Query: {
         fields: {
-          currentPreInspectionsByOperatorAndSeason: {
-            merge: cacheMerge,
-          },
-          currentPostInspectionsByOperatorAndSeason: {
+          currentInspectionsByOperatorAndSeason: {
             merge: cacheMerge,
           },
           availableDayTypes: {

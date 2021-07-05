@@ -124,31 +124,33 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               onChange={onChangeInspectionDate}
             />
           </FlexRow>
-          <FieldLabel style={{ textTransform: 'uppercase' }}>
-            <Text>inspection_selectProductionDate</Text>
-          </FieldLabel>
           {isPreInspection(inspection) && (
-            <ProductionDatePickers>
-              <DatePicker
-                value={getDateString(inspectionValues.startDate)}
-                minDate={inspection.minStartDate}
-                maxDate={inspection.season.endDate}
-                onChange={(dateString: string | null) => {
-                  onUpdateValue('startDate', dateString)
-                }}
-                acceptableDayTypes={['Ma']}
-                disabled={inspection.status !== InspectionStatus.Draft}
-              />
-              <DatePicker
-                value={getDateString(inspectionValues.endDate)}
-                maxDate={inspection.season.endDate}
-                onChange={(dateString: string | null) => {
-                  onUpdateValue('endDate', dateString)
-                }}
-                acceptableDayTypes={['Su']}
-                disabled={inspection.status !== InspectionStatus.Draft}
-              />
-            </ProductionDatePickers>
+            <>
+              <FieldLabel style={{ textTransform: 'uppercase' }}>
+                <Text>inspection_selectProductionDate</Text>
+              </FieldLabel>
+              <ProductionDatePickers>
+                <DatePicker
+                  value={getDateString(inspectionValues.startDate)}
+                  minDate={inspection.minStartDate}
+                  maxDate={inspection.season.endDate}
+                  onChange={(dateString: string | null) => {
+                    onUpdateValue('startDate', dateString)
+                  }}
+                  acceptableDayTypes={['Ma']}
+                  disabled={inspection.status !== InspectionStatus.Draft}
+                />
+                <DatePicker
+                  value={getDateString(inspectionValues.endDate)}
+                  maxDate={inspection.season.endDate}
+                  onChange={(dateString: string | null) => {
+                    onUpdateValue('endDate', dateString)
+                  }}
+                  acceptableDayTypes={['Su']}
+                  disabled={inspection.status !== InspectionStatus.Draft}
+                />
+              </ProductionDatePickers>
+            </>
           )}
           <FlexRow>
             <ActionsWrapper>
