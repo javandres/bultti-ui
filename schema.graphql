@@ -633,7 +633,7 @@ type InspectionStatusUpdate {
   inspectionStartDate: BulttiDate!
   startDate: BulttiDate
   status: InspectionStatus!
-  version: Int!
+  version: Int
 }
 
 type InspectionTimelineItem {
@@ -642,7 +642,7 @@ type InspectionTimelineItem {
   inspectionStartDate: BulttiDate!
   operatorName: String!
   seasonId: String!
-  version: Int!
+  version: Int
 }
 
 type InspectionUserRelation {

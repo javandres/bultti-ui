@@ -778,7 +778,7 @@ export type InspectionStatusUpdate = {
   inspectionEndDate: Scalars['BulttiDate']
   startDate?: Maybe<Scalars['BulttiDate']>
   endDate?: Maybe<Scalars['BulttiDate']>
-  version: Scalars['Int']
+  version?: Maybe<Scalars['Int']>
 }
 
 export type InspectionTimelineItem = {
@@ -788,7 +788,7 @@ export type InspectionTimelineItem = {
   seasonId: Scalars['String']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  version: Scalars['Int']
+  version?: Maybe<Scalars['Int']>
 }
 
 export enum InspectionType {

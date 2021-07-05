@@ -141,7 +141,7 @@ const InspectionsList: React.FC<PropTypes> = ({
   seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
 
   const seasonGroups = groupBy(
-    orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
+    orderBy(inspections, ['inspectionStartDate'], ['desc', 'desc']),
     'seasonId'
   )
 
