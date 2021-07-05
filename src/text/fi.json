@@ -4,6 +4,7 @@
   "endDate": "Loppupäivä",
   "validityPeriod": "Voimassaoloaika",
   "login": "Kirjaudu sisään",
+  "register": "Luo tili",
   "logout": "Kirjaudu ulos",
   "login_failed": "Kirjautuminen epäonnistui. Ole yhteydessä HSL:n suuntaan ongelman jatkuessa.",
   "update": "Päivitä",
