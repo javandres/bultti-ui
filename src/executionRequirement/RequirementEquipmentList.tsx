@@ -102,7 +102,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}
         editableValues={
-          isEditable && isAdmin ? ['percentageQuota', 'meterRequirement'] : undefined
+          isEditable && isAdmin ? ['percentageQuota', 'kilometerRequirement'] : undefined
         }
       />
     ) : (

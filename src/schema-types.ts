@@ -601,7 +601,7 @@ export type ExecutionRequirementQuota = {
   __typename?: 'ExecutionRequirementQuota'
   id: Scalars['ID']
   percentageQuota: Scalars['Float']
-  meterRequirement: Scalars['Float']
+  kilometerRequirement?: Maybe<Scalars['Float']>
   equipmentId: Scalars['String']
   executionRequirementId: Scalars['String']
   equipment: Equipment
@@ -1094,7 +1094,7 @@ export type MutationSaveInspectionDepartureBlocksArgs = {
 }
 
 export type MutationUpdateEquipmentRequirementQuotaArgs = {
-  meters?: Maybe<Scalars['Float']>
+  kilometers?: Maybe<Scalars['Float']>
   quota?: Maybe<Scalars['Float']>
   quotaId: Scalars['String']
 }
@@ -1346,9 +1346,7 @@ export type ObservedEquipmentTypeReportData = {
 export type ObservedExecutionRequirement = {
   __typename?: 'ObservedExecutionRequirement'
   id: Scalars['ID']
-  metersRequired?: Maybe<Scalars['Float']>
   kilometersRequired?: Maybe<Scalars['Float']>
-  metersObserved?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
   area: OperatingArea
   areaId: Scalars['Int']
@@ -1585,9 +1583,7 @@ export type OverAgeDeparturesReportData = {
 export type PlannedAreaExecutionRequirement = {
   __typename?: 'PlannedAreaExecutionRequirement'
   id: Scalars['ID']
-  metersRequired?: Maybe<Scalars['Float']>
   kilometersRequired?: Maybe<Scalars['Float']>
-  metersObserved?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
@@ -1621,9 +1617,7 @@ export type PlannedEmissionClassRequirement = {
 export type PlannedExecutionRequirement = {
   __typename?: 'PlannedExecutionRequirement'
   id: Scalars['ID']
-  metersRequired?: Maybe<Scalars['Float']>
   kilometersRequired?: Maybe<Scalars['Float']>
-  metersObserved?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
@@ -1633,9 +1627,7 @@ export type PlannedExecutionRequirement = {
 export type PlannedUnitExecutionRequirement = {
   __typename?: 'PlannedUnitExecutionRequirement'
   id: Scalars['ID']
-  metersRequired?: Maybe<Scalars['Float']>
   kilometersRequired?: Maybe<Scalars['Float']>
-  metersObserved?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
@@ -1749,7 +1741,6 @@ export type ProcurementUnitRoute = {
 
 export type Query = {
   __typename?: 'Query'
-  executionRequirementsByOperator: Array<PlannedUnitExecutionRequirement>
   executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   executionSchemaStats?: Maybe<ExecutionSchemaStats>
   operator?: Maybe<Operator>
@@ -1759,8 +1750,6 @@ export type Query = {
   procurementUnit: ProcurementUnit
   procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
-  equipment: Array<Equipment>
-  equipmentByOperator: Array<Equipment>
   queryEquipmentFromSource?: Maybe<Equipment>
   equipmentCatalogue?: Maybe<EquipmentCatalogue>
   equipmentCatalogueByOperator: Array<EquipmentCatalogue>
@@ -1814,15 +1803,10 @@ export type Query = {
   inspection: Inspection
   inspectionsByOperator: Array<Inspection>
   currentInspectionsByOperatorAndSeason: Array<Inspection>
-  allInspections: Array<Inspection>
   inspectionsTimeline: Array<InspectionTimelineItem>
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
   inspectionEquipmentDefectSanctions: SanctionsResponse
-}
-
-export type QueryExecutionRequirementsByOperatorArgs = {
-  operatorId: Scalars['Int']
 }
 
 export type QueryExecutionRequirementForProcurementUnitArgs = {
@@ -1860,10 +1844,6 @@ export type QueryProcurementUnitsByOperatorArgs = {
 
 export type QuerySingleEquipmentArgs = {
   equipmentId: Scalars['String']
-}
-
-export type QueryEquipmentByOperatorArgs = {
-  operatorId: Scalars['Int']
 }
 
 export type QueryQueryEquipmentFromSourceArgs = {
@@ -2130,10 +2110,6 @@ export type QueryCurrentInspectionsByOperatorAndSeasonArgs = {
   inspectionType: InspectionType
   seasonId: Scalars['String']
   operatorId: Scalars['Int']
-}
-
-export type QueryAllInspectionsArgs = {
-  inspectionType: InspectionType
 }
 
 export type QueryInspectionsTimelineArgs = {
