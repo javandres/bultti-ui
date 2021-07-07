@@ -779,7 +779,7 @@ export type InspectionStatusUpdate = {
   inspectionEndDate: Scalars['BulttiDate']
   startDate?: Maybe<Scalars['BulttiDate']>
   endDate?: Maybe<Scalars['BulttiDate']>
-  version: Scalars['Int']
+  version?: Maybe<Scalars['Int']>
 }
 
 export type InspectionTimelineItem = {
@@ -789,7 +789,7 @@ export type InspectionTimelineItem = {
   seasonId: Scalars['String']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  version: Scalars['Int']
+  version?: Maybe<Scalars['Int']>
 }
 
 export enum InspectionType {
@@ -1181,8 +1181,6 @@ export type MutationUpdateInspectionArgs = {
 }
 
 export type MutationSubmitInspectionArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
   inspectionId: Scalars['String']
 }
 
@@ -1655,13 +1653,8 @@ export type PostInspection = {
   inspectionType: InspectionType
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  version: Scalars['Int']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
-  minStartDate: Scalars['BulttiDate']
-  versionStackIdentifier?: Maybe<Scalars['String']>
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
@@ -1684,13 +1677,13 @@ export type PreInspection = {
   inspectionType: InspectionType
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
-  version: Scalars['Int']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
+  startDate: Scalars['BulttiDate']
+  endDate: Scalars['BulttiDate']
   minStartDate: Scalars['BulttiDate']
   versionStackIdentifier?: Maybe<Scalars['String']>
+  version: Scalars['Int']
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']

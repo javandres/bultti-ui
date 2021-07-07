@@ -14,7 +14,11 @@ import { getDateString } from '../util/formatDate'
 import { Text, text } from '../util/translate'
 import { useWatchDirtyForm } from '../util/promptUnsavedChanges'
 import DatePicker from '../common/input/DatePicker'
-import { didInspectionPeriodChange, useCanEditInspection } from './inspectionUtils'
+import {
+  didInspectionPeriodChange,
+  isPreInspection,
+  useCanEditInspection,
+} from './inspectionUtils'
 import { useStateValue } from '../state/useAppState'
 
 const InspectionConfigView = styled(PageSection)`
@@ -120,30 +124,34 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               onChange={onChangeInspectionDate}
             />
           </FlexRow>
-          <FieldLabel style={{ textTransform: 'uppercase' }}>
-            <Text>inspection_selectProductionDate</Text>
-          </FieldLabel>
-          <ProductionDatePickers>
-            <DatePicker
-              value={getDateString(inspectionValues.startDate)}
-              minDate={inspection.minStartDate}
-              maxDate={inspection.season.endDate}
-              onChange={(dateString: string | null) => {
-                onUpdateValue('startDate', dateString)
-              }}
-              acceptableDayTypes={['Ma']}
-              disabled={inspection.status !== InspectionStatus.Draft}
-            />
-            <DatePicker
-              value={getDateString(inspectionValues.endDate)}
-              maxDate={inspection.season.endDate}
-              onChange={(dateString: string | null) => {
-                onUpdateValue('endDate', dateString)
-              }}
-              acceptableDayTypes={['Su']}
-              disabled={inspection.status !== InspectionStatus.Draft}
-            />
-          </ProductionDatePickers>
+          {isPreInspection(inspection) && (
+            <>
+              <FieldLabel style={{ textTransform: 'uppercase' }}>
+                <Text>inspection_selectProductionDate</Text>
+              </FieldLabel>
+              <ProductionDatePickers>
+                <DatePicker
+                  value={getDateString(inspectionValues.startDate)}
+                  minDate={inspection.minStartDate}
+                  maxDate={inspection.season.endDate}
+                  onChange={(dateString: string | null) => {
+                    onUpdateValue('startDate', dateString)
+                  }}
+                  acceptableDayTypes={['Ma']}
+                  disabled={inspection.status !== InspectionStatus.Draft}
+                />
+                <DatePicker
+                  value={getDateString(inspectionValues.endDate)}
+                  maxDate={inspection.season.endDate}
+                  onChange={(dateString: string | null) => {
+                    onUpdateValue('endDate', dateString)
+                  }}
+                  acceptableDayTypes={['Su']}
+                  disabled={inspection.status !== InspectionStatus.Draft}
+                />
+              </ProductionDatePickers>
+            </>
+          )}
           <FlexRow>
             <ActionsWrapper>
               <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>

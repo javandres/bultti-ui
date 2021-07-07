@@ -634,7 +634,7 @@ type InspectionStatusUpdate {
   inspectionStartDate: BulttiDate!
   startDate: BulttiDate
   status: InspectionStatus!
-  version: Int!
+  version: Int
 }
 
 type InspectionTimelineItem {
@@ -643,7 +643,7 @@ type InspectionTimelineItem {
   inspectionStartDate: BulttiDate!
   operatorName: String!
   seasonId: String!
-  version: Int!
+  version: Int
 }
 
 type InspectionUserRelation {
@@ -795,7 +795,7 @@ type Mutation {
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
-  submitInspection(endDate: BulttiDate!, inspectionId: String!, startDate: BulttiDate!): Inspection!
+  submitInspection(inspectionId: String!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
   toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
@@ -1216,7 +1216,6 @@ type PlannedUnitExecutionRequirement {
 type PostInspection {
   billingPeriodMonth: BulttiDate
   createdAt: DateTime!
-  endDate: BulttiDate
   id: ID!
   inspectionDate: InspectionDate
   inspectionDateId: String
@@ -1226,25 +1225,21 @@ type PostInspection {
   inspectionType: InspectionType!
   linkedInspectionUpdateAvailable: Boolean
   linkedInspections: [LinkedInspectionForWeek!]
-  minStartDate: BulttiDate!
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
   operatorId: Int!
   season: Season!
   seasonId: String!
-  startDate: BulttiDate
   status: InspectionStatus!
   updatedAt: DateTime!
   userRelations: [InspectionUserRelation!]
-  version: Int!
-  versionStackIdentifier: String
 }
 
 type PreInspection {
   areaExecutionRequirements: [PlannedAreaExecutionRequirement!]!
   createdAt: DateTime!
-  endDate: BulttiDate
+  endDate: BulttiDate!
   id: ID!
   inspectionEndDate: BulttiDate!
   inspectionErrors: [ValidationErrorData!]
@@ -1256,7 +1251,7 @@ type PreInspection {
   operatorId: Int!
   season: Season!
   seasonId: String!
-  startDate: BulttiDate
+  startDate: BulttiDate!
   status: InspectionStatus!
   unitExecutionRequirements: [PlannedUnitExecutionRequirement!]!
   updatedAt: DateTime!

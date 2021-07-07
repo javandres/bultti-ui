@@ -3,6 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
   getInspectionTypeStrings,
+  isPreInspection,
   useFetchInspections,
   useNavigateToInspectionReports,
 } from '../inspection/inspectionUtils'
@@ -73,7 +74,8 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
       if (
         selectedDate &&
         selectedDate.value !== 'kaikki' &&
-        selectedDate.value !== inspection.startDate
+        selectedDate.value !==
+          (isPreInspection(inspection) ? inspection.startDate : inspection.season.startDate)
       ) {
         return false
       }
@@ -87,10 +89,16 @@ const InspectionReportIndexPage: React.FC<PropTypes> = observer(({ inspectionTyp
   let startDateOptions = useMemo(
     () => [
       defaultSelectedDate,
-      ...inspectionsList.map((inspection: Inspection) => ({
-        value: inspection.startDate || '',
-        label: getReadableDate(inspection.startDate),
-      })),
+      ...inspectionsList.map((inspection: Inspection) => {
+        let startDate =
+          (isPreInspection(inspection) ? inspection.startDate : inspection.season.startDate) ||
+          ''
+
+        return {
+          value: startDate,
+          label: getReadableDate(startDate),
+        }
+      }),
     ],
     [inspectionsList]
   )

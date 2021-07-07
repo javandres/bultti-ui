@@ -53,7 +53,7 @@ export type PropTypes = {
   isEditingAllowed?: boolean
 }
 
-// TODO: Make a InspectionActions folder, put all action buttons seperately there to their own files to improve readability
+// TODO: Make a InspectionActions folder, separate action buttons into their own files to improve readability
 const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
@@ -124,8 +124,6 @@ const InspectionActions = observer(
       await submitInspection({
         variables: {
           inspectionId: inspection.id,
-          startDate: inspection.startDate,
-          endDate: inspection.endDate,
         },
       })
 

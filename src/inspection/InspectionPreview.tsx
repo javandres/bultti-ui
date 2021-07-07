@@ -22,7 +22,6 @@ const InspectionPreview: React.FC<PropTypes> = observer(({ inspection }) => {
       inspection: !!inspection,
       status: inspection?.status !== InspectionStatus.InProduction,
       operator: !!inspection?.operator,
-      startDate: !!inspection?.startDate,
       season: !!inspection?.season,
     }
   }, [inspection])
