@@ -3,10 +3,10 @@ import { observer } from 'mobx-react-lite'
 import { Season } from '../../schema-types'
 import { parseISO } from 'date-fns'
 import { orderBy } from 'lodash'
-import Dropdown from './Dropdown'
 import { useSeasons } from '../../util/useSeasons'
 import { unselectedSeason } from '../../state/UIStore'
 import { text } from '../../util/translate'
+import { SidebarStyledDropdown } from '../components/SidebarStyledDropdown'
 
 export type PropTypes = {
   label?: string | null
@@ -82,7 +82,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
     }, [seasons, value, selectInitialId, unselectedVal])
 
     return (
-      <Dropdown
+      <SidebarStyledDropdown
         className={className}
         label={!label ? '' : label || text('season')}
         items={seasons}

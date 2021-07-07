@@ -9,6 +9,7 @@ import { useStateValue } from '../../state/useAppState'
 import { operatorIsAuthorized } from '../../util/operatorIsAuthorized'
 import { isNumeric } from '../../util/isNumeric'
 import { unselectedOperator } from '../../state/UIStore'
+import { SidebarStyledDropdown } from '../components/SidebarStyledDropdown'
 
 const operatorsQuery = gql`
   query listOperators {
@@ -20,7 +21,7 @@ const operatorsQuery = gql`
   }
 `
 
-export type PropTypes = {
+export type SelectOperatorPropTypes = {
   label?: string | null
   className?: string
   style?: CSSProperties
@@ -39,7 +40,7 @@ export const operatorIsValid = (operator: Operator | number | null | undefined) 
   )
 }
 
-const SelectOperator: React.FC<PropTypes> = observer(
+const SelectOperator: React.FC<SelectOperatorPropTypes> = observer(
   ({ onSelect, value, label, className, style, disabled = false, selectInitialId }) => {
     const { data } = useQueryData<Operator[]>(operatorsQuery)
     const [user] = useStateValue('user')
@@ -99,7 +100,7 @@ const SelectOperator: React.FC<PropTypes> = observer(
     }, [operators, value])
 
     return (
-      <Dropdown
+      <SidebarStyledDropdown
         disabled={disabled || operators.length < 2}
         className={className}
         style={style}

@@ -1,8 +1,7 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { MouseEventHandler, useMemo, useRef, useState } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import Input, { TextInput } from '../input/Input'
-import FormSaveToolbar from '../components/FormSaveToolbar'
 import { useWatchDirtyForm } from '../../util/promptUnsavedChanges'
 import { SortConfig, SortOrder } from '../../schema-types'
 import {
@@ -27,6 +26,7 @@ import { useFloatingToolbar } from './useFloatingToolbar'
 import { useTableRows } from './useTableRows'
 import { SCROLLBAR_WIDTH } from '../../constants'
 import { ValueOf } from '../../type/common'
+import FormSaveToolbar from '../components/FormSaveToolbar'
 
 const TableWrapper = styled.div<{ height: number }>`
   position: relative;
@@ -256,7 +256,7 @@ const Table = observer(
                     }}
                     isEditing={isEditingColumn}
                     key={colKey}
-                    onMouseDown={onMouseDownHandler}>
+                    onMouseDown={onMouseDownHandler as MouseEventHandler}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
                       <ColumnSortIndicator onClick={() => sortByColumn(colKey)}>
