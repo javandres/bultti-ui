@@ -6168,6 +6168,22 @@
             "deprecationReason": null
           },
           {
+            "name": "isTrunkRoute",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "equipmentExteriorColor",
             "description": null,
             "args": [],
@@ -7371,17 +7387,13 @@
             "deprecationReason": null
           },
           {
-            "name": "meterRequirement",
+            "name": "kilometerRequirement",
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Float",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -11918,7 +11930,7 @@
             "description": null,
             "args": [
               {
-                "name": "meters",
+                "name": "kilometers",
                 "description": null,
                 "type": {
                   "kind": "SCALAR",
@@ -14134,6 +14146,22 @@
             "deprecationReason": null
           },
           {
+            "name": "isTrunkRoute",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "observedExteriorColor",
             "description": null,
             "args": [],
@@ -14759,31 +14787,7 @@
             "deprecationReason": null
           },
           {
-            "name": "metersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "kilometersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "metersObserved",
             "description": null,
             "args": [],
             "type": {
@@ -16623,16 +16627,24 @@
             "deprecationReason": null
           },
           {
-            "name": "operatorId",
+            "name": "operatorIds",
             "description": null,
             "args": [],
             "type": {
               "kind": "NON_NULL",
               "name": null,
               "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "SCALAR",
+                    "name": "Int",
+                    "ofType": null
+                  }
+                }
               }
             },
             "isDeprecated": false,
@@ -17818,31 +17830,7 @@
             "deprecationReason": null
           },
           {
-            "name": "metersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "kilometersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "metersObserved",
             "description": null,
             "args": [],
             "type": {
@@ -18228,31 +18216,7 @@
             "deprecationReason": null
           },
           {
-            "name": "metersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "kilometersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "metersObserved",
             "description": null,
             "args": [],
             "type": {
@@ -18339,31 +18303,7 @@
             "deprecationReason": null
           },
           {
-            "name": "metersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "kilometersRequired",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Float",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "metersObserved",
             "description": null,
             "args": [],
             "type": {

@@ -433,6 +433,7 @@ type EquipmentColorReportData {
   direction: String!
   equipmentExteriorColor: String!
   id: ID!
+  isTrunkRoute: Boolean!
   journeyEndTime: String!
   journeyStartTime: String!
   registryNr: String!
@@ -523,7 +524,7 @@ type ExecutionRequirementQuota {
   executionRequirement: PlannedUnitExecutionRequirement!
   executionRequirementId: String!
   id: ID!
-  meterRequirement: Float!
+  kilometerRequirement: Float
   percentageQuota: Float!
   requirementOnly: Boolean!
 }
@@ -801,7 +802,7 @@ type Mutation {
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(quota: Float!, quotaId: String!): EquipmentCatalogueQuota!
   updateEquipmentDefectSanctions(sanctionUpdates: [EquipmentDefectSanctionUpdate!]!): [EquipmentDefectSanction!]!
-  updateEquipmentRequirementQuota(meters: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota!
+  updateEquipmentRequirementQuota(kilometers: Float, quota: Float, quotaId: String!): ExecutionRequirementQuota!
   updateInspection(inspection: InspectionInput!, inspectionId: String!): Inspection!
   updateLinkedInspection(inspectionId: String!): PostInspection!
   updateObservedExecutionRequirementValues(requirementId: String!, updateValues: [ObservedRequirementValueInput!]!): ObservedExecutionRequirement!
@@ -886,6 +887,7 @@ type ObservedEquipmentColorReportData {
   dayType: String!
   direction: String!
   id: ID!
+  isTrunkRoute: Boolean!
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
@@ -950,8 +952,6 @@ type ObservedExecutionRequirement {
   isCombinedAreaRequirement: Boolean!
   kilometersObserved: Float
   kilometersRequired: Float
-  metersObserved: Float
-  metersRequired: Float
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operator: Operator!
   operatorId: Int!
@@ -1073,7 +1073,7 @@ type Operator {
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: Int!
-  operatorId: Int!
+  operatorIds: [Int!]!
   operatorName: String!
   postInspections: [PostInspection!]!
   preInspections: [PreInspection!]!
@@ -1163,8 +1163,6 @@ type PlannedAreaExecutionRequirement {
   inspectionId: String!
   kilometersObserved: Float
   kilometersRequired: Float
-  metersObserved: Float
-  metersRequired: Float
   operator: Operator!
   operatorId: Int!
   procurementUnitRequirements: [PlannedUnitExecutionRequirement!]
@@ -1193,8 +1191,6 @@ type PlannedExecutionRequirement {
   id: ID!
   kilometersObserved: Float
   kilometersRequired: Float
-  metersObserved: Float
-  metersRequired: Float
 }
 
 type PlannedUnitExecutionRequirement {
@@ -1210,8 +1206,6 @@ type PlannedUnitExecutionRequirement {
   inspectionId: String!
   kilometersObserved: Float
   kilometersRequired: Float
-  metersObserved: Float
-  metersRequired: Float
   operator: Operator!
   operatorId: Int!
   procurementUnit: ProcurementUnit!

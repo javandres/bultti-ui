@@ -120,6 +120,7 @@ export const reportQueryFragments = {
     fragment ObservedEquipmentColorFragment on ObservedEquipmentColorReportData {
       ${observedDepartureReportBaseFragment}
       registryNr
+      isTrunkRoute
       observedExteriorColor
       journeyKilometers
       procurementUnitId
@@ -218,6 +219,7 @@ export const reportQueryFragments = {
     fragment EquipmentColorFragment on EquipmentColorReportData {
       ${departureReportBaseFragment}
       registryNr
+      isTrunkRoute
       equipmentExteriorColor
     }
   `,

@@ -73,7 +73,7 @@ export const addEquipmentToRequirementMutation = gql`
       id
       equipmentQuotas {
         id
-        meterRequirement
+        kilometerRequirement
         percentageQuota
         equipment {
           ...EquipmentFragment
@@ -139,10 +139,18 @@ export const updateEquipmentCatalogueQuotaMutation = gql`
 `
 
 export const updateEquipmentRequirementQuotaMutation = gql`
-  mutation updateEquipmentRequirementQuota($quotaId: String!, $quota: Float, $meters: Float) {
-    updateEquipmentRequirementQuota(quotaId: $quotaId, quota: $quota, meters: $meters) {
+  mutation updateEquipmentRequirementQuota(
+    $quotaId: String!
+    $quota: Float
+    $kilometers: Float
+  ) {
+    updateEquipmentRequirementQuota(
+      quotaId: $quotaId
+      quota: $quota
+      kilometers: $kilometers
+    ) {
       id
-      meterRequirement
+      kilometerRequirement
       percentageQuota
       requirementOnly
       equipmentId
@@ -179,7 +187,7 @@ export const removeRequirementEquipmentMutation = gql`
       id
       equipmentQuotas {
         id
-        meterRequirement
+        kilometerRequirement
         percentageQuota
         equipment {
           ...EquipmentFragment

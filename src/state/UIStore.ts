@@ -12,7 +12,7 @@ export const unselectedOperator: Operator = {
   equipmentCatalogues: [],
   procurementUnits: [],
   id: 0,
-  operatorId: 0,
+  operatorIds: [0],
   operatorName: translate('unselected', languageState.language),
   preInspections: [],
   postInspections: [],
@@ -52,7 +52,7 @@ export const UIStore: Initializer = (state, initialState, history): UIActions =>
     setUrlValue(
       history,
       'operator',
-      !setValue || setValue.id === 0 ? '' : setValue?.operatorId + '' || ''
+      !setValue || setValue.id === 0 ? '' : setValue?.id + '' || ''
     )
   })
 
