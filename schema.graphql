@@ -1377,6 +1377,7 @@ type Sanction {
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
+  registryNr: String
   sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!

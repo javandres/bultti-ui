@@ -99,7 +99,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
 
     let canCreateInspection = useCanEditInspection({
       inspectionType,
-      operatorId: globalOperator.operatorId,
+      operatorId: globalOperator.id,
     })
 
     var navigateToInspection = useNavigateToInspection(inspectionType)

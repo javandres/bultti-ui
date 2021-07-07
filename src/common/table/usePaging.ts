@@ -39,11 +39,10 @@ export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateTyp
   let [currentPage, setCurrentPage] = useState<number>(1)
   let [pageSize, setPageSize] = useState<number>(10)
 
-  let itemPages = useMemo(() => (!pagingIsEnabled ? [items] : chunk(items, pageSize)), [
-    items,
-    pagingIsEnabled,
-    pageSize,
-  ])
+  let itemPages = useMemo(
+    () => (!pagingIsEnabled ? [items] : chunk(items, pageSize)),
+    [items, pagingIsEnabled, pageSize]
+  )
 
   let pagesLength = itemPages.length
 
@@ -78,10 +77,10 @@ export function usePaging<ItemType>(items: ItemType[] = []): TablePagingStateTyp
   )
 
   // The items in the current page. Use -1 to get an array index from the currentPage value.
-  let currentPageItems = useMemo(() => itemPages[currentPage - 1] || itemPages[0] || [], [
-    currentPage,
-    itemPages,
-  ])
+  let currentPageItems = useMemo(
+    () => itemPages[currentPage - 1] || itemPages[0] || [],
+    [currentPage, itemPages]
+  )
 
   return {
     currentPage,

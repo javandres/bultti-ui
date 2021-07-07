@@ -24,8 +24,13 @@ export const useQueryData = <TData = unknown, TVariables = OperationVariables>(
   // Execute the Apollo hook
   let queryData = useQuery<TData, TVariables>(query, allOptions)
 
-  let { loading, error, data = {} as TData, refetch, subscribeToMore = () => {} } =
-    queryData || {}
+  let {
+    loading,
+    error,
+    data = {} as TData,
+    refetch,
+    subscribeToMore = () => {},
+  } = queryData || {}
 
   // Save the previous result here so we can show it while the query is refectched.
   let prevData = useRef(undefined)

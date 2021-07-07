@@ -2141,6 +2141,7 @@ export type Sanction = {
   inspectionId: Scalars['String']
   procurementUnitId?: Maybe<Scalars['String']>
   areaName?: Maybe<OperatingAreaName>
+  registryNr?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
   sanctionReasonValue?: Maybe<Scalars['String']>

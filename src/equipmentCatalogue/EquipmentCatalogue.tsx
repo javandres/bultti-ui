@@ -37,9 +37,10 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
       onCatalogueChanged
     )
 
-    const equipment: EquipmentWithQuota[] = useMemo(() => catalogueEquipment(catalogue), [
-      catalogue,
-    ])
+    const equipment: EquipmentWithQuota[] = useMemo(
+      () => catalogueEquipment(catalogue),
+      [catalogue]
+    )
 
     return (
       <EquipmentCatalogueView>
