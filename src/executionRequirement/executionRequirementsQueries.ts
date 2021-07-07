@@ -43,10 +43,8 @@ export const ObservedRequirementValueFragment = gql`
 export const UnitExecutionRequirementFragment = gql`
   fragment UnitExecutionRequirementFragment on PlannedUnitExecutionRequirement {
     id
-    metersRequired
     kilometersRequired
     kilometersObserved
-    metersObserved
     operator {
       id
       operatorId
@@ -62,10 +60,8 @@ export const UnitExecutionRequirementFragment = gql`
 export const AreaExecutionRequirementFragment = gql`
   fragment AreaExecutionRequirementFragment on PlannedAreaExecutionRequirement {
     id
-    metersRequired
     kilometersRequired
     kilometersObserved
-    metersObserved
     operator {
       id
       operatorId
@@ -117,7 +113,7 @@ export const executionRequirementForProcurementUnitQuery = gql`
       ...UnitExecutionRequirementFragment
       equipmentQuotas {
         id
-        meterRequirement
+        kilometerRequirement
         percentageQuota
         requirementOnly
         equipment {
@@ -227,7 +223,6 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
       inspectionId: $inspectionId
     ) {
       id
-      metersRequired
       kilometersRequired
       area {
         id
@@ -240,7 +235,7 @@ export const createExecutionRequirementForProcurementUnitMutation = gql`
       }
       equipmentQuotas {
         id
-        meterRequirement
+        kilometerRequirement
         percentageQuota
         requirementOnly
         equipmentId
@@ -265,7 +260,6 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
       executionRequirementId: $executionRequirementId
     ) {
       id
-      metersRequired
       kilometersRequired
       area {
         id
@@ -278,7 +272,7 @@ export const refreshExecutionRequirementForProcurementUnitMutation = gql`
       }
       equipmentQuotas {
         id
-        meterRequirement
+        kilometerRequirement
         percentageQuota
         equipmentId
         requirementOnly
@@ -303,7 +297,6 @@ export const removeAllEquipmentFromExecutionRequirement = gql`
       id
       equipmentQuotas {
         id
-        meterRequirement
         percentageQuota
         equipment {
           ...EquipmentFragment
@@ -324,7 +317,6 @@ export const weeklyMetersFromJoreMutation = gql`
       date: $date
     ) {
       id
-      metersRequired
       kilometersRequired
     }
   }
