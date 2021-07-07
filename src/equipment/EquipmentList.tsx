@@ -19,7 +19,7 @@ import { ValueOf } from '../type/common'
 
 export type EquipmentUpdate = {
   quota?: number
-  meters?: number
+  kilometers?: number
   quotaId: string
 }
 
@@ -105,12 +105,13 @@ const EquipmentList: React.FC<PropTypes> = observer(
         let percentageQuota = pendingEditValues.find((val) => val.key === 'percentageQuota')
           ?.value
 
-        let meterRequirement = pendingEditValues.find((val) => val.key === 'meterRequirement')
-          ?.value
+        let kilometerRequirement = pendingEditValues.find(
+          (val) => val.key === 'kilometerRequirement'
+        )?.value
 
         updates.push({
           quota: undefinedOrNumber(percentageQuota),
-          meters: undefinedOrNumber(meterRequirement),
+          kilometers: undefinedOrNumber(kilometerRequirement),
           quotaId: item.quotaId,
         })
       }
@@ -156,8 +157,6 @@ const EquipmentList: React.FC<PropTypes> = observer(
         switch (col) {
           case 'percentageQuota':
             return round(getTotal(equipment, 'percentageQuota'), DEFAULT_DECIMALS) + '%'
-          case 'meterRequirement':
-            return round(getTotal(equipment, 'meterRequirement'), DEFAULT_DECIMALS) + ' m'
           case 'kilometerRequirement':
             return round(getTotal(equipment, 'kilometerRequirement'), DEFAULT_DECIMALS) + ' km'
           default:

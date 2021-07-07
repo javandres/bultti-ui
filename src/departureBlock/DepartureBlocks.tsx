@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { InspectionContext } from '../inspection/InspectionContext'
@@ -13,7 +13,6 @@ import { Button, ButtonSize } from '../common/components/buttons/Button'
 import { FlexRow } from '../common/components/common'
 import { useMutationData } from '../util/useMutationData'
 import { inspectionQuery } from '../inspection/inspectionQueries'
-import { uniqBy } from 'lodash'
 
 const DepartureBlocksView = styled.div`
   margin-bottom: 0;
@@ -53,10 +52,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
     },
   })
 
-  let [
-    fetchDepartureBlocks,
-    { data: fetchedDepartureBlocks = [], loading: fetchLoading },
-  ] = useMutationData<OperatorBlockDeparture[]>(saveDepartureBlocksMutation, {
+  let [fetchDepartureBlocks, { loading: fetchLoading }] = useMutationData<
+    OperatorBlockDeparture[]
+  >(saveDepartureBlocksMutation, {
     variables: {
       inspectionId,
     },
@@ -67,15 +65,14 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
           inspectionId,
         },
       },
+      {
+        query: departureBlocksQuery,
+        variables: {
+          inspectionId,
+        },
+      },
     ],
   })
-
-  let currentDepartureBlocks = useMemo(
-    () => uniqBy([...departureBlocks, ...(fetchedDepartureBlocks || [])], 'id'),
-    [fetchedDepartureBlocks, departureBlocks]
-  )
-
-  // TODO: Localization
 
   return (
     <ExpandableSection
@@ -87,7 +84,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
       }>
       <DepartureBlocksView>
         <LoadingDisplay loading={loading || fetchLoading} />
-        {!(loading || fetchLoading) && currentDepartureBlocks.length === 0 ? (
+        {!(loading || fetchLoading) && departureBlocks.length === 0 ? (
           <FlexRow>
             <Button onClick={() => fetchDepartureBlocks()} loading={fetchLoading}>
               <Text>departureBlocks_fetchDepartureBlocks</Text>
@@ -104,7 +101,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
                 <Text>update</Text>
               </Button>
             </FlexRow>
-            <PagedTable columnLabels={columnLabels} items={currentDepartureBlocks} />
+            <PagedTable columnLabels={columnLabels} items={departureBlocks} />
           </>
         )}
       </DepartureBlocksView>

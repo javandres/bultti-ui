@@ -1,13 +1,14 @@
 import React, { FC } from 'react'
 import styled from 'styled-components/macro'
 import { Inspection, InspectionStatus, User } from '../schema-types'
-import { getCreatedByUser } from './inspectionUtils'
+import { getCreatedByUser, useCanOpenInspection } from './inspectionUtils'
 import ValueDisplay, {
   PropTypes as ValueDisplayPropTypes,
 } from '../common/components/ValueDisplay'
 import InspectionActions from './InspectionActions'
 import { getReadableDate } from '../util/formatDate'
 import { text } from '../util/translate'
+import { useStateValue } from '../state/useAppState'
 
 const InspectionItemView = styled.div<{ status?: InspectionStatus; inEffect?: boolean }>`
   padding: 0.75rem 0.75rem 0;
@@ -78,15 +79,20 @@ const renderValue = (key, val) => {
     case 'inspectionEndDate':
       return getReadableDate(val)
     case 'status':
-      if (val === InspectionStatus.InProduction) {
-        return text('inspection_state_production')
+      if (val === InspectionStatus.Draft) {
+        return text('inspection_state_Draft')
       }
-
+      if (val === InspectionStatus.Sanctionable) {
+        return text('inspection_state_Sanctionable')
+      }
       if (val === InspectionStatus.InReview) {
-        return text('inspection_state_review')
+        return text('inspection_state_Review')
+      }
+      if (val === InspectionStatus.InProduction) {
+        return text('inspection_state_Production')
       }
 
-      return text('inspection_state_draft')
+      return `Inspection status not being supported: ${val}`
     default:
       return val
   }
@@ -99,6 +105,12 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
   onInspectionUpdated = () => {},
   showActions = true,
 }) => {
+  let [globalOperator] = useStateValue('globalOperator')
+  let canEditInspection = useCanOpenInspection({
+    inspectionType: inspection.inspectionType,
+    operatorId: globalOperator.id,
+  })
+
   let createdBy = getCreatedByUser(inspection)
 
   return (
@@ -113,7 +125,11 @@ const InspectionItem: React.FC<InspectionItemProps> = ({
         renderValue={renderValue}
       />
       {showActions && inspection && (
-        <InspectionActionsRow inspection={inspection} onRefresh={onInspectionUpdated} />
+        <InspectionActionsRow
+          inspection={inspection}
+          onRefresh={onInspectionUpdated}
+          isEditingAllowed={canEditInspection}
+        />
       )}
     </InspectionItemView>
   )
