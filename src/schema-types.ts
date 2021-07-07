@@ -1494,7 +1494,7 @@ export enum OperatingAreaName {
 export type Operator = {
   __typename?: 'Operator'
   id: Scalars['Int']
-  operatorId: Scalars['Int']
+  operatorIds: Array<Scalars['Int']>
   operatorName: Scalars['String']
   preInspections: Array<PreInspection>
   postInspections: Array<PostInspection>

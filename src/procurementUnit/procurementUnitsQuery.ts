@@ -66,7 +66,7 @@ export const procurementUnitQuery = gql`
         procurementUnitId
         operator {
           id
-          operatorId
+          operatorIds
           operatorName
         }
         equipmentQuotas {

@@ -100,7 +100,7 @@ const InspectionEditor: React.FC<InspectionEditorProps> = observer(
       }
 
       if (
-        inspection.operatorId !== globalOperator.operatorId ||
+        inspection.operatorId !== globalOperator.id ||
         inspection.seasonId !== globalSeason.id
       ) {
         navigate.push(
