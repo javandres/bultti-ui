@@ -433,6 +433,7 @@ type EquipmentColorReportData {
   direction: String!
   equipmentExteriorColor: String!
   id: ID!
+  isTrunkRoute: Boolean!
   journeyEndTime: String!
   journeyStartTime: String!
   registryNr: String!
@@ -886,6 +887,7 @@ type ObservedEquipmentColorReportData {
   dayType: String!
   direction: String!
   id: ID!
+  isTrunkRoute: Boolean!
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!

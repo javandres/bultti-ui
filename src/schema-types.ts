@@ -494,6 +494,7 @@ export type EquipmentColorReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   registryNr: Scalars['String']
+  isTrunkRoute: Scalars['Boolean']
   equipmentExteriorColor: Scalars['String']
 }
 
@@ -1297,6 +1298,7 @@ export type ObservedEquipmentColorReportData = {
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
   registryNr: Scalars['String']
+  isTrunkRoute: Scalars['Boolean']
   observedExteriorColor: Scalars['String']
   journeyKilometers: Scalars['Float']
 }
