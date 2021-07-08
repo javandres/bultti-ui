@@ -125,22 +125,23 @@ const EditSanctions = observer(({ inspection }: PropTypes) => {
   let { filters = [], sort = [] } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
 
-  let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
-    sanctionsQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      skip: !inspection,
-      partialRefetch: true,
-      variables: {
-        // Add a string variable that changes when the table state changes.
-        // Without this it wouldn't refetch if eg. filters change.
-        responseId: createResponseId({ filters, sort }),
-        inspectionId: inspection.id,
-        filters,
-        sort,
-      },
-    }
-  )
+  let {
+    data: sanctionsData,
+    loading,
+    refetch,
+  } = useQueryData<SanctionsResponse>(sanctionsQuery, {
+    notifyOnNetworkStatusChange: true,
+    skip: !inspection,
+    partialRefetch: true,
+    variables: {
+      // Add a string variable that changes when the table state changes.
+      // Without this it wouldn't refetch if eg. filters change.
+      responseId: createResponseId({ filters, sort }),
+      inspectionId: inspection.id,
+      filters,
+      sort,
+    },
+  })
 
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
@@ -239,19 +240,17 @@ const EditSanctions = observer(({ inspection }: PropTypes) => {
       }
 
       if (
-        ([
-          'sanctionPercentageAmount',
-          'appliedSanctionPercentageAmount',
-        ] as (keyof Sanction)[]).includes(key)
+        (
+          ['sanctionPercentageAmount', 'appliedSanctionPercentageAmount'] as (keyof Sanction)[]
+        ).includes(key)
       ) {
         return round(val as number, DEFAULT_DECIMALS) + '%'
       }
 
       if (
-        ([
-          'sanctionScopeKilometers',
-          'sanctionResultKilometers',
-        ] as (keyof Sanction)[]).includes(key)
+        (
+          ['sanctionScopeKilometers', 'sanctionResultKilometers'] as (keyof Sanction)[]
+        ).includes(key)
       ) {
         return round(val as number, DEFAULT_DECIMALS) + ' km'
       }

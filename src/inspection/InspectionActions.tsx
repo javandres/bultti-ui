@@ -1,9 +1,10 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, UserRole } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
+  useCanEditInspection,
   useNavigateToInspection,
   useNavigateToInspectionReports,
   useRemoveInspection,
@@ -17,7 +18,7 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
+import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
@@ -49,15 +50,20 @@ export type PropTypes = {
   onRefresh: () => unknown
   className?: string
   style?: CSSProperties
+  isEditingAllowed?: boolean
 }
 
+// TODO: Make a InspectionActions folder, separate action buttons into their own files to improve readability
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style }: PropTypes) => {
-    var [season, setSeason] = useStateValue('globalSeason')
+  ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
+    var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
+    var [globalOperator] = useStateValue('globalOperator')
     let hasAdminAccessRights = useHasAdminAccessRights()
-    let hasOperatorUserAccessRights = useHasOperatorUserAccessRights(
-      inspection?.operatorId || undefined
-    )
+
+    let canEditInspection = useCanEditInspection({
+      inspectionType: inspection.inspectionType,
+      operatorId: globalOperator.id,
+    })
 
     var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
@@ -72,17 +78,17 @@ const InspectionActions = observer(
     var onOpenInspection = useCallback(
       (inspection: Inspection) => {
         // If the season of the inspection is not already selected, change the selected season to match.
-        if (inspection && inspection.seasonId !== season.id) {
+        if (inspection && inspection.seasonId !== globalSeason.id) {
           showInfoNotification(
             text('inspection_seasonChangedAutomatically', { newSeason: inspection.season.id })
           )
 
-          setSeason(inspection.season)
+          setGlobalSeason(inspection.season)
         }
 
         navigateToInspection(inspection)
       },
-      [inspection, navigateToInspection, setSeason, season]
+      [inspection, navigateToInspection, setGlobalSeason, globalSeason]
     )
 
     var [removeInspection, { loading: removeLoading }] = useRemoveInspection(inspection)
@@ -118,8 +124,6 @@ const InspectionActions = observer(
       await submitInspection({
         variables: {
           inspectionId: inspection.id,
-          startDate: inspection.startDate,
-          endDate: inspection.endDate,
         },
       })
 
@@ -174,9 +178,16 @@ const InspectionActions = observer(
       (inspectionType === InspectionType.Post &&
         inspection.status === InspectionStatus.Sanctionable)
 
+    let canUserSubmit = useCanEditInspection({
+      inspectionType: inspection.inspectionType,
+      operatorId: inspection.operatorId,
+    })
+
     // Only post-inspections which are in draft state can be made sanctionable.
     let canInspectionBeSanctionable =
       inspectionType === InspectionType.Post && inspection.status === InspectionStatus.Draft
+
+    let canUserMakeSanctionable = useHasAdminAccessRights()
 
     let [isDirty] = useUnsavedChangesPrompt()
 
@@ -187,6 +198,7 @@ const InspectionActions = observer(
             <Button
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
+              disabled={!isEditingAllowed}
               onClick={() => onOpenInspection(inspection)}>
               {inspection.status === InspectionStatus.Draft ? 'Muokkaa' : 'Avaa'}
             </Button>
@@ -205,10 +217,10 @@ const InspectionActions = observer(
                   : ButtonStyle.SECONDARY
               }
               size={ButtonSize.MEDIUM}>
-              Raportit
+              <Text>reports</Text>
             </Button>
           )}
-          {canInspectionBeSubmitted && isEditing && (
+          {canUserSubmit && canInspectionBeSubmitted && isEditing && (
             <Button
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
@@ -219,7 +231,7 @@ const InspectionActions = observer(
             </Button>
           )}
 
-          {canInspectionBeSanctionable && hasOperatorUserAccessRights && isEditing && (
+          {canUserMakeSanctionable && canInspectionBeSanctionable && isEditing && (
             <Button
               loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
@@ -233,7 +245,7 @@ const InspectionActions = observer(
           {[InspectionStatus.Draft, InspectionStatus.InProduction].includes(
             inspection.status
           ) &&
-            hasAdminAccessRights && (
+            canEditInspection && (
               <Button
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={removeLoading}

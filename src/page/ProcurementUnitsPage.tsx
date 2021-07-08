@@ -37,6 +37,7 @@ const ProcurementUnitsPage: React.FC<PropTypes> = observer(() => {
             startDate={globalSeason?.startDate || ''}
             endDate={globalSeason?.endDate || ''}
             contractSelectionDate={getDateObject(globalSeason.startDate)}
+            isOnlyActiveCatalogueVisible={false}
           />
         )}
       </PageContainer>

@@ -1,7 +1,11 @@
 import React from 'react'
 import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
-import { getInspectionStatusColor, getInspectionStatusName } from './inspectionUtils'
+import {
+  getInspectionStatusColor,
+  getInspectionStatusName,
+  isPreInspection,
+} from './inspectionUtils'
 import { getReadableDate } from '../util/formatDate'
 import InspectionActions from './InspectionActions'
 import { Inspection, InspectionStatus } from '../schema-types'
@@ -116,18 +120,20 @@ const InspectionCard: React.FC<PropTypes> = observer(
               {inspection.operator.operatorName}, {inspection.seasonId}
             </InspectionTitle>
           )}
-          <InspectionVersion>{inspection.version}</InspectionVersion>
           <InspectionStatusDisplay status={inspection.status}>
             {getInspectionStatusName(inspection.status)}
           </InspectionStatusDisplay>
-          {inspection.startDate && inspection.endDate && (
-            <InspectionPeriodDisplay>
-              <DateTitle>
-                <Text>inspection_inspectionValidPeriod</Text>
-              </DateTitle>
-              <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
-              <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
-            </InspectionPeriodDisplay>
+          {isPreInspection(inspection) && (
+            <>
+              <InspectionVersion>{inspection.version}</InspectionVersion>
+              <InspectionPeriodDisplay>
+                <DateTitle>
+                  <Text>inspection_inspectionValidPeriod</Text>
+                </DateTitle>
+                <StartDate>{getReadableDate(inspection.startDate)}</StartDate>
+                <EndDate>{getReadableDate(inspection.endDate)}</EndDate>
+              </InspectionPeriodDisplay>
+            </>
           )}
           <InspectionPeriodDisplay>
             <DateTitle>

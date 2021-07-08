@@ -4,6 +4,7 @@
   "endDate": "Loppupäivä",
   "validityPeriod": "Voimassaoloaika",
   "login": "Kirjaudu sisään",
+  "register": "Luo tili",
   "logout": "Kirjaudu ulos",
   "login_failed": "Kirjautuminen epäonnistui. Ole yhteydessä HSL:n suuntaan ongelman jatkuessa.",
   "update": "Päivitä",
@@ -123,7 +124,7 @@
   "executionRequirement_equipmentList": "Suoritevaatimuksen ajoneuvot",
   "executionRequirement_remove": "Poista suoritevaatimus",
   "executionRequirement_unitValues": "Kilpailukohteen suoritearvot",
-  "executionRequirement_missing": "Suoritevaatimukset ei laskettu.",
+  "executionRequirement_missing": "Kohteen suoritevaatimuksia ei ole laskettu.",
   "executionRequirement_create": "Laske kohteen suoritevaatimukset",
   "executionRequirement_removeWarning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
   "executionRequirement_refreshWarning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
@@ -152,6 +153,9 @@
   "userRelations_madeSanctionableBy": "Sanktioitavaksi",
   "userRelations_sanctionsAbandonedBy": "Sanktiointi peruttu",
 
+  "with_vehicleId": "kylkinumerolla",
+  "with_registryNr": "rekisterinumerolla",
+
   "catalogue_newCatalogue": "Luo uusi kalustoluettelo",
   "catalogue_emptyCatalogue": "Kalustoluettelossa ei ole ajoneuvoja.",
   "catalogue_addCatalogue": "Lisää kalustoluettelo",
@@ -163,7 +167,7 @@
   "catalogue_removeEquipment": "Poista kalustoluettelo",
   "catalogue_addEquipment": "Lisää ajoneuvo",
   "catalogue_batchAddEquipment": "Lisää ajoneuvoja listalta",
-  "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa kylkinumerolla: ${vehicleId}, rekisterinumerolla: ${registryNumber}",
+  "catalogue_findByVehicleIdAndRegistryNumber": "Hae kalustoa ${searchType} ${searchValue}",
   "catalogue_findEquipment": "Hae kalustoa",
   "catalogue_equipmentNotFound": "Kalustoa ei löytynyt.",
   "catalogue_equipmentConfirmRemove": "Haluatko varmasti poistaa ajoneuvon?",
@@ -175,7 +179,7 @@
 
   "inspectionPage_selectOperatorAndSeason": "Valitse liikennöitsijä ja kausi.",
   "inspectionPage_createNewInspection": "Luo uusi ${prefix}tarkastus",
-  "inspectionPage_inspectionNotFound": "Tarkastusta ei löytynyt.",
+  "inspectionPage_inspectionNotFound": "${inspection}tarkastusta ei löytynyt tai sinulla ei ole oikeuksia nähdä sitä.",
   "inspectionPage_inspectionInformation": "Tarkastuksen tiedot",
   "inspectionPage_results": "Tulokset",
   "inspectionPage_sanctions": "Sanktiointi",
@@ -195,7 +199,7 @@
   "inspection_editor_linkedInspectionsUpdateConfirm": "Oletko varma että haluat päivittää linkitetyt tarkastukset? Tämän jälkitarkastuksen suoritevaatimukset luodaan uudelleen, jolloin mahdolliset muutokset resetoituu.",
   "inspection_editor_noLinkedInspections": "Ei linkattuja ennakkotarkastuksia. Julkaise ennakkotarkastus ja päivitä!",
 
-  "departureBlocks_fetchDepartureBlocks": "Fetch departure blocks",
+  "departureBlocks_fetchDepartureBlocks": "Hae lähtöketjuja",
   "departureBlocks_blockNumber": "Ketjunumero",
   "departureBlocks_dayType": "Päivä",
   "departureBlocks_registryNr": "Rekisterinumero",
@@ -209,9 +213,9 @@
 
   "inspection_state_Draft": "Muokattavissa",
   "inspection_state_Processing": "Käsittelee tietoja",
+  "inspection_state_Sanctionable": "Sanktioitavana",
   "inspection_state_InReview": "Hyväksyttävänä",
   "inspection_state_InProduction": "Tuotannossa",
-  "inspection_state_Sanctionable": "Sanktiointi",
 
   "inspectionList_noInspectionInProduction": "Tällä kaudella ei ole tuotannossa-olevaa ${inspection}tarkastusta.",
   "inspectionList_youAreHere": "Olet tässä",
@@ -244,6 +248,7 @@
 
   "preInspection_noCalculatedExecutionRequirements": "Ei laskettuja suoritevaatimuksia",
   "preInspection_calculateExecutionRequirements": "Laske suoritevaatimukset ja toteumat",
+  "preInspection_confirmInspectionPeriodChange": "Kun muutat tarkastusjaksoa, ladatut lähtöketjut kumotaan ja niitä pitää hakea uudestaan. Haluatko jatkaa?",
 
   "postInspection_confirmAbandonSanctions": "Haluatko varmasti poistaa kaikki tarkastuksen sanktiot ja palauttaa tarkastus muokattavaan tilaan?",
   "postInspection_sanctionReason_EQUIPMENT_TYPE_VIOLATION": "Väärä kalustotyyppi",

@@ -35,7 +35,7 @@
     "react-window": "^1.8.6",
     "styled-components": "^5.2.1",
     "subscriptions-transport-ws": "^0.9.18",
-    "typescript": "^4.2.4",
+    "typescript": "4.3.5",
     "use-debounce": "^5.2.0"
   },
   "scripts": {
@@ -110,7 +110,7 @@
     "lint-staged": "^10.5.3",
     "patch-package": "^6.2.2",
     "postinstall-postinstall": "^2.1.0",
-    "prettier": "2.2.1",
+    "prettier": "^2.3.2",
     "ts-jest": "^26.4.4",
     "yarn": "^1.22.5"
   }

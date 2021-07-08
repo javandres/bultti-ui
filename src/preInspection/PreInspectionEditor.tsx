@@ -58,6 +58,7 @@ const PreInspectionEditor: React.FC<PreInspectionProps> = observer(
             startDate={inspection.inspectionStartDate}
             endDate={inspection.inspectionEndDate}
             contractSelectionDate={getDateObject(inspection.startDate || '')}
+            isOnlyActiveCatalogueVisible={true}
           />
         )}
         {DEBUG && (

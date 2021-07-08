@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import styled from 'styled-components/macro'
 import { Colors } from '../util/HSLColors'
@@ -9,7 +9,7 @@ import { Text } from '../util/translate'
 import { ButtonSize, ButtonStyle, StyledButton } from '../common/components/buttons/Button'
 import { AUTH_SCOPE, AUTH_URI, CLIENT_ID, REDIRECT_URI } from '../constants'
 import InfoMessages from '../common/components/InfoMessages'
-import { useLocation } from 'react-router-dom'
+import { UserIcon } from '../common/icon/UserIcon'
 
 const LoadingScreen = styled.div`
   width: 100%;
@@ -24,6 +24,8 @@ const LoadingScreen = styled.div`
 
 const ButtonWrapper = styled.div`
   margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
 `
 
 const LoadingIndicator = styled(LoadingDisplay)`
@@ -48,11 +50,29 @@ const Title = styled.h2`
 
 const LoginButton = styled(StyledButton).attrs(() => ({
   inverted: true,
+  buttonStyle: ButtonStyle.NORMAL,
+  size: ButtonSize.LARGE,
+}))`
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+  align-items: center;
+  user-select: none;
+  cursor: pointer;
+  margin-bottom: 1rem;
+
+  svg + .buttonText {
+    margin-left: 1rem;
+  }
+`
+// For some reason I can't extend from LoginButton, it results in an error.
+const RegisterButton = styled(StyledButton).attrs(() => ({
+  inverted: true,
   buttonStyle: ButtonStyle.SECONDARY,
   size: ButtonSize.LARGE,
 }))`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   flex-direction: row;
   align-items: center;
   user-select: none;
@@ -69,21 +89,23 @@ type PropTypes = {
   loading: boolean
 }
 
-const redirectToLogin = () => {
+const redirectToAuth = (register = false): void => {
+  let currentPath = window.location.href.replace(window.location.origin, '')
+
+  if (currentPath && currentPath.length > 1) {
+    sessionStorage.setItem('return_to_url', currentPath)
+  }
+
   let authUrl = `${AUTH_URI}?ns=hsl-transitlog&client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=${AUTH_SCOPE}&ui_locales=en`
+
+  if (register) {
+    authUrl += '&nur'
+  }
+
   window.location.assign(authUrl)
 }
 
 const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = false }) => {
-  let location = useLocation()
-
-  const openAuthForm = useCallback(() => {
-    let currentPath = location.pathname
-    sessionStorage.setItem('return_to_url', currentPath)
-
-    redirectToLogin()
-  }, [location])
-
   return (
     <LoadingScreen>
       <Header>
@@ -99,12 +121,18 @@ const AuthGate: React.FC<PropTypes> = observer(({ loading, unauthenticated = fal
       {unauthenticated && (
         <>
           <ButtonWrapper>
-            <LoginButton onClick={openAuthForm}>
-              <Login height="1em" fill="white" />
+            <LoginButton onClick={() => redirectToAuth(false)}>
+              <Login height="1em" fill="var(--blue)" />
               <span className="buttonText">
                 <Text>login</Text>
               </span>
             </LoginButton>
+            <RegisterButton onClick={() => redirectToAuth(true)}>
+              <UserIcon height="1em" fill="white" />
+              <span className="buttonText">
+                <Text>register</Text>
+              </span>
+            </RegisterButton>
           </ButtonWrapper>
         </>
       )}

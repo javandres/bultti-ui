@@ -47,7 +47,9 @@ const DownloadReport = observer(
         },
       })
 
-      if (response.ok) {
+      // Require status 200 for the download. If the report is empty, the status
+      // will be 204 but the "ok" will still be true.
+      if (response.ok && response.status === 200) {
         let contentHeader = response.headers.get('Content-Disposition') || ''
         let regex = /filename="(.+?(?="))/g // Extract filename from header
         let name = (regex.exec(contentHeader) || ['', ''])[1] || 'raportti.xlsx'
