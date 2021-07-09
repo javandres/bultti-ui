@@ -1420,6 +1420,7 @@ type SanctionListReportData {
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
   sanctionReason: String!
+  sanctionScope: String!
 }
 
 type SanctionSummaryReport {

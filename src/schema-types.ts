@@ -2200,6 +2200,7 @@ export type SanctionListReportData = {
   kilometers: Scalars['Float']
   sanctionFinancialAmount: Scalars['Float']
   sanctionReason: Scalars['String']
+  sanctionScope: Scalars['String']
 }
 
 export enum SanctionReason {
