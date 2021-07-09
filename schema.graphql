@@ -1401,6 +1401,7 @@ type Sanction {
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
+  reasonBenchmarkValue: String
   registryNr: String
   sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
@@ -1439,12 +1440,19 @@ type SanctionListReport {
 }
 
 type SanctionListReportData {
+  departureDate: String
+  direction: String
   id: ID!
+  journeyStartTime: String
   kilometers: Float!
   procurementUnitId: String!
+  reasonBenchmarkValue: String
+  registryNr: String
+  routeId: String
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
   sanctionReason: String!
+  sanctionReasonValue: String
   sanctionScope: String!
 }
 

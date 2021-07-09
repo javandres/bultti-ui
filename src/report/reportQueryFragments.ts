@@ -327,6 +327,13 @@ export const reportQueryFragments = {
       sanctionFinancialAmount
       sanctionReason
       sanctionScope
+      departureDate
+      direction
+      journeyStartTime
+      reasonBenchmarkValue
+      registryNr
+      routeId
+      sanctionReasonValue
     }
   `,
   DangerousDefectSanctionsFragment: `

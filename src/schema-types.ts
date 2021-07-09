@@ -2168,6 +2168,7 @@ export type Sanction = {
   registryNr?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionReasonValue?: Maybe<Scalars['String']>
   sanctionPercentageAmount: Scalars['Float']
   appliedSanctionPercentageAmount: Scalars['Float']
@@ -2226,6 +2227,13 @@ export type SanctionListReportData = {
   sanctionFinancialAmount: Scalars['Float']
   sanctionReason: Scalars['String']
   sanctionScope: Scalars['String']
+  sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
+  routeId?: Maybe<Scalars['String']>
+  direction?: Maybe<Scalars['String']>
+  registryNr?: Maybe<Scalars['String']>
+  departureDate?: Maybe<Scalars['String']>
+  journeyStartTime?: Maybe<Scalars['String']>
 }
 
 export enum SanctionReason {

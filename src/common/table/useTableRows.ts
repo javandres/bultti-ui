@@ -41,7 +41,6 @@ export function useTableRows<ItemType extends TableItemType>({
   let rows: TableRowWithDataAndFunctions<ItemType>[] = useMemo(
     () =>
       items.map((item) => {
-        // Again, omit keys that start with an underscore.
         let itemEntries = Object.entries(item) as [string, ValueOf<ItemType>][]
 
         itemEntries = itemEntries.filter(

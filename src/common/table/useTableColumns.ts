@@ -1,5 +1,6 @@
 import { Dictionary, difference, get, omitBy, orderBy } from 'lodash'
 import { TableItemType } from './tableUtils'
+import { useMemo } from 'react'
 
 export function useTableColumns<ItemType extends TableItemType>({
   items,
@@ -12,11 +13,25 @@ export function useTableColumns<ItemType extends TableItemType>({
   columnOrder?: string[]
   hideKeys?: string[]
 }) {
+  // Collect an array of keys that are empty for all items. These will be hidden.
+  let emptyValues = useMemo(
+    () =>
+      items.reduce((emptyCols: string[], item: ItemType) => {
+        let nonEmptyCols = Object.entries(item)
+          .filter(([, value]) => typeof value !== 'undefined' && value !== null)
+          .map(([key]) => key)
+
+        return difference(emptyCols, nonEmptyCols)
+      }, Object.keys(items[0])),
+    [items]
+  )
+
   // Order the keys and get cleartext labels for the columns
-  // Omit keys that start with an underscore.
+  // Omit keys that start with an underscore or which are empty in all items.
   let columns = Object.keys(
-    omitBy((items[0] || columnLabels) as Dictionary<ItemType>, (val, key) =>
-      key.startsWith('_')
+    omitBy(
+      (items[0] || columnLabels) as Dictionary<ItemType>,
+      (val, key) => emptyValues.includes(key) || key.startsWith('_')
     )
   )
 
