@@ -315,7 +315,7 @@ export const reportQueryFragments = {
       sanctionReason
       sanctionPercentageRatio
       sanctionResultKilometers
-      unitEquipmentMaxAge
+      averageAgeRequired
     }
   `,
   SanctionListFragment: `

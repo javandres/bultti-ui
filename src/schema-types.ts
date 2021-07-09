@@ -2286,7 +2286,7 @@ export type SanctionSummaryReportData = {
   sanctionResultKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
-  unitEquipmentMaxAge: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
 }
 
 export type SanctionUpdate = {

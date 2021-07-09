@@ -1478,6 +1478,7 @@ type SanctionSummaryReport {
 
 type SanctionSummaryReportData {
   areaName: String!
+  averageAgeRequired: Float!
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
@@ -1486,7 +1487,6 @@ type SanctionSummaryReportData {
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float!
   totalKilometers: Float!
-  unitEquipmentMaxAge: Float!
 }
 
 type SanctionsResponse {

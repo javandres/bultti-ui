@@ -25091,7 +25091,7 @@
             "deprecationReason": null
           },
           {
-            "name": "unitEquipmentMaxAge",
+            "name": "averageAgeRequired",
             "description": null,
             "args": [],
             "type": {
