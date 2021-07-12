@@ -19608,7 +19608,7 @@
             "deprecationReason": null
           },
           {
-            "name": "medianAgeRequirement",
+            "name": "averageAgeRequirement",
             "description": null,
             "args": [],
             "type": {
@@ -19824,7 +19824,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "medianAgeRequirement",
+            "name": "averageAgeRequirement",
             "description": null,
             "type": {
               "kind": "NON_NULL",

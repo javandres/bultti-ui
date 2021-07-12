@@ -1724,7 +1724,7 @@ export type ProcurementUnit = {
   procurementUnitId: Scalars['String']
   operatorId: Scalars['Int']
   operator: Operator
-  medianAgeRequirement: Scalars['Float']
+  averageAgeRequirement: Scalars['Float']
   equipmentCatalogues: Array<EquipmentCatalogue>
   areaId?: Maybe<Scalars['Int']>
   area?: Maybe<OperatingArea>
@@ -1738,7 +1738,7 @@ export type ProcurementUnit = {
 }
 
 export type ProcurementUnitEditInput = {
-  medianAgeRequirement: Scalars['Float']
+  averageAgeRequirement: Scalars['Float']
 }
 
 export type ProcurementUnitOption = {
