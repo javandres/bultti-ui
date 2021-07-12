@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType, UserRole } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, PostInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useCanEditInspection,
@@ -18,11 +18,12 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights } from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
 import { useUnsavedChangesPrompt } from '../util/promptUnsavedChanges'
+import PostInspectionAcceptance from './PostInspectionAcceptance'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -258,15 +259,23 @@ const InspectionActions = observer(
 
           {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
-              <Button
-                disabled={hasErrors}
-                style={{ marginLeft: 'auto' }}
-                loading={publishLoading}
-                buttonStyle={ButtonStyle.NORMAL}
-                size={ButtonSize.MEDIUM}
-                onClick={onPublishInspection}>
-                <Text>inspection_actions_publish</Text>
-              </Button>
+              {inspectionType === InspectionType.Post ? (
+                <PostInspectionAcceptance
+                  loading={publishLoading}
+                  inspection={inspection as PostInspection}
+                  onAccept={onPublishInspection}
+                />
+              ) : (
+                <Button
+                  disabled={hasErrors}
+                  style={{ marginLeft: 'auto' }}
+                  loading={publishLoading}
+                  buttonStyle={ButtonStyle.NORMAL}
+                  size={ButtonSize.MEDIUM}
+                  onClick={onPublishInspection}>
+                  <Text>inspection_actions_publish</Text>
+                </Button>
+              )}
               <Button
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={rejectLoading}
