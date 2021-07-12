@@ -1216,6 +1216,7 @@ type PlannedUnitExecutionRequirement {
 type PostInspection {
   billingPeriodMonth: BulttiDate
   createdAt: DateTime!
+  hslAccepted: Boolean!
   id: ID!
   inspectionDate: InspectionDate
   inspectionDateId: String
@@ -1228,6 +1229,7 @@ type PostInspection {
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
+  operatorAccepted: Boolean!
   operatorId: Int!
   season: Season!
   seasonId: String!

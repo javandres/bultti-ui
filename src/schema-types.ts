@@ -1655,6 +1655,8 @@ export type PostInspection = {
   updatedAt: Scalars['DateTime']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
+  hslAccepted: Scalars['Boolean']
+  operatorAccepted: Scalars['Boolean']
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
