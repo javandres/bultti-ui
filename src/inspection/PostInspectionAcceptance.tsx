@@ -52,10 +52,11 @@ export type InspectionAcceptanceButtonPropTypes = {
   onClick: () => unknown
   label: string
   loading?: boolean
+  buttonStyle?: ButtonStyle
 }
 
 const InspectionAcceptButton: React.FC<InspectionAcceptanceButtonPropTypes> = observer(
-  ({ onClick, hasErrors, loading, label }) => {
+  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL }) => {
     return (
       <Button
         disabled={hasErrors}
@@ -102,6 +103,7 @@ const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = ob
           <InspectionAcceptButton
             hasErrors={hasErrors}
             onClick={onAccept}
+            buttonStyle={ButtonStyle.ACCEPT}
             label={text('postInspection_acceptance_operatorAcceptButtonLabel')}
             loading={loading}
           />
