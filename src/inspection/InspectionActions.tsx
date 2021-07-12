@@ -46,6 +46,30 @@ const ButtonRow = styled.div`
   }
 `
 
+type InspectionAcceptanceButtonPropTypes = {
+  hasErrors: boolean
+  onClick: () => unknown
+  label: string
+  loading?: boolean
+  buttonStyle?: ButtonStyle
+}
+
+export const InspectionAcceptButton: React.FC<InspectionAcceptanceButtonPropTypes> = observer(
+  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL }) => {
+    return (
+      <Button
+        disabled={hasErrors}
+        style={{ marginLeft: 'auto' }}
+        loading={loading}
+        buttonStyle={ButtonStyle.NORMAL}
+        size={ButtonSize.MEDIUM}
+        onClick={onClick}>
+        {label}
+      </Button>
+    )
+  }
+)
+
 export type PropTypes = {
   inspection: Inspection
   onRefresh: () => unknown
@@ -266,15 +290,12 @@ const InspectionActions = observer(
                   onAccept={onPublishInspection}
                 />
               ) : (
-                <Button
-                  disabled={hasErrors}
-                  style={{ marginLeft: 'auto' }}
+                <InspectionAcceptButton
+                  hasErrors={hasErrors}
+                  onClick={onPublishInspection}
                   loading={publishLoading}
-                  buttonStyle={ButtonStyle.NORMAL}
-                  size={ButtonSize.MEDIUM}
-                  onClick={onPublishInspection}>
-                  <Text>inspection_actions_publish</Text>
-                </Button>
+                  label={text('inspection_actions_publish')}
+                />
               )}
               <Button
                 style={{ marginLeft: 'auto', marginRight: 0 }}

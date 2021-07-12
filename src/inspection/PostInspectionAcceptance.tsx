@@ -7,9 +7,10 @@ import {
   useHasOperatorUserAccessRights,
   useIsTestUser,
 } from '../util/userRoles'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
+import { ButtonStyle } from '../common/components/buttons/Button'
 import { text, Text } from '../util/translate'
 import { DEBUG } from '../constants'
+import { InspectionAcceptButton } from './InspectionActions'
 
 const PostInspectionAcceptanceView = styled.div`
   margin-left: auto;
@@ -46,30 +47,6 @@ export type PostInspectionAcceptancePropTypes = {
   onAccept: () => unknown
   loading?: boolean
 }
-
-export type InspectionAcceptanceButtonPropTypes = {
-  hasErrors: boolean
-  onClick: () => unknown
-  label: string
-  loading?: boolean
-  buttonStyle?: ButtonStyle
-}
-
-const InspectionAcceptButton: React.FC<InspectionAcceptanceButtonPropTypes> = observer(
-  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL }) => {
-    return (
-      <Button
-        disabled={hasErrors}
-        style={{ marginLeft: 'auto' }}
-        loading={loading}
-        buttonStyle={ButtonStyle.NORMAL}
-        size={ButtonSize.MEDIUM}
-        onClick={onClick}>
-        {label}
-      </Button>
-    )
-  }
-)
 
 const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = observer(
   ({ onAccept, inspection, loading }) => {
