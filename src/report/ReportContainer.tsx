@@ -98,12 +98,6 @@ const ReportContainer = observer((props: PropTypes) => {
         continue
       }
 
-      // We don't want to display averageAgeRequired column in sanction report
-      // TODO: Hide this column in a better way
-      if (colName === 'averageAgeRequired') {
-        continue
-      }
-
       if (!columnLabels[colName]) {
         columnLabels[colName] = colName
       }

@@ -1287,13 +1287,13 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
+  averageAgeRequirement: Float!
   contracts: [Contract!]!
   currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
-  medianAgeRequirement: Float!
   operator: Operator!
   operatorId: Int!
   optionsUsed: Int!
@@ -1826,7 +1826,7 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
-  medianAgeRequirement: Float!
+  averageAgeRequirement: Float!
 }
 
 input SanctionUpdate {
