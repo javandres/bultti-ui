@@ -16389,6 +16389,18 @@
             "deprecationReason": null
           },
           {
+            "name": "averageAgeObserved",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "averageAgeWeightedObserved",
             "description": null,
             "args": [],
@@ -24612,6 +24624,18 @@
           },
           {
             "name": "UNIT_EQUIPMENT_MAX_AGE_VIOLATION",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNIT_EQUIPMENT_OVERAGE_UNDER_2",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNIT_EQUIPMENT_OVERAGE_OVER_2",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

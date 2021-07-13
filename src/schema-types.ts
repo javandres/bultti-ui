@@ -1471,6 +1471,7 @@ export type ObservedUnitExecution = {
   totalKilometersObserved?: Maybe<Scalars['Float']>
   averageAgeMax?: Maybe<Scalars['Float']>
   averageAgeRequired?: Maybe<Scalars['Float']>
+  averageAgeObserved?: Maybe<Scalars['Float']>
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
   sanctionPercentageAmount?: Maybe<Scalars['Float']>
@@ -2245,6 +2246,8 @@ export enum SanctionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  UnitEquipmentOverageUnder_2 = 'UNIT_EQUIPMENT_OVERAGE_UNDER_2',
+  UnitEquipmentOverageOver_2 = 'UNIT_EQUIPMENT_OVERAGE_OVER_2',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 

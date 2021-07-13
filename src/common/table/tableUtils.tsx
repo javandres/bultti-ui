@@ -172,5 +172,5 @@ export function findEmptyKeys(items: Record<string, unknown>[]) {
       .map(([key]) => key)
 
     return difference(emptyCols, nonEmptyCols)
-  }, Object.keys(items[0]))
+  }, Object.keys(items[0] || {}))
 }

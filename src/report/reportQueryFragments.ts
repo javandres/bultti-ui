@@ -91,6 +91,9 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometersObserved
       totalUnitKilometers
+      averageAgeMax
+      averageAgeObserved
+      averageAgeRequired
       averageAgeWeightedObserved
       sanctionPercentageAmount
       sanctionFinancialAmount
