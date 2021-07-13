@@ -63,7 +63,11 @@ export type PropTypes = {
   editable: boolean
 }
 
-function createContractInput(contract: Partial<Contract>): ContractInput {
+type ContractInputWithRules = ContractInput & {
+  rules?: { uploadFile: File[]; currentRules: ContractRule[] }
+}
+
+function createContractInput(contract: Partial<Contract>): ContractInputWithRules {
   return {
     id: contract.id,
     description: contract.description ? contract.description : '',
@@ -87,7 +91,7 @@ const renderInput =
     contractFileReadError,
     isNew,
   }: {
-    contract: ContractInput
+    contract: ContractInputWithRules
     operatorName: string
     contractFileReadError?: string
     isNew: boolean
@@ -96,6 +100,7 @@ const renderInput =
     key: string,
     val: unknown,
     onChange: (val: unknown) => void,
+    item: ContractInputWithRules,
     readOnly: boolean,
     loading: boolean = false,
     onCancel?: () => unknown
@@ -254,7 +259,7 @@ const ContractEditor = observer(
     let [globalOperator] = useStateValue('globalOperator')
     let showErrorNotification = useShowErrorNotification()
 
-    let initialContract: ContractInput = useMemo(() => {
+    let initialContract: ContractInputWithRules = useMemo(() => {
       if (isNew) {
         let newContract: Partial<Contract> = {
           operatorId: globalOperator?.id,
@@ -269,7 +274,8 @@ const ContractEditor = observer(
       }
     }, [isNew, contract, globalOperator])
 
-    let [pendingContract, setPendingContract] = useState<ContractInput>(initialContract)
+    let [pendingContract, setPendingContract] =
+      useState<ContractInputWithRules>(initialContract)
 
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
@@ -494,7 +500,7 @@ const ContractEditor = observer(
           </FlexRow>
         )}
         {!isNew && <ContractUsersEditor contractId={contract!.id} />}
-        <ItemForm
+        <ItemForm<ContractInputWithRules>
           item={{
             ...pendingContract,
             rules: { uploadFile: rulesFiles, currentRules: contract?.rules || [] },

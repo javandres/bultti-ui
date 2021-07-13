@@ -484,9 +484,21 @@ type EquipmentDefectSanction {
   registryNumber: String!
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
+  sanctionReason: EquipmentDefectSanctionReason!
   sanctionResultKilometers: Float
   sanctionScopeKilometers: Float!
   startDate: BulttiDate
+}
+
+type EquipmentDefectSanctionsResponse {
+  filteredCount: Int!
+  filters: [FilterConfig!]
+  id: String!
+  inspectionId: String!
+  responseId: String!
+  rows: [EquipmentDefectSanction!]!
+  sort: [SortConfig!]
+  totalCount: Int!
 }
 
 type EquipmentTypeReport {
@@ -789,6 +801,7 @@ type Mutation {
   forceRemoveInspection(inspectionId: String!, testOnly: Boolean = true): Boolean!
   generateEquipmentForPreInspection(inspectionId: String!): Boolean!
   helperResolver: Boolean!
+  importHfpForDates(endDate: String!, startDate: String!): Boolean!
   inspectionSanctionable(inspectionId: String!): PostInspection!
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String): String
@@ -1349,7 +1362,7 @@ type Query {
   getObservedInspectionDates(seasonId: String!): [InspectionDate!]!
   inspection(inspectionId: String!): Inspection!
   inspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
-  inspectionEquipmentDefectSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
+  inspectionEquipmentDefectSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): EquipmentDefectSanctionsResponse!
   inspectionSanctions(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): SanctionsResponse!
   inspectionUserRelations(inspectionId: String!): [InspectionUserRelation!]!
   inspectionsByOperator(inspectionType: InspectionType!, operatorId: Int!): [Inspection!]!
@@ -1402,7 +1415,7 @@ type Sanction {
   matchesException: SanctionException
   procurementUnitId: String
   reasonBenchmarkValue: String
-  registryNr: String
+  registryNumber: String
   sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
   sanctionReason: SanctionReason!
@@ -1644,6 +1657,12 @@ enum ContractUserRelationType {
 enum EquipmentDefectPriority {
   DANGEROUS
   MUST_FIX
+}
+
+enum EquipmentDefectSanctionReason {
+  AD_COVER_DEFECT
+  DANGEROUS_DEFECT
+  DEFECTIVE_EQUIPMENT_DEPARTURE
 }
 
 enum EquipmentDefectStatus {

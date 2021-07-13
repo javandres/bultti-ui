@@ -8,6 +8,7 @@ import { CellContent } from './TableCell'
 import { getThousandSeparatedNumber } from '../../util/formatNumber'
 import { ValueOf } from '../../type/common'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
+import { text } from '../../util/translate'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
@@ -72,7 +73,7 @@ export type TableEditProps<ItemType extends TableItemType> = {
   pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
-  editableValues?: (keyof ItemType)[]
+  editableValues?: (keyof ItemType)[] | ((item: ItemType) => (keyof ItemType)[])
   isAlwaysEditable?: boolean
 }
 
@@ -80,6 +81,7 @@ export type RenderInputType<ItemType extends TableItemType> = (
   key: keyof ItemType,
   val: ValueOf<ItemType>,
   onChange: (val: string) => unknown,
+  item: ItemType,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
   tabIndex?: number,
@@ -114,6 +116,7 @@ export function defaultRenderInput<ItemType extends TableItemType>(
   key: keyof ItemType,
   val: ValueOf<ItemType>,
   onChange: (val: string) => unknown,
+  item: ItemType,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
   tabIndex?: number,
@@ -174,3 +177,7 @@ export function findEmptyKeys(items: Record<string, unknown>[]) {
     return difference(emptyCols, nonEmptyCols)
   }, Object.keys(items[0]))
 }
+
+export const NotApplicableValue = (
+  <span style={{ color: '#aaa' }}>{text('not_applicable')}</span>
+)
