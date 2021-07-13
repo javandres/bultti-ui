@@ -33,7 +33,7 @@ export function useTableRows<ItemType extends TableItemType>({
     item: ItemType
   ) => unknown
   pendingValues?: EditValue<ItemType>[]
-  editableValues?: (keyof ItemType)[]
+  editableValues?: (keyof ItemType)[] | ((item: ItemType) => (keyof ItemType)[])
   isAlwaysEditable?: boolean
 }) {
   let { columnNames, keysToHide, columnKeysOrdering, columns } = useTableColumns({
@@ -69,7 +69,14 @@ export function useTableRows<ItemType extends TableItemType>({
         (!!pendingValues && pendingValues.map((val) => keyFromItem(val.item)).includes(rowKey))
 
       const onMakeEditable = (key: keyof ItemType, val: ValueOf<ItemType>) => {
-        if (!isEditingRow && onEditValue && (editableValues || []).includes(key as string)) {
+        let itemEditableValues =
+          typeof editableValues === 'function'
+            ? editableValues(item) // Some columns may be editable on a per-item basis.
+            : Array.isArray(editableValues)
+            ? editableValues
+            : []
+
+        if (!isEditingRow && onEditValue && itemEditableValues.includes(key as string)) {
           onEditValue(key, val, item)
         }
       }

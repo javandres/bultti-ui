@@ -111,6 +111,7 @@ export type PropTypes<ItemType extends Record<string, unknown>> = {
     key: string,
     val: unknown,
     onChange: (val: unknown) => void,
+    item: ItemType,
     readOnly: boolean,
     loading?: boolean,
     onReset?: () => unknown
@@ -124,7 +125,7 @@ export type PropTypes<ItemType extends Record<string, unknown>> = {
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
 
-const defaultRenderInput = (key, val, onChange, readOnly = false) =>
+const defaultRenderInput = (key, val, onChange, item, readOnly = false) =>
   readOnly ? (
     renderReadOnlyField(val)
   ) : (
@@ -188,7 +189,15 @@ const ItemForm = observer(
               frameless={frameless}
               fullWidth={fullWidthFields?.includes(key)}>
               {renderedLabel !== false && renderedLabel}
-              {renderInput(key, val, onValueChange(key), isReadOnly(key), loading, onCancel)}
+              {renderInput(
+                key,
+                val,
+                onValueChange(key),
+                item,
+                isReadOnly(key),
+                loading,
+                onCancel
+              )}
             </FieldWrapper>
           )
         })}
