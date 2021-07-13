@@ -67,7 +67,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
   }, [])
 
   let renderUserInput = useCallback(
-    (key, val, onChange, readOnly) => {
+    (key, val, onChange, item, readOnly) => {
       if (key === 'role') {
         return (
           <Dropdown
