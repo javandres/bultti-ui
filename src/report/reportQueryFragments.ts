@@ -92,8 +92,8 @@ export const reportQueryFragments = {
       totalKilometersObserved
       totalUnitKilometers
       averageAgeMax
-      averageAgeObserved
       averageAgeRequired
+      averageAgeWeighted
       averageAgeWeightedObserved
       sanctionPercentageAmount
       sanctionFinancialAmount

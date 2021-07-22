@@ -820,7 +820,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
-  removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
+  removeObservedExecutionRequirementsFromPostInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
@@ -1062,10 +1062,10 @@ type ObservedOverAgeDeparturesReportData {
 }
 
 type ObservedUnitExecution {
-  area: OperatingAreaName
-  averageAgeMax: Float
-  averageAgeObserved: Float
-  averageAgeRequired: Float
+  area: OperatingAreaName!
+  averageAgeMax: Float!
+  averageAgeRequired: Float!
+  averageAgeWeighted: Float!
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
@@ -1743,8 +1743,8 @@ enum SanctionReason {
   LATE_DEPARTURE
   TIMING_STOP_VIOLATION
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
-  UNIT_EQUIPMENT_OVERAGE_OVER_2
-  UNIT_EQUIPMENT_OVERAGE_UNDER_2
+  UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD
+  UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD
 }
 
 enum SanctionScope {
