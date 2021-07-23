@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client'
 
-const DepartureBlocksFragment = gql`
-  fragment DepartureBlocksFragment on OperatorBlockDeparture {
+const OperatorDepartureBlocksFragment = gql`
+  fragment OperatorDepartureBlocksFragment on OperatorBlockDeparture {
     id
     blockNumber
     dayType
@@ -19,17 +19,17 @@ const DepartureBlocksFragment = gql`
 export const departureBlocksQuery = gql`
   query previewDepartureBlocks($inspectionId: String!) {
     inspectionDepartureBlocks(inspectionId: $inspectionId) {
-      ...DepartureBlocksFragment
+      ...OperatorDepartureBlocksFragment
     }
   }
-  ${DepartureBlocksFragment}
+  ${OperatorDepartureBlocksFragment}
 `
 
 export const saveDepartureBlocksMutation = gql`
   mutation saveDepartureBlocks($inspectionId: String!) {
     saveInspectionDepartureBlocks(inspectionId: $inspectionId) {
-      ...DepartureBlocksFragment
+      ...OperatorDepartureBlocksFragment
     }
   }
-  ${DepartureBlocksFragment}
+  ${OperatorDepartureBlocksFragment}
 `
