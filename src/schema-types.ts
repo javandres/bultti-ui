@@ -332,6 +332,8 @@ export type DeviationsReportData = {
   journeyEndTime: Scalars['String']
   direction: Scalars['String']
   trackReason: TrackReason
+  pairSide: Scalars['String']
+  pairId: Scalars['String']
   registryNr?: Maybe<Scalars['String']>
   terminalTime: Scalars['Float']
   recoveryTime: Scalars['Float']

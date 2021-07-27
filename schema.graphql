@@ -289,6 +289,8 @@ type DeviationsReportData {
   journeyStartTime: String!
   overlapPlannedBy: String
   overlapSeconds: Float!
+  pairId: String!
+  pairSide: String!
   recoveryTime: Float!
   registryNr: String
   routeId: String!

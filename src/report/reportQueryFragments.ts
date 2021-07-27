@@ -178,6 +178,8 @@ export const reportQueryFragments = {
   BlockDeviationsFragment: `
     fragment BlockDeviationsFragment on DeviationsReportData {
       ${departureReportBaseFragment}
+      pairId
+      pairSide
       overlapSeconds
       overlapPlannedBy
       registryNr
@@ -186,6 +188,8 @@ export const reportQueryFragments = {
   AllDeviationsFragment: `
     fragment AllDeviationsFragment on DeviationsReportData {
       ${departureReportBaseFragment}
+      pairId
+      pairSide
       overlapSeconds
       overlapPlannedBy
       registryNr
