@@ -208,16 +208,16 @@ export type DeadrunsReportData = {
   aJourneyEndTime: Scalars['String']
   aTerminalTime: Scalars['Float']
   aRecoveryTime: Scalars['Float']
-  aOriginStop: Scalars['String']
-  aDestinationStop: Scalars['String']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
   bRouteId: Scalars['String']
   bDirection: Scalars['String']
   bJourneyStartTime: Scalars['String']
   bJourneyEndTime: Scalars['String']
   bTerminalTime: Scalars['Float']
   bRecoveryTime: Scalars['Float']
-  bOriginStop: Scalars['String']
-  bDestinationStop: Scalars['String']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
   deadrunMinutes: Scalars['Int']
   deadrunPlannedBy: Scalars['String']
   blockNumber?: Maybe<Scalars['String']>
@@ -326,17 +326,25 @@ export type DeviationsReport = {
 export type DeviationsReportData = {
   __typename?: 'DeviationsReportData'
   id: Scalars['ID']
-  routeId: Scalars['String']
   dayType: Scalars['String']
-  journeyStartTime: Scalars['String']
-  journeyEndTime: Scalars['String']
-  direction: Scalars['String']
-  trackReason: TrackReason
-  pairSide: Scalars['String']
+  aRouteId: Scalars['String']
+  aDirection: Scalars['String']
+  aJourneyStartTime: Scalars['String']
+  aJourneyEndTime: Scalars['String']
+  aTerminalTime: Scalars['Float']
+  aRecoveryTime: Scalars['Float']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
+  bRouteId: Scalars['String']
+  bDirection: Scalars['String']
+  bJourneyStartTime: Scalars['String']
+  bJourneyEndTime: Scalars['String']
+  bTerminalTime: Scalars['Float']
+  bRecoveryTime: Scalars['Float']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
   pairId: Scalars['String']
   registryNr?: Maybe<Scalars['String']>
-  terminalTime: Scalars['Float']
-  recoveryTime: Scalars['Float']
   overlapSeconds: Scalars['Float']
   overlapPlannedBy?: Maybe<Scalars['String']>
 }

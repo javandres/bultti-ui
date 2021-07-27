@@ -47,23 +47,15 @@ aRouteId
 aDirection
 aJourneyStartTime
 aJourneyEndTime
-aOriginStop
-aDestinationStop
 aTerminalTime
 aRecoveryTime
 bRouteId
 bDirection
 bJourneyStartTime
 bJourneyEndTime
-bOriginStop
-bDestinationStop
 bTerminalTime
 bRecoveryTime
-blockNumber
-equipmentRotation
-schemaId
-deadrunMinutes
-deadrunPlannedBy
+
 `
 
 // The keys should match the capitalized reportName + 'Fragment'.
@@ -177,9 +169,8 @@ export const reportQueryFragments = {
   `,
   BlockDeviationsFragment: `
     fragment BlockDeviationsFragment on DeviationsReportData {
-      ${departureReportBaseFragment}
+      ${departurePairBaseFragment}
       pairId
-      pairSide
       overlapSeconds
       overlapPlannedBy
       registryNr
@@ -187,9 +178,8 @@ export const reportQueryFragments = {
   `,
   AllDeviationsFragment: `
     fragment AllDeviationsFragment on DeviationsReportData {
-      ${departureReportBaseFragment}
+      ${departurePairBaseFragment}
       pairId
-      pairSide
       overlapSeconds
       overlapPlannedBy
       registryNr
@@ -198,11 +188,29 @@ export const reportQueryFragments = {
   DeadrunsFragment: `
     fragment DeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
+      aOriginStop
+      aDestinationStop
+      bOriginStop
+      bDestinationStop
+      blockNumber
+      equipmentRotation
+      schemaId
+      deadrunMinutes
+      deadrunPlannedBy
     }
   `,
   OperatorDeadrunsFragment: `
     fragment OperatorDeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
+      aOriginStop
+      aDestinationStop
+      bOriginStop
+      bDestinationStop
+      blockNumber
+      equipmentRotation
+      schemaId
+      deadrunMinutes
+      deadrunPlannedBy
     }
   `,
   DepartureBlocksFragment: `

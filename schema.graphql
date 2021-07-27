@@ -163,19 +163,19 @@ type DeadrunsReport {
 }
 
 type DeadrunsReportData {
-  aDestinationStop: String!
+  aDestinationStop: String
   aDirection: String!
   aJourneyEndTime: String!
   aJourneyStartTime: String!
-  aOriginStop: String!
+  aOriginStop: String
   aRecoveryTime: Float!
   aRouteId: String!
   aTerminalTime: Float!
-  bDestinationStop: String!
+  bDestinationStop: String
   bDirection: String!
   bJourneyEndTime: String!
   bJourneyStartTime: String!
-  bOriginStop: String!
+  bOriginStop: String
   bRecoveryTime: Float!
   bRouteId: String!
   bTerminalTime: Float!
@@ -282,20 +282,28 @@ type DeviationsReport {
 }
 
 type DeviationsReportData {
+  aDestinationStop: String
+  aDirection: String!
+  aJourneyEndTime: String!
+  aJourneyStartTime: String!
+  aOriginStop: String
+  aRecoveryTime: Float!
+  aRouteId: String!
+  aTerminalTime: Float!
+  bDestinationStop: String
+  bDirection: String!
+  bJourneyEndTime: String!
+  bJourneyStartTime: String!
+  bOriginStop: String
+  bRecoveryTime: Float!
+  bRouteId: String!
+  bTerminalTime: Float!
   dayType: String!
-  direction: String!
   id: ID!
-  journeyEndTime: String!
-  journeyStartTime: String!
   overlapPlannedBy: String
   overlapSeconds: Float!
   pairId: String!
-  pairSide: String!
-  recoveryTime: Float!
   registryNr: String
-  routeId: String!
-  terminalTime: Float!
-  trackReason: TrackReason!
 }
 
 type EarlyTimingStopDeparturesReport {
