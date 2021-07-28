@@ -756,6 +756,7 @@ export type InspectionDate = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   hfpDataStatus: HfpStatus
+  lastDateLoaded?: Maybe<Scalars['BulttiDate']>
   inspections?: Maybe<Array<PostInspection>>
 }
 
@@ -882,8 +883,8 @@ export type LateDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1315,8 +1316,8 @@ export type ObservedEquipmentColorReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1356,8 +1357,8 @@ export type ObservedEquipmentTypeReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   registryNr: Scalars['String']
@@ -1447,8 +1448,8 @@ export type ObservedOverAgeDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
