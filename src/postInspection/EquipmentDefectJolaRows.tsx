@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
-import { EquipmentDefect, PostInspection } from '../schema-types'
+import { EquipmentDefect, EquipmentDefectPriority, PostInspection } from '../schema-types'
 import { gql } from '@apollo/client'
 import { useQueryData } from '../util/useQueryData'
 import ExpandableSection, { HeaderMainHeading } from '../common/components/ExpandableSection'
@@ -10,6 +10,8 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import PagedTable from '../common/table/PagedTable'
 import { ValueOf } from '../type/common'
+import { TableRowWithDataAndFunctions } from '../common/table/tableUtils'
+import { isAfter } from '../util/isBetween'
 
 export type PropTypes = {
   inspection: PostInspection
@@ -83,6 +85,20 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
     []
   )
 
+  let highlightRow = useCallback((row: TableRowWithDataAndFunctions<EquipmentDefect>) => {
+    let { concludedDate, deadlineDate, priority } = row.item
+
+    if (
+      !concludedDate ||
+      isAfter(concludedDate, deadlineDate) ||
+      priority === EquipmentDefectPriority.Dangerous
+    ) {
+      return 'var(--light-red)'
+    }
+
+    return ''
+  }, [])
+
   return (
     <ExpandableSection
       isExpanded={true}
@@ -106,6 +122,7 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
       </p>
       {data.length !== 0 ? (
         <PagedTable
+          getRowHighlightColor={highlightRow}
           columnLabels={equipmentDefectColumnLabels}
           items={data || []}
           renderValue={renderJolaValue}
