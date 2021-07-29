@@ -1590,6 +1590,7 @@ type UnobservedDeparturesReportData {
   procurementUnitId: String!
   routeId: String!
   trackReason: TrackReason!
+  transitlogLink: String!
 }
 
 type User {

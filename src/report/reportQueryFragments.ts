@@ -302,6 +302,7 @@ export const reportQueryFragments = {
       procurementUnitId
       blockNumber
       date
+      transitlogLink
     }
   `,
   SanctionSummaryFragment: `

@@ -2456,6 +2456,7 @@ export type UnobservedDeparturesReportData = {
   journeyKilometers: Scalars['Float']
   blockNumber?: Maybe<Scalars['String']>
   date: Scalars['String']
+  transitlogLink: Scalars['String']
 }
 
 export type User = {
