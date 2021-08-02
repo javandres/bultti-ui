@@ -92,6 +92,7 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
       !concludedDate ||
       isAfter(concludedDate, deadlineDate) ||
       priority === EquipmentDefectPriority.Dangerous
+      // Ad cover defect case not covered. These are not automatically sanctions.
     ) {
       return 'var(--light-red)'
     }
