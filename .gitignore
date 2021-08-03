@@ -33,3 +33,7 @@ src/data
 
 # Webstorm
 .idea
+
+# Cypress
+cypress/screenshots
+cypress/videos
