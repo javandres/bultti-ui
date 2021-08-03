@@ -48,19 +48,19 @@ Cypress.Commands.add('loginOperator', () => {
  * @param {String} props.role ADMIN / HSL / OPERATOR
  */
 const hslLogin = ({ role }) => {
-  const AUTH_URI = Cypress.env('CYPRESS_HSLID_AUTH_URI')
+  // The following two env vars come from the cypress.json file
+  const AUTH_URI = Cypress.env('HSLID_AUTH_URI')
+  const AUTH_SCOPE = Cypress.env('HSLID_AUTH_SCOPE')
+  // The rest of the env vars come from the .env file.
   const HSLID_CLIENT_ID = Cypress.env('CYPRESS_HSLID_CLIENT_ID')
   const HSLID_CLIENT_SECRET = Cypress.env('CYPRESS_HSLID_CLIENT_SECRET')
-  const AUTH_SCOPE = Cypress.env('CYPRESS_AUTH_SCOPE')
+  const HSLID_USERNAME = Cypress.env('CYPRESS_HSLID_TESTING_USERNAME')
+  const HSLID_PASSWORD = Cypress.env('CYPRESS_HSLID_TESTING_PASSWORD')
 
-  let HSLID_USERNAME
-  let HSLID_PASSWORD
-  HSLID_USERNAME = Cypress.env('CYPRESS_HSLID_TESTING_USERNAME')
-  HSLID_PASSWORD = Cypress.env('CYPRESS_HSLID_TESTING_PASSWORD')
   const authHeader = `Basic ${btoa(`${HSLID_CLIENT_ID}:${HSLID_CLIENT_SECRET}`)}`
 
   Cypress.log({
-    name: `HSL ID login as admin`,
+    name: `HSL ID login as ${role}`,
   })
 
   const options = {
