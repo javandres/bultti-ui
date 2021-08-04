@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
@@ -17,6 +17,7 @@ import ProcurementUnitItemContent from './ProcurementUnitItemContent'
 import { text, Text } from '../util/translate'
 import { getDateObject } from '../util/formatDate'
 import { isWithinInterval } from 'date-fns'
+import { calculateMaximumAverageAge } from './procurementUnitUtils'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -99,6 +100,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
               : -1
           })[0]
       : undefined
+
+    let maximumAgeWithOptions = useMemo(
+      () => calculateMaximumAverageAge(procurementUnit, startDate),
+      [procurementUnit, startDate]
+    )
+
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -113,6 +120,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     <Text>procurementUnit_unitId</Text>
                   </HeaderHeading>
                   {procurementUnit.procurementUnitId}
+                  <HeaderHeading>
+                    <Text>procurementUnit_operationArea</Text>
+                  </HeaderHeading>
+                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
@@ -123,7 +134,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     .filter((routeId) => !!routeId)
                     .join(', ')}
                 </HeaderSection>
-                <HeaderSection style={{ flexGrow: 2 }}>
+                <HeaderSection>
                   <HeaderHeading>
                     <Text>procurementUnit_unitValidTime</Text>
                   </HeaderHeading>
@@ -131,12 +142,14 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     startDate={procurementUnit.startDate}
                     endDate={procurementUnit.endDate}
                   />
-                </HeaderSection>
-                <HeaderSection>
-                  <HeaderHeading>
-                    <Text>procurementUnit_operationArea</Text>
-                  </HeaderHeading>
-                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
+                  {procurementUnit.optionPeriodStart && (
+                    <>
+                      <HeaderHeading>
+                        <Text>procurementUnit_optionPeriodStart</Text>
+                      </HeaderHeading>
+                      {procurementUnit.optionPeriodStart}
+                    </>
+                  )}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
@@ -144,6 +157,15 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   </HeaderHeading>
                   {procurementUnit?.maximumAverageAge || 0}{' '}
                   <Text>procurementUnit_ageRequirementYears</Text>
+                  {maximumAgeWithOptions !== procurementUnit?.maximumAverageAge && (
+                    <>
+                      <HeaderHeading>
+                        <Text>procurementUnit_ageRequirementWithOptions</Text>
+                      </HeaderHeading>
+                      {calculateMaximumAverageAge(procurementUnit, startDate)}{' '}
+                      <Text>procurementUnit_ageRequirementYears</Text>
+                    </>
+                  )}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>

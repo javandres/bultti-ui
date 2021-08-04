@@ -14,7 +14,7 @@ import { isBetween } from '../util/isBetween'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
-import { addDays, parseISO } from 'date-fns'
+import { addDays } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
 import { MessageView } from '../common/components/Messages'
@@ -33,10 +33,11 @@ import { useHasAdminAccessRights } from '../util/userRoles'
 import DatePicker from '../common/input/DatePicker'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString } from '../util/formatDate'
+import { calculateMaximumAverageAge } from './procurementUnitUtils'
 
 const procurementUnitLabels = {
   maximumAverageAge: text('procurementUnit_ageRequirement'),
-  calculatedMaximumAgeRequirement: text('procurementUnit_ageRequirementCalculated'),
+  calculatedMaximumAgeRequirement: text('procurementUnit_ageRequirementWithOptions'),
   optionMaxAgeIncreaseMethod: text('procurementUnit_optionMaxAgeIncreaseMethod'),
   optionPeriodStart: text('procurementUnit_optionPeriodStart'),
 }
@@ -97,7 +98,7 @@ function renderInput(key: string, val: unknown, onChange: (val: unknown) => void
     <TextInput
       type="number"
       value={val as string}
-      onChange={(e) => onChange(e.target.value)}
+      onChange={(e) => onChange(parseFloat(e.target.value))}
     />
   )
 }
@@ -217,7 +218,7 @@ const ProcurementUnitItemContent = observer(
       setIsUnitEditable(false)
     }, [procurementUnitInputValues, isCatalogueEditable, hasAdminAccessRights])
 
-    const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
+    const inspectionStartDate = useMemo(() => getDateObject(startDate), [startDate])
 
     let isDirty = useMemo(
       () =>
@@ -228,11 +229,10 @@ const ProcurementUnitItemContent = observer(
       [procurementUnit, procurementUnitInputValues]
     )
 
-    let calcMedianAgeRequirement = useMemo(() => {
-      let optionsUsed = procurementUnit?.optionsUsed || 0
-      let maximumAverageAge = procurementUnit?.maximumAverageAge || 0
-      return maximumAverageAge + 0.5 * optionsUsed
-    }, [procurementUnit])
+    let calcMedianAgeRequirement = useMemo(
+      () => calculateMaximumAverageAge(procurementUnit, inspectionStartDate),
+      [procurementUnit, inspectionStartDate]
+    )
 
     let navigate = useNavigate()
 
