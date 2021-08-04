@@ -92,16 +92,16 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
 }
 
 function toString(item, converter?: string | ((item) => string | JSX.Element)) {
+  if (typeof converter === 'function') {
+    return converter(item)
+  }
+
   if (typeof item === 'string') {
     return item
   }
 
   if (item && typeof converter === 'string') {
     return item[converter]
-  }
-
-  if (typeof converter === 'function') {
-    return converter(item)
   }
 
   return ''
