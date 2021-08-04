@@ -102,7 +102,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       : undefined
 
     let maximumAgeWithOptions = useMemo(
-      () => calculateMaximumAverageAge(procurementUnit, startDate),
+      () => (procurementUnit ? calculateMaximumAverageAge(procurementUnit, startDate) : 0),
       [procurementUnit, startDate]
     )
 

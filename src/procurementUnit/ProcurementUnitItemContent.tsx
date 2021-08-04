@@ -230,7 +230,8 @@ const ProcurementUnitItemContent = observer(
     )
 
     let calcMedianAgeRequirement = useMemo(
-      () => calculateMaximumAverageAge(procurementUnit, inspectionStartDate),
+      () =>
+        procurementUnit ? calculateMaximumAverageAge(procurementUnit, inspectionStartDate) : 0,
       [procurementUnit, inspectionStartDate]
     )
 
