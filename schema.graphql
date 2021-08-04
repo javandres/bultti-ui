@@ -1227,7 +1227,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
-  billingPeriodMonth: BulttiDate
+  billingPeriodMonth: BulttiDate!
   createdAt: DateTime!
   id: ID!
   inspectionDate: InspectionDate

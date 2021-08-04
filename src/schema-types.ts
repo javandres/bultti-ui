@@ -961,6 +961,7 @@ export type MissingEquipmentReportData = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  updateProcurementUnit: ProcurementUnit
   createExecutionRequirementsForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   updateWeeklyExecutionMetersFromSource: PlannedUnitExecutionRequirement
   refreshExecutionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
@@ -968,7 +969,6 @@ export type Mutation = {
   removeEquipmentFromExecutionRequirement: PlannedUnitExecutionRequirement
   removeAllEquipmentFromExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>
   removeUnitExecutionRequirement: Scalars['Boolean']
-  updateProcurementUnit: ProcurementUnit
   updateEquipment?: Maybe<Equipment>
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>
   updateEquipmentCatalogue: EquipmentCatalogue
@@ -1015,6 +1015,11 @@ export type Mutation = {
   updateEquipmentDefectSanctions: Array<EquipmentDefectSanction>
 }
 
+export type MutationUpdateProcurementUnitArgs = {
+  procurementUnit: ProcurementUnitEditInput
+  procurementUnitId: Scalars['String']
+}
+
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
   inspectionId: Scalars['String']
   procurementUnitId: Scalars['String']
@@ -1045,11 +1050,6 @@ export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
 
 export type MutationRemoveUnitExecutionRequirementArgs = {
   executionRequirementId: Scalars['String']
-}
-
-export type MutationUpdateProcurementUnitArgs = {
-  procurementUnit: ProcurementUnitEditInput
-  procurementUnitId: Scalars['String']
 }
 
 export type MutationUpdateEquipmentArgs = {
@@ -1690,7 +1690,7 @@ export type PostInspection = {
   operator: Operator
   seasonId: Scalars['String']
   season: Season
-  billingPeriodMonth?: Maybe<Scalars['BulttiDate']>
+  billingPeriodMonth: Scalars['BulttiDate']
   inspectionDate?: Maybe<InspectionDate>
   inspectionDateId?: Maybe<Scalars['String']>
   linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>
@@ -1771,10 +1771,10 @@ export type ProcurementUnitRoute = {
 
 export type Query = {
   __typename?: 'Query'
-  executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
-  executionSchemaStats?: Maybe<ExecutionSchemaStats>
   procurementUnit: ProcurementUnit
   procurementUnitsByOperator: Array<ProcurementUnit>
+  executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
+  executionSchemaStats?: Maybe<ExecutionSchemaStats>
   operator?: Maybe<Operator>
   operators: Array<Operator>
   season?: Maybe<Array<Season>>
@@ -1839,15 +1839,6 @@ export type Query = {
   inspectionEquipmentDefectSanctions: EquipmentDefectSanctionsResponse
 }
 
-export type QueryExecutionRequirementForProcurementUnitArgs = {
-  inspectionId: Scalars['String']
-  procurementUnitId: Scalars['String']
-}
-
-export type QueryExecutionSchemaStatsArgs = {
-  executionRequirementId: Scalars['String']
-}
-
 export type QueryProcurementUnitArgs = {
   endDate: Scalars['BulttiDate']
   startDate: Scalars['BulttiDate']
@@ -1858,6 +1849,15 @@ export type QueryProcurementUnitsByOperatorArgs = {
   endDate: Scalars['BulttiDate']
   startDate: Scalars['BulttiDate']
   operatorId: Scalars['Int']
+}
+
+export type QueryExecutionRequirementForProcurementUnitArgs = {
+  inspectionId: Scalars['String']
+  procurementUnitId: Scalars['String']
+}
+
+export type QueryExecutionSchemaStatsArgs = {
+  executionRequirementId: Scalars['String']
 }
 
 export type QueryOperatorArgs = {
