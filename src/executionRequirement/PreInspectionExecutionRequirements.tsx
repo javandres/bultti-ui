@@ -11,7 +11,7 @@ import {
   RequirementsTableLayout,
   usePreInspectionAreaRequirements,
 } from './executionRequirementUtils'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 
 const AreaWrapper = styled.div`
@@ -73,8 +73,11 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
             </Button>
           </FlexRow>
           {areaExecutionRequirements.map((areaRequirement) => (
-            <AreaWrapper key={areaRequirement.area.id}>
-              <AreaHeading>{areaRequirement.area.name}</AreaHeading>
+            <AreaWrapper key={areaRequirement.id}>
+              <AreaHeading>
+                {text(`executionRequirement_area_${areaRequirement.area.name}`)} /{' '}
+                {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
+              </AreaHeading>
               <RequirementsTable
                 tableLayout={RequirementsTableLayout.BY_VALUES}
                 executionRequirement={areaRequirement}

@@ -968,6 +968,8 @@ type ObservedExecutionRequirement {
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operator: Operator!
   operatorId: Int!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
   startDate: BulttiDate!
 }
 
@@ -1180,6 +1182,8 @@ type PlannedAreaExecutionRequirement {
   operatorId: Int!
   procurementUnitRequirements: [PlannedUnitExecutionRequirement!]
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
 }
 
 type PlannedEmissionClassRequirement {
