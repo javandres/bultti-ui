@@ -1,4 +1,4 @@
-describe('Authentication tests - admin user', () => {
+describe('Authentication tests', () => {
   it('Cannot see unauthorized elements when not logged in', () => {
     cy.visit('/')
     cy.getTestElement('authInfo').should('not.exist')

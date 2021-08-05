@@ -89,6 +89,7 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   className?: string
   hintText?: string
   style?: CSSProperties
+  testId?: string
 }
 
 function toString(item, converter?: string | ((item) => string | JSX.Element)) {
@@ -120,6 +121,7 @@ const Dropdown = observer(
     itemToString = 'id',
     itemToLabel = 'label',
     unselectedValue,
+    testId = 'dropdown',
   }: DropdownProps<ValueType>) => {
     const onSelectFn = useCallback(
       ({ selectedItem = unselectedValue }) => {
@@ -158,10 +160,15 @@ const Dropdown = observer(
         )}
         <SelectWrapper>
           <SelectButton
+            data-cy={testId}
             {...getToggleButtonProps({
               disabled,
             })}>
-            {typeof buttonLabel === 'string' ? <span>{buttonLabel}</span> : buttonLabel}
+            {typeof buttonLabel === 'string' ? (
+              <span data-cy={`${testId}_selected`}>{buttonLabel}</span>
+            ) : (
+              buttonLabel
+            )}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 
@@ -173,6 +180,7 @@ const Dropdown = observer(
               <>
                 {items.map((item, index) => (
                   <DropdownItem
+                    data-cy={`${testId}_${toString(item, itemToString)}`}
                     key={`dropdown-item-${index}`}
                     highlighted={highlightedIndex === index}
                     {...getItemProps({

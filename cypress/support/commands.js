@@ -24,6 +24,16 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
+// Visits a page and set up spy on console.error. This allows us to assert that
+// there were no errors.
+Cypress.Commands.add('visitAndSpy', (path) => {
+  return cy.visit(path, {
+    onBeforeLoad: (win) => {
+      cy.spy(win.console, 'error').as('consoleError')
+    },
+  })
+})
+
 Cypress.Commands.add('getTestElement', (selector, options = {}) => {
   return cy.get(`[data-cy~="${selector}"]`, options)
 })
@@ -41,6 +51,44 @@ Cypress.Commands.add('loginHSL', () => {
 Cypress.Commands.add('loginOperator', () => {
   hslLogin({ role: 'OPERATOR' })
   cy.getTestElement('authInfo').should('exist')
+})
+
+Cypress.Commands.add('selectTestOperator', () => {
+  cy.getTestElement('operator-select').should.exist
+  cy.getTestElement('operator-select').click()
+  cy.getTestElement('operator-select_999').click()
+  cy.getTestElement('operator-select_selected')
+    .text()
+    .should('equal', 'Bultin Testiliikennöitsijä')
+})
+
+Cypress.Commands.add('selectTestSeason', () => {
+  cy.getTestElement('season-select').should.exist
+  cy.getTestElement('season-select').click()
+  cy.getTestElement('season-select_TESTIKAUSI').click()
+  cy.getTestElement('season-select_selected').text().should('equal', 'TESTIKAUSI')
+})
+
+Cypress.Commands.add('selectTestSettings', () => {
+  cy.selectTestOperator()
+  cy.selectTestSeason()
+})
+
+Cypress.Commands.add('generateTestData', () => {
+  cy.visit('/dev-tools')
+  cy.getTestElement('create_test_data').click()
+
+  cy.waitUntil(
+    () =>
+      cy
+        .getTestElement('create_test_data_loading', { timeout: 240000 })
+        .should('have.length', 0),
+    {
+      timeout: 240000,
+    }
+  )
+
+  cy.visit('/')
 })
 
 /**

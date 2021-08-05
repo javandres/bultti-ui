@@ -138,7 +138,9 @@ const SelectInspection: React.FC<PropTypes> = observer(
             </HeaderRow>
             <InspectionItems>
               {canCreateInspection && (
-                <NewInspection onClick={onCreateInspection}>
+                <NewInspection
+                  data-cy="create_new_pre_inspection"
+                  onClick={onCreateInspection}>
                   <ItemContent>
                     <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
                   </ItemContent>
