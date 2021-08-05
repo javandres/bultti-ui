@@ -654,11 +654,9 @@ export type ExecutionRequirementsReportData = {
   id: Scalars['ID']
   operatorId: Scalars['Int']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometers: Scalars['Float']
   totalKilometersFulfilled: Scalars['Float']
-  averageAgeWeighted?: Maybe<Scalars['Float']>
-  averageAgeRequirement?: Maybe<Scalars['Float']>
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   requirements: Array<PlannedEmissionClassRequirement>
 }
 
@@ -1414,6 +1412,7 @@ export type ObservedExecutionRequirementsReportData = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometersRequired: Scalars['Float']
   totalKilometersObserved: Scalars['Float']
   observedRequirements: Array<ObservedEmissionClassRequirement>

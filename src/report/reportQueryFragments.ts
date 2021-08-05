@@ -146,6 +146,7 @@ export const reportQueryFragments = {
       endDate
       totalKilometersRequired
       totalKilometersObserved
+      sanctionLeeway
       observedRequirements {
         id
         emissionClass
@@ -239,8 +240,7 @@ export const reportQueryFragments = {
       areaName
       totalKilometers
       totalKilometersFulfilled
-      averageAgeWeighted
-      averageAgeWeightedFulfilled
+      sanctionLeeway
       requirements {
         emissionClass
         kilometerRequirement

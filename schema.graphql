@@ -562,12 +562,10 @@ type ExecutionRequirementsReport {
 
 type ExecutionRequirementsReportData {
   areaName: String!
-  averageAgeRequirement: Float
-  averageAgeWeighted: Float
-  averageAgeWeightedFulfilled: Float
   id: ID!
   operatorId: Int!
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Float!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
@@ -998,6 +996,7 @@ type ObservedExecutionRequirementsReportData {
   id: ID!
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operatorId: Int!
+  sanctionLeeway: Float!
   startDate: BulttiDate!
   totalKilometersObserved: Float!
   totalKilometersRequired: Float!
