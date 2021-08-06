@@ -14,7 +14,7 @@ describe('Pre-inspection', () => {
     )
   })
 
-  it('Can create a pre-inspection', () => {
+  it.skip('Can create a pre-inspection', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
     // We are not testing deletion, but if we don't delete, test inspections will pile up.
@@ -22,7 +22,7 @@ describe('Pre-inspection', () => {
     cy.getTestElement('remove_inspection').click()
   })
 
-  it('Can set a name on the pre-inspection', () => {
+  it.skip('Can set a name on the pre-inspection', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -33,7 +33,7 @@ describe('Pre-inspection', () => {
     cy.getTestElement('remove_inspection').click()
   })
 
-  it('Can change pre-inspection period', () => {
+  it.skip('Can change pre-inspection period', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -53,6 +53,17 @@ describe('Pre-inspection', () => {
     })
 
     cy.wait(3000) // Some requests are triggered after period change, wait a while before deleting.
+    cy.getTestElement('remove_inspection').click()
+  })
+
+  it('Can change pre-inspection production period', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('production_start').clear().type('11.01.2021').blur()
+    cy.getTestElement('production_end').clear().type('23.05.2021').blur()
+    cy.getTestElement('inspection_config_save').click()
+
     cy.getTestElement('remove_inspection').click()
   })
 })

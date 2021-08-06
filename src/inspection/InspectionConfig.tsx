@@ -131,6 +131,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               </FieldLabel>
               <ProductionDatePickers>
                 <DatePicker
+                  testId="production_start"
                   value={getDateString(inspectionValues.startDate)}
                   minDate={inspection.minStartDate}
                   maxDate={inspection.season.endDate}
@@ -141,6 +142,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
                   disabled={inspection.status !== InspectionStatus.Draft}
                 />
                 <DatePicker
+                  testId="production_end"
                   value={getDateString(inspectionValues.endDate)}
                   maxDate={inspection.season.endDate}
                   onChange={(dateString: string | null) => {

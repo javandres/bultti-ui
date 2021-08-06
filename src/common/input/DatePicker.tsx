@@ -37,6 +37,7 @@ export type PropTypes = {
   minDate?: string
   maxDate?: string
   acceptableDayTypes?: AcceptableDayType[]
+  testId?: string
 }
 
 const DatePickerWrapperStyles = createGlobalStyle`
