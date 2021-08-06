@@ -20,5 +20,8 @@ describe('Pre-inspection', () => {
 
     cy.getTestElement('edit_pre_inspection').should('exist').click()
     cy.getTestElement('create_new_pre_inspection').should('exist').click()
+    cy.getTestElement('create_inspection_type').contains('ennakkotarkastus', {
+      matchCase: false,
+    })
   })
 })

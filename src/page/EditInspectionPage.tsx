@@ -78,7 +78,7 @@ const InspectionStatusContainer = styled.div`
   margin-left: 0.5rem;
 `
 
-const InspectionTypeContainer = styled.span`
+const InspectionTypeDisplay = styled.span`
   text-transform: capitalize;
 `
 
@@ -157,12 +157,13 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     <EditInspectionView>
       <InspectionContext.Provider value={inspection || null}>
         <PageTitle loading={isInspectionLoading} onRefresh={refetch}>
-          <InspectionTypeContainer>
-            {inspection?.status !== InspectionStatus.InProduction
-              ? typeStrings.prefixLC
-              : typeStrings.prefix}
-            tarkastus
-          </InspectionTypeContainer>
+          <InspectionTypeDisplay data-cy="create_inspection_type">
+            {`${
+              inspection?.status !== InspectionStatus.InProduction
+                ? typeStrings.prefixLC
+                : typeStrings.prefix
+            }tarkastus`}
+          </InspectionTypeDisplay>
           <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
           {inspection && (
             <InspectionStatusContainer
