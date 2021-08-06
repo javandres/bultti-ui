@@ -51,11 +51,19 @@ export type PropTypes = {
   className?: string
   style?: CSSProperties
   isEditingAllowed?: boolean
+  testId?: string
 }
 
 // TODO: Make a InspectionActions folder, separate action buttons into their own files to improve readability
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
+  ({
+    inspection,
+    onRefresh,
+    className,
+    style,
+    isEditingAllowed = true,
+    testId,
+  }: PropTypes) => {
     var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
     let hasAdminAccessRights = useHasAdminAccessRights()
@@ -196,6 +204,7 @@ const InspectionActions = observer(
         <ButtonRow className={className} style={style}>
           {!isEditing && (
             <Button
+              data-cy={`open_${testId}`}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               disabled={!isEditingAllowed}
@@ -247,6 +256,7 @@ const InspectionActions = observer(
           ) &&
             canEditInspection && (
               <Button
+                data-cy="remove_inspection"
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={removeLoading}
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}

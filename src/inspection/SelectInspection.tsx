@@ -152,8 +152,9 @@ const SelectInspection: React.FC<PropTypes> = observer(
                 </NewInspection>
               )}
               {orderBy(inspections, ['inspectionStartDate', 'version'], ['desc', 'desc']).map(
-                (inspection) => (
+                (inspection, idx) => (
                   <InspectionCard
+                    testId={`pre_inspection_${idx}`}
                     key={inspection.id}
                     onRefresh={refetchInspections}
                     inspection={inspection}

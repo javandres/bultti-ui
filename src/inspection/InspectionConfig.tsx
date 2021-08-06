@@ -102,6 +102,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           <FlexRow>
             <FormColumn>
               <Input
+                testId="inspection_name"
                 disabled={!canEditInspection}
                 value={inspectionValues.name || ''}
                 label={text('inspection_inspectionName')}
@@ -153,7 +154,11 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           )}
           <FlexRow>
             <ActionsWrapper>
-              <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
+              <Button
+                data-cy="inspection_config_save"
+                style={{ marginRight: '1rem' }}
+                onClick={onSave}
+                disabled={!isDirty}>
                 <Text>save</Text>
               </Button>
               <Button

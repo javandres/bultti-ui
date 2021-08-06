@@ -56,6 +56,7 @@ export type PropTypes = {
   onEnterPress?: (value?: string) => unknown
   onEscPress?: () => unknown
   ref?: RefObject<HTMLInputElement>
+  testId?: string
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'onChange'>
 
 const Input: React.FC<PropTypes> = observer(
@@ -72,6 +73,7 @@ const Input: React.FC<PropTypes> = observer(
     onChange,
     onEnterPress,
     onEscPress,
+    testId,
     ...inputProps
   }) => {
     const onValueChange = useCallback(
@@ -108,6 +110,7 @@ const Input: React.FC<PropTypes> = observer(
         )}
         <InputComponent
           {...inputProps}
+          data-cy={testId}
           ref={ref}
           type={type}
           value={value}

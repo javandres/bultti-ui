@@ -157,14 +157,16 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     <EditInspectionView>
       <InspectionContext.Provider value={inspection || null}>
         <PageTitle loading={isInspectionLoading} onRefresh={refetch}>
-          <InspectionTypeDisplay data-cy="create_inspection_type">
+          <InspectionTypeDisplay data-cy="inspection_type_title">
             {`${
               inspection?.status !== InspectionStatus.InProduction
                 ? typeStrings.prefixLC
                 : typeStrings.prefix
             }tarkastus`}
           </InspectionTypeDisplay>
-          <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+          <InspectionNameTitle data-cy="inspection_name_title">
+            {inspectionName}
+          </InspectionNameTitle>
           {inspection && (
             <InspectionStatusContainer
               style={{

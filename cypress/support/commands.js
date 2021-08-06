@@ -91,6 +91,27 @@ Cypress.Commands.add('generateTestData', () => {
   cy.visit('/')
 })
 
+Cypress.Commands.add('openTestPreInspection', () => {
+  cy.visit('/pre-inspection/edit')
+  cy.selectTestSettings()
+
+  cy.getTestElement('pre_inspection_0').should('exist')
+  cy.getTestElement('open_pre_inspection_0').should('exist').click()
+  cy.getTestElement('inspection_type_title').contains('ennakkotarkastus', {
+    matchCase: false,
+  })
+})
+
+Cypress.Commands.add('createTestPreInspection', () => {
+  cy.visit('/pre-inspection/edit')
+  cy.selectTestSettings()
+
+  cy.getTestElement('create_new_pre_inspection').should('exist').click()
+  cy.getTestElement('inspection_type_title').contains('ennakkotarkastus', {
+    matchCase: false,
+  })
+})
+
 /**
  * @param {Object} props
  * @param {String} props.role ADMIN / HSL / OPERATOR
