@@ -34,8 +34,8 @@ Cypress.Commands.add('visitAndSpy', (path) => {
   })
 })
 
-Cypress.Commands.add('getTestElement', (selector, options = {}) => {
-  return cy.get(`[data-cy~="${selector}"]`, options)
+Cypress.Commands.add('getTestElement', (selector, match = '~', options = {}) => {
+  return cy.get(`[data-cy${match}="${selector}"]`, options)
 })
 
 Cypress.Commands.add('loginAdmin', () => {
@@ -81,7 +81,7 @@ Cypress.Commands.add('generateTestData', () => {
   cy.waitUntil(
     () =>
       cy
-        .getTestElement('create_test_data_loading', { timeout: 240000 })
+        .getTestElement('create_test_data_loading', '~', { timeout: 240000 })
         .should('have.length', 0),
     {
       timeout: 240000,

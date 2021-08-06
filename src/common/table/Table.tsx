@@ -116,6 +116,7 @@ export type TablePropTypes<ItemType extends TableItemType> = {
   sort?: SortConfig[]
   setSort?: (arg: ((sort: SortConfig[]) => SortConfig[]) | SortConfig[]) => unknown
   isResizeEnabled?: boolean
+  testId?: string
 } & TableEditProps<ItemType>
 
 const Table = observer(
@@ -145,6 +146,7 @@ const Table = observer(
     sort: propSort,
     setSort: propSetSort,
     isResizeEnabled = true,
+    testId,
   }: TablePropTypes<ItemType>) => {
     let tableViewRef = useRef<null | HTMLDivElement>(null)
     let [_sort, _setSort] = useState<SortConfig[]>([])
@@ -170,6 +172,7 @@ const Table = observer(
       columnLabels,
       columnOrder,
       hideKeys,
+      testId,
     })
 
     let toolbarIsFloating = useFloatingToolbar(tableViewRef, pendingValues.length !== 0)
@@ -256,6 +259,7 @@ const Table = observer(
                     }}
                     isEditing={isEditingColumn}
                     key={colKey}
+                    data-cy={`${testId}_header_${colName}`}
                     onMouseDown={onMouseDownHandler as MouseEventHandler}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
@@ -277,6 +281,7 @@ const Table = observer(
               ? emptyContent
               : rows.map((row, rowIndex) => (
                   <TableRow<ItemType>
+                    testId={`${testId}_row_${rowIndex}`}
                     key={row.key || rowIndex}
                     row={row}
                     index={rowIndex}

@@ -87,6 +87,7 @@ type CellPropTypes<ItemType extends TableItemType> = {
   tabIndex?: number
   rowId: string
   cellHighlightColor?: string
+  testId?: string
 }
 
 export const TableCell = observer(
@@ -96,6 +97,7 @@ export const TableCell = observer(
     colIndex,
     tabIndex = 1,
     cellHighlightColor = '',
+    testId,
   }: CellPropTypes<ItemType>) => {
     let {
       pendingValues = [],
@@ -162,6 +164,7 @@ export const TableCell = observer(
 
     return (
       <TableCellElement
+        data-cy={testId}
         highlightColor={cellHighlightColor}
         style={cellWidthStyle}
         isEditing={cellInputIsActive}

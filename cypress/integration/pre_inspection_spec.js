@@ -56,13 +56,24 @@ describe('Pre-inspection', () => {
     cy.getTestElement('remove_inspection').click()
   })
 
-  it('Can change pre-inspection production period', () => {
+  it.skip('Can change pre-inspection production period', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
     cy.getTestElement('production_start').clear().type('11.01.2021').blur()
     cy.getTestElement('production_end').clear().type('23.05.2021').blur()
     cy.getTestElement('inspection_config_save').click()
+
+    cy.getTestElement('remove_inspection').click()
+  })
+
+  it('Can fetch pre-inspection departure blocks', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('departure_blocks_section').click()
+    cy.getTestElement('fetch_departure_blocks').click()
+    cy.getTestElement('departure_blocks_table_row', '*').should('have.length.at.least', 1)
 
     cy.getTestElement('remove_inspection').click()
   })
