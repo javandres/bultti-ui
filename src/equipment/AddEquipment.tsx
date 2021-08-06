@@ -36,6 +36,7 @@ export type PropTypes = {
   editableKeys: string[]
   fieldLabels: { [key: string]: string }
   updateQuota?: boolean
+  testId?: string
 }
 
 const AddEquipment: React.FC<PropTypes> = observer(
@@ -50,6 +51,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     onEquipmentChanged,
     fieldLabels,
     updateQuota,
+    testId,
   }) => {
     let [quotaInput, setQuotaInput] = useState<number>(0)
     let [batchInput, setBatchInput] = useState<string>('')

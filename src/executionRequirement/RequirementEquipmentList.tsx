@@ -19,6 +19,7 @@ export type PropTypes = {
   startDate: Date
   onEquipmentChanged: () => unknown
   isEditable: boolean
+  testId?: string
 }
 
 export const equipmentColumnLabels = {
@@ -45,7 +46,7 @@ export const groupedEquipmentColumnLabels = {
 }
 
 const RequirementEquipmentList: React.FC<PropTypes> = observer(
-  ({ equipment, executionRequirement, startDate, onEquipmentChanged, isEditable }) => {
+  ({ equipment, executionRequirement, startDate, onEquipmentChanged, isEditable, testId }) => {
     let [execRemoveEquipment] = useMutationData(removeRequirementEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentRequirementQuotaMutation)
 
@@ -95,6 +96,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
 
     return equipment.length !== 0 ? (
       <EquipmentList
+        testId={testId}
         equipment={tableEquipmentRows}
         updateEquipment={updateEquipmentData}
         removeEquipment={!isEditable ? undefined : removeEquipment}

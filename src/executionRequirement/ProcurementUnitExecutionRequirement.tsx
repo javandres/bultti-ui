@@ -71,10 +71,11 @@ export type PropTypes = {
   isEditable: boolean
   onUpdate?: () => unknown
   valid: boolean
+  testId?: string
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
-  ({ procurementUnit, isEditable, onUpdate, valid = true }) => {
+  ({ procurementUnit, isEditable, onUpdate, valid = true, testId }) => {
     let inspection = useContext(InspectionContext)
 
     let {
@@ -218,6 +219,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         </FlexRow>
         {procurementUnitRequirement && (
           <RequirementsTable
+            testId={`${testId}_table`}
             executionRequirement={procurementUnitRequirement}
             tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
           />
@@ -249,6 +251,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <Text>executionRequirement_equipmentList</Text>
             </SubHeading>
             <RequirementEquipmentList
+              testId={`${testId}_equipment`}
               isEditable={isEditable}
               startDate={inspectionStartDate}
               onEquipmentChanged={update}
@@ -257,6 +260,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             />
             {isEditable && (
               <AddEquipment
+                testId={`${testId}_equipment_controls`}
                 operatorId={procurementUnitRequirement.operator.id}
                 equipment={equipment}
                 onEquipmentChanged={update}
