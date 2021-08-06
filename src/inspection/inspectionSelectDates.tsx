@@ -123,14 +123,17 @@ const InspectionSelectDates = observer(
           <LoadingDisplay />
         ) : (
           <Dropdown<DateOption>
+            testId="select_inspection_period"
+            setOptionTestIdByIndex={true}
             disabled={isEditingDisabled}
             label={text('inspection_selectInspectionDate')}
             items={dateOptions}
             onSelect={onSelectDates}
             selectedItem={selectedItem}
+            itemToString={inspectionType === InspectionType.Pre ? 'label' : 'id'}
             itemToLabel={(item: DateOption) => (
               <InspectionDateLabel>
-                <span>{item.label}</span>
+                <span data-cy="inspection_date_option_display">{item.label}</span>
                 {item.hfpDataStatus && (
                   <HfpStatusIndicator
                     title={text(`inspectionDate_hfp_${lowerCase(item.hfpDataStatus)}`)}

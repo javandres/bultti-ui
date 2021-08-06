@@ -32,4 +32,27 @@ describe('Pre-inspection', () => {
 
     cy.getTestElement('remove_inspection').click()
   })
+
+  it('Can change pre-inspection period', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('select_inspection_period').click()
+    cy.getTestElement('select_inspection_period_1')
+      .find(`[data-cy~="inspection_date_option_display"]`)
+      .text()
+      .as('selected_inspection_period')
+
+    cy.getTestElement('select_inspection_period_1').click()
+
+    cy.getTestElement('inspection_config_save').click()
+    cy.on('window:confirm', () => true)
+
+    cy.get('@selected_inspection_period').then((selectedPeriod) => {
+      cy.getTestElement('select_inspection_period').contains(selectedPeriod)
+    })
+
+    cy.wait(3000) // Some requests are triggered after period change, wait a while before deleting.
+    cy.getTestElement('remove_inspection').click()
+  })
 })

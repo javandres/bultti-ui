@@ -90,6 +90,8 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   hintText?: string
   style?: CSSProperties
   testId?: string
+  // Set the test ID of options by the index of the option instead of with the toString value.
+  setOptionTestIdByIndex?: boolean
 }
 
 function toString(item, converter?: string | ((item) => string | JSX.Element)) {
@@ -122,6 +124,7 @@ const Dropdown = observer(
     itemToLabel = 'label',
     unselectedValue,
     testId = 'dropdown',
+    setOptionTestIdByIndex = false,
   }: DropdownProps<ValueType>) => {
     const onSelectFn = useCallback(
       ({ selectedItem = unselectedValue }) => {
@@ -180,7 +183,9 @@ const Dropdown = observer(
               <>
                 {items.map((item, index) => (
                   <DropdownItem
-                    data-cy={`${testId}_${toString(item, itemToString)}`}
+                    data-cy={`${testId}_${
+                      !setOptionTestIdByIndex ? toString(item, itemToString) : index
+                    }`}
                     key={`dropdown-item-${index}`}
                     highlighted={highlightedIndex === index}
                     {...getItemProps({
