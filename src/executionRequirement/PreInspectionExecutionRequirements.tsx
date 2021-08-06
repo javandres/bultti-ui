@@ -44,6 +44,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
 
     return (
       <ExpandableSection
+        testId="execution_requirements_section"
         error={!isValid}
         headerContent={
           <HeaderMainHeading>
@@ -56,7 +57,10 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
               <Text>preInspection_noCalculatedExecutionRequirements</Text>
             </MessageView>
             <div>
-              <Button onClick={refetch} loading={requirementsLoading}>
+              <Button
+                data-cy="fetch_execution_requirements"
+                onClick={refetch}
+                loading={requirementsLoading}>
                 <Text>preInspection_calculateExecutionRequirements</Text>
               </Button>
             </div>
@@ -76,6 +80,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
             <AreaWrapper key={areaRequirement.area.id}>
               <AreaHeading>{areaRequirement.area.name}</AreaHeading>
               <RequirementsTable
+                testId="execution_requirements_table"
                 tableLayout={RequirementsTableLayout.BY_VALUES}
                 executionRequirement={areaRequirement}
               />

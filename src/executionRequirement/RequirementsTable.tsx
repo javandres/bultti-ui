@@ -42,6 +42,7 @@ export interface IExecutionRequirement {
 export type PropTypes = {
   executionRequirement: IExecutionRequirement
   tableLayout?: RequirementsTableLayout
+  testId?: string
 }
 
 const valuesLayoutColumnLabels: { [key in keyof PlannedEmissionClassRequirement]?: string } = {
@@ -63,7 +64,11 @@ type SummaryType = { unit: string; total: string }
 type ValueItemType = PlannedEmissionClassRequirement | SummaryType
 
 const RequirementsTable: React.FC<PropTypes> = observer(
-  ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
+  ({
+    executionRequirement,
+    tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS,
+    testId,
+  }) => {
     let requirementRows = useMemo((): Array<ValueItemType> => {
       let requirementValues = executionRequirement.requirements
 
@@ -203,6 +208,7 @@ const RequirementsTable: React.FC<PropTypes> = observer(
           renderValue={renderDisplayValue}
         />
         <Table<ValueItemType>
+          testId={testId}
           items={requirementRows}
           columnLabels={
             tableLayout === RequirementsTableLayout.BY_VALUES

@@ -67,13 +67,26 @@ describe('Pre-inspection', () => {
     cy.getTestElement('remove_inspection').click()
   })
 
-  it('Can fetch pre-inspection departure blocks', () => {
+  it.skip('Can fetch pre-inspection departure blocks', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
     cy.getTestElement('departure_blocks_section').click()
     cy.getTestElement('fetch_departure_blocks').click()
     cy.getTestElement('departure_blocks_table_row', '*').should('have.length.at.least', 1)
+
+    cy.getTestElement('remove_inspection').click()
+  })
+
+  it('Can open execution requirements', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('execution_requirements_section').click()
+    cy.getTestElement('execution_requirements_table_row', '*').should(
+      'have.length.at.least',
+      1
+    )
 
     cy.getTestElement('remove_inspection').click()
   })
