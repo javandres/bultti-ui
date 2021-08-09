@@ -35,6 +35,7 @@ export type PropTypes = {
   inspectionType: InspectionType
   inspectionId: string
   inspectionStatus: InspectionStatus
+  testId?: string
 }
 
 interface ReportItemKeyInterface {
@@ -48,7 +49,7 @@ let reportKeyFromItem = (item: ReportItemKeyInterface): string =>
   item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
 const ReportContainer = observer((props: PropTypes) => {
-  let { reportName, inspectionId, inspectionType, inspectionStatus } = props
+  let { reportName, inspectionId, inspectionType, inspectionStatus, testId } = props
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
 
@@ -142,6 +143,8 @@ const ReportContainer = observer((props: PropTypes) => {
 
   let getCellHighlightColor = reportCellHighlightColorMap[reportName]
 
+  let reportTableTestId = `${testId}_table`
+
   return (
     <ReportViewWrapper>
       <ReportFunctionsRow>
@@ -164,11 +167,15 @@ const ReportContainer = observer((props: PropTypes) => {
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} />
       {reportType === 'executionRequirement' ? (
-        <ExecutionRequirementsReport items={reportDataItems} />
+        <ExecutionRequirementsReport testId={reportTableTestId} items={reportDataItems} />
       ) : reportType === 'observedExecutionRequirement' ? (
-        <ObservedExecutionRequirementsReport items={reportDataItems} />
+        <ObservedExecutionRequirementsReport
+          testId={reportTableTestId}
+          items={reportDataItems}
+        />
       ) : (
         <FilteredResponseTable
+          testId={reportTableTestId}
           data={preparedReport}
           tableState={tableState}
           columnLabels={columnLabels}

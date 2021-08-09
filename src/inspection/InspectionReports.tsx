@@ -95,7 +95,7 @@ const InspectionReports = observer(
     let typeStrings = getInspectionTypeStrings(inspection.inspectionType)
 
     return (
-      <InspectionReportsView>
+      <InspectionReportsView data-cy="inspection_reports">
         {!inspection && <ErrorView>{typeStrings.prefix}tarkastus ei löydetty.</ErrorView>}
         {!!inspection && !reportsData && !reportsLoading && (
           <MessageView>Ei raportteja...</MessageView>
@@ -111,10 +111,12 @@ const InspectionReports = observer(
           reports.map((reportListItem) => (
             <ReportListItem
               key={reportListItem.name}
+              testId={`inspection_reports_report_section_${reportListItem.name}`}
               inspectionType={showItemActions ? inspection.inspectionType! : undefined}
               inspectionId={showItemActions ? inspectionId : undefined}
               reportData={reportListItem}>
               <ReportContainer
+                testId={`inspection_reports_report_${reportListItem.name}`}
                 reportName={reportListItem.name as keyof ReportTypeByName}
                 inspectionId={inspectionId}
                 inspectionType={inspection.inspectionType}

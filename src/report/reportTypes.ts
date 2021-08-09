@@ -33,6 +33,7 @@ import {
 export type ReportComponentProps<T = Record<string, unknown>> = {
   items: T[]
   columnLabels?: { [key: string]: string }
+  testId?: string
 }
 
 export type ReportTypeByName = {

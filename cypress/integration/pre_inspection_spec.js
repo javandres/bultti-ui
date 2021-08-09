@@ -12,14 +12,16 @@ describe('Pre-inspection', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
+
+    // We are not testing deletion, but if we don't delete, test inspections will pile up.
+    // Separate delete draft inspection test is not needed.
+    cy.wait(1000)
+    cy.getTestElement('remove_inspection').click()
   })
 
   it.skip('Can create a pre-inspection', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
-    // We are not testing deletion, but if we don't delete, test inspections will pile up.
-    // Separate delete draft inspection test is not needed.
-    cy.getTestElement('remove_inspection').click()
   })
 
   it.skip('Can set a name on the pre-inspection', () => {
@@ -29,8 +31,6 @@ describe('Pre-inspection', () => {
     cy.getTestElement('inspection_name').type('Test inspection')
     cy.getTestElement('inspection_config_save').click()
     cy.getTestElement('inspection_name_title').contains('Test inspection')
-
-    cy.getTestElement('remove_inspection').click()
   })
 
   it.skip('Can change pre-inspection period', () => {
@@ -51,9 +51,6 @@ describe('Pre-inspection', () => {
     cy.get('@selected_inspection_period').then((selectedPeriod) => {
       cy.getTestElement('select_inspection_period').contains(selectedPeriod)
     })
-
-    cy.wait(3000) // Some requests are triggered after period change, wait a while before deleting.
-    cy.getTestElement('remove_inspection').click()
   })
 
   it.skip('Can change pre-inspection production period', () => {
@@ -63,8 +60,6 @@ describe('Pre-inspection', () => {
     cy.getTestElement('production_start').clear().type('11.01.2021').blur()
     cy.getTestElement('production_end').clear().type('23.05.2021').blur()
     cy.getTestElement('inspection_config_save').click()
-
-    cy.getTestElement('remove_inspection').click()
   })
 
   it.skip('Can fetch pre-inspection departure blocks', () => {
@@ -74,11 +69,9 @@ describe('Pre-inspection', () => {
     cy.getTestElement('departure_blocks_section').click()
     cy.getTestElement('fetch_departure_blocks').click()
     cy.getTestElement('departure_blocks_table_row', '*').should('have.length.at.least', 1)
-
-    cy.getTestElement('remove_inspection').click()
   })
 
-  it('Can open execution requirements', () => {
+  it.skip('Can open execution requirements', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -87,7 +80,35 @@ describe('Pre-inspection', () => {
       'have.length.at.least',
       1
     )
+  })
 
-    cy.getTestElement('remove_inspection').click()
+  it.skip('Can open procurement units and their requirements', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('procurement_unit_0_section').click()
+
+    cy.getTestElement('procurement_unit_0_requirements_table_row', '*').should(
+      'have.length.at.least',
+      1
+    )
+
+    cy.getTestElement(
+      'procurement_unit_0_requirements_equipment_equipment_list_row',
+      '*'
+    ).should('have.length.at.least', 1)
+  })
+
+  // TODO: Test adding and removing equipment and changing percentage quotas.
+
+  it('Can open reports preview tab', () => {
+    cy.loginAdmin()
+    cy.createTestPreInspection()
+
+    cy.getTestElement('inspection_tabs_tab_reports').click()
+    cy.getTestElement('inspection_reports').should('exist')
+
+    cy.getTestElement('inspection_reports_report_section', '*').first().click()
+    cy.getTestElement('inspection_reports_report', '*').should('exist')
   })
 })

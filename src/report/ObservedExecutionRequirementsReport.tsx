@@ -20,13 +20,16 @@ const AreaHeading = styled.h4`
 export type PropTypes<T> = ReportComponentProps<T>
 
 const ObservedExecutionRequirementsReport = observer(
-  ({ items }: PropTypes<ObservedExecutionRequirementsReportData>) => {
+  ({ items, testId }: PropTypes<ObservedExecutionRequirementsReportData>) => {
     return (
       <ExecutionRequirementsReportView>
         {items.map((areaRequirement) => (
           <React.Fragment key={areaRequirement.areaName}>
             <AreaHeading>{areaRequirement.areaName}</AreaHeading>
-            <ObservedRequirementsTable executionRequirement={areaRequirement} />
+            <ObservedRequirementsTable
+              testId={testId}
+              executionRequirement={areaRequirement}
+            />
           </React.Fragment>
         ))}
       </ExecutionRequirementsReportView>

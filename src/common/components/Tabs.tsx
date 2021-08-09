@@ -115,73 +115,71 @@ type TabChildComponent = React.ReactElement<{
 
 type PropTypes = {
   children: (TabChildComponent | false)[]
-  testIdPrefix?: string
   className?: string
   rootPath?: string
+  testId?: string
 }
 
 let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`.replace('//', '/'))
 
-const Tabs: React.FC<PropTypes> = decorate(
-  ({ testIdPrefix = 'page-tabs', children, className }) => {
-    let { path, url } = useRouteMatch()
+const Tabs: React.FC<PropTypes> = decorate(({ children, className, testId }) => {
+  let { path, url } = useRouteMatch()
 
-    // The children usually contain an empty string as the first element.
-    // Remove all such falsy values from the array.
-    const validChildren = useMemo(
-      () => compact(Children.toArray(children)) as TabChildComponent[],
-      [children]
-    )
+  // The children usually contain an empty string as the first element.
+  // Remove all such falsy values from the array.
+  const validChildren = useMemo(
+    () => compact(Children.toArray(children)) as TabChildComponent[],
+    [children]
+  )
 
-    // An array of child tab data with labels etc is extracted from props.children.
-    let tabs: TabChildProps[] = useMemo(() => {
-      const childrenTabs = validChildren.map((tabContent) => {
-        if (!tabContent || !React.isValidElement(tabContent)) {
-          return null
-        }
+  // An array of child tab data with labels etc is extracted from props.children.
+  let tabs: TabChildProps[] = useMemo(() => {
+    const childrenTabs = validChildren.map((tabContent) => {
+      if (!tabContent || !React.isValidElement(tabContent)) {
+        return null
+      }
 
-        const { name, label, path, loading, testId = name } = tabContent.props
-        return { name, label, path, loading, testId }
-      })
+      const { name, label, path, loading, testId = name } = tabContent.props
+      return { name, label, path, loading, testId }
+    })
 
-      return compact(childrenTabs)
-    }, [validChildren])
+    return compact(childrenTabs)
+  }, [validChildren])
 
-    return (
-      <TabsWrapper className={className}>
-        <TabButtonsWrapper>
-          {tabs.map((tabOption) => (
+  return (
+    <TabsWrapper className={className}>
+      <TabButtonsWrapper>
+        {tabs.map((tabOption) => (
+          <Route
+            key={`tab_link_${tabOption.name}`}
+            exact={tabOption.path === '/'}
+            path={getPathName(path, tabOption.path)}>
+            {({ match }) => (
+              <TabButton
+                to={getPathName(url, tabOption.path)}
+                data-cy={`${testId}_tab_${tabOption.testId}`}
+                selected={!!match}>
+                {tabOption.loading && <LoadingIndicator data-cy="loading" />}
+                <TabLabel>{tabOption.label}</TabLabel>
+              </TabButton>
+            )}
+          </Route>
+        ))}
+      </TabButtonsWrapper>
+      <TabContentWrapper>
+        <Switch>
+          {validChildren.map((tabChild) => (
             <Route
-              key={`tab_link_${tabOption.name}`}
-              exact={tabOption.path === '/'}
-              path={getPathName(path, tabOption.path)}>
-              {({ match }) => (
-                <TabButton
-                  to={getPathName(url, tabOption.path)}
-                  data-testid={`${testIdPrefix}-tab ${testIdPrefix}-tab-${tabOption.testId}`}
-                  selected={!!match}>
-                  {tabOption.loading && <LoadingIndicator data-testid="loading" />}
-                  <TabLabel>{tabOption.label}</TabLabel>
-                </TabButton>
-              )}
-            </Route>
+              exact={tabChild.props.path === '/'}
+              key={tabChild.props.name}
+              path={getPathName(path, tabChild.props.path)}
+              render={() => tabChild}
+            />
           ))}
-        </TabButtonsWrapper>
-        <TabContentWrapper>
-          <Switch>
-            {validChildren.map((tabChild) => (
-              <Route
-                exact={tabChild.props.path === '/'}
-                key={tabChild.props.name}
-                path={getPathName(path, tabChild.props.path)}
-                render={() => tabChild}
-              />
-            ))}
-          </Switch>
-        </TabContentWrapper>
-      </TabsWrapper>
-    )
-  }
-)
+        </Switch>
+      </TabContentWrapper>
+    </TabsWrapper>
+  )
+})
 
 export default Tabs

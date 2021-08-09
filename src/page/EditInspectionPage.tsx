@@ -210,9 +210,10 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
                   ) : (
-                    <Tabs>
+                    <Tabs testId="inspection_tabs">
                       <InspectionEditor
                         default={true}
+                        testId="create"
                         name="create"
                         path="/"
                         label={text('inspectionPage_inspectionInformation')}
@@ -230,6 +231,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                       )}
                       <InspectionPreview
                         inspection={inspection}
+                        testId="reports"
                         path="results"
                         name="results"
                         label={text('inspectionPage_results')}
