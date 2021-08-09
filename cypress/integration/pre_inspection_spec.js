@@ -1,4 +1,4 @@
-describe('Pre-inspection', () => {
+describe('Pre-inspection creation', () => {
   before(() => {
     cy.loginAdmin()
     cy.generateTestData()
@@ -19,12 +19,12 @@ describe('Pre-inspection', () => {
     cy.getTestElement('remove_inspection').click()
   })
 
-  it.skip('Can create a pre-inspection', () => {
+  it('Can create a pre-inspection', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
   })
 
-  it.skip('Can set a name on the pre-inspection', () => {
+  it('Can set a name on the pre-inspection', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -33,7 +33,7 @@ describe('Pre-inspection', () => {
     cy.getTestElement('inspection_name_title').contains('Test inspection')
   })
 
-  it.skip('Can change pre-inspection period', () => {
+  it('Can change pre-inspection period', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -53,7 +53,7 @@ describe('Pre-inspection', () => {
     })
   })
 
-  it.skip('Can change pre-inspection production period', () => {
+  it('Can change pre-inspection production period', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -62,7 +62,7 @@ describe('Pre-inspection', () => {
     cy.getTestElement('inspection_config_save').click()
   })
 
-  it.skip('Can fetch pre-inspection departure blocks', () => {
+  it('Can fetch pre-inspection departure blocks', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -71,7 +71,7 @@ describe('Pre-inspection', () => {
     cy.getTestElement('departure_blocks_table_row', '*').should('have.length.at.least', 1)
   })
 
-  it.skip('Can open execution requirements', () => {
+  it('Can open execution requirements', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
@@ -82,7 +82,7 @@ describe('Pre-inspection', () => {
     )
   })
 
-  it.skip('Can open procurement units and their requirements', () => {
+  it('Can open procurement units and their requirements', () => {
     cy.loginAdmin()
     cy.createTestPreInspection()
 
