@@ -104,7 +104,7 @@ Cypress.Commands.add('createTestPreInspection', () => {
   cy.visit('/pre-inspection/edit')
   cy.selectTestSettings()
 
-  cy.getTestElement('create_new_pre_inspection').click()
+  cy.getTestElement('create_new_inspection').click()
   cy.getTestElement('inspection_type_title').contains('ennakkotarkastus', {
     matchCase: false,
   })
@@ -121,7 +121,7 @@ Cypress.Commands.add('openTestPreInspection', () => {
       if (selectInspection.find('[data-cy*="open_pre_inspection_Draft"]').length !== 0) {
         cy.getTestElement('open_pre_inspection_Draft', '*').first().click()
       } else {
-        cy.getTestElement('create_new_pre_inspection').click()
+        cy.getTestElement('create_new_inspection').click()
       }
     })
   })
