@@ -34,5 +34,7 @@ describe('Pre-inspection creation', () => {
     cy.openTestReviewPreInspection()
 
     cy.getTestElement('publish_inspection').click()
+    // Remove inspection to prevent pre-inspections from piling up.
+    cy.getTestElement('remove_inspection').click()
   })
 })
