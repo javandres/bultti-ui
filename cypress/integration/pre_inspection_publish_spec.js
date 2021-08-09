@@ -14,6 +14,9 @@ describe('Pre-inspection creation', () => {
     )
   })
 
+  // Test rejection first to clean up any existing InReview pre-inspections. The next
+  // test will create a new one to test that whole process, and there cannot be
+  // two InReview inspections concurrently.
   it('Can reject in review pre-inspection', () => {
     cy.loginAdmin()
     cy.openTestReviewPreInspection()
@@ -23,10 +26,13 @@ describe('Pre-inspection creation', () => {
 
   it('Can set pre-inspection in review', () => {
     cy.loginAdmin()
-
-    cy.visit('/pre-inspection/edit')
-    cy.selectTestSettings()
-
     cy.createTestReviewPreInspection()
+  })
+
+  it('Can publish pre-inspection', () => {
+    cy.loginAdmin()
+    cy.openTestReviewPreInspection()
+
+    cy.getTestElement('publish_inspection').click()
   })
 })

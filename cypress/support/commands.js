@@ -53,6 +53,8 @@ Cypress.Commands.add('loginOperator', () => {
   cy.getTestElement('authInfo').should('exist')
 })
 
+// Select the test operator. Test data needs to have been generated at least once
+// for this to work. Test operator is not deleted when test data is removed.
 Cypress.Commands.add('selectTestOperator', () => {
   cy.getTestElement('operator-select').should.exist
   cy.getTestElement('operator-select').click()
@@ -62,6 +64,8 @@ Cypress.Commands.add('selectTestOperator', () => {
     .should('equal', 'Bultin Testiliikennöitsijä')
 })
 
+// Select the test season. Test data needs to have been generated at least once
+// for this to work. Test season is not deleted when test data is removed.
 Cypress.Commands.add('selectTestSeason', () => {
   cy.getTestElement('season-select').should.exist
   cy.getTestElement('season-select').click()
@@ -69,17 +73,21 @@ Cypress.Commands.add('selectTestSeason', () => {
   cy.getTestElement('season-select_selected').text().should('equal', 'TESTIKAUSI')
 })
 
+// Selects test operator and season. Should be run at the start of each test.
 Cypress.Commands.add('selectTestSettings', () => {
   cy.selectTestOperator()
   cy.selectTestSeason()
 })
 
+// Generates test data. Test data can be generated continuously, it will not be
+// created "on top" of existing test data.
 Cypress.Commands.add('generateTestData', () => {
   cy.visit('/dev-tools')
   cy.getTestElement('create_test_data').click()
 
   cy.waitUntil(
     () =>
+      // Wait until test data has loaded.
       cy
         .getTestElement('create_test_data_loading', '~', { timeout: 240000 })
         .should('have.length', 0),
@@ -91,6 +99,7 @@ Cypress.Commands.add('generateTestData', () => {
   cy.visit('/')
 })
 
+// Directly creates a new draft pre-inspection.
 Cypress.Commands.add('createTestPreInspection', () => {
   cy.visit('/pre-inspection/edit')
   cy.selectTestSettings()
@@ -102,6 +111,7 @@ Cypress.Commands.add('createTestPreInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
 })
 
+// Opens an existing draft pre-inspection if one exists. Creates a new one if not.
 Cypress.Commands.add('openTestPreInspection', () => {
   cy.visit('/pre-inspection/edit')
   cy.selectTestSettings()
@@ -122,6 +132,8 @@ Cypress.Commands.add('openTestPreInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
 })
 
+// Brings a draft pre-inspection to InReview. Will fail if an InReview pre-
+// inspection already exists.
 Cypress.Commands.add('createTestReviewPreInspection', () => {
   cy.openTestPreInspection()
 
@@ -141,6 +153,7 @@ Cypress.Commands.add('createTestReviewPreInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Hyväksyttävänä')
 })
 
+// Opens a currently InReview pre-inspection or creates a new one if one does not exist.
 Cypress.Commands.add('openTestReviewPreInspection', () => {
   cy.visit('/pre-inspection/edit')
   cy.selectTestSettings()
