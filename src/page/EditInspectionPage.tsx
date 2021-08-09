@@ -215,6 +215,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                       />
                       {inspection.status === InspectionStatus.Sanctionable && (
                         <ManageSanctions
+                          testId="sanction"
                           inspection={inspection as PostInspection}
                           name="sanction"
                           path="sanctions"
