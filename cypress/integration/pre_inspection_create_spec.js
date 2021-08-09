@@ -12,11 +12,6 @@ describe('Pre-inspection creation', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
-
-    // We are not testing deletion, but if we don't delete, test inspections will pile up.
-    // Separate delete draft inspection test is not needed.
-    cy.wait(1000)
-    cy.getTestElement('remove_inspection').click()
   })
 
   it('Can create a pre-inspection', () => {
@@ -24,9 +19,17 @@ describe('Pre-inspection creation', () => {
     cy.createTestPreInspection()
   })
 
+  it('Can delete pre-inspection', () => {
+    cy.loginAdmin()
+    cy.openTestPreInspection()
+
+    cy.wait(1000)
+    cy.getTestElement('remove_inspection').click()
+  })
+
   it('Can set a name on the pre-inspection', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('inspection_name').type('Test inspection')
     cy.getTestElement('inspection_config_save').click()
@@ -35,7 +38,7 @@ describe('Pre-inspection creation', () => {
 
   it('Can change pre-inspection period', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('select_inspection_period').click()
     cy.getTestElement('select_inspection_period_1')
@@ -55,7 +58,7 @@ describe('Pre-inspection creation', () => {
 
   it('Can change pre-inspection production period', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('production_start').clear().type('11.01.2021').blur()
     cy.getTestElement('production_end').clear().type('23.05.2021').blur()
@@ -64,16 +67,20 @@ describe('Pre-inspection creation', () => {
 
   it('Can fetch pre-inspection departure blocks', () => {
     cy.loginAdmin()
+    // Create a new pre-inspection for this test as we want the departure blocks to not be fetched.
     cy.createTestPreInspection()
 
     cy.getTestElement('departure_blocks_section').click()
     cy.getTestElement('fetch_departure_blocks').click()
     cy.getTestElement('departure_blocks_table_row', '*').should('have.length.at.least', 1)
+
+    // Delete the created pre-inspection.
+    cy.getTestElement('remove_inspection').click()
   })
 
   it('Can open execution requirements', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('execution_requirements_section').click()
     cy.getTestElement('execution_requirements_table_row', '*').should(
@@ -84,7 +91,7 @@ describe('Pre-inspection creation', () => {
 
   it('Can open procurement units and their requirements', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('procurement_unit_0_section').click()
 
@@ -103,7 +110,7 @@ describe('Pre-inspection creation', () => {
 
   it('Can open reports preview tab', () => {
     cy.loginAdmin()
-    cy.createTestPreInspection()
+    cy.openTestPreInspection()
 
     cy.getTestElement('inspection_tabs_tab_reports').click()
     cy.getTestElement('inspection_reports').should('exist')

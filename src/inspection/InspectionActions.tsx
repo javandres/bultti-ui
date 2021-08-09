@@ -199,12 +199,14 @@ const InspectionActions = observer(
 
     let [isDirty] = useUnsavedChangesPrompt()
 
+    let testIds = testId?.split(' ') || []
+
     return (
       <>
-        <ButtonRow className={className} style={style}>
+        <ButtonRow className={className} style={style} data-cy="inspection_actions">
           {!isEditing && (
             <Button
-              data-cy={`open_${testId}`}
+              data-cy={testIds.map((testIdStr) => `open_${testIdStr}`).join(' ')}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               disabled={!isEditingAllowed}
@@ -231,6 +233,7 @@ const InspectionActions = observer(
           )}
           {canUserSubmit && canInspectionBeSubmitted && isEditing && (
             <Button
+              data-cy="submit_inspection"
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
               disabled={hasErrors || isDirty}
@@ -242,6 +245,7 @@ const InspectionActions = observer(
 
           {canUserMakeSanctionable && canInspectionBeSanctionable && isEditing && (
             <Button
+              data-cy="sanction_inspection"
               loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
@@ -269,6 +273,7 @@ const InspectionActions = observer(
           {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
               <Button
+                data-cy="publish_inspection"
                 disabled={hasErrors}
                 style={{ marginLeft: 'auto' }}
                 loading={publishLoading}
@@ -278,6 +283,7 @@ const InspectionActions = observer(
                 <Text>inspection_actions_publish</Text>
               </Button>
               <Button
+                data-cy="reject_inspection"
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={rejectLoading}
                 buttonStyle={ButtonStyle.REMOVE}

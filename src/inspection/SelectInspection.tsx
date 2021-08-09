@@ -136,7 +136,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
                 {typeof globalSeason === 'string' ? globalSeason : globalSeason?.id}
               </ListHeading>
             </HeaderRow>
-            <InspectionItems>
+            <InspectionItems data-cy="select_inspection">
               {canCreateInspection && (
                 <NewInspection
                   data-cy="create_new_pre_inspection"
@@ -154,7 +154,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
               {orderBy(inspections, ['inspectionStartDate', 'version'], ['desc', 'desc']).map(
                 (inspection, idx) => (
                   <InspectionCard
-                    testId={`pre_inspection_${idx}`}
+                    testId={`pre_inspection_${idx} pre_inspection_${inspection.status}`}
                     key={inspection.id}
                     onRefresh={refetchInspections}
                     inspection={inspection}

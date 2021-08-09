@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
@@ -106,6 +106,8 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     refetch,
   } = useInspectionById(inspectionId)
 
+  console.log(inspection?.status)
+
   const { data: statusUpdateData } = useSubscription<InspectionStatusUpdate>(
     inspectionStatusSubscription,
     {
@@ -130,17 +132,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
       showErrorNotification(errorUpdate.message)
     }
   }, [errorUpdateData])
-
-  // Add updated status on inspection if it did update.
-  inspection = useMemo(() => {
-    let statusUpdate = pickGraphqlData(statusUpdateData)
-
-    if (!inspection || !statusUpdate || inspection.status === statusUpdate.status) {
-      return inspection
-    }
-
-    return { ...inspection, status: statusUpdate.status }
-  }, [inspection, statusUpdateData])
 
   let typeStrings = getInspectionTypeStrings(inspectionType)
   let inspectionGenericName = inspection
@@ -169,6 +160,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
           </InspectionNameTitle>
           {inspection && (
             <InspectionStatusContainer
+              data-cy="inspection_status"
               style={{
                 backgroundColor: getInspectionStatusColor(inspection.status),
                 borderColor: getInspectionStatusColor(inspection.status),

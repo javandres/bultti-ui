@@ -85,7 +85,7 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
           <Text>departureBlocks</Text>
         </HeaderMainHeading>
       }>
-      <DepartureBlocksView>
+      <DepartureBlocksView data-cy="departure_blocks">
         <LoadingDisplay loading={loading || fetchLoading} />
         {!(loading || fetchLoading) && departureBlocks.length === 0 ? (
           <FlexRow>
