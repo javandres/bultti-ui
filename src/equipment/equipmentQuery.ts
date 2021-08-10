@@ -45,7 +45,7 @@ export const addEquipmentToCatalogueMutation = gql`
       operatorId
       operator {
         id
-        operatorId
+        operatorIds
         operatorName
       }
       equipmentQuotas {

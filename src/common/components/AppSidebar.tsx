@@ -19,7 +19,6 @@ import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
 import { DEBUG } from '../../constants'
 import { useHasAdminAccessRights } from '../../util/userRoles'
-import { gql, useMutation } from '@apollo/client'
 import { useNavigate } from '../../util/urlValue'
 
 export const APP_TITLE_HEIGHT = 100
@@ -136,12 +135,6 @@ const UserLink = styled(LinkWithQuery)`
 
 const GlobalFilters = styled.div``
 
-const clearCacheMutation = gql`
-  mutation clearCache {
-    clearCache
-  }
-`
-
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
@@ -178,8 +171,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
       setUser(null)
     }
   }, [navigate])
-
-  const [clearCache] = useMutation(clearCacheMutation)
 
   return (
     <AppSidebarView>
@@ -269,16 +260,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Text>logout</Text>
             </Button>
           </NavCategory>
-          {DEBUG && (
-            <NavCategory>
-              <Button
-                style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-                onClick={() => clearCache()}
-                size={ButtonSize.MEDIUM}>
-                <div>Clear cache</div>
-              </Button>
-            </NavCategory>
-          )}
         </AppNav>
       </SidebarScrollContainer>
     </AppSidebarView>
