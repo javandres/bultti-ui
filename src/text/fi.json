@@ -264,7 +264,7 @@
   "postInspection_acceptance_hslAccepted": "HSL hyväksynyt",
   "postInspection_acceptance_hslAcceptButtonLabel": "Hyväksy HSL pääkäyttäjänä",
   "postInspection_acceptance_operatorAccepted": "Liikennöitsijä hyväksynyt",
-  "postInspection_acceptance_operatorAcceptButtonLabel": "Hyväksy liikennöitsijä-edustajana",
+  "postInspection_acceptance_operatorAcceptButtonLabel": "Hyväksy liikennöitsijänä",
 
   "postInspection_heading_sanctions": "Sanktiot",
   "postInspection_heading_equipmentDefectSanctions": "Kalustovikasanktiot",
