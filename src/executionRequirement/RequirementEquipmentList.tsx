@@ -70,7 +70,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
 
     const removeEquipment = useCallback(
       async (equipmentId: string) => {
-        if (isEditable) {
+        if (isEditable && isAdmin) {
           await execRemoveEquipment({
             variables: {
               equipmentId,
@@ -81,7 +81,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
           await onEquipmentChanged()
         }
       },
-      [onEquipmentChanged, executionRequirement, execRemoveEquipment, isEditable]
+      [onEquipmentChanged, executionRequirement, execRemoveEquipment, isEditable, isAdmin]
     )
 
     let tableEquipmentRows = useMemo(
@@ -97,7 +97,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
       <EquipmentList
         equipment={tableEquipmentRows}
         updateEquipment={updateEquipmentData}
-        removeEquipment={!isEditable ? undefined : removeEquipment}
+        removeEquipment={isEditable && isAdmin ? removeEquipment : undefined}
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}
