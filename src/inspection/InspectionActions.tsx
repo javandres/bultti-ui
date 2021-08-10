@@ -18,7 +18,7 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import { useHasAdminAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
@@ -83,14 +83,17 @@ const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
+
+    let { inspectionType, operatorId } = inspection
+
     let hasAdminAccessRights = useHasAdminAccessRights()
+    let hasOperatorAccessRights = useHasOperatorUserAccessRights(operatorId)
 
     let canEditInspection = useCanEditInspection({
       inspectionType: inspection.inspectionType,
       operatorId: globalOperator.id,
     })
 
-    var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
     var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId`))
 
@@ -194,7 +197,10 @@ const InspectionActions = observer(
     }, [onRefresh, inspection])
 
     let canUserPublish =
-      inspection.status === InspectionStatus.InReview && hasAdminAccessRights
+      inspection.status === InspectionStatus.InReview &&
+      (inspectionType === InspectionType.Post
+        ? hasAdminAccessRights || hasOperatorAccessRights
+        : hasAdminAccessRights)
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let canInspectionBeSubmitted =
@@ -204,8 +210,8 @@ const InspectionActions = observer(
         inspection.status === InspectionStatus.Sanctionable)
 
     let canUserSubmit = useCanEditInspection({
-      inspectionType: inspection.inspectionType,
-      operatorId: inspection.operatorId,
+      inspectionType,
+      operatorId,
     })
 
     // Only post-inspections which are in draft state can be made sanctionable.
