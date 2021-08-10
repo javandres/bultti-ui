@@ -31,11 +31,25 @@ Cypress.Commands.add('openTestPostInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
 })
 
+Cypress.Commands.add('ensureLinkedPreInspection', () => {
+  // This is sadly a bit undeterministic.
+  cy.getTestElement('update_linked_inspection').then((btn) => {
+    if (!btn.prop('disabled')) {
+      btn.click()
+    }
+  })
+
+  cy.getTestElement('linked_inspection_', '*').should('have.length.at.least', 1)
+  cy.getTestElement('create_execution_requirements').click()
+})
+
 // Brings a draft post-inspection to Sanctionable.
 Cypress.Commands.add('createTestSanctionPostInspection', () => {
   // The post-inspection needs a published pre-inspection to be able to move into sanctioning.
   cy.openTestProductionPreInspection()
   cy.openTestPostInspection()
+
+  cy.ensureLinkedPreInspection()
 
   cy.getTestElement('sanction_inspection').click()
 

@@ -61,14 +61,7 @@ describe('Pre-inspection creation', () => {
     cy.openTestProductionPreInspection()
     cy.openTestPostInspection()
 
-    // This is sadly a bit undeterministic.
-    cy.getTestElement('update_linked_inspection').then((btn) => {
-      if (!btn.prop('disabled')) {
-        btn.click()
-      }
-    })
-
-    cy.getTestElement('linked_inspection_', '*').should('have.length.at.least', 1)
+    cy.ensureLinkedPreInspection()
   })
 
   it('Can open reports preview tab', () => {

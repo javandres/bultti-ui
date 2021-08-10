@@ -301,7 +301,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
         />
         {isEditable && (
           <FlexRow style={{ marginBottom: '1.5rem' }}>
-            <Button onClick={onClickCreateRequirements} loading={createLoading}>
+            <Button
+              data-cy="create_execution_requirements"
+              onClick={onClickCreateRequirements}
+              loading={createLoading}>
               Luo suoritevaatimukset ennakkotarkastuksesta
             </Button>
             {observedRequirements.length !== 0 && (
