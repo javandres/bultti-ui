@@ -70,6 +70,6 @@ export function isAfter(
   return checkVal > otherVal
 }
 
-export const isBetween = (value: ValueType, start: ValueType, end: ValueType) => {
+export function isBetween(value: ValueType, start: ValueType, end: ValueType): boolean {
   return isAfter(value, start, true) && isBefore(value, end, true)
 }

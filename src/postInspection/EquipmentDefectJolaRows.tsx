@@ -11,7 +11,7 @@ import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Bu
 import PagedTable from '../common/table/PagedTable'
 import { ValueOf } from '../type/common'
 import { TableRowWithDataAndFunctions } from '../common/table/tableUtils'
-import { isAfter } from '../util/isBetween'
+import { isAfter } from '../util/compare'
 import { lowerCase } from 'lodash'
 
 export type PropTypes = {
