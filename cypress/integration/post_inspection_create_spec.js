@@ -55,6 +55,22 @@ describe('Pre-inspection creation', () => {
     })
   })
 
+  it('Can update linked pre-inspection', () => {
+    cy.loginAdmin()
+    // Must have a production pre-inspection for this test.
+    cy.openTestProductionPreInspection()
+    cy.openTestPostInspection()
+
+    // This is sadly a bit undeterministic.
+    cy.getTestElement('update_linked_inspection').then((btn) => {
+      if (!btn.prop('disabled')) {
+        btn.click()
+      }
+    })
+
+    cy.getTestElement('linked_inspection_', '*').should('have.length.at.least', 1)
+  })
+
   it('Can open reports preview tab', () => {
     cy.loginAdmin()
     cy.openTestPostInspection()

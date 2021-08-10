@@ -77,6 +77,7 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
         <Text>inspection_editor_linkedInspections</Text>
         <div style={{ marginLeft: 'auto', display: 'flex', alignSelf: 'stretch' }}>
           <Button
+            data-cy="update_linked_inspection"
             disabled={!linkedInspectionsCanUpdate}
             style={{ marginLeft: '1rem', alignSelf: 'center' }}
             loading={updateLoading}
@@ -91,13 +92,16 @@ const LinkedInspections = observer(({ inspection, isEditable = false }: PropType
           </Button>
         </div>
       </Heading>
-      {connectedPreInspections.map((inspectionMapping) => (
-        <InspectionIndexItem
-          key={inspectionMapping.id}
-          onClick={() => onClickConnectedInspection(inspectionMapping.inspection.id)}
-          inspection={inspectionMapping.inspection}
-        />
-      ))}
+      <div data-cy="linked_inspections">
+        {connectedPreInspections.map((inspectionMapping, idx) => (
+          <InspectionIndexItem
+            testId={`linked_inspection_${idx}`}
+            key={inspectionMapping.id}
+            onClick={() => onClickConnectedInspection(inspectionMapping.inspection.id)}
+            inspection={inspectionMapping.inspection}
+          />
+        ))}
+      </div>
       {connectedPreInspections.length === 0 && (
         <MessageView>
           <Text>inspection_editor_noLinkedInspections</Text>

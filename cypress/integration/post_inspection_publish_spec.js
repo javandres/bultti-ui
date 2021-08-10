@@ -21,26 +21,23 @@ describe('Pre-inspection creation', () => {
 
   it('Can revert sanctionable post-inspection to draft', () => {
     cy.loginAdmin()
-    cy.openTestPostInspection()
+    cy.openTestSanctionPostInspection()
 
     cy.getTestElement('inspection_tabs_tab_sanction').click()
     cy.getTestElement('revert_inspection_to_draft').click()
   })
 
-  it('Can submit sanctionable post-inspection', () => {
+  it('Can publish sanctionable post-inspection', () => {
     cy.loginAdmin()
-    cy.openTestPostInspection()
+    cy.openTestSanctionPostInspection()
 
+    // Not really any point in a separate test case for submitting post-inspections.
     cy.getTestElement('submit_inspection').click()
-  })
-
-  it('Can submit sanctionable post-inspection', () => {
-    cy.loginAdmin()
-    cy.openTestPostInspection('InReview')
-
-    cy.getTestElement('inspection_status').text()
+    cy.getTestElement('inspection_status').should('contain.text', 'Hyväksyttävänä')
 
     cy.getTestElement('publish_inspection').click()
+    cy.getTestElement('inspection_status').should('contain.text', 'Tuotannossa')
+
     // Remove inspection to prevent post-inspections from piling up.
     cy.getTestElement('remove_inspection').click()
   })
