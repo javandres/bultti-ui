@@ -12461,7 +12461,7 @@
             "deprecationReason": null
           },
           {
-            "name": "removeObservedExecutionRequirementsFromPreInspection",
+            "name": "removeObservedExecutionRequirementsFromPostInspection",
             "description": null,
             "args": [
               {

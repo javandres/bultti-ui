@@ -804,7 +804,7 @@ type Mutation {
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
   removeInspection(inspectionId: String!): Boolean!
   removeInspectionDate(id: String!): Boolean!
-  removeObservedExecutionRequirementsFromPreInspection(postInspectionId: String!): Boolean!
+  removeObservedExecutionRequirementsFromPostInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
