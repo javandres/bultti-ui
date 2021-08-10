@@ -2,6 +2,7 @@ import {
   formatISO,
   isAfter as dateIsAfter,
   isBefore as dateIsBefore,
+  isEqual,
   parseISO,
 } from 'date-fns'
 
@@ -23,34 +24,52 @@ export function compareVal(val: ValueType = 0): number {
   return !strVal ? 0 : parseInt(strVal.replace(/\D/g, ''), 10)
 }
 
-export function isBefore(value: ValueType, otherValue: ValueType): boolean {
+export function isBefore(
+  value: ValueType,
+  otherValue: ValueType,
+  inclusive: boolean = false
+): boolean {
   if (
     value instanceof Date &&
     (otherValue instanceof Date || typeof otherValue === 'string')
   ) {
     const otherDate = otherValue instanceof Date ? otherValue : parseISO(otherValue)
-    return dateIsBefore(value, otherDate)
+    return (inclusive && isEqual(value, otherDate)) || dateIsBefore(value, otherDate)
   }
 
   const checkVal = compareVal(value)
   const otherVal = compareVal(otherValue)
-  return checkVal <= otherVal
+
+  if (inclusive) {
+    return checkVal <= otherVal
+  }
+
+  return checkVal < otherVal
 }
 
-export function isAfter(value: ValueType, otherValue: ValueType): boolean {
+export function isAfter(
+  value: ValueType,
+  otherValue: ValueType,
+  inclusive: boolean = false
+): boolean {
   if (
     value instanceof Date &&
     (otherValue instanceof Date || typeof otherValue === 'string')
   ) {
     const otherDate = otherValue instanceof Date ? otherValue : parseISO(otherValue)
-    return dateIsAfter(value, otherDate)
+    return (inclusive && isEqual(value, otherDate)) || dateIsAfter(value, otherDate)
   }
 
   const checkVal = compareVal(value)
   const otherVal = compareVal(otherValue)
-  return checkVal >= otherVal
+
+  if (inclusive) {
+    return checkVal >= otherVal
+  }
+
+  return checkVal > otherVal
 }
 
 export const isBetween = (value: ValueType, start: ValueType, end: ValueType) => {
-  return isAfter(value, start) && isBefore(value, end)
+  return isAfter(value, start, true) && isBefore(value, end, true)
 }

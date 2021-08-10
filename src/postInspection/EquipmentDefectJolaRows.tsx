@@ -12,6 +12,7 @@ import PagedTable from '../common/table/PagedTable'
 import { ValueOf } from '../type/common'
 import { TableRowWithDataAndFunctions } from '../common/table/tableUtils'
 import { isAfter } from '../util/isBetween'
+import { lowerCase } from 'lodash'
 
 export type PropTypes = {
   inspection: PostInspection
@@ -51,6 +52,9 @@ const equipmentDefectColumnLabels: { [key in keyof EquipmentDefect]?: string } =
   jolaId: 'Jola ID',
 }
 
+const MATCH_AD_COVER_OBSERVATION_NAME = 'korin ulko'
+const MATCH_AD_COVER_OBSERVATION_DESCRIPTION = 'mainosteippa'
+
 const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) => {
   let {
     data = [],
@@ -86,15 +90,22 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
   )
 
   let highlightRow = useCallback((row: TableRowWithDataAndFunctions<EquipmentDefect>) => {
-    let { concludedDate, deadlineDate, priority } = row.item
+    let { concludedDate, deadlineDate, priority, name, description } = row.item
 
     if (
       !concludedDate ||
       isAfter(concludedDate, deadlineDate) ||
       priority === EquipmentDefectPriority.Dangerous
-      // Ad cover defect case not covered. These are not automatically sanctions.
     ) {
       return 'var(--light-red)'
+    }
+
+    // Ad cover defect case highlighted in yellow. These are not automatically sanctions.
+    if (
+      lowerCase(name).includes(MATCH_AD_COVER_OBSERVATION_NAME) &&
+      lowerCase(description).includes(MATCH_AD_COVER_OBSERVATION_DESCRIPTION)
+    ) {
+      return 'var(--light-yellow)'
     }
 
     return ''
