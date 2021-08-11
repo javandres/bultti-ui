@@ -14,6 +14,7 @@ const workerStatusQuery = gql`
       id
       taskStarted
       workingOnTask
+      params
     }
   }
 `
@@ -32,7 +33,7 @@ const WorkerStatusItem = styled.div`
 `
 
 const ItemSection = styled.div`
-  flex: 1;
+  flex: 1 0 auto;
 `
 
 const ItemSectionHeading = styled.h5`
@@ -58,6 +59,12 @@ const StatusPage: React.FC = observer(({ children }) => {
               <ItemSection>
                 <ItemSectionHeading>Started</ItemSectionHeading>
                 {status.taskStarted}
+              </ItemSection>
+              <ItemSection style={{ maxWidth: '33%' }}>
+                <ItemSectionHeading>Params</ItemSectionHeading>
+                <pre style={{ maxWidth: '100%', overflowX: 'scroll' }}>
+                  <code>{JSON.stringify(JSON.parse(status.params || ''), null, 2)}</code>
+                </pre>
               </ItemSection>
             </WorkerStatusItem>
           ))}
