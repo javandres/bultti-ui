@@ -68,6 +68,7 @@ const StatusPage: React.FC = observer(({ children }) => {
               <Text>update</Text>
             </Button>
           </FlexRow>
+          {workerStatus.length === 0 && <div>Currently not working on any task.</div>}
 
           {workerStatus.map((status) => (
             <WorkerStatusItem key={status.id}>
