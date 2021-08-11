@@ -61,7 +61,7 @@ const ReportContainer = observer((props: PropTypes) => {
   })
 
   let reportDataItems = useMemo(
-    () => transformReport(reportName, report.rows),
+    () => transformReport(reportName, report?.rows || []),
     [reportName, report]
   )
 
@@ -105,11 +105,13 @@ const ReportContainer = observer((props: PropTypes) => {
       ) : reportType === 'observedExecutionRequirement' ? (
         <ObservedExecutionRequirementsReport items={reportDataItems} />
       ) : (
-        <TableReport<ReportDataType>
-          report={report}
-          reportName={reportName}
-          tableState={tableState}
-        />
+        report?.rows && (
+          <TableReport<ReportDataType>
+            report={report}
+            reportName={reportName}
+            tableState={tableState}
+          />
+        )
       )}
     </ReportViewWrapper>
   )

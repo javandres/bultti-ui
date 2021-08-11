@@ -33,11 +33,11 @@ const TableReport = observer(
     // Prepare report data by transforming report rows (if necessary) and parsing the column labels.
     let preparedReport = useMemo(() => {
       if (!report) {
-        return report
+        return undefined
       }
 
       // Transform data. Will be passed through untouched if no transform is implemented.
-      let transformedRows = transformReport(reportName, report.rows)
+      let transformedRows = transformReport(reportName, report?.rows)
       let columnLabels = report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
 
       let rowModel = transformedRows[0]
