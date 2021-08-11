@@ -93,7 +93,7 @@ export function hasOperatorUserAccessRights(
   )
 }
 
-export function isTestUser(user: User | null | undefined) {
+export function isTestUser(user?: User) {
   if (!user) {
     return false
   }
