@@ -7,17 +7,15 @@ import { InspectionStatus, InspectionType } from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
 import DownloadReport from './DownloadReport'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
-import { text, Text } from '../util/translate'
+import { Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 import { ReportTypeByName } from './reportTypes'
 import { LoadingDisplay } from '../common/components/Loading'
 import ExecutionRequirementsReport from './ExecutionRequirementsReport'
 import ObservedExecutionRequirementsReport from './ObservedExecutionRequirementsReport'
-import FilteredResponseTable from '../common/table/FilteredResponseTable'
-import { hasReportTransform, transformReport } from './transformReports'
-import { createColumnTotalCallback } from './reportTotals'
-import { reportCellHighlightColorMap } from './reportCellHighlightColor'
+import { transformReport } from './transformReports'
 import { BaseReport } from '../type/report'
+import TableReport from './TableReport'
 
 const ReportViewWrapper = styled.div`
   position: relative;
@@ -36,16 +34,6 @@ export type PropTypes = {
   inspectionId: string
   inspectionStatus: InspectionStatus
 }
-
-interface ReportItemKeyInterface {
-  id?: string
-  _id?: string
-  departureId?: string
-  registryNr?: string
-}
-
-let reportKeyFromItem = (item: ReportItemKeyInterface): string =>
-  item?.id || item?._id || item?.departureId || item?.registryNr || ''
 
 const ReportContainer = observer((props: PropTypes) => {
   let { reportName, inspectionId, inspectionType, inspectionStatus } = props
@@ -72,54 +60,10 @@ const ReportContainer = observer((props: PropTypes) => {
     },
   })
 
-  // Prepare report data by transforming report rows (if necessary) and parsing the column labels.
-  let preparedReport = useMemo(() => {
-    if (!report) {
-      return report
-    }
-
-    // Transform data. Will be passed through untouched if no transform is implemented.
-    let transformedRows = transformReport(reportName, report.rows)
-    let columnLabels = report?.columnLabels ? JSON.parse(report?.columnLabels) : undefined
-
-    let rowModel = transformedRows[0]
-
-    // Column labels from the response are already OK if rows were not transformed.
-    if (!rowModel || !columnLabels || !hasReportTransform(reportName)) {
-      return { ...report, columnLabels, rows: transformedRows }
-    }
-
-    let totalRowsCount = transformedRows.length
-
-    // Add the transformed row keys to the column labels in order to actually show them.
-    for (let colName of Object.keys(rowModel)) {
-      // Skip id col
-      if (colName === 'id') {
-        continue
-      }
-
-      // We don't want to display unitEquipmentMaxAge column in sanction report
-      if (colName === 'unitEquipmentMaxAge') {
-        continue
-      }
-
-      if (!columnLabels[colName]) {
-        columnLabels[colName] = colName
-      }
-    }
-
-    // Return amended report object with transformed rows and column labels.
-    return {
-      ...report,
-      totalCount: totalRowsCount,
-      filteredCount: totalRowsCount,
-      rows: transformedRows,
-      columnLabels,
-    }
-  }, [report, reportName])
-
-  let columnLabels = preparedReport?.columnLabels
-  let reportDataItems = preparedReport?.rows || []
+  let reportDataItems = useMemo(
+    () => transformReport(reportName, report.rows),
+    [reportName, report]
+  )
 
   // Determine if the report is about some form of execution requirement.
   // These have their own report components.
@@ -134,13 +78,6 @@ const ReportContainer = observer((props: PropTypes) => {
       ? 'observedExecutionRequirement'
       : 'executionRequirement'
     : 'list'
-
-  let calculateReportTotals = useMemo(
-    () => createColumnTotalCallback(reportName, preparedReport?.rows || []),
-    [reportName, preparedReport]
-  )
-
-  let getCellHighlightColor = reportCellHighlightColorMap[reportName]
 
   return (
     <ReportViewWrapper>
@@ -168,22 +105,11 @@ const ReportContainer = observer((props: PropTypes) => {
       ) : reportType === 'observedExecutionRequirement' ? (
         <ObservedExecutionRequirementsReport items={reportDataItems} />
       ) : (
-        preparedReport && (
-          <FilteredResponseTable
-            data={preparedReport}
-            tableState={tableState}
-            columnLabels={columnLabels}
-            keyFromItem={reportKeyFromItem}
-            getColumnTotal={calculateReportTotals}
-            getCellHighlightColor={getCellHighlightColor}
-            groupBy={
-              report?.groupRowsBy
-                ? (item) =>
-                    report?.groupRowsBy ? text(item[report.groupRowsBy] as string) : 'default'
-                : undefined
-            }
-          />
-        )
+        <TableReport<ReportDataType>
+          report={report}
+          reportName={reportName}
+          tableState={tableState}
+        />
       )}
     </ReportViewWrapper>
   )
