@@ -1006,7 +1006,7 @@ export type Mutation = {
   modifyContract: Contract
   removeContract: Scalars['Boolean']
   createObservedExecutionRequirementsFromPreInspectionRequirements: Array<ObservedExecutionRequirement>
-  removeObservedExecutionRequirementsFromPreInspection: Scalars['Boolean']
+  removeObservedExecutionRequirementsFromPostInspection: Scalars['Boolean']
   updateObservedExecutionRequirementValues: ObservedExecutionRequirement
   loadHfpDataForInspectionPeriod: InspectionDate
   createInspectionDate: InspectionDate
@@ -1165,7 +1165,7 @@ export type MutationCreateObservedExecutionRequirementsFromPreInspectionRequirem
   postInspectionId: Scalars['String']
 }
 
-export type MutationRemoveObservedExecutionRequirementsFromPreInspectionArgs = {
+export type MutationRemoveObservedExecutionRequirementsFromPostInspectionArgs = {
   postInspectionId: Scalars['String']
 }
 
