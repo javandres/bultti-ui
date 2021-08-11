@@ -96,7 +96,9 @@ const TableReport = observer(
         groupBy={
           report?.groupRowsBy
             ? (item) =>
-                report?.groupRowsBy ? text(item[report.groupRowsBy] as string) : 'default'
+                report?.groupRowsBy
+                  ? text(`report_group_by_${item[report.groupRowsBy] as string}`)
+                  : 'default'
             : undefined
         }
       />
