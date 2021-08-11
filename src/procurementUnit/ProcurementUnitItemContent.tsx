@@ -9,7 +9,7 @@ import {
 } from '../schema-types'
 import { orderBy } from 'lodash'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
-import { isBetween } from '../util/isBetween'
+import { isBetween } from '../util/compare'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'

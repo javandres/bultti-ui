@@ -10,7 +10,7 @@ import {
   Season,
 } from '../schema-types'
 import { getInspectionTypeStrings, isPreInspection } from './inspectionUtils'
-import { isBetween } from '../util/isBetween'
+import { isBetween } from '../util/compare'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
