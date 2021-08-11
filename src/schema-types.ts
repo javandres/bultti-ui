@@ -1827,6 +1827,7 @@ export type Query = {
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
   inspectionEquipmentDefectSanctions: EquipmentDefectSanctionsResponse
+  workerStatus: Array<WorkerStatus>
 }
 
 export type QueryExecutionRequirementForProcurementUnitArgs = {
@@ -2492,4 +2493,12 @@ export type ValidationErrorData = {
   keys?: Maybe<Array<Scalars['String']>>
   referenceKeys?: Maybe<Array<Scalars['String']>>
   objectId?: Maybe<Scalars['String']>
+}
+
+export type WorkerStatus = {
+  __typename?: 'WorkerStatus'
+  id: Scalars['String']
+  workingOnTask?: Maybe<Scalars['String']>
+  taskStarted?: Maybe<Scalars['DateTime']>
+  params?: Maybe<Scalars['String']>
 }

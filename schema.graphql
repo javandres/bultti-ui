@@ -1373,6 +1373,7 @@ type Query {
   unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnobservedDeparturesReport
   user(userId: Int!): User
   users: [User!]!
+  workerStatus: [WorkerStatus!]!
 }
 
 type ReportListItem {
@@ -1608,6 +1609,13 @@ type ValidationErrorData {
   objectId: String
   referenceKeys: [String!]
   type: InspectionValidationError!
+}
+
+type WorkerStatus {
+  id: String!
+  params: String
+  taskStarted: DateTime
+  workingOnTask: String
 }
 
 enum ContractUserRelationType {
