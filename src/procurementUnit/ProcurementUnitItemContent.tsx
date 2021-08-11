@@ -208,7 +208,9 @@ const ProcurementUnitItemContent = observer(
           optionMaxAgeIncreaseMethod: procurementUnit.optionMaxAgeIncreaseMethod,
           maximumAverageAge: procurementUnit.maximumAverageAge,
           optionPeriodStart:
-            procurementUnit.optionPeriodStart || getDateString(defaultOptionStartDate),
+            procurementUnit.optionPeriodStart ||
+            getDateString(defaultOptionStartDate) ||
+            undefined,
         })
       }
 
@@ -222,7 +224,7 @@ const ProcurementUnitItemContent = observer(
     let onChangeProcurementUnit = useCallback((key, nextValue) => {
       setProcurementUnitInputValues((currentValues) => {
         let nextValues = { ...currentValues }
-        nextValues[key] = nextValue
+        nextValues[key] = nextValue || undefined
         return nextValues
       })
     }, [])

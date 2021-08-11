@@ -91,6 +91,9 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometersObserved
       totalUnitKilometers
+      averageAgeMax
+      averageAgeRequired
+      averageAgeWeighted
       averageAgeWeightedObserved
       sanctionPercentageAmount
       sanctionFinancialAmount
@@ -315,14 +318,25 @@ export const reportQueryFragments = {
       sanctionReason
       sanctionPercentageRatio
       sanctionResultKilometers
+      averageAgeRequired
     }
   `,
   SanctionListFragment: `
     fragment SanctionListFragment on SanctionListReportData {
+      id
       procurementUnitId
       kilometers
+      sanctionPercentageAmount
       sanctionFinancialAmount
       sanctionReason
+      sanctionScope
+      departureDate
+      direction
+      journeyStartTime
+      reasonBenchmarkValue
+      registryNr
+      routeId
+      sanctionReasonValue
     }
   `,
   DangerousDefectSanctionsFragment: `
