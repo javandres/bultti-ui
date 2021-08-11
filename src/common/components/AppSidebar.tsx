@@ -181,7 +181,9 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </h1>
       </AppTitle>
       <SidebarScrollContainer>
-        <UserBar>{DEBUG ? <UserLink to="user">{userContent}</UserLink> : userContent}</UserBar>
+        <UserBar>
+          {DEBUG ? <UserLink to="/user">{userContent}</UserLink> : userContent}
+        </UserBar>
         <GlobalFilters>
           <GlobalOperatorFilter />
           <GlobalSeasonFilter />
