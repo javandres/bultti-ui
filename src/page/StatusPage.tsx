@@ -2,11 +2,14 @@ import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
 import { SectionHeading } from '../common/components/Typography'
-import { Page, PageContainer, PageSection } from '../common/components/common'
+import { FlexRow, Page, PageContainer, PageSection } from '../common/components/common'
 import { gql } from '@apollo/client'
 import { useQueryData } from '../util/useQueryData'
 import styled from 'styled-components/macro'
 import { WorkerStatus } from '../schema-types'
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
+import { Text } from '../util/translate'
+import { LoadingDisplay } from '../common/components/Loading'
 
 const workerStatusQuery = gql`
   query workerStatus {
@@ -42,14 +45,30 @@ const ItemSectionHeading = styled.h5`
 `
 
 const StatusPage: React.FC = observer(({ children }) => {
-  let { data: workerStatus = [] } = useQueryData<WorkerStatus[]>(workerStatusQuery)
+  let {
+    data: workerStatus = [],
+    loading,
+    refetch,
+  } = useQueryData<WorkerStatus[]>(workerStatusQuery)
 
   return (
     <Page>
       <PageTitle>Status</PageTitle>
       <PageContainer>
         <PageSection>
-          <SectionHeading>Worker status</SectionHeading>
+          <LoadingDisplay loading={loading} />
+          <FlexRow>
+            <SectionHeading>Worker status</SectionHeading>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              size={ButtonSize.SMALL}
+              buttonStyle={ButtonStyle.SECONDARY}
+              loading={loading}
+              onClick={() => refetch()}>
+              <Text>update</Text>
+            </Button>
+          </FlexRow>
+
           {workerStatus.map((status) => (
             <WorkerStatusItem key={status.id}>
               <ItemSection>
