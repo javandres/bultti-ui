@@ -20,6 +20,7 @@ import DevPage from './dev/DevPage'
 import { InspectionType } from './schema-types'
 import { DEBUG } from './constants'
 import { useUnsavedChangesPrompt } from './util/promptUnsavedChanges'
+import StatusPage from './page/StatusPage'
 
 const App: React.FC = observer(() => {
   const [authState, loading] = useAuth()
@@ -107,7 +108,12 @@ const App: React.FC = observer(() => {
         />
         <Route component={EditContractPage} path="/contract/:contractId" />
         <Route component={ContractPage} path="/contract" />
-        {hasAdminAccessRights && <Route component={DevPage} path="/dev-tools" />}
+        {hasAdminAccessRights && (
+          <>
+            <Route component={DevPage} path="/dev-tools" />
+            <Route component={StatusPage} path="/status" />
+          </>
+        )}
         <Route component={ProcurementUnitsPage} path="/procurement-units" />
       </Switch>
     </AppFrame>

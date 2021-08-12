@@ -93,11 +93,15 @@ export function hasOperatorUserAccessRights(
   )
 }
 
+export function isTestUser(user?: User) {
+  if (!user) {
+    return false
+  }
+
+  return user.hslIdGroups.includes('HSL-testing')
+}
+
 export function useIsTestUser() {
   const [user] = useStateValue('user')
   return isTestUser(user)
-}
-
-export function isTestUser(user?: User) {
-  return !!user && user.hslIdGroups?.includes('HSL-testing')
 }

@@ -45,6 +45,7 @@
   "reports": "Raportit",
   "preInspections": "Ennakkotarkastukset",
   "postInspections": "Jälkitarkastukset",
+  "maintenance": "Ylläpito",
   "executionRequirements": "Suoritevaatimukset",
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",

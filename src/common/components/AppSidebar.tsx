@@ -18,7 +18,7 @@ import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
 import { DEBUG } from '../../constants'
-import { useHasAdminAccessRights } from '../../util/userRoles'
+import { useHasAdminAccessRights, useIsTestUser } from '../../util/userRoles'
 import { useNavigate } from '../../util/urlValue'
 
 export const APP_TITLE_HEIGHT = 100
@@ -172,6 +172,8 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
     }
   }, [navigate])
 
+  let isTestUser = useIsTestUser()
+
   return (
     <AppSidebarView>
       <AppTitle to="/">
@@ -246,12 +248,22 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
-            {hasAdminAccessRights && DEBUG && (
-              <NavLink to="/dev-tools">
-                <div>Dev tools</div>
-              </NavLink>
-            )}
           </NavCategory>
+          {hasAdminAccessRights && (
+            <NavCategory>
+              <CategoryTitle>
+                <Text>maintenance</Text>
+              </CategoryTitle>
+              <NavLink to="/status">
+                <div>System status</div>
+              </NavLink>
+              {isTestUser && (
+                <NavLink to="/dev-tools">
+                  <div>Dev tools</div>
+                </NavLink>
+              )}
+            </NavCategory>
+          )}
           <NavCategory>
             <Button
               style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
