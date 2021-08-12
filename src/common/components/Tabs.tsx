@@ -1,10 +1,12 @@
-import React, { Children, useMemo } from 'react'
+import React, { Children, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
+import { Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 import LinkWithQuery from './LinkWithQuery'
+import { last } from 'lodash'
+import { useNavigate } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
   display: grid;
@@ -145,6 +147,22 @@ const Tabs: React.FC<PropTypes> = decorate(({ children, className, testId }) => 
 
     return compact(childrenTabs)
   }, [validChildren])
+
+  let location = useLocation()
+  let navigate = useNavigate()
+
+  // Revert to the root tab if the current tab disappears.
+  useEffect(() => {
+    let currentTab = last(location.pathname.split('/'))
+
+    if (
+      currentTab &&
+      !tabs.some((tab) => tab.path === currentTab) &&
+      location.pathname !== url
+    ) {
+      navigate.replace(url)
+    }
+  }, [tabs, navigate, location, url])
 
   return (
     <TabsWrapper className={className}>
