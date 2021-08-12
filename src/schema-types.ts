@@ -1711,6 +1711,8 @@ export type PostInspection = {
   updatedAt: Scalars['DateTime']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
+  hslAccepted: Scalars['Boolean']
+  operatorAccepted: Scalars['Boolean']
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
@@ -1862,6 +1864,7 @@ export type Query = {
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
   inspectionEquipmentDefectSanctions: EquipmentDefectSanctionsResponse
+  workerStatus: Array<WorkerStatus>
 }
 
 export type QueryProcurementUnitArgs = {
@@ -2543,4 +2546,12 @@ export type ValidationErrorData = {
   keys?: Maybe<Array<Scalars['String']>>
   referenceKeys?: Maybe<Array<Scalars['String']>>
   objectId?: Maybe<Scalars['String']>
+}
+
+export type WorkerStatus = {
+  __typename?: 'WorkerStatus'
+  id: Scalars['String']
+  taskName?: Maybe<Scalars['String']>
+  taskStartedAt?: Maybe<Scalars['DateTime']>
+  taskParams?: Maybe<Scalars['String']>
 }
