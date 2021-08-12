@@ -27778,7 +27778,7 @@
             "deprecationReason": null
           },
           {
-            "name": "workingOnTask",
+            "name": "taskName",
             "description": null,
             "args": [],
             "type": {
@@ -27790,7 +27790,7 @@
             "deprecationReason": null
           },
           {
-            "name": "taskStarted",
+            "name": "taskStartedAt",
             "description": null,
             "args": [],
             "type": {
@@ -27802,7 +27802,7 @@
             "deprecationReason": null
           },
           {
-            "name": "params",
+            "name": "taskParams",
             "description": null,
             "args": [],
             "type": {

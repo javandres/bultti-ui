@@ -15,9 +15,9 @@ const workerStatusQuery = gql`
   query workerStatus {
     workerStatus {
       id
-      taskStarted
-      workingOnTask
-      params
+      taskStartedAt
+      taskName
+      taskParams
     }
   }
 `
@@ -74,16 +74,16 @@ const StatusPage: React.FC = observer(({ children }) => {
             <WorkerStatusItem key={status.id}>
               <ItemSection>
                 <ItemSectionHeading>Task</ItemSectionHeading>
-                {status.workingOnTask}
+                {status.taskName}
               </ItemSection>
               <ItemSection>
                 <ItemSectionHeading>Started</ItemSectionHeading>
-                {status.taskStarted}
+                {status.taskStartedAt}
               </ItemSection>
               <ItemSection style={{ maxWidth: '33%' }}>
                 <ItemSectionHeading>Params</ItemSectionHeading>
                 <pre style={{ maxWidth: '100%', overflowX: 'scroll' }}>
-                  <code>{JSON.stringify(JSON.parse(status.params || ''), null, 2)}</code>
+                  <code>{JSON.stringify(JSON.parse(status.taskParams || ''), null, 2)}</code>
                 </pre>
               </ItemSection>
             </WorkerStatusItem>

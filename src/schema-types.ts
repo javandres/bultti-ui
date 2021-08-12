@@ -2538,7 +2538,7 @@ export type ValidationErrorData = {
 export type WorkerStatus = {
   __typename?: 'WorkerStatus'
   id: Scalars['String']
-  workingOnTask?: Maybe<Scalars['String']>
-  taskStarted?: Maybe<Scalars['DateTime']>
-  params?: Maybe<Scalars['String']>
+  taskName?: Maybe<Scalars['String']>
+  taskStartedAt?: Maybe<Scalars['DateTime']>
+  taskParams?: Maybe<Scalars['String']>
 }
