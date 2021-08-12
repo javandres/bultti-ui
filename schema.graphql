@@ -13,6 +13,7 @@ type AdCoverSanctionsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -51,6 +52,7 @@ type BlockDeviationsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -104,6 +106,7 @@ type DangerousDefectSanctionsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -148,6 +151,7 @@ type DeadrunsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -193,6 +197,7 @@ type DefectiveEquipmentDepartureSanctionsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -235,6 +240,7 @@ type DepartureBlocksReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -267,6 +273,7 @@ type DeviationsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -301,6 +308,7 @@ type EarlyTimingStopDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -339,6 +347,7 @@ type EmissionClassExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -414,6 +423,7 @@ type EquipmentColorReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -496,6 +506,7 @@ type EquipmentTypeReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -546,6 +557,7 @@ type ExecutionRequirementsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -585,6 +597,7 @@ type ExtraBlockDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -675,6 +688,7 @@ type LateDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -720,6 +734,7 @@ type MissingBlockDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -749,6 +764,7 @@ type MissingEquipmentReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -830,6 +846,7 @@ type ObservedEmissionClassExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -882,6 +899,7 @@ type ObservedEquipmentColorReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -921,6 +939,7 @@ type ObservedEquipmentTypeReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -977,6 +996,7 @@ type ObservedExecutionRequirementsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1007,6 +1027,7 @@ type ObservedOverAgeDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1059,6 +1080,7 @@ type ObservedUnitExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1120,6 +1142,7 @@ type OperatorDeadrunsReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1139,6 +1162,7 @@ type OverAgeDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1230,6 +1254,7 @@ type PlannedUnitExecutionRequirement {
 type PostInspection {
   billingPeriodMonth: BulttiDate
   createdAt: DateTime!
+  hslAccepted: Boolean!
   id: ID!
   inspectionDate: InspectionDate
   inspectionDateId: String
@@ -1242,6 +1267,7 @@ type PostInspection {
   name: String
   observedExecutionRequirements: [ObservedExecutionRequirement!]!
   operator: Operator!
+  operatorAccepted: Boolean!
   operatorId: Int!
   season: Season!
   seasonId: String!
@@ -1374,6 +1400,7 @@ type Query {
   unobservedDeparturesReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): UnobservedDeparturesReport
   user(userId: Int!): User
   users: [User!]!
+  workerStatus: [WorkerStatus!]!
 }
 
 type ReportListItem {
@@ -1391,6 +1418,7 @@ type Sanction {
   inspectionId: String!
   matchesException: SanctionException
   procurementUnitId: String
+  reasonBenchmarkValue: String
   registryNumber: String
   sanctionFinancialAmount: Float
   sanctionPercentageAmount: Float!
@@ -1413,6 +1441,7 @@ type SanctionListReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1428,12 +1457,20 @@ type SanctionListReport {
 }
 
 type SanctionListReportData {
+  departureDate: String
+  direction: String
   id: ID!
+  journeyStartTime: String
   kilometers: Float!
   procurementUnitId: String!
+  reasonBenchmarkValue: String
+  registryNr: String
+  routeId: String
   sanctionFinancialAmount: Float!
   sanctionPercentageAmount: Float!
   sanctionReason: String!
+  sanctionReasonValue: String
+  sanctionScope: String!
 }
 
 type SanctionSummaryReport {
@@ -1441,6 +1478,7 @@ type SanctionSummaryReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1505,6 +1543,7 @@ type TrackedDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1534,6 +1573,7 @@ type UnitExecutionReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1564,6 +1604,7 @@ type UnobservedDeparturesReport {
   description: String!
   filteredCount: Int!
   filters: [FilterConfig!]
+  groupRowsBy: String
   id: String!
   inspectionId: String!
   name: String!
@@ -1610,6 +1651,13 @@ type ValidationErrorData {
   objectId: String
   referenceKeys: [String!]
   type: InspectionValidationError!
+}
+
+type WorkerStatus {
+  id: String!
+  taskName: String
+  taskParams: String
+  taskStartedAt: DateTime
 }
 
 enum ContractUserRelationType {

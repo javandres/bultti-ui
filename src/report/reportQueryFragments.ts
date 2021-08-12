@@ -321,10 +321,20 @@ export const reportQueryFragments = {
   `,
   SanctionListFragment: `
     fragment SanctionListFragment on SanctionListReportData {
+      id
       procurementUnitId
       kilometers
+      sanctionPercentageAmount
       sanctionFinancialAmount
       sanctionReason
+      sanctionScope
+      departureDate
+      direction
+      journeyStartTime
+      reasonBenchmarkValue
+      registryNr
+      routeId
+      sanctionReasonValue
     }
   `,
   DangerousDefectSanctionsFragment: `
