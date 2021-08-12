@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { EquipmentDefect, EquipmentDefectPriority, PostInspection } from '../schema-types'
 import { gql } from '@apollo/client'
@@ -66,6 +66,11 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
       inspectionId: inspection.id,
     },
   })
+
+  // Refetch JOLA rows when the inspection period changes.
+  useEffect(() => {
+    refetch()
+  }, [inspection.inspectionStartDate, inspection.inspectionEndDate, refetch])
 
   let renderJolaValue = useCallback(
     (key: keyof EquipmentDefect, value: ValueOf<EquipmentDefect>) => {
