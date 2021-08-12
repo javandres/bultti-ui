@@ -48,8 +48,13 @@ describe('Pre-inspection creation', () => {
       cy.getTestElement('publish_inspection_operator').click()
       cy.getTestElement('hsl_accepted').should('contain.text', 'HSL hyväksynyt')
 
-      // Remove inspection to prevent post-inspections from piling up.
-      cy.getTestElement('remove_inspection').click()
+      cy.loginAdmin()
+
+      cy.get('@inspection_url').then((inspectionUrl) => {
+        cy.visit(inspectionUrl)
+        // Remove inspection to prevent post-inspections from piling up.
+        cy.getTestElement('remove_inspection').click()
+      })
     })
   })
 })
