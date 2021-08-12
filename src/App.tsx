@@ -108,13 +108,13 @@ const App: React.FC = observer(() => {
         />
         <Route component={EditContractPage} path="/contract/:contractId" />
         <Route component={ContractPage} path="/contract" />
+        <Route component={ProcurementUnitsPage} path="/procurement-units" />
         {hasAdminAccessRights && (
           <>
             <Route component={DevPage} path="/dev-tools" />
             <Route component={StatusPage} path="/status" />
           </>
         )}
-        <Route component={ProcurementUnitsPage} path="/procurement-units" />
       </Switch>
     </AppFrame>
   )
