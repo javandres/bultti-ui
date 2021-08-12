@@ -45,6 +45,7 @@
   "reports": "Raportit",
   "preInspections": "Ennakkotarkastukset",
   "postInspections": "Jälkitarkastukset",
+  "maintenance": "Ylläpito",
   "executionRequirements": "Suoritevaatimukset",
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
@@ -264,6 +265,11 @@
   "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen maksimi-iän ylitys",
   "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Suoritevaatimuksen alitus",
 
+  "postInspection_acceptance_hslAccepted": "HSL hyväksynyt",
+  "postInspection_acceptance_hslAcceptButtonLabel": "Hyväksy HSL pääkäyttäjänä",
+  "postInspection_acceptance_operatorAccepted": "Liikennöitsijä hyväksynyt",
+  "postInspection_acceptance_operatorAcceptButtonLabel": "Hyväksy liikennöitsijänä",
+
   "postInspection_heading_sanctions": "Sanktiot",
   "postInspection_heading_equipmentDefectSanctions": "Kalustovikasanktiot",
 
@@ -284,6 +290,10 @@
   "report_filtering_filter_on": "Suodata saraketta",
   "report_filtering_apply": "Suodata",
   "report_filtering_hint": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
+
+  "report_group_by_DEPARTURE": "Lähdöittäin",
+  "report_group_by_OPERATING_AREA": "Alueittain",
+  "report_group_by_PROCUREMENT_UNIT": "Kohteittain",
 
   "NOT_PRE": "Tarkastus ei ole ennakko-tarkastus",
   "NOT_POST": "Tarkastus ei ole jälkitarkastus",
