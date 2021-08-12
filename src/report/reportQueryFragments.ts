@@ -55,7 +55,6 @@ bJourneyStartTime
 bJourneyEndTime
 bTerminalTime
 bRecoveryTime
-
 `
 
 // The keys should match the capitalized reportName + 'Fragment'.
