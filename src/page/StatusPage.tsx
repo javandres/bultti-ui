@@ -10,6 +10,7 @@ import { WorkerStatus } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { Text } from '../util/translate'
 import { LoadingDisplay } from '../common/components/Loading'
+import { RouteChildrenProps } from 'react-router-dom'
 
 const workerStatusQuery = gql`
   query workerStatus {
@@ -44,7 +45,7 @@ const ItemSectionHeading = styled.h5`
   margin-top: 0;
 `
 
-const StatusPage: React.FC = observer(({ children }) => {
+const StatusPage: React.FC<RouteChildrenProps> = observer(({ children }) => {
   let {
     data: workerStatus = [],
     loading,
