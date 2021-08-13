@@ -14,12 +14,12 @@ describe('Pre-inspection creation', () => {
     )
   })
 
-  it.skip('Can set post-inspection sanctionable', () => {
+  it('Can set post-inspection sanctionable', () => {
     cy.loginAdmin()
     cy.createTestSanctionPostInspection()
   })
 
-  it.skip('Can revert sanctionable post-inspection to draft', () => {
+  it('Can revert sanctionable post-inspection to draft', () => {
     cy.loginAdmin()
     cy.openTestSanctionPostInspection()
 
