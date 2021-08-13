@@ -93,15 +93,15 @@ describe('Pre-inspection creation', () => {
     cy.loginAdmin()
     cy.openTestPreInspection()
 
-    cy.getTestElement('procurement_unit_0_section').click()
+    cy.getTestElement('procurement_unit_section').first().click()
 
-    cy.getTestElement('procurement_unit_0_requirements_table_row', '*').should(
+    cy.getTestElement('procurement_unit_requirements_table_row', '*').should(
       'have.length.at.least',
       1
     )
 
     cy.getTestElement(
-      'procurement_unit_0_requirements_equipment_equipment_list_row',
+      'procurement_unit_requirements_equipment_equipment_list_row',
       '*'
     ).should('have.length.at.least', 1)
   })

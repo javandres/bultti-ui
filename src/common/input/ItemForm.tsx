@@ -121,6 +121,7 @@ export type PropTypes<ItemType extends Record<string, unknown>> = {
   loading?: boolean
   fullWidthFields?: string[]
   showButtons?: boolean
+  testId?: string
 }
 
 const renderReadOnlyField = (val) => <FieldValueDisplay>{val}</FieldValueDisplay>
@@ -162,6 +163,7 @@ const ItemForm = observer(
     loading = false,
     fullWidthFields = [],
     showButtons = true,
+    testId,
   }: PropTypes<ItemType>) => {
     const itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
@@ -180,7 +182,7 @@ const ItemForm = observer(
     useWatchDirtyForm(dirtyFormCheckIsEnabled && isDirty)
 
     return (
-      <ControlledFormView style={style} frameless={frameless}>
+      <ControlledFormView style={style} frameless={frameless} data-cy={testId}>
         {itemEntries.map(([key, val], index) => {
           let renderedLabel = renderLabel(key, val, labels, hints)
           return (
