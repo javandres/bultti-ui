@@ -1,7 +1,7 @@
 import React, { CSSProperties, useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
-import { Inspection, InspectionStatus, InspectionType, UserRole } from '../schema-types'
+import { Inspection, InspectionStatus, InspectionType, PostInspection } from '../schema-types'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import {
   useCanEditInspection,
@@ -18,11 +18,12 @@ import {
 } from './inspectionQueries'
 import { useStateValue } from '../state/useAppState'
 import { useRouteMatch } from 'react-router-dom'
-import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
+import { useHasAdminAccessRights, useHasOperatorUserAccessRights } from '../util/userRoles'
 import { text, Text } from '../util/translate'
 import { useShowInfoNotification } from '../util/useShowNotification'
 import { useNavigate } from '../util/urlValue'
 import { useUnsavedChangesPrompt } from '../util/promptUnsavedChanges'
+import PostInspectionAcceptance from './PostInspectionAcceptance'
 
 const ButtonRow = styled.div`
   margin: auto -1rem 0;
@@ -45,6 +46,30 @@ const ButtonRow = styled.div`
   }
 `
 
+type InspectionAcceptanceButtonPropTypes = {
+  hasErrors: boolean
+  onClick: () => unknown
+  label: string
+  loading?: boolean
+  buttonStyle?: ButtonStyle
+}
+
+export const InspectionAcceptButton: React.FC<InspectionAcceptanceButtonPropTypes> = observer(
+  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL }) => {
+    return (
+      <Button
+        disabled={hasErrors}
+        style={{ marginLeft: 'auto' }}
+        loading={loading}
+        buttonStyle={ButtonStyle.NORMAL}
+        size={ButtonSize.MEDIUM}
+        onClick={onClick}>
+        {label}
+      </Button>
+    )
+  }
+)
+
 export type PropTypes = {
   inspection: Inspection
   onRefresh: () => unknown
@@ -58,14 +83,17 @@ const InspectionActions = observer(
   ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
     var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
+
+    let { inspectionType, operatorId } = inspection
+
     let hasAdminAccessRights = useHasAdminAccessRights()
+    let hasOperatorAccessRights = useHasOperatorUserAccessRights(operatorId)
 
     let canEditInspection = useCanEditInspection({
       inspectionType: inspection.inspectionType,
       operatorId: globalOperator.id,
     })
 
-    var { inspectionType } = inspection
     // useRouteMatch returns null if the route does not match
     var isEditing = Boolean(useRouteMatch(`/:inspectionType/edit/:inspectionId`))
 
@@ -169,7 +197,10 @@ const InspectionActions = observer(
     }, [onRefresh, inspection])
 
     let canUserPublish =
-      inspection.status === InspectionStatus.InReview && hasAdminAccessRights
+      inspection.status === InspectionStatus.InReview &&
+      (inspectionType === InspectionType.Post
+        ? hasAdminAccessRights || hasOperatorAccessRights
+        : hasAdminAccessRights)
 
     // Pre-inspection which are drafts and post-inspections which are ready can be submitted for approval.
     let canInspectionBeSubmitted =
@@ -179,8 +210,8 @@ const InspectionActions = observer(
         inspection.status === InspectionStatus.Sanctionable)
 
     let canUserSubmit = useCanEditInspection({
-      inspectionType: inspection.inspectionType,
-      operatorId: inspection.operatorId,
+      inspectionType,
+      operatorId,
     })
 
     // Only post-inspections which are in draft state can be made sanctionable.
@@ -258,15 +289,20 @@ const InspectionActions = observer(
 
           {inspection.status === InspectionStatus.InReview && canUserPublish && isEditing && (
             <>
-              <Button
-                disabled={hasErrors}
-                style={{ marginLeft: 'auto' }}
-                loading={publishLoading}
-                buttonStyle={ButtonStyle.NORMAL}
-                size={ButtonSize.MEDIUM}
-                onClick={onPublishInspection}>
-                <Text>inspection_actions_publish</Text>
-              </Button>
+              {inspectionType === InspectionType.Post ? (
+                <PostInspectionAcceptance
+                  loading={publishLoading}
+                  inspection={inspection as PostInspection}
+                  onAccept={onPublishInspection}
+                />
+              ) : (
+                <InspectionAcceptButton
+                  hasErrors={hasErrors}
+                  onClick={onPublishInspection}
+                  loading={publishLoading}
+                  label={text('inspection_actions_publish')}
+                />
+              )}
               <Button
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={rejectLoading}
