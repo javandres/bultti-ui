@@ -25,7 +25,7 @@ describe('Procurement units', () => {
     })
   })
 
-  it('Can open procurement units', () => {
+  it.skip('Can open procurement units', () => {
     cy.visit('/procurement-units')
     cy.selectTestSettings()
   })
