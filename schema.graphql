@@ -1065,6 +1065,7 @@ type ObservedOverAgeDeparturesReportData {
 type ObservedUnitExecution {
   area: OperatingAreaName
   averageAgeMax: Float
+  averageAgeObserved: Float
   averageAgeRequired: Float
   averageAgeWeightedObserved: Float
   id: ID!
@@ -1303,13 +1304,13 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
+  averageAgeRequirement: Float!
   contracts: [Contract!]!
   currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
-  medianAgeRequirement: Float!
   operator: Operator!
   operatorId: Int!
   optionsUsed: Int!
@@ -1495,6 +1496,7 @@ type SanctionSummaryReport {
 
 type SanctionSummaryReportData {
   areaName: String!
+  averageAgeRequired: Float!
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
@@ -1503,7 +1505,6 @@ type SanctionSummaryReportData {
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float!
   totalKilometers: Float!
-  unitEquipmentMaxAge: Float!
 }
 
 type SanctionsResponse {
@@ -1754,6 +1755,8 @@ enum SanctionReason {
   LATE_DEPARTURE
   TIMING_STOP_VIOLATION
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
+  UNIT_EQUIPMENT_OVERAGE_OVER_2
+  UNIT_EQUIPMENT_OVERAGE_UNDER_2
 }
 
 enum SanctionScope {
@@ -1857,7 +1860,7 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
-  medianAgeRequirement: Float!
+  averageAgeRequirement: Float!
 }
 
 input SanctionUpdate {

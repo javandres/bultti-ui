@@ -56,11 +56,6 @@ const TableReport = observer(
           continue
         }
 
-        // We don't want to display unitEquipmentMaxAge column in sanction report
-        if (colName === 'unitEquipmentMaxAge') {
-          continue
-        }
-
         if (!columnLabels[colName]) {
           columnLabels[colName] = colName
         }

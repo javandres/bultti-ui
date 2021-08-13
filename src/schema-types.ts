@@ -1497,6 +1497,7 @@ export type ObservedUnitExecution = {
   totalKilometersObserved?: Maybe<Scalars['Float']>
   averageAgeMax?: Maybe<Scalars['Float']>
   averageAgeRequired?: Maybe<Scalars['Float']>
+  averageAgeObserved?: Maybe<Scalars['Float']>
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
   sanctionPercentageAmount?: Maybe<Scalars['Float']>
@@ -1752,7 +1753,7 @@ export type ProcurementUnit = {
   procurementUnitId: Scalars['String']
   operatorId: Scalars['Int']
   operator: Operator
-  medianAgeRequirement: Scalars['Float']
+  averageAgeRequirement: Scalars['Float']
   equipmentCatalogues: Array<EquipmentCatalogue>
   areaId?: Maybe<Scalars['Int']>
   area?: Maybe<OperatingArea>
@@ -1766,7 +1767,7 @@ export type ProcurementUnit = {
 }
 
 export type ProcurementUnitEditInput = {
-  medianAgeRequirement: Scalars['Float']
+  averageAgeRequirement: Scalars['Float']
 }
 
 export type ProcurementUnitOption = {
@@ -2274,6 +2275,8 @@ export enum SanctionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  UnitEquipmentOverageUnder_2 = 'UNIT_EQUIPMENT_OVERAGE_UNDER_2',
+  UnitEquipmentOverageOver_2 = 'UNIT_EQUIPMENT_OVERAGE_OVER_2',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 
@@ -2315,7 +2318,7 @@ export type SanctionSummaryReportData = {
   sanctionResultKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
-  unitEquipmentMaxAge: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
 }
 
 export type SanctionUpdate = {
