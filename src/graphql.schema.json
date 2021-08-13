@@ -16638,6 +16638,18 @@
             "deprecationReason": null
           },
           {
+            "name": "averageAgeObserved",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "averageAgeWeightedObserved",
             "description": null,
             "args": [],
@@ -19889,7 +19901,7 @@
             "deprecationReason": null
           },
           {
-            "name": "medianAgeRequirement",
+            "name": "averageAgeRequirement",
             "description": null,
             "args": [],
             "type": {
@@ -20105,7 +20117,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "medianAgeRequirement",
+            "name": "averageAgeRequirement",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -24922,6 +24934,18 @@
             "deprecationReason": null
           },
           {
+            "name": "UNIT_EQUIPMENT_OVERAGE_UNDER_2",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "UNIT_EQUIPMENT_OVERAGE_OVER_2",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "EMISSION_CLASS_DEFICIENCY",
             "description": null,
             "isDeprecated": false,
@@ -25396,7 +25420,7 @@
             "deprecationReason": null
           },
           {
-            "name": "unitEquipmentMaxAge",
+            "name": "averageAgeRequired",
             "description": null,
             "args": [],
             "type": {
