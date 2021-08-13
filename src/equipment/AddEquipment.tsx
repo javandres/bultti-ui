@@ -143,7 +143,10 @@ const AddEquipment: React.FC<PropTypes> = observer(
       <>
         <FlexRow style={{ marginTop: '1rem' }}>
           {addBatchEquipment && (
-            <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
+            <Button
+              data-cy={`${testId}_batch_add`}
+              style={{ marginRight: '1rem' }}
+              onClick={() => setBatchFormVisible(true)}>
               <Text>catalogue_batchAddEquipment</Text>
             </Button>
           )}
@@ -211,6 +214,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
             </SubHeading>
             <Text>equipment_batchAddEquipment</Text>
             <TextArea
+              data-cy={`${testId}_batch_field`}
               value={batchInput}
               onChange={(e) => setBatchInput(e.target.value)}
               style={{ width: '100%' }}
@@ -218,6 +222,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
             />
             <ActionsWrapper style={{ marginTop: '1rem' }}>
               <Button
+                data-cy={`${testId}_batch_done`}
                 disabled={!batchInput}
                 style={{ marginRight: '1rem' }}
                 onClick={onAddBatchEquipment}>

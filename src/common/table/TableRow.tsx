@@ -101,7 +101,11 @@ export const TableRow = observer(
           />
         ))}
         {onRemoveRow && (
-          <RowRemoveButton style={{ opacity: '0' }} onClick={() => onRemoveRow!(row.item)} />
+          <RowRemoveButton
+            data-cy={`${testId}_remove_btn`}
+            style={{ opacity: '0' }}
+            onClick={() => onRemoveRow!(row.item)}
+          />
         )}
       </TableRowElement>
     )
