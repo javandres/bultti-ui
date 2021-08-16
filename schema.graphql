@@ -1062,10 +1062,10 @@ type ObservedOverAgeDeparturesReportData {
 }
 
 type ObservedUnitExecution {
-  area: OperatingAreaName
-  averageAgeMax: Float
-  averageAgeObserved: Float
-  averageAgeRequired: Float
+  area: OperatingAreaName!
+  averageAgeMax: Float!
+  averageAgeRequired: Float!
+  averageAgeWeighted: Float!
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
@@ -1753,8 +1753,8 @@ enum SanctionReason {
   LATE_DEPARTURE
   TIMING_STOP_VIOLATION
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
-  UNIT_EQUIPMENT_OVERAGE_OVER_2
-  UNIT_EQUIPMENT_OVERAGE_UNDER_2
+  UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD
+  UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD
 }
 
 enum SanctionScope {
