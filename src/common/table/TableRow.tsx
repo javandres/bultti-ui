@@ -83,7 +83,11 @@ export const TableRow = observer(
     let rowHighlightColor = getRowHighlightColor(rowItem)
 
     return (
-      <TableRowElement key={rowId} isEditing={isEditingRow} style={style} data-cy={testId}>
+      <TableRowElement
+        key={rowId}
+        isEditing={isEditingRow}
+        style={style}
+        data-cy={`table_row_${itemEntries[0][1]} ${testId}_element`}>
         {itemEntries.map(([key, val], colIndex) => (
           <TableCell<ItemType>
             testId={`${testId}_col_${colIndex}`}

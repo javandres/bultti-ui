@@ -162,9 +162,14 @@ export const TableCell = observer(
       flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
     }
 
+    let cellContent = useMemo(
+      () => renderCell(valueKey, renderValue(valueKey, val, false, item), item),
+      [valueKey, val, item]
+    )
+
     return (
       <TableCellElement
-        data-cy={testId}
+        data-cy={`cell_content_${val} ${testId}`}
         highlightColor={cellHighlightColor}
         style={cellWidthStyle}
         isEditing={cellInputIsActive}
@@ -185,7 +190,7 @@ export const TableCell = observer(
               onCancelEdit,
               tabIndex
             )
-          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
+          : cellContent}
       </TableCellElement>
     )
   }

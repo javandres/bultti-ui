@@ -263,7 +263,9 @@ const Table = observer(
                     onMouseDown={onMouseDownHandler as MouseEventHandler}>
                     <HeaderCellContent>
                       {renderValue('', colName, true)}
-                      <ColumnSortIndicator onClick={() => sortByColumn(colKey)}>
+                      <ColumnSortIndicator
+                        data-cy={`${testId}_sort_${colIdx}`}
+                        onClick={() => sortByColumn(colKey)}>
                         {sortIndex !== -1 ? (
                           <>
                             {sortIndex + 1} {sortConfig.order === SortOrder.Asc ? '▲' : '▼'}
@@ -281,7 +283,7 @@ const Table = observer(
               ? emptyContent
               : rows.map((row, rowIndex) => (
                   <TableRow<ItemType>
-                    testId={`${testId}_row_${rowIndex}`}
+                    testId={`${testId}_row`}
                     key={row.key || rowIndex}
                     row={row}
                     index={rowIndex}
