@@ -87,6 +87,9 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           inspectionDepartureBlocks: {
             merge: cacheMerge,
           },
+          equipmentDefectObservations: {
+            merge: cacheMerge,
+          },
         },
       },
       PreInspection: {

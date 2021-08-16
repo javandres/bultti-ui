@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { observer } from 'mobx-react-lite'
 import { EquipmentDefect, EquipmentDefectPriority, PostInspection } from '../schema-types'
 import { gql } from '@apollo/client'
@@ -10,6 +10,7 @@ import { FlexRow } from '../common/components/common'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import PagedTable from '../common/table/PagedTable'
 import { ValueOf } from '../type/common'
+import { LoadingDisplay } from '../common/components/Loading'
 import { TableRowWithDataAndFunctions } from '../common/table/tableUtils'
 import { isAfter } from '../util/compare'
 import { lowerCase } from 'lodash'
@@ -66,6 +67,11 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
     },
   })
 
+  // Refetch JOLA rows when the inspection period changes.
+  useEffect(() => {
+    refetch()
+  }, [inspection.inspectionStartDate, inspection.inspectionEndDate, refetch])
+
   let renderJolaValue = useCallback(
     (key: keyof EquipmentDefect, value: ValueOf<EquipmentDefect>) => {
       if (key === 'priority') {
@@ -113,6 +119,7 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
 
   return (
     <ExpandableSection
+      style={{ position: 'relative' }}
       isExpanded={true}
       unmountOnClose={true}
       headerContent={
@@ -120,6 +127,7 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
           <Text>postInspection_jolaPreview_heading</Text>
         </HeaderMainHeading>
       }>
+      <LoadingDisplay loading={loading} />
       <FlexRow style={{ marginBottom: '1rem', justifyContent: 'flex-end' }}>
         <Button
           buttonStyle={ButtonStyle.SECONDARY}
@@ -139,13 +147,13 @@ const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) =
           items={data || []}
           renderValue={renderJolaValue}
         />
-      ) : (
+      ) : !loading ? (
         <MessageContainer>
           <SuccessView>
             <Text>postInspection_jolaPreview_empty</Text>
           </SuccessView>
         </MessageContainer>
-      )}
+      ) : null}
     </ExpandableSection>
   )
 })
