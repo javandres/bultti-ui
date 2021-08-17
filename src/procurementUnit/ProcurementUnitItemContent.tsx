@@ -32,8 +32,8 @@ import { useNavigate } from '../util/urlValue'
 import { useHasAdminAccessRights } from '../util/userRoles'
 
 const procurementUnitLabels = {
-  medianAgeRequirement: text('procurementUnit_ageRequirement'),
-  calculatedMedianAgeRequirement: text('procurementUnit_ageRequirementCalculated'),
+  averageAgeRequirement: text('procurementUnit_ageRequirement'),
+  calculatedAverageAgeRequirement: text('procurementUnit_ageRequirementCalculated'),
 }
 
 const ContentWrapper = styled.div`
@@ -141,7 +141,7 @@ const ProcurementUnitItemContent = observer(
 
     let onEditProcurementUnit = useCallback(() => {
       if (!isUnitEditable) {
-        setMedianAgeValue((procurementUnit?.medianAgeRequirement || 0) + '')
+        setMedianAgeValue((procurementUnit?.averageAgeRequirement || 0) + '')
       }
 
       setIsUnitEditable((cur) => !cur)
@@ -153,7 +153,7 @@ const ProcurementUnitItemContent = observer(
 
     let onChangeProcurementUnit = useCallback(
       (key, nextValue) => {
-        if (key === 'medianAgeRequirement') {
+        if (key === 'averageAgeRequirement') {
           setMedianAgeValue(nextValue)
         }
       },
@@ -166,7 +166,7 @@ const ProcurementUnitItemContent = observer(
       }
 
       let unitInput: ProcurementUnitEditInput = {
-        medianAgeRequirement: numval(medianAgeValue, true),
+        averageAgeRequirement: numval(medianAgeValue, true),
       }
 
       await updateProcurementUnit({
@@ -181,7 +181,7 @@ const ProcurementUnitItemContent = observer(
     const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
 
     let isDirty = useMemo(
-      () => procurementUnit?.medianAgeRequirement !== numval(medianAgeValue, true),
+      () => procurementUnit?.averageAgeRequirement !== numval(medianAgeValue, true),
       [procurementUnit, medianAgeValue]
     )
 
@@ -195,10 +195,10 @@ const ProcurementUnitItemContent = observer(
       )
     }, [])
 
-    let calcMedianAgeRequirement = useMemo(() => {
+    let calcAverageAgeRequirement = useMemo(() => {
       let optionsUsed = procurementUnit?.optionsUsed || 0
-      let medianAgeRequirement = procurementUnit?.medianAgeRequirement || 0
-      return medianAgeRequirement + 0.5 * optionsUsed
+      let averageAgeRequirement = procurementUnit?.averageAgeRequirement || 0
+      return averageAgeRequirement + 0.5 * optionsUsed
     }, [procurementUnit])
 
     let navigate = useNavigate()
@@ -237,8 +237,8 @@ const ProcurementUnitItemContent = observer(
             <ValueDisplay
               renderValue={(key, val) => `${val} vuotta`}
               item={{
-                medianAgeRequirement: procurementUnit?.medianAgeRequirement,
-                calculatedMedianAgeRequirement: calcMedianAgeRequirement,
+                averageAgeRequirement: procurementUnit?.averageAgeRequirement,
+                calculatedAverageAgeRequirement: calcAverageAgeRequirement,
               }}
               labels={procurementUnitLabels}>
               {hasAdminAccessRights && (
@@ -251,7 +251,7 @@ const ProcurementUnitItemContent = observer(
             </ValueDisplay>
           ) : (
             <ItemForm
-              item={{ medianAgeRequirement: medianAgeValue }}
+              item={{ averageAgeRequirement: medianAgeValue }}
               labels={procurementUnitLabels}
               onChange={onChangeProcurementUnit}
               onDone={onSaveProcurementUnit}
