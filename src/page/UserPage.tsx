@@ -38,9 +38,8 @@ const UserPage: React.FC<PropTypes> = observer(() => {
     }))
   }, [])
 
-  let [modifyUser, { data: nextUser, loading: userLoading }] = useMutationData<User>(
-    modifyUserMutation
-  )
+  let [modifyUser, { data: nextUser, loading: userLoading }] =
+    useMutationData<User>(modifyUserMutation)
 
   useEffect(() => {
     if (nextUser && !userLoading) {
@@ -68,7 +67,7 @@ const UserPage: React.FC<PropTypes> = observer(() => {
   }, [])
 
   let renderUserInput = useCallback(
-    (key, val, onChange, readOnly) => {
+    (key, val, onChange, item, readOnly) => {
       if (key === 'role') {
         return (
           <Dropdown

@@ -18,8 +18,7 @@ import { useMutationData } from '../../util/useMutationData'
 import { pickGraphqlData } from '../../util/pickGraphqlData'
 import { removeAuthToken } from '../../util/authToken'
 import { DEBUG } from '../../constants'
-import { useHasAdminAccessRights } from '../../util/userRoles'
-import { gql, useMutation } from '@apollo/client'
+import { useHasAdminAccessRights, useIsTestUser } from '../../util/userRoles'
 import { useNavigate } from '../../util/urlValue'
 
 export const APP_TITLE_HEIGHT = 100
@@ -136,19 +135,13 @@ const UserLink = styled(LinkWithQuery)`
 
 const GlobalFilters = styled.div``
 
-const clearCacheMutation = gql`
-  mutation clearCache {
-    clearCache
-  }
-`
-
 export type AppSidebarProps = {
   children?: React.ReactNode
 }
 
 const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
   const [user, setUser] = useStateValue('user')
-  let hasAdminAccess = useHasAdminAccessRights()
+  let hasAdminAccessRights = useHasAdminAccessRights()
 
   let userContent = (
     <>
@@ -179,7 +172,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
     }
   }, [navigate])
 
-  const [clearCache] = useMutation(clearCacheMutation)
+  let isTestUser = useIsTestUser()
 
   return (
     <AppSidebarView>
@@ -190,7 +183,9 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
         </h1>
       </AppTitle>
       <SidebarScrollContainer>
-        <UserBar>{DEBUG ? <UserLink to="user">{userContent}</UserLink> : userContent}</UserBar>
+        <UserBar>
+          {DEBUG ? <UserLink to="/user">{userContent}</UserLink> : userContent}
+        </UserBar>
         <GlobalFilters>
           <GlobalOperatorFilter />
           <GlobalSeasonFilter />
@@ -243,7 +238,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Plus fill="white" width="1rem" height="1rem" />
               <Text>nav_newPostInspection</Text>
             </NavLink>
-            {hasAdminAccess && (
+            {hasAdminAccessRights && (
               <NavLink to="/inspection-date">
                 <Plus fill="white" width="1rem" height="1rem" />
                 <Text>nav_editInspectionDates</Text>
@@ -253,12 +248,22 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Menu fill="white" width="1rem" height="1rem" />
               <Text>reports</Text>
             </NavLink>
-            {DEBUG && (
-              <NavLink to="/dev-tools">
-                <div>Dev tools</div>
-              </NavLink>
-            )}
           </NavCategory>
+          {hasAdminAccessRights && (
+            <NavCategory>
+              <CategoryTitle>
+                <Text>maintenance</Text>
+              </CategoryTitle>
+              <NavLink to="/status">
+                <div>System status</div>
+              </NavLink>
+              {isTestUser && (
+                <NavLink to="/dev-tools">
+                  <div>Dev tools</div>
+                </NavLink>
+              )}
+            </NavCategory>
+          )}
           <NavCategory>
             <Button
               style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
@@ -269,16 +274,6 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Text>logout</Text>
             </Button>
           </NavCategory>
-          {DEBUG && (
-            <NavCategory>
-              <Button
-                style={{ color: 'white ', border: '1px solid white', margin: 'auto' }}
-                onClick={() => clearCache()}
-                size={ButtonSize.MEDIUM}>
-                <div>Clear cache</div>
-              </Button>
-            </NavCategory>
-          )}
         </AppNav>
       </SidebarScrollContainer>
     </AppSidebarView>

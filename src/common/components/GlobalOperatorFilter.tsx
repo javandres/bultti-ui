@@ -2,10 +2,9 @@ import React, { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useStateValue } from '../../state/useAppState'
 import SelectOperator from '../input/SelectOperator'
-import { UserRole } from '../../schema-types'
+import { Operator, UserRole } from '../../schema-types'
 import { getUrlValue } from '../../util/urlValue'
 import { useHistory } from 'react-router-dom'
-import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 
 const GlobalOperatorFilter: React.FC = observer(() => {
   var [operator, setOperatorFilter] = useStateValue('globalOperator')
@@ -20,9 +19,8 @@ const GlobalOperatorFilter: React.FC = observer(() => {
   var userIsOperator = user && user?.role === UserRole.Operator
 
   return (
-    <SidebarStyledDropdown
-      as={SelectOperator}
-      onSelect={setOperatorFilter}
+    <SelectOperator
+      onSelect={(operator) => setOperatorFilter(operator as Operator)}
       value={operator}
       label={userIsOperator ? 'Liikennöitsijä' : 'Valitse liikennöitsijä'}
       selectInitialId={initialOperatorId}

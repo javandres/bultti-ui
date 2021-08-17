@@ -10,6 +10,7 @@ import {
   PreInspection,
   Season,
   User,
+  UserRole,
 } from '../schema-types'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import { useMutationData } from '../util/useMutationData'
@@ -28,18 +29,21 @@ import { text } from '../util/translate'
 import { operatorIsValid } from '../common/input/SelectOperator'
 import { isObjectLike } from '../util/isObjectLike'
 import { useNavigate } from '../util/urlValue'
+import { hasAccessRights } from '../util/userRoles'
 
 export function useInspectionById(inspectionId: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
-    inspectionQuery,
-    {
-      skip: !inspectionId,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        inspectionId: inspectionId,
-      },
-    }
-  )
+  let {
+    data,
+    loading,
+    error,
+    refetch: refetcher,
+  } = useQueryData<Inspection>(inspectionQuery, {
+    skip: !inspectionId,
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      inspectionId: inspectionId,
+    },
+  })
 
   let refetch = useRefetch(refetcher, false)
   return { data, loading, error, refetch }
@@ -149,17 +153,18 @@ export function useFetchInspections(
 
   let queryOperator = operator || globalOperator || undefined
 
-  let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
-    inspectionsByOperatorQuery,
-    {
-      skip: !operatorIsValid(queryOperator),
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        operatorId: queryOperator?.operatorId,
-        inspectionType,
-      },
-    }
-  )
+  let {
+    data: inspectionsData,
+    loading,
+    refetch,
+  } = useQueryData<Inspection>(inspectionsByOperatorQuery, {
+    skip: !operatorIsValid(queryOperator),
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      operatorId: queryOperator?.id,
+      inspectionType,
+    },
+  })
 
   let inspections = !!inspectionsData && Array.isArray(inspectionsData) ? inspectionsData : []
 
@@ -235,4 +240,73 @@ export function isPreInspection(inspection: unknown): inspection is PreInspectio
 
 export function isPostInspection(inspection: unknown): inspection is PostInspection {
   return isObjectLike(inspection) && inspection.inspectionType === InspectionType.Post
+}
+
+export function useCanOpenInspection({
+  inspectionType,
+  inspectionStatus,
+  operatorId,
+}: {
+  inspectionType: InspectionType
+  inspectionStatus?: InspectionStatus
+  operatorId: number
+}): boolean {
+  const [user] = useStateValue('user')
+
+  let allowedRoles: 'all' | UserRole[] = []
+  if (inspectionStatus === InspectionStatus.Draft) {
+    if (inspectionType === InspectionType.Pre) {
+      allowedRoles = [UserRole.Admin, UserRole.Operator]
+    } else {
+      allowedRoles = [UserRole.Admin]
+    }
+  } else {
+    allowedRoles = 'all'
+  }
+
+  return hasAccessRights({
+    user,
+    allowedRoles,
+    operatorId,
+  })
+}
+
+export function useCanEditInspection({
+  inspectionType,
+  operatorId,
+}: {
+  inspectionType: InspectionType
+  operatorId?: number
+}): boolean {
+  const [user] = useStateValue('user')
+
+  let allowedRoles: UserRole[] = []
+
+  if (inspectionType === InspectionType.Pre) {
+    allowedRoles = [UserRole.Admin, UserRole.Operator]
+  } else {
+    allowedRoles = [UserRole.Admin]
+  }
+
+  return hasAccessRights({
+    user,
+    allowedRoles,
+    operatorId,
+  })
+}
+
+interface InspectionPeriodObj {
+  inspectionStartDate?: string | null
+  inspectionEndDate?: string | null
+}
+
+export function didInspectionPeriodChange(
+  inspectionA: InspectionPeriodObj,
+  inspectionB: InspectionPeriodObj
+) {
+  return (
+    inspectionA.inspectionStartDate &&
+    inspectionB.inspectionStartDate &&
+    inspectionA.inspectionStartDate !== inspectionB.inspectionStartDate
+  )
 }

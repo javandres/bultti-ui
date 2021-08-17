@@ -32,12 +32,13 @@ export type PropTypes = {
   expanded?: boolean
   startDate: string
   endDate: string
-  catalogueEditable: boolean
+  isCatalogueEditable: boolean
   requirementsEditable: boolean
   showExecutionRequirements: boolean
   className?: string
   validationErrors: ValidationErrorData[]
   contractSelectionDate: Date
+  isOnlyActiveCatalogueVisible: boolean
 }
 
 const operatingAreaNameLocalizationObj = {
@@ -48,7 +49,7 @@ const operatingAreaNameLocalizationObj = {
 
 const ProcurementUnitItem: React.FC<PropTypes> = observer(
   ({
-    catalogueEditable,
+    isCatalogueEditable,
     requirementsEditable,
     showExecutionRequirements,
     startDate,
@@ -58,6 +59,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     className,
     validationErrors = [],
     contractSelectionDate,
+    isOnlyActiveCatalogueVisible,
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
 
@@ -142,7 +144,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   <HeaderHeading>
                     <Text>procurementUnit_ageRequirement</Text>
                   </HeaderHeading>
-                  {procurementUnit?.medianAgeRequirement || 0}{' '}
+                  {procurementUnit?.averageAgeRequirement || 0}{' '}
                   <Text>procurementUnit_ageRequirementYears</Text>
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
@@ -176,9 +178,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   displayedContractUnit ? displayedContractUnit.id : undefined
                 }
                 requirementsEditable={requirementsEditable}
-                catalogueEditable={catalogueEditable}
+                isCatalogueEditable={isCatalogueEditable}
                 catalogueInvalid={catalogueInvalid}
                 requirementsInvalid={requirementsInvalid}
+                isOnlyActiveCatalogueVisible={isOnlyActiveCatalogueVisible}
               />
             )}
           </ExpandableSection>

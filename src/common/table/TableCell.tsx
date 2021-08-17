@@ -11,7 +11,7 @@ import {
   TableRowWithDataAndFunctions,
 } from './tableUtils'
 import { observer } from 'mobx-react-lite'
-import React, { useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import { ValueOf } from '../../type/common'
 
 export const TableCellElement = styled.div<{
@@ -118,13 +118,18 @@ export const TableCell = observer(
     let [key, val] = cell
     let valueKey = key as keyof ItemType
 
-    let canEditCell = onEditValue && editableValues.includes((valueKey as unknown) as string)
+    let itemEditableValues = useMemo(
+      () => (typeof editableValues === 'function' ? editableValues(item) : editableValues),
+      [editableValues, item]
+    )
+
+    let canEditCell = onEditValue && itemEditableValues.includes(valueKey as unknown as string)
 
     let pendingValue = pendingValues.find(
       (val) => keyFromItem(val.item) === itemId && val.key === key
     )
 
-    let cellIsEditable = (isAlwaysEditable || !!pendingValue) && canEditCell
+    let cellInputIsActive = (isAlwaysEditable || !!pendingValue) && canEditCell
 
     let editValue = (pendingValue || {
       key,
@@ -147,7 +152,7 @@ export const TableCell = observer(
           makeCellEditable()
         }
       },
-      [makeCellEditable, isFocused]
+      [makeCellEditable, isFocused, canEditCell]
     )
 
     let cellWidthStyle = {
@@ -159,19 +164,20 @@ export const TableCell = observer(
       <TableCellElement
         highlightColor={cellHighlightColor}
         style={cellWidthStyle}
-        isEditing={cellIsEditable}
+        isEditing={cellInputIsActive}
         isEditingRow={isEditingRow}
         editable={canEditCell}
-        tabIndex={!canEditCell || editValue ? -1 : tabIndex}
+        tabIndex={!canEditCell || cellInputIsActive ? -1 : tabIndex}
         onKeyUp={!editValue && canEditCell ? onKeyUp : undefined}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         onDoubleClick={makeCellEditable}>
-        {cellIsEditable
+        {cellInputIsActive
           ? renderInput(
               key,
               editValue.value,
               onValueChange(valueKey),
+              item,
               onSaveEdit,
               onCancelEdit,
               tabIndex

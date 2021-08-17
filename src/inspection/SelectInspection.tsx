@@ -7,6 +7,7 @@ import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
   getInspectionTypeStrings,
+  useCanEditInspection,
   useCreateInspection,
   useNavigateToInspection,
 } from './inspectionUtils'
@@ -93,13 +94,18 @@ export type PropTypes = {
 
 const SelectInspection: React.FC<PropTypes> = observer(
   ({ inspections = [], inspectionType, refetchInspections, loading = false }) => {
-    var [season] = useStateValue('globalSeason')
-    var [operator] = useStateValue('globalOperator')
+    var [globalSeason] = useStateValue('globalSeason')
+    var [globalOperator] = useStateValue('globalOperator')
+
+    let canCreateInspection = useCanEditInspection({
+      inspectionType,
+      operatorId: globalOperator.id,
+    })
 
     var navigateToInspection = useNavigateToInspection(inspectionType)
 
     // Initialize the form by creating a pre-inspection on the server and getting the ID.
-    let createInspection = useCreateInspection(operator, season, inspectionType)
+    let createInspection = useCreateInspection(globalOperator, globalSeason, inspectionType)
 
     let onCreateInspection = useCallback(async () => {
       let createdInspection = await createInspection()
@@ -116,7 +122,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
     return (
       <SelectInspectionView>
         <LoadingDisplay loading={loading} />
-        {!operatorIsValid(operator) || !seasonIsValid(season) ? (
+        {!operatorIsValid(globalOperator) || !seasonIsValid(globalSeason) ? (
           <MessageContainer>
             <MessageView>
               <Text>inspectionPage_selectOperatorAndSeason</Text>
@@ -126,27 +132,32 @@ const SelectInspection: React.FC<PropTypes> = observer(
           <>
             <HeaderRow>
               <ListHeading>
-                {operator.operatorName} / {typeof season === 'string' ? season : season?.id}
+                {globalOperator.operatorName} /{' '}
+                {typeof globalSeason === 'string' ? globalSeason : globalSeason?.id}
               </ListHeading>
             </HeaderRow>
             <InspectionItems>
-              <NewInspection onClick={onCreateInspection}>
-                <ItemContent>
-                  <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
-                </ItemContent>
-                <ItemContent style={{ marginTop: 0 }}>
-                  <Text keyValueMap={{ prefix: typeStrings.prefixLC }}>
-                    inspectionPage_createNewInspection
-                  </Text>
-                </ItemContent>
-              </NewInspection>
-              {orderBy(inspections, 'version', 'desc').map((inspection) => (
-                <InspectionCard
-                  key={inspection.id}
-                  onRefresh={refetchInspections}
-                  inspection={inspection}
-                />
-              ))}
+              {canCreateInspection && (
+                <NewInspection onClick={onCreateInspection}>
+                  <ItemContent>
+                    <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
+                  </ItemContent>
+                  <ItemContent style={{ marginTop: 0 }}>
+                    <Text keyValueMap={{ prefix: typeStrings.prefixLC }}>
+                      inspectionPage_createNewInspection
+                    </Text>
+                  </ItemContent>
+                </NewInspection>
+              )}
+              {orderBy(inspections, ['inspectionStartDate', 'version'], ['desc', 'desc']).map(
+                (inspection) => (
+                  <InspectionCard
+                    key={inspection.id}
+                    onRefresh={refetchInspections}
+                    inspection={inspection}
+                  />
+                )
+              )}
             </InspectionItems>
           </>
         )}

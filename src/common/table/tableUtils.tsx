@@ -1,13 +1,14 @@
 import { FilterConfig, SortConfig } from '../../schema-types'
-import React, { ReactNode, useCallback } from 'react'
+import React, { ReactNode, RefObject, useCallback } from 'react'
 import { round } from '../../util/round'
 import { format, isValid, parseISO } from 'date-fns'
 import { DEFAULT_DECIMALS, READABLE_TIME_FORMAT } from '../../constants'
-import { toString } from 'lodash'
+import { difference, isEmpty, toString } from 'lodash'
 import { CellContent } from './TableCell'
 import { getThousandSeparatedNumber } from '../../util/formatNumber'
 import { ValueOf } from '../../type/common'
 import { TableInput, TablePropTypes, TableTextInput } from './Table'
+import { text } from '../../util/translate'
 
 export type FilteredResponseMeta = {
   filteredCount?: number
@@ -72,7 +73,7 @@ export type TableEditProps<ItemType extends TableItemType> = {
   pendingValues?: EditValue<ItemType>[]
   onCancelEdit?: () => unknown
   onSaveEdit?: () => unknown
-  editableValues?: (keyof ItemType)[]
+  editableValues?: (keyof ItemType)[] | ((item: ItemType) => (keyof ItemType)[])
   isAlwaysEditable?: boolean
 }
 
@@ -80,9 +81,11 @@ export type RenderInputType<ItemType extends TableItemType> = (
   key: keyof ItemType,
   val: ValueOf<ItemType>,
   onChange: (val: string) => unknown,
+  item: ItemType,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
-  tabIndex?: number
+  tabIndex?: number,
+  ref?: RefObject<HTMLInputElement>
 ) => React.ReactChild
 
 export function defaultKeyFromItem(item) {
@@ -113,12 +116,15 @@ export function defaultRenderInput<ItemType extends TableItemType>(
   key: keyof ItemType,
   val: ValueOf<ItemType>,
   onChange: (val: string) => unknown,
+  item: ItemType,
   onAccept?: () => unknown,
   onCancel?: () => unknown,
-  tabIndex?: number
+  tabIndex?: number,
+  ref?: RefObject<HTMLInputElement>
 ): React.ReactChild {
   return (
     <TableInput
+      ref={ref}
       autoFocus
       tabIndex={tabIndex}
       value={val + ''}
@@ -161,3 +167,20 @@ export const TableContext = React.createContext({})
 export const defaultGetRowHighlightColor = (): string => ''
 
 export const defaultGetCellHighlightColor = (): string => ''
+
+export function findEmptyKeys(items: Record<string, unknown>[]): string[] {
+  if (isEmpty(items)) {
+    return []
+  }
+  return items.reduce((emptyCols: string[], item) => {
+    let nonEmptyCols = Object.entries(item)
+      .filter(([, value]) => typeof value !== 'undefined' && value !== null)
+      .map(([key]) => key)
+
+    return difference(emptyCols, nonEmptyCols)
+  }, Object.keys(items[0] || {}))
+}
+
+export const NotApplicableValue = (
+  <span style={{ color: '#aaa' }}>{text('not_applicable')}</span>
+)

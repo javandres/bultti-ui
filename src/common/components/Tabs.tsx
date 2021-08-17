@@ -1,10 +1,12 @@
-import React, { Children, useMemo } from 'react'
+import React, { Children, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import styled, { keyframes } from 'styled-components/macro'
 import compact from 'lodash/compact'
 import flow from 'lodash/flow'
-import { Route, Switch, useRouteMatch } from 'react-router-dom'
+import { Route, Switch, useLocation, useRouteMatch } from 'react-router-dom'
 import LinkWithQuery from './LinkWithQuery'
+import { last } from 'lodash'
+import { useNavigate } from '../../util/urlValue'
 
 export const TabsWrapper = styled.div`
   display: grid;
@@ -120,7 +122,7 @@ type PropTypes = {
   rootPath?: string
 }
 
-let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`)
+let getPathName = (base, path) => (path === '/' ? base : `${base}/${path}`.replace('//', '/'))
 
 const Tabs: React.FC<PropTypes> = decorate(
   ({ testIdPrefix = 'page-tabs', children, className }) => {
@@ -146,6 +148,22 @@ const Tabs: React.FC<PropTypes> = decorate(
 
       return compact(childrenTabs)
     }, [validChildren])
+
+    let location = useLocation()
+    let navigate = useNavigate()
+
+    // Revert to the root tab if the current tab disappears.
+    useEffect(() => {
+      let currentTab = last(location.pathname.split('/'))
+
+      if (
+        currentTab &&
+        !tabs.some((tab) => tab.path === currentTab) &&
+        location.pathname !== url
+      ) {
+        navigate.replace(url)
+      }
+    }, [tabs, navigate, location, url])
 
     return (
       <TabsWrapper className={className}>

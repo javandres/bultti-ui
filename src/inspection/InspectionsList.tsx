@@ -2,9 +2,15 @@ import React, { useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { get, groupBy, orderBy } from 'lodash'
 import InspectionItem from './InspectionItem'
-import { Inspection, InspectionStatus, InspectionType, Season } from '../schema-types'
-import { getInspectionTypeStrings } from './inspectionUtils'
-import { isBetween } from '../util/isBetween'
+import {
+  Inspection,
+  InspectionStatus,
+  InspectionType,
+  PreInspection,
+  Season,
+} from '../schema-types'
+import { getInspectionTypeStrings, isPreInspection } from './inspectionUtils'
+import { isBetween } from '../util/compare'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useSeasons } from '../util/useSeasons'
 import { MessageView } from '../common/components/Messages'
@@ -135,7 +141,7 @@ const InspectionsList: React.FC<PropTypes> = ({
   seasons = orderBy(seasons, ['startDate', 'endDate'], ['desc', 'desc'])
 
   const seasonGroups = groupBy(
-    orderBy(inspections, ['startDate', 'version'], ['desc', 'desc']),
+    orderBy(inspections, ['inspectionStartDate'], ['desc', 'desc']),
     'seasonId'
   )
 
@@ -161,13 +167,15 @@ const InspectionsList: React.FC<PropTypes> = ({
           let { id: seasonId } = season
           let inspections: Inspection[] = get(seasonGroups, seasonId, [])
 
-          let maxProductionVersion = inspections.reduce(
-            (maxVersion, { version, status }) =>
-              status === InspectionStatus.InProduction && version > maxVersion
-                ? version
-                : maxVersion,
-            1
-          )
+          let maxProductionVersion = isPreInspection(inspections[0])
+            ? inspections.reduce((maxVersion, inspection) => {
+                let version = (inspection as PreInspection).version
+
+                return status === InspectionStatus.InProduction && version > maxVersion
+                  ? version
+                  : maxVersion
+              }, 1)
+            : 0
 
           let renderCurrentTemporalLocationInSeason =
             currentSeason?.id === seasonId && inspections.length === 0
@@ -195,6 +203,7 @@ const InspectionsList: React.FC<PropTypes> = ({
               {inspections.map((inspection) => {
                 let renderCurrentTemporalLocation =
                   currentSeason?.id === seasonId &&
+                  isPreInspection(inspection) &&
                   isBetween(currentDateString, inspection.startDate, inspection.endDate)
 
                 return (
@@ -209,7 +218,8 @@ const InspectionsList: React.FC<PropTypes> = ({
                       inspection={inspection}
                       onInspectionUpdated={onUpdate}
                       isCurrentlyInEffect={
-                        inspection.version === maxProductionVersion &&
+                        (!isPreInspection(inspection) ||
+                          inspection.version === maxProductionVersion) &&
                         inspection.status === InspectionStatus.InProduction
                       }
                     />

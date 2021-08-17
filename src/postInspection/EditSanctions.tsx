@@ -5,39 +5,23 @@ import { useQueryData } from '../util/useQueryData'
 import {
   PostInspection,
   Sanction,
-  SanctionableEntity,
   SanctionException,
+  SanctionScope,
   SanctionsResponse,
   SanctionUpdate,
 } from '../schema-types'
 import { createResponseId, useTableState } from '../common/table/useTableState'
-import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
-import { text, Text } from '../util/translate'
-import { FlexRow, PageSection } from '../common/components/common'
+import { Text } from '../util/translate'
 import { useMutationData } from '../util/useMutationData'
 import { gql } from '@apollo/client'
 import FilteredResponseTable from '../common/table/FilteredResponseTable'
 import { TabChildProps } from '../common/components/Tabs'
-import { EditValue, RenderInputType } from '../common/table/tableUtils'
-import { useLazyQueryData } from '../util/useLazyQueryData'
-import { DEBUG, DEFAULT_DECIMALS } from '../constants'
+import { EditValue, NotApplicableValue, RenderInputType } from '../common/table/tableUtils'
+import { DEFAULT_DECIMALS } from '../constants'
 import { round } from '../util/round'
 import { ValueOf } from '../type/common'
-import { useNavigate } from '../util/urlValue'
-
-const PostInspectionSanctionsView = styled.div`
-  min-height: 100%;
-  width: 100%;
-  padding: 0 0.75rem 2rem;
-  background-color: var(--white-grey);
-`
-
-const FunctionsRow = styled(FlexRow)`
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--lighter-grey);
-  margin: 0 -0.75rem 0;
-  background: white;
-`
+import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
+import { FlexRow } from '../common/components/common'
 
 const SanctionToggleLabel = styled.label`
   display: block;
@@ -49,14 +33,17 @@ const SanctionToggleInput = styled.input`
   display: block;
 `
 
-let sanctionColumnLabels = {
-  sanctionableType: 'Sanktioitava kohde',
+let sanctionColumnLabels: { [name in keyof Partial<Sanction>]: string } = {
+  procurementUnitId: 'Kilpailukohde',
+  areaName: 'Alue',
+  sanctionScope: 'Sanktioitava kohde',
   entityIdentifier: 'Tunnus',
-  sanctionAmount: 'Sanktiomäärä',
+  sanctionPercentageAmount: 'Sanktiomäärä',
   sanctionReason: 'Sanktioperuste',
-  sanctionableValue: 'Sanktioon johtava arvo',
-  sanctionableKilometers: 'Kilometrisuorite',
-  appliedSanctionAmount: 'Sanktioidaan',
+  sanctionReasonValue: 'Sanktioon johtava arvo',
+  sanctionScopeKilometers: 'Kilometrisuorite',
+  appliedSanctionPercentageAmount: 'Sanktioidaan',
+  sanctionFinancialAmount: 'Sanktiosumma €',
   sanctionResultKilometers: 'Sanktioidut kilometrit',
   matchesException: 'Sanktiopoikkeus',
 }
@@ -68,7 +55,7 @@ let renderSanctionInput: RenderInputType<Sanction> = (key, val, onChange) => {
         type="checkbox"
         value={val + ''}
         onChange={() => onChange(val as string)}
-        checked={val !== '0'}
+        checked={val !== 0}
         name="sanctionable"
       />
     </SanctionToggleLabel>
@@ -96,15 +83,18 @@ let sanctionsQuery = gql`
       }
       rows {
         id
+        procurementUnitId
+        areaName
         entityIdentifier
         inspectionId
-        sanctionAmount
+        sanctionPercentageAmount
         sanctionReason
-        sanctionableKilometers
-        sanctionableType
-        appliedSanctionAmount
+        sanctionScopeKilometers
+        sanctionScope
+        appliedSanctionPercentageAmount
         sanctionResultKilometers
-        sanctionableValue
+        sanctionFinancialAmount
+        sanctionReasonValue
         matchesException {
           id
           departureProperty
@@ -120,25 +110,8 @@ let setSanctionMutation = gql`
   mutation setSanction($sanctionUpdates: [SanctionUpdate!]!) {
     updateSanctions(sanctionUpdates: $sanctionUpdates) {
       id
-      appliedSanctionAmount
+      appliedSanctionPercentageAmount
       sanctionResultKilometers
-    }
-  }
-`
-
-let devLoadSanctions = gql`
-  query runSanctioning($inspectionId: String!) {
-    runSanctioning(inspectionId: $inspectionId) {
-      id
-    }
-  }
-`
-
-let abandonSanctionsMutation = gql`
-  mutation abandonSanctions($inspectionId: String!) {
-    abandonSanctions(inspectionId: $inspectionId) {
-      id
-      status
     }
   }
 `
@@ -147,46 +120,48 @@ export type PropTypes = {
   inspection: PostInspection
 } & TabChildProps
 
-const SanctionsContainer = observer(({ inspection }: PropTypes) => {
+const EditSanctions = observer(({ inspection }: PropTypes) => {
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
   let [pendingValues, setPendingValues] = useState<EditValue<Sanction>[]>([])
 
-  let { data: sanctionsData, loading, refetch } = useQueryData<SanctionsResponse>(
-    sanctionsQuery,
-    {
-      notifyOnNetworkStatusChange: true,
-      skip: !inspection,
-      partialRefetch: true,
-      variables: {
-        // Add a string variable that changes when the table state changes.
-        // Without this it wouldn't refetch if eg. filters change.
-        responseId: createResponseId({ filters, sort }),
-        inspectionId: inspection.id,
-        filters,
-        sort,
-      },
-    }
-  )
+  let {
+    data: sanctionsData,
+    loading,
+    refetch,
+  } = useQueryData<SanctionsResponse>(sanctionsQuery, {
+    notifyOnNetworkStatusChange: true,
+    skip: !inspection,
+    partialRefetch: true,
+    variables: {
+      // Add a string variable that changes when the table state changes.
+      // Without this it wouldn't refetch if eg. filters change.
+      responseId: createResponseId({ filters, sort }),
+      inspectionId: inspection.id,
+      filters,
+      sort,
+    },
+  })
 
   let [execSetSanctionMutation, { loading: setSanctionLoading }] = useMutationData<Sanction[]>(
     setSanctionMutation,
     {
-      update: (cache, { data: updateSanctions }) => {
-        // TODO: Test that this works. Apollo types may be wrong here.
-        console.log(updateSanctions)
+      update: (cache, result) => {
+        // @ts-ignore faulty types
+        let sanctionUpdates = result.data?.updateSanctions || []
 
-        for (let update of updateSanctions || []) {
+        for (let update of sanctionUpdates) {
           let cacheId = cache.identify(update)
+
           cache.writeFragment({
             id: cacheId,
             data: {
-              appliedSanctionAmount: update.appliedSanctionAmount,
+              appliedSanctionPercentageAmount: update.appliedSanctionPercentageAmount,
               sanctionResultKilometers: update.sanctionResultKilometers,
             },
             fragment: gql`
               fragment SanctionFragment on Sanction {
-                appliedSanctionAmount
+                appliedSanctionPercentageAmount
                 sanctionResultKilometers
               }
             `,
@@ -196,15 +171,6 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     }
   )
 
-  let [
-    execAbandonSanctions,
-    { loading: abandonSanctionsLoading },
-  ] = useMutationData<PostInspection>(abandonSanctionsMutation, {
-    variables: {
-      inspectionId: inspection.id,
-    },
-  })
-
   let onChangeSanction = useCallback(
     (key: keyof Sanction, value: ValueOf<Sanction>, item: Sanction) => {
       setPendingValues((currentValues) => {
@@ -212,7 +178,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           (val) => val.key === key && val.itemId === item.id
         )
 
-        let setValue = value === item.sanctionAmount ? 0 : item.sanctionAmount
+        let setValue =
+          value === item.sanctionPercentageAmount ? 0 : item.sanctionPercentageAmount
 
         if (existingEditValueIndex !== -1) {
           currentValues.splice(existingEditValueIndex, 1)
@@ -236,7 +203,7 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
     for (let editValue of pendingValues) {
       let updateValue: SanctionUpdate = {
         sanctionId: editValue.itemId,
-        appliedSanctionAmount: editValue.value as number,
+        appliedSanctionPercentageAmount: editValue.value as number,
       }
 
       updateValues.push(updateValue)
@@ -255,34 +222,37 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
   let isLoading = loading || setSanctionLoading || false
 
-  let navigate = useNavigate()
-
-  let onAbandonSanctions = useCallback(async () => {
-    if (confirm(text('postInspection_confirmAbandonSanctions'))) {
-      await execAbandonSanctions()
-      navigate.push(`/post-inspection/edit/${inspection.id}/`)
-    }
-  }, [execAbandonSanctions, inspection, navigate])
-
-  let [loadSanctions, { loading: devLoadingSanctions }] = useLazyQueryData(devLoadSanctions, {
-    variables: { inspectionId: inspection?.id },
-  })
-
   let renderValue = useCallback(
     (key: keyof Sanction, val: ValueOf<Sanction>, isHeader?: boolean, item?: Sanction) => {
+      if (val === 0) {
+        return '0'
+      }
+
       if (!val) {
-        return '-'
+        return NotApplicableValue
+      }
+
+      if (key === 'sanctionFinancialAmount') {
+        // Show 0 financial amount if the sanction is disabled.
+        return item?.appliedSanctionPercentageAmount === 0
+          ? 0
+          : round(val as number, DEFAULT_DECIMALS) + '€'
       }
 
       if (
-        [
-          'sanctionAmount',
-          'sanctionableKilometers',
-          'appliedSanctionAmount',
-          'sanctionResultKilometers',
-        ].includes(key)
+        (
+          ['sanctionPercentageAmount', 'appliedSanctionPercentageAmount'] as (keyof Sanction)[]
+        ).includes(key)
       ) {
-        return round(val as number, DEFAULT_DECIMALS)
+        return round(val as number, DEFAULT_DECIMALS) + '%'
+      }
+
+      if (
+        (
+          ['sanctionScopeKilometers', 'sanctionResultKilometers'] as (keyof Sanction)[]
+        ).includes(key)
+      ) {
+        return round(val as number, DEFAULT_DECIMALS) + ' km'
       }
 
       if (
@@ -299,12 +269,12 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
 
       let idParts = String(val).split('_')
 
-      switch (item.sanctionableType) {
-        case SanctionableEntity.Departure:
+      switch (item.sanctionScope) {
+        case SanctionScope.Departure:
           return `${idParts[0]} / ${idParts[1]} / ${idParts[2]} / ${idParts[3]}`
-        case SanctionableEntity.EmissionClass:
+        case SanctionScope.OperatingArea:
           return `Alue: ${idParts[0]} Päästöluokka: ${idParts[1]}`
-        case SanctionableEntity.Equipment:
+        case SanctionScope.ProcurementUnit:
           return `Kohde: ${idParts[0]} Ajoneuvon ikä: ${idParts[1]}`
         default:
           return val
@@ -328,23 +298,8 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
   }, [])
 
   return (
-    <PostInspectionSanctionsView>
-      <FunctionsRow>
-        <Button
-          loading={abandonSanctionsLoading}
-          buttonStyle={ButtonStyle.SECONDARY_REMOVE}
-          size={ButtonSize.SMALL}
-          onClick={onAbandonSanctions}>
-          <Text>inspection_actions_abandonSanctions</Text>
-        </Button>
-        {DEBUG && (
-          <Button
-            loading={devLoadingSanctions}
-            size={ButtonSize.SMALL}
-            onClick={() => loadSanctions()}>
-            DEV Load sanctions
-          </Button>
-        )}
+    <>
+      <FlexRow style={{ marginBottom: 0 }}>
         <Button
           style={{ marginLeft: 'auto' }}
           buttonStyle={ButtonStyle.SECONDARY}
@@ -352,27 +307,25 @@ const SanctionsContainer = observer(({ inspection }: PropTypes) => {
           onClick={() => refetch()}>
           <Text>update</Text>
         </Button>
-      </FunctionsRow>
-      <PageSection>
-        <FilteredResponseTable<Sanction>
-          loading={isLoading}
-          data={sanctionsData}
-          tableState={tableState}
-          columnLabels={sanctionColumnLabels}
-          keyFromItem={(item) => item.id}
-          renderInput={renderSanctionInput}
-          pendingValues={pendingValues}
-          editableValues={['appliedSanctionAmount']}
-          onSaveEdit={onSaveSanctions}
-          onEditValue={onChangeSanction}
-          onCancelEdit={onCancelEdit}
-          isAlwaysEditable={true}
-          renderValue={renderValue}
-          transformItems={transformItems}
-        />
-      </PageSection>
-    </PostInspectionSanctionsView>
+      </FlexRow>
+      <FilteredResponseTable<Sanction>
+        loading={isLoading}
+        data={sanctionsData}
+        tableState={tableState}
+        columnLabels={sanctionColumnLabels}
+        keyFromItem={(item) => item.id}
+        renderInput={renderSanctionInput}
+        pendingValues={pendingValues}
+        editableValues={['appliedSanctionPercentageAmount']}
+        onSaveEdit={onSaveSanctions}
+        onEditValue={onChangeSanction}
+        onCancelEdit={onCancelEdit}
+        isAlwaysEditable={true}
+        renderValue={renderValue}
+        transformItems={transformItems}
+      />
+    </>
   )
 })
 
-export default SanctionsContainer
+export default EditSanctions

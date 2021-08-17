@@ -6,7 +6,6 @@ import { getUrlValue } from '../../util/urlValue'
 import { getDateObject, getReadableDateRange } from '../../util/formatDate'
 import styled from 'styled-components/macro'
 import { text } from '../../util/translate'
-import { SidebarStyledDropdown } from './SidebarStyledDropdown'
 import { useHistory } from 'react-router-dom'
 
 const SeasonTimeSpan = styled.div`
@@ -26,8 +25,7 @@ const GlobalSeasonFilter: React.FC = observer(() => {
 
   return (
     <React.Fragment>
-      <SidebarStyledDropdown
-        as={SelectSeason}
+      <SelectSeason
         onSelect={setSeasonFilter}
         value={season}
         label={text('selectSeason')}

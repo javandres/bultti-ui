@@ -30,7 +30,7 @@ export const ContractFragment = gql`
     rulesFile
     operator {
       id
-      operatorId
+      operatorIds
       operatorName
     }
     procurementUnits {

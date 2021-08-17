@@ -3,8 +3,8 @@ import styled from 'styled-components'
 import { observer } from 'mobx-react-lite'
 import { PageTitle } from '../common/components/PageTitle'
 import { PageContainer } from '../common/components/common'
-import { Button } from '../common/components/buttons/Button'
-import { gql } from '@apollo/client'
+import { Button, ButtonSize } from '../common/components/buttons/Button'
+import { gql, useMutation } from '@apollo/client'
 import { useMutationData } from '../util/useMutationData'
 import { useHasAdminAccessRights } from '../util/userRoles'
 import Input from '../common/input/Input'
@@ -42,20 +42,25 @@ const helperResolverMutation = gql`
   }
 `
 
+const clearCacheMutation = gql`
+  mutation clearCache {
+    clearCache
+  }
+`
+
 export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
 
-  let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
-    removeTestDataMutation
-  )
+  let [removeTestData, { loading: testDataRemoveLoading }] =
+    useMutationData(removeTestDataMutation)
 
   let [forceRemoveInspection, { loading: forceRemoveInspectionLoading }] = useMutationData(
     forceRemoveInspectionMutation
   )
 
-  let [helperResolver, { loading: asd }] = useMutationData(helperResolverMutation)
+  let [helperResolver] = useMutationData(helperResolverMutation)
 
   let isAdmin = useHasAdminAccessRights()
 
@@ -97,6 +102,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let onHelperResolver = () => {
     helperResolver()
   }
+
+  const [clearCache] = useMutation(clearCacheMutation)
 
   return (
     <AdminPageView>
@@ -160,6 +167,16 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         </p>
         <p>
           <Button onClick={onHelperResolver}>Call helperResolver</Button>
+        </p>
+        <h3>Clear cache</h3>
+        <p>
+          Clears the whole Redis cache of the app, including queued jobs.
+          <Button
+            style={{ color: 'white ', border: '1px solid white', marginTop: '1rem' }}
+            onClick={() => clearCache()}
+            size={ButtonSize.MEDIUM}>
+            <div>Clear cache</div>
+          </Button>
         </p>
       </PageContainer>
     </AdminPageView>

@@ -19,26 +19,26 @@ type SanctionSummaryReportItemConstants = {
   totalKilometers: number
   areaName: string
   averageAgeWeightedObserved: number
-  unitEquipmentMaxAge: number
+  averageAgeRequired: number
 }
 
 type SanctionSummaryReportItem = SanctionSummaryReportItemConstants & Record<string, number>
 
-function getSanctionCols(
+function getSanctionColumns(
   sanctionAmount,
   sanctionReason,
-  values: { sanctionAmountRatio: number; sanctionedKilometers: number } = {
-    sanctionedKilometers: 0,
-    sanctionAmountRatio: 0,
+  values: { sanctionPercentageAmount: number; sanctionResultKilometers: number } = {
+    sanctionResultKilometers: 0,
+    sanctionPercentageAmount: 0,
   }
 ) {
   let cols = {}
   let reasonText = text('postInspection_sanctionReason_' + sanctionReason)
   let sanctionAmountCol = `${reasonText} ${sanctionAmount}%`
-  let sanctionAmountKmCol = `${reasonText} KM`
+  let sanctionAmountKmCol = `${reasonText} S${sanctionAmount} (km)`
 
-  cols[sanctionAmountCol] = values.sanctionAmountRatio
-  cols[sanctionAmountKmCol] = values.sanctionedKilometers
+  cols[sanctionAmountCol] = values.sanctionPercentageAmount
+  cols[sanctionAmountKmCol] = values.sanctionResultKilometers
 
   return cols
 }
@@ -50,8 +50,8 @@ function sanctionSummaryTransform(
 
   // Template for dynamic keyed sanction summary items
   let sanctionAmountColumnsTemplate = rows.reduce(
-    (cols: Record<string, number>, { sanctionAmount, sanctionReason }) => {
-      let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason)
+    (cols: Record<string, number>, { sanctionPercentageAmount, sanctionReason }) => {
+      let sanctionCols = getSanctionColumns(sanctionPercentageAmount, sanctionReason)
       return { ...cols, ...sanctionCols }
     },
     {}
@@ -59,33 +59,32 @@ function sanctionSummaryTransform(
 
   for (let row of rows) {
     let {
-      sanctionAmount,
+      sanctionPercentageAmount,
       sanctionReason,
-      sanctionAmountRatio,
-      sanctionedKilometers,
+      sanctionPercentageRatio,
+      sanctionResultKilometers,
       procurementUnitId,
     } = row
 
-    let resultRow: SanctionSummaryReportItemConstants | undefined = resultRows.get(
-      procurementUnitId
-    )
+    let resultRow: SanctionSummaryReportItemConstants | undefined =
+      resultRows.get(procurementUnitId)
     if (!resultRow) {
       resultRow = {
         procurementUnitId: row.procurementUnitId,
         totalKilometers: row.totalKilometers,
         areaName: row.areaName,
         averageAgeWeightedObserved: row.averageAgeWeightedObserved,
-        unitEquipmentMaxAge: row.unitEquipmentMaxAge,
+        averageAgeRequired: row.averageAgeRequired,
         ...sanctionAmountColumnsTemplate,
       }
     } else {
       resultRow.totalKilometers = row.totalKilometers
-      resultRow.unitEquipmentMaxAge = row.unitEquipmentMaxAge
+      resultRow.averageAgeRequired = row.averageAgeRequired
     }
 
-    let sanctionCols = getSanctionCols(sanctionAmount, sanctionReason, {
-      sanctionedKilometers,
-      sanctionAmountRatio,
+    let sanctionCols = getSanctionColumns(sanctionPercentageAmount, sanctionReason, {
+      sanctionResultKilometers,
+      sanctionPercentageAmount,
     })
 
     let fullResultRow = {

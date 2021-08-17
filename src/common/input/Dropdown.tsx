@@ -108,7 +108,7 @@ function toString(item, converter?: string | ((item) => string | JSX.Element)) {
 }
 
 const Dropdown = observer(
-  <ValueType extends Record<string, unknown> | string = DefaultDropdownValueType>({
+  <ValueType extends Record<string, unknown> | string | number = DefaultDropdownValueType>({
     disabled = false,
     className,
     style = {},

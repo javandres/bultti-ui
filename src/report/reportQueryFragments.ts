@@ -91,9 +91,12 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometersObserved
       totalUnitKilometers
+      averageAgeMax
+      averageAgeRequired
+      averageAgeWeighted
       averageAgeWeightedObserved
-      sanctionAmount
-      sanctionedKilometers
+      sanctionPercentageAmount
+      sanctionFinancialAmount
     }
   `,
   ObservedLateDeparturesFragment: `
@@ -120,6 +123,7 @@ export const reportQueryFragments = {
     fragment ObservedEquipmentColorFragment on ObservedEquipmentColorReportData {
       ${observedDepartureReportBaseFragment}
       registryNr
+      isTrunkRoute
       observedExteriorColor
       journeyKilometers
       procurementUnitId
@@ -218,6 +222,7 @@ export const reportQueryFragments = {
     fragment EquipmentColorFragment on EquipmentColorReportData {
       ${departureReportBaseFragment}
       registryNr
+      isTrunkRoute
       equipmentExteriorColor
     }
   `,
@@ -309,19 +314,29 @@ export const reportQueryFragments = {
       totalKilometers
       areaName
       averageAgeWeightedObserved
-      sanctionAmount
+      sanctionPercentageAmount
       sanctionReason
-      sanctionAmountRatio
-      sanctionedKilometers
-      unitEquipmentMaxAge
+      sanctionPercentageRatio
+      sanctionResultKilometers
+      averageAgeRequired
     }
   `,
   SanctionListFragment: `
     fragment SanctionListFragment on SanctionListReportData {
+      id
       procurementUnitId
       kilometers
-      sanctionSum
+      sanctionPercentageAmount
+      sanctionFinancialAmount
       sanctionReason
+      sanctionScope
+      departureDate
+      direction
+      journeyStartTime
+      reasonBenchmarkValue
+      registryNr
+      routeId
+      sanctionReasonValue
     }
   `,
   DangerousDefectSanctionsFragment: `

@@ -37,15 +37,14 @@ export const lightPostInspectionFragment = gql`
     name
     createdAt
     updatedAt
-    startDate
-    endDate
+    inspectionDateId
     inspectionStartDate
     inspectionEndDate
-    version
     status
-    minStartDate
     operatorId
     seasonId
+    hslAccepted
+    operatorAccepted
     operator {
       id
       operatorName
@@ -224,12 +223,8 @@ export const updateLinkedInspectionsMutation = gql`
 `
 
 export const submitInspectionMutation = gql`
-  mutation submitInspection(
-    $inspectionId: String!
-    $startDate: BulttiDate!
-    $endDate: BulttiDate!
-  ) {
-    submitInspection(inspectionId: $inspectionId, startDate: $startDate, endDate: $endDate) {
+  mutation submitInspection($inspectionId: String!) {
+    submitInspection(inspectionId: $inspectionId) {
       ...InspectionUnionFragment
     }
   }

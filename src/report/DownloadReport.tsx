@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
 import { SERVER_URL } from '../constants'
 import { saveAs } from 'file-saver'
+import { Text } from '../util/translate'
 import styled from 'styled-components/macro'
 import { getAuthToken } from '../util/authToken'
 import { InspectionType } from '../schema-types'
@@ -46,7 +47,9 @@ const DownloadReport = observer(
         },
       })
 
-      if (response.ok) {
+      // Require status 200 for the download. If the report is empty, the status
+      // will be 204 but the "ok" will still be true.
+      if (response.ok && response.status === 200) {
         let contentHeader = response.headers.get('Content-Disposition') || ''
         let regex = /filename="(.+?(?="))/g // Extract filename from header
         let name = (regex.exec(contentHeader) || ['', ''])[1] || 'raportti.xlsx'
@@ -67,7 +70,7 @@ const DownloadReport = observer(
           <ErrorButton onClick={() => setError('')}>{error}</ErrorButton>
         ) : (
           <Button loading={loading} onClick={onDownloadReport}>
-            Download excel
+            <Text>downloadExcelRaport</Text>
           </Button>
         )}
       </DownloadWrapper>

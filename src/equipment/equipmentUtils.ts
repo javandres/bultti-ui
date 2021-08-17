@@ -19,20 +19,17 @@ import {
 } from './equipmentQuery'
 import { useCallback } from 'react'
 import { removeAllEquipmentFromExecutionRequirement } from '../executionRequirement/executionRequirementsQueries'
-import Big from 'big.js'
 import { isObjectLike } from '../util/isObjectLike'
 
 export type EquipmentQuotaGroup = Omit<Equipment, 'vehicleId' | 'registryNr'> & {
   percentageQuota: number | string
-  meterRequirement: number | string
-  kilometerRequirement?: number | string
+  kilometerRequirement: number | string
   amount: number
   age: number | string
 }
 
 export type EquipmentWithQuota = Equipment & {
   percentageQuota: number
-  meterRequirement?: number
   kilometerRequirement?: number
   quotaId: string
   requirementOnly?: boolean
@@ -77,8 +74,7 @@ export function createRequirementEquipment(
       return {
         ...quota?.equipment,
         percentageQuota: quota.percentageQuota || 0,
-        meterRequirement: quota.meterRequirement || 0,
-        kilometerRequirement: (quota.meterRequirement || 0) / 1000,
+        kilometerRequirement: quota.kilometerRequirement || 0,
         quotaId: quota.id,
         requirementOnly: !!quota.requirementOnly,
       }
@@ -102,11 +98,10 @@ export function groupedEquipment(
       model + strval(emissionClass) + type + strval(registryDate)
   )
 
-  return Object.values(grouped).map((equipmentGroup) => {
+  return Object.values(grouped).map((equipmentGroup: EquipmentWithQuota[]) => {
     let percentageQuota = getTotal(equipmentGroup, 'percentageQuota')
-    let meterRequirement = getTotal(equipmentGroup, 'meterRequirement')
+    let kilometerRequirement = getTotal(equipmentGroup, 'kilometerRequirement')
 
-    let kilometerRequirement = Big(meterRequirement).div(1000).toString()
     let age = getEquipmentAge(parseISO(equipmentGroup[0].registryDate), startDate)
 
     return {
@@ -114,7 +109,6 @@ export function groupedEquipment(
       amount: equipmentGroup.length,
       age,
       percentageQuota,
-      meterRequirement,
       kilometerRequirement,
     }
   })
