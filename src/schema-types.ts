@@ -1492,12 +1492,12 @@ export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution'
   id: Scalars['ID']
   procurementUnitId: Scalars['String']
-  area?: Maybe<OperatingAreaName>
+  area: OperatingAreaName
   totalUnitKilometers: Scalars['Float']
   totalKilometersObserved?: Maybe<Scalars['Float']>
-  averageAgeMax?: Maybe<Scalars['Float']>
-  averageAgeRequired?: Maybe<Scalars['Float']>
-  averageAgeObserved?: Maybe<Scalars['Float']>
+  averageAgeMax: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
+  averageAgeWeighted: Scalars['Float']
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
   sanctionPercentageAmount?: Maybe<Scalars['Float']>
@@ -2275,8 +2275,8 @@ export enum SanctionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
-  UnitEquipmentOverageUnder_2 = 'UNIT_EQUIPMENT_OVERAGE_UNDER_2',
-  UnitEquipmentOverageOver_2 = 'UNIT_EQUIPMENT_OVERAGE_OVER_2',
+  UnitEquipmentOverageUnderThreshold = 'UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD',
+  UnitEquipmentOverageOverThreshold = 'UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 
