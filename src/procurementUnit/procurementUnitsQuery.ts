@@ -86,7 +86,7 @@ export const procurementUnitQuery = gql`
   ${EquipmentFragment}
 `
 
-// The IDE doesn't understand that the $startDate is used in the
+// Webstorm IDE doesn't understand that the $startDate is used in the
 // fragment and marks it as an error due to being unused.
 // noinspection GraphQLSchemaValidation
 export const updateProcurementUnitMutation = gql`

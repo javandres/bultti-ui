@@ -70,6 +70,7 @@ export function createRequirementEquipment(
         return null
       }
 
+      // Used for Webstorm IDE
       // noinspection PointlessBooleanExpressionJS
       return {
         ...quota?.equipment,
