@@ -109,7 +109,7 @@
   "procurementUnit_unitValidTime": "Kohteen voimassaoloaika",
   "procurementUnit_operationArea": "Seuranta-alue",
   "procurementUnit_ageRequirement": "Maksimi keski-ikä",
-  "procurementUnit_noOptions": "Ei optiota",
+  "procurementUnit_noOptions": "Ei optio-kautta",
   "procurementUnit_optionsUsed": "Käytetyt optiot",
   "procurementUnit_optionPeriodStart": "Optio-kauden alku",
   "procurementUnit_optionMaxAgeIncreaseMethod": "Maksimi keski-iän korotustapa",
