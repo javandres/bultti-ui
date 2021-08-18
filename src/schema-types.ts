@@ -1759,6 +1759,7 @@ export type ProcurementUnit = {
   operatorId: Scalars['Int']
   operator: Operator
   maximumAverageAge: Scalars['Float']
+  maximumAverageAgeWithOptions: Scalars['Float']
   optionPeriodStart?: Maybe<Scalars['BulttiDate']>
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
   equipmentCatalogues: Array<EquipmentCatalogue>
@@ -1771,6 +1772,10 @@ export type ProcurementUnit = {
   executionRequirements: Array<PlannedUnitExecutionRequirement>
   contracts: Array<Contract>
   currentContracts?: Maybe<Array<Contract>>
+}
+
+export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
+  startDate: Scalars['BulttiDate']
 }
 
 export type ProcurementUnitEditInput = {

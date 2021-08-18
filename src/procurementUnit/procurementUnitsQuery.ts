@@ -9,6 +9,7 @@ export const ProcurementUnitFragment = gql`
     startDate
     endDate
     maximumAverageAge
+    maximumAverageAgeWithOptions(startDate: $startDate)
     optionMaxAgeIncreaseMethod
     optionPeriodStart
     optionsUsed
@@ -85,10 +86,15 @@ export const procurementUnitQuery = gql`
   ${EquipmentFragment}
 `
 
+// The IDE doesn't understand that the $startDate is used in the
+// fragment and marks it as an error due to being unused.
+// noinspection GraphQLSchemaValidation
 export const updateProcurementUnitMutation = gql`
   mutation updateProcurementUnit(
     $updatedData: ProcurementUnitEditInput!
     $procurementUnitId: String!
+    # Must have startDate for the calculated maximum average age.
+    $startDate: BulttiDate!
   ) {
     updateProcurementUnit(
       procurementUnit: $updatedData

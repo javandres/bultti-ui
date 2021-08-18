@@ -1310,6 +1310,7 @@ type ProcurementUnit {
   executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
   maximumAverageAge: Float!
+  maximumAverageAgeWithOptions(startDate: BulttiDate!): Float!
   operator: Operator!
   operatorId: Int!
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!

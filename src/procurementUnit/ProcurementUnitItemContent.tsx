@@ -33,7 +33,6 @@ import { useHasAdminAccessRights } from '../util/userRoles'
 import DatePicker from '../common/input/DatePicker'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString, getReadableDate } from '../util/formatDate'
-import { calculateMaximumAverageAge } from './procurementUnitUtils'
 
 const procurementUnitLabels = {
   maximumAverageAge: text('procurementUnit_ageRequirement'),
@@ -155,6 +154,7 @@ const ProcurementUnitItemContent = observer(
         variables: {
           procurementUnitId,
           updatedData: null,
+          startDate,
         },
         refetchQueries: ['procurementUnit'],
       }
@@ -252,12 +252,6 @@ const ProcurementUnitItemContent = observer(
       [procurementUnit, procurementUnitInputValues]
     )
 
-    let calcMedianAgeRequirement = useMemo(
-      () =>
-        procurementUnit ? calculateMaximumAverageAge(procurementUnit, inspectionStartDate) : 0,
-      [procurementUnit, inspectionStartDate]
-    )
-
     let navigate = useNavigate()
 
     const onOpenContract = useCallback(
@@ -295,7 +289,7 @@ const ProcurementUnitItemContent = observer(
               renderValue={renderValueDisplayValue}
               item={{
                 maximumAverageAge: procurementUnit?.maximumAverageAge,
-                calculatedMaximumAgeRequirement: calcMedianAgeRequirement,
+                calculatedMaximumAgeRequirement: procurementUnit?.maximumAverageAgeWithOptions,
                 optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
                 optionPeriodStart: procurementUnit?.optionPeriodStart
                   ? getReadableDate(getDateObject(procurementUnit.optionPeriodStart))

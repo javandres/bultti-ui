@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import {
@@ -17,7 +17,6 @@ import ProcurementUnitItemContent from './ProcurementUnitItemContent'
 import { text, Text } from '../util/translate'
 import { getDateObject } from '../util/formatDate'
 import { isWithinInterval } from 'date-fns'
-import { calculateMaximumAverageAge } from './procurementUnitUtils'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -101,11 +100,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
           })[0]
       : undefined
 
-    let maximumAgeWithOptions = useMemo(
-      () => (procurementUnit ? calculateMaximumAverageAge(procurementUnit, startDate) : 0),
-      [procurementUnit, startDate]
-    )
-
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
@@ -157,12 +151,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                   </HeaderHeading>
                   {procurementUnit?.maximumAverageAge || 0}{' '}
                   <Text>procurementUnit_ageRequirementYears</Text>
-                  {maximumAgeWithOptions !== procurementUnit?.maximumAverageAge && (
+                  {procurementUnit?.maximumAverageAgeWithOptions !==
+                    procurementUnit?.maximumAverageAge && (
                     <>
                       <HeaderHeading>
                         <Text>procurementUnit_ageRequirementWithOptions</Text>
                       </HeaderHeading>
-                      {calculateMaximumAverageAge(procurementUnit, startDate)}{' '}
+                      {procurementUnit?.maximumAverageAgeWithOptions}{' '}
                       <Text>procurementUnit_ageRequirementYears</Text>
                     </>
                   )}
