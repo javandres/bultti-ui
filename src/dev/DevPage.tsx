@@ -30,6 +30,12 @@ const removeTestDataMutation = gql`
   }
 `
 
+const removeUserMutation = gql`
+  mutation removeUser($email: String!) {
+    removeUser(email: $email)
+  }
+`
+
 const forceRemoveInspectionMutation = gql`
   mutation forceRemoveInspection($inspectionId: String!, $testOnly: Boolean) {
     forceRemoveInspection(inspectionId: $inspectionId, testOnly: $testOnly)
@@ -56,6 +62,8 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [removeTestData, { loading: testDataRemoveLoading }] =
     useMutationData(removeTestDataMutation)
 
+  let [removeUser, { loading: isRemoveUserLoading }] = useMutationData(removeUserMutation)
+
   let [forceRemoveInspection, { loading: forceRemoveInspectionLoading }] = useMutationData(
     forceRemoveInspectionMutation
   )
@@ -69,6 +77,23 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
       window.history.back()
     }
   }, [isAdmin])
+
+  let [removeUserEmail, setRemoveUserEmail] = useState('')
+
+  let onRemoveUser = useCallback(() => {
+    if (
+      confirm(
+        `Are you sure you want to remove this user: ${removeUserEmail}? All relations related to the user (contract and inspections) will be removed.`
+      )
+    ) {
+      setRemoveUserEmail('')
+      removeUser({
+        variables: {
+          email: removeUserEmail,
+        },
+      })
+    }
+  }, [removeUserEmail, forceRemoveInspection])
 
   let [removeInspectionId, setRemoveInspectionId] = useState('')
 
@@ -132,6 +157,20 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         </p>
         <Button loading={testDataRemoveLoading} onClick={() => removeTestData()}>
           Remove test data
+        </Button>
+
+        <h3>Remove user</h3>
+        <Input
+          style={{ marginBottom: '1rem' }}
+          label="User email address to remove"
+          value={removeUserEmail}
+          onChange={(val) => setRemoveUserEmail(val)}
+        />
+        <Button
+          disabled={removeUserEmail.length === 0}
+          loading={isRemoveUserLoading}
+          onClick={onRemoveUser}>
+          Remove user
         </Button>
 
         <h3>Force remove inspections</h3>

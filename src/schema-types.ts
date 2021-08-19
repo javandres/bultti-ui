@@ -1025,6 +1025,7 @@ export type Mutation = {
   clearCache: Scalars['Boolean']
   createTestData: Scalars['Boolean']
   removeTestData: Scalars['Boolean']
+  removeUser: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
   importHfpForDates: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
@@ -1198,6 +1199,10 @@ export type MutationRemoveInspectionDateArgs = {
 
 export type MutationUpdateSanctionsArgs = {
   sanctionUpdates: Array<SanctionUpdate>
+}
+
+export type MutationRemoveUserArgs = {
+  email: Scalars['String']
 }
 
 export type MutationForceRemoveInspectionArgs = {
@@ -2207,8 +2212,8 @@ export type Sanction = {
   registryNumber?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
-  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionPercentageAmount: Scalars['Float']
   appliedSanctionPercentageAmount: Scalars['Float']
   sanctionScopeKilometers: Scalars['Float']
@@ -2537,7 +2542,6 @@ export enum UserRole {
   Admin = 'ADMIN',
   Hsl = 'HSL',
   Operator = 'OPERATOR',
-  Blocked = 'BLOCKED',
 }
 
 export type ValidationErrorData = {
