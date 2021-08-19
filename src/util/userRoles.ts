@@ -41,10 +41,9 @@ export function hasAccessRights({
   }
 
   if (
-    // If all roles are allowed, check that the user is not blocked. If the user is an operator user,
+    // If all roles are allowed, check that user role exists. If the user is an operator user,
     // ensure that it has access to the operatorId.
     allowedRoles === 'all' &&
-    user.role !== UserRole.Blocked &&
     // Either the user is not an operator user...
     (user.role !== UserRole.Operator ||
       // Or there is an operator ID provided AND the user belongs to the operator ID.
