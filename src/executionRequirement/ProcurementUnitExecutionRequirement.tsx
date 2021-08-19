@@ -99,8 +99,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
       refreshExecutionRequirementForProcurementUnitMutation
     )
 
-    let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
-
     let [updateWeeklyMeters, { loading: weeklyMetersUpdateLoading }] = useMutationData(
       weeklyMetersFromJoreMutation,
       {
@@ -149,22 +147,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         update()
       }
     }, [procurementUnitRequirement, refreshExecutionRequirement, isEditable])
-
-    let removeExecutionRequirement = useCallback(async () => {
-      if (
-        isEditable &&
-        procurementUnitRequirement &&
-        confirm(text('executionRequirement_removeWarning'))
-      ) {
-        await execRemoveExecutionRequirement({
-          variables: {
-            requirementId: procurementUnitRequirement.id,
-          },
-        })
-
-        update()
-      }
-    }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (isEditable) {
@@ -262,7 +244,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
                 onEquipmentChanged={update}
                 hasEquipment={equipment.length !== 0}
                 addEquipment={addEquipment}
-                removeAllEquipment={removeExecutionRequirement}
                 removeLabel={text('executionRequirement_remove')}
                 editableKeys={['percentageQuota']}
                 fieldLabels={equipmentColumnLabels}
