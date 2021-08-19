@@ -57,6 +57,14 @@ export function useRenderCellValue() {
       }
     }
 
+    if (key.toLowerCase().includes('link')) {
+      return (
+        <a target="_blank" href={val as string} rel="noreferrer">
+          {val}
+        </a>
+      )
+    }
+
     return toString(val)
   }, [])
 }

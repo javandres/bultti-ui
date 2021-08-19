@@ -650,6 +650,7 @@ type InspectionDate {
   hfpDataStatus: HfpStatus!
   id: ID!
   inspections: [PostInspection!]
+  lastDateLoaded: BulttiDate
   startDate: BulttiDate!
 }
 
@@ -718,8 +719,8 @@ type LateDeparturesReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedLateArrivalSeconds: Float!
   observedLateDepartureSeconds: Float!
   procurementUnitId: String!
@@ -930,8 +931,8 @@ type ObservedEquipmentColorReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedExteriorColor: String!
   procurementUnitId: String!
   registryNr: String!
@@ -970,8 +971,8 @@ type ObservedEquipmentTypeReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedEquipmentType: String!
   plannedEquipmentType: String!
   procurementUnitId: String!
@@ -1060,8 +1061,8 @@ type ObservedOverAgeDeparturesReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedEquipmentAge: Float!
   overAgeType: String!
   procurementUnitId: String!
@@ -1647,6 +1648,7 @@ type UnobservedDeparturesReportData {
   procurementUnitId: String!
   routeId: String!
   trackReason: TrackReason!
+  transitlogLink: String!
 }
 
 type User {
