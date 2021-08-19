@@ -75,7 +75,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
           {areaExecutionRequirements.map((areaRequirement) => (
             <AreaWrapper key={areaRequirement.id}>
               <AreaHeading>
-                {text(`executionRequirement_area_${areaRequirement.area.name}`)} /{' '}
+                {text(`executionRequirement_area_${areaRequirement.area.name}`)},{' '}
                 {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
               </AreaHeading>
               <RequirementsTable

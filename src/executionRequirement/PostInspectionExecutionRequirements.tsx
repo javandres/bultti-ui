@@ -193,7 +193,9 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
           groupBy<ObservedExecutionRequirement>(
             areaReqs,
             (req) =>
-              `${text(`executionRequirement_area_${req.area.name}`)} / ${req.sanctionLeeway}%`
+              `${text(`executionRequirement_area_${req.area.name}`)}, ${text(
+                'executionRequirement_leeway'
+              )} ${req.sanctionLeeway}%`
           )
         ),
       ]),

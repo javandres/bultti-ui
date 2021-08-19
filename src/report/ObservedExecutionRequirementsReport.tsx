@@ -27,7 +27,7 @@ const ObservedExecutionRequirementsReport = observer(
         {items.map((areaRequirement) => (
           <React.Fragment key={areaRequirement.id}>
             <AreaHeading>
-              {text(`executionRequirement_area_${areaRequirement.areaName}`)} /{' '}
+              {text(`executionRequirement_area_${areaRequirement.areaName}`)},{' '}
               {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
             </AreaHeading>
             <ObservedRequirementsTable executionRequirement={areaRequirement} />
