@@ -119,7 +119,7 @@
   "executionRequirement_statsEquipmentType": "Kalustotyyppi",
   "executionRequirement_statsEquipmentCount": "Kalustomäärä",
   "executionRequirement_statsKilometers": "Kilometrejä viikossa",
-  "executionRequirement_refreshEquipment": "Virkistä kalustoluettelosta",
+  "executionRequirement_refreshEquipment": "Palauta alkuperäinen kalustoluettelo",
   "executionRequirement_weeklyKilometers": "Viikkokilometrit",
   "executionRequirement_updateJoreKilometers": "Päivitä suoritteet JOREsta",
   "executionRequirement_equipmentList": "Suoritevaatimuksen ajoneuvot",
