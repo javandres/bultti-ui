@@ -62,6 +62,8 @@ export const AreaExecutionRequirementFragment = gql`
     id
     kilometersRequired
     kilometersObserved
+    sanctionLeeway
+    sanctionPercentage
     operator {
       id
       operatorIds
@@ -83,6 +85,8 @@ export const ObservedExecutionRequirementFragment = gql`
     operatorId
     kilometersObserved
     kilometersRequired
+    sanctionLeeway
+    sanctionPercentage
     area {
       id
       name

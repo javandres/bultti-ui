@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import RequirementsTable from '../executionRequirement/RequirementsTable'
 import { ReportComponentProps } from './reportTypes'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { ExecutionRequirementsReportData } from '../schema-types'
 import { MessageView } from '../common/components/Messages'
 import { RequirementsTableLayout } from '../executionRequirement/executionRequirementUtils'
@@ -27,8 +27,11 @@ const ExecutionRequirementsReport = observer(
     return (
       <ExecutionRequirementsReportView>
         {items.map((areaRequirement) => (
-          <React.Fragment key={areaRequirement.areaName}>
-            <AreaHeading>{areaRequirement.areaName}</AreaHeading>
+          <React.Fragment key={areaRequirement.id}>
+            <AreaHeading>
+              {text(`executionRequirement_area_${areaRequirement.areaName}`)},{' '}
+              {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
+            </AreaHeading>
             <RequirementsTable
               tableLayout={RequirementsTableLayout.BY_VALUES}
               executionRequirement={areaRequirement}

@@ -676,11 +676,9 @@ export type ExecutionRequirementsReportData = {
   id: Scalars['ID']
   operatorId: Scalars['Int']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometers: Scalars['Float']
   totalKilometersFulfilled: Scalars['Float']
-  averageAgeWeighted?: Maybe<Scalars['Float']>
-  averageAgeRequirement?: Maybe<Scalars['Float']>
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   requirements: Array<PlannedEmissionClassRequirement>
 }
 
@@ -1407,6 +1405,8 @@ export type ObservedExecutionRequirement = {
   id: Scalars['ID']
   kilometersRequired?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator
@@ -1447,6 +1447,7 @@ export type ObservedExecutionRequirementsReportData = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometersRequired: Scalars['Float']
   totalKilometersObserved: Scalars['Float']
   observedRequirements: Array<ObservedEmissionClassRequirement>
@@ -1659,6 +1660,8 @@ export type PlannedAreaExecutionRequirement = {
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   averageAgeRequirement?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator

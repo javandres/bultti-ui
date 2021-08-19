@@ -32,7 +32,7 @@ import { inspectionQuery } from '../inspection/inspectionQueries'
 import ObservedRequirementsTable, {
   EditObservedRequirementValue,
 } from './ObservedRequirementsTable'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 
 const PostInspectionExecutionRequirementsView = styled.div`
   position: relative;
@@ -190,7 +190,13 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
       ).map(([areaName, areaReqs]) => [
         areaName,
         Object.entries<ObservedExecutionRequirement[]>(
-          groupBy<ObservedExecutionRequirement>(areaReqs, 'area.name')
+          groupBy<ObservedExecutionRequirement>(
+            areaReqs,
+            (req) =>
+              `${text(`executionRequirement_area_${req.area.name}`)}, ${text(
+                'executionRequirement_leeway'
+              )} ${req.sanctionLeeway}%`
+          )
         ),
       ]),
     [observedRequirements]
@@ -327,10 +333,10 @@ const PostInspectionExecutionRequirements = observer(({ isEditable }: PropTypes)
                 }>
                 <RequirementAreaRow key={weekLabel}>
                   <RequirementWeeksWrapper>
-                    {areaReqs.map(([areaLabel, weekRequirementAreas]) => (
-                      <ExecutionRequirementWeek key={areaLabel + weekLabel}>
+                    {areaReqs.map(([areaLeewayLabel, weekRequirementAreas]) => (
+                      <ExecutionRequirementWeek key={areaLeewayLabel + weekLabel}>
                         <FlexRow>
-                          <AreaHeading>{areaLabel}</AreaHeading>
+                          <AreaHeading>{areaLeewayLabel}</AreaHeading>
                         </FlexRow>
                         {weekRequirementAreas.map((requirement) => (
                           <React.Fragment key={requirement.id}>

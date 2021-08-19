@@ -33,7 +33,8 @@ const ExecutionRequirementsAreaContainer = styled.div`
 
 export interface IExecutionRequirement {
   requirements: PlannedEmissionClassRequirement[]
-  totalKilometers?: number | null
+  kilometersRequired?: number | null
+  kilometersObserved?: number | null
   averageAgeWeighted?: number | null
   averageAgeRequirement?: number | null
   averageAgeWeightedFulfilled?: number | null
@@ -192,13 +193,15 @@ const RequirementsTable: React.FC<PropTypes> = observer(
             'averageAgeWeighted',
             'averageAgeRequirement',
             'averageAgeWeightedFulfilled',
-            'totalKilometers',
+            'kilometersRequired',
+            'kilometersObserved',
           ])}
           labels={{
             averageAgeWeighted: 'Painotettu keski-ikä',
             averageAgeRequirement: 'Painotettu keski-ikä vaatimus',
             averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
-            totalKilometers: 'Suoritekilometrit yhteensä',
+            kilometersRequired: 'Suoritekilometrit',
+            kilometersObserved: 'Toteutetut kilometrit',
           }}
           renderValue={renderDisplayValue}
         />

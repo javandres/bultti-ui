@@ -137,6 +137,9 @@
   "executionRequirement_removeWarning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
   "executionRequirement_refreshWarning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
   "executionRequirement_unitExecutionRequirements": "Kohteen suoritevaatimukset",
+  "executionRequirement_leeway": "Jousto",
+  "executionRequirement_area_OTHER": "Muu alue",
+  "executionRequirement_area_CENTER": "Keskusta-alue",
 
   "executionRequirement_equipmentList_vehicleId": "Kylkinumero",
   "executionRequirement_equipmentList_model": "Malli",

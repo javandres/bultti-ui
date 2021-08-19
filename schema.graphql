@@ -584,12 +584,10 @@ type ExecutionRequirementsReport {
 
 type ExecutionRequirementsReportData {
   areaName: String!
-  averageAgeRequirement: Float
-  averageAgeWeighted: Float
-  averageAgeWeightedFulfilled: Float
   id: ID!
   operatorId: Int!
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Float!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
@@ -997,6 +995,8 @@ type ObservedExecutionRequirement {
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operator: Operator!
   operatorId: Int!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
   startDate: BulttiDate!
 }
 
@@ -1026,6 +1026,7 @@ type ObservedExecutionRequirementsReportData {
   id: ID!
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operatorId: Int!
+  sanctionLeeway: Float!
   startDate: BulttiDate!
   totalKilometersObserved: Float!
   totalKilometersRequired: Float!
@@ -1215,6 +1216,8 @@ type PlannedAreaExecutionRequirement {
   operatorId: Int!
   procurementUnitRequirements: [PlannedUnitExecutionRequirement!]
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
 }
 
 type PlannedEmissionClassRequirement {
