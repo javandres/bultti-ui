@@ -142,6 +142,7 @@ const ProcurementUnitItemContent = observer(
     } = useQueryData<ProcurementUnitType>(procurementUnitQuery, {
       skip: !procurementUnitId || !isVisible,
       variables: unitQueryVariables,
+      fetchPolicy: 'cache-and-network',
     }) || {}
 
     let updateViewData = useCallback(() => {

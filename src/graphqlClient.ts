@@ -90,6 +90,9 @@ export const createGraphqlClient = (onAuthError: () => unknown = () => {}) => {
           equipmentDefectObservations: {
             merge: cacheMerge,
           },
+          procurementUnit: {
+            merge: cacheMerge,
+          },
         },
       },
       PreInspection: {
