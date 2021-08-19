@@ -23,6 +23,8 @@ const AreaWrapper = styled.div`
 `
 
 const AreaHeading = styled.h4`
+  font-weight: normal;
+  font-size: 1.2rem;
   margin-bottom: 0;
   margin-top: 0;
 `
