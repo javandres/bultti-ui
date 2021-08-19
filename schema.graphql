@@ -1262,7 +1262,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
-  billingPeriodMonth: BulttiDate
+  billingPeriodMonth: BulttiDate!
   createdAt: DateTime!
   hslAccepted: Boolean!
   id: ID!
@@ -1313,15 +1313,18 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
-  averageAgeRequirement: Float!
   contracts: [Contract!]!
   currentContracts: [Contract!]
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
+  maximumAverageAge: Float!
+  maximumAverageAgeWithOptions(startDate: BulttiDate!): Float!
   operator: Operator!
   operatorId: Int!
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
+  optionPeriodStart: BulttiDate
   optionsUsed: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!
@@ -1742,6 +1745,12 @@ enum OperatingAreaName {
   UNKNOWN
 }
 
+enum OptionMaxAgeIncreaseMethod {
+  HALF_YEAR_INCREASE
+  MONTHLY_INCREASE
+  NO_INCREASE
+}
+
 enum SanctionExceptionReason {
   ALL
   EQUIPMENT_AGE_VIOLATION
@@ -1868,7 +1877,9 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
-  averageAgeRequirement: Float!
+  maximumAverageAge: Float!
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
+  optionPeriodStart: BulttiDate
 }
 
 input SanctionUpdate {
