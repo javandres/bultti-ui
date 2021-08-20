@@ -106,8 +106,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     refetch,
   } = useInspectionById(inspectionId)
 
-  console.log(inspection?.status)
-
   const { data: statusUpdateData } = useSubscription<InspectionStatusUpdate>(
     inspectionStatusSubscription,
     {
