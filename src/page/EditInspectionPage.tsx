@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import styled from 'styled-components/macro'
 import { Page, PageContainer } from '../common/components/common'
 import { observer } from 'mobx-react-lite'
@@ -78,7 +78,7 @@ const InspectionStatusContainer = styled.div`
   margin-left: 0.5rem;
 `
 
-const InspectionTypeContainer = styled.span`
+const InspectionTypeDisplay = styled.span`
   text-transform: capitalize;
 `
 
@@ -131,17 +131,6 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     }
   }, [errorUpdateData])
 
-  // Add updated status on inspection if it did update.
-  inspection = useMemo(() => {
-    let statusUpdate = pickGraphqlData(statusUpdateData)
-
-    if (!inspection || !statusUpdate || inspection.status === statusUpdate.status) {
-      return inspection
-    }
-
-    return { ...inspection, status: statusUpdate.status }
-  }, [inspection, statusUpdateData])
-
   let typeStrings = getInspectionTypeStrings(inspectionType)
   let inspectionGenericName = inspection
     ? `${inspection.operator.operatorName}/${inspection.seasonId}`
@@ -157,15 +146,19 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
     <EditInspectionView>
       <InspectionContext.Provider value={inspection || null}>
         <PageTitle loading={isInspectionLoading} onRefresh={refetch}>
-          <InspectionTypeContainer>
-            {inspection?.status !== InspectionStatus.InProduction
-              ? typeStrings.prefixLC
-              : typeStrings.prefix}
-            tarkastus
-          </InspectionTypeContainer>
-          <InspectionNameTitle>{inspectionName}</InspectionNameTitle>
+          <InspectionTypeDisplay data-cy="inspection_type_title">
+            {`${
+              inspection?.status !== InspectionStatus.InProduction
+                ? typeStrings.prefixLC
+                : typeStrings.prefix
+            }tarkastus`}
+          </InspectionTypeDisplay>
+          <InspectionNameTitle data-cy="inspection_name_title">
+            {inspectionName}
+          </InspectionNameTitle>
           {inspection && (
             <InspectionStatusContainer
+              data-cy="inspection_status"
               style={{
                 backgroundColor: getInspectionStatusColor(inspection.status),
                 borderColor: getInspectionStatusColor(inspection.status),
@@ -207,9 +200,10 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                   {inspection?.status === InspectionStatus.InProduction ? (
                     <InspectionEditor inspection={inspection} refetchData={refetch} />
                   ) : (
-                    <Tabs>
+                    <Tabs testId="inspection_tabs">
                       <InspectionEditor
                         default={true}
+                        testId="create"
                         name="create"
                         path="/"
                         label={text('inspectionPage_inspectionInformation')}
@@ -227,6 +221,7 @@ const EditInspectionPage: React.FC<PropTypes> = observer(({ inspectionType }) =>
                       )}
                       <InspectionPreview
                         inspection={inspection}
+                        testId="reports"
                         path="results"
                         name="results"
                         label={text('inspectionPage_results')}

@@ -33,10 +33,11 @@ export type PropTypes = {
   inspectionType: InspectionType
   inspectionId: string
   inspectionStatus: InspectionStatus
+  testId?: string
 }
 
 const ReportContainer = observer((props: PropTypes) => {
-  let { reportName, inspectionId, inspectionType, inspectionStatus } = props
+  let { reportName, inspectionId, inspectionType, inspectionStatus, testId } = props
   let tableState = useTableState()
   let { filters = [], sort = [] } = tableState
 
@@ -79,6 +80,8 @@ const ReportContainer = observer((props: PropTypes) => {
       : 'executionRequirement'
     : 'list'
 
+  let reportTableTestId = `${testId}_table`
+
   return (
     <ReportViewWrapper>
       <ReportFunctionsRow>
@@ -101,12 +104,16 @@ const ReportContainer = observer((props: PropTypes) => {
       </ReportFunctionsRow>
       <LoadingDisplay loading={reportLoading} />
       {reportType === 'executionRequirement' ? (
-        <ExecutionRequirementsReport items={reportDataItems} />
+        <ExecutionRequirementsReport testId={reportTableTestId} items={reportDataItems} />
       ) : reportType === 'observedExecutionRequirement' ? (
-        <ObservedExecutionRequirementsReport items={reportDataItems} />
+        <ObservedExecutionRequirementsReport
+          testId={reportTableTestId}
+          items={reportDataItems}
+        />
       ) : (
         report?.rows && (
           <TableReport<ReportDataType>
+            testId={reportTableTestId}
             report={report}
             reportName={reportName}
             tableState={tableState}

@@ -66,6 +66,7 @@ const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = ob
           </AcceptedDisplay>
         ) : canAcceptAsHslAdmin ? (
           <InspectionAcceptButton
+            testId="publish_inspection_hsl"
             hasErrors={hasErrors}
             onClick={onAccept}
             label={text('postInspection_acceptance_hslAcceptButtonLabel')}
@@ -78,6 +79,7 @@ const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = ob
           </AcceptedDisplay>
         ) : canAcceptAsOperatorUser ? (
           <InspectionAcceptButton
+            testId="publish_inspection_operator"
             hasErrors={hasErrors}
             onClick={onAccept}
             buttonStyle={ButtonStyle.ACCEPT}
@@ -91,6 +93,7 @@ const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = ob
           inspection.hslAccepted &&
           inspection.operatorAccepted && (
             <InspectionAcceptButton
+              testId="publish_inspection_backup"
               hasErrors={hasErrors}
               onClick={onAccept}
               label={text('inspection_actions_publish')}

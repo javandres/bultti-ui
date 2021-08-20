@@ -21,7 +21,7 @@ const AreaHeading = styled.h4`
 export type PropTypes<T> = ReportComponentProps<T>
 
 const ObservedExecutionRequirementsReport = observer(
-  ({ items }: PropTypes<ObservedExecutionRequirementsReportData>) => {
+  ({ items, testId }: PropTypes<ObservedExecutionRequirementsReportData>) => {
     return (
       <ExecutionRequirementsReportView>
         {items.map((areaRequirement) => (
@@ -30,7 +30,10 @@ const ObservedExecutionRequirementsReport = observer(
               {text(`executionRequirement_area_${areaRequirement.areaName}`)},{' '}
               {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
             </AreaHeading>
-            <ObservedRequirementsTable executionRequirement={areaRequirement} />
+            <ObservedRequirementsTable
+              testId={testId}
+              executionRequirement={areaRequirement}
+            />
           </React.Fragment>
         ))}
       </ExecutionRequirementsReportView>

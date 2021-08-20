@@ -12,6 +12,7 @@ export type PropTypes<ReportType extends Record<string, unknown>> = {
   report: BaseReport<ReportType>
   reportName: string
   tableState: TableStateType
+  testId?: string
 }
 
 interface ReportItemKeyInterface {
@@ -29,6 +30,7 @@ const TableReport = observer(
     report,
     reportName,
     tableState,
+    testId,
   }: PropTypes<ReportType>) => {
     // Prepare report data by transforming report rows (if necessary) and parsing the column labels.
     let preparedReport = useMemo(() => {
@@ -82,6 +84,7 @@ const TableReport = observer(
 
     return (
       <FilteredResponseTable
+        testId={testId}
         data={preparedReport}
         tableState={tableState}
         columnLabels={columnLabels}

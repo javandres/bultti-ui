@@ -168,7 +168,10 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
           first <em>remove</em> the old test data before creating new test data with the
           updated code. Otherwise all test data may not be properly updated.
         </p>
-        <Button loading={testDataLoading} onClick={() => createTestData()}>
+        <Button
+          data-cy={'create_test_data' + (testDataLoading ? '_loading' : '')}
+          loading={testDataLoading}
+          onClick={() => createTestData()}>
           Create test data
         </Button>
 

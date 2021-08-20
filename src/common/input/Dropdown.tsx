@@ -89,6 +89,9 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   className?: string
   hintText?: string
   style?: CSSProperties
+  testId?: string
+  // Set the test ID of options by the index of the option instead of with the toString value.
+  setOptionTestIdByIndex?: boolean
 }
 
 function toString(item, converter?: string | ((item) => string | JSX.Element)) {
@@ -120,6 +123,8 @@ const Dropdown = observer(
     itemToString = 'id',
     itemToLabel = 'label',
     unselectedValue,
+    testId = 'dropdown',
+    setOptionTestIdByIndex = false,
   }: DropdownProps<ValueType>) => {
     const onSelectFn = useCallback(
       ({ selectedItem = unselectedValue }) => {
@@ -158,10 +163,15 @@ const Dropdown = observer(
         )}
         <SelectWrapper>
           <SelectButton
+            data-cy={testId}
             {...getToggleButtonProps({
               disabled,
             })}>
-            {typeof buttonLabel === 'string' ? <span>{buttonLabel}</span> : buttonLabel}
+            {typeof buttonLabel === 'string' ? (
+              <span data-cy={`${testId}_selected`}>{buttonLabel}</span>
+            ) : (
+              buttonLabel
+            )}
             <ArrowDown fill="var(--dark-grey)" width="1rem" height="1rem" />
           </SelectButton>
 
@@ -173,6 +183,9 @@ const Dropdown = observer(
               <>
                 {items.map((item, index) => (
                   <DropdownItem
+                    data-cy={`${testId}_${
+                      !setOptionTestIdByIndex ? toString(item, itemToString) : index
+                    }`}
                     key={`dropdown-item-${index}`}
                     highlighted={highlightedIndex === index}
                     {...getItemProps({

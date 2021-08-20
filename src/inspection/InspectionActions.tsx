@@ -52,12 +52,14 @@ type InspectionAcceptanceButtonPropTypes = {
   label: string
   loading?: boolean
   buttonStyle?: ButtonStyle
+  testId?: string
 }
 
 export const InspectionAcceptButton: React.FC<InspectionAcceptanceButtonPropTypes> = observer(
-  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL }) => {
+  ({ onClick, hasErrors, loading, label, buttonStyle = ButtonStyle.NORMAL, testId }) => {
     return (
       <Button
+        data-cy={testId}
         disabled={hasErrors}
         style={{ marginLeft: 'auto' }}
         loading={loading}
@@ -76,11 +78,19 @@ export type PropTypes = {
   className?: string
   style?: CSSProperties
   isEditingAllowed?: boolean
+  testId?: string
 }
 
 // TODO: Make a InspectionActions folder, separate action buttons into their own files to improve readability
 const InspectionActions = observer(
-  ({ inspection, onRefresh, className, style, isEditingAllowed = true }: PropTypes) => {
+  ({
+    inspection,
+    onRefresh,
+    className,
+    style,
+    isEditingAllowed = true,
+    testId,
+  }: PropTypes) => {
     var [globalSeason, setGlobalSeason] = useStateValue('globalSeason')
     var [globalOperator] = useStateValue('globalOperator')
 
@@ -222,11 +232,14 @@ const InspectionActions = observer(
 
     let [isDirty] = useUnsavedChangesPrompt()
 
+    let testIds = testId?.split(' ') || []
+
     return (
       <>
-        <ButtonRow className={className} style={style}>
+        <ButtonRow className={className} style={style} data-cy="inspection_actions">
           {!isEditing && (
             <Button
+              data-cy={testIds.map((testIdStr) => `open_${testIdStr}`).join(' ')}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               disabled={!isEditingAllowed}
@@ -253,6 +266,7 @@ const InspectionActions = observer(
           )}
           {canUserSubmit && canInspectionBeSubmitted && isEditing && (
             <Button
+              data-cy="submit_inspection"
               loading={submitLoading}
               buttonStyle={ButtonStyle.NORMAL}
               disabled={hasErrors || isDirty}
@@ -264,6 +278,7 @@ const InspectionActions = observer(
 
           {canUserMakeSanctionable && canInspectionBeSanctionable && isEditing && (
             <Button
+              data-cy="sanction_inspection"
               loading={sanctionableLoading}
               buttonStyle={ButtonStyle.ACCEPT}
               size={ButtonSize.MEDIUM}
@@ -278,6 +293,7 @@ const InspectionActions = observer(
           ) &&
             canEditInspection && (
               <Button
+                data-cy="remove_inspection"
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={removeLoading}
                 buttonStyle={ButtonStyle.SECONDARY_REMOVE}
@@ -297,6 +313,7 @@ const InspectionActions = observer(
                 />
               ) : (
                 <InspectionAcceptButton
+                  testId="publish_inspection"
                   hasErrors={hasErrors}
                   onClick={onPublishInspection}
                   loading={publishLoading}
@@ -304,6 +321,7 @@ const InspectionActions = observer(
                 />
               )}
               <Button
+                data-cy="reject_inspection"
                 style={{ marginLeft: 'auto', marginRight: 0 }}
                 loading={rejectLoading}
                 buttonStyle={ButtonStyle.REMOVE}

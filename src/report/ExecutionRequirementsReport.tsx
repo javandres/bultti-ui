@@ -23,7 +23,7 @@ const AreaHeading = styled.h4`
 export type PropTypes<T> = ReportComponentProps<T>
 
 const ExecutionRequirementsReport = observer(
-  ({ items }: PropTypes<ExecutionRequirementsReportData>) => {
+  ({ items, testId }: PropTypes<ExecutionRequirementsReportData>) => {
     return (
       <ExecutionRequirementsReportView>
         {items.map((areaRequirement) => (
@@ -33,6 +33,7 @@ const ExecutionRequirementsReport = observer(
               {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
             </AreaHeading>
             <RequirementsTable
+              testId={testId}
               tableLayout={RequirementsTableLayout.BY_VALUES}
               executionRequirement={areaRequirement}
             />

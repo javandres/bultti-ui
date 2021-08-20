@@ -39,6 +39,7 @@ export type PropTypes = {
   validationErrors: ValidationErrorData[]
   contractSelectionDate: Date
   isOnlyActiveCatalogueVisible: boolean
+  testId?: string
 }
 
 const operatingAreaNameLocalizationObj = {
@@ -60,6 +61,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     validationErrors = [],
     contractSelectionDate,
     isOnlyActiveCatalogueVisible,
+    testId,
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
 
@@ -104,6 +106,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       <ProcurementUnitView className={className}>
         {procurementUnit && (
           <ExpandableSection
+            testId={`${testId}_section`}
             unmountOnClose={true}
             error={validationErrors.length !== 0}
             isExpanded={expanded}
@@ -184,6 +187,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             }>
             {(itemIsExpanded: boolean) => (
               <ProcurementUnitItemContent
+                testId={testId}
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}

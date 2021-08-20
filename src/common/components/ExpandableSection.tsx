@@ -126,6 +126,7 @@ export type PropTypes = {
   error?: boolean
   // For large content it is advisable to unmount when the expander is closed.
   unmountOnClose?: boolean
+  testId?: string
 }
 
 const ExpandableSection = observer(
@@ -138,6 +139,7 @@ const ExpandableSection = observer(
     style,
     error = false,
     unmountOnClose = false,
+    testId,
   }: PropTypes) => {
     const [expanded, setExpanded] = useState(isExpanded)
 
@@ -165,7 +167,7 @@ const ExpandableSection = observer(
 
     return (
       <ExpandableBoxView error={error} style={style} className={className}>
-        <HeaderRow onClick={onChangeExpanded}>
+        <HeaderRow data-cy={testId} onClick={onChangeExpanded}>
           {headerContent && (
             <HeaderContentWrapper expanded={expanded} onClick={stopPropagation}>
               {typeof headerContent === 'function' ? headerContent(expanded) : headerContent}

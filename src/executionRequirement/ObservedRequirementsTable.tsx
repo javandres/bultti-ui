@@ -36,6 +36,7 @@ export interface IObservedExecutionRequirement {
 export type PropTypes = {
   executionRequirement: IObservedExecutionRequirement
   isEditable?: boolean
+  testId?: string
 } & TableEditProps<ObservedEmissionClassRequirement>
 
 const valuesLayoutColumnLabels: {
@@ -64,6 +65,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     onCancelEdit,
     pendingValues,
     isEditable = false,
+    testId,
   }) => {
     let requirementRows: ObservedEmissionClassRequirement[] = useMemo(() => {
       let requirementValues = executionRequirement.observedRequirements
@@ -156,6 +158,7 @@ const ObservedRequirementsTable: React.FC<PropTypes> = observer(
     return (
       <ExecutionRequirementsAreaContainer>
         <Table<ObservedEmissionClassRequirement>
+          testId={testId}
           items={requirementRows}
           columnLabels={valuesLayoutColumnLabels}
           renderValue={renderTableValue}

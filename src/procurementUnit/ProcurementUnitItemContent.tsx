@@ -72,6 +72,7 @@ type ContentPropTypes = {
   catalogueInvalid: boolean
   requirementsInvalid: boolean
   isOnlyActiveCatalogueVisible: boolean
+  testId?: string
 }
 
 function renderInput(key: string, val: unknown, onChange: (val: unknown) => void) {
@@ -126,6 +127,7 @@ const ProcurementUnitItemContent = observer(
     catalogueInvalid,
     requirementsInvalid,
     isOnlyActiveCatalogueVisible,
+    testId,
   }: ContentPropTypes) => {
     let unitQueryVariables = {
       procurementUnitId,
@@ -322,6 +324,7 @@ const ProcurementUnitItemContent = observer(
           <>
             {showExecutionRequirements && hasEquipment && (
               <ProcurementUnitExecutionRequirement
+                testId={`${testId}_requirements`}
                 isEditable={requirementsEditable}
                 procurementUnit={procurementUnit}
                 valid={!requirementsInvalid}
