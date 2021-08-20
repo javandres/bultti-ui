@@ -35,10 +35,26 @@ describe('Pre-inspection creation', () => {
     cy.getTestElement('submit_inspection').click()
     cy.getTestElement('inspection_status').should('contain.text', 'Hyväksyttävänä')
 
-    cy.getTestElement('publish_inspection').click()
-    cy.getTestElement('inspection_status').should('contain.text', 'Tuotannossa')
+    cy.getTestElement('publish_inspection_hsl').click()
+    cy.getTestElement('hsl_accepted').should('contain.text', 'HSL hyväksynyt')
 
-    // Remove inspection to prevent post-inspections from piling up.
-    cy.getTestElement('remove_inspection').click()
+    cy.url().as('inspection_url')
+
+    cy.loginOperator()
+
+    cy.get('@inspection_url').then((inspectionUrl) => {
+      cy.visit(inspectionUrl)
+
+      cy.getTestElement('publish_inspection_operator').click()
+      cy.getTestElement('hsl_accepted').should('contain.text', 'HSL hyväksynyt')
+
+      cy.loginAdmin()
+
+      cy.get('@inspection_url').then((inspectionUrl) => {
+        cy.visit(inspectionUrl)
+        // Remove inspection to prevent post-inspections from piling up.
+        cy.getTestElement('remove_inspection').click()
+      })
+    })
   })
 })

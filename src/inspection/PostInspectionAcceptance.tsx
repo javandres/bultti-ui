@@ -61,7 +61,7 @@ const PostInspectionAcceptance: React.FC<PostInspectionAcceptancePropTypes> = ob
     return (
       <PostInspectionAcceptanceView>
         {inspection.hslAccepted ? (
-          <AcceptedDisplay>
+          <AcceptedDisplay data-cy="hsl_accepted">
             <Text>postInspection_acceptance_hslAccepted</Text>
           </AcceptedDisplay>
         ) : canAcceptAsHslAdmin ? (
