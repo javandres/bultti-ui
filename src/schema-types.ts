@@ -35,6 +35,7 @@ export type AdCoverSanctionsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<AdCoverSanctionsReportData>
 }
 
@@ -75,6 +76,7 @@ export type BlockDeviationsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DeviationsReportData>
 }
 
@@ -148,6 +150,7 @@ export type DangerousDefectSanctionsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DangerousDefectSanctionsReportData>
 }
 
@@ -195,6 +198,7 @@ export type DeadrunsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DeadrunsReportData>
 }
 
@@ -208,16 +212,16 @@ export type DeadrunsReportData = {
   aJourneyEndTime: Scalars['String']
   aTerminalTime: Scalars['Float']
   aRecoveryTime: Scalars['Float']
-  aOriginStop: Scalars['String']
-  aDestinationStop: Scalars['String']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
   bRouteId: Scalars['String']
   bDirection: Scalars['String']
   bJourneyStartTime: Scalars['String']
   bJourneyEndTime: Scalars['String']
   bTerminalTime: Scalars['Float']
   bRecoveryTime: Scalars['Float']
-  bOriginStop: Scalars['String']
-  bDestinationStop: Scalars['String']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
   deadrunMinutes: Scalars['Int']
   deadrunPlannedBy: Scalars['String']
   blockNumber?: Maybe<Scalars['String']>
@@ -242,6 +246,7 @@ export type DefectiveEquipmentDepartureSanctionsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DefectiveEquipmentDepartureSanctionsReportData>
 }
 
@@ -286,6 +291,7 @@ export type DepartureBlocksReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DepartureBlocksReportData>
 }
 
@@ -320,21 +326,32 @@ export type DeviationsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DeviationsReportData>
 }
 
 export type DeviationsReportData = {
   __typename?: 'DeviationsReportData'
   id: Scalars['ID']
-  routeId: Scalars['String']
   dayType: Scalars['String']
-  journeyStartTime: Scalars['String']
-  journeyEndTime: Scalars['String']
-  direction: Scalars['String']
-  trackReason: TrackReason
+  aRouteId: Scalars['String']
+  aDirection: Scalars['String']
+  aJourneyStartTime: Scalars['String']
+  aJourneyEndTime: Scalars['String']
+  aTerminalTime: Scalars['Float']
+  aRecoveryTime: Scalars['Float']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
+  bRouteId: Scalars['String']
+  bDirection: Scalars['String']
+  bJourneyStartTime: Scalars['String']
+  bJourneyEndTime: Scalars['String']
+  bTerminalTime: Scalars['Float']
+  bRecoveryTime: Scalars['Float']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
+  pairId: Scalars['String']
   registryNr?: Maybe<Scalars['String']>
-  terminalTime: Scalars['Float']
-  recoveryTime: Scalars['Float']
   overlapSeconds: Scalars['Float']
   overlapPlannedBy?: Maybe<Scalars['String']>
 }
@@ -356,6 +373,7 @@ export type EarlyTimingStopDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<EarlyTimingStopDeparturesReportData>
 }
 
@@ -396,6 +414,7 @@ export type EmissionClassExecutionReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<EmissionClassExecutionReportData>
 }
 
@@ -481,6 +500,7 @@ export type EquipmentColorReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<EquipmentColorReportData>
 }
 
@@ -592,6 +612,7 @@ export type EquipmentTypeReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<EquipmentTypeReportData>
 }
 
@@ -646,6 +667,7 @@ export type ExecutionRequirementsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ExecutionRequirementsReportData>
 }
 
@@ -654,11 +676,9 @@ export type ExecutionRequirementsReportData = {
   id: Scalars['ID']
   operatorId: Scalars['Int']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometers: Scalars['Float']
   totalKilometersFulfilled: Scalars['Float']
-  averageAgeWeighted?: Maybe<Scalars['Float']>
-  averageAgeRequirement?: Maybe<Scalars['Float']>
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   requirements: Array<PlannedEmissionClassRequirement>
 }
 
@@ -688,6 +708,7 @@ export type ExtraBlockDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ExtraBlockDeparturesReportData>
 }
 
@@ -756,6 +777,7 @@ export type InspectionDate = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   hfpDataStatus: HfpStatus
+  lastDateLoaded?: Maybe<Scalars['BulttiDate']>
   inspections?: Maybe<Array<PostInspection>>
 }
 
@@ -869,6 +891,7 @@ export type LateDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<LateDeparturesReportData>
 }
 
@@ -882,8 +905,8 @@ export type LateDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -917,6 +940,7 @@ export type MissingBlockDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<MissingBlockDeparturesReportData>
 }
 
@@ -948,6 +972,7 @@ export type MissingEquipmentReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<MissingEquipmentReportData>
 }
 
@@ -961,6 +986,7 @@ export type MissingEquipmentReportData = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  updateProcurementUnit: ProcurementUnit
   createExecutionRequirementsForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   updateWeeklyExecutionMetersFromSource: PlannedUnitExecutionRequirement
   refreshExecutionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
@@ -968,7 +994,6 @@ export type Mutation = {
   removeEquipmentFromExecutionRequirement: PlannedUnitExecutionRequirement
   removeAllEquipmentFromExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>
   removeUnitExecutionRequirement: Scalars['Boolean']
-  updateProcurementUnit: ProcurementUnit
   updateEquipment?: Maybe<Equipment>
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>
   updateEquipmentCatalogue: EquipmentCatalogue
@@ -999,6 +1024,7 @@ export type Mutation = {
   clearCache: Scalars['Boolean']
   createTestData: Scalars['Boolean']
   removeTestData: Scalars['Boolean']
+  removeUser: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
   importHfpForDates: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
@@ -1013,6 +1039,11 @@ export type Mutation = {
   removeInspection: Scalars['Boolean']
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>
   updateEquipmentDefectSanctions: Array<EquipmentDefectSanction>
+}
+
+export type MutationUpdateProcurementUnitArgs = {
+  procurementUnit: ProcurementUnitEditInput
+  procurementUnitId: Scalars['String']
 }
 
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
@@ -1045,11 +1076,6 @@ export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
 
 export type MutationRemoveUnitExecutionRequirementArgs = {
   executionRequirementId: Scalars['String']
-}
-
-export type MutationUpdateProcurementUnitArgs = {
-  procurementUnit: ProcurementUnitEditInput
-  procurementUnitId: Scalars['String']
 }
 
 export type MutationUpdateEquipmentArgs = {
@@ -1174,6 +1200,10 @@ export type MutationUpdateSanctionsArgs = {
   sanctionUpdates: Array<SanctionUpdate>
 }
 
+export type MutationRemoveUserArgs = {
+  email: Scalars['String']
+}
+
 export type MutationForceRemoveInspectionArgs = {
   testOnly?: Maybe<Scalars['Boolean']>
   inspectionId: Scalars['String']
@@ -1247,6 +1277,7 @@ export type ObservedEmissionClassExecutionReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedEmissionClassExecutionReportData>
 }
 
@@ -1302,6 +1333,7 @@ export type ObservedEquipmentColorReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedEquipmentColorReportData>
 }
 
@@ -1315,8 +1347,8 @@ export type ObservedEquipmentColorReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1343,6 +1375,7 @@ export type ObservedEquipmentTypeReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedEquipmentTypeReportData>
 }
 
@@ -1356,8 +1389,8 @@ export type ObservedEquipmentTypeReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   registryNr: Scalars['String']
@@ -1373,6 +1406,8 @@ export type ObservedExecutionRequirement = {
   id: Scalars['ID']
   kilometersRequired?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator
@@ -1402,6 +1437,7 @@ export type ObservedExecutionRequirementsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedExecutionRequirementsReportData>
 }
 
@@ -1412,6 +1448,7 @@ export type ObservedExecutionRequirementsReportData = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometersRequired: Scalars['Float']
   totalKilometersObserved: Scalars['Float']
   observedRequirements: Array<ObservedEmissionClassRequirement>
@@ -1434,6 +1471,7 @@ export type ObservedOverAgeDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedOverAgeDeparturesReportData>
 }
 
@@ -1447,8 +1485,8 @@ export type ObservedOverAgeDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1470,11 +1508,12 @@ export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution'
   id: Scalars['ID']
   procurementUnitId: Scalars['String']
-  area?: Maybe<OperatingAreaName>
+  area: OperatingAreaName
   totalUnitKilometers: Scalars['Float']
   totalKilometersObserved?: Maybe<Scalars['Float']>
-  averageAgeMax?: Maybe<Scalars['Float']>
-  averageAgeRequired?: Maybe<Scalars['Float']>
+  averageAgeMax: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
+  averageAgeWeighted: Scalars['Float']
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
   sanctionPercentageAmount?: Maybe<Scalars['Float']>
@@ -1497,6 +1536,7 @@ export type ObservedUnitExecutionReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<ObservedUnitExecution>
 }
 
@@ -1568,7 +1608,14 @@ export type OperatorDeadrunsReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<DeadrunsReportData>
+}
+
+export enum OptionMaxAgeIncreaseMethod {
+  NoIncrease = 'NO_INCREASE',
+  MonthlyIncrease = 'MONTHLY_INCREASE',
+  HalfYearIncrease = 'HALF_YEAR_INCREASE',
 }
 
 export type OverAgeDeparturesReport = {
@@ -1588,6 +1635,7 @@ export type OverAgeDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<OverAgeDeparturesReportData>
 }
 
@@ -1613,6 +1661,8 @@ export type PlannedAreaExecutionRequirement = {
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   averageAgeRequirement?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator
@@ -1680,11 +1730,13 @@ export type PostInspection = {
   updatedAt: Scalars['DateTime']
   inspectionStartDate: Scalars['BulttiDate']
   inspectionEndDate: Scalars['BulttiDate']
+  hslAccepted: Scalars['Boolean']
+  operatorAccepted: Scalars['Boolean']
   operatorId: Scalars['Int']
   operator: Operator
   seasonId: Scalars['String']
   season: Season
-  billingPeriodMonth?: Maybe<Scalars['BulttiDate']>
+  billingPeriodMonth: Scalars['BulttiDate']
   inspectionDate?: Maybe<InspectionDate>
   inspectionDateId?: Maybe<Scalars['String']>
   linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>
@@ -1725,7 +1777,10 @@ export type ProcurementUnit = {
   procurementUnitId: Scalars['String']
   operatorId: Scalars['Int']
   operator: Operator
-  medianAgeRequirement: Scalars['Float']
+  maximumAverageAge: Scalars['Float']
+  maximumAverageAgeWithOptions: Scalars['Float']
+  optionPeriodStart?: Maybe<Scalars['BulttiDate']>
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
   equipmentCatalogues: Array<EquipmentCatalogue>
   areaId?: Maybe<Scalars['Int']>
   area?: Maybe<OperatingArea>
@@ -1738,8 +1793,14 @@ export type ProcurementUnit = {
   currentContracts?: Maybe<Array<Contract>>
 }
 
+export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
+  startDate: Scalars['BulttiDate']
+}
+
 export type ProcurementUnitEditInput = {
-  medianAgeRequirement: Scalars['Float']
+  maximumAverageAge: Scalars['Float']
+  optionPeriodStart?: Maybe<Scalars['BulttiDate']>
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
 }
 
 export type ProcurementUnitOption = {
@@ -1761,14 +1822,14 @@ export type ProcurementUnitRoute = {
 
 export type Query = {
   __typename?: 'Query'
+  procurementUnit: ProcurementUnit
+  procurementUnitsByOperator: Array<ProcurementUnit>
   executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   executionSchemaStats?: Maybe<ExecutionSchemaStats>
   operator?: Maybe<Operator>
   operators: Array<Operator>
   season?: Maybe<Array<Season>>
   seasons: Array<Season>
-  procurementUnit: ProcurementUnit
-  procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
   queryEquipmentFromSource?: Maybe<Equipment>
   equipmentCatalogue?: Maybe<EquipmentCatalogue>
@@ -1827,6 +1888,19 @@ export type Query = {
   inspectionUserRelations: Array<InspectionUserRelation>
   equipmentDefectObservations: Array<EquipmentDefect>
   inspectionEquipmentDefectSanctions: EquipmentDefectSanctionsResponse
+  workerStatus: Array<WorkerStatus>
+}
+
+export type QueryProcurementUnitArgs = {
+  endDate: Scalars['BulttiDate']
+  startDate: Scalars['BulttiDate']
+  procurementUnitId: Scalars['String']
+}
+
+export type QueryProcurementUnitsByOperatorArgs = {
+  endDate: Scalars['BulttiDate']
+  startDate: Scalars['BulttiDate']
+  operatorId: Scalars['Int']
 }
 
 export type QueryExecutionRequirementForProcurementUnitArgs = {
@@ -1848,18 +1922,6 @@ export type QuerySeasonArgs = {
 
 export type QuerySeasonsArgs = {
   date: Scalars['BulttiDate']
-}
-
-export type QueryProcurementUnitArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  procurementUnitId: Scalars['String']
-}
-
-export type QueryProcurementUnitsByOperatorArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  operatorId: Scalars['Int']
 }
 
 export type QuerySingleEquipmentArgs = {
@@ -2170,6 +2232,7 @@ export type Sanction = {
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
   sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionPercentageAmount: Scalars['Float']
   appliedSanctionPercentageAmount: Scalars['Float']
   sanctionScopeKilometers: Scalars['Float']
@@ -2214,6 +2277,7 @@ export type SanctionListReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<SanctionListReportData>
 }
 
@@ -2225,6 +2289,14 @@ export type SanctionListReportData = {
   kilometers: Scalars['Float']
   sanctionFinancialAmount: Scalars['Float']
   sanctionReason: Scalars['String']
+  sanctionScope: Scalars['String']
+  sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
+  routeId?: Maybe<Scalars['String']>
+  direction?: Maybe<Scalars['String']>
+  registryNr?: Maybe<Scalars['String']>
+  departureDate?: Maybe<Scalars['String']>
+  journeyStartTime?: Maybe<Scalars['String']>
 }
 
 export enum SanctionReason {
@@ -2236,6 +2308,8 @@ export enum SanctionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  UnitEquipmentOverageUnderThreshold = 'UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD',
+  UnitEquipmentOverageOverThreshold = 'UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 
@@ -2262,6 +2336,7 @@ export type SanctionSummaryReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<SanctionSummaryReportData>
 }
 
@@ -2276,7 +2351,7 @@ export type SanctionSummaryReportData = {
   sanctionResultKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
-  unitEquipmentMaxAge: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
 }
 
 export type SanctionUpdate = {
@@ -2376,6 +2451,7 @@ export type TrackedDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<TrackedDeparturesReportData>
 }
 
@@ -2407,6 +2483,7 @@ export type UnitExecutionReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<UnitExecutionReportData>
 }
 
@@ -2439,6 +2516,7 @@ export type UnobservedDeparturesReport = {
   inspectionId: Scalars['String']
   showSanctioned?: Maybe<Scalars['Boolean']>
   showUnsanctioned?: Maybe<Scalars['Boolean']>
+  groupRowsBy?: Maybe<Scalars['String']>
   rows: Array<UnobservedDeparturesReportData>
 }
 
@@ -2455,6 +2533,7 @@ export type UnobservedDeparturesReportData = {
   journeyKilometers: Scalars['Float']
   blockNumber?: Maybe<Scalars['String']>
   date: Scalars['String']
+  transitlogLink: Scalars['String']
 }
 
 export type User = {
@@ -2483,7 +2562,6 @@ export enum UserRole {
   Admin = 'ADMIN',
   Hsl = 'HSL',
   Operator = 'OPERATOR',
-  Blocked = 'BLOCKED',
 }
 
 export type ValidationErrorData = {
@@ -2492,4 +2570,12 @@ export type ValidationErrorData = {
   keys?: Maybe<Array<Scalars['String']>>
   referenceKeys?: Maybe<Array<Scalars['String']>>
   objectId?: Maybe<Scalars['String']>
+}
+
+export type WorkerStatus = {
+  __typename?: 'WorkerStatus'
+  id: Scalars['String']
+  taskName?: Maybe<Scalars['String']>
+  taskStartedAt?: Maybe<Scalars['DateTime']>
+  taskParams?: Maybe<Scalars['String']>
 }

@@ -12,6 +12,7 @@ describe('Pre-inspection creation', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
+    cy.getTestElement('info_message_error').should('not.exist')
   })
 
   it('Can create a pre-inspection', () => {
@@ -63,6 +64,9 @@ describe('Pre-inspection creation', () => {
     cy.getTestElement('production_start').clear().type('11.01.2021').blur()
     cy.getTestElement('production_end').clear().type('23.05.2021').blur()
     cy.getTestElement('inspection_config_save').click()
+
+    cy.getTestElement('production_start').should('have.value', '11.01.2021')
+    cy.getTestElement('production_end').should('have.value', '23.05.2021')
   })
 
   it('Can fetch pre-inspection departure blocks', () => {

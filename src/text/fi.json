@@ -45,6 +45,7 @@
   "reports": "Raportit",
   "preInspections": "Ennakkotarkastukset",
   "postInspections": "Jälkitarkastukset",
+  "maintenance": "Ylläpito",
   "executionRequirements": "Suoritevaatimukset",
   "departureBlocks": "Lähtöketjut",
   "vehicleId": "Kylkinumero",
@@ -107,8 +108,15 @@
   "procurementUnit_kilometersInWeek": "Kilometrejä viikossa",
   "procurementUnit_unitValidTime": "Kohteen voimassaoloaika",
   "procurementUnit_operationArea": "Seuranta-alue",
-  "procurementUnit_ageRequirement": "Maksimi keski-ikä vaatimus",
-  "procurementUnit_ageRequirementCalculated": "Laskettu maksimi keski-ikä vaatimus + optiovuodet",
+  "procurementUnit_ageRequirement": "Maksimi keski-ikä",
+  "procurementUnit_noOptions": "Ei optio-kautta",
+  "procurementUnit_optionsUsed": "Käytetyt optiot",
+  "procurementUnit_optionPeriodStart": "Optio-kauden alku",
+  "procurementUnit_optionMaxAgeIncreaseMethod": "Maksimi keski-iän korotustapa",
+  "procurementUnit_optionMaxAgeIncreaseMethod_NO_INCREASE": "Ei korotusta",
+  "procurementUnit_optionMaxAgeIncreaseMethod_MONTHLY_INCREASE": "Korotetaan kuukausittain",
+  "procurementUnit_optionMaxAgeIncreaseMethod_HALF_YEAR_INCREASE": "Korotetaan 0.5v / optio-vuosi",
+  "procurementUnit_ageRequirementWithOptions": "Maksimi keski-ikä optiokorotuksilla",
   "procurementUnit_ageRequirementYears": "Vuotta",
   "procurementUnit_noValidContracts": "Ei voimassaolevaa sopimusta.",
 
@@ -118,7 +126,7 @@
   "executionRequirement_statsEquipmentType": "Kalustotyyppi",
   "executionRequirement_statsEquipmentCount": "Kalustomäärä",
   "executionRequirement_statsKilometers": "Kilometrejä viikossa",
-  "executionRequirement_refreshEquipment": "Virkistä kalustoluettelosta",
+  "executionRequirement_refreshEquipment": "Palauta alkuperäinen kalustoluettelo",
   "executionRequirement_weeklyKilometers": "Viikkokilometrit",
   "executionRequirement_updateJoreKilometers": "Päivitä suoritteet JOREsta",
   "executionRequirement_equipmentList": "Suoritevaatimuksen ajoneuvot",
@@ -129,6 +137,9 @@
   "executionRequirement_removeWarning": "Olet poistamassa tämän kilpailukohteen suoritevaatimukset. Oletko varma?",
   "executionRequirement_refreshWarning": "Kalustoluettelosta löytyvät mutta ei suoritevaatimuksessa olevat ajoneuvot lisätään suoritevaatimukseen. Ok?",
   "executionRequirement_unitExecutionRequirements": "Kohteen suoritevaatimukset",
+  "executionRequirement_leeway": "Jousto",
+  "executionRequirement_area_OTHER": "Muu alue",
+  "executionRequirement_area_CENTER": "Keskusta-alue",
 
   "executionRequirement_equipmentList_vehicleId": "Kylkinumero",
   "executionRequirement_equipmentList_model": "Malli",
@@ -261,6 +272,11 @@
   "postInspection_sanctionReason_UNIT_EQUIPMENT_MAX_AGE_VIOLATION": "Kohteen maksimi-iän ylitys",
   "postInspection_sanctionReason_EMISSION_CLASS_DEFICIENCY": "Suoritevaatimuksen alitus",
 
+  "postInspection_acceptance_hslAccepted": "HSL hyväksynyt",
+  "postInspection_acceptance_hslAcceptButtonLabel": "Hyväksy HSL pääkäyttäjänä",
+  "postInspection_acceptance_operatorAccepted": "Liikennöitsijä hyväksynyt",
+  "postInspection_acceptance_operatorAcceptButtonLabel": "Hyväksy liikennöitsijänä",
+
   "postInspection_heading_sanctions": "Sanktiot",
   "postInspection_heading_equipmentDefectSanctions": "Kalustovikasanktiot",
 
@@ -281,6 +297,10 @@
   "report_filtering_filter_on": "Suodata saraketta",
   "report_filtering_apply": "Suodata",
   "report_filtering_hint": "Suodata raporttitaulukkoa lisäämällä kenttä ylläolevalla painikkeella. Kirjoita tekstikentään arvo ja valitse valikosta sarakkeen jonka mukaan haluat suodata tuloksia. Jos haluat suodata kyllä/ei arvoja, voit käyttää suodatinarvona: true/false, kyllä/ei tai yes/no. Negatiiviset arvot toimii myös jos haluat listata rivit mistä puuttuu jokin arvo.",
+
+  "report_group_by_DEPARTURE": "Lähdöittäin",
+  "report_group_by_OPERATING_AREA": "Alueittain",
+  "report_group_by_PROCUREMENT_UNIT": "Kohteittain",
 
   "NOT_PRE": "Tarkastus ei ole ennakko-tarkastus",
   "NOT_POST": "Tarkastus ei ole jälkitarkastus",

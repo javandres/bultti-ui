@@ -83,7 +83,7 @@ const SelectSeason: React.FC<PropTypes> = observer(
 
     return (
       <SidebarStyledDropdown
-        testId="season-select"
+        testId="season_select"
         className={className}
         label={!label ? '' : label || text('season')}
         items={seasons}

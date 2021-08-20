@@ -42,7 +42,10 @@ const InfoMessages = observer(() => {
   return (
     <InfoWrapper>
       {messages.map((message, idx) => (
-        <InfoMessage type={message.type} key={`message-${idx}`}>
+        <InfoMessage
+          type={message.type}
+          key={`message-${idx}`}
+          data-cy={`info_message_${message.type}`}>
           <span>{message.message}</span>
           <DismissButton
             size={ButtonSize.SMALL}

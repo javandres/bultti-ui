@@ -100,7 +100,7 @@ const SelectOperator: React.FC<SelectOperatorPropTypes> = observer(
 
     return (
       <SidebarStyledDropdown
-        testId="operator-select"
+        testId="operator_select"
         disabled={disabled || operators.length < 2}
         className={className}
         style={style}

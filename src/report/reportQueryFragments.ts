@@ -47,23 +47,14 @@ aRouteId
 aDirection
 aJourneyStartTime
 aJourneyEndTime
-aOriginStop
-aDestinationStop
 aTerminalTime
 aRecoveryTime
 bRouteId
 bDirection
 bJourneyStartTime
 bJourneyEndTime
-bOriginStop
-bDestinationStop
 bTerminalTime
 bRecoveryTime
-blockNumber
-equipmentRotation
-schemaId
-deadrunMinutes
-deadrunPlannedBy
 `
 
 // The keys should match the capitalized reportName + 'Fragment'.
@@ -91,6 +82,9 @@ export const reportQueryFragments = {
       procurementUnitId
       totalKilometersObserved
       totalUnitKilometers
+      averageAgeMax
+      averageAgeRequired
+      averageAgeWeighted
       averageAgeWeightedObserved
       sanctionPercentageAmount
       sanctionFinancialAmount
@@ -146,6 +140,7 @@ export const reportQueryFragments = {
       endDate
       totalKilometersRequired
       totalKilometersObserved
+      sanctionLeeway
       observedRequirements {
         id
         emissionClass
@@ -177,7 +172,8 @@ export const reportQueryFragments = {
   `,
   BlockDeviationsFragment: `
     fragment BlockDeviationsFragment on DeviationsReportData {
-      ${departureReportBaseFragment}
+      ${departurePairBaseFragment}
+      pairId
       overlapSeconds
       overlapPlannedBy
       registryNr
@@ -185,7 +181,8 @@ export const reportQueryFragments = {
   `,
   AllDeviationsFragment: `
     fragment AllDeviationsFragment on DeviationsReportData {
-      ${departureReportBaseFragment}
+      ${departurePairBaseFragment}
+      pairId
       overlapSeconds
       overlapPlannedBy
       registryNr
@@ -194,11 +191,29 @@ export const reportQueryFragments = {
   DeadrunsFragment: `
     fragment DeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
+      aOriginStop
+      aDestinationStop
+      bOriginStop
+      bDestinationStop
+      blockNumber
+      equipmentRotation
+      schemaId
+      deadrunMinutes
+      deadrunPlannedBy
     }
   `,
   OperatorDeadrunsFragment: `
     fragment OperatorDeadrunsFragment on DeadrunsReportData {
       ${departurePairBaseFragment}
+      aOriginStop
+      aDestinationStop
+      bOriginStop
+      bDestinationStop
+      blockNumber
+      equipmentRotation
+      schemaId
+      deadrunMinutes
+      deadrunPlannedBy
     }
   `,
   DepartureBlocksFragment: `
@@ -239,8 +254,7 @@ export const reportQueryFragments = {
       areaName
       totalKilometers
       totalKilometersFulfilled
-      averageAgeWeighted
-      averageAgeWeightedFulfilled
+      sanctionLeeway
       requirements {
         emissionClass
         kilometerRequirement
@@ -302,6 +316,7 @@ export const reportQueryFragments = {
       procurementUnitId
       blockNumber
       date
+      transitlogLink
     }
   `,
   SanctionSummaryFragment: `
@@ -315,15 +330,25 @@ export const reportQueryFragments = {
       sanctionReason
       sanctionPercentageRatio
       sanctionResultKilometers
-      unitEquipmentMaxAge
+      averageAgeRequired
     }
   `,
   SanctionListFragment: `
     fragment SanctionListFragment on SanctionListReportData {
+      id
       procurementUnitId
       kilometers
+      sanctionPercentageAmount
       sanctionFinancialAmount
       sanctionReason
+      sanctionScope
+      departureDate
+      direction
+      journeyStartTime
+      reasonBenchmarkValue
+      registryNr
+      routeId
+      sanctionReasonValue
     }
   `,
   DangerousDefectSanctionsFragment: `
