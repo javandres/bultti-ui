@@ -96,6 +96,8 @@ Cypress.Commands.add('generateTestData', () => {
     }
   )
 
+  cy.getTestElement('info_message_error').should('not.exist')
+
   cy.visit('/')
 })
 

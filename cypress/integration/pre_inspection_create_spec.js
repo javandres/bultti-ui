@@ -12,6 +12,7 @@ describe('Pre-inspection creation', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
+    cy.getTestElement('info_message_error').should('not.exist')
   })
 
   it('Can create a pre-inspection', () => {
