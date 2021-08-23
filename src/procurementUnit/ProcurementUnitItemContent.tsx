@@ -276,6 +276,7 @@ const ProcurementUnitItemContent = observer(
               {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
                 return (
                   <LinkButton
+                    data-cy="unit_contract_button"
                     key={`contract-${index}`}
                     onClick={() => onOpenContract(contract.id)}
                     style={{
@@ -289,6 +290,7 @@ const ProcurementUnitItemContent = observer(
           )}
           {!hasAdminAccessRights || !isUnitEditable ? (
             <ValueDisplay
+              testId="unit_config_display"
               renderValue={renderValueDisplayValue}
               item={{
                 maximumAverageAge: procurementUnit?.maximumAverageAge,
@@ -301,6 +303,7 @@ const ProcurementUnitItemContent = observer(
               labels={procurementUnitLabels}>
               {hasAdminAccessRights && (
                 <Button
+                  data-cy="edit_unit_config"
                   style={{ marginLeft: 'auto', marginTop: 'auto' }}
                   onClick={onEditProcurementUnit}>
                   <Text>edit</Text>
@@ -309,6 +312,7 @@ const ProcurementUnitItemContent = observer(
             </ValueDisplay>
           ) : (
             <ItemForm
+              testId="unit_config_form"
               item={procurementUnitInputValues}
               labels={procurementUnitLabels}
               onChange={onChangeProcurementUnit}
@@ -337,6 +341,7 @@ const ProcurementUnitItemContent = observer(
               {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
                 return (
                   <ExpandableSection
+                    testId="unit_equipment_catalogue_section"
                     isExpanded={false}
                     key={catalogue.id}
                     headerContent={

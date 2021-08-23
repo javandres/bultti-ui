@@ -4,7 +4,7 @@
   "viewportHeight": 1200,
   "watchForFileChanges": true,
   "defaultCommandTimeout": 45000,
-  "numTestsKeptInMemory": 0,
+  "numTestsKeptInMemory": 10,
   "projectId": "bofmho",
   "retries": 1,
   "env": {
