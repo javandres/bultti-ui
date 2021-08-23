@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { Inspection, InspectionType } from '../schema-types'
-import { orderBy } from 'lodash'
+import { lowerCase, orderBy } from 'lodash'
 import { FlexRow } from '../common/components/common'
 import { useStateValue } from '../state/useAppState'
 import {
@@ -138,9 +138,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
             </HeaderRow>
             <InspectionItems data-cy="select_inspection">
               {canCreateInspection && (
-                <NewInspection
-                  data-cy="create_new_pre_inspection"
-                  onClick={onCreateInspection}>
+                <NewInspection data-cy="create_new_inspection" onClick={onCreateInspection}>
                   <ItemContent>
                     <Plus fill="var(--lighter-grey)" width="4rem" height="4rem" />
                   </ItemContent>
@@ -154,7 +152,7 @@ const SelectInspection: React.FC<PropTypes> = observer(
               {orderBy(inspections, ['inspectionStartDate', 'version'], ['desc', 'desc']).map(
                 (inspection, idx) => (
                   <InspectionCard
-                    testId={`pre_inspection_${idx} pre_inspection_${inspection.status}`}
+                    testId={`${typeStrings.path}_inspection_${idx} ${typeStrings.path}_inspection_${inspection.status}`}
                     key={inspection.id}
                     onRefresh={refetchInspections}
                     inspection={inspection}
