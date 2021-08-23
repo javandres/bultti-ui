@@ -5,33 +5,23 @@ import { Redirect, RouteChildrenProps, useHistory, useParams } from 'react-route
 import { useQueryData } from '../util/useQueryData'
 import { contractQuery } from '../contract/contractQueries'
 import ContractEditor from '../contract/ContractEditor'
-import { Contract } from '../schema-types'
-import { useStateValue } from '../state/useAppState'
+import { Contract, UserRole } from '../schema-types'
 import { useHasAccessRights, useHasAdminAccessRights } from '../util/userRoles'
 import { LoadingDisplay } from '../common/components/Loading'
 import { Page, PageContainer } from '../common/components/common'
 import { useRefetch } from '../util/useRefetch'
 import { Text } from '../util/translate'
-import { MessageView } from '../common/components/Messages'
 import { PageTitle } from '../common/components/PageTitle'
 
 const EditContractPageView = styled(Page)``
-
-const PageTitleOperator = styled.span`
-  margin-left: 1rem;
-  font-weight: normal;
-`
 
 export type PropTypes = RouteChildrenProps
 
 const EditContractPage: React.FC<PropTypes> = observer(() => {
   let { contractId = '' } = useParams<{ contractId?: string }>()
 
-  let [globalOperator] = useStateValue('globalOperator')
-
   let hasAccessRights = useHasAccessRights({
-    allowedRoles: 'all',
-    operatorId: globalOperator?.id,
+    allowedRoles: [UserRole.Admin],
   })
 
   let hasAdminAccessRights = useHasAdminAccessRights()
@@ -69,13 +59,11 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
           <>
             {contract ? (
               <>
-                <Text>Sopimusehdot</Text>
-                <PageTitleOperator>{contract.operator.operatorName}</PageTitleOperator>
+                <Text>contract</Text>
               </>
             ) : (
               <>
-                <Text>Luo uudet sopimusehdot</Text>
-                <PageTitleOperator>{globalOperator?.operatorName}</PageTitleOperator>
+                <Text>contractPage_createNewContract</Text>
               </>
             )}
           </>
@@ -84,20 +72,12 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
       <PageContainer>
         <LoadingDisplay loading={loading} />
         {!loading && (
-          <>
-            {isNew && !globalOperator ? (
-              <MessageView>
-                <Text>selectOperator</Text>
-              </MessageView>
-            ) : (
-              <ContractEditor
-                onRefresh={refetch}
-                editable={hasAdminAccessRights}
-                contract={contract}
-                isNew={isNew}
-              />
-            )}
-          </>
+          <ContractEditor
+            onRefresh={refetch}
+            editable={hasAdminAccessRights}
+            contract={contract}
+            isNew={isNew}
+          />
         )}
       </PageContainer>
     </EditContractPageView>

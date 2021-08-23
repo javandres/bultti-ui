@@ -84,12 +84,9 @@ export type Contract = {
   __typename?: 'Contract'
   id: Scalars['ID']
   description?: Maybe<Scalars['String']>
-  operatorId?: Maybe<Scalars['Int']>
-  operator: Operator
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   userRelations: Array<ContractUserRelation>
-  procurementUnits: Array<ProcurementUnit>
   rulesFile?: Maybe<Scalars['String']>
   rules?: Maybe<Array<ContractRule>>
 }
@@ -97,10 +94,6 @@ export type Contract = {
 export type ContractInput = {
   id?: Maybe<Scalars['ID']>
   description?: Maybe<Scalars['String']>
-  operatorId?: Maybe<Scalars['Int']>
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
-  procurementUnitIds?: Maybe<Array<Scalars['String']>>
   rulesFile?: Maybe<Scalars['String']>
 }
 
@@ -1159,13 +1152,11 @@ export type MutationCreateContractArgs = {
 }
 
 export type MutationModifyContractArgs = {
-  operatorId: Scalars['Int']
   contractInput: ContractInput
   file?: Maybe<Scalars['Upload']>
 }
 
 export type MutationRemoveContractArgs = {
-  operatorId: Scalars['Int']
   contractId: Scalars['String']
 }
 
@@ -1561,7 +1552,6 @@ export type Operator = {
   operatorName: Scalars['String']
   preInspections: Array<PreInspection>
   postInspections: Array<PostInspection>
-  contracts: Array<Contract>
   procurementUnits: Array<ProcurementUnit>
   equipment: Array<Equipment>
   equipmentCatalogues: Array<EquipmentCatalogue>
@@ -1800,18 +1790,6 @@ export type ProcurementUnitEditInput = {
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
 }
 
-export type ProcurementUnitOption = {
-  __typename?: 'ProcurementUnitOption'
-  id: Scalars['String']
-  name: Scalars['String']
-  startDate: Scalars['BulttiDate']
-  endDate: Scalars['BulttiDate']
-  routes: Array<Scalars['String']>
-  areaName?: Maybe<Scalars['String']>
-  contract?: Maybe<Contract>
-  isUnselectingDisabled: Scalars['Boolean']
-}
-
 export type ProcurementUnitRoute = {
   __typename?: 'ProcurementUnitRoute'
   routeId: Scalars['String']
@@ -1868,7 +1846,6 @@ export type Query = {
   contracts: Array<Contract>
   contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
-  contractProcurementUnitOptions: Array<ProcurementUnitOption>
   contractUserRelations: Array<ContractUserRelation>
   observedExecutionRequirements: Array<ObservedExecutionRequirement>
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>
@@ -2126,24 +2103,12 @@ export type QueryDefectiveEquipmentDepartureSanctionsReportArgs = {
   inspectionId: Scalars['String']
 }
 
-export type QueryContractsArgs = {
-  date?: Maybe<Scalars['BulttiDate']>
-  operatorId?: Maybe<Scalars['Int']>
-}
-
 export type QueryContractsByProcurementUnitArgs = {
   procurementUnitId: Scalars['String']
 }
 
 export type QueryContractArgs = {
   contractId: Scalars['String']
-}
-
-export type QueryContractProcurementUnitOptionsArgs = {
-  contractId: Scalars['String']
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  operatorId: Scalars['Int']
 }
 
 export type QueryContractUserRelationsArgs = {

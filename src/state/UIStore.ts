@@ -16,7 +16,6 @@ export const unselectedOperator: Operator = {
   operatorName: translate('unselected', languageState.language),
   preInspections: [],
   postInspections: [],
-  contracts: [],
 }
 
 export const unselectedSeason: Season = {
