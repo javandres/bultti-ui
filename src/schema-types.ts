@@ -89,8 +89,6 @@ export type Contract = {
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   userRelations: Array<ContractUserRelation>
-  startDate: Scalars['BulttiDate']
-  endDate: Scalars['BulttiDate']
   procurementUnits: Array<ProcurementUnit>
   rulesFile?: Maybe<Scalars['String']>
   rules?: Maybe<Array<ContractRule>>
@@ -1789,8 +1787,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate']
   optionsUsed: Scalars['Int']
   executionRequirements: Array<PlannedUnitExecutionRequirement>
-  contracts: Array<Contract>
-  currentContracts?: Maybe<Array<Contract>>
+  contract: Contract
 }
 
 export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
@@ -1811,7 +1808,7 @@ export type ProcurementUnitOption = {
   endDate: Scalars['BulttiDate']
   routes: Array<Scalars['String']>
   areaName?: Maybe<Scalars['String']>
-  currentContracts?: Maybe<Array<Contract>>
+  contract?: Maybe<Contract>
   isUnselectingDisabled: Scalars['Boolean']
 }
 

@@ -70,14 +70,12 @@ type BlockDeviationsReport {
 type Contract {
   createdAt: DateTime!
   description: String
-  endDate: BulttiDate!
   id: ID!
   operator: Operator!
   operatorId: Int
   procurementUnits: [ProcurementUnit!]!
   rules: [ContractRule!]
   rulesFile: String
-  startDate: BulttiDate!
   updatedAt: DateTime!
   userRelations: [ContractUserRelation!]!
 }
@@ -832,6 +830,7 @@ type Mutation {
   removeObservedExecutionRequirementsFromPostInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
+  removeUser(email: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   submitInspection(inspectionId: String!): Inspection!
   toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
@@ -1317,8 +1316,7 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
-  contracts: [Contract!]!
-  currentContracts: [Contract!]
+  contract: Contract!
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
@@ -1337,7 +1335,7 @@ type ProcurementUnit {
 
 type ProcurementUnitOption {
   areaName: String
-  currentContracts: [Contract!]
+  contract: Contract
   endDate: BulttiDate!
   id: String!
   isUnselectingDisabled: Boolean!
@@ -1810,7 +1808,6 @@ enum TrackReason {
 
 enum UserRole {
   ADMIN
-  BLOCKED
   HSL
   OPERATOR
 }
