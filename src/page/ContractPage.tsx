@@ -3,7 +3,7 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, Page, PageContainer } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
@@ -14,7 +14,8 @@ import { LinkButton } from '../common/components/buttons/LinkButton'
 import { Contract } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
-import { orderBy } from 'lodash'
+import { lowerCase, orderBy } from 'lodash'
+import { getReadableDate } from '../util/formatDate'
 
 const ContractPageView = styled(Page)``
 
@@ -26,8 +27,8 @@ const ContractContentView = styled.div`
 `
 
 const ContractDescription = styled.div`
-  font-size: 0.875rem;
   margin-right: 1rem;
+  font-weight: bold;
 `
 
 export type PropTypes = RouteChildrenProps
@@ -87,7 +88,10 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
               onClick={() => onOpenContract(contractItem.id)}
               style={{ padding: '1rem 1rem 1rem 1.5rem' }}>
               {contractItem?.description && (
-                <ContractDescription>{contractItem?.description}</ContractDescription>
+                <div>
+                  <strong>{contractItem?.description}</strong> ({lowerCase(text('edited'))}{' '}
+                  {getReadableDate(contractItem?.updatedAt)})
+                </div>
               )}
             </LinkButton>
           ))}

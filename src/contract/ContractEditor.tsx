@@ -154,6 +154,7 @@ const renderInput =
     if (key === 'description') {
       return (
         <TextArea
+          required={true}
           value={(val || '') as string}
           onChange={(e) => onChange(e.target.value)}
           name={key}
@@ -225,7 +226,7 @@ const ContractEditor = observer(
     }, [rulesFiles, isNew, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
-      () => !isNew || (isNew && rulesFiles.length !== 0),
+      () => !isNew || (isNew && rulesFiles.length !== 0 && !!pendingContract.description),
       [isNew, pendingContract, rulesFiles]
     )
 

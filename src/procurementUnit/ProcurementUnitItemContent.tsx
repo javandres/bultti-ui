@@ -13,7 +13,7 @@ import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/compare'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
-import { LoadingDisplay } from '../common/components/Loading'
+import Loading, { LoadingDisplay } from '../common/components/Loading'
 import { isBefore, nextMonday, subISOWeekYears } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
@@ -342,19 +342,21 @@ const ProcurementUnitItemContent = observer(
           {contract && hasAdminAccessRights ? (
             <LinkButton onClick={() => onOpenContract(contract?.id)}>
               <div>
-                <strong>{contract.description}</strong> (<Text>edited</Text>{' '}
+                <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
                 {getReadableDate(contract.updatedAt)})
               </div>
             </LinkButton>
           ) : contract ? (
             <MessageView>
-              <strong>{contract.description}</strong> (<Text>edited</Text>{' '}
+              <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
               {getReadableDate(contract.updatedAt)})
             </MessageView>
-          ) : (
+          ) : procurementUnit && !contract ? (
             <ErrorView>
               <Text>contractPage_noContracts</Text>
             </ErrorView>
+          ) : (
+            <Loading />
           )}
         </div>
         {procurementUnit && (
