@@ -83,7 +83,7 @@ export type BlockDeviationsReport = {
 export type Contract = {
   __typename?: 'Contract'
   id: Scalars['ID']
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   userRelations: Array<ContractUserRelation>
@@ -93,7 +93,7 @@ export type Contract = {
 
 export type ContractInput = {
   id?: Maybe<Scalars['ID']>
-  description?: Maybe<Scalars['String']>
+  description: Scalars['String']
   rulesFile?: Maybe<Scalars['String']>
 }
 
@@ -1777,7 +1777,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate']
   optionsUsed: Scalars['Int']
   executionRequirements: Array<PlannedUnitExecutionRequirement>
-  contract: Contract
+  contract?: Maybe<Contract>
 }
 
 export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
@@ -1788,6 +1788,7 @@ export type ProcurementUnitEditInput = {
   maximumAverageAge: Scalars['Float']
   optionPeriodStart?: Maybe<Scalars['BulttiDate']>
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
+  contractId?: Maybe<Scalars['String']>
 }
 
 export type ProcurementUnitRoute = {

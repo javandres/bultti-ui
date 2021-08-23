@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, Page, PageContainer } from '../common/components/common'
@@ -14,6 +14,7 @@ import { LinkButton } from '../common/components/buttons/LinkButton'
 import { Contract } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
+import { orderBy } from 'lodash'
 
 const ContractPageView = styled(Page)``
 
@@ -35,7 +36,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
   let hasAccessRights = useHasAdminAccessRights()
 
   let {
-    data: contracts,
+    data: contractData,
     loading: contractsLoading,
     refetch: refetchContracts,
   } = useQueryData<Contract[]>(contractsQuery)
@@ -48,6 +49,11 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
       return navigate.push(`/contract/${contractId}`)
     },
     [navigate]
+  )
+
+  let contracts = useMemo(
+    () => orderBy(contractData || [], ['createdAt', 'updatedAt'], ['desc', 'desc']),
+    [contractData]
   )
 
   return (

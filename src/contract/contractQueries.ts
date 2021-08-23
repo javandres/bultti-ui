@@ -57,6 +57,17 @@ export const contractsQuery = gql`
   ${ContractFragment}
 `
 
+export const contractOptionsQuery = gql`
+  query contracts {
+    contracts {
+      id
+      description
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const modifyContractMutation = gql`
   mutation modifyContract($file: Upload, $contractInput: ContractInput!) {
     modifyContract(file: $file, contractInput: $contractInput) {

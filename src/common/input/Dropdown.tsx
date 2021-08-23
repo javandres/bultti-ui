@@ -84,8 +84,8 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   onSelect: (selectedItem: ValueType) => unknown
   selectedItem?: ValueType
   unselectedValue?: ValueType
-  itemToString?: string | ((item: ValueType) => string) // property of given object to get value from or a function that returns the value.
-  itemToLabel?: string | ((item: ValueType) => string | JSX.Element) // property of given object to get label from or a function that returns the label.
+  itemToString?: string | ((item: ValueType) => string | undefined) // property of given object to get value from or a function that returns the value.
+  itemToLabel?: string | ((item: ValueType) => string | JSX.Element | undefined) // property of given object to get label from or a function that returns the label.
   className?: string
   hintText?: string
   style?: CSSProperties
@@ -94,7 +94,7 @@ export type DropdownProps<ValueType = DefaultDropdownValueType> = {
   setOptionTestIdByIndex?: boolean
 }
 
-function toString(item, converter?: string | ((item) => string | JSX.Element)) {
+function toString(item, converter?: string | ((item) => string | JSX.Element | undefined)) {
   if (typeof converter === 'function') {
     return converter(item)
   }

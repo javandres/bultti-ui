@@ -38,6 +38,7 @@
   "average": "Keski-arvo",
   "selectAll": "Valitse kaikki",
   "allSelected": "Kaikki valittu",
+  "edited": "Muokattu",
   "procurementUnits": "Kilpailukohteet",
   "contract": "Sopimusehdot",
   "contracts": "Sopimusehdot",
@@ -54,6 +55,7 @@
   "tableEmpty": "Taulukko on tyhjä.",
   "selectOperator": "Valitse liikennöitsijä.",
   "selectSeason": "Valitse aikataulukausi",
+  "selectContract": "Valitse sopimusehtoja",
   "downloadExcelRaport": "Lataa excel tiedosto",
 
   "authentication_expired": "Autentikointi umpeutui, kirjaudu sisään uudestaan.",

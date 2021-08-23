@@ -69,7 +69,7 @@ type BlockDeviationsReport {
 
 type Contract {
   createdAt: DateTime!
-  description: String
+  description: String!
   id: ID!
   rules: [ContractRule!]
   rulesFile: String
@@ -1312,7 +1312,7 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
-  contract: Contract!
+  contract: Contract
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
@@ -1797,7 +1797,7 @@ enum UserRole {
 }
 
 input ContractInput {
-  description: String
+  description: String!
   id: ID
   rulesFile: String
 }
@@ -1859,6 +1859,7 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
+  contractId: String
   maximumAverageAge: Float!
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
   optionPeriodStart: BulttiDate
