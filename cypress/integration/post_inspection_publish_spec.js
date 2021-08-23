@@ -1,4 +1,4 @@
-describe('Pre-inspection creation', () => {
+describe('Post-inspection creation', () => {
   before(() => {
     cy.loginAdmin()
     cy.generateTestData()
@@ -12,6 +12,7 @@ describe('Pre-inspection creation', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
+    cy.getTestElement('info_message_error').should('not.exist')
   })
 
   it('Can set post-inspection sanctionable', () => {
@@ -25,6 +26,8 @@ describe('Pre-inspection creation', () => {
 
     cy.getTestElement('inspection_tabs_tab_sanction').click()
     cy.getTestElement('revert_inspection_to_draft').click()
+
+    cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
   })
 
   it('Can publish sanctionable post-inspection', () => {

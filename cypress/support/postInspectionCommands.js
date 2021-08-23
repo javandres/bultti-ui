@@ -10,7 +10,7 @@ Cypress.Commands.add('createTestPostInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
 })
 
-// Opens an existing draft pre-inspection if one exists. Creates a new one if not.
+// Opens an existing draft post-inspection if one exists. Creates a new one if not.
 Cypress.Commands.add('openTestPostInspection', () => {
   cy.visit('/post-inspection/edit')
   cy.selectTestSettings()
@@ -67,7 +67,7 @@ Cypress.Commands.add('openTestSanctionPostInspection', () => {
       if (
         selectInspection.find(`[data-cy~="open_post_inspection_Sanctionable"]`).length !== 0
       ) {
-        cy.getTestElement(`open_post_inspection_Sanctionable`).click()
+        cy.getTestElement(`open_post_inspection_Sanctionable`).first().click()
       } else {
         cy.createTestSanctionPostInspection()
       }

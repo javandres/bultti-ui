@@ -1,4 +1,4 @@
-describe('Pre-inspection creation', () => {
+describe('Post-inspection creation', () => {
   before(() => {
     cy.loginAdmin()
     cy.generateTestData()
@@ -12,6 +12,7 @@ describe('Pre-inspection creation', () => {
     cy.get('@consoleError', { timeout: 1000 }).should((errorLog) =>
       expect(errorLog).to.have.callCount(0)
     )
+    cy.getTestElement('info_message_error').should('not.exist')
   })
 
   it('Can create a post-inspection', () => {
@@ -23,7 +24,6 @@ describe('Pre-inspection creation', () => {
     cy.loginAdmin()
     cy.openTestPostInspection()
 
-    cy.wait(1000)
     cy.getTestElement('remove_inspection').click()
   })
 

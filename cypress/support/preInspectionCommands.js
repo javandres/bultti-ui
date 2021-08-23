@@ -10,7 +10,7 @@ Cypress.Commands.add('createTestPreInspection', () => {
   cy.getTestElement('inspection_status').should('contain.text', 'Muokattavissa')
 })
 
-// Opens an existing draft pre-inspection if one exists. Creates a new one if not.
+// Opens an existing draft pre-inspection if one exists. Creates a new one if not found.
 Cypress.Commands.add('openTestPreInspection', () => {
   cy.visit('/pre-inspection/edit')
   cy.selectTestSettings()
