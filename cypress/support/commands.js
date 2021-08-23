@@ -56,10 +56,10 @@ Cypress.Commands.add('loginOperator', () => {
 // Select the test operator. Test data needs to have been generated at least once
 // for this to work. Test operator is not deleted when test data is removed.
 Cypress.Commands.add('selectTestOperator', () => {
-  cy.getTestElement('operator-select').should.exist
-  cy.getTestElement('operator-select').click()
-  cy.getTestElement('operator-select_999').click()
-  cy.getTestElement('operator-select_selected')
+  cy.getTestElement('operator_select').should.exist
+  cy.getTestElement('operator_select').click()
+  cy.getTestElement('operator_select_999').click()
+  cy.getTestElement('operator_select_selected')
     .text()
     .should('equal', 'Bultin Testiliikennöitsijä')
 })
@@ -67,10 +67,10 @@ Cypress.Commands.add('selectTestOperator', () => {
 // Select the test season. Test data needs to have been generated at least once
 // for this to work. Test season is not deleted when test data is removed.
 Cypress.Commands.add('selectTestSeason', () => {
-  cy.getTestElement('season-select').should.exist
-  cy.getTestElement('season-select').click()
-  cy.getTestElement('season-select_TESTIKAUSI').click()
-  cy.getTestElement('season-select_selected').text().should('equal', 'TESTIKAUSI')
+  cy.getTestElement('season_select').should.exist
+  cy.getTestElement('season_select').click()
+  cy.getTestElement('season_select_TESTIKAUSI').click()
+  cy.getTestElement('season_select_selected').text().should('equal', 'TESTIKAUSI')
 })
 
 // Selects test operator and season. Should be run at the start of each test.
@@ -95,6 +95,8 @@ Cypress.Commands.add('generateTestData', () => {
       timeout: 240000,
     }
   )
+
+  cy.getTestElement('info_message_error').should('not.exist')
 
   cy.visit('/')
 })

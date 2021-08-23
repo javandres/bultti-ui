@@ -4,16 +4,17 @@ import { observer } from 'mobx-react-lite'
 import {
   Contract,
   EquipmentCatalogue as EquipmentCatalogueType,
+  OptionMaxAgeIncreaseMethod,
   ProcurementUnit as ProcurementUnitType,
   ProcurementUnitEditInput,
 } from '../schema-types'
-import { orderBy } from 'lodash'
+import { isEqual, lowerCase, orderBy, pick } from 'lodash'
 import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/compare'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
 import { LoadingDisplay } from '../common/components/Loading'
-import { parseISO } from 'date-fns'
+import { isBefore, nextMonday, subISOWeekYears } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
 import { MessageView } from '../common/components/Messages'
@@ -22,7 +23,6 @@ import { text, Text } from '../util/translate'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import { useMutationData } from '../util/useMutationData'
-import { numval } from '../util/numval'
 import ItemForm from '../common/input/ItemForm'
 import { TextInput } from '../common/input/Input'
 import ValueDisplay from '../common/components/ValueDisplay'
@@ -30,10 +30,15 @@ import { Button } from '../common/components/buttons/Button'
 import { LinkButton } from '../common/components/buttons/LinkButton'
 import { useNavigate } from '../util/urlValue'
 import { useHasAdminAccessRights } from '../util/userRoles'
+import DatePicker from '../common/input/DatePicker'
+import Dropdown from '../common/input/Dropdown'
+import { getDateObject, getDateString, getReadableDate } from '../util/formatDate'
 
 const procurementUnitLabels = {
-  medianAgeRequirement: text('procurementUnit_ageRequirement'),
-  calculatedMedianAgeRequirement: text('procurementUnit_ageRequirementCalculated'),
+  maximumAverageAge: text('procurementUnit_ageRequirement'),
+  calculatedMaximumAgeRequirement: text('procurementUnit_ageRequirementWithOptions'),
+  optionMaxAgeIncreaseMethod: text('procurementUnit_optionMaxAgeIncreaseMethod'),
+  optionPeriodStart: text('procurementUnit_optionPeriodStart'),
 }
 
 const ContentWrapper = styled.div`
@@ -70,6 +75,45 @@ type ContentPropTypes = {
   testId?: string
 }
 
+function renderInput(key: string, val: unknown, onChange: (val: unknown) => void) {
+  let inputKey = key as keyof ProcurementUnitEditInput
+
+  if (inputKey === 'optionPeriodStart') {
+    return <DatePicker isEmptyValueAllowed={true} value={val as string} onChange={onChange} />
+  }
+
+  if (inputKey === 'optionMaxAgeIncreaseMethod') {
+    return (
+      <Dropdown
+        onSelect={onChange}
+        selectedItem={val as string}
+        items={Object.values(OptionMaxAgeIncreaseMethod)}
+        itemToLabel={(option) => text(`procurementUnit_optionMaxAgeIncreaseMethod_${option}`)}
+      />
+    )
+  }
+
+  return (
+    <TextInput
+      type="number"
+      value={val as string}
+      onChange={(e) => onChange(parseFloat(e.target.value))}
+    />
+  )
+}
+
+function renderValueDisplayValue(key: string, val: unknown) {
+  if (['maximumAverageAge', 'calculatedMaximumAgeRequirement'].includes(key)) {
+    return `${val} ${lowerCase(text('procurementUnit_ageRequirementYears'))}`
+  }
+
+  if (key === 'optionMaxAgeIncreaseMethod') {
+    return text(`procurementUnit_optionMaxAgeIncreaseMethod_${val as string}`)
+  }
+
+  return val as string
+}
+
 const ProcurementUnitItemContent = observer(
   ({
     showExecutionRequirements,
@@ -93,7 +137,6 @@ const ProcurementUnitItemContent = observer(
 
     let hasAdminAccessRights = useHasAdminAccessRights()
 
-    // Get the operating units for the selected operator.
     const {
       data: procurementUnit,
       loading,
@@ -101,6 +144,7 @@ const ProcurementUnitItemContent = observer(
     } = useQueryData<ProcurementUnitType>(procurementUnitQuery, {
       skip: !procurementUnitId || !isVisible,
       variables: unitQueryVariables,
+      fetchPolicy: 'cache-and-network',
     }) || {}
 
     let updateViewData = useCallback(() => {
@@ -113,13 +157,9 @@ const ProcurementUnitItemContent = observer(
         variables: {
           procurementUnitId,
           updatedData: null,
+          startDate,
         },
-        refetchQueries: [
-          {
-            query: procurementUnitQuery,
-            variables: unitQueryVariables,
-          },
-        ],
+        refetchQueries: ['procurementUnit'],
       }
     )
 
@@ -136,70 +176,84 @@ const ProcurementUnitItemContent = observer(
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
       .some((cat) => cat.equipmentQuotas?.length !== 0)
 
-    let [medianAgeValue, setMedianAgeValue] = useState('')
+    let [procurementUnitInputValues, setProcurementUnitInputValues] =
+      useState<ProcurementUnitEditInput>({
+        optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
+        maximumAverageAge: procurementUnit?.maximumAverageAge,
+        optionPeriodStart: procurementUnit?.optionPeriodStart,
+      })
+
     let [isUnitEditable, setIsUnitEditable] = useState(false)
 
+    const inspectionStartDate = useMemo(() => getDateObject(startDate), [startDate])
+
     let onEditProcurementUnit = useCallback(() => {
-      if (!isUnitEditable) {
-        setMedianAgeValue((procurementUnit?.medianAgeRequirement || 0) + '')
+      if (!isUnitEditable && procurementUnit) {
+        let defaultOptionStartDate: Date | undefined = undefined
+
+        if (procurementUnit.optionsUsed) {
+          // Create a default option period start date based on the end date of the unit and
+          // the options used.
+          defaultOptionStartDate = nextMonday(
+            // The end date of the unit usually contains the option years, so subtract them.
+            subISOWeekYears(
+              getDateObject(procurementUnit.endDate),
+              procurementUnit.optionsUsed
+            )
+          )
+        }
+        // If the option period has not started yet, it would be confusing to suggest a default start date.
+        if (defaultOptionStartDate && isBefore(inspectionStartDate, defaultOptionStartDate)) {
+          defaultOptionStartDate = undefined
+        }
+
+        setProcurementUnitInputValues({
+          optionMaxAgeIncreaseMethod: procurementUnit.optionMaxAgeIncreaseMethod,
+          maximumAverageAge: procurementUnit.maximumAverageAge,
+          optionPeriodStart:
+            procurementUnit.optionPeriodStart ||
+            getDateString(defaultOptionStartDate) ||
+            undefined,
+        })
       }
 
-      setIsUnitEditable((cur) => !cur)
-    }, [isUnitEditable, procurementUnit])
+      setIsUnitEditable((currentValue) => !currentValue)
+    }, [isUnitEditable, procurementUnit, inspectionStartDate])
 
     let onCancelEdit = useCallback(() => {
       setIsUnitEditable(false)
     }, [])
 
-    let onChangeProcurementUnit = useCallback(
-      (key, nextValue) => {
-        if (key === 'medianAgeRequirement') {
-          setMedianAgeValue(nextValue)
-        }
-      },
-      [medianAgeValue]
-    )
+    let onChangeProcurementUnit = useCallback((key, nextValue) => {
+      setProcurementUnitInputValues((currentValues) => {
+        let nextValues = { ...currentValues }
+        nextValues[key] = nextValue || undefined
+        return nextValues
+      })
+    }, [])
 
     const onSaveProcurementUnit = useCallback(async () => {
       if (!hasAdminAccessRights) {
         return
       }
 
-      let unitInput: ProcurementUnitEditInput = {
-        medianAgeRequirement: numval(medianAgeValue, true),
-      }
-
       await updateProcurementUnit({
         variables: {
-          updatedData: unitInput,
+          updatedData: procurementUnitInputValues,
         },
       })
 
       setIsUnitEditable(false)
-    }, [medianAgeValue, isCatalogueEditable, hasAdminAccessRights])
-
-    const inspectionStartDate = useMemo(() => parseISO(startDate), [startDate])
+    }, [procurementUnitInputValues, isCatalogueEditable, hasAdminAccessRights])
 
     let isDirty = useMemo(
-      () => procurementUnit?.medianAgeRequirement !== numval(medianAgeValue, true),
-      [procurementUnit, medianAgeValue]
+      () =>
+        !isEqual(
+          pick(procurementUnit, Object.keys(procurementUnitInputValues)),
+          procurementUnitInputValues
+        ),
+      [procurementUnit, procurementUnitInputValues]
     )
-
-    let renderProcurementItemInput = useCallback((key: string, val: unknown, onChange) => {
-      return (
-        <TextInput
-          type="number"
-          value={val as string}
-          onChange={(e) => onChange(e.target.value)}
-        />
-      )
-    }, [])
-
-    let calcMedianAgeRequirement = useMemo(() => {
-      let optionsUsed = procurementUnit?.optionsUsed || 0
-      let medianAgeRequirement = procurementUnit?.medianAgeRequirement || 0
-      return medianAgeRequirement + 0.5 * optionsUsed
-    }, [procurementUnit])
 
     let navigate = useNavigate()
 
@@ -237,10 +291,14 @@ const ProcurementUnitItemContent = observer(
           {!hasAdminAccessRights || !isUnitEditable ? (
             <ValueDisplay
               testId="unit_config_display"
-              renderValue={(key, val) => `${val} vuotta`}
+              renderValue={renderValueDisplayValue}
               item={{
-                medianAgeRequirement: procurementUnit?.medianAgeRequirement,
-                calculatedMedianAgeRequirement: calcMedianAgeRequirement,
+                maximumAverageAge: procurementUnit?.maximumAverageAge,
+                calculatedMaximumAgeRequirement: procurementUnit?.maximumAverageAgeWithOptions,
+                optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
+                optionPeriodStart: procurementUnit?.optionPeriodStart
+                  ? getReadableDate(getDateObject(procurementUnit.optionPeriodStart))
+                  : text('procurementUnit_noOptions'),
               }}
               labels={procurementUnitLabels}>
               {hasAdminAccessRights && (
@@ -255,14 +313,14 @@ const ProcurementUnitItemContent = observer(
           ) : (
             <ItemForm
               testId="unit_config_form"
-              item={{ medianAgeRequirement: medianAgeValue }}
+              item={procurementUnitInputValues}
               labels={procurementUnitLabels}
               onChange={onChangeProcurementUnit}
               onDone={onSaveProcurementUnit}
               onCancel={onCancelEdit}
               isDirty={isDirty}
               doneLabel={text('save')}
-              renderInput={renderProcurementItemInput}
+              renderInput={renderInput}
             />
           )}
         </div>

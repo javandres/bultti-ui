@@ -57,6 +57,14 @@ export function useRenderCellValue() {
       }
     }
 
+    if (key.toLowerCase().includes('link')) {
+      return (
+        <a target="_blank" href={val as string} rel="noreferrer">
+          {val}
+        </a>
+      )
+    }
+
     return toString(val)
   }, [])
 }
@@ -178,7 +186,7 @@ export function findEmptyKeys(items: Record<string, unknown>[]): string[] {
       .map(([key]) => key)
 
     return difference(emptyCols, nonEmptyCols)
-  }, Object.keys(items[0]))
+  }, Object.keys(items[0] || {}))
 }
 
 export const NotApplicableValue = (

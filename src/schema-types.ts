@@ -212,16 +212,16 @@ export type DeadrunsReportData = {
   aJourneyEndTime: Scalars['String']
   aTerminalTime: Scalars['Float']
   aRecoveryTime: Scalars['Float']
-  aOriginStop: Scalars['String']
-  aDestinationStop: Scalars['String']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
   bRouteId: Scalars['String']
   bDirection: Scalars['String']
   bJourneyStartTime: Scalars['String']
   bJourneyEndTime: Scalars['String']
   bTerminalTime: Scalars['Float']
   bRecoveryTime: Scalars['Float']
-  bOriginStop: Scalars['String']
-  bDestinationStop: Scalars['String']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
   deadrunMinutes: Scalars['Int']
   deadrunPlannedBy: Scalars['String']
   blockNumber?: Maybe<Scalars['String']>
@@ -333,15 +333,25 @@ export type DeviationsReport = {
 export type DeviationsReportData = {
   __typename?: 'DeviationsReportData'
   id: Scalars['ID']
-  routeId: Scalars['String']
   dayType: Scalars['String']
-  journeyStartTime: Scalars['String']
-  journeyEndTime: Scalars['String']
-  direction: Scalars['String']
-  trackReason: TrackReason
+  aRouteId: Scalars['String']
+  aDirection: Scalars['String']
+  aJourneyStartTime: Scalars['String']
+  aJourneyEndTime: Scalars['String']
+  aTerminalTime: Scalars['Float']
+  aRecoveryTime: Scalars['Float']
+  aOriginStop?: Maybe<Scalars['String']>
+  aDestinationStop?: Maybe<Scalars['String']>
+  bRouteId: Scalars['String']
+  bDirection: Scalars['String']
+  bJourneyStartTime: Scalars['String']
+  bJourneyEndTime: Scalars['String']
+  bTerminalTime: Scalars['Float']
+  bRecoveryTime: Scalars['Float']
+  bOriginStop?: Maybe<Scalars['String']>
+  bDestinationStop?: Maybe<Scalars['String']>
+  pairId: Scalars['String']
   registryNr?: Maybe<Scalars['String']>
-  terminalTime: Scalars['Float']
-  recoveryTime: Scalars['Float']
   overlapSeconds: Scalars['Float']
   overlapPlannedBy?: Maybe<Scalars['String']>
 }
@@ -666,11 +676,9 @@ export type ExecutionRequirementsReportData = {
   id: Scalars['ID']
   operatorId: Scalars['Int']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometers: Scalars['Float']
   totalKilometersFulfilled: Scalars['Float']
-  averageAgeWeighted?: Maybe<Scalars['Float']>
-  averageAgeRequirement?: Maybe<Scalars['Float']>
-  averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   requirements: Array<PlannedEmissionClassRequirement>
 }
 
@@ -769,6 +777,7 @@ export type InspectionDate = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   hfpDataStatus: HfpStatus
+  lastDateLoaded?: Maybe<Scalars['BulttiDate']>
   inspections?: Maybe<Array<PostInspection>>
 }
 
@@ -896,8 +905,8 @@ export type LateDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -977,6 +986,7 @@ export type MissingEquipmentReportData = {
 
 export type Mutation = {
   __typename?: 'Mutation'
+  updateProcurementUnit: ProcurementUnit
   createExecutionRequirementsForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   updateWeeklyExecutionMetersFromSource: PlannedUnitExecutionRequirement
   refreshExecutionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
@@ -984,7 +994,6 @@ export type Mutation = {
   removeEquipmentFromExecutionRequirement: PlannedUnitExecutionRequirement
   removeAllEquipmentFromExecutionRequirement?: Maybe<PlannedUnitExecutionRequirement>
   removeUnitExecutionRequirement: Scalars['Boolean']
-  updateProcurementUnit: ProcurementUnit
   updateEquipment?: Maybe<Equipment>
   createEquipmentCatalogue?: Maybe<EquipmentCatalogue>
   updateEquipmentCatalogue: EquipmentCatalogue
@@ -1015,6 +1024,7 @@ export type Mutation = {
   clearCache: Scalars['Boolean']
   createTestData: Scalars['Boolean']
   removeTestData: Scalars['Boolean']
+  removeUser: Scalars['Boolean']
   forceRemoveInspection: Scalars['Boolean']
   importHfpForDates: Scalars['Boolean']
   helperResolver: Scalars['Boolean']
@@ -1029,6 +1039,11 @@ export type Mutation = {
   removeInspection: Scalars['Boolean']
   toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>
   updateEquipmentDefectSanctions: Array<EquipmentDefectSanction>
+}
+
+export type MutationUpdateProcurementUnitArgs = {
+  procurementUnit: ProcurementUnitEditInput
+  procurementUnitId: Scalars['String']
 }
 
 export type MutationCreateExecutionRequirementsForProcurementUnitArgs = {
@@ -1061,11 +1076,6 @@ export type MutationRemoveAllEquipmentFromExecutionRequirementArgs = {
 
 export type MutationRemoveUnitExecutionRequirementArgs = {
   executionRequirementId: Scalars['String']
-}
-
-export type MutationUpdateProcurementUnitArgs = {
-  procurementUnit: ProcurementUnitEditInput
-  procurementUnitId: Scalars['String']
 }
 
 export type MutationUpdateEquipmentArgs = {
@@ -1188,6 +1198,10 @@ export type MutationRemoveInspectionDateArgs = {
 
 export type MutationUpdateSanctionsArgs = {
   sanctionUpdates: Array<SanctionUpdate>
+}
+
+export type MutationRemoveUserArgs = {
+  email: Scalars['String']
 }
 
 export type MutationForceRemoveInspectionArgs = {
@@ -1333,8 +1347,8 @@ export type ObservedEquipmentColorReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1375,8 +1389,8 @@ export type ObservedEquipmentTypeReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   registryNr: Scalars['String']
@@ -1392,6 +1406,8 @@ export type ObservedExecutionRequirement = {
   id: Scalars['ID']
   kilometersRequired?: Maybe<Scalars['Float']>
   kilometersObserved?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator
@@ -1432,6 +1448,7 @@ export type ObservedExecutionRequirementsReportData = {
   startDate: Scalars['BulttiDate']
   endDate: Scalars['BulttiDate']
   areaName: Scalars['String']
+  sanctionLeeway: Scalars['Float']
   totalKilometersRequired: Scalars['Float']
   totalKilometersObserved: Scalars['Float']
   observedRequirements: Array<ObservedEmissionClassRequirement>
@@ -1468,8 +1485,8 @@ export type ObservedOverAgeDeparturesReportData = {
   direction: Scalars['String']
   trackReason: TrackReason
   date: Scalars['String']
-  observedDepartureTime: Scalars['DateTime']
-  observedArrivalTime: Scalars['DateTime']
+  observedDepartureTime?: Maybe<Scalars['DateTime']>
+  observedArrivalTime?: Maybe<Scalars['DateTime']>
   sanctionedKilometers?: Maybe<Scalars['Float']>
   sanctionAmount?: Maybe<Scalars['Float']>
   procurementUnitId: Scalars['String']
@@ -1491,11 +1508,12 @@ export type ObservedUnitExecution = {
   __typename?: 'ObservedUnitExecution'
   id: Scalars['ID']
   procurementUnitId: Scalars['String']
-  area?: Maybe<OperatingAreaName>
+  area: OperatingAreaName
   totalUnitKilometers: Scalars['Float']
   totalKilometersObserved?: Maybe<Scalars['Float']>
-  averageAgeMax?: Maybe<Scalars['Float']>
-  averageAgeRequired?: Maybe<Scalars['Float']>
+  averageAgeMax: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
+  averageAgeWeighted: Scalars['Float']
   averageAgeWeightedObserved?: Maybe<Scalars['Float']>
   sanctionFinancialAmount?: Maybe<Scalars['Float']>
   sanctionPercentageAmount?: Maybe<Scalars['Float']>
@@ -1594,6 +1612,12 @@ export type OperatorDeadrunsReport = {
   rows: Array<DeadrunsReportData>
 }
 
+export enum OptionMaxAgeIncreaseMethod {
+  NoIncrease = 'NO_INCREASE',
+  MonthlyIncrease = 'MONTHLY_INCREASE',
+  HalfYearIncrease = 'HALF_YEAR_INCREASE',
+}
+
 export type OverAgeDeparturesReport = {
   __typename?: 'OverAgeDeparturesReport'
   filteredCount: Scalars['Int']
@@ -1637,6 +1661,8 @@ export type PlannedAreaExecutionRequirement = {
   averageAgeWeighted?: Maybe<Scalars['Float']>
   averageAgeWeightedFulfilled?: Maybe<Scalars['Float']>
   averageAgeRequirement?: Maybe<Scalars['Float']>
+  sanctionLeeway: Scalars['Int']
+  sanctionPercentage: Scalars['Int']
   area: OperatingArea
   areaId: Scalars['Int']
   operator: Operator
@@ -1710,7 +1736,7 @@ export type PostInspection = {
   operator: Operator
   seasonId: Scalars['String']
   season: Season
-  billingPeriodMonth?: Maybe<Scalars['BulttiDate']>
+  billingPeriodMonth: Scalars['BulttiDate']
   inspectionDate?: Maybe<InspectionDate>
   inspectionDateId?: Maybe<Scalars['String']>
   linkedInspections?: Maybe<Array<LinkedInspectionForWeek>>
@@ -1751,7 +1777,10 @@ export type ProcurementUnit = {
   procurementUnitId: Scalars['String']
   operatorId: Scalars['Int']
   operator: Operator
-  medianAgeRequirement: Scalars['Float']
+  maximumAverageAge: Scalars['Float']
+  maximumAverageAgeWithOptions: Scalars['Float']
+  optionPeriodStart?: Maybe<Scalars['BulttiDate']>
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
   equipmentCatalogues: Array<EquipmentCatalogue>
   areaId?: Maybe<Scalars['Int']>
   area?: Maybe<OperatingArea>
@@ -1764,8 +1793,14 @@ export type ProcurementUnit = {
   currentContracts?: Maybe<Array<Contract>>
 }
 
+export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
+  startDate: Scalars['BulttiDate']
+}
+
 export type ProcurementUnitEditInput = {
-  medianAgeRequirement: Scalars['Float']
+  maximumAverageAge: Scalars['Float']
+  optionPeriodStart?: Maybe<Scalars['BulttiDate']>
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
 }
 
 export type ProcurementUnitOption = {
@@ -1787,14 +1822,14 @@ export type ProcurementUnitRoute = {
 
 export type Query = {
   __typename?: 'Query'
+  procurementUnit: ProcurementUnit
+  procurementUnitsByOperator: Array<ProcurementUnit>
   executionRequirementForProcurementUnit?: Maybe<PlannedUnitExecutionRequirement>
   executionSchemaStats?: Maybe<ExecutionSchemaStats>
   operator?: Maybe<Operator>
   operators: Array<Operator>
   season?: Maybe<Array<Season>>
   seasons: Array<Season>
-  procurementUnit: ProcurementUnit
-  procurementUnitsByOperator: Array<ProcurementUnit>
   singleEquipment?: Maybe<Equipment>
   queryEquipmentFromSource?: Maybe<Equipment>
   equipmentCatalogue?: Maybe<EquipmentCatalogue>
@@ -1856,6 +1891,18 @@ export type Query = {
   workerStatus: Array<WorkerStatus>
 }
 
+export type QueryProcurementUnitArgs = {
+  endDate: Scalars['BulttiDate']
+  startDate: Scalars['BulttiDate']
+  procurementUnitId: Scalars['String']
+}
+
+export type QueryProcurementUnitsByOperatorArgs = {
+  endDate: Scalars['BulttiDate']
+  startDate: Scalars['BulttiDate']
+  operatorId: Scalars['Int']
+}
+
 export type QueryExecutionRequirementForProcurementUnitArgs = {
   inspectionId: Scalars['String']
   procurementUnitId: Scalars['String']
@@ -1875,18 +1922,6 @@ export type QuerySeasonArgs = {
 
 export type QuerySeasonsArgs = {
   date: Scalars['BulttiDate']
-}
-
-export type QueryProcurementUnitArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  procurementUnitId: Scalars['String']
-}
-
-export type QueryProcurementUnitsByOperatorArgs = {
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  operatorId: Scalars['Int']
 }
 
 export type QuerySingleEquipmentArgs = {
@@ -2196,8 +2231,8 @@ export type Sanction = {
   registryNumber?: Maybe<Scalars['String']>
   sanctionScope: SanctionScope
   sanctionReason: SanctionReason
-  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionReasonValue?: Maybe<Scalars['String']>
+  reasonBenchmarkValue?: Maybe<Scalars['String']>
   sanctionPercentageAmount: Scalars['Float']
   appliedSanctionPercentageAmount: Scalars['Float']
   sanctionScopeKilometers: Scalars['Float']
@@ -2273,6 +2308,8 @@ export enum SanctionReason {
   TimingStopViolation = 'TIMING_STOP_VIOLATION',
   LateDeparture = 'LATE_DEPARTURE',
   UnitEquipmentMaxAgeViolation = 'UNIT_EQUIPMENT_MAX_AGE_VIOLATION',
+  UnitEquipmentOverageUnderThreshold = 'UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD',
+  UnitEquipmentOverageOverThreshold = 'UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD',
   EmissionClassDeficiency = 'EMISSION_CLASS_DEFICIENCY',
 }
 
@@ -2314,7 +2351,7 @@ export type SanctionSummaryReportData = {
   sanctionResultKilometers: Scalars['Float']
   averageAgeWeightedObserved: Scalars['Float']
   sanctionReason: SanctionReason
-  unitEquipmentMaxAge: Scalars['Float']
+  averageAgeRequired: Scalars['Float']
 }
 
 export type SanctionUpdate = {
@@ -2496,6 +2533,7 @@ export type UnobservedDeparturesReportData = {
   journeyKilometers: Scalars['Float']
   blockNumber?: Maybe<Scalars['String']>
   date: Scalars['String']
+  transitlogLink: Scalars['String']
 }
 
 export type User = {
@@ -2524,7 +2562,6 @@ export enum UserRole {
   Admin = 'ADMIN',
   Hsl = 'HSL',
   Operator = 'OPERATOR',
-  Blocked = 'BLOCKED',
 }
 
 export type ValidationErrorData = {

@@ -167,19 +167,19 @@ type DeadrunsReport {
 }
 
 type DeadrunsReportData {
-  aDestinationStop: String!
+  aDestinationStop: String
   aDirection: String!
   aJourneyEndTime: String!
   aJourneyStartTime: String!
-  aOriginStop: String!
+  aOriginStop: String
   aRecoveryTime: Float!
   aRouteId: String!
   aTerminalTime: Float!
-  bDestinationStop: String!
+  bDestinationStop: String
   bDirection: String!
   bJourneyEndTime: String!
   bJourneyStartTime: String!
-  bOriginStop: String!
+  bOriginStop: String
   bRecoveryTime: Float!
   bRouteId: String!
   bTerminalTime: Float!
@@ -289,18 +289,28 @@ type DeviationsReport {
 }
 
 type DeviationsReportData {
+  aDestinationStop: String
+  aDirection: String!
+  aJourneyEndTime: String!
+  aJourneyStartTime: String!
+  aOriginStop: String
+  aRecoveryTime: Float!
+  aRouteId: String!
+  aTerminalTime: Float!
+  bDestinationStop: String
+  bDirection: String!
+  bJourneyEndTime: String!
+  bJourneyStartTime: String!
+  bOriginStop: String
+  bRecoveryTime: Float!
+  bRouteId: String!
+  bTerminalTime: Float!
   dayType: String!
-  direction: String!
   id: ID!
-  journeyEndTime: String!
-  journeyStartTime: String!
   overlapPlannedBy: String
   overlapSeconds: Float!
-  recoveryTime: Float!
+  pairId: String!
   registryNr: String
-  routeId: String!
-  terminalTime: Float!
-  trackReason: TrackReason!
 }
 
 type EarlyTimingStopDeparturesReport {
@@ -574,12 +584,10 @@ type ExecutionRequirementsReport {
 
 type ExecutionRequirementsReportData {
   areaName: String!
-  averageAgeRequirement: Float
-  averageAgeWeighted: Float
-  averageAgeWeightedFulfilled: Float
   id: ID!
   operatorId: Int!
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Float!
   totalKilometers: Float!
   totalKilometersFulfilled: Float!
 }
@@ -642,6 +650,7 @@ type InspectionDate {
   hfpDataStatus: HfpStatus!
   id: ID!
   inspections: [PostInspection!]
+  lastDateLoaded: BulttiDate
   startDate: BulttiDate!
 }
 
@@ -710,8 +719,8 @@ type LateDeparturesReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedLateArrivalSeconds: Float!
   observedLateDepartureSeconds: Float!
   procurementUnitId: String!
@@ -922,8 +931,8 @@ type ObservedEquipmentColorReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedExteriorColor: String!
   procurementUnitId: String!
   registryNr: String!
@@ -962,8 +971,8 @@ type ObservedEquipmentTypeReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedEquipmentType: String!
   plannedEquipmentType: String!
   procurementUnitId: String!
@@ -987,6 +996,8 @@ type ObservedExecutionRequirement {
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operator: Operator!
   operatorId: Int!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
   startDate: BulttiDate!
 }
 
@@ -1016,6 +1027,7 @@ type ObservedExecutionRequirementsReportData {
   id: ID!
   observedRequirements: [ObservedEmissionClassRequirement!]!
   operatorId: Int!
+  sanctionLeeway: Float!
   startDate: BulttiDate!
   totalKilometersObserved: Float!
   totalKilometersRequired: Float!
@@ -1049,8 +1061,8 @@ type ObservedOverAgeDeparturesReportData {
   journeyEndTime: String!
   journeyKilometers: Float!
   journeyStartTime: String!
-  observedArrivalTime: DateTime!
-  observedDepartureTime: DateTime!
+  observedArrivalTime: DateTime
+  observedDepartureTime: DateTime
   observedEquipmentAge: Float!
   overAgeType: String!
   procurementUnitId: String!
@@ -1062,9 +1074,10 @@ type ObservedOverAgeDeparturesReportData {
 }
 
 type ObservedUnitExecution {
-  area: OperatingAreaName
-  averageAgeMax: Float
-  averageAgeRequired: Float
+  area: OperatingAreaName!
+  averageAgeMax: Float!
+  averageAgeRequired: Float!
+  averageAgeWeighted: Float!
   averageAgeWeightedObserved: Float
   id: ID!
   procurementUnitId: String!
@@ -1204,6 +1217,8 @@ type PlannedAreaExecutionRequirement {
   operatorId: Int!
   procurementUnitRequirements: [PlannedUnitExecutionRequirement!]
   requirements: [PlannedEmissionClassRequirement!]!
+  sanctionLeeway: Int!
+  sanctionPercentage: Int!
 }
 
 type PlannedEmissionClassRequirement {
@@ -1251,7 +1266,7 @@ type PlannedUnitExecutionRequirement {
 }
 
 type PostInspection {
-  billingPeriodMonth: BulttiDate
+  billingPeriodMonth: BulttiDate!
   createdAt: DateTime!
   hslAccepted: Boolean!
   id: ID!
@@ -1308,9 +1323,12 @@ type ProcurementUnit {
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
   id: ID!
-  medianAgeRequirement: Float!
+  maximumAverageAge: Float!
+  maximumAverageAgeWithOptions(startDate: BulttiDate!): Float!
   operator: Operator!
   operatorId: Int!
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
+  optionPeriodStart: BulttiDate
   optionsUsed: Int!
   procurementUnitId: String!
   routes: [ProcurementUnitRoute!]!
@@ -1494,6 +1512,7 @@ type SanctionSummaryReport {
 
 type SanctionSummaryReportData {
   areaName: String!
+  averageAgeRequired: Float!
   averageAgeWeightedObserved: Float!
   id: ID!
   procurementUnitId: String!
@@ -1502,7 +1521,6 @@ type SanctionSummaryReportData {
   sanctionReason: SanctionReason!
   sanctionResultKilometers: Float!
   totalKilometers: Float!
-  unitEquipmentMaxAge: Float!
 }
 
 type SanctionsResponse {
@@ -1630,6 +1648,7 @@ type UnobservedDeparturesReportData {
   procurementUnitId: String!
   routeId: String!
   trackReason: TrackReason!
+  transitlogLink: String!
 }
 
 type User {
@@ -1731,6 +1750,12 @@ enum OperatingAreaName {
   UNKNOWN
 }
 
+enum OptionMaxAgeIncreaseMethod {
+  HALF_YEAR_INCREASE
+  MONTHLY_INCREASE
+  NO_INCREASE
+}
+
 enum SanctionExceptionReason {
   ALL
   EQUIPMENT_AGE_VIOLATION
@@ -1752,6 +1777,8 @@ enum SanctionReason {
   LATE_DEPARTURE
   TIMING_STOP_VIOLATION
   UNIT_EQUIPMENT_MAX_AGE_VIOLATION
+  UNIT_EQUIPMENT_OVERAGE_OVER_THRESHOLD
+  UNIT_EQUIPMENT_OVERAGE_UNDER_THRESHOLD
 }
 
 enum SanctionScope {
@@ -1855,7 +1882,9 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
-  medianAgeRequirement: Float!
+  maximumAverageAge: Float!
+  optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
+  optionPeriodStart: BulttiDate
 }
 
 input SanctionUpdate {
