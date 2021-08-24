@@ -1531,8 +1531,8 @@ type SortConfig {
 }
 
 type Subscription {
-  hfpLoadingProgress(rangeEnd: String!, rangeStart: String!): HfpDateProgress
-  hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
+  hfpLoadingProgress: HfpDateProgress
+  hfpPreloadStatus: [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): InspectionStatusUpdate
 }
@@ -1715,7 +1715,6 @@ enum InspectionUserRelationType {
 
 enum InspectionValidationError {
   HFP_UNAVAILABLE_FOR_INSPECTION_DATES
-  INVALID_CONTRACTS
   INVALID_INSPECTION_TIME
   INVALID_PRODUCTION_TIME
   MISSING_BLOCK_DEPARTURES

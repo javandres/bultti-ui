@@ -857,7 +857,6 @@ export enum InspectionValidationError {
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
   MissingContracts = 'MISSING_CONTRACTS',
-  InvalidContracts = 'INVALID_CONTRACTS',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
@@ -2361,16 +2360,6 @@ export type Subscription = {
   hfpLoadingProgress?: Maybe<HfpDateProgress>
   inspectionStatus?: Maybe<InspectionStatusUpdate>
   inspectionError?: Maybe<InspectionErrorUpdate>
-}
-
-export type SubscriptionHfpPreloadStatusArgs = {
-  rangeEnd: Scalars['String']
-  rangeStart: Scalars['String']
-}
-
-export type SubscriptionHfpLoadingProgressArgs = {
-  rangeEnd: Scalars['String']
-  rangeStart: Scalars['String']
 }
 
 export type SubscriptionInspectionStatusArgs = {
