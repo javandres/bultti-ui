@@ -21,6 +21,7 @@ export type PropTypes = {
   inspectionType?: InspectionType
   inspectionId?: string
   isExpanded?: boolean
+  testId?: string
 }
 
 const ReportListItem: React.FC<PropTypes> = observer(
@@ -31,11 +32,13 @@ const ReportListItem: React.FC<PropTypes> = observer(
     isExpanded = false,
     inspectionId,
     inspectionType,
+    testId,
   }) => {
     return (
       <ExpandableSection
         unmountOnClose={true}
         isExpanded={isExpanded}
+        testId={testId}
         headerContent={
           <>
             <HeaderSection>

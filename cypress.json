@@ -4,7 +4,11 @@
   "viewportHeight": 1200,
   "watchForFileChanges": true,
   "defaultCommandTimeout": 45000,
-  "numTestsKeptInMemory": 0,
+  "numTestsKeptInMemory": 10,
   "projectId": "bofmho",
-  "retries": 1
+  "retries": 1,
+  "env": {
+    "HSLID_AUTH_URI": "https://hslid-dev.t5.fi/openid/token",
+    "HSLID_AUTH_SCOPE": "email https://oneportal.trivore.com/scope/groups.readonly"
+  }
 }

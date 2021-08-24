@@ -16,10 +16,11 @@ export type PropTypes = {
   onDone: () => void
   doneLabel?: string
   doneDisabled?: boolean
+  testId?: string
 }
 
 const InputForm: React.FC<PropTypes> = observer(
-  ({ onDone, onCancel, doneLabel, doneDisabled, fields, children: buttons }) => {
+  ({ onDone, onCancel, doneLabel, doneDisabled, fields, children: buttons, testId }) => {
     useWatchDirtyForm(!doneDisabled)
 
     return (
@@ -41,10 +42,17 @@ const InputForm: React.FC<PropTypes> = observer(
           }}>
           {buttons}
           <ActionsWrapper>
-            <Button style={{ marginRight: '1rem' }} disabled={doneDisabled} onClick={onDone}>
+            <Button
+              data-cy={`${testId}_done`}
+              style={{ marginRight: '1rem' }}
+              disabled={doneDisabled}
+              onClick={onDone}>
               {doneLabel || 'Tallenna'}
             </Button>
-            <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
+            <Button
+              data-cy={`${testId}_cancel`}
+              buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+              onClick={onCancel}>
               Peruuta
             </Button>
           </ActionsWrapper>

@@ -20,6 +20,7 @@ export function useTableRows<ItemType extends TableItemType>({
   hideKeys,
   columnLabels,
   columnOrder,
+  testId,
 }: {
   items: ItemType[]
   keyFromItem: (item: ItemType) => string
@@ -35,6 +36,7 @@ export function useTableRows<ItemType extends TableItemType>({
   pendingValues?: EditValue<ItemType>[]
   editableValues?: (keyof ItemType)[] | ((item: ItemType) => (keyof ItemType)[])
   isAlwaysEditable?: boolean
+  testId?: string
 }) {
   let { columnNames, keysToHide, columnKeysOrdering, columns } = useTableColumns({
     items,

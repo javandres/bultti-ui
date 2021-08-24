@@ -87,6 +87,7 @@ type CellPropTypes<ItemType extends TableItemType> = {
   tabIndex?: number
   rowId: string
   cellHighlightColor?: string
+  testId?: string
 }
 
 export const TableCell = observer(
@@ -96,6 +97,7 @@ export const TableCell = observer(
     colIndex,
     tabIndex = 1,
     cellHighlightColor = '',
+    testId,
   }: CellPropTypes<ItemType>) => {
     let {
       pendingValues = [],
@@ -161,8 +163,14 @@ export const TableCell = observer(
       flex: typeof columnWidth !== 'undefined' ? 'none' : '1 1 auto',
     }
 
+    let cellContent = useMemo(
+      () => renderCell(valueKey, renderValue(valueKey, val, false, item), item),
+      [valueKey, val, item]
+    )
+
     return (
       <TableCellElement
+        data-cy={`cell_content_${val} ${testId}`}
         highlightColor={cellHighlightColor}
         style={cellWidthStyle}
         isEditing={cellInputIsActive}
@@ -183,7 +191,7 @@ export const TableCell = observer(
               onCancelEdit,
               tabIndex
             )
-          : renderCell(valueKey, renderValue(valueKey, val, false, item), item)}
+          : cellContent}
       </TableCellElement>
     )
   }

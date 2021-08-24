@@ -76,17 +76,21 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
 
   return (
     <ExpandableSection
+      testId="departure_blocks_section"
       error={!isValid}
       headerContent={
         <HeaderMainHeading>
           <Text>departureBlocks</Text>
         </HeaderMainHeading>
       }>
-      <DepartureBlocksView>
+      <DepartureBlocksView data-cy="departure_blocks">
         <LoadingDisplay loading={loading || fetchLoading} />
         {!(loading || fetchLoading) && departureBlocks.length === 0 ? (
           <FlexRow>
-            <Button onClick={() => fetchDepartureBlocks()} loading={fetchLoading}>
+            <Button
+              data-cy="fetch_departure_blocks"
+              onClick={() => fetchDepartureBlocks()}
+              loading={fetchLoading}>
               <Text>departureBlocks_fetchDepartureBlocks</Text>
             </Button>
           </FlexRow>
@@ -101,7 +105,11 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
                 <Text>update</Text>
               </Button>
             </FlexRow>
-            <PagedTable columnLabels={columnLabels} items={departureBlocks} />
+            <PagedTable
+              testId="departure_blocks_table"
+              columnLabels={columnLabels}
+              items={departureBlocks}
+            />
           </>
         )}
       </DepartureBlocksView>

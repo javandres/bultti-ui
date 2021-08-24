@@ -30,9 +30,8 @@ const PostInspectionEditor: React.FC<PostInspectionProps> = observer(
       <PostInspectionEditorView>
         <EquipmentDefectJolaRows inspection={inspection} />
         <LinkedInspections inspection={inspection} isEditable={isEditable} />
-        {hfpLoaded ? (
-          <PostInspectionExecutionRequirements isEditable={isEditable} />
-        ) : (
+        <PostInspectionExecutionRequirements isEditable={isEditable} />
+        {!hfpLoaded && (
           <MessageContainer style={{ margin: '1rem 0 0', padding: '0' }}>
             <MessageView>
               <Text>inspection_editor_hfp_unavailable</Text>

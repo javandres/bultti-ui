@@ -61,6 +61,7 @@ const ManageSanctions: React.FC<PropTypes> = observer(({ inspection }) => {
     <ManageSanctionsView>
       <FunctionsRow>
         <Button
+          data-cy="revert_inspection_to_draft"
           loading={abandonSanctionsLoading}
           buttonStyle={ButtonStyle.SECONDARY_REMOVE}
           size={ButtonSize.SMALL}

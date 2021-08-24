@@ -217,7 +217,7 @@ const AppSidebar: React.FC<AppSidebarProps> = observer(() => {
               <Search fill="white" width="1rem" height="1rem" />
               <Text>preInspections</Text>
             </NavLink>
-            <NavLink to="/pre-inspection/edit">
+            <NavLink to="/pre-inspection/edit" data-cy="edit_pre_inspection">
               <Plus fill="white" width="1rem" height="1rem" />
               <Text>nav_newPreInspection</Text>
             </NavLink>

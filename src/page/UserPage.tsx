@@ -23,7 +23,7 @@ function createUserInput(user?: User): UserInput {
     name: user?.name || '',
     operatorIds: (user?.operatorIds || []).join(','),
     organisation: user?.organisation || '',
-    role: user?.role || UserRole.Blocked,
+    role: user?.role || null,
   }
 }
 

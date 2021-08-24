@@ -104,11 +104,12 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
                 <Text>update</Text>
               </Button>
             </FlexRow>
-            {procurementUnits.map((procurementUnit) => {
+            {procurementUnits.map((procurementUnit, idx) => {
               let unitErrors = getUnitErrors(procurementUnit.id)
 
               return (
                 <ProcurementUnitItem
+                  testId={`procurement_unit`}
                   validationErrors={unitErrors}
                   requirementsEditable={requirementsEditable}
                   isCatalogueEditable={isCatalogueEditable}

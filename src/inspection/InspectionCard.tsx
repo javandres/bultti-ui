@@ -101,12 +101,13 @@ export type PropTypes = {
   inspection: Inspection
   showActions?: boolean
   onRefresh: () => unknown
+  testId?: string
 }
 
 const InspectionCard: React.FC<PropTypes> = observer(
-  ({ inspection, onRefresh, showActions = true }) => {
+  ({ inspection, onRefresh, showActions = true, testId }) => {
     return (
-      <InspectionItem key={inspection.id} status={inspection.status}>
+      <InspectionItem key={inspection.id} status={inspection.status} data-cy={testId}>
         <ItemContent>
           {inspection.name ? (
             <>
@@ -143,7 +144,9 @@ const InspectionCard: React.FC<PropTypes> = observer(
             <EndDate>{getReadableDate(inspection.inspectionEndDate)}</EndDate>
           </InspectionPeriodDisplay>
         </ItemContent>
-        {showActions && <InspectionActions onRefresh={onRefresh} inspection={inspection} />}
+        {showActions && (
+          <InspectionActions testId={testId} onRefresh={onRefresh} inspection={inspection} />
+        )}
       </InspectionItem>
     )
   }

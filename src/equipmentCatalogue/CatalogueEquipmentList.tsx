@@ -99,6 +99,7 @@ const CatalogueEquipmentList: React.FC<PropTypes> = observer(
     return equipment.length !== 0 ? (
       <>
         <EquipmentList
+          testId="catalogue"
           equipment={equipment}
           updateEquipment={isCatalogueEditable ? updateEquipment : undefined}
           removeEquipment={isCatalogueEditable ? removeEquipment : undefined}

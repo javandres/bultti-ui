@@ -96,11 +96,16 @@ const GoToReportsButton = styled.div`
 export type PropTypes = {
   inspection: Inspection
   onClick?: () => unknown
+  testId?: string
 }
 
-const InspectionIndexItem = observer(({ inspection, onClick }: PropTypes) => {
+const InspectionIndexItem = observer(({ inspection, onClick, testId }: PropTypes) => {
   return (
-    <InspectionListItem key={inspection.id} onClick={onClick} as={onClick ? 'button' : 'div'}>
+    <InspectionListItem
+      key={inspection.id}
+      data-cy={testId}
+      onClick={onClick}
+      as={onClick ? 'button' : 'div'}>
       {isPreInspection(inspection) && (
         <InspectionVersion>{inspection.version}</InspectionVersion>
       )}

@@ -19,6 +19,7 @@ export type PropTypes = {
   startDate: Date
   onEquipmentChanged: () => unknown
   isEditable: boolean
+  testId?: string
 }
 
 export const equipmentColumnLabels = {
@@ -45,7 +46,7 @@ export const groupedEquipmentColumnLabels = {
 }
 
 const RequirementEquipmentList: React.FC<PropTypes> = observer(
-  ({ equipment, executionRequirement, startDate, onEquipmentChanged, isEditable }) => {
+  ({ equipment, executionRequirement, startDate, onEquipmentChanged, isEditable, testId }) => {
     let [execRemoveEquipment] = useMutationData(removeRequirementEquipmentMutation)
     let [execUpdateEquipment] = useMutationData(updateEquipmentRequirementQuotaMutation)
 
@@ -70,7 +71,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
 
     const removeEquipment = useCallback(
       async (equipmentId: string) => {
-        if (isEditable) {
+        if (isEditable && isAdmin) {
           await execRemoveEquipment({
             variables: {
               equipmentId,
@@ -81,7 +82,7 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
           await onEquipmentChanged()
         }
       },
-      [onEquipmentChanged, executionRequirement, execRemoveEquipment, isEditable]
+      [onEquipmentChanged, executionRequirement, execRemoveEquipment, isEditable, isAdmin]
     )
 
     let tableEquipmentRows = useMemo(
@@ -95,9 +96,10 @@ const RequirementEquipmentList: React.FC<PropTypes> = observer(
 
     return equipment.length !== 0 ? (
       <EquipmentList
+        testId={testId}
         equipment={tableEquipmentRows}
         updateEquipment={updateEquipmentData}
-        removeEquipment={!isEditable ? undefined : removeEquipment}
+        removeEquipment={isEditable && isAdmin ? removeEquipment : undefined}
         startDate={startDate}
         columnLabels={equipmentColumnLabels}
         groupedColumnLabels={groupedEquipmentColumnLabels}

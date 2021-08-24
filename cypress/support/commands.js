@@ -24,8 +24,18 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
 
-Cypress.Commands.add('getTestElement', (selector, options = {}) => {
-  return cy.get(`[data-cy~="${selector}"]`, options)
+// Visits a page and set up spy on console.error. This allows us to assert that
+// there were no errors.
+Cypress.Commands.add('visitAndSpy', (path) => {
+  return cy.visit(path, {
+    onBeforeLoad: (win) => {
+      cy.spy(win.console, 'error').as('consoleError')
+    },
+  })
+})
+
+Cypress.Commands.add('getTestElement', (selector, match = '~', options = {}) => {
+  return cy.get(`[data-cy${match}="${selector}"]`, options)
 })
 
 Cypress.Commands.add('loginAdmin', () => {
@@ -43,24 +53,72 @@ Cypress.Commands.add('loginOperator', () => {
   cy.getTestElement('authInfo').should('exist')
 })
 
+// Select the test operator. Test data needs to have been generated at least once
+// for this to work. Test operator is not deleted when test data is removed.
+Cypress.Commands.add('selectTestOperator', () => {
+  cy.getTestElement('operator_select').should.exist
+  cy.getTestElement('operator_select').click()
+  cy.getTestElement('operator_select_999').click()
+  cy.getTestElement('operator_select_selected')
+    .text()
+    .should('equal', 'Bultin Testiliikennöitsijä')
+})
+
+// Select the test season. Test data needs to have been generated at least once
+// for this to work. Test season is not deleted when test data is removed.
+Cypress.Commands.add('selectTestSeason', () => {
+  cy.getTestElement('season_select').should.exist
+  cy.getTestElement('season_select').click()
+  cy.getTestElement('season_select_TESTIKAUSI').click()
+  cy.getTestElement('season_select_selected').text().should('equal', 'TESTIKAUSI')
+})
+
+// Selects test operator and season. Should be run at the start of each test.
+Cypress.Commands.add('selectTestSettings', () => {
+  cy.selectTestOperator()
+  cy.selectTestSeason()
+})
+
+// Generates test data. Test data can be generated continuously, it will not be
+// created "on top" of existing test data.
+Cypress.Commands.add('generateTestData', () => {
+  cy.visit('/dev-tools')
+  cy.getTestElement('create_test_data').click()
+
+  cy.waitUntil(
+    () =>
+      // Wait until test data has loaded.
+      cy
+        .getTestElement('create_test_data_loading', '~', { timeout: 240000 })
+        .should('have.length', 0),
+    {
+      timeout: 240000,
+    }
+  )
+
+  cy.getTestElement('info_message_error').should('not.exist')
+
+  cy.visit('/')
+})
+
 /**
  * @param {Object} props
  * @param {String} props.role ADMIN / HSL / OPERATOR
  */
 const hslLogin = ({ role }) => {
-  const AUTH_URI = Cypress.env('CYPRESS_HSLID_AUTH_URI')
+  // The following two env vars come from the cypress.json file
+  const AUTH_URI = Cypress.env('HSLID_AUTH_URI')
+  const AUTH_SCOPE = Cypress.env('HSLID_AUTH_SCOPE')
+  // The rest of the env vars come from the .env file.
   const HSLID_CLIENT_ID = Cypress.env('CYPRESS_HSLID_CLIENT_ID')
   const HSLID_CLIENT_SECRET = Cypress.env('CYPRESS_HSLID_CLIENT_SECRET')
-  const AUTH_SCOPE = Cypress.env('CYPRESS_AUTH_SCOPE')
+  const HSLID_USERNAME = Cypress.env('CYPRESS_HSLID_TESTING_USERNAME')
+  const HSLID_PASSWORD = Cypress.env('CYPRESS_HSLID_TESTING_PASSWORD')
 
-  let HSLID_USERNAME
-  let HSLID_PASSWORD
-  HSLID_USERNAME = Cypress.env('CYPRESS_HSLID_TESTING_USERNAME')
-  HSLID_PASSWORD = Cypress.env('CYPRESS_HSLID_TESTING_PASSWORD')
   const authHeader = `Basic ${btoa(`${HSLID_CLIENT_ID}:${HSLID_CLIENT_SECRET}`)}`
 
   Cypress.log({
-    name: `HSL ID login as admin`,
+    name: `HSL ID login as ${role}`,
   })
 
   const options = {

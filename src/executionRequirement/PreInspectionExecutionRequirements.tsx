@@ -11,7 +11,7 @@ import {
   RequirementsTableLayout,
   usePreInspectionAreaRequirements,
 } from './executionRequirementUtils'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { FlexRow } from '../common/components/common'
 
 const AreaWrapper = styled.div`
@@ -23,6 +23,8 @@ const AreaWrapper = styled.div`
 `
 
 const AreaHeading = styled.h4`
+  font-weight: normal;
+  font-size: 1.2rem;
   margin-bottom: 0;
   margin-top: 0;
 `
@@ -44,6 +46,7 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
 
     return (
       <ExpandableSection
+        testId="execution_requirements_section"
         error={!isValid}
         headerContent={
           <HeaderMainHeading>
@@ -56,7 +59,10 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
               <Text>preInspection_noCalculatedExecutionRequirements</Text>
             </MessageView>
             <div>
-              <Button onClick={refetch} loading={requirementsLoading}>
+              <Button
+                data-cy="fetch_execution_requirements"
+                onClick={refetch}
+                loading={requirementsLoading}>
                 <Text>preInspection_calculateExecutionRequirements</Text>
               </Button>
             </div>
@@ -73,9 +79,13 @@ const PreInspectionExecutionRequirements: React.FC<PropTypes> = observer(
             </Button>
           </FlexRow>
           {areaExecutionRequirements.map((areaRequirement) => (
-            <AreaWrapper key={areaRequirement.area.id}>
-              <AreaHeading>{areaRequirement.area.name}</AreaHeading>
+            <AreaWrapper key={areaRequirement.id}>
+              <AreaHeading>
+                {text(`executionRequirement_area_${areaRequirement.area.name}`)},{' '}
+                {text('executionRequirement_leeway')} {areaRequirement.sanctionLeeway}%
+              </AreaHeading>
               <RequirementsTable
+                testId="execution_requirements_table"
                 tableLayout={RequirementsTableLayout.BY_VALUES}
                 executionRequirement={areaRequirement}
               />

@@ -31,6 +31,7 @@ export type PropTypes = {
   columnLabels: { [key: string]: string }
   groupedColumnLabels: { [key: string]: string }
   editableValues?: (keyof EquipmentWithQuota)[]
+  testId?: string
 }
 
 const getQuotaId = (item) => `${item.quotaId}_${item.id}`
@@ -44,6 +45,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
     columnLabels,
     groupedColumnLabels,
     editableValues = [],
+    testId,
   }) => {
     let [isEquipmentShownInGroup, setIsEquipmentShownInGroup] = useState(false)
     let [pendingValues, setPendingValues] = useState<EditValue<EquipmentWithQuota>[]>([])
@@ -196,6 +198,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         </FlexRow>
         {isEquipmentListEditable && (
           <PagedTable<EquipmentWithQuota>
+            testId={`${testId}_equipment_list`}
             items={equipment}
             keyFromItem={getQuotaId}
             columnLabels={columnLabels}
@@ -224,6 +227,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         )}
         {isEquipmentShownInGroup && (
           <PagedTable<EquipmentQuotaGroup>
+            testId={`${testId}_equipment_list_grouped`}
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}

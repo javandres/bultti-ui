@@ -71,10 +71,11 @@ export type PropTypes = {
   isEditable: boolean
   onUpdate?: () => unknown
   valid: boolean
+  testId?: string
 }
 
 const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
-  ({ procurementUnit, isEditable, onUpdate, valid = true }) => {
+  ({ procurementUnit, isEditable, onUpdate, valid = true, testId }) => {
     let inspection = useContext(InspectionContext)
 
     let {
@@ -98,8 +99,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     let [refreshExecutionRequirement, { loading: refreshLoading }] = useMutationData(
       refreshExecutionRequirementForProcurementUnitMutation
     )
-
-    let [execRemoveExecutionRequirement] = useMutationData(removeExecutionRequirementMutation)
 
     let [updateWeeklyMeters, { loading: weeklyMetersUpdateLoading }] = useMutationData(
       weeklyMetersFromJoreMutation,
@@ -149,22 +148,6 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         update()
       }
     }, [procurementUnitRequirement, refreshExecutionRequirement, isEditable])
-
-    let removeExecutionRequirement = useCallback(async () => {
-      if (
-        isEditable &&
-        procurementUnitRequirement &&
-        confirm(text('executionRequirement_removeWarning'))
-      ) {
-        await execRemoveExecutionRequirement({
-          variables: {
-            requirementId: procurementUnitRequirement.id,
-          },
-        })
-
-        update()
-      }
-    }, [procurementUnitRequirement, execRemoveExecutionRequirement, update, isEditable])
 
     const onUpdateWeeklyMeters = useCallback(async () => {
       if (isEditable) {
@@ -218,6 +201,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
         </FlexRow>
         {procurementUnitRequirement && (
           <RequirementsTable
+            testId={`${testId}_table`}
             executionRequirement={procurementUnitRequirement}
             tableLayout={RequirementsTableLayout.BY_EMISSION_CLASS}
           />
@@ -249,6 +233,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
               <Text>executionRequirement_equipmentList</Text>
             </SubHeading>
             <RequirementEquipmentList
+              testId={`${testId}_equipment`}
               isEditable={isEditable}
               startDate={inspectionStartDate}
               onEquipmentChanged={update}
@@ -257,12 +242,12 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
             />
             {isEditable && (
               <AddEquipment
+                testId={`${testId}_equipment_controls`}
                 operatorId={procurementUnitRequirement.operator.id}
                 equipment={equipment}
                 onEquipmentChanged={update}
                 hasEquipment={equipment.length !== 0}
                 addEquipment={addEquipment}
-                removeAllEquipment={removeExecutionRequirement}
                 removeLabel={text('executionRequirement_remove')}
                 editableKeys={['percentageQuota']}
                 fieldLabels={equipmentColumnLabels}

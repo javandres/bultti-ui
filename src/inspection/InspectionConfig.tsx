@@ -103,6 +103,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           <FlexRow>
             <FormColumn>
               <Input
+                testId="inspection_name"
                 disabled={!canEditInspection}
                 value={inspectionValues.name || ''}
                 label={text('inspection_inspectionName')}
@@ -131,6 +132,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
               </FieldLabel>
               <ProductionDatePickers>
                 <DatePicker
+                  testId="production_start"
                   value={getDateString(inspectionValues.startDate)}
                   minDate={inspection.minStartDate}
                   maxDate={inspection.season.endDate}
@@ -141,6 +143,7 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
                   disabled={inspection.status !== InspectionStatus.Draft}
                 />
                 <DatePicker
+                  testId="production_end"
                   value={getDateString(inspectionValues.endDate)}
                   maxDate={inspection.season.endDate}
                   onChange={(dateString: string | null) => {
@@ -154,7 +157,11 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
           )}
           <FlexRow>
             <ActionsWrapper>
-              <Button style={{ marginRight: '1rem' }} onClick={onSave} disabled={!isDirty}>
+              <Button
+                data-cy="inspection_config_save"
+                style={{ marginRight: '1rem' }}
+                onClick={onSave}
+                disabled={!isDirty}>
                 <Text>save</Text>
               </Button>
               <Button

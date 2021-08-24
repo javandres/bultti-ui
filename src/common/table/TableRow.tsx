@@ -58,6 +58,7 @@ type RowPropTypes<ItemType extends TableItemType> = {
   isScrolling?: boolean
   getRowHighlightColor: (item: TableRowWithDataAndFunctions<ItemType>) => string
   getCellHighlightColor: (item: TableRowWithDataAndFunctions<ItemType>, key: string) => string
+  testId?: string
 }
 
 export const TableRow = observer(
@@ -68,6 +69,7 @@ export const TableRow = observer(
     getRowHighlightColor,
     getCellHighlightColor,
     data: allRows = [],
+    testId,
   }: RowPropTypes<ItemType>) => {
     let rowItem = row || allRows[index]
 
@@ -81,9 +83,14 @@ export const TableRow = observer(
     let rowHighlightColor = getRowHighlightColor(rowItem)
 
     return (
-      <TableRowElement key={rowId} isEditing={isEditingRow} style={style}>
+      <TableRowElement
+        key={rowId}
+        isEditing={isEditingRow}
+        style={style}
+        data-cy={`table_row_${itemEntries[0][1]} ${testId}_element`}>
         {itemEntries.map(([key, val], colIndex) => (
           <TableCell<ItemType>
+            testId={`${testId}_col_${colIndex}`}
             key={`${rowId}_${key as string}`}
             row={rowItem}
             rowId={rowId}
@@ -98,7 +105,11 @@ export const TableRow = observer(
           />
         ))}
         {onRemoveRow && (
-          <RowRemoveButton style={{ opacity: '0' }} onClick={() => onRemoveRow!(row.item)} />
+          <RowRemoveButton
+            data-cy={`${testId}_remove_btn`}
+            style={{ opacity: '0' }}
+            onClick={() => onRemoveRow!(row.item)}
+          />
         )}
       </TableRowElement>
     )

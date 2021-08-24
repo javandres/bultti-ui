@@ -36,6 +36,7 @@ export type PropTypes = {
   editableKeys: string[]
   fieldLabels: { [key: string]: string }
   updateQuota?: boolean
+  testId?: string
 }
 
 const AddEquipment: React.FC<PropTypes> = observer(
@@ -50,6 +51,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
     onEquipmentChanged,
     fieldLabels,
     updateQuota,
+    testId,
   }) => {
     let [quotaInput, setQuotaInput] = useState<number>(0)
     let [batchInput, setBatchInput] = useState<string>('')
@@ -141,11 +143,17 @@ const AddEquipment: React.FC<PropTypes> = observer(
       <>
         <FlexRow style={{ marginTop: '1rem' }}>
           {addBatchEquipment && (
-            <Button style={{ marginRight: '1rem' }} onClick={() => setBatchFormVisible(true)}>
+            <Button
+              data-cy={`${testId}_batch_add`}
+              style={{ marginRight: '1rem' }}
+              onClick={() => setBatchFormVisible(true)}>
               <Text>catalogue_batchAddEquipment</Text>
             </Button>
           )}
-          <Button style={{ marginRight: '1rem' }} onClick={() => setSearchFormVisible(true)}>
+          <Button
+            data-cy={`${testId}_find`}
+            style={{ marginRight: '1rem' }}
+            onClick={() => setSearchFormVisible(true)}>
             <Text>catalogue_findEquipment</Text>
           </Button>
           {DEBUG && (
@@ -164,7 +172,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
         </FlexRow>
         {foundEquipment && searchResultActive && (
           <Modal>
-            <AddEquipmentFormWrapper>
+            <AddEquipmentFormWrapper data-cy={`${testId}_`}>
               <SubHeading>
                 <Text>catalogue_addEquipment</Text>
               </SubHeading>
@@ -172,6 +180,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
               {updateQuota && (
                 <FlexRow style={{ marginTop: '1rem' }}>
                   <Input
+                    testId={`${testId}_quota_field`}
                     label="% Osuus"
                     type="number"
                     step={0.01}
@@ -182,12 +191,16 @@ const AddEquipment: React.FC<PropTypes> = observer(
               )}
               <ActionsWrapper style={{ marginTop: '0.5rem' }}>
                 <Button
+                  data-cy={`${testId}_accept_equipment`}
                   buttonStyle={ButtonStyle.ACCEPT}
                   onClick={onAddEquipment}
                   style={{ marginRight: '1rem' }}>
                   <Text>catalogue_addEquipment</Text>
                 </Button>
-                <Button buttonStyle={ButtonStyle.SECONDARY_REMOVE} onClick={onCancel}>
+                <Button
+                  data-cy={`${testId}_cancel_equipment`}
+                  buttonStyle={ButtonStyle.SECONDARY_REMOVE}
+                  onClick={onCancel}>
                   <Text>cancel</Text>
                 </Button>
               </ActionsWrapper>
@@ -201,6 +214,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
             </SubHeading>
             <Text>equipment_batchAddEquipment</Text>
             <TextArea
+              data-cy={`${testId}_batch_field`}
               value={batchInput}
               onChange={(e) => setBatchInput(e.target.value)}
               style={{ width: '100%' }}
@@ -208,6 +222,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
             />
             <ActionsWrapper style={{ marginTop: '1rem' }}>
               <Button
+                data-cy={`${testId}_batch_done`}
                 disabled={!batchInput}
                 style={{ marginRight: '1rem' }}
                 onClick={onAddBatchEquipment}>
@@ -225,6 +240,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
               <Text>catalogue_findEquipment</Text>
             </SubHeading>
             <InputForm
+              testId={`${testId}_search`}
               onCancel={() => setSearchFormVisible(false)}
               onDone={doSearch}
               doneLabel={text('catalogue_findByVehicleIdAndRegistryNumber', {
@@ -241,6 +257,7 @@ const AddEquipment: React.FC<PropTypes> = observer(
                   label: text('vehicleId'),
                   field: (
                     <Input
+                      testId={`${testId}_vehicle_id_field`}
                       onChange={(val) => setSearchVehicleId(val)}
                       value={searchVehicleId}
                     />

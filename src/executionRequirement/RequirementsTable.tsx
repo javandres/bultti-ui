@@ -33,7 +33,8 @@ const ExecutionRequirementsAreaContainer = styled.div`
 
 export interface IExecutionRequirement {
   requirements: PlannedEmissionClassRequirement[]
-  totalKilometers?: number | null
+  kilometersRequired?: number | null
+  kilometersObserved?: number | null
   averageAgeWeighted?: number | null
   averageAgeRequirement?: number | null
   averageAgeWeightedFulfilled?: number | null
@@ -42,6 +43,7 @@ export interface IExecutionRequirement {
 export type PropTypes = {
   executionRequirement: IExecutionRequirement
   tableLayout?: RequirementsTableLayout
+  testId?: string
 }
 
 const valuesLayoutColumnLabels: { [key in keyof PlannedEmissionClassRequirement]?: string } = {
@@ -63,7 +65,11 @@ type SummaryType = { unit: string; total: string }
 type ValueItemType = PlannedEmissionClassRequirement | SummaryType
 
 const RequirementsTable: React.FC<PropTypes> = observer(
-  ({ executionRequirement, tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS }) => {
+  ({
+    executionRequirement,
+    tableLayout = RequirementsTableLayout.BY_EMISSION_CLASS,
+    testId,
+  }) => {
     let requirementRows = useMemo((): Array<ValueItemType> => {
       let requirementValues = executionRequirement.requirements
 
@@ -192,17 +198,20 @@ const RequirementsTable: React.FC<PropTypes> = observer(
             'averageAgeWeighted',
             'averageAgeRequirement',
             'averageAgeWeightedFulfilled',
-            'totalKilometers',
+            'kilometersRequired',
+            'kilometersObserved',
           ])}
           labels={{
             averageAgeWeighted: 'Painotettu keski-ikä',
             averageAgeRequirement: 'Painotettu keski-ikä vaatimus',
             averageAgeWeightedFulfilled: 'Toteutunut keski-ikä',
-            totalKilometers: 'Suoritekilometrit yhteensä',
+            kilometersRequired: 'Suoritekilometrit',
+            kilometersObserved: 'Toteutetut kilometrit',
           }}
           renderValue={renderDisplayValue}
         />
         <Table<ValueItemType>
+          testId={testId}
           items={requirementRows}
           columnLabels={
             tableLayout === RequirementsTableLayout.BY_VALUES

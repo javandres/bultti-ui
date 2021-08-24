@@ -2,7 +2,6 @@ import React, { CSSProperties, useCallback, useEffect, useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
 import { useQueryData } from '../../util/useQueryData'
 import { Operator, UserRole } from '../../schema-types'
-import Dropdown from './Dropdown'
 import { gql } from '@apollo/client'
 import { compact } from 'lodash'
 import { useStateValue } from '../../state/useAppState'
@@ -101,6 +100,7 @@ const SelectOperator: React.FC<SelectOperatorPropTypes> = observer(
 
     return (
       <SidebarStyledDropdown
+        testId="operator_select"
         disabled={disabled || operators.length < 2}
         className={className}
         style={style}

@@ -39,6 +39,7 @@ export type PropTypes = {
   validationErrors: ValidationErrorData[]
   contractSelectionDate: Date
   isOnlyActiveCatalogueVisible: boolean
+  testId?: string
 }
 
 const operatingAreaNameLocalizationObj = {
@@ -60,6 +61,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     validationErrors = [],
     contractSelectionDate,
     isOnlyActiveCatalogueVisible,
+    testId,
   }) => {
     const { currentContracts = [], routes = [] } = procurementUnit || {}
 
@@ -101,10 +103,12 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
               : -1
           })[0]
       : undefined
+
     return (
       <ProcurementUnitView className={className}>
         {procurementUnit && (
           <ExpandableSection
+            testId={`${testId}_section`}
             unmountOnClose={true}
             error={validationErrors.length !== 0}
             isExpanded={expanded}
@@ -115,6 +119,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     <Text>procurementUnit_unitId</Text>
                   </HeaderHeading>
                   {procurementUnit.procurementUnitId}
+                  <HeaderHeading>
+                    <Text>procurementUnit_operationArea</Text>
+                  </HeaderHeading>
+                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
@@ -125,7 +133,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     .filter((routeId) => !!routeId)
                     .join(', ')}
                 </HeaderSection>
-                <HeaderSection style={{ flexGrow: 2 }}>
+                <HeaderSection>
                   <HeaderHeading>
                     <Text>procurementUnit_unitValidTime</Text>
                   </HeaderHeading>
@@ -133,19 +141,31 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     startDate={procurementUnit.startDate}
                     endDate={procurementUnit.endDate}
                   />
-                </HeaderSection>
-                <HeaderSection>
-                  <HeaderHeading>
-                    <Text>procurementUnit_operationArea</Text>
-                  </HeaderHeading>
-                  {operatingAreaNameLocalizationObj[procurementUnitAreaName]}
+                  {procurementUnit.optionPeriodStart && (
+                    <>
+                      <HeaderHeading>
+                        <Text>procurementUnit_optionPeriodStart</Text>
+                      </HeaderHeading>
+                      {procurementUnit.optionPeriodStart}
+                    </>
+                  )}
                 </HeaderSection>
                 <HeaderSection>
                   <HeaderHeading>
                     <Text>procurementUnit_ageRequirement</Text>
                   </HeaderHeading>
-                  {procurementUnit?.averageAgeRequirement || 0}{' '}
+                  {procurementUnit?.maximumAverageAge || 0}{' '}
                   <Text>procurementUnit_ageRequirementYears</Text>
+                  {procurementUnit?.maximumAverageAgeWithOptions !==
+                    procurementUnit?.maximumAverageAge && (
+                    <>
+                      <HeaderHeading>
+                        <Text>procurementUnit_ageRequirementWithOptions</Text>
+                      </HeaderHeading>
+                      {procurementUnit?.maximumAverageAgeWithOptions}{' '}
+                      <Text>procurementUnit_ageRequirementYears</Text>
+                    </>
+                  )}
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>
@@ -169,6 +189,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
             }>
             {(itemIsExpanded: boolean) => (
               <ProcurementUnitItemContent
+                testId={testId}
                 isVisible={itemIsExpanded}
                 showExecutionRequirements={showExecutionRequirements}
                 startDate={startDate}
