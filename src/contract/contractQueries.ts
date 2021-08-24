@@ -7,7 +7,6 @@ export const ContractUserRelationFragment = gql`
     createdAt
     updatedAt
     relatedBy
-    subscribed
     contract {
       id
     }
@@ -129,15 +128,6 @@ export const createContractMutation = gql`
 export const contractUserRelationsQuery = gql`
   query contractUserRelations($contractId: String!) {
     contractUserRelations(contractId: $contractId) {
-      ...ContractUserRelationFragment
-    }
-  }
-  ${ContractUserRelationFragment}
-`
-
-export const toggleContractUserSubscription = gql`
-  mutation toggleContractUserSubscribed($contractId: String!, $userId: String!) {
-    toggleContractUserSubscribed(contractId: $contractId, userId: $userId) {
       ...ContractUserRelationFragment
     }
   }

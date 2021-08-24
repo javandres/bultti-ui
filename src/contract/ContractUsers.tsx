@@ -1,17 +1,15 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { observer } from 'mobx-react-lite'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
-import { useStateValue } from '../state/useAppState'
 import ExpandableSection, {
   HeaderMainHeading,
   HeaderSection,
 } from '../common/components/ExpandableSection'
-import { useMutationData } from '../util/useMutationData'
 import { useQueryData } from '../util/useQueryData'
 import { LoadingDisplay } from '../common/components/Loading'
 import { useRefetch } from '../util/useRefetch'
 import UserRelations from '../common/components/UserRelations'
-import { contractUserRelationsQuery, toggleContractUserSubscription } from './contractQueries'
+import { contractUserRelationsQuery } from './contractQueries'
 import { ContractUserRelation } from '../schema-types'
 import { Text } from '../util/translate'
 
@@ -21,8 +19,6 @@ export type PropTypes = {
 }
 
 const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) => {
-  var [user] = useStateValue('user')
-
   let {
     data: contractRelations,
     loading: relationsLoading,
@@ -35,23 +31,6 @@ const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) 
   })
 
   let refetchRelations = useRefetch(refetch)
-
-  let [toggleSubscribed, { loading: userSubscribedLoading }] = useMutationData(
-    toggleContractUserSubscription
-  )
-
-  let onToggleSubscribed = useCallback(async () => {
-    if (user) {
-      await toggleSubscribed({
-        variables: {
-          contractId,
-          userId: user.id,
-        },
-      })
-
-      refetchRelations()
-    }
-  }, [contractId, user, toggleSubscribed, refetchRelations])
 
   return (
     <ExpandableSection
@@ -73,11 +52,7 @@ const ContractUsers: React.FC<PropTypes> = observer(({ contractId, className }) 
         </>
       }>
       <LoadingDisplay loading={relationsLoading} />
-      <UserRelations
-        relations={contractRelations}
-        loading={userSubscribedLoading}
-        onToggleSubscribed={onToggleSubscribed}
-      />
+      <UserRelations relations={contractRelations} />
     </ExpandableSection>
   )
 })

@@ -96,7 +96,6 @@ type ContractUserRelation {
   createdAt: DateTime!
   id: ID!
   relatedBy: ContractUserRelationType!
-  subscribed: Boolean!
   updatedAt: DateTime!
   user: User!
 }
@@ -686,7 +685,6 @@ type InspectionUserRelation {
   postInspection: PostInspection
   preInspection: PreInspection
   relatedBy: InspectionUserRelationType!
-  subscribed: Boolean!
   updatedAt: DateTime!
   user: User!
 }
@@ -834,8 +832,6 @@ type Mutation {
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   submitInspection(inspectionId: String!): Inspection!
-  toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
-  toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(quota: Float!, quotaId: String!): EquipmentCatalogueQuota!
@@ -1679,7 +1675,6 @@ type WorkerStatus {
 
 enum ContractUserRelationType {
   CREATED_BY
-  SUBSCRIBED_TO
   UPDATED_BY
 }
 
@@ -1727,7 +1722,6 @@ enum InspectionUserRelationType {
   REJECTED_BY
   SANCTIONS_ABANDONED_BY
   SUBMITTED_BY
-  SUBSCRIBED_TO
   UPDATED_BY
 }
 
