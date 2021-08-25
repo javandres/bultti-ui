@@ -67,8 +67,9 @@ export type PropTypes = RouteChildrenProps
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
   let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
 
-  let [removeTestData, { loading: testDataRemoveLoading }] =
-    useMutationData(removeTestDataMutation)
+  let [removeTestData, { loading: testDataRemoveLoading }] = useMutationData(
+    removeTestDataMutation
+  )
 
   let [removeUser, { loading: isRemoveUserLoading }] = useMutationData(removeUserMutation)
 

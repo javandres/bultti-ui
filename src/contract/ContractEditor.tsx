@@ -84,158 +84,154 @@ function createContractInput(contract: Partial<Contract>): ContractInputWithRule
 
 type RulesValue = { uploadFile: File[]; currentRules: ContractRule[] }
 
-const renderInput =
-  ({
-    contract,
-    operatorName,
-    contractFileReadError,
-    isNew,
-  }: {
-    contract: ContractInputWithRules
-    operatorName: string
-    contractFileReadError?: string
-    isNew: boolean
-  }) =>
-  (
-    key: string,
-    val: unknown,
-    onChange: (val: unknown) => void,
-    item: ContractInputWithRules,
-    readOnly: boolean,
-    loading: boolean = false,
-    onCancel?: () => unknown
-  ) => {
-    if (key === 'rules') {
-      let isRulesFileSet = !!contract.rulesFile
-      let rulesValue = val as RulesValue
+const renderInput = ({
+  contract,
+  operatorName,
+  contractFileReadError,
+  isNew,
+}: {
+  contract: ContractInputWithRules
+  operatorName: string
+  contractFileReadError?: string
+  isNew: boolean
+}) => (
+  key: string,
+  val: unknown,
+  onChange: (val: unknown) => void,
+  item: ContractInputWithRules,
+  readOnly: boolean,
+  loading: boolean = false,
+  onCancel?: () => unknown
+) => {
+  if (key === 'rules') {
+    let isRulesFileSet = !!contract.rulesFile
+    let rulesValue = val as RulesValue
 
-      return (
-        <>
-          {!readOnly && (
-            <>
-              <FileUploadInput
-                label={text('contractForm_labelUploadRules')}
-                onChange={onChange}
-                value={rulesValue.uploadFile}
-                disabled={readOnly}
-                onReset={onCancel}
-                loading={loading}
-              />
-              {contractFileReadError && (
-                <ErrorView>
-                  <Text>contractForm_tomlReadError</Text>
-                  {contractFileReadError}`
-                </ErrorView>
-              )}
-            </>
-          )}
-          <ExpandableFormSection
-            isExpanded={readOnly}
-            style={{ marginTop: '1rem' }}
-            headerContent={
-              <ExpandableFormSectionHeading>
-                <Text>contractForm_currentContract</Text>
-              </ExpandableFormSectionHeading>
-            }>
-            <div style={{ padding: '1rem 1rem 0' }}>
-              <SubHeading>
-                {isRulesFileSet ? (
-                  <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
-                ) : (
-                  <Text>contractForm_noLoadedContractFile</Text>
-                )}
-              </SubHeading>
-              {isRulesFileSet && (
-                <PagedTable
-                  columnLabels={{
-                    name: text('name'),
-                    value: text('value'),
-                    condition: text('contractForm_condition'),
-                    category: text('contractForm_category'),
-                    code: text('contractForm_code'),
-                  }}
-                  items={rulesValue.currentRules}
-                />
-              )}
-            </div>
-          </ExpandableFormSection>
-        </>
-      )
-    }
-
-    if (key === 'procurementUnitIds') {
-      if (isNew) {
-        return <React.Fragment />
-      }
-
-      return (
+    return (
+      <>
+        {!readOnly && (
+          <>
+            <FileUploadInput
+              label={text('contractForm_labelUploadRules')}
+              onChange={onChange}
+              value={rulesValue.uploadFile}
+              disabled={readOnly}
+              onReset={onCancel}
+              loading={loading}
+            />
+            {contractFileReadError && (
+              <ErrorView>
+                <Text>contractForm_tomlReadError</Text>
+                {contractFileReadError}`
+              </ErrorView>
+            )}
+          </>
+        )}
         <ExpandableFormSection
+          isExpanded={readOnly}
+          style={{ marginTop: '1rem' }}
           headerContent={
             <ExpandableFormSectionHeading>
-              <Text>procurementUnits</Text>
+              <Text>contractForm_currentContract</Text>
             </ExpandableFormSectionHeading>
           }>
-          <ContractProcurementUnitsEditor
-            readOnly={readOnly}
-            contract={contract}
-            onChange={onChange}
-          />
+          <div style={{ padding: '1rem 1rem 0' }}>
+            <SubHeading>
+              {isRulesFileSet ? (
+                <strong>{`Tiedosto ${contract.rulesFile}`}</strong>
+              ) : (
+                <Text>contractForm_noLoadedContractFile</Text>
+              )}
+            </SubHeading>
+            {isRulesFileSet && (
+              <PagedTable
+                columnLabels={{
+                  name: text('name'),
+                  value: text('value'),
+                  condition: text('contractForm_condition'),
+                  category: text('contractForm_category'),
+                  code: text('contractForm_code'),
+                }}
+                items={rulesValue.currentRules}
+              />
+            )}
+          </div>
         </ExpandableFormSection>
-      )
-    }
+      </>
+    )
+  }
 
-    if (key === 'operatorId') {
-      return (
-        <Input disabled={true} style={{ color: 'var(--dark-grey)' }} value={operatorName} />
-      )
-    }
-
-    if (readOnly) {
-      return <FieldValueDisplay>{val as string}</FieldValueDisplay>
-    }
-
-    if (key === 'description') {
-      return (
-        <TextArea
-          value={(val || '') as string}
-          onChange={(e) => onChange(e.target.value)}
-          name={key}
-          style={{ width: '100%' }}
-        />
-      )
-    }
-
-    if (key === 'startDate') {
-      return (
-        <DatePicker
-          value={val as string}
-          onChange={onChange}
-          maxDate={contract.endDate as string}
-          acceptableDayTypes={['Ma']}
-        />
-      )
-    }
-
-    if (key === 'endDate') {
-      return (
-        <DatePicker
-          value={val as string}
-          onChange={onChange}
-          minDate={contract.startDate as string}
-          acceptableDayTypes={['Su']}
-        />
-      )
+  if (key === 'procurementUnitIds') {
+    if (isNew) {
+      return <React.Fragment />
     }
 
     return (
-      <TextInput
-        type="text"
-        value={val as string}
+      <ExpandableFormSection
+        headerContent={
+          <ExpandableFormSectionHeading>
+            <Text>procurementUnits</Text>
+          </ExpandableFormSectionHeading>
+        }>
+        <ContractProcurementUnitsEditor
+          readOnly={readOnly}
+          contract={contract}
+          onChange={onChange}
+        />
+      </ExpandableFormSection>
+    )
+  }
+
+  if (key === 'operatorId') {
+    return <Input disabled={true} style={{ color: 'var(--dark-grey)' }} value={operatorName} />
+  }
+
+  if (readOnly) {
+    return <FieldValueDisplay>{val as string}</FieldValueDisplay>
+  }
+
+  if (key === 'description') {
+    return (
+      <TextArea
+        value={(val || '') as string}
         onChange={(e) => onChange(e.target.value)}
         name={key}
+        style={{ width: '100%' }}
       />
     )
   }
+
+  if (key === 'startDate') {
+    return (
+      <DatePicker
+        value={val as string}
+        onChange={onChange}
+        maxDate={contract.endDate as string}
+        acceptableDayTypes={['Ma']}
+      />
+    )
+  }
+
+  if (key === 'endDate') {
+    return (
+      <DatePicker
+        value={val as string}
+        onChange={onChange}
+        minDate={contract.startDate as string}
+        acceptableDayTypes={['Su']}
+      />
+    )
+  }
+
+  return (
+    <TextInput
+      type="text"
+      value={val as string}
+      onChange={(e) => onChange(e.target.value)}
+      name={key}
+    />
+  )
+}
 
 let formLabels = {
   startDate: text('contractForm_labelStartDate'),
@@ -274,8 +270,9 @@ const ContractEditor = observer(
       }
     }, [isNew, contract, globalOperator])
 
-    let [pendingContract, setPendingContract] =
-      useState<ContractInputWithRules>(initialContract)
+    let [pendingContract, setPendingContract] = useState<ContractInputWithRules>(
+      initialContract
+    )
 
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
@@ -380,10 +377,10 @@ const ContractEditor = observer(
         ],
       }
     )
-    let contractFileReadError = useMemo(
-      () => (createError || modifyError)?.message,
-      [modifyError, createError]
-    )
+    let contractFileReadError = useMemo(() => (createError || modifyError)?.message, [
+      modifyError,
+      createError,
+    ])
 
     let isLoading = modifyLoading || createLoading
     let goToContract = useContractPage()

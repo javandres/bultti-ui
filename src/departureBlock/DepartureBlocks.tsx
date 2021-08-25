@@ -42,11 +42,9 @@ const DepartureBlocks: React.FC<PropTypes> = observer(({ isEditable, isValid }) 
   const inspection = useContext(InspectionContext)
   const inspectionId = inspection?.id || ''
 
-  let {
-    data: departureBlocks = [],
-    loading,
-    refetch,
-  } = useQueryData<OperatorBlockDeparture[]>(departureBlocksQuery, {
+  let { data: departureBlocks = [], loading, refetch } = useQueryData<
+    OperatorBlockDeparture[]
+  >(departureBlocksQuery, {
     notifyOnNetworkStatusChange: true,
     skip: !inspectionId,
     variables: {

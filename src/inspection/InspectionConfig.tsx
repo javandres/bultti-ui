@@ -44,8 +44,10 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     operatorId: globalOperator.id,
   })
 
-  let [pendingInspectionInputValues, setPendingInspectionInputValues] =
-    useState<InspectionInput>({})
+  let [
+    pendingInspectionInputValues,
+    setPendingInspectionInputValues,
+  ] = useState<InspectionInput>({})
 
   let onUpdateValue = useCallback((name: string, value: unknown) => {
     setPendingInspectionInputValues((currentValues) => {
@@ -77,15 +79,14 @@ const InspectionConfig: React.FC<PropTypes> = observer(({ saveValues, inspection
     setPendingInspectionInputValues({})
   }, [inspection, pendingInspectionInputValues])
 
-  let inspectionValues = useMemo(
-    () => ({ ...inspection, ...pendingInspectionInputValues }),
-    [inspection, pendingInspectionInputValues]
-  )
+  let inspectionValues = useMemo(() => ({ ...inspection, ...pendingInspectionInputValues }), [
+    inspection,
+    pendingInspectionInputValues,
+  ])
 
-  let isDirty = useMemo(
-    () => Object.keys(pendingInspectionInputValues).length !== 0,
-    [pendingInspectionInputValues]
-  )
+  let isDirty = useMemo(() => Object.keys(pendingInspectionInputValues).length !== 0, [
+    pendingInspectionInputValues,
+  ])
 
   useWatchDirtyForm(isDirty)
 

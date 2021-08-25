@@ -39,12 +39,14 @@ let abandonSanctionsMutation = gql`
 export type PropTypes = { inspection: PostInspection } & TabChildProps
 
 const ManageSanctions: React.FC<PropTypes> = observer(({ inspection }) => {
-  let [execAbandonSanctions, { loading: abandonSanctionsLoading }] =
-    useMutationData<PostInspection>(abandonSanctionsMutation, {
-      variables: {
-        inspectionId: inspection.id,
-      },
-    })
+  let [
+    execAbandonSanctions,
+    { loading: abandonSanctionsLoading },
+  ] = useMutationData<PostInspection>(abandonSanctionsMutation, {
+    variables: {
+      inspectionId: inspection.id,
+    },
+  })
 
   let navigate = useNavigate()
 

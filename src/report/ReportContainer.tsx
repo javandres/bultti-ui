@@ -43,11 +43,9 @@ const ReportContainer = observer((props: PropTypes) => {
 
   type ReportDataType = ReportTypeByName[typeof reportName]
 
-  let {
-    data: report,
-    loading: reportLoading,
-    refetch,
-  } = useQueryData<BaseReport<ReportDataType>>(createReportQueryByName(reportName), {
+  let { data: report, loading: reportLoading, refetch } = useQueryData<
+    BaseReport<ReportDataType>
+  >(createReportQueryByName(reportName), {
     notifyOnNetworkStatusChange: true,
     variables: {
       // Add a string variable that changes when the table state changes.
@@ -61,10 +59,10 @@ const ReportContainer = observer((props: PropTypes) => {
     },
   })
 
-  let reportDataItems = useMemo(
-    () => transformReport(reportName, report?.rows || []),
-    [reportName, report]
-  )
+  let reportDataItems = useMemo(() => transformReport(reportName, report?.rows || []), [
+    reportName,
+    report,
+  ])
 
   // Determine if the report is about some form of execution requirement.
   // These have their own report components.
