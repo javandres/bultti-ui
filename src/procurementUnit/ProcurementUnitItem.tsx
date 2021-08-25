@@ -15,8 +15,9 @@ import ExpandableSection, {
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import ProcurementUnitItemContent from './ProcurementUnitItemContent'
 import { text, Text } from '../util/translate'
-import { getDateObject } from '../util/formatDate'
+import { getDateObject, getReadableDate } from '../util/formatDate'
 import { isWithinInterval } from 'date-fns'
+import { lowerCase } from 'lodash'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -73,11 +74,8 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
       (err) => err.type === InspectionValidationError.MissingEquipmentCatalogues
     )
 
-    let contractInvalid = validationErrors.some((err) =>
-      [
-        InspectionValidationError.InvalidContracts,
-        InspectionValidationError.MissingContracts,
-      ].includes(err.type)
+    let contractInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingContracts
     )
 
     const procurementUnitAreaName = procurementUnit?.area?.name
@@ -152,7 +150,10 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                     <Text>contract</Text>
                   </HeaderHeading>
                   {contract ? (
-                    <ContractDescription>{contract.description}</ContractDescription>
+                    <ContractDescription>
+                      {contract.description} ({lowerCase(text('edited'))}{' '}
+                      {getReadableDate(contract.updatedAt)})
+                    </ContractDescription>
                   ) : (
                     text('procurementUnit_noValidContracts')
                   )}
