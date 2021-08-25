@@ -32,16 +32,18 @@ import { useNavigate } from '../util/urlValue'
 import { hasAccessRights } from '../util/userRoles'
 
 export function useInspectionById(inspectionId: string) {
-  let { data, loading, error, refetch: refetcher } = useQueryData<Inspection>(
-    inspectionQuery,
-    {
-      skip: !inspectionId,
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        inspectionId: inspectionId,
-      },
-    }
-  )
+  let {
+    data,
+    loading,
+    error,
+    refetch: refetcher,
+  } = useQueryData<Inspection>(inspectionQuery, {
+    skip: !inspectionId,
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      inspectionId: inspectionId,
+    },
+  })
 
   let refetch = useRefetch(refetcher, false)
   return { data, loading, error, refetch }
@@ -151,17 +153,18 @@ export function useFetchInspections(
 
   let queryOperator = operator || globalOperator || undefined
 
-  let { data: inspectionsData, loading, refetch } = useQueryData<Inspection>(
-    inspectionsByOperatorQuery,
-    {
-      skip: !operatorIsValid(queryOperator),
-      notifyOnNetworkStatusChange: true,
-      variables: {
-        operatorId: queryOperator?.id,
-        inspectionType,
-      },
-    }
-  )
+  let {
+    data: inspectionsData,
+    loading,
+    refetch,
+  } = useQueryData<Inspection>(inspectionsByOperatorQuery, {
+    skip: !operatorIsValid(queryOperator),
+    notifyOnNetworkStatusChange: true,
+    variables: {
+      operatorId: queryOperator?.id,
+      inspectionType,
+    },
+  })
 
   let inspections = !!inspectionsData && Array.isArray(inspectionsData) ? inspectionsData : []
 

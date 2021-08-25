@@ -137,12 +137,15 @@ const ProcurementUnitItemContent = observer(
 
     let hasAdminAccessRights = useHasAdminAccessRights()
 
-    const { data: procurementUnit, loading, refetch } =
-      useQueryData<ProcurementUnitType>(procurementUnitQuery, {
-        skip: !procurementUnitId || !isVisible,
-        variables: unitQueryVariables,
-        fetchPolicy: 'cache-and-network',
-      }) || {}
+    const {
+      data: procurementUnit,
+      loading,
+      refetch,
+    } = useQueryData<ProcurementUnitType>(procurementUnitQuery, {
+      skip: !procurementUnitId || !isVisible,
+      variables: unitQueryVariables,
+      fetchPolicy: 'cache-and-network',
+    }) || {}
 
     let updateViewData = useCallback(() => {
       refetch()
@@ -173,14 +176,12 @@ const ProcurementUnitItemContent = observer(
       .filter((cat) => isBetween(startDate, cat.startDate, cat.endDate))
       .some((cat) => cat.equipmentQuotas?.length !== 0)
 
-    let [
-      procurementUnitInputValues,
-      setProcurementUnitInputValues,
-    ] = useState<ProcurementUnitEditInput>({
-      optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
-      maximumAverageAge: procurementUnit?.maximumAverageAge,
-      optionPeriodStart: procurementUnit?.optionPeriodStart,
-    })
+    let [procurementUnitInputValues, setProcurementUnitInputValues] =
+      useState<ProcurementUnitEditInput>({
+        optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
+        maximumAverageAge: procurementUnit?.maximumAverageAge,
+        optionPeriodStart: procurementUnit?.optionPeriodStart,
+      })
 
     let [isUnitEditable, setIsUnitEditable] = useState(false)
 

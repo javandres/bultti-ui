@@ -125,8 +125,7 @@ export const TableCell = observer(
       [editableValues, item]
     )
 
-    let canEditCell =
-      onEditValue && itemEditableValues.includes((valueKey as unknown) as string)
+    let canEditCell = onEditValue && itemEditableValues.includes(valueKey as unknown as string)
 
     let pendingValue = pendingValues.find(
       (val) => keyFromItem(val.item) === itemId && val.key === key

@@ -57,14 +57,15 @@ const MATCH_AD_COVER_OBSERVATION_NAME = 'korin ulko'
 const MATCH_AD_COVER_OBSERVATION_DESCRIPTION = 'mainosteippa'
 
 const EquipmentDefectJolaRows: React.FC<PropTypes> = observer(({ inspection }) => {
-  let { data = [], loading, refetch } = useQueryData<EquipmentDefect[]>(
-    equipmentDefectPreviewQuery,
-    {
-      variables: {
-        inspectionId: inspection.id,
-      },
-    }
-  )
+  let {
+    data = [],
+    loading,
+    refetch,
+  } = useQueryData<EquipmentDefect[]>(equipmentDefectPreviewQuery, {
+    variables: {
+      inspectionId: inspection.id,
+    },
+  })
 
   // Refetch JOLA rows when the inspection period changes.
   useEffect(() => {

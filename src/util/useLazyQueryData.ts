@@ -41,10 +41,8 @@ export const useLazyQueryData = <
 
   let queryHookArr = useLazyQuery<TData, TVariables>(query, allOptions)
 
-  let [
-    queryFn,
-    { loading, error, data = {} as TData, refetch, called, networkStatus },
-  ] = queryHookArr || [() => {}, {}]
+  let [queryFn, { loading, error, data = {} as TData, refetch, called, networkStatus }] =
+    queryHookArr || [() => {}, {}]
 
   let availableRefetch = useCallback(
     async (variables?: TVariables): Promise<void> => {

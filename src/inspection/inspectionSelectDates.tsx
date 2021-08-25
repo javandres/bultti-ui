@@ -55,15 +55,13 @@ const InspectionSelectDates = observer(
     inspectionInput,
     onChange,
   }: PropTypes) => {
-    let {
-      data: inspectionDatesQueryResult,
-      loading: areInspectionDatesLoading,
-    } = useQueryData<InspectionDate[]>(getObservedInspectionDatesQuery, {
-      variables: {
-        seasonId: inspectionSeason.id,
-      },
-      skip: inspectionType === InspectionType.Pre,
-    })
+    let { data: inspectionDatesQueryResult, loading: areInspectionDatesLoading } =
+      useQueryData<InspectionDate[]>(getObservedInspectionDatesQuery, {
+        variables: {
+          seasonId: inspectionSeason.id,
+        },
+        skip: inspectionType === InspectionType.Pre,
+      })
 
     let dateOptions: DateOption[] = useMemo(() => {
       let opts: DateOption[] = []

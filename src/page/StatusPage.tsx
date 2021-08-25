@@ -46,9 +46,11 @@ const ItemSectionHeading = styled.h5`
 `
 
 const StatusPage: React.FC<RouteChildrenProps> = observer(({ children }) => {
-  let { data: workerStatus = [], loading, refetch } = useQueryData<WorkerStatus[]>(
-    workerStatusQuery
-  )
+  let {
+    data: workerStatus = [],
+    loading,
+    refetch,
+  } = useQueryData<WorkerStatus[]>(workerStatusQuery)
 
   return (
     <Page>

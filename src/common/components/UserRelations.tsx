@@ -63,21 +63,12 @@ const UserRoleBadge = styled.div`
   line-height: 1.35;
 `
 
-const SubscribedCheckbox = styled(Checkbox)`
-  margin-left: auto;
-
-  ${CheckboxLabel} {
-    font-size: 0.875rem;
-  }
-`
-
 export type UserRelation = InspectionUserRelation | ContractUserRelation
 type UserRelationType = InspectionUserRelationType | ContractUserRelationType
 
 const userRelationTypeMap = {
   CREATED_BY: 'createdBy',
   UPDATED_BY: 'updatedBy',
-  SUBSCRIBED_TO: 'subscribedTo',
   PUBLISHED_BY: 'publishedBy',
   REJECTED_BY: 'rejectedBy',
   SUBMITTED_BY: 'submittedBy',
@@ -87,67 +78,45 @@ const userRelationTypeMap = {
 
 export type PropTypes = {
   relations: UserRelation[]
-  onToggleSubscribed: () => unknown
-  loading?: boolean
 }
 
-const UserRelations = observer(
-  ({ relations, onToggleSubscribed, loading = false }: PropTypes) => {
-    var [user] = useStateValue('user')
+const UserRelations = observer(({ relations }: PropTypes) => {
+  var [user] = useStateValue('user')
 
-    let allRelations = orderBy<UserRelation>(relations || [], 'updatedAt', 'desc')
-    let ownRelations = allRelations.filter((rel) => rel.user.email === user?.email)
+  let allRelations = orderBy<UserRelation>(relations || [], 'updatedAt', 'desc')
 
-    let subscriptionRelation = ownRelations.find(
-      (rel) => rel.relatedBy === InspectionUserRelationType.SubscribedTo
-    )
-
-    let isSubscribed =
-      subscriptionRelation?.subscribed || ownRelations.some((rel) => rel.subscribed)
-
-    return (
-      <UserList>
-        <UserRow>
-          <RowTitle>Sinä</RowTitle>
+  return (
+    <UserList>
+      <UserRow>
+        <RowTitle>Sinä</RowTitle>
+        <RowContent>
+          <RowUserName>
+            <UserRoleBadge>{user?.role}</UserRoleBadge>
+            {user?.name}
+          </RowUserName>
+        </RowContent>
+      </UserRow>
+      {allRelations.map((rel: UserRelation) => (
+        <UserRow key={rel.id}>
+          <RowTitle>
+            {getUserRelationTypeText(rel.relatedBy)}
+            <TitleTimestamp>
+              {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
+            </TitleTimestamp>
+          </RowTitle>
           <RowContent>
             <RowUserName>
-              <UserRoleBadge>{user?.role}</UserRoleBadge>
-              {user?.name}
+              <UserRoleBadge>{rel.user.role}</UserRoleBadge>
+              {rel.user.name} / {rel.user.organisation}
+              <br />
+              {rel.user.email}
             </RowUserName>
-            <SubscribedCheckbox
-              loading={loading}
-              label={isSubscribed ? 'Tilattu' : 'Ei tilattu'}
-              onChange={onToggleSubscribed}
-              checked={isSubscribed}
-              name="subscribed"
-              value="rel_subscribed"
-            />
           </RowContent>
         </UserRow>
-        {allRelations.map((rel: UserRelation) =>
-          rel === subscriptionRelation ? null : (
-            <UserRow key={rel.id}>
-              <RowTitle>
-                {getUserRelationTypeText(rel.relatedBy)}
-                <TitleTimestamp>
-                  {format(parseISO(rel.updatedAt), READABLE_TIME_FORMAT)}
-                </TitleTimestamp>
-              </RowTitle>
-              <RowContent>
-                <RowUserName>
-                  <UserRoleBadge>{rel.user.role}</UserRoleBadge>
-                  {rel.user.name} / {rel.user.organisation}
-                  <br />
-                  {rel.user.email}
-                </RowUserName>
-              </RowContent>
-            </UserRow>
-          )
-        )}
-      </UserList>
-    )
-  }
-)
+      ))}
+    </UserList>
+  )
+})
 
 const getUserRelationTypeText = (rel: UserRelationType) => {
   let key = userRelationTypeMap[rel]

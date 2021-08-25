@@ -66,9 +66,8 @@ function sanctionSummaryTransform(
       procurementUnitId,
     } = row
 
-    let resultRow: SanctionSummaryReportItemConstants | undefined = resultRows.get(
-      procurementUnitId
-    )
+    let resultRow: SanctionSummaryReportItemConstants | undefined =
+      resultRows.get(procurementUnitId)
     if (!resultRow) {
       resultRow = {
         procurementUnitId: row.procurementUnitId,
