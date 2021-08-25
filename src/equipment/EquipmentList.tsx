@@ -228,6 +228,7 @@ const EquipmentList: React.FC<PropTypes> = observer(
         )}
         {isEquipmentShownInGroup && (
           <PagedTable<EquipmentQuotaGroup>
+            testId={`${testId}_equipment_list_grouped`}
             items={equipmentGroups}
             columnLabels={groupedColumnLabels}
             renderValue={renderCellValue}

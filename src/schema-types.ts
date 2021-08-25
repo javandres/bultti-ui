@@ -111,7 +111,6 @@ export type ContractUserRelation = {
   __typename?: 'ContractUserRelation'
   id: Scalars['ID']
   relatedBy: ContractUserRelationType
-  subscribed: Scalars['Boolean']
   contract: Contract
   user: User
   createdAt: Scalars['DateTime']
@@ -121,7 +120,6 @@ export type ContractUserRelation = {
 export enum ContractUserRelationType {
   CreatedBy = 'CREATED_BY',
   UpdatedBy = 'UPDATED_BY',
-  SubscribedTo = 'SUBSCRIBED_TO',
 }
 
 export type DangerousDefectSanctionsReport = {
@@ -833,7 +831,6 @@ export type InspectionUserRelation = {
   __typename?: 'InspectionUserRelation'
   id: Scalars['ID']
   relatedBy: InspectionUserRelationType
-  subscribed: Scalars['Boolean']
   preInspection?: Maybe<PreInspection>
   postInspection?: Maybe<PostInspection>
   user: User
@@ -844,7 +841,6 @@ export type InspectionUserRelation = {
 export enum InspectionUserRelationType {
   CreatedBy = 'CREATED_BY',
   UpdatedBy = 'UPDATED_BY',
-  SubscribedTo = 'SUBSCRIBED_TO',
   PublishedBy = 'PUBLISHED_BY',
   RejectedBy = 'REJECTED_BY',
   SubmittedBy = 'SUBMITTED_BY',
@@ -860,6 +856,7 @@ export enum InspectionValidationError {
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
+  MissingRequirementVehicles = 'MISSING_REQUIREMENT_VEHICLES',
   HfpUnavailableForInspectionDates = 'HFP_UNAVAILABLE_FOR_INSPECTION_DATES',
   PostInspectionMissingLinkedPreInspections = 'POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS',
 }
@@ -1000,7 +997,6 @@ export type Mutation = {
   saveInspectionDepartureBlocks: Array<OperatorBlockDeparture>
   updateEquipmentRequirementQuota: ExecutionRequirementQuota
   generateEquipmentForPreInspection: Scalars['Boolean']
-  toggleContractUserSubscribed?: Maybe<ContractUserRelation>
   createContract: Contract
   modifyContract: Contract
   removeContract: Scalars['Boolean']
@@ -1027,7 +1023,6 @@ export type Mutation = {
   publishInspection: Inspection
   rejectInspection: Inspection
   removeInspection: Scalars['Boolean']
-  toggleInspectionUserSubscribed?: Maybe<InspectionUserRelation>
   updateEquipmentDefectSanctions: Array<EquipmentDefectSanction>
 }
 
@@ -1140,11 +1135,6 @@ export type MutationGenerateEquipmentForPreInspectionArgs = {
   inspectionId: Scalars['String']
 }
 
-export type MutationToggleContractUserSubscribedArgs = {
-  userId: Scalars['String']
-  contractId: Scalars['String']
-}
-
 export type MutationCreateContractArgs = {
   contractInput: ContractInput
   file: Scalars['Upload']
@@ -1236,11 +1226,6 @@ export type MutationRejectInspectionArgs = {
 }
 
 export type MutationRemoveInspectionArgs = {
-  inspectionId: Scalars['String']
-}
-
-export type MutationToggleInspectionUserSubscribedArgs = {
-  userId: Scalars['String']
   inspectionId: Scalars['String']
 }
 

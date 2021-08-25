@@ -163,7 +163,10 @@ const EditEquipmentCatalogue = observer(
       <EditEquipmentCatalogueView>
         <>
           {!pendingCatalogue && catalogue && (
-            <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels}>
+            <ValueDisplay
+              testId="catalogue_details"
+              item={catalogue}
+              labels={equipmentCatalogueLabels}>
               <FlexRow style={{ marginLeft: 'auto' }}>
                 <Button onClick={editCurrentCatalogue}>
                   <Text>edit</Text>
@@ -182,6 +185,7 @@ const EditEquipmentCatalogue = observer(
           )}
           {pendingCatalogue && (
             <ItemForm<EquipmentCatalogueInput>
+              testId="catalogue_edit_form"
               item={pendingCatalogue}
               labels={equipmentCatalogueLabels}
               hints={equipmentCatalogueHints}

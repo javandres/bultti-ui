@@ -91,7 +91,6 @@ type ContractUserRelation {
   createdAt: DateTime!
   id: ID!
   relatedBy: ContractUserRelationType!
-  subscribed: Boolean!
   updatedAt: DateTime!
   user: User!
 }
@@ -681,7 +680,6 @@ type InspectionUserRelation {
   postInspection: PostInspection
   preInspection: PreInspection
   relatedBy: InspectionUserRelationType!
-  subscribed: Boolean!
   updatedAt: DateTime!
   user: User!
 }
@@ -830,8 +828,6 @@ type Mutation {
   removeUser(email: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   submitInspection(inspectionId: String!): Inspection!
-  toggleContractUserSubscribed(contractId: String!, userId: String!): ContractUserRelation
-  toggleInspectionUserSubscribed(inspectionId: String!, userId: String!): InspectionUserRelation
   updateEquipment(equipmentId: String!): Equipment
   updateEquipmentCatalogue(catalogueId: String!, equipmentCatalogue: EquipmentCatalogueInput!): EquipmentCatalogue!
   updateEquipmentCatalogueQuota(quota: Float!, quotaId: String!): EquipmentCatalogueQuota!
@@ -1661,7 +1657,6 @@ type WorkerStatus {
 
 enum ContractUserRelationType {
   CREATED_BY
-  SUBSCRIBED_TO
   UPDATED_BY
 }
 
@@ -1709,7 +1704,6 @@ enum InspectionUserRelationType {
   REJECTED_BY
   SANCTIONS_ABANDONED_BY
   SUBMITTED_BY
-  SUBSCRIBED_TO
   UPDATED_BY
 }
 
@@ -1722,6 +1716,7 @@ enum InspectionValidationError {
   MISSING_EQUIPMENT_CATALOGUES
   MISSING_EXECUTION_REQUIREMENTS
   MISSING_REQUIREMENT_QUOTAS
+  MISSING_REQUIREMENT_VEHICLES
   POST_INSPECTION_MISSING_LINKED_PRE_INSPECTIONS
 }
 

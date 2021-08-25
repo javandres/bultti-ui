@@ -72,7 +72,6 @@ export const preInspectionFragment = gql`
       createdAt
       updatedAt
       relatedBy
-      subscribed
       user {
         id
         email
@@ -107,7 +106,6 @@ export const postInspectionFragment = gql`
       createdAt
       updatedAt
       relatedBy
-      subscribed
       user {
         id
         email
@@ -265,7 +263,6 @@ export const inspectionUserRelationsQuery = gql`
       createdAt
       updatedAt
       relatedBy
-      subscribed
       preInspection {
         id
       }
@@ -278,27 +275,6 @@ export const inspectionUserRelationsQuery = gql`
     }
   }
   ${UserFragment}
-`
-
-export const toggleUserInspectionSubscription = gql`
-  mutation InspectionUserSubscribed($inspectionId: String!, $userId: String!) {
-    toggleInspectionUserSubscribed(inspectionId: $inspectionId, userId: $userId) {
-      id
-      createdAt
-      updatedAt
-      relatedBy
-      subscribed
-      preInspection {
-        id
-      }
-      postInspection {
-        id
-      }
-      user {
-        id
-      }
-    }
-  }
 `
 
 export const removeInspectionMutation = gql`

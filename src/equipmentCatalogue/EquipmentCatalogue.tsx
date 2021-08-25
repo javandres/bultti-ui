@@ -45,7 +45,11 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
     return (
       <EquipmentCatalogueView>
         {!isCatalogueEditable && catalogue && (
-          <ValueDisplay item={catalogue} labels={equipmentCatalogueLabels} />
+          <ValueDisplay
+            testId="catalogue_details"
+            item={catalogue}
+            labels={equipmentCatalogueLabels}
+          />
         )}
         {isCatalogueEditable && (
           <EditEquipmentCatalogue
@@ -67,6 +71,7 @@ const EquipmentCatalogue: React.FC<PropTypes> = observer(
             />
             {isCatalogueEditable && (
               <AddEquipment
+                testId="catalogue_add_equipment"
                 operatorId={operatorId}
                 equipment={equipment}
                 onEquipmentChanged={onCatalogueChanged}

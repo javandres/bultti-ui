@@ -110,7 +110,7 @@ const ProcurementUnits: React.FC<PropTypes> = observer(
 
               return (
                 <ProcurementUnitItem
-                  testId={`procurement_unit_${idx}`}
+                  testId={`procurement_unit`}
                   validationErrors={unitErrors}
                   requirementsEditable={requirementsEditable}
                   isCatalogueEditable={isCatalogueEditable}

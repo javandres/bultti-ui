@@ -57,6 +57,7 @@ export type PropTypes<ItemType extends Record<string, unknown>> = {
   children?: React.ReactChild | false
   style?: CSSProperties
   valuesPerRow?: number
+  testId?: string
 }
 
 const defaultRenderValue = (key: string, val: unknown): ReactNode => {
@@ -79,11 +80,12 @@ const ValueDisplay = observer(
     style,
     objectPaths,
     valuesPerRow = 2,
+    testId,
   }: PropTypes<ItemType>) => {
     let itemEntries = useOrderedValues(item, labels, order, hideKeys)
 
     return (
-      <ValueDisplayView style={style} className={className}>
+      <ValueDisplayView data-cy={testId} style={style} className={className}>
         {itemEntries.map(([key, val]) => {
           let displayValue = val
 
