@@ -8,19 +8,16 @@ import {
   contractsQuery,
   createContractMutation,
   modifyContractMutation,
-  procurementUnitOptionsQuery,
   removeContractMutation,
 } from './contractQueries'
-import { addYears } from 'date-fns'
 import { useStateValue } from '../state/useAppState'
 import { ErrorView } from '../common/components/Messages'
-import Input, { TextArea, TextInput } from '../common/input/Input'
-import ContractProcurementUnitsEditor from './ContractProcurementUnitsEditor'
+import { TextArea, TextInput } from '../common/input/Input'
 import ExpandableSection, {
   ContentWrapper,
   HeaderBoldHeading,
 } from '../common/components/ExpandableSection'
-import { get, isEqual, orderBy } from 'lodash'
+import { get, isEqual } from 'lodash'
 import { pickGraphqlData } from '../util/pickGraphqlData'
 import ContractUsers from './ContractUsers'
 import { useContractPage } from './contractUtils'
@@ -30,10 +27,8 @@ import FileUploadInput from '../common/input/FileUploadInput'
 import { useUploader } from '../util/useUploader'
 import { SubHeading } from '../common/components/Typography'
 import { text, Text } from '../util/translate'
-import { getDateString } from '../util/formatDate'
 import PagedTable from '../common/table/PagedTable'
 import { ApolloError } from '@apollo/client'
-import DatePicker from '../common/input/DatePicker'
 import { useShowErrorNotification } from '../util/useShowNotification'
 import { useHistory } from 'react-router-dom'
 
@@ -67,18 +62,11 @@ type ContractInputWithRules = ContractInput & {
   rules?: { uploadFile: File[]; currentRules: ContractRule[] }
 }
 
-function createContractInput(contract: Partial<Contract>): ContractInputWithRules {
+function createContractInput(contract?: Partial<Contract>): ContractInputWithRules {
   return {
-    id: contract.id,
-    description: contract.description ? contract.description : '',
-    startDate: contract.startDate,
-    endDate: contract.endDate,
-    operatorId: contract.operatorId,
-    rulesFile: contract.rulesFile,
-    procurementUnitIds: orderBy(
-      (contract?.procurementUnits || []).map((pu) => pu.id),
-      'procurementUnitId'
-    ),
+    id: contract?.id,
+    description: contract?.description ? contract.description : '',
+    rulesFile: contract?.rulesFile,
   }
 }
 
@@ -87,14 +75,10 @@ type RulesValue = { uploadFile: File[]; currentRules: ContractRule[] }
 const renderInput =
   ({
     contract,
-    operatorName,
     contractFileReadError,
-    isNew,
   }: {
     contract: ContractInputWithRules
-    operatorName: string
     contractFileReadError?: string
-    isNew: boolean
   }) =>
   (
     key: string,
@@ -163,33 +147,6 @@ const renderInput =
       )
     }
 
-    if (key === 'procurementUnitIds') {
-      if (isNew) {
-        return <React.Fragment />
-      }
-
-      return (
-        <ExpandableFormSection
-          headerContent={
-            <ExpandableFormSectionHeading>
-              <Text>procurementUnits</Text>
-            </ExpandableFormSectionHeading>
-          }>
-          <ContractProcurementUnitsEditor
-            readOnly={readOnly}
-            contract={contract}
-            onChange={onChange}
-          />
-        </ExpandableFormSection>
-      )
-    }
-
-    if (key === 'operatorId') {
-      return (
-        <Input disabled={true} style={{ color: 'var(--dark-grey)' }} value={operatorName} />
-      )
-    }
-
     if (readOnly) {
       return <FieldValueDisplay>{val as string}</FieldValueDisplay>
     }
@@ -197,32 +154,11 @@ const renderInput =
     if (key === 'description') {
       return (
         <TextArea
+          required={true}
           value={(val || '') as string}
           onChange={(e) => onChange(e.target.value)}
           name={key}
           style={{ width: '100%' }}
-        />
-      )
-    }
-
-    if (key === 'startDate') {
-      return (
-        <DatePicker
-          value={val as string}
-          onChange={onChange}
-          maxDate={contract.endDate as string}
-          acceptableDayTypes={['Ma']}
-        />
-      )
-    }
-
-    if (key === 'endDate') {
-      return (
-        <DatePicker
-          value={val as string}
-          onChange={onChange}
-          minDate={contract.startDate as string}
-          acceptableDayTypes={['Su']}
         />
       )
     }
@@ -261,14 +197,7 @@ const ContractEditor = observer(
 
     let initialContract: ContractInputWithRules = useMemo(() => {
       if (isNew) {
-        let newContract: Partial<Contract> = {
-          operatorId: globalOperator?.id,
-          operator: globalOperator || undefined,
-          startDate: getDateString(new Date()),
-          endDate: getDateString(addYears(new Date(), 1)),
-        }
-
-        return createContractInput(newContract)
+        return createContractInput()
       } else {
         return createContractInput(contract!)
       }
@@ -280,15 +209,6 @@ const ContractEditor = observer(
     let resetChanges = useCallback(() => {
       setPendingContract(initialContract)
     }, [initialContract])
-
-    useEffect(() => {
-      if (isNew && pendingContract.operatorId !== globalOperator?.id) {
-        setPendingContract({
-          ...pendingContract,
-          operatorId: globalOperator?.id,
-        })
-      }
-    }, [globalOperator && globalOperator.id, isNew])
 
     let [rulesFiles, setRulesFiles] = useState<File[]>([])
 
@@ -306,10 +226,7 @@ const ContractEditor = observer(
     }, [rulesFiles, isNew, pendingContract, contract, editable])
 
     let pendingContractValid = useMemo(
-      () =>
-        (!isNew || (isNew && rulesFiles.length !== 0)) &&
-        !!pendingContract?.startDate &&
-        !!pendingContract?.endDate,
+      () => !isNew || (isNew && rulesFiles.length !== 0 && !!pendingContract.description),
       [isNew, pendingContract, rulesFiles]
     )
 
@@ -325,18 +242,9 @@ const ContractEditor = observer(
         }
 
         setPendingContract((currentVal) => {
-          let nextProcurementUnits =
-            key === 'procurementUnitIds' ? nextValue : currentVal?.procurementUnitIds || []
-
-          // Reset procurement units if operatorId changes.
-          if (key === 'operatorId') {
-            nextProcurementUnits = []
-          }
-
           return {
             ...currentVal,
             [key]: nextValue,
-            procurementUnitIds: nextProcurementUnits,
           }
         })
       },
@@ -354,30 +262,13 @@ const ContractEditor = observer(
           setPendingContract(createContractInput(mutationResult))
         }
       },
-      refetchQueries: ({ data }) => {
-        let mutationResult = pickGraphqlData(data)
-
-        return [
-          { query: contractsQuery, variables: { operatorId: mutationResult?.operatorId } },
-          {
-            query: procurementUnitOptionsQuery,
-            variables: {
-              operatorId: mutationResult?.operatorId,
-              startDate: mutationResult?.startDate,
-              endDate: mutationResult?.endDate,
-              contractId: pendingContract.id,
-            },
-          },
-        ]
-      },
+      refetchQueries: ['contracts'],
     })
 
     let [createContract, { loading: createLoading, uploadError: createError }] = useUploader(
       createContractMutation,
       {
-        refetchQueries: [
-          { query: contractsQuery, variables: { operatorId: pendingContract.operatorId } },
-        ],
+        refetchQueries: ['contracts'],
       }
     )
     let contractFileReadError = useMemo(
@@ -445,14 +336,7 @@ const ContractEditor = observer(
     let [removeContract, { loading: removeLoading }] = useMutationData<Contract>(
       removeContractMutation,
       {
-        refetchQueries: [
-          {
-            query: contractsQuery,
-            variables: {
-              operatorId: contract ? contract.operatorId : null,
-            },
-          },
-        ],
+        refetchQueries: ['contracts'],
       }
     )
 
@@ -520,11 +404,7 @@ const ContractEditor = observer(
           renderLabel={renderLabel}
           renderInput={renderInput({
             contractFileReadError,
-            isNew,
             contract: pendingContract,
-            operatorName: contract
-              ? contract.operator.operatorName
-              : globalOperator.operatorName,
           })}
         />
       </ContractEditorView>

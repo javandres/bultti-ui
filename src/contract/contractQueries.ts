@@ -21,31 +21,9 @@ export const ContractFragment = gql`
   fragment ContractFragment on Contract {
     id
     description
-    startDate
-    endDate
     createdAt
     updatedAt
-    operatorId
     rulesFile
-    operator {
-      id
-      operatorIds
-      operatorName
-    }
-    procurementUnits {
-      id
-      procurementUnitId
-      startDate
-      endDate
-      areaId
-      area {
-        id
-        name
-      }
-      routes {
-        routeId
-      }
-    }
     userRelations {
       ...ContractUserRelationFragment
     }
@@ -70,46 +48,28 @@ export const contractQuery = gql`
 `
 
 export const contractsQuery = gql`
-  query contracts($operatorId: Int) {
-    contracts(operatorId: $operatorId) {
+  query contracts {
+    contracts {
       ...ContractFragment
     }
   }
   ${ContractFragment}
 `
 
-export const procurementUnitOptionsQuery = gql`
-  query contractProcurementUnitOptions(
-    $operatorId: Int!
-    $startDate: BulttiDate!
-    $endDate: BulttiDate!
-    $contractId: String!
-  ) {
-    contractProcurementUnitOptions(
-      operatorId: $operatorId
-      startDate: $startDate
-      endDate: $endDate
-      contractId: $contractId
-    ) {
+export const contractOptionsQuery = gql`
+  query contracts {
+    contracts {
       id
-      name
-      startDate
-      endDate
-      routes
-      areaName
-      isUnselectingDisabled
-      currentContracts {
-        id
-        startDate
-        endDate
-      }
+      description
+      createdAt
+      updatedAt
     }
   }
 `
 
 export const modifyContractMutation = gql`
-  mutation modifyContract($file: Upload, $contractInput: ContractInput!, $operatorId: Int!) {
-    modifyContract(file: $file, contractInput: $contractInput, operatorId: $operatorId) {
+  mutation modifyContract($file: Upload, $contractInput: ContractInput!) {
+    modifyContract(file: $file, contractInput: $contractInput) {
       ...ContractFragment
     }
   }
@@ -135,7 +95,7 @@ export const contractUserRelationsQuery = gql`
 `
 
 export const removeContractMutation = gql`
-  mutation removeContract($contractId: String!, $operatorId: Int!) {
-    removeContract(contractId: $contractId, operatorId: $operatorId)
+  mutation removeContract($contractId: String!) {
+    removeContract(contractId: $contractId)
   }
 `

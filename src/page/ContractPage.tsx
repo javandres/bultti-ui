@@ -3,21 +3,19 @@ import styled from 'styled-components/macro'
 import { observer } from 'mobx-react-lite'
 import { FlexRow, Page, PageContainer } from '../common/components/common'
 import { useQueryData } from '../util/useQueryData'
-import { Text } from '../util/translate'
+import { text, Text } from '../util/translate'
 import { contractsQuery } from '../contract/contractQueries'
 import { MessageContainer, MessageView } from '../common/components/Messages'
 import { Button, ButtonSize, ButtonStyle } from '../common/components/buttons/Button'
-import { useStateValue } from '../state/useAppState'
 import { useHasAdminAccessRights } from '../util/userRoles'
-import DateRangeDisplay from '../common/components/DateRangeDisplay'
-import { orderBy } from 'lodash'
 import { PageTitle } from '../common/components/PageTitle'
 import { useRefetch } from '../util/useRefetch'
 import { LinkButton } from '../common/components/buttons/LinkButton'
-import { operatorIsValid } from '../common/input/SelectOperator'
 import { Contract } from '../schema-types'
 import { RouteChildrenProps } from 'react-router-dom'
 import { useNavigate } from '../util/urlValue'
+import { lowerCase, orderBy } from 'lodash'
+import { getReadableDate } from '../util/formatDate'
 
 const ContractPageView = styled(Page)``
 
@@ -28,47 +26,23 @@ const ContractContentView = styled.div`
   height: 100%;
 `
 
-const ContractTitle = styled.h4`
-  margin: 0 1rem 0 0;
-  flex: 1 0;
-  white-space: nowrap;
-  align-self: flex-start;
-`
-
 const ContractDescription = styled.div`
-  font-size: 0.875rem;
   margin-right: 1rem;
-`
-
-const ContractDates = styled(DateRangeDisplay)`
-  margin-left: auto;
-  flex: 0;
-  align-self: flex-start;
+  font-weight: bold;
 `
 
 export type PropTypes = RouteChildrenProps
 
 const OperatorContractsListPage: FC<PropTypes> = observer(() => {
-  let [operator] = useStateValue('globalOperator')
   let hasAccessRights = useHasAdminAccessRights()
 
   let {
-    data: contractsData,
+    data: contractData,
     loading: contractsLoading,
     refetch: refetchContracts,
-  } = useQueryData<Contract[]>(contractsQuery, {
-    variables: {
-      operatorId: operator?.id,
-    },
-  })
+  } = useQueryData<Contract[]>(contractsQuery)
 
   let refetch = useRefetch(refetchContracts)
-
-  let contracts = useMemo(
-    () => orderBy(contractsData || [], 'startDate', 'desc'),
-    [contractsData]
-  )
-
   let navigate = useNavigate()
 
   const onOpenContract = useCallback(
@@ -78,13 +52,10 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
     [navigate]
   )
 
-  const onCreateNewContract = useCallback(() => {
-    if (!operatorIsValid(operator)) {
-      return
-    }
-
-    onOpenContract('new')
-  }, [operator])
+  let contracts = useMemo(
+    () => orderBy(contractData || [], ['createdAt', 'updatedAt'], ['desc', 'desc']),
+    [contractData]
+  )
 
   return (
     <ContractPageView>
@@ -102,8 +73,7 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
         {hasAccessRights && (
           <FlexRow style={{ margin: '1rem' }}>
             <Button
-              disabled={!operatorIsValid(operator)}
-              onClick={onCreateNewContract}
+              onClick={() => onOpenContract('new')}
               buttonStyle={ButtonStyle.NORMAL}
               size={ButtonSize.MEDIUM}
               style={{ marginLeft: 'auto' }}>
@@ -117,14 +87,12 @@ const OperatorContractsListPage: FC<PropTypes> = observer(() => {
               key={contractItem.id}
               onClick={() => onOpenContract(contractItem.id)}
               style={{ padding: '1rem 1rem 1rem 1.5rem' }}>
-              <ContractTitle>{contractItem?.operator?.operatorName}</ContractTitle>
               {contractItem?.description && (
-                <ContractDescription>{contractItem?.description}</ContractDescription>
+                <div>
+                  <strong>{contractItem?.description}</strong> ({lowerCase(text('edited'))}{' '}
+                  {getReadableDate(contractItem?.updatedAt)})
+                </div>
               )}
-              <ContractDates
-                startDate={contractItem.startDate as string}
-                endDate={contractItem.endDate as string}
-              />
             </LinkButton>
           ))}
         </ContractContentView>

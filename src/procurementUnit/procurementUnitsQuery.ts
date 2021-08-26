@@ -20,14 +20,11 @@ export const ProcurementUnitFragment = gql`
     routes {
       routeId
     }
-    currentContracts {
+    contract {
       id
-      operatorId
       createdAt
       updatedAt
       description
-      startDate
-      endDate
     }
   }
 `

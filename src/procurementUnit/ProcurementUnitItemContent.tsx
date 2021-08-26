@@ -13,11 +13,11 @@ import EquipmentCatalogue from '../equipmentCatalogue/EquipmentCatalogue'
 import { isBetween } from '../util/compare'
 import { useQueryData } from '../util/useQueryData'
 import { procurementUnitQuery, updateProcurementUnitMutation } from './procurementUnitsQuery'
-import { LoadingDisplay } from '../common/components/Loading'
+import Loading, { LoadingDisplay } from '../common/components/Loading'
 import { isBefore, nextMonday, subISOWeekYears } from 'date-fns'
 import ProcurementUnitExecutionRequirement from '../executionRequirement/ProcurementUnitExecutionRequirement'
 import { SubHeading } from '../common/components/Typography'
-import { MessageView } from '../common/components/Messages'
+import { ErrorView, MessageView } from '../common/components/Messages'
 import EditEquipmentCatalogue from '../equipmentCatalogue/EditEquipmentCatalogue'
 import { text, Text } from '../util/translate'
 import ExpandableSection, { HeaderSection } from '../common/components/ExpandableSection'
@@ -33,12 +33,14 @@ import { useHasAdminAccessRights } from '../util/userRoles'
 import DatePicker from '../common/input/DatePicker'
 import Dropdown from '../common/input/Dropdown'
 import { getDateObject, getDateString, getReadableDate } from '../util/formatDate'
+import { contractOptionsQuery } from '../contract/contractQueries'
 
 const procurementUnitLabels = {
   maximumAverageAge: text('procurementUnit_ageRequirement'),
   calculatedMaximumAgeRequirement: text('procurementUnit_ageRequirementWithOptions'),
   optionMaxAgeIncreaseMethod: text('procurementUnit_optionMaxAgeIncreaseMethod'),
   optionPeriodStart: text('procurementUnit_optionPeriodStart'),
+  contractId: text('contract'),
 }
 
 const ContentWrapper = styled.div`
@@ -66,7 +68,6 @@ type ContentPropTypes = {
   endDate: string
   procurementUnitId: string
   isCatalogueEditable: boolean
-  displayedContractUnitId?: string
   requirementsEditable: boolean
   isVisible: boolean
   catalogueInvalid: boolean
@@ -75,32 +76,51 @@ type ContentPropTypes = {
   testId?: string
 }
 
-function renderInput(key: string, val: unknown, onChange: (val: unknown) => void) {
-  let inputKey = key as keyof ProcurementUnitEditInput
+const renderFormWithContracts =
+  (contracts: Contract[] = []) =>
+  (key: string, val: unknown, onChange: (val: unknown) => void) => {
+    let inputKey = key as keyof ProcurementUnitEditInput
 
-  if (inputKey === 'optionPeriodStart') {
-    return <DatePicker isEmptyValueAllowed={true} value={val as string} onChange={onChange} />
-  }
+    if (inputKey === 'optionPeriodStart') {
+      return (
+        <DatePicker isEmptyValueAllowed={true} value={val as string} onChange={onChange} />
+      )
+    }
 
-  if (inputKey === 'optionMaxAgeIncreaseMethod') {
+    if (inputKey === 'optionMaxAgeIncreaseMethod') {
+      return (
+        <Dropdown
+          onSelect={onChange}
+          selectedItem={val as string}
+          items={Object.values(OptionMaxAgeIncreaseMethod)}
+          itemToLabel={(option) =>
+            text(`procurementUnit_optionMaxAgeIncreaseMethod_${option}`)
+          }
+        />
+      )
+    }
+
+    if (inputKey === 'contractId') {
+      return (
+        <Dropdown<Partial<Contract>>
+          unselectedValue={{ id: '', description: text('selectContract') }}
+          onSelect={(contract) => onChange(contract?.id || undefined)}
+          selectedItem={contracts.find((c) => c.id === val)}
+          items={contracts}
+          itemToLabel={(contract) => contract?.description || contract?.createdAt || ''}
+          itemToString={(contract) => contract?.id || ''}
+        />
+      )
+    }
+
     return (
-      <Dropdown
-        onSelect={onChange}
-        selectedItem={val as string}
-        items={Object.values(OptionMaxAgeIncreaseMethod)}
-        itemToLabel={(option) => text(`procurementUnit_optionMaxAgeIncreaseMethod_${option}`)}
+      <TextInput
+        type="number"
+        value={val as string}
+        onChange={(e) => onChange(parseFloat(e.target.value))}
       />
     )
   }
-
-  return (
-    <TextInput
-      type="number"
-      value={val as string}
-      onChange={(e) => onChange(parseFloat(e.target.value))}
-    />
-  )
-}
 
 function renderValueDisplayValue(key: string, val: unknown) {
   if (['maximumAverageAge', 'calculatedMaximumAgeRequirement'].includes(key)) {
@@ -121,7 +141,6 @@ const ProcurementUnitItemContent = observer(
     endDate,
     procurementUnitId,
     isCatalogueEditable,
-    displayedContractUnitId,
     requirementsEditable,
     isVisible,
     catalogueInvalid,
@@ -181,6 +200,7 @@ const ProcurementUnitItemContent = observer(
         optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
         maximumAverageAge: procurementUnit?.maximumAverageAge,
         optionPeriodStart: procurementUnit?.optionPeriodStart,
+        contractId: procurementUnit?.contract?.id,
       })
 
     let [isUnitEditable, setIsUnitEditable] = useState(false)
@@ -214,6 +234,7 @@ const ProcurementUnitItemContent = observer(
             procurementUnit.optionPeriodStart ||
             getDateString(defaultOptionStartDate) ||
             undefined,
+          contractId: procurementUnit.contract?.id,
         })
       }
 
@@ -264,30 +285,23 @@ const ProcurementUnitItemContent = observer(
       [navigate]
     )
 
+    let { data: contractOptionData } = useQueryData<Contract[]>(contractOptionsQuery)
+
+    let contractOptions = useMemo(
+      () => orderBy(contractOptionData || [], ['createdAt', 'updatedAt'], ['desc', 'desc']),
+      [contractOptionData]
+    )
+
+    let renderInput = renderFormWithContracts(!hasAdminAccessRights ? [] : contractOptions)
+    let contract = procurementUnit?.contract ? procurementUnit.contract : undefined
+
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
-        <div style={{ marginBottom: '1rem' }}>
-          {procurementUnit && (
-            <>
-              <SubHeading>
-                <Text>contracts</Text>
-              </SubHeading>
-              {procurementUnit.currentContracts?.map((contract: Contract, index: number) => {
-                return (
-                  <LinkButton
-                    data-cy="unit_contract_button"
-                    key={`contract-${index}`}
-                    onClick={() => onOpenContract(contract.id)}
-                    style={{
-                      fontWeight: displayedContractUnitId === contract.id ? 'bold' : 'unset',
-                    }}>
-                    {contract.startDate} - {contract.endDate}
-                  </LinkButton>
-                )
-              })}
-            </>
-          )}
+        <div style={{ marginBottom: '2rem' }}>
+          <SubHeading>
+            <Text>procurementUnit_unitInfo</Text>
+          </SubHeading>
           {!hasAdminAccessRights || !isUnitEditable ? (
             <ValueDisplay
               testId="unit_config_display"
@@ -322,6 +336,32 @@ const ProcurementUnitItemContent = observer(
               doneLabel={text('save')}
               renderInput={renderInput}
             />
+          )}
+        </div>
+        <div style={{ marginBottom: '2rem' }}>
+          <SubHeading>
+            <Text>contracts</Text>
+          </SubHeading>
+          {contract && hasAdminAccessRights ? (
+            <LinkButton
+              data-cy="unit_contract_button"
+              onClick={() => onOpenContract(contract?.id)}>
+              <div>
+                <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
+                {getReadableDate(contract.updatedAt)})
+              </div>
+            </LinkButton>
+          ) : contract ? (
+            <MessageView data-cy="unit_contract_button">
+              <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
+              {getReadableDate(contract.updatedAt)})
+            </MessageView>
+          ) : procurementUnit && !contract ? (
+            <ErrorView>
+              <Text>contractPage_noContracts</Text>
+            </ErrorView>
+          ) : (
+            <Loading />
           )}
         </div>
         {procurementUnit && (

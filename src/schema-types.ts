@@ -83,26 +83,17 @@ export type BlockDeviationsReport = {
 export type Contract = {
   __typename?: 'Contract'
   id: Scalars['ID']
-  description?: Maybe<Scalars['String']>
-  operatorId?: Maybe<Scalars['Int']>
-  operator: Operator
+  description: Scalars['String']
   createdAt: Scalars['DateTime']
   updatedAt: Scalars['DateTime']
   userRelations: Array<ContractUserRelation>
-  startDate: Scalars['BulttiDate']
-  endDate: Scalars['BulttiDate']
-  procurementUnits: Array<ProcurementUnit>
   rulesFile?: Maybe<Scalars['String']>
   rules?: Maybe<Array<ContractRule>>
 }
 
 export type ContractInput = {
   id?: Maybe<Scalars['ID']>
-  description?: Maybe<Scalars['String']>
-  operatorId?: Maybe<Scalars['Int']>
-  startDate?: Maybe<Scalars['BulttiDate']>
-  endDate?: Maybe<Scalars['BulttiDate']>
-  procurementUnitIds?: Maybe<Array<Scalars['String']>>
+  description: Scalars['String']
   rulesFile?: Maybe<Scalars['String']>
 }
 
@@ -862,7 +853,6 @@ export enum InspectionValidationError {
   InvalidInspectionTime = 'INVALID_INSPECTION_TIME',
   MissingBlockDepartures = 'MISSING_BLOCK_DEPARTURES',
   MissingContracts = 'MISSING_CONTRACTS',
-  InvalidContracts = 'INVALID_CONTRACTS',
   MissingEquipmentCatalogues = 'MISSING_EQUIPMENT_CATALOGUES',
   MissingExecutionRequirements = 'MISSING_EXECUTION_REQUIREMENTS',
   MissingRequirementQuotas = 'MISSING_REQUIREMENT_QUOTAS',
@@ -1151,13 +1141,11 @@ export type MutationCreateContractArgs = {
 }
 
 export type MutationModifyContractArgs = {
-  operatorId: Scalars['Int']
   contractInput: ContractInput
   file?: Maybe<Scalars['Upload']>
 }
 
 export type MutationRemoveContractArgs = {
-  operatorId: Scalars['Int']
   contractId: Scalars['String']
 }
 
@@ -1548,7 +1536,6 @@ export type Operator = {
   operatorName: Scalars['String']
   preInspections: Array<PreInspection>
   postInspections: Array<PostInspection>
-  contracts: Array<Contract>
   procurementUnits: Array<ProcurementUnit>
   equipment: Array<Equipment>
   equipmentCatalogues: Array<EquipmentCatalogue>
@@ -1774,8 +1761,7 @@ export type ProcurementUnit = {
   endDate: Scalars['BulttiDate']
   optionsUsed: Scalars['Int']
   executionRequirements: Array<PlannedUnitExecutionRequirement>
-  contracts: Array<Contract>
-  currentContracts?: Maybe<Array<Contract>>
+  contract?: Maybe<Contract>
 }
 
 export type ProcurementUnitMaximumAverageAgeWithOptionsArgs = {
@@ -1786,18 +1772,7 @@ export type ProcurementUnitEditInput = {
   maximumAverageAge: Scalars['Float']
   optionPeriodStart?: Maybe<Scalars['BulttiDate']>
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod
-}
-
-export type ProcurementUnitOption = {
-  __typename?: 'ProcurementUnitOption'
-  id: Scalars['String']
-  name: Scalars['String']
-  startDate: Scalars['BulttiDate']
-  endDate: Scalars['BulttiDate']
-  routes: Array<Scalars['String']>
-  areaName?: Maybe<Scalars['String']>
-  currentContracts?: Maybe<Array<Contract>>
-  isUnselectingDisabled: Scalars['Boolean']
+  contractId?: Maybe<Scalars['String']>
 }
 
 export type ProcurementUnitRoute = {
@@ -1856,7 +1831,6 @@ export type Query = {
   contracts: Array<Contract>
   contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
-  contractProcurementUnitOptions: Array<ProcurementUnitOption>
   contractUserRelations: Array<ContractUserRelation>
   observedExecutionRequirements: Array<ObservedExecutionRequirement>
   previewObservedRequirement?: Maybe<ObservedExecutionRequirement>
@@ -2114,24 +2088,12 @@ export type QueryDefectiveEquipmentDepartureSanctionsReportArgs = {
   inspectionId: Scalars['String']
 }
 
-export type QueryContractsArgs = {
-  date?: Maybe<Scalars['BulttiDate']>
-  operatorId?: Maybe<Scalars['Int']>
-}
-
 export type QueryContractsByProcurementUnitArgs = {
   procurementUnitId: Scalars['String']
 }
 
 export type QueryContractArgs = {
   contractId: Scalars['String']
-}
-
-export type QueryContractProcurementUnitOptionsArgs = {
-  contractId: Scalars['String']
-  endDate: Scalars['BulttiDate']
-  startDate: Scalars['BulttiDate']
-  operatorId: Scalars['Int']
 }
 
 export type QueryContractUserRelationsArgs = {
@@ -2383,16 +2345,6 @@ export type Subscription = {
   hfpLoadingProgress?: Maybe<HfpDateProgress>
   inspectionStatus?: Maybe<InspectionStatusUpdate>
   inspectionError?: Maybe<InspectionErrorUpdate>
-}
-
-export type SubscriptionHfpPreloadStatusArgs = {
-  rangeEnd: Scalars['String']
-  rangeStart: Scalars['String']
-}
-
-export type SubscriptionHfpLoadingProgressArgs = {
-  rangeEnd: Scalars['String']
-  rangeStart: Scalars['String']
 }
 
 export type SubscriptionInspectionStatusArgs = {

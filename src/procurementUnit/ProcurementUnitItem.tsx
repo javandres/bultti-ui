@@ -15,8 +15,9 @@ import ExpandableSection, {
 import DateRangeDisplay from '../common/components/DateRangeDisplay'
 import ProcurementUnitItemContent from './ProcurementUnitItemContent'
 import { text, Text } from '../util/translate'
-import { getDateObject } from '../util/formatDate'
+import { getDateObject, getReadableDate } from '../util/formatDate'
 import { isWithinInterval } from 'date-fns'
+import { lowerCase } from 'lodash'
 
 const ProcurementUnitView = styled.div<{ error?: boolean }>`
   position: relative;
@@ -63,7 +64,7 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
     isOnlyActiveCatalogueVisible,
     testId,
   }) => {
-    const { currentContracts = [], routes = [] } = procurementUnit || {}
+    const { contract, routes = [] } = procurementUnit || {}
 
     let requirementsInvalid = validationErrors.some(
       (err) => err.type === InspectionValidationError.MissingExecutionRequirements
@@ -75,34 +76,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
         err.type === InspectionValidationError.MissingRequirementVehicles
     )
 
-    let contractInvalid = validationErrors.some((err) =>
-      [
-        InspectionValidationError.InvalidContracts,
-        InspectionValidationError.MissingContracts,
-      ].includes(err.type)
+    let contractInvalid = validationErrors.some(
+      (err) => err.type === InspectionValidationError.MissingContracts
     )
 
     const procurementUnitAreaName = procurementUnit?.area?.name
       ? procurementUnit?.area?.name
       : OperatingAreaName.Unknown
-
-    // The logic behind finding displayed contractUnit: selecting the latest contract that is currently valid
-    // meaning if there are multiple contracts being valid, we select the one with the latest startDate
-    let displayedContractUnit = currentContracts
-      ? currentContracts
-          .slice()
-          .filter((contract: Contract) => {
-            return isWithinInterval(contractSelectionDate, {
-              start: getDateObject(contract.startDate),
-              end: getDateObject(contract.endDate),
-            })
-          })
-          .sort((a: Contract, b: Contract) => {
-            return getDateObject(a.startDate).getTime() < getDateObject(b.startDate).getTime()
-              ? 1
-              : -1
-          })[0]
-      : undefined
 
     return (
       <ProcurementUnitView className={className}>
@@ -169,18 +149,13 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 </HeaderSection>
                 <HeaderSection style={{ flexGrow: 2 }} error={contractInvalid}>
                   <HeaderHeading>
-                    <Text>contracts</Text> ({(currentContracts || []).length})
+                    <Text>contract</Text>
                   </HeaderHeading>
-                  {displayedContractUnit ? (
-                    <>
-                      <DateRangeDisplay
-                        startDate={displayedContractUnit.startDate}
-                        endDate={displayedContractUnit.endDate}
-                      />
-                      <ContractDescription>
-                        {displayedContractUnit.description}
-                      </ContractDescription>
-                    </>
+                  {contract ? (
+                    <ContractDescription>
+                      {contract.description} ({lowerCase(text('edited'))}{' '}
+                      {getReadableDate(contract.updatedAt)})
+                    </ContractDescription>
                   ) : (
                     text('procurementUnit_noValidContracts')
                   )}
@@ -195,9 +170,6 @@ const ProcurementUnitItem: React.FC<PropTypes> = observer(
                 startDate={startDate}
                 endDate={endDate}
                 procurementUnitId={procurementUnit.id}
-                displayedContractUnitId={
-                  displayedContractUnit ? displayedContractUnit.id : undefined
-                }
                 requirementsEditable={requirementsEditable}
                 isCatalogueEditable={isCatalogueEditable}
                 catalogueInvalid={catalogueInvalid}

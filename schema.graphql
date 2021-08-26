@@ -69,15 +69,10 @@ type BlockDeviationsReport {
 
 type Contract {
   createdAt: DateTime!
-  description: String
-  endDate: BulttiDate!
+  description: String!
   id: ID!
-  operator: Operator!
-  operatorId: Int
-  procurementUnits: [ProcurementUnit!]!
   rules: [ContractRule!]
   rulesFile: String
-  startDate: BulttiDate!
   updatedAt: DateTime!
   userRelations: [ContractUserRelation!]!
 }
@@ -813,7 +808,7 @@ type Mutation {
   loadHfpDataForInspectionPeriod(inspectionDateId: String!): InspectionDate!
   login(authorizationCode: String!, isTest: Boolean = false, role: String): String
   logout: Boolean!
-  modifyContract(contractInput: ContractInput!, file: Upload, operatorId: Int!): Contract!
+  modifyContract(contractInput: ContractInput!, file: Upload): Contract!
   modifyUser(userInput: UserInput!): User!
   publishInspection(inspectionId: String!): Inspection!
   refreshEquipmentInCatalogue(catalogueId: String!): EquipmentCatalogue!
@@ -821,7 +816,7 @@ type Mutation {
   rejectInspection(inspectionId: String!): Inspection!
   removeAllEquipmentFromCatalogue(catalogueId: String!): EquipmentCatalogue!
   removeAllEquipmentFromExecutionRequirement(executionRequirementId: String!): PlannedUnitExecutionRequirement
-  removeContract(contractId: String!, operatorId: Int!): Boolean!
+  removeContract(contractId: String!): Boolean!
   removeEquipmentCatalogue(catalogueId: String!): Boolean!
   removeEquipmentFromCatalogue(catalogueId: String!, equipmentId: String!): EquipmentCatalogue
   removeEquipmentFromExecutionRequirement(equipmentId: String!, executionRequirementId: String!): PlannedUnitExecutionRequirement!
@@ -830,6 +825,7 @@ type Mutation {
   removeObservedExecutionRequirementsFromPostInspection(postInspectionId: String!): Boolean!
   removeTestData: Boolean!
   removeUnitExecutionRequirement(executionRequirementId: String!): Boolean!
+  removeUser(email: String!): Boolean!
   saveInspectionDepartureBlocks(inspectionId: String!): [OperatorBlockDeparture!]!
   submitInspection(inspectionId: String!): Inspection!
   updateEquipment(equipmentId: String!): Equipment
@@ -1113,7 +1109,6 @@ type OperatingArea {
 }
 
 type Operator {
-  contracts: [Contract!]!
   equipment: [Equipment!]!
   equipmentCatalogues: [EquipmentCatalogue!]!
   id: Int!
@@ -1313,8 +1308,7 @@ type PreInspection {
 type ProcurementUnit {
   area: OperatingArea
   areaId: Int
-  contracts: [Contract!]!
-  currentContracts: [Contract!]
+  contract: Contract
   endDate: BulttiDate!
   equipmentCatalogues: [EquipmentCatalogue!]!
   executionRequirements: [PlannedUnitExecutionRequirement!]!
@@ -1331,17 +1325,6 @@ type ProcurementUnit {
   startDate: BulttiDate!
 }
 
-type ProcurementUnitOption {
-  areaName: String
-  currentContracts: [Contract!]
-  endDate: BulttiDate!
-  id: String!
-  isUnselectingDisabled: Boolean!
-  name: String!
-  routes: [String!]!
-  startDate: BulttiDate!
-}
-
 type ProcurementUnitRoute {
   routeId: String!
 }
@@ -1352,9 +1335,8 @@ type Query {
   allInspectionDates: [InspectionDate!]!
   blockDeviationsReport(filters: [InputFilterConfig!], inspectionId: String!, sort: [InputSortConfig!]): BlockDeviationsReport
   contract(contractId: String!): Contract
-  contractProcurementUnitOptions(contractId: String!, endDate: BulttiDate!, operatorId: Int!, startDate: BulttiDate!): [ProcurementUnitOption!]!
   contractUserRelations(contractId: String!): [ContractUserRelation!]!
-  contracts(date: BulttiDate, operatorId: Int): [Contract!]!
+  contracts: [Contract!]!
   contractsByProcurementUnit(procurementUnitId: String!): [Contract!]!
   currentInspectionsByOperatorAndSeason(inspectionType: InspectionType!, operatorId: Int!, seasonId: String!): [Inspection!]!
   currentUser: User
@@ -1545,8 +1527,8 @@ type SortConfig {
 }
 
 type Subscription {
-  hfpLoadingProgress(rangeEnd: String!, rangeStart: String!): HfpDateProgress
-  hfpPreloadStatus(rangeEnd: String!, rangeStart: String!): [HfpDateStatus!]
+  hfpLoadingProgress: HfpDateProgress
+  hfpPreloadStatus: [HfpDateStatus!]
   inspectionError(inspectionId: String!): InspectionErrorUpdate
   inspectionStatus(inspectionId: String!): InspectionStatusUpdate
 }
@@ -1727,7 +1709,6 @@ enum InspectionUserRelationType {
 
 enum InspectionValidationError {
   HFP_UNAVAILABLE_FOR_INSPECTION_DATES
-  INVALID_CONTRACTS
   INVALID_INSPECTION_TIME
   INVALID_PRODUCTION_TIME
   MISSING_BLOCK_DEPARTURES
@@ -1805,19 +1786,14 @@ enum TrackReason {
 
 enum UserRole {
   ADMIN
-  BLOCKED
   HSL
   OPERATOR
 }
 
 input ContractInput {
-  description: String
-  endDate: BulttiDate
+  description: String!
   id: ID
-  operatorId: Int
-  procurementUnitIds: [String!]
   rulesFile: String
-  startDate: BulttiDate
 }
 
 input EquipmentCatalogueInput {
@@ -1877,6 +1853,7 @@ input ObservedRequirementValueInput {
 }
 
 input ProcurementUnitEditInput {
+  contractId: String
   maximumAverageAge: Float!
   optionMaxAgeIncreaseMethod: OptionMaxAgeIncreaseMethod!
   optionPeriodStart: BulttiDate
