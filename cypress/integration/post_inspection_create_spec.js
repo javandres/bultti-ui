@@ -64,7 +64,7 @@ describe('Post-inspection creation', () => {
     cy.ensureLinkedPreInspection()
   })
 
-  it('Can open reports preview tab', () => {
+  it('Can open report preview tab', () => {
     cy.loginAdmin()
     cy.openTestPostInspection()
 

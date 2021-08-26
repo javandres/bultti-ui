@@ -112,7 +112,7 @@ describe('Pre-inspection creation', () => {
 
   // TODO: Test adding and removing equipment and changing percentage quotas.
 
-  it('Can open reports preview tab', () => {
+  it('Can open report preview tab', () => {
     cy.loginAdmin()
     cy.openTestPreInspection()
 
