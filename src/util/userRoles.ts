@@ -40,35 +40,36 @@ export function hasAccessRights({
     return false
   }
 
+  if (allowedRoles.length === 0) {
+    throw new Error('hasAccessRights error: given allowedRoles list is empty.')
+  }
+
+  // Check for OPERATOR access rights
+  if (allowedRoles === 'all' || allowedRoles.includes(UserRole.Operator)) {
+    if (!operatorId) {
+      throw new Error(
+        'hasAccessRights error: operatorId (number or all) has to be given when allowing operator.'
+      )
+    }
+
+    if (user.role === UserRole.Operator) {
+      return operatorId === 'all' || hasOperatorUserAccessRights(user, operatorId)
+    }
+  }
+
+  // Check for ADMIN access rights
   if (
-    // If all roles are allowed, check that user role exists. If the user is an operator user,
-    // ensure that it has access to the operatorId.
-    allowedRoles === 'all' &&
-    // Either the user is not an operator user...
-    (user.role !== UserRole.Operator ||
-      // Or there is an operator ID provided AND the user belongs to the operator ID.
-      (operatorId && (operatorId === 'all' || (user.operatorIds || []).includes(operatorId))))
+    (allowedRoles === 'all' || allowedRoles.includes(UserRole.Admin)) &&
+    hasAdminAccessRights(user)
   ) {
     return true
   }
 
-  if (allowedRoles.length === 0) {
-    throw new Error('Guard roles not working, given allowedRoles list is empty.')
-  }
-
-  if (allowedRoles.includes(UserRole.Admin) && hasAdminAccessRights(user)) {
-    return true
-  }
-
-  if (allowedRoles.includes(UserRole.Hsl) && hasHSLUserAccessRights(user)) {
-    return true
-  }
-
-  if (allowedRoles.includes(UserRole.Operator) && operatorId) {
-    return operatorId === 'all' || hasOperatorUserAccessRights(user, operatorId)
-  }
-
-  return false
+  // Check for HSL access rights
+  return (
+    (allowedRoles === 'all' || allowedRoles.includes(UserRole.Hsl)) &&
+    hasHSLUserAccessRights(user)
+  )
 }
 
 export function hasAdminAccessRights(user?: User): boolean {
