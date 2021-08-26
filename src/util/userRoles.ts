@@ -21,7 +21,7 @@ export function useHasAccessRights({
   operatorId,
 }: {
   allowedRoles: 'all' | UserRole[]
-  operatorId?: number
+  operatorId?: number | 'all'
 }): boolean {
   const [user] = useStateValue('user')
   return hasAccessRights({ user, allowedRoles, operatorId })
@@ -34,7 +34,7 @@ export function hasAccessRights({
 }: {
   user?: User
   allowedRoles: 'all' | UserRole[]
-  operatorId?: number
+  operatorId?: number | 'all'
 }): boolean {
   if (!user) {
     return false
@@ -47,7 +47,7 @@ export function hasAccessRights({
     // Either the user is not an operator user...
     (user.role !== UserRole.Operator ||
       // Or there is an operator ID provided AND the user belongs to the operator ID.
-      (operatorId && (user.operatorIds || []).includes(operatorId)))
+      (operatorId && (operatorId === 'all' || (user.operatorIds || []).includes(operatorId))))
   ) {
     return true
   }
@@ -65,7 +65,7 @@ export function hasAccessRights({
   }
 
   if (allowedRoles.includes(UserRole.Operator) && operatorId) {
-    return hasOperatorUserAccessRights(user, operatorId)
+    return operatorId === 'all' || hasOperatorUserAccessRights(user, operatorId)
   }
 
   return false

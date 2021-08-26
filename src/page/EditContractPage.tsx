@@ -21,7 +21,8 @@ const EditContractPage: React.FC<PropTypes> = observer(() => {
   let { contractId = '' } = useParams<{ contractId?: string }>()
 
   let hasAccessRights = useHasAccessRights({
-    allowedRoles: [UserRole.Admin],
+    allowedRoles: 'all',
+    operatorId: 'all',
   })
 
   let hasAdminAccessRights = useHasAdminAccessRights()
