@@ -46,13 +46,11 @@ export function hasAccessRights({
 
   // Check for OPERATOR access rights
   if (allowedRoles === 'all' || allowedRoles.includes(UserRole.Operator)) {
-    if (!operatorId) {
-      throw new Error(
-        'hasAccessRights error: operatorId (number or all) has to be given when allowing operator.'
-      )
-    }
-
     if (user.role === UserRole.Operator) {
+      if (!operatorId) {
+        // OperatorId (number or all) has to be given when allowing operator.'
+        return false
+      }
       return operatorId === 'all' || hasOperatorUserAccessRights(user, operatorId)
     }
   }
