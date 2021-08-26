@@ -107,8 +107,8 @@ const renderFormWithContracts =
           onSelect={(contract) => onChange(contract?.id || undefined)}
           selectedItem={contracts.find((c) => c.id === val)}
           items={contracts}
-          itemToLabel={(contract) => contract?.description || contract?.createdAt}
-          itemToString={(contract) => contract?.id}
+          itemToLabel={(contract) => contract?.description || contract?.createdAt || ''}
+          itemToString={(contract) => contract?.id || ''}
         />
       )
     }
