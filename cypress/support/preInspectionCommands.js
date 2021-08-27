@@ -22,6 +22,15 @@ Cypress.Commands.add('openTestPreInspection', () => {
       } else {
         cy.getTestElement('create_new_inspection').click()
       }
+
+      // We always want to check if departure blocks need to be fetched
+      cy.getTestElement('departure_blocks_section').click()
+      // Click fetch_departure_blocks if it exists
+      cy.get('body').then(($body) => {
+        if ($body.find('button[data-cy=fetch_departure_blocks]').length > 0) {
+          cy.getTestElement('fetch_departure_blocks').click()
+        }
+      })
     })
   })
 

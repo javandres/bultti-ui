@@ -5,7 +5,6 @@ import { Contract, ContractInput, ContractRule } from '../schema-types'
 import ItemForm, { FieldLabel, FieldValueDisplay } from '../common/input/ItemForm'
 import { useMutationData } from '../util/useMutationData'
 import {
-  contractsQuery,
   createContractMutation,
   modifyContractMutation,
   removeContractMutation,

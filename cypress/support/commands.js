@@ -79,6 +79,28 @@ Cypress.Commands.add('selectTestSettings', () => {
   cy.selectTestSeason()
 })
 
+/**
+ * Sets a filter value of TableFiltersControl and filters with it
+ * @param {string} value - Value to filter with
+ * @param {string} key - Key of the dropdown item
+ * @param {string} scope - Scope of TableFiltersControl (see which testId was given to TableFiltersControl)
+ * @param {string} expectedValue - Check that after filtering, the expected value is found from the results
+ */
+Cypress.Commands.add('filterTableByValueAndKey', (value, key, scope, expectedValue) => {
+  if (!value || !key || !scope) {
+    console.log(
+      `Missing some required props of filterTableByValueAndKey. Props given: ${value}, ${key}, ${scope}`
+    )
+  }
+  cy.getTestElement(`${scope}_add_filter`).click()
+  cy.getTestElement(`${scope}_filter_dropdown`).click()
+  cy.getTestElement(`${scope}_filter_dropdown_sanctionReason`).click()
+  cy.getTestElement(`${scope}_filter_input_field`).type(value)
+  cy.getTestElement(`${scope}_report_filtering_apply`).click()
+
+  cy.getTestElement(`${scope}_table_filtered_rows`).contains(expectedValue)
+})
+
 // Generates test data. Test data can be generated continuously, it will not be
 // created "on top" of existing test data.
 Cypress.Commands.add('generateTestData', () => {

@@ -309,6 +309,7 @@ const EditSanctions = observer(({ inspection }: PropTypes) => {
         </Button>
       </FlexRow>
       <FilteredResponseTable<Sanction>
+        testId="edit_sanctions"
         loading={isLoading}
         data={sanctionsData}
         tableState={tableState}

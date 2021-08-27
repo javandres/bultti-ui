@@ -34,6 +34,7 @@ const FilterButtonsWrapper = styled.div`
 `
 
 export type PropTypes<ItemType extends TableItemType> = {
+  testId?: string
   excludeFields?: (keyof ItemType)[]
   fieldLabels?: { [key in keyof ItemType]?: string }
   filters: FilterConfig[]
@@ -42,6 +43,7 @@ export type PropTypes<ItemType extends TableItemType> = {
 
 const TableFiltersControl = observer(
   <ItemType extends TableItemType>({
+    testId,
     excludeFields = [],
     fieldLabels = {},
     filters,
@@ -144,6 +146,7 @@ const TableFiltersControl = observer(
             />
           </SubHeading>
           <Button
+            data-cy={`${testId}_add_filter`}
             style={{ marginLeft: 'auto' }}
             onClick={() => onAddFilter()}
             buttonStyle={ButtonStyle.SECONDARY}
@@ -164,6 +167,7 @@ const TableFiltersControl = observer(
                     key={`${filterConfig.field}_${index}`}
                     style={{ width: '100%', marginBottom: '1.5rem' }}>
                     <Input
+                      testId={`${testId}_filter_input_field`}
                       value={filterConfig.filterValue}
                       onChange={(nextVal) => onChangeFilter(index, nextVal)}
                       name="filter"
@@ -174,6 +178,7 @@ const TableFiltersControl = observer(
                     />
                     {filterFieldOptions.length !== 0 && (
                       <Dropdown
+                        testId={`${testId}_filter_dropdown`}
                         label={text('field')}
                         items={filterFieldOptions}
                         selectedItem={selectedFilterOption}
@@ -192,7 +197,10 @@ const TableFiltersControl = observer(
             <FlexRow>
               {tempFilters.length !== 0 && (
                 <FilterButtonBar>
-                  <Button size={ButtonSize.LARGE} onClick={onApplyFilters}>
+                  <Button
+                    data-cy={`${testId}_report_filtering_apply`}
+                    size={ButtonSize.LARGE}
+                    onClick={onApplyFilters}>
                     <Text>report_filtering_apply</Text>
                   </Button>
                 </FilterButtonBar>

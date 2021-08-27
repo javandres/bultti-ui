@@ -1,3 +1,8 @@
+import {
+  getDeparturesPerUnitCount,
+  getEquipmentPerCatalogueCount,
+} from '../../support/expectedEntityCounts'
+
 describe('Equipment color violation', () => {
   before(() => {
     cy.loginAdmin()
@@ -16,7 +21,7 @@ describe('Equipment color violation', () => {
     cy.getTestElement('info_message_error').should('not.exist')
   })
 
-  it.only('Gets correct count pre-inspection color violations', () => {
+  it('Gets correct count of pre-inspection color violations', () => {
     cy.loginAdmin()
     cy.openTestPreInspection()
 
@@ -26,31 +31,33 @@ describe('Equipment color violation', () => {
 
     cy.getTestElement('inspection_reports_report_section_equipmentColor').click()
 
-    // 2 options to test, TODO: pick 1
-
-    // way 1
-    cy.getDeparturesPerUnitCount().then((departuresPerUnit) => {
-      cy.getEquipmentPerCatalogueCount().then((equipmentPerCatalogue) => {
-        let expectedRowCount = departuresPerUnit / equipmentPerCatalogue
-        cy.getTestElement('table_totalRows').contains(expectedRowCount)
-      })
-    })
-
-    // way 2
-    cy.getEntityCountMap().then((entityCountMap) => {
-      let departuresPerUnit =
-        entityCountMap.routes *
-        entityCountMap.directions *
-        entityCountMap.dayTypes *
-        entityCountMap.departures
-      let expectedRowCount = departuresPerUnit / entityCountMap.equipmentPerCatalogue
-      cy.getTestElement('table_totalRows').contains(expectedRowCount)
-    })
+    let expectedRowCount = getDeparturesPerUnitCount() / getEquipmentPerCatalogueCount()
+    cy.getTestElement('table_totalRows').contains(expectedRowCount)
   })
 
-  // TODO:
-  // it('Gets correct count post-inspection color violations', () => {
-  //   cy.loginAdmin()
-  //   cy.createTestPostInspection()
-  // })
+  it('Gets correct count of post-inspection color violations', () => {
+    cy.loginAdmin()
+    cy.openTestSanctionPostInspection()
+
+    let expectedRowCount = getDeparturesPerUnitCount() / getEquipmentPerCatalogueCount()
+
+    // Check from sanctions tab
+    cy.getTestElement('inspection_tabs_tab_sanction').click()
+    cy.filterTableByValueAndKey(
+      'EXTERIOR_COLOR_VIOLATION',
+      'dropdown_sanctionReason',
+      'edit_sanctions',
+      expectedRowCount
+    )
+
+    // Check from reports tab
+    cy.getTestElement('inspection_tabs_tab_reports').click()
+    cy.getTestElement('inspection_reports_report_section_sanctionList').click()
+    cy.filterTableByValueAndKey(
+      'EXTERIOR_COLOR_VIOLATION',
+      'dropdown_sanctionReason',
+      'inspection_reports_report_sanctionList_table',
+      expectedRowCount
+    )
+  })
 })

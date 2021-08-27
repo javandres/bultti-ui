@@ -1,46 +1,49 @@
-let entityCountMap = null
+let entityCountMap = null // TODO: start using typescript and add an interface of this variable
 
 Cypress.Commands.add('getEntityCountMap', () => {
-  // Use cache
+  // Use cache if found
   if (entityCountMap) {
     return entityCountMap
   }
 
-  // If not found, TODO: request entityCountMap from backend
-
-  // TODO: request entityCountMap from backend
-  // if (!entityCountMap) {
-  //   cy.request().then((response) => {
-  //     ...
-  //   })
-  // }
-
-  // ...and remove this hardcoding
-  entityCountMap = {
-    procurementUnits: 4,
-    routes: 1, // 1 for each unit (there are multiple different routes though)
-    directions: 2, // 2 for each route
-    departures: 4, // 4 departures for each direction
-    dayTypes: 7, // 7 day types for each departure
-    schema: 1, // 1 for each dayType
-    equipmentCatalogues: 1, // 1 for each unit
-    equipmentTotal: 8, // 2 equipment for each catalogue
-    equipmentPerCatalogue: 2,
-    equipmentQuota: 1, // 1 for each equipment
+  if (entityCountMap) {
+    return entityCountMap
   }
 
-  return entityCountMap
+  const testDataConfigQuery = `
+    query testDataConfig {
+      testDataConfig
+    }
+  `
+  cy.request({
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/graphql',
+    },
+    form: true,
+    url: 'http://localhost:4100/graphql',
+    body: { query: testDataConfigQuery, operationName: 'testDataConfig' },
+  }).then((res) => {
+    if (!res.body?.data?.testDataConfig) {
+      throw new Error(
+        `TestDataConfig query failed. Received res.body did not contain testDataConfig.`
+      )
+    }
+    entityCountMap = JSON.parse(res.body.data?.testDataConfig)
+
+    return entityCountMap
+  })
 })
 
-Cypress.Commands.add('getDeparturesPerUnitCount', () => {
+export function getDeparturesPerUnitCount() {
   return (
     entityCountMap.routes *
     entityCountMap.directions *
     entityCountMap.dayTypes *
     entityCountMap.departures
   )
-})
+}
 
-Cypress.Commands.add('getEquipmentPerCatalogueCount', () => {
+export function getEquipmentPerCatalogueCount() {
   return entityCountMap.equipmentPerCatalogue
-})
+}

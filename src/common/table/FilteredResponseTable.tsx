@@ -26,6 +26,7 @@ const TableEmptyView = styled(EmptyView)`
 `
 
 export type PropTypes<ItemType extends TableItemType> = {
+  testId?: string
   tableState: TableStateType
   data?: IFilteredSortedResponse<ItemType>
   loading?: boolean
@@ -36,6 +37,7 @@ export type PropTypes<ItemType extends TableItemType> = {
 
 const FilteredResponseTable = observer(
   <ItemType extends TableItemType>({
+    testId,
     data,
     columnLabels,
     loading = false,
@@ -74,6 +76,7 @@ const FilteredResponseTable = observer(
       <TableViewWrapper>
         <LoadingDisplay loading={loading} style={{ top: '-1rem' }} />
         <TableFiltersControl
+          testId={testId}
           filters={filters}
           setFilters={setFilters}
           fieldLabels={columnLabels}
@@ -81,7 +84,10 @@ const FilteredResponseTable = observer(
         />
         {data?.filteredCount !== data?.totalCount && (
           <SmallHeading>
-            <Text>table_filteredRows</Text> <strong>{data?.filteredCount || 0}</strong>
+            <Text>table_filteredRows</Text>{' '}
+            <strong data-cy={`${testId}_table_filtered_rows`}>
+              {data?.filteredCount || 0}
+            </strong>
           </SmallHeading>
         )}
         {Object.entries(itemGroups).map(([groupName, items]) => (
