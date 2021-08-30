@@ -1829,7 +1829,6 @@ export type Query = {
   adCoverSanctionsReport?: Maybe<AdCoverSanctionsReport>
   defectiveEquipmentDepartureSanctionsReport?: Maybe<DefectiveEquipmentDepartureSanctionsReport>
   contracts: Array<Contract>
-  contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
   contractUserRelations: Array<ContractUserRelation>
   observedExecutionRequirements: Array<ObservedExecutionRequirement>
@@ -1839,6 +1838,7 @@ export type Query = {
   getObservedInspectionDates: Array<InspectionDate>
   inspectionSanctions: SanctionsResponse
   runSanctioning: Array<Sanction>
+  testDataConfig: Scalars['String']
   executionRequirementsForPreInspectionAreas: Array<PlannedAreaExecutionRequirement>
   inspection: Inspection
   inspectionsByOperator: Array<Inspection>
@@ -2086,10 +2086,6 @@ export type QueryDefectiveEquipmentDepartureSanctionsReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
   inspectionId: Scalars['String']
-}
-
-export type QueryContractsByProcurementUnitArgs = {
-  procurementUnitId: Scalars['String']
 }
 
 export type QueryContractArgs = {

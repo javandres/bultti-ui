@@ -65,7 +65,17 @@ const clearCacheMutation = gql`
 export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
-  let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
+  let [createTestData, { loading: testDataLoading, error }] =
+    useMutationData(createTestDataMutation)
+
+  let _createTestData = async () => {
+    let response = await createTestData()
+    if (!response?.data?.createTestData) {
+      console.log(
+        'Test data insertion cancelled. Firstly remove existing test data before you can create it.'
+      )
+    }
+  }
 
   let [removeTestData, { loading: testDataRemoveLoading }] =
     useMutationData(removeTestDataMutation)
@@ -171,7 +181,7 @@ const DevPage: React.FC<PropTypes> = observer(({ children }) => {
         <Button
           data-cy={'create_test_data' + (testDataLoading ? '_loading' : '')}
           loading={testDataLoading}
-          onClick={() => createTestData()}>
+          onClick={() => _createTestData()}>
           Create test data
         </Button>
 
