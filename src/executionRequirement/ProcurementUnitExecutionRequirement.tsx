@@ -164,12 +164,7 @@ const ProcurementUnitExecutionRequirement: React.FC<PropTypes> = observer(
     )
 
     const inspectionStartDate = useMemo(
-      () =>
-        !inspection
-          ? undefined
-          : isPreInspection(inspection)
-          ? parseISO(inspection.startDate)
-          : parseISO(inspection?.inspectionStartDate),
+      () => (!inspection ? undefined : parseISO(inspection?.inspectionStartDate)),
       [inspection]
     )
 
