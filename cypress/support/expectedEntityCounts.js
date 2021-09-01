@@ -6,7 +6,7 @@
 // this regular variable.
 let entityCountMapCache = null // TODO: start using typescript and add an interface of this variable
 
-Cypress.Commands.add('getEntityCountMap', () => {
+Cypress.Commands.add('initEntityCountMap', () => {
   if (entityCountMapCache) {
     cy.wrap(entityCountMapCache).as('entityCountMap')
   } else {

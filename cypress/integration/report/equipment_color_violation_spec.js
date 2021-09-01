@@ -5,7 +5,7 @@ describe('Equipment color violation', () => {
   })
 
   beforeEach(() => {
-    cy.getEntityCountMap()
+    cy.initEntityCountMap()
     cy.visitAndSpy('/')
   })
 
