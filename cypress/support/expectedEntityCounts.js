@@ -15,13 +15,15 @@ Cypress.Commands.add('getEntityCountMap', () => {
       testDataConfig
     }
   `
+
+  const REACT_APP_SERVER_URL = Cypress.env('CYPRESS_REACT_APP_SERVER_URL')
   cy.request({
     method: 'POST',
     headers: {
       'Content-Type': 'application/graphql',
     },
     form: true,
-    url: 'http://localhost:4100/graphql',
+    url: `${REACT_APP_SERVER_URL}/graphql`,
     body: { query: testDataConfigQuery, operationName: 'testDataConfig' },
   }).then((res) => {
     if (!res.body?.data?.testDataConfig) {
