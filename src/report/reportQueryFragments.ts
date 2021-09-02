@@ -228,6 +228,7 @@ export const reportQueryFragments = {
       journeyType
       registryNr
       vehicleId
+      routeLength
     }
   `,
   EquipmentColorFragment: `
