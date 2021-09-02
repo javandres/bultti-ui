@@ -296,6 +296,7 @@ export type DepartureBlocksReportData = {
   journeyEndTime: Scalars['String']
   registryNr?: Maybe<Scalars['String']>
   vehicleId?: Maybe<Scalars['String']>
+  routeLength: Scalars['Float']
 }
 
 export type DeviationsReport = {
@@ -1829,7 +1830,6 @@ export type Query = {
   adCoverSanctionsReport?: Maybe<AdCoverSanctionsReport>
   defectiveEquipmentDepartureSanctionsReport?: Maybe<DefectiveEquipmentDepartureSanctionsReport>
   contracts: Array<Contract>
-  contractsByProcurementUnit: Array<Contract>
   contract?: Maybe<Contract>
   contractUserRelations: Array<ContractUserRelation>
   observedExecutionRequirements: Array<ObservedExecutionRequirement>
@@ -2086,10 +2086,6 @@ export type QueryDefectiveEquipmentDepartureSanctionsReportArgs = {
   filters?: Maybe<Array<InputFilterConfig>>
   sort?: Maybe<Array<InputSortConfig>>
   inspectionId: Scalars['String']
-}
-
-export type QueryContractsByProcurementUnitArgs = {
-  procurementUnitId: Scalars['String']
 }
 
 export type QueryContractArgs = {
