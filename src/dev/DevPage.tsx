@@ -65,7 +65,8 @@ const clearCacheMutation = gql`
 export type PropTypes = RouteChildrenProps
 
 const DevPage: React.FC<PropTypes> = observer(({ children }) => {
-  let [createTestData, { loading: testDataLoading }] = useMutationData(createTestDataMutation)
+  let [createTestData, { loading: testDataLoading, error }] =
+    useMutationData(createTestDataMutation)
 
   let [removeTestData, { loading: testDataRemoveLoading }] =
     useMutationData(removeTestDataMutation)

@@ -1839,6 +1839,7 @@ export type Query = {
   getObservedInspectionDates: Array<InspectionDate>
   inspectionSanctions: SanctionsResponse
   runSanctioning: Array<Sanction>
+  testDataConfig: Scalars['String']
   executionRequirementsForPreInspectionAreas: Array<PlannedAreaExecutionRequirement>
   inspection: Inspection
   inspectionsByOperator: Array<Inspection>

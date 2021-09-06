@@ -16,5 +16,6 @@
 import './commands'
 import './preInspectionCommands'
 import './postInspectionCommands'
+import './expectedEntityCounts'
 import 'cypress-commands'
 import 'cypress-wait-until'

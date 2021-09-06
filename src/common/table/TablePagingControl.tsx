@@ -168,7 +168,8 @@ const TablePagingControl = observer(
         )}
         <PagingElementsRow>
           <PageElement>
-            <Text>table_totalRows</Text> <strong>{totalItemsCount}</strong>
+            <Text>table_totalRows</Text>{' '}
+            <strong data-cy={'table_totalRows'}>{totalItemsCount}</strong>
           </PageElement>
           {filteredItemsCount !== totalItemsCount && (
             <PageElement>
