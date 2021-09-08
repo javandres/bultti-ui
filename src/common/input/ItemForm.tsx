@@ -216,6 +216,7 @@ const ItemForm = observer(
             {children}
             <ActionsWrapper>
               <Button
+                data-cy="item_form_save_button"
                 loading={loading}
                 style={{ marginRight: '1rem' }}
                 disabled={doneDisabled || (dirtyFormCheckIsEnabled && !isDirty)}

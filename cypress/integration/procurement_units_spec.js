@@ -48,6 +48,24 @@ describe('Procurement units', () => {
     )
   })
 
+  it('Can save procurementUnit option year as empty', () => {
+    cy.loginAdmin()
+    cy.visit('/procurement-units')
+    cy.selectTestSettings()
+
+    cy.getTestElement('procurement_unit_section').first().click()
+
+    cy.getTestElement('edit_unit_config').click()
+    cy.getTestElement('option_period_start_input').focus().clear().type('16.09.2021')
+    cy.getTestElement('item_form_save_button').click()
+    cy.getTestElement('option_period_start_value').should('contain.text', '16 Sep 2021')
+
+    cy.getTestElement('edit_unit_config').click()
+    cy.getTestElement('option_period_start_input').focus().clear()
+    cy.getTestElement('item_form_save_button').click()
+    cy.getTestElement('option_period_start_value').should('contain.text', '')
+  })
+
   it('Can add/remove equipment', () => {
     cy.loginAdmin()
     cy.visit('/procurement-units')
