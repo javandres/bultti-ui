@@ -248,7 +248,7 @@ const ProcurementUnitItemContent = observer(
     let onChangeProcurementUnit = useCallback((key, nextValue) => {
       setProcurementUnitInputValues((currentValues) => {
         let nextValues = { ...currentValues }
-        nextValues[key] = nextValue || undefined
+        nextValues[key] = nextValue || null
         return nextValues
       })
     }, [])

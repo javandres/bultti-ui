@@ -46,6 +46,7 @@
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen --config codegen.yml",
     "format": "prettier --write \"**/*.{tsx,ts,js,json}\"",
+    "codegen-format": "yarn run codegen && yarn run format",
     "lint": "eslint '**/*.{js,ts,tsx}'",
     "lint:fix": "eslint '**/*.{js,ts,tsx}' --quiet --fix",
     "postinstall": "patch-package",
