@@ -83,7 +83,12 @@ const renderFormWithContracts =
 
     if (inputKey === 'optionPeriodStart') {
       return (
-        <DatePicker isEmptyValueAllowed={true} value={val as string} onChange={onChange} />
+        <DatePicker
+          testId="option_period_start_input"
+          isEmptyValueAllowed={true}
+          value={val as string}
+          onChange={onChange}
+        />
       )
     }
 
@@ -115,6 +120,7 @@ const renderFormWithContracts =
 
     return (
       <TextInput
+        data-cy="maximum_average_age"
         type="number"
         value={val as string}
         onChange={(e) => onChange(parseFloat(e.target.value))}
@@ -129,6 +135,10 @@ function renderValueDisplayValue(key: string, val: unknown) {
 
   if (key === 'optionMaxAgeIncreaseMethod') {
     return text(`procurementUnit_optionMaxAgeIncreaseMethod_${val as string}`)
+  }
+
+  if (key === 'optionPeriodStart') {
+    return <span data-cy="option_period_start_value">{`${val}`}</span>
   }
 
   return val as string
@@ -248,7 +258,11 @@ const ProcurementUnitItemContent = observer(
     let onChangeProcurementUnit = useCallback((key, nextValue) => {
       setProcurementUnitInputValues((currentValues) => {
         let nextValues = { ...currentValues }
-        nextValues[key] = nextValue || undefined
+        if (key === 'maximumAverageAge' && !nextValue) {
+          nextValues[key] = 1
+        } else {
+          nextValues[key] = nextValue || null
+        }
         return nextValues
       })
     }, [])
@@ -298,123 +312,128 @@ const ProcurementUnitItemContent = observer(
     return (
       <ContentWrapper>
         <LoadingDisplay loading={loading} />
-        <div style={{ marginBottom: '2rem' }}>
-          <SubHeading>
-            <Text>procurementUnit_unitInfo</Text>
-          </SubHeading>
-          {!hasAdminAccessRights || !isUnitEditable ? (
-            <ValueDisplay
-              testId="unit_config_display"
-              renderValue={renderValueDisplayValue}
-              item={{
-                maximumAverageAge: procurementUnit?.maximumAverageAge,
-                calculatedMaximumAgeRequirement: procurementUnit?.maximumAverageAgeWithOptions,
-                optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
-                optionPeriodStart: procurementUnit?.optionPeriodStart
-                  ? getReadableDate(getDateObject(procurementUnit.optionPeriodStart))
-                  : text('procurementUnit_noOptions'),
-              }}
-              labels={procurementUnitLabels}>
-              {hasAdminAccessRights && (
-                <Button
-                  data-cy="edit_unit_config"
-                  style={{ marginLeft: 'auto', marginTop: 'auto' }}
-                  onClick={onEditProcurementUnit}>
-                  <Text>edit</Text>
-                </Button>
-              )}
-            </ValueDisplay>
-          ) : (
-            <ItemForm
-              testId="unit_config_form"
-              item={procurementUnitInputValues}
-              labels={procurementUnitLabels}
-              onChange={onChangeProcurementUnit}
-              onDone={onSaveProcurementUnit}
-              onCancel={onCancelEdit}
-              isDirty={isDirty}
-              doneLabel={text('save')}
-              renderInput={renderInput}
-            />
-          )}
-        </div>
-        <div style={{ marginBottom: '2rem' }}>
-          <SubHeading>
-            <Text>contracts</Text>
-          </SubHeading>
-          {contract && hasAdminAccessRights ? (
-            <LinkButton
-              data-cy="unit_contract_button"
-              onClick={() => onOpenContract(contract?.id)}>
-              <div>
-                <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
-                {getReadableDate(contract.updatedAt)})
-              </div>
-            </LinkButton>
-          ) : contract ? (
-            <MessageView data-cy="unit_contract_button">
-              <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
-              {getReadableDate(contract.updatedAt)})
-            </MessageView>
-          ) : procurementUnit && !contract ? (
-            <ErrorView>
-              <Text>contractPage_noContracts</Text>
-            </ErrorView>
-          ) : (
-            <Loading />
-          )}
-        </div>
-        {procurementUnit && (
+        {!loading && (
           <>
-            {showExecutionRequirements && hasEquipment && (
-              <ProcurementUnitExecutionRequirement
-                testId={`${testId}_requirements`}
-                isEditable={requirementsEditable}
-                procurementUnit={procurementUnit}
-                valid={!requirementsInvalid}
-              />
-            )}
-            <CatalogueWrapper isInvalid={catalogueInvalid}>
+            <div style={{ marginBottom: '2rem' }}>
               <SubHeading>
-                <Text>catalogue_cataloguesListHeading</Text>
+                <Text>procurementUnit_unitInfo</Text>
               </SubHeading>
-              {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
-                return (
-                  <ExpandableSection
-                    testId="unit_equipment_catalogue_section"
-                    isExpanded={false}
-                    key={catalogue.id}
-                    headerContent={
-                      <HeaderSection>
-                        <DateRangeDisplay
-                          startDate={catalogue.startDate}
-                          endDate={catalogue.endDate}
-                        />
-                      </HeaderSection>
-                    }>
-                    <EquipmentCatalogue
-                      startDate={inspectionStartDate}
-                      procurementUnit={procurementUnit}
-                      catalogue={catalogue}
-                      operatorId={procurementUnit.operatorId}
-                      onCatalogueChanged={updateViewData}
-                      isCatalogueEditable={isCatalogueEditable}
-                    />
-                  </ExpandableSection>
-                )
-              })}
-              {catalogues.length === 0 && (
-                <MessageView>
-                  <Text>procurementUnit_noCatalogueForUnit</Text>
-                </MessageView>
-              )}
-              {isCatalogueEditable && (
-                <EditEquipmentCatalogue
-                  onChange={updateViewData}
-                  procurementUnit={procurementUnit}
+              {!hasAdminAccessRights || !isUnitEditable ? (
+                <ValueDisplay
+                  testId="unit_config_display"
+                  renderValue={renderValueDisplayValue}
+                  item={{
+                    maximumAverageAge: procurementUnit?.maximumAverageAge,
+                    calculatedMaximumAgeRequirement:
+                      procurementUnit?.maximumAverageAgeWithOptions,
+                    optionMaxAgeIncreaseMethod: procurementUnit?.optionMaxAgeIncreaseMethod,
+                    optionPeriodStart: procurementUnit?.optionPeriodStart
+                      ? getReadableDate(getDateObject(procurementUnit.optionPeriodStart))
+                      : text('procurementUnit_noOptions'),
+                  }}
+                  labels={procurementUnitLabels}>
+                  {hasAdminAccessRights && (
+                    <Button
+                      data-cy="edit_unit_config"
+                      style={{ marginLeft: 'auto', marginTop: 'auto' }}
+                      onClick={onEditProcurementUnit}>
+                      <Text>edit</Text>
+                    </Button>
+                  )}
+                </ValueDisplay>
+              ) : (
+                <ItemForm
+                  testId="unit_config_form"
+                  item={procurementUnitInputValues}
+                  labels={procurementUnitLabels}
+                  onChange={onChangeProcurementUnit}
+                  onDone={onSaveProcurementUnit}
+                  onCancel={onCancelEdit}
+                  isDirty={isDirty}
+                  doneLabel={text('save')}
+                  renderInput={renderInput}
                 />
               )}
-            </CatalogueWrapper>
+            </div>
+            <div style={{ marginBottom: '2rem' }}>
+              <SubHeading>
+                <Text>contracts</Text>
+              </SubHeading>
+              {contract && hasAdminAccessRights ? (
+                <LinkButton
+                  data-cy="unit_contract_button"
+                  onClick={() => onOpenContract(contract?.id)}>
+                  <div>
+                    <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
+                    {getReadableDate(contract.updatedAt)})
+                  </div>
+                </LinkButton>
+              ) : contract ? (
+                <MessageView data-cy="unit_contract_button">
+                  <strong>{contract.description}</strong> ({lowerCase(text('edited'))}{' '}
+                  {getReadableDate(contract.updatedAt)})
+                </MessageView>
+              ) : procurementUnit && !contract ? (
+                <ErrorView>
+                  <Text>contractPage_noContracts</Text>
+                </ErrorView>
+              ) : (
+                <Loading />
+              )}
+            </div>
+            {procurementUnit && (
+              <>
+                {showExecutionRequirements && hasEquipment && (
+                  <ProcurementUnitExecutionRequirement
+                    testId={`${testId}_requirements`}
+                    isEditable={requirementsEditable}
+                    procurementUnit={procurementUnit}
+                    valid={!requirementsInvalid}
+                  />
+                )}
+                <CatalogueWrapper isInvalid={catalogueInvalid}>
+                  <SubHeading>
+                    <Text>catalogue_cataloguesListHeading</Text>
+                  </SubHeading>
+                  {orderBy(catalogues, 'startDate', 'desc').map((catalogue) => {
+                    return (
+                      <ExpandableSection
+                        testId="unit_equipment_catalogue_section"
+                        isExpanded={false}
+                        key={catalogue.id}
+                        headerContent={
+                          <HeaderSection>
+                            <DateRangeDisplay
+                              startDate={catalogue.startDate}
+                              endDate={catalogue.endDate}
+                            />
+                          </HeaderSection>
+                        }>
+                        <EquipmentCatalogue
+                          startDate={inspectionStartDate}
+                          procurementUnit={procurementUnit}
+                          catalogue={catalogue}
+                          operatorId={procurementUnit.operatorId}
+                          onCatalogueChanged={updateViewData}
+                          isCatalogueEditable={isCatalogueEditable}
+                        />
+                      </ExpandableSection>
+                    )
+                  })}
+                  {catalogues.length === 0 && (
+                    <MessageView>
+                      <Text>procurementUnit_noCatalogueForUnit</Text>
+                    </MessageView>
+                  )}
+                  {isCatalogueEditable && (
+                    <EditEquipmentCatalogue
+                      onChange={updateViewData}
+                      procurementUnit={procurementUnit}
+                    />
+                  )}
+                </CatalogueWrapper>
+              </>
+            )}
           </>
         )}
       </ContentWrapper>
