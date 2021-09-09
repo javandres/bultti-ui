@@ -6,11 +6,12 @@ import { User } from '../schema-types'
 import { getUrlValue, setUrlValue, useNavigate } from './urlValue'
 import { useQueryData } from './useQueryData'
 import { useRefetch } from './useRefetch'
-import { getAuthToken, saveAuthToken } from './authToken'
+import { getAuthToken, removeAuthToken, saveAuthToken } from './authToken'
 import { pickGraphqlData } from './pickGraphqlData'
 import { text } from './translate'
 import { useShowErrorNotification } from './useShowNotification'
 import { useHistory } from 'react-router-dom'
+import { ApolloError } from '@apollo/client'
 
 export enum AuthState {
   AUTHENTICATED,
@@ -116,20 +117,26 @@ export const useAuth = (): [AuthState, boolean] => {
           isTest: isTestUrlParam,
           role: roleUrlParam || undefined,
         },
-      }).then(({ data }) => {
-        let token = pickGraphqlData(data)
-
-        if (token) {
-          saveAuthToken(token)
-          setAuthState(AuthState.AUTHENTICATED)
-          shouldNavigate.current = true
-
-          refetchUser()
-        } else {
-          setAuthState(AuthState.UNAUTHENTICATED)
-          showErrorNotification(text('login_failed'))
-        }
       })
+        .then(({ data }) => {
+          let token = pickGraphqlData(data)
+
+          if (token) {
+            saveAuthToken(token)
+            setAuthState(AuthState.AUTHENTICATED)
+            shouldNavigate.current = true
+
+            refetchUser()
+          } else {
+            setAuthState(AuthState.UNAUTHENTICATED)
+            showErrorNotification(text('login_failed'))
+            removeAuthToken()
+          }
+        })
+        .catch((error: ApolloError) => {
+          console.log('[error]: Login failed: ', error)
+          removeAuthToken()
+        })
     }
   }, [currentUser, codeUrlParam, authState, login, refetchUser, navigateNext, history])
 
